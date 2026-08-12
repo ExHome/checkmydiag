@@ -15,7 +15,9 @@
     { cle: 'pourquoi', mot: 'Pourquoi', icone: 'question' },
     { cle: 'comment', mot: 'Comment', icone: 'loupe' },
     { cle: 'risque', mot: 'Le risque', icone: 'alerte' },
-    { cle: 'quoiFaire', mot: 'Quoi faire', icone: 'action' }
+    { cle: 'quoiFaire', mot: 'Quoi faire', icone: 'action' },
+    // La question que le rapport ne traite jamais, et que tout le monde pose.
+    { cle: 'vente', mot: 'Pour vendre', icone: 'vente' }
   ] as const;
 </script>
 
@@ -35,8 +37,13 @@
             <path d="M12 3.6 21.2 19.4H2.8L12 3.6Z" />
             <path d="M12 9.8v4" />
             <path d="M12 16.6h.01" />
-          {:else}
+          {:else if bloc.icone === 'action'}
             <path d="M4.5 12.5 10 18 20 6.5" />
+          {:else}
+            <!-- Le panneau « à vendre » planté devant la maison. -->
+            <path d="M4.5 4.5v16" />
+            <rect x="4.5" y="5" width="14" height="8.5" rx="1.4" />
+            <path d="M8.5 9.2h6" />
           {/if}
         </svg>
       </span>
@@ -93,6 +100,15 @@
     color: var(--or);
   }
 
+  li.vente .icone {
+    background: rgb(210 163 88 / 18%);
+    color: var(--or-fonce);
+  }
+
+  li.vente {
+    border-color: var(--or);
+  }
+
   .mot {
     margin: 0 0 2px;
     font-size: 0.72rem;
@@ -108,6 +124,10 @@
 
   li.action .mot {
     color: var(--or);
+  }
+
+  li.vente .mot {
+    color: var(--or-fonce);
   }
 
   .texte {

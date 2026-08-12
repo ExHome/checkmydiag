@@ -13,6 +13,13 @@ export interface Fiche {
   comment: string;
   risque: string;
   quoiFaire: string;
+  /**
+   * Ce que ça change le jour de la vente ou de la signature du bail.
+   *
+   * C'est la question que tout le monde finit par poser — « et pour vendre,
+   * ça donne quoi ? » — et la seule à laquelle un rapport ne répond jamais.
+   */
+  vente: string;
 }
 
 /**
@@ -61,62 +68,80 @@ export const FICHES: Record<TypeDiag, Fiche> = {
     comment:
       'Calcul d’après l’isolation et les équipements. Usage standard, pas vos habitudes.',
     risque: 'Mauvaise note → chauffage cher, vente plus difficile, location parfois interdite.',
-    quoiFaire: 'Lire la lettre, puis la liste de travaux. Le toit d’abord : moins cher, plus efficace.'
+    quoiFaire: 'Lire la lettre, puis la liste de travaux. Le toit d’abord : moins cher, plus efficace.',
+    vente:
+      'Lettre obligatoire dans l’annonce. G : plus louable. F : interdit en 2028. F ou G en maison → audit énergétique à fournir. Valable 10 ans.'
   },
 
   plomb: {
     pourquoi: 'Peintures d’avant 1949 = plomb. Toujours là, souvent sous des couches récentes.',
     comment: 'Appareil posé contre le mur → une note de 0 à 3 par élément. Rien n’est abîmé.',
     risque: 'Peinture qui s’écaille → poussière → avalée par un enfant → saturnisme.',
-    quoiFaire: 'Une classe 3 → travaux obligatoires. Jamais de ponçage à sec.'
+    quoiFaire: 'Une classe 3 → travaux obligatoires. Jamais de ponçage à sec.',
+    vente:
+      'Obligatoire avant 1949. Sans plomb : valable à vie. Avec plomb : 1 an pour vendre, 6 ans pour louer. Classe 3 → travaux avant de remettre en location.'
   },
 
   amiante: {
     pourquoi: 'Interdite depuis 1997. Avant : toiture, dalles de sol, colle, conduits.',
     comment: 'Liste précise de matériaux, contrôlés à l’œil. Rien n’est percé.',
     risque: 'Percer, poncer, casser → fibres libérées → cancers, des dizaines d’années plus tard.',
-    quoiFaire: 'Bon état → laisser tranquille et surveiller. Travaux → entreprise certifiée.'
+    quoiFaire: 'Bon état → laisser tranquille et surveiller. Travaux → entreprise certifiée.',
+    vente:
+      'Obligatoire avant juillet 1997. Sans amiante : valable à vie. Avec amiante : à réévaluer tous les 3 ans. Ne bloque pas la vente, mais s’annonce à l’acheteur.'
   },
 
   electricite: {
     pourquoi: 'Installations de plus de 15 ans : première cause d’incendie électrique.',
     comment: 'Six points contrôlés à l’œil : coupure, différentiel, terre, disjoncteurs, salle de bains, matériel abîmé.',
     risque: 'Sans différentiel → le courant qui fuit passe par vous.',
-    quoiFaire: 'Rien d’obligatoire pour vendre. Priorité : différentiel et mise à la terre.'
+    quoiFaire: 'Rien d’obligatoire pour vendre. Priorité : différentiel et mise à la terre.',
+    vente:
+      'Obligatoire au-delà de 15 ans d’installation. Valable 3 ans pour vendre, 6 pour louer. Aucun travail imposé — mais chaque anomalie devient un argument de négociation.'
   },
 
   gaz: {
     pourquoi: 'Fuite ou mauvaise combustion → mort possible en une nuit.',
     comment: 'Tuyaux, appareils, ventilation de la pièce, évacuation des fumées.',
     risque: 'Monoxyde de carbone : invisible, sans odeur. Il endort, puis il tue.',
-    quoiFaire: 'A1 → un jour. A2 → vite. DGI → gaz coupé sur-le-champ, remise en service par un pro.'
+    quoiFaire: 'A1 → un jour. A2 → vite. DGI → gaz coupé sur-le-champ, remise en service par un pro.',
+    vente:
+      'Obligatoire au-delà de 15 ans d’installation. Valable 3 ans pour vendre, 6 pour louer. Un DGI se règle avant l’état des lieux : le gaz reste coupé tant que ce n’est pas fait.'
   },
 
   termites: {
     pourquoi: 'Communes classées par le préfet : les termites y attaquent charpentes et planchers.',
     comment: 'Recherche de traces visibles : galeries, tunnels de terre, bois qui sonne creux.',
     risque: 'Bois mangé de l’intérieur, surface intacte → un plancher peut céder sans prévenir.',
-    quoiFaire: 'Indices → mairie + entreprise de traitement. Document valable 6 mois.'
+    quoiFaire: 'Indices → mairie + entreprise de traitement. Document valable 6 mois.',
+    vente:
+      'Obligatoire seulement en commune classée par arrêté préfectoral. Valable 6 mois : souvent le premier document du dossier à périmer avant la signature.'
   },
 
   erp: {
     pourquoi: 'Savoir à quoi le terrain est exposé : inondation, argile, séisme, pollution, bruit.',
     comment: 'Recopie des zonages officiels. Personne ne vient mesurer chez vous.',
     risque: 'Argile → gonfle et se rétracte → la maison suit → murs fissurés.',
-    quoiFaire: 'Vérifier la couverture de l’assurance. Document valable 6 mois.'
+    quoiFaire: 'Vérifier la couverture de l’assurance. Document valable 6 mois.',
+    vente:
+      'Obligatoire partout. Valable 6 mois. Ne se négocie pas — mais un sinistre indemnisé passé doit être déclaré à l’acheteur, sous peine d’annulation.'
   },
 
   carrez: {
     pourquoi: 'Savoir quelle surface on achète, en copropriété.',
     comment: 'Sol mesuré sous plus de 1,80 m. Murs, cloisons et gaines déduits.',
     risque: 'Plus de 5 % d’écart avec l’annonce → l’acheteur peut faire baisser le prix.',
-    quoiFaire: 'Comparer avec l’annonce. Écart → demander au diagnostiqueur lequel fait foi.'
+    quoiFaire: 'Comparer avec l’annonce. Écart → demander au diagnostiqueur lequel fait foi.',
+    vente:
+      'Obligatoire en copropriété. Sans limite de validité tant que rien ne bouge. Le chiffre part dans l’acte : plus de 5 % en moins, et l’acheteur a 1 an pour réclamer une baisse de prix.'
   },
 
   assainissement: {
     pourquoi: 'Savoir où partent les eaux usées.',
     comment: 'Contrôle du raccordement au réseau, ou de l’installation enterrée.',
     risque: 'Non conforme → pollution du terrain, travaux en milliers d’euros.',
-    quoiFaire: 'Non conforme → l’acheteur a 1 an pour faire les travaux. Point de négociation.'
+    quoiFaire: 'Non conforme → l’acheteur a 1 an pour faire les travaux. Point de négociation.',
+    vente:
+      'Obligatoire hors réseau collectif. Valable 3 ans. Non conforme : la vente se fait quand même, mais l’acheteur a 1 an pour tout remettre aux normes — d’où la négociation.'
   }
 };
