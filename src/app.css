@@ -291,6 +291,15 @@ button {
     line-height: 1.45;
   }
 
+  /* Les vues sont un confort d'écran : sur papier, tout se déplie. */
+  .vue.cachee {
+    display: block !important;
+  }
+
+  .vues {
+    display: none !important;
+  }
+
   /* Ce qui ne sert qu'à l'écran. */
   .entete,
   .depot,

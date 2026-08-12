@@ -18,7 +18,6 @@
   import MiniSchema from './MiniSchema.svelte';
   import Fiche from './Fiche.svelte';
   import Curieux from './Curieux.svelte';
-  import Essentiel from './Essentiel.svelte';
   import Notaire from './Notaire.svelte';
   import Diagnostics from './Diagnostics.svelte';
   import { FICHES } from '../lib/analyse/fiches';
@@ -78,7 +77,11 @@
   function allerAuDiagnostic(type: TypeDiag): void {
     const constat = reperes.findIndex((r) => r.type === type && r.repere.famille === 'constat');
     const i = constat >= 0 ? constat : reperes.findIndex((r) => r.type === type);
-    if (i >= 0) allerAu(i);
+    if (i < 0) return;
+    // Aller dans le rapport, c'est changer de vue : sans ça, le clic ouvrait
+    // un passage que le lecteur ne voyait pas.
+    vue = 'rapport';
+    allerAu(i);
   }
 
   // Une demande venue de l'extérieur ouvre le diagnostic voulu.
@@ -106,6 +109,21 @@
     }));
     return liste;
   });
+
+  /**
+   * Les trois vues du dossier.
+   *
+   * Tout empilé, la page faisait vingt-trois écrans et quatre-vingts boutons
+   * visibles d'un coup : impossible de savoir où l'on est ni ce qui reste. On
+   * la coupe donc en trois temps, dans l'ordre où on lit un dossier.
+   */
+  const VUES = [
+    { cle: 'point', nom: 'Le point', quoi: 'Le bien, sa classe, le conseil' },
+    { cle: 'diags', nom: 'Les diagnostics', quoi: 'Un par un, expliqués' },
+    { cle: 'rapport', nom: 'Le rapport', quoi: 'Le document d’origine, annoté' }
+  ];
+
+  let vue = $state('point');
 
   /** Ouvert au clic, et seulement au clic. Reclic : ça se referme. */
   let epingle = $state<string | null>(null);
@@ -176,20 +194,36 @@
 
 {#if reperes.length}
   <section class="lecteur">
-    <!-- Le point qu'on ferait à l'étude : de quel bien il s'agit, ce que le
-         dossier établit, où il se situe, et ce qu'il faut faire. -->
-    <Notaire {analyse} />
+    <!-- Trois vues, pas vingt-trois écrans à la file. Le lecteur sait toujours
+         où il est et ce qui reste. À l'impression, tout se déplie : le document
+         remis n'a pas d'onglets. -->
+    <nav class="vues" aria-label="Les parties du dossier">
+      {#each VUES as v (v.cle)}
+        <button
+          type="button"
+          class:courante={vue === v.cle}
+          aria-current={vue === v.cle ? 'page' : undefined}
+          onclick={() => (vue = v.cle)}
+        >
+          <span class="nom-vue">{v.nom}</span>
+          <span class="quoi-vue">{v.quoi}</span>
+        </button>
+      {/each}
+    </nav>
 
-    <!-- Puis le détail, classé par ce que ça change. Chaque ligne renvoie à la
-         page du rapport où c'est écrit. -->
-    <Essentiel {analyse} allerA={allerAuDiagnostic} />
+    <div class="vue" class:cachee={vue !== 'point'}>
+      <!-- Le point qu'on ferait à l'étude : de quel bien il s'agit, où il se
+           situe, et ce qu'il faut faire. -->
+      <Notaire {analyse} />
+    </div>
 
-    <!-- Puis le dossier diagnostic par diagnostic : conclusion, dessin,
-         chiffres, canevas, réserves. De quoi tout comprendre sur un seul
-         document imprimé. -->
-    <Diagnostics {analyse} />
+    <div class="vue" class:cachee={vue !== 'diags'}>
+      <!-- Le dossier diagnostic par diagnostic : conclusion, dessin, chiffres,
+           canevas, réserves. -->
+      <Diagnostics {analyse} />
+    </div>
 
-    <div class="deux-colonnes" class:seul={!actif}>
+    <div class="vue" class:cachee={vue !== 'rapport'} class:deux-colonnes={true} class:seul={!actif}>
       <div class="document">
         {#if pages.length}
           <!-- Les pages à la suite : c'est un document, il se déroule. -->
@@ -435,7 +469,7 @@
 
     <!-- Au repos, le seul texte de l'écran : la porte d'entrée de la lecture
          guidée. Tout le reste attend un clic. -->
-    {#if !actif && nbReperes}
+    {#if vue === 'rapport' && !actif && nbReperes}
       <button type="button" class="commencer" onclick={() => allerAu(0)}>
         Lire le rapport avec moi
         <em>{nbReperes} passages, dans l’ordre</em>
@@ -516,6 +550,69 @@
 
 
 
+
+  /* La barre des vues : collante, elle dit en permanence où l'on est. */
+  .vues {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    position: sticky;
+    top: 0;
+    z-index: 8;
+    margin-bottom: 34px;
+    background: var(--fond);
+    border-bottom: 1px solid rgb(255 255 255 / 12%);
+  }
+
+  .vues button {
+    text-align: left;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 16px 4px 14px;
+    cursor: pointer;
+    color: var(--sur-fond-doux);
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .vues button:hover {
+    color: var(--sur-fond);
+  }
+
+  .vues button.courante {
+    color: var(--sur-fond);
+    border-bottom-color: var(--or);
+  }
+
+  .nom-vue {
+    display: block;
+    font-family: var(--police-titre);
+    font-size: 1.06rem;
+    font-weight: 500;
+    letter-spacing: -0.022em;
+  }
+
+  .vues button.courante .nom-vue {
+    color: var(--or-clair);
+  }
+
+  .quoi-vue {
+    display: block;
+    margin-top: 2px;
+    font-size: 0.74rem;
+    letter-spacing: 0.06em;
+    opacity: 0.7;
+  }
+
+  @media (max-width: 620px) {
+    .quoi-vue {
+      display: none;
+    }
+  }
+
+  .vue.cachee {
+    display: none;
+  }
 
   /* Tant que rien n'est ouvert, le rapport est seul et centré. Dès qu'on
      clique, il se décale pour laisser entrer l'explication. */

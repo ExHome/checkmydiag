@@ -159,6 +159,48 @@
     return bouts.join(' ');
   });
 
+  /**
+   * D'où sort la lettre du DPE, et les chiffres qui décrivent le logement.
+   *
+   * C'est la question que tout le monde pose et à laquelle le rapport ne répond
+   * jamais : on divise une consommation par une surface, on regarde la tranche.
+   * Le reste — les parois nues, les postes — explique pourquoi la consommation
+   * est là où elle est.
+   */
+  const TRANCHE: Record<string, string> = {
+    A: 'moins de 70',
+    B: 'de 70 à 110',
+    C: 'de 110 à 180',
+    D: 'de 180 à 250',
+    E: 'de 250 à 330',
+    F: 'de 330 à 420',
+    G: 'plus de 420'
+  };
+
+  const chiffres = $derived.by<{ quoi: string; donc: string[] }[]>(() => {
+    if (dpe?.schema?.genre !== 'dpe' || !lettre) return [];
+
+    const donc: string[] = [];
+    const surface = dpe.faits.find((f) => /surface/i.test(f.libelle))?.valeur;
+    const conso = dpe.schema.energie;
+    const climat = dpe.schema.climat;
+
+    if (conso) {
+      const t = TRANCHE[conso.lettre];
+      donc.push(
+        `${conso.valeur} ${conso.unite}${surface ? ` — la consommation calculée divisée par ${surface}` : ''}. Ça tombe dans la tranche ${conso.lettre}${t ? ` (${t})` : ''}.`
+      );
+    }
+    if (climat && conso && climat.lettre > conso.lettre) {
+      donc.push(`Le CO₂ note ${climat.lettre} : c’est lui qui tire la lettre vers le bas.`);
+    }
+    for (const poste of dpe.schema.postes.slice(0, 5)) {
+      donc.push(`${poste.nom} : ${Math.round(poste.kwh)} kWh${poste.cout ? ` — ${poste.cout}` : ''}.`);
+    }
+
+    return [{ quoi: `Classe ${lettre}`, donc }];
+  });
+
   const perimes = $derived(analyse.controles.filter((c) => c.genre === 'perime'));
   const manquants = $derived(analyse.controles.filter((c) => c.genre === 'manque'));
   const anomalies = $derived(
@@ -315,6 +357,25 @@
         </div>
       {/if}
     </div>
+
+    {#if chiffres.length}
+      <!-- Les chiffres du logement, à leur place : juste après ce qui les
+           produit. Ils étaient plus bas dans un relevé séparé, qui répétait
+           déjà la moitié du conseil. -->
+      <h2 class="apres">Les chiffres du logement</h2>
+      <ul class="chiffres">
+        {#each chiffres as c (c.quoi)}
+          <li>
+            <p class="valeur">{c.quoi}</p>
+            <ul class="detail">
+              {#each c.donc as ligne}
+                <li><MotsExpliques texte={ligne} /></li>
+              {/each}
+            </ul>
+          </li>
+        {/each}
+      </ul>
+    {/if}
 
     <h2 class="apres">Ce que je vous conseille</h2>
     <div class="conseils">
