@@ -363,6 +363,7 @@
                     isolation={diagnostic.schema?.genre === 'dpe'
                       ? diagnostic.schema.isolation
                       : null}
+                    lettre={diagnostic.schema?.genre === 'dpe' ? diagnostic.schema.finale : null}
                   />
                 </div>
               {:else if actif.rubrique === 'fiche' && diagnostic}

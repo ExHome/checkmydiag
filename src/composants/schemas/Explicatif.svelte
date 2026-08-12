@@ -14,12 +14,17 @@
   import CheminTermites from './CheminTermites.svelte';
   import SurfaceCarrez from './SurfaceCarrez.svelte';
 
-  import type { Isolation } from '../../lib/modele';
+  import type { Isolation, Lettre } from '../../lib/modele';
 
-  const { type, isolation = null }: { type: TypeDiag; isolation?: Isolation | null } = $props();
+  const {
+    type,
+    isolation = null,
+    lettre = null
+  }: { type: TypeDiag; isolation?: Isolation | null; lettre?: Lettre | null } = $props();
 
+  // Le schéma parle du logement du lecteur, pas d'une maison en général.
   const TITRES: Partial<Record<TypeDiag, string>> = {
-    dpe: 'Par où part la chaleur',
+    dpe: 'Par où la chaleur part de chez vous',
     plomb: 'Pourquoi une vieille peinture est dangereuse',
     electricite: 'Ce que fait le différentiel quand le courant fuit',
     gaz: 'Le gaz, l’air et les fumées : trois trajets à ne jamais boucher',
@@ -36,7 +41,7 @@
   <section class="explicatif">
     <h3>{titre}</h3>
     {#if type === 'dpe'}
-      <Deperditions {isolation} />
+      <Deperditions {isolation} {lettre} />
     {:else if type === 'plomb'}
       <ChainePlomb />
     {:else if type === 'electricite'}
@@ -57,23 +62,25 @@
 
 <style>
   .explicatif {
-    margin-top: 26px;
-    padding-top: 20px;
-    border-top: 1px solid var(--trait);
+    margin: 0;
   }
 
   h3 {
-    font-family: var(--police);
-    font-size: 0.95rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--encre-doux);
-    margin-bottom: 16px;
+    font-family: var(--police-titre);
+    font-style: italic;
+    font-size: 1.24rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    text-transform: none;
+    color: var(--vert-700);
+    margin-bottom: 14px;
   }
 
-  /* Un schéma trop large se lit mal : on le pose au centre, à taille de lecture. */
+  /* Le schéma est la pièce maîtresse de l'encart : il prend toute la largeur
+     qu'on lui donne. */
   .explicatif :global(figure > svg) {
-    max-width: 520px;
+    width: 100%;
+    max-width: 100%;
     margin-inline: auto;
     display: block;
   }

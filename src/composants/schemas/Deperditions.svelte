@@ -7,9 +7,23 @@
    * Les pourcentages sont des ordres de grandeur moyens (source ADEME). Quand le
    * rapport dit ce qui est isolé, la pastille le montre — vert ou rouge.
    */
-  import type { EtatIsolation, Isolation } from '../../lib/modele';
+  import type { EtatIsolation, Isolation, Lettre } from '../../lib/modele';
 
-  const { isolation = null }: { isolation?: Isolation | null } = $props();
+  const {
+    isolation = null,
+    lettre = null
+  }: { isolation?: Isolation | null; lettre?: Lettre | null } = $props();
+
+  /** Les couleurs officielles de l'étiquette, pour poser la classe sur la maison. */
+  const TEINTE_LETTRE: Record<Lettre, string> = {
+    A: '#319834',
+    B: '#33cc31',
+    C: '#cbfc34',
+    D: '#fbfe06',
+    E: '#fbcc05',
+    F: '#fc9935',
+    G: '#fc0205'
+  };
 
   interface Fuite {
     id: string;
@@ -112,10 +126,45 @@
   }
 
   const MENTION = { isole: 'isolé', nonIsole: 'non isolé' } as const;
+
+  const NOM_PAROI: Record<string, string> = {
+    toit: 'le toit',
+    murs: 'les murs',
+    fenetres: 'les fenêtres',
+    plancher: 'le plancher'
+  };
+
+  /**
+   * Le constat, tiré du rapport et pas d'une moyenne nationale : la classe du
+   * logement, puis ce que le diagnostiqueur a noté paroi par paroi.
+   */
+  const constat = $derived.by(() => {
+    const debut = lettre ? `Votre logement est classé ${lettre}.` : 'Votre logement.';
+    if (!isolation) return `${debut} Le rapport ne dit pas ce qui est isolé.`;
+
+    const nues = Object.entries(isolation)
+      .filter(([, etat]) => etat === 'nonIsole')
+      .map(([paroi]) => NOM_PAROI[paroi])
+      .filter(Boolean);
+    const faites = Object.entries(isolation)
+      .filter(([, etat]) => etat === 'isole')
+      .map(([paroi]) => NOM_PAROI[paroi])
+      .filter(Boolean);
+
+    if (!nues.length && !faites.length) return `${debut} Le rapport ne dit pas ce qui est isolé.`;
+
+    // « le plancher comme non isolé », mais « les murs et le toit comme non isolés ».
+    const accord = (liste: string[]): string =>
+      liste.length > 1 || liste[0]?.startsWith('les') ? 's' : '';
+
+    if (!nues.length)
+      return `${debut} Le rapport donne ${faites.join(', ')} comme isolé${accord(faites)}.`;
+    return `${debut} Le rapport donne ${nues.join(', ')} comme non isolé${accord(nues)} — c’est par là que ça part.`;
+  });
 </script>
 
 <figure>
-  <p class="invite muet petit">Touchez la maison.</p>
+  <p class="invite">Touchez la maison.</p>
 
   <svg viewBox="0 0 500 396" role="group" aria-label="Une maison illustrée : les six endroits par où la chaleur s’échappe.">
     <!-- Le ciel et le décor -->
@@ -146,6 +195,21 @@
     <path d="M206 178v52M180 204h52M312 178v52M286 204h52" class="croisillon" />
     <rect x="228" y="240" width="46" height="56" rx="5" class="porte" />
     <circle cx="266" cy="270" r="3.6" class="poignee" />
+
+    <!-- La classe du logement, posée sur sa façade : c'est sa maison. -->
+    {#if lettre}
+      <g transform="translate(196 152)">
+        <rect x="-22" y="-16" width="44" height="32" rx="8" fill={TEINTE_LETTRE[lettre]} />
+        <text
+          x="0"
+          y="7"
+          class="classe"
+          fill={lettre === 'C' || lettre === 'D' || lettre === 'E' ? '#16241e' : '#fff'}
+        >
+          {lettre}
+        </text>
+      </g>
+    {/if}
 
     <!-- Souffles de chaleur et libellés -->
     {#each FUITES as fuite (fuite.id)}
@@ -205,10 +269,9 @@
       <button type="button" class="fermer" onclick={() => (choisi = null)}>← Revenir</button>
     </div>
   {:else}
-    <figcaption class="muet petit">
-      Ordres de grandeur moyens (ADEME). Quand votre rapport le dit, la pastille indique ce qui est
-      isolé chez vous.
-    </figcaption>
+    <!-- On ne pose pas une question au lecteur : on lui dit ce que son rapport
+         raconte, paroi par paroi. -->
+    <figcaption class="constat">{constat}</figcaption>
   {/if}
 </figure>
 
@@ -218,13 +281,17 @@
   }
 
   .invite {
-    margin: 0 0 4px;
+    margin: 0 0 8px;
+    font-size: 0.84rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #9a7231;
   }
 
   svg {
     width: 100%;
     height: auto;
-    max-width: 540px;
     display: block;
     margin-inline: auto;
   }
@@ -363,6 +430,12 @@
     stroke: #c2503c;
   }
 
+  .classe {
+    font-size: 22px;
+    font-weight: 900;
+    text-anchor: middle;
+  }
+
   .nom {
     font-size: 14px;
     font-weight: 800;
@@ -414,7 +487,11 @@
     cursor: pointer;
   }
 
-  figcaption {
-    margin-top: 12px;
+  .constat {
+    margin-top: 14px;
+    font-size: 1rem;
+    font-weight: 650;
+    line-height: 1.45;
+    color: #2f3d36;
   }
 </style>
