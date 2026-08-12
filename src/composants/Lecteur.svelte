@@ -21,6 +21,9 @@
   import Fiche from './Fiche.svelte';
   import Curieux from './Curieux.svelte';
   import RubanDpe from './RubanDpe.svelte';
+  import Picto from './Picto.svelte';
+  import MiniEtiquette from './MiniEtiquette.svelte';
+  import { libelleCourt } from '../lib/libelle';
 
   interface Props {
     analyse: Analyse;
@@ -48,6 +51,7 @@
         type: d.type,
         titre: d.titre,
         gravite: d.gravite,
+        diag: d,
         numero: d.reperes[0]?.page ?? 1,
         pages: d.feuillets?.filter((n) => analyse.textePages[n]) ?? [d.reperes[0]?.page ?? 1],
         reperes: d.reperes
@@ -121,11 +125,9 @@
     return liste;
   });
 
-  /** Survolé à la loupe : ça s'ouvre, ça se referme quand on part. */
-  let survol = $state<string | null>(null);
-  /** Épinglé au clic : ça reste, on peut descendre dedans. */
+  /** Ouvert au clic, et seulement au clic. Reclic : ça se referme. */
   let epingle = $state<string | null>(null);
-  const actifId = $derived(epingle ?? survol);
+  const actifId = $derived(epingle);
   const actif = $derived(entrees.find((e) => e.id === actifId) ?? null);
 
   /** Le détail et le schéma, sous la synthèse. Le lecteur décide s'il y va. */
@@ -146,26 +148,10 @@
   $effect(() => {
     void ouvert;
     epingle = null;
-    survol = null;
   });
-
-  /* Passer du surlignage à l'encart traverse un vide : sans ce délai, l'encart
-     se refermerait entre les deux. */
-  let minuterie: ReturnType<typeof setTimeout> | null = null;
-
-  function entre(id: string): void {
-    if (minuterie) clearTimeout(minuterie);
-    survol = id;
-  }
-
-  function sort(): void {
-    if (minuterie) clearTimeout(minuterie);
-    minuterie = setTimeout(() => (survol = null), 240);
-  }
 
   function epingler(id: string): void {
     epingle = epingle === id ? null : id;
-    survol = epingle ? id : null;
   }
 
   function cadre(r: Repere) {
@@ -179,37 +165,31 @@
     };
   }
 
-  /* ---- La loupe ---------------------------------------------------------- */
-
-  const RAYON = 74;
-  const GROSSISSEMENT = 2.3;
-
-  let loupe = $state<{ x: number; y: number; l: number; h: number } | null>(null);
-
-  function promener(e: PointerEvent): void {
-    if (e.pointerType !== 'mouse' || !page) return;
-    const boite = (e.currentTarget as HTMLElement).getBoundingClientRect();
-    loupe = {
-      x: e.clientX - boite.left,
-      y: e.clientY - boite.top,
-      l: boite.width,
-      h: boite.height
-    };
-  }
 </script>
 
 {#if feuillet}
-  <section class="carte lecteur">
-    <nav class="onglets" aria-label="Diagnostics du dossier">
+  <section class="lecteur">
+    <!-- Les tuiles sont la navigation : on choisit son diagnostic à la couleur
+         et au médaillon, pas dans une liste d'onglets. -->
+    <nav class="tuiles" aria-label="Diagnostics du dossier">
       {#each feuillets as f, i (f.type)}
         <button
           type="button"
-          class="onglet {f.gravite}"
+          class="tuile {f.gravite}"
           class:actif={i === ouvert}
           onclick={() => (ouvert = i)}
         >
-          {f.titre}
-          <span class="page-num">p. {f.numero}</span>
+          <span class="medaille" class:etiquette={f.type === 'dpe'}>
+            {#if f.type === 'dpe' && f.diag.schema?.genre === 'dpe'}
+              <MiniEtiquette lettre={f.diag.schema.finale} />
+            {:else}
+              <Picto type={f.type} />
+            {/if}
+          </span>
+          <span class="dit">
+            <span class="verdict">{libelleCourt(f.diag)}</span>
+            <span class="quoi">{f.titre}</span>
+          </span>
         </button>
       {/each}
     </nav>
@@ -217,12 +197,7 @@
     <div class="deux-colonnes">
       <div class="document">
         {#if page}
-          <!-- svelte-ignore a11y_no_static_element_interactions -->
-          <div
-            class="page"
-            onpointermove={promener}
-            onpointerleave={() => (loupe = null)}
-          >
+          <div class="page">
             <img src={page.image} alt="Page {feuillet.numero} de votre rapport" />
 
             {#each feuillet.reperes as repere, i (repere.titre)}
@@ -239,31 +214,12 @@
                   style:width="{c.width}%"
                   style:height="{c.height}%"
                   aria-label={repere.titre}
-                  onmouseenter={() => entre(`r${i}`)}
-                  onmouseleave={sort}
-                  onfocus={() => entre(`r${i}`)}
-                  onblur={sort}
                   onclick={() => epingler(`r${i}`)}
                 >
                   <span class="puce">{i + 1}</span>
                 </button>
               {/if}
             {/each}
-
-            {#if loupe}
-              <div
-                class="loupe"
-                style:left="{loupe.x}px"
-                style:top="{loupe.y}px"
-                style:width="{RAYON * 2}px"
-                style:height="{RAYON * 2}px"
-                style:background-image="url({page.image})"
-                style:background-size="{loupe.l * GROSSISSEMENT}px {loupe.h *
-                  GROSSISSEMENT}px"
-                style:background-position="{RAYON - loupe.x * GROSSISSEMENT}px {RAYON -
-                  loupe.y * GROSSISSEMENT}px"
-              ></div>
-            {/if}
           </div>
         {:else}
           <!-- Pas d'image de page : le texte du rapport, page après page, avec
@@ -282,10 +238,6 @@
                     class="ligne surlignee"
                     class:actif={actifId === `r${idx}`}
                     style:--teinte={TEINTES[r?.ton ?? 'info']}
-                    onmouseenter={() => entre(`r${idx}`)}
-                    onmouseleave={sort}
-                    onfocus={() => entre(`r${idx}`)}
-                    onblur={sort}
                     onclick={() => epingler(`r${idx}`)}
                   >
                     <span class="puce-ligne">{idx + 1}</span>
@@ -300,16 +252,11 @@
         {/if}
       </div>
 
-      <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-      <aside
-        class="panneau"
-        onmouseenter={() => actifId && entre(actifId)}
-        onmouseleave={sort}
-      >
+      <aside class="panneau">
         {#if actif}
           {#key actif.id}
             <div class="encart apparait" style:--teinte={actif.teinte}>
-              <button type="button" class="retour" onclick={() => ((epingle = null), (survol = null))}>
+              <button type="button" class="retour" onclick={() => (epingle = null)}>
                 ← Retour
               </button>
 
@@ -438,8 +385,6 @@
                           type="button"
                           class="mot"
                           style:--teinte={e.teinte}
-                          onmouseenter={() => entre(e.id)}
-                          onmouseleave={sort}
                           onclick={() => epingler(e.id)}
                         >
                           <span class="pastille"></span>
@@ -460,82 +405,118 @@
 {/if}
 
 <style>
+  /* Pas de caisson autour du lecteur : le rapport se pose directement sur le
+     vert, comme une feuille sur un bureau. C'est lui la matière, pas le cadre. */
   .lecteur {
+    margin-bottom: 40px;
+  }
+
+  /* Les tuiles : la navigation du dossier. On les lit à la couleur avant de les
+     lire au mot. Celle qu'on regarde est pleine ; les autres attendent. */
+  .tuiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 10px;
     margin-bottom: 24px;
   }
 
-  .onglets {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 18px;
-  }
-
-  .onglet {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 8px;
-    background: var(--papier-doux);
-    border: 1px solid var(--trait);
-    border-radius: 999px;
-    padding: 8px 16px;
+  .tuile {
+    display: grid;
+    grid-template-columns: 46px 1fr;
+    align-items: center;
+    gap: 13px;
+    text-align: left;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid rgb(255 255 255 / 12%);
+    background: rgb(255 255 255 / 6%);
+    color: var(--sur-fond);
     cursor: pointer;
-    font-size: 0.92rem;
-    color: var(--encre-doux);
-    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    transition: background 0.18s ease, border-color 0.18s ease, transform 0.15s ease;
   }
 
-  .onglet:hover {
-    background: var(--vert-100);
+  .tuile:hover {
+    background: rgb(255 255 255 / 12%);
+    transform: translateY(-2px);
   }
 
-  .onglet.actif {
-    background: var(--vert-700);
-    border-color: var(--vert-700);
+  /* La tuile ouverte prend la couleur de sa gravité, pleine. */
+  .tuile.actif {
     color: #fff;
-    font-weight: 600;
+    border-color: transparent;
+    box-shadow: var(--ombre-forte);
   }
 
-  .page-num {
-    font-size: 0.78rem;
-    opacity: 0.7;
+  .tuile.actif.bon {
+    background: linear-gradient(150deg, #22a06b, #17835a);
   }
 
+  .tuile.actif.attention {
+    background: linear-gradient(150deg, #e79a2e, #cf7f16);
+  }
+
+  .tuile.actif.alerte {
+    background: linear-gradient(150deg, #dd5540, #c33e2b);
+  }
+
+  .tuile.actif.neutre {
+    background: linear-gradient(150deg, #6f8279, #586b62);
+  }
+
+  .medaille {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    font-size: 22px;
+    background: radial-gradient(circle at 32% 26%, #e9d2a5, #d2a358 60%, #a3762f);
+    box-shadow: inset 0 -2px 5px rgb(0 0 0 / 22%);
+  }
+
+  .medaille.etiquette {
+    border-radius: 10px;
+    padding: 5px 6px;
+    background: rgb(255 255 255 / 94%);
+    box-shadow: none;
+  }
+
+  .verdict {
+    display: block;
+    font-weight: 750;
+    font-size: 0.98rem;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  .quoi {
+    display: block;
+    font-size: 0.8rem;
+    opacity: 0.72;
+    line-height: 1.25;
+  }
+
+  /* Le rapport tient les deux tiers : c'est ce qu'on est venu lire. L'encart
+     l'accompagne, il ne lui dispute pas la place. */
   .deux-colonnes {
     display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-    gap: 24px;
+    grid-template-columns: minmax(0, 1fr) 366px;
+    gap: 28px;
     align-items: start;
   }
 
   .page {
     position: relative;
-    border-radius: var(--rayon-petit);
+    border-radius: 6px;
     overflow: hidden;
-    box-shadow: var(--ombre);
+    box-shadow: var(--ombre-forte);
     background: #fff;
     line-height: 0;
-    cursor: crosshair;
   }
 
   img {
     width: 100%;
     height: auto;
-  }
-
-  /* La loupe : un vrai verre grossissant, cerclé d'or, qui suit la main. */
-  .loupe {
-    position: absolute;
-    transform: translate(-50%, -50%);
-    border-radius: 50%;
-    pointer-events: none;
-    background-repeat: no-repeat;
-    border: 3px solid var(--or);
-    box-shadow:
-      0 0 0 1px rgb(0 0 0 / 20%),
-      0 10px 26px -8px rgb(0 0 0 / 45%),
-      inset 0 0 22px rgb(255 255 255 / 30%);
-    z-index: 3;
   }
 
   /* Le surlignage prend la couleur de ce que dit la ligne. */
@@ -650,27 +631,25 @@
     vertical-align: text-bottom;
   }
 
-  /* L'encart crème : c'est là que l'explication arrive, en face du rapport. */
+  /* L'explication se pose à même le vert, sans caisson. Une feuille de papier
+     d'un côté, la parole de l'autre : c'est la mise en page de la plaquette. */
   .panneau {
     position: sticky;
     top: 16px;
-    background: linear-gradient(180deg, #fdfaf2, var(--papier-doux));
-    border: 1px solid var(--trait);
-    border-radius: var(--rayon);
-    padding: 20px 22px;
-    box-shadow: var(--ombre);
+    padding: 4px 0 0 4px;
     max-height: calc(100vh - 32px);
     overflow-y: auto;
+    color: var(--sur-fond);
   }
 
   .panneau :global(.ruban) {
-    margin: 14px 0 12px;
+    margin: 16px 0 14px;
   }
 
   .invite {
-    margin: 0 0 14px;
-    font-size: 0.94rem;
-    color: var(--encre-doux);
+    margin: 0 0 18px;
+    font-size: 0.93rem;
+    color: var(--sur-fond-doux);
     font-style: italic;
   }
 
@@ -683,20 +662,26 @@
     display: grid;
     grid-template-columns: 1fr auto 14px;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     width: 100%;
     background: none;
     border: none;
-    border-bottom: 1px solid var(--trait);
-    padding: 11px 2px;
+    border-bottom: 1px solid rgb(230 200 148 / 26%);
+    padding: 13px 2px;
     cursor: pointer;
     text-align: left;
+    transition: border-color 0.2s ease;
+  }
+
+  .tete:hover {
+    border-bottom-color: var(--or);
   }
 
   .titre-tiroir {
-    font-weight: 800;
-    font-size: 0.98rem;
-    color: var(--vert-700);
+    font-family: var(--police-titre);
+    font-weight: 700;
+    font-size: 1.04rem;
+    color: var(--or-clair);
     font-style: italic;
   }
 
@@ -707,9 +692,9 @@
     height: 22px;
     padding: 0 6px;
     border-radius: 999px;
-    background: var(--vert-100);
-    color: var(--vert-700);
-    font-size: 0.76rem;
+    background: rgb(255 255 255 / 10%);
+    color: var(--sur-fond-doux);
+    font-size: 0.75rem;
     font-weight: 800;
   }
 
@@ -728,34 +713,36 @@
 
   .mot {
     display: grid;
-    grid-template-columns: 14px 1fr 14px;
+    grid-template-columns: 10px 1fr 14px;
     align-items: center;
-    gap: 12px;
+    gap: 13px;
     width: 100%;
     text-align: left;
-    background: #fff;
-    border: 1px solid var(--trait);
-    border-left: 5px solid var(--teinte);
-    border-radius: 10px;
-    padding: 11px 14px;
+    background: rgb(255 255 255 / 6%);
+    border: 1px solid rgb(255 255 255 / 9%);
+    border-left: 3px solid var(--teinte);
+    border-radius: 12px;
+    padding: 12px 15px;
     cursor: pointer;
-    font-weight: 700;
+    font-weight: 650;
     font-size: 0.95rem;
-    color: var(--encre);
-    transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;
+    color: var(--sur-fond);
+    transition: background 0.18s ease, border-color 0.18s ease, transform 0.15s ease;
   }
 
   .mot:hover {
-    background: color-mix(in srgb, var(--teinte) 13%, #fff);
+    background: rgb(255 255 255 / 12%);
+    border-color: rgb(230 200 148 / 40%);
+    border-left-color: var(--teinte);
     transform: translateX(3px);
-    box-shadow: 0 0 0 2px color-mix(in srgb, var(--teinte) 40%, transparent);
   }
 
   .pastille {
-    width: 14px;
-    height: 14px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
     background: var(--teinte);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--teinte) 26%, transparent);
   }
 
   .mot.rubrique .pastille {
@@ -770,94 +757,100 @@
   .chevron {
     width: 7px;
     height: 7px;
-    border-right: 2.4px solid var(--encre-doux);
-    border-bottom: 2.4px solid var(--encre-doux);
+    border-right: 2px solid rgb(230 200 148 / 70%);
+    border-bottom: 2px solid rgb(230 200 148 / 70%);
     transform: rotate(-45deg);
     justify-self: end;
   }
 
   /* L'encart : une seule chose à la fois. */
   .encart {
-    border-left: 5px solid var(--teinte);
-    padding-left: 15px;
+    border-left: 3px solid var(--teinte);
+    padding-left: 17px;
   }
 
   .encart h3 {
-    font-size: 1.16rem;
-    margin: 6px 0 10px;
-    color: var(--encre);
+    font-family: var(--police-titre);
+    font-style: italic;
+    font-size: 1.32rem;
+    font-weight: 700;
+    margin: 8px 0 14px;
+    color: var(--or-clair);
   }
 
   .retour {
     background: none;
     border: none;
     padding: 0;
-    color: var(--encre-doux);
+    color: var(--sur-fond-doux);
     font-weight: 700;
     cursor: pointer;
-    font-size: 0.86rem;
+    font-size: 0.84rem;
+    letter-spacing: 0.02em;
   }
 
   .retour:hover {
-    color: var(--vert-700);
+    color: var(--or-clair);
   }
 
   /* La ligne du rapport, citée telle quelle, avant toute explication. */
   .extrait {
-    margin: 0 0 12px;
-    padding: 10px 12px;
-    background: color-mix(in srgb, var(--teinte) 11%, #fff);
-    border-radius: var(--rayon-petit);
-    font-size: 0.89rem;
-    color: #4a3d24;
-    line-height: 1.45;
+    margin: 0 0 14px;
+    padding: 12px 14px;
+    background: rgb(255 255 255 / 8%);
+    border-left: 2px solid color-mix(in srgb, var(--teinte) 70%, transparent);
+    border-radius: 4px;
+    font-size: 0.88rem;
+    color: var(--sur-fond-doux);
+    line-height: 1.5;
     font-style: italic;
   }
 
   /* Ce qui se passe, en une ligne. Le reste est facultatif. */
   .synthese {
     margin: 0 0 12px;
-    font-size: 1.04rem;
-    font-weight: 700;
-    line-height: 1.35;
-    color: var(--encre);
+    font-size: 1.08rem;
+    font-weight: 650;
+    line-height: 1.4;
+    color: var(--sur-fond);
   }
 
   /* Chez vous, en pratique. La phrase qui empêche de retomber dans le cours. */
   .pratique {
-    margin: 0 0 14px;
+    margin: 0 0 18px;
     font-style: italic;
-    font-size: 0.95rem;
-    line-height: 1.4;
-    color: var(--or-fonce);
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--or-clair);
   }
 
   .ouvertures {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
   }
 
   .creuser {
     background: none;
-    border: 1px solid var(--trait);
+    border: 1px solid rgb(230 200 148 / 40%);
     border-radius: 999px;
-    padding: 7px 15px;
+    padding: 8px 17px;
     font-size: 0.86rem;
     font-weight: 700;
-    color: var(--vert-700);
+    color: var(--or-clair);
     cursor: pointer;
+    transition: background 0.18s ease, border-color 0.18s ease;
   }
 
   .creuser:hover,
   .creuser.ouvert {
-    background: #fff;
-    border-color: var(--teinte);
+    background: rgb(255 255 255 / 10%);
+    border-color: var(--or);
   }
 
   .detail {
-    margin-bottom: 12px;
+    margin-bottom: 14px;
   }
 
   /* Des puces, pas des paragraphes : trois ou quatre mots par ligne. */
@@ -866,15 +859,15 @@
     margin: 10px 0 0;
     padding: 0;
     display: grid;
-    gap: 7px;
+    gap: 9px;
   }
 
   .points li {
     position: relative;
-    padding-left: 20px;
-    font-size: 0.95rem;
-    line-height: 1.4;
-    color: var(--encre);
+    padding-left: 21px;
+    font-size: 1rem;
+    line-height: 1.45;
+    color: var(--sur-fond);
   }
 
   .points li::before {
@@ -897,16 +890,16 @@
 
   .suite {
     text-align: left;
-    border: 1px solid var(--trait);
-    border-left-width: 5px;
+    border: 1px solid rgb(255 255 255 / 12%);
+    border-left-width: 3px;
     border-radius: var(--rayon-petit);
-    padding: 9px 13px;
+    padding: 10px 14px;
     cursor: pointer;
-    font-size: 0.92rem;
+    font-size: 0.95rem;
     font-weight: 650;
-    color: var(--encre);
-    background: #fff;
-    transition: background 0.15s ease, border-color 0.15s ease;
+    color: var(--sur-fond);
+    background: rgb(255 255 255 / 6%);
+    transition: background 0.18s ease, border-color 0.18s ease;
   }
 
   .suite::before {
@@ -928,8 +921,8 @@
 
   .reponse-suite {
     margin: 0 0 4px;
-    padding-left: 14px;
-    border-left: 3px solid var(--trait);
+    padding-left: 15px;
+    border-left: 2px solid rgb(255 255 255 / 18%);
   }
 
   .reponse-suite.bon {
@@ -949,25 +942,26 @@
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-top: 14px;
-    padding-top: 12px;
-    border-top: 1px solid var(--trait);
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid rgb(230 200 148 / 24%);
   }
 
   .passerelles button {
-    background: #fff;
-    border: 1px solid var(--or);
-    color: var(--or-fonce);
+    background: none;
+    border: 1px solid rgb(230 200 148 / 45%);
+    color: var(--or-clair);
     border-radius: 999px;
-    padding: 7px 15px;
-    font-size: 0.85rem;
+    padding: 8px 16px;
+    font-size: 0.86rem;
     font-weight: 700;
     cursor: pointer;
+    transition: background 0.18s ease;
   }
 
   .passerelles button:hover {
     background: var(--or);
-    color: #fff;
+    color: #17301f;
   }
 
   @media (max-width: 820px) {

@@ -294,16 +294,9 @@
       </p>
     {/if}
 
-    <!-- Ce qui intéresse d'abord : l'état du dossier. Le rapport vient après,
-         pour ceux qui veulent aller voir. -->
-    <Resume
-      {analyse}
-      {nomFichier}
-      {exemple}
-      {recommencer}
-      partie="bilan"
-      allerVers={(type) => (demande = type)}
-    />
+    <!-- On arrive sur son rapport, pas sur un bilan. Les tuiles servent de
+         navigation, et tout se découvre en cliquant dedans. -->
+    <Lecteur {analyse} {rendus} {demande} />
 
     <!-- Le même dossier ne se lit pas pareil selon qu'on vend, qu'on achète ou
          qu'on fait signer. -->
@@ -311,7 +304,12 @@
 
     <Controles controles={analyse.controles} />
 
-    <Lecteur {analyse} {rendus} {demande} />
+    <div class="reprendre">
+      <button class="bouton bouton--fantome" onclick={recommencer}>Analyser un autre rapport</button>
+      <button class="bouton bouton--fantome" onclick={() => window.print()}>
+        Imprimer l’antisèche
+      </button>
+    </div>
 
     <p class="avertissement muet petit">
       Outil de lecture. Aucune valeur réglementaire — la référence reste le rapport signé.
@@ -357,6 +355,13 @@
 
   main {
     padding: clamp(28px, 6vw, 56px) 0 80px;
+  }
+
+  .reprendre {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 28px 0 18px;
   }
 
   .accroche {

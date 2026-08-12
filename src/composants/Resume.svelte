@@ -46,16 +46,33 @@
   const aRegarder = $derived(analyse.diagnostics.filter((d) => d.gravite === 'attention'));
   const tranquilles = $derived(analyse.diagnostics.filter((d) => d.gravite === 'bon'));
 
+  /**
+   * On compte, on ne juge pas.
+   *
+   * Dire d'un dossier qu'il est « sain » serait un avis — et Check My Diag n'en
+   * donne aucun : il lit ce qui est écrit. La phrase énumère donc ce que le
+   * rapport signale, et laisse le lecteur conclure.
+   */
   const phrase = $derived.by(() => {
-    if (importants.length > 0) {
+    const bouts: string[] = [];
+    if (importants.length) {
       const noms = importants.map((d) => NOMS[d.type]);
       const liste =
         noms.length === 1 ? noms[0] : `${noms.slice(0, -1).join(', ')} et ${noms[noms.length - 1]}`;
-      return `À regarder : ${liste}. Le reste est propre.`;
+      bouts.push(`Signalé : ${liste}.`);
     }
-    if (aRegarder.length > 0) return 'Rien de grave. Quelques points à voir avant de signer.';
-    if (tranquilles.length > 0) return 'Rien à signaler dans ce dossier.';
-    return 'Voici votre dossier.';
+    if (aRegarder.length) {
+      bouts.push(
+        `${aRegarder.length} point${aRegarder.length > 1 ? 's' : ''} à regarder de près.`
+      );
+    }
+    if (analyse.controles.length) {
+      bouts.push(
+        `${analyse.controles.length} chose${analyse.controles.length > 1 ? 's' : ''} à vérifier dans le dossier.`
+      );
+    }
+    if (!bouts.length) return `${analyse.diagnostics.length} diagnostics lus. Rien n’est signalé.`;
+    return bouts.join(' ');
   });
 </script>
 
@@ -70,15 +87,10 @@
 
   <p class="fichier muet petit">{nomFichier} — {analyse.nbPages} pages</p>
 
+  <!-- Un titre qui décrit, jamais qui tranche : le verdict appartient au
+       rapport signé, pas à nous. -->
   <h1>
-    {#if importants.length}
-      {importants.length} point{importants.length > 1 ? 's' : ''} important{importants.length > 1 ? 's' : ''}
-      dans votre dossier
-    {:else if aRegarder.length}
-      Votre dossier est plutôt sain
-    {:else}
-      Votre dossier ne signale rien
-    {/if}
+    {analyse.diagnostics.length} diagnostic{analyse.diagnostics.length > 1 ? 's' : ''} dans votre dossier
   </h1>
 
   <p class="phrase">{phrase}</p>
