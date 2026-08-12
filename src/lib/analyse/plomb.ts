@@ -84,9 +84,9 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
   if (date?.[1]) faits.push({ libelle: 'Date du constat', valeur: date[1] });
 
   const explication = [
-    'Le CREP ne cherche pas le plomb dans les canalisations : il mesure le plomb des peintures, mur par mur, à l’aide d’un appareil à fluorescence X. Chaque élément mesuré est une « unité de diagnostic ».',
-    'Classe 0 : pas de plomb, ou sous le seuil. Classe 1 : plomb présent mais revêtement intact. Classe 2 : revêtement en état d’usage (usé, éraflé). Classe 3 : revêtement dégradé — c’est celui-là qui pose problème, car il libère des poussières.',
-    'Le danger vient des poussières et des écailles ingérées, en particulier par les jeunes enfants et les femmes enceintes (saturnisme). Un mur au plomb en bon état, laissé tranquille, n’est pas dangereux.'
+    'Le CREP — le constat plomb — ne regarde pas les canalisations : il mesure le plomb des peintures, mur par mur, avec un appareil qu’on pose sur la surface. Chaque élément mesuré (un mur, une porte, une plinthe) est appelé « unité de diagnostic » dans le rapport.',
+    'Les classes vont de 0 à 3 : pas de plomb, du plomb sous une peinture intacte, une peinture usée ou éraflée, et enfin une peinture dégradée qui s’écaille. Seule la dernière pose vraiment problème.',
+    'Le danger vient des poussières et des écailles avalées, surtout par les jeunes enfants et les femmes enceintes — c’est ce qu’on appelle le saturnisme. Un mur au plomb en bon état, qu’on laisse tranquille, n’est pas dangereux.'
   ];
 
   const aFaire =
