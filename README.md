@@ -3,9 +3,30 @@
 Un particulier reçoit soixante pages de PDF technique et n'a qu'une question :
 **est-ce que c'est grave ?**
 
-Check My Diag lit son rapport de diagnostic immobilier dans le navigateur, en
-sort le verdict de chaque diagnostic, un schéma, et ce que ça change
-concrètement pour lui.
+Check My Diag lit son rapport de diagnostic immobilier dans le navigateur. Le
+rapport s'affiche d'un côté, les passages qui comptent y sont surlignés : on en
+touche un, l'explication arrive en face — en puces, avec un petit dessin. Des
+antisèches, pas un cours.
+
+## Point ouvert : le dessin des pages
+
+Les pages du PDF sont dessinées pour être annotées. **Ce rendu ne fonctionne pas
+dans le navigateur de prévisualisation de Claude Code** — à vérifier dans un
+navigateur ordinaire.
+
+Ce qui a été écarté par la mesure, pour ne pas refaire le tour deux fois :
+
+| Hypothèse | Résultat |
+| --- | --- |
+| Résolution demandée trop grande | 200 px ne va pas plus vite que 900 px |
+| Canevas détaché du document | l'attacher au DOM ne change rien |
+| Document abîmé par l'extraction | un second document rouvert bloque pareil |
+| Attente d'une police système | `useSystemFonts: false` + `disableFontFace` : identique |
+| Le document lui-même | un PDF d'un seul carré rouge s'ouvre en 141 ms et ne se dessine pas |
+
+En attendant, l'interface se replie sur le **texte** de la page, avec les mêmes
+surlignages : l'écran reste utilisable, et le dessin s'ajoute dès qu'il aboutit
+(huit secondes maximum par page, en tâche de fond).
 
 ## Principes
 
