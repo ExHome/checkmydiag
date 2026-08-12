@@ -85,7 +85,7 @@
     </p>
   {/if}
   {:else}
-  <h2 class="titre-bilan">Le bilan de votre dossier</h2>
+  <h2 class="titre-bilan">Ce que dit votre dossier</h2>
 
   <div class="compteurs">
     <div class="compteur alerte">

@@ -248,14 +248,13 @@
       </p>
     {/if}
 
-    <!-- Un seul endroit où lire : le rapport et son explication. Les cartes
-         détaillées répétaient ce que le lecteur dit déjà — la page en devenait
-         trois fois trop longue. -->
-    <Lecteur {analyse} {rendus} />
+    <!-- Ce qui intéresse d'abord : l'état du dossier. Le rapport vient après,
+         pour ceux qui veulent aller voir. -->
+    <Resume {analyse} {nomFichier} {exemple} {recommencer} partie="bilan" />
 
     <Controles controles={analyse.controles} />
 
-    <Resume {analyse} {nomFichier} {exemple} {recommencer} partie="bilan" />
+    <Lecteur {analyse} {rendus} />
 
     <p class="avertissement muet petit">
       Check My Diag est un outil de lecture : il reformule votre rapport, il ne le remplace pas et

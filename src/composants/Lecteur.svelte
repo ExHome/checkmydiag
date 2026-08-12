@@ -78,7 +78,7 @@
 {#if feuillet}
   <section class="carte lecteur">
     <header class="entete">
-      <h2>L’antisèche de votre dossier</h2>
+      <h2>Aller voir dans le rapport</h2>
       <p class="muet petit">
         Touchez un passage surligné : l’explication arrive à côté.
       </p>
