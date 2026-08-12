@@ -84,6 +84,22 @@ describe.skipIf(!disponible)('calibration sur rapports réels', () => {
           console.log(`      ⌾ [${c.genre}] ${c.titre} — ${c.explication.slice(0, 110)}`);
         }
 
+        // Les deux nouveautés à surveiller : l'isolation lue paroi par paroi,
+        // et l'emplacement du plomb pièce par pièce.
+        for (const d of analyse.diagnostics) {
+          if (d.schema?.genre === 'dpe') {
+            const i = d.schema.isolation;
+            console.log(`      ▦ isolation  toit:${i.toit} murs:${i.murs} sol:${i.plancher} fen:${i.fenetres}`);
+          }
+          if (d.schema?.genre === 'plomb' && d.schema.emplacements.length) {
+            const ou = d.schema.emplacements
+              .slice(0, 4)
+              .map((e) => `${e.zone}/${e.element}(${e.classe})`)
+              .join(' · ');
+            console.log(`      ▣ plomb  ${ou}`);
+          }
+        }
+
         if (analyse.diagnostics.length === 0) muets.push(fichier);
         for (const d of analyse.diagnostics) {
           const cle: `${TypeDiag}:${string}` = `${d.type}:${d.gravite}`;

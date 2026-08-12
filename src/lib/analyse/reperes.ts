@@ -24,8 +24,16 @@ export interface Repere {
   schema?: string;
   /** L'explication, en puces courtes. */
   points: string[];
+  /** Ce qu'on peut demander ensuite, sans quitter le passage. */
+  suites?: Suite[];
   /** La ligne du rapport elle-même : sert à la retrouver dans le texte. */
   extrait: string;
+}
+
+/** Une question que le lecteur se pose en lisant l'explication. */
+export interface Suite {
+  question: string;
+  points: string[];
 }
 
 interface Cible {
@@ -34,7 +42,89 @@ interface Cible {
   /** Identifiant du petit dessin qui illustre la notion. */
   schema?: string;
   points: string[];
+  /** Ce qu'on peut demander ensuite, sans quitter le passage. */
+  suites?: Suite[];
 }
+
+/**
+ * Les lignes qu'on retrouve dans tous les rapports, quel que soit le
+ * diagnostic. Elles s'ajoutent aux cibles propres à chaque type : le lecteur
+ * doit pouvoir toucher n'importe quelle donnée, pas seulement les grandes.
+ */
+const COMMUNES: Cible[] = [
+  {
+    motif: /Num[ée]ro de dossier/i,
+    titre: 'Le numéro de dossier',
+    points: [
+      'La référence interne du diagnostiqueur',
+      'À citer pour toute question ou réclamation',
+      'Le même pour tous les diagnostics du dossier'
+    ]
+  },
+  {
+    motif: /Date du rep[ée]rage|Date de la visite/i,
+    titre: 'La date de la visite',
+    points: [
+      'Le jour où le diagnostiqueur est venu',
+      'C’est de là que court la validité',
+      'Pas la date d’envoi du rapport'
+    ]
+  },
+  {
+    motif: /Norme m[ée]thodologique|selon la norme|NF\s*[XP]/i,
+    titre: 'La méthode suivie',
+    points: [
+      'Chaque diagnostic a sa norme officielle',
+      'Elle dit quoi contrôler, et comment',
+      'Le diagnostiqueur ne peut pas s’en écarter'
+    ]
+  },
+  {
+    motif: /N°\s*de certification|Organisme de certification/i,
+    titre: 'La certification',
+    points: [
+      'Le diagnostiqueur est certifié par un organisme agréé',
+      'Certification à repasser tous les 5 à 7 ans',
+      'Vérifiable sur l’annuaire officiel du ministère'
+    ]
+  },
+  {
+    motif: /P[ée]rim[èe]tre de rep[ée]rage/i,
+    titre: 'Ce qui a été regardé',
+    points: [
+      'Précise l’étendue de la visite',
+      '« Sans démontage ni destruction » = à l’œil seulement',
+      'Ce qui est fermé ou encombré n’a pas été vu'
+    ]
+  },
+  {
+    motif: /R[ée]f[ée]rences cadastrales/i,
+    titre: 'Les références cadastrales',
+    points: [
+      'L’identité officielle du terrain',
+      'Section et numéro de parcelle',
+      '« Non communiquées » est fréquent et sans gravité'
+    ]
+  },
+  {
+    motif: /Ann[ée]e de construction/i,
+    titre: 'L’année de construction',
+    points: [
+      'Elle décide des diagnostics obligatoires',
+      'Avant 1949 : constat plomb',
+      'Avant 1997 : repérage amiante'
+    ]
+  },
+  {
+    motif: /^Type de bien/i,
+    titre: 'Le type de bien',
+    points: [
+      'Maison ou appartement',
+      'Change les diagnostics exigés',
+      'Un appartement ajoute le mesurage Carrez'
+    ]
+  }
+];
 
 const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
   dpe: [
@@ -69,6 +159,41 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
         'Ne compte pas : garage, cave, balcon',
         'Sert à calculer la note',
         'Différente de la surface de l’acte de vente'
+      ]
+    },
+    {
+      motif: /non isol[ée]/i,
+      titre: '« Non isolé »',
+      points: [
+        'Le diagnostiqueur n’a vu aucun isolant',
+        'Deux explications possibles — touchez-les'
+      ],
+      suites: [
+        {
+          question: 'Il n’y a vraiment pas d’isolant',
+          points: [
+            'Fréquent avant 1975 : on ne posait rien',
+            'C’est le premier poste de travaux à envisager',
+            'Le toit d’abord, c’est le moins cher'
+          ]
+        },
+        {
+          question: 'Le diagnostiqueur n’a pas pu voir',
+          points: [
+            'Un isolant derrière une cloison ne se voit pas',
+            'Sans preuve, la règle l’oblige à écrire « non isolé »',
+            'Le calcul retient alors le pire cas'
+          ]
+        },
+        {
+          question: 'J’ai les factures des travaux',
+          points: [
+            'Apportez-les au diagnostiqueur',
+            'Factures, devis, photos de chantier : il peut les prendre en compte',
+            'Le DPE est alors refait avec ces éléments',
+            'Cela peut faire gagner une lettre entière'
+          ]
+        }
       ]
     },
     {
@@ -218,8 +343,12 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
 };
 
 export function reperer(type: TypeDiag, pages: PageTexte[]): Repere[] {
-  const cibles = CIBLES[type];
-  if (!cibles) return [];
+  const propres = CIBLES[type];
+  if (!propres) return [];
+
+  // Les cibles propres au diagnostic passent en premier : à texte égal, c'est
+  // l'explication la plus précise qui gagne.
+  const cibles = [...propres, ...COMMUNES];
 
   const reperes: Repere[] = [];
   const dejaVus = new Set<string>();
@@ -243,6 +372,7 @@ export function reperer(type: TypeDiag, pages: PageTexte[]): Repere[] {
         titre: cible.titre,
         ...(cible.schema ? { schema: cible.schema } : {}),
         points: cible.points,
+        ...(cible.suites ? { suites: cible.suites } : {}),
         extrait: ligne.texte
       });
     }

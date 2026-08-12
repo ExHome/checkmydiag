@@ -43,6 +43,14 @@
 
   /** Repère choisi ; null = on affiche le résumé du diagnostic. */
   let choisi = $state<Repere | null>(null);
+  /** Question de second niveau ouverte, s'il y en a une. */
+  let suiteOuverte = $state<string | null>(null);
+
+  // Changer de passage referme la question ouverte.
+  $effect(() => {
+    void choisi;
+    suiteOuverte = null;
+  });
 
   // Changer de diagnostic remet le panneau sur sa vue d'ensemble.
   $effect(() => {
@@ -151,6 +159,30 @@
                   <li>{point}</li>
                 {/each}
               </ul>
+
+              {#if choisi.suites?.length}
+                <div class="suites">
+                  {#each choisi.suites as suite (suite.question)}
+                    <button
+                      type="button"
+                      class="suite"
+                      class:ouverte={suiteOuverte === suite.question}
+                      onclick={() =>
+                        (suiteOuverte = suiteOuverte === suite.question ? null : suite.question)}
+                    >
+                      {suite.question}
+                    </button>
+                    {#if suiteOuverte === suite.question}
+                      <ul class="points reponse-suite apparait">
+                        {#each suite.points as point}
+                          <li>{point}</li>
+                        {/each}
+                      </ul>
+                    {/if}
+                  {/each}
+                </div>
+              {/if}
+
               <button type="button" class="retour" onclick={() => (choisi = null)}>
                 ← Revenir au résumé
               </button>
@@ -453,6 +485,43 @@
     height: 7px;
     border-radius: 2px;
     background: var(--or);
+  }
+
+  /* Les questions de second niveau : on creuse sans quitter le passage. */
+  .suites {
+    display: grid;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+
+  .suite {
+    text-align: left;
+    background: rgb(255 200 87 / 8%);
+    border: 1px solid var(--trait);
+    border-radius: var(--rayon-petit);
+    padding: 9px 13px;
+    cursor: pointer;
+    color: var(--or-clair);
+    font-size: 0.93rem;
+    font-weight: 650;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+
+  .suite::before {
+    content: '→ ';
+    opacity: 0.7;
+  }
+
+  .suite:hover,
+  .suite.ouverte {
+    background: rgb(255 200 87 / 16%);
+    border-color: var(--or);
+  }
+
+  .reponse-suite {
+    margin: 0 0 4px;
+    padding-left: 14px;
+    border-left: 2px solid var(--or);
   }
 
   .schema {

@@ -173,10 +173,21 @@ function postes(lignes: string[]): { nom: string; kwh: number; cout?: string }[]
  * « inconnue », et le schéma la laisse en gris.
  */
 function lireIsolation(lignes: string[]): Isolation {
+  /**
+   * Seules les lignes du descriptif détaillé constatent quelque chose. Le reste
+   * du DPE affiche des listes d'options — « logement traversant · toiture
+   * isolée » vient des pictogrammes « confort d'été », et faisait conclure à
+   * tort que la toiture de ce logement était isolée.
+   */
+  const estDescriptif = (ligne: string) =>
+    /d'épaisseur|donnant sur|observé\s*\/?\s*mesuré|document fourni|\bU\s*=|\bR\s*=|non isolé/i.test(
+      ligne
+    );
+
   function etat(motifParoi: RegExp): EtatIsolation {
     let vuIsole = false;
     for (const ligne of lignes) {
-      if (!motifParoi.test(ligne)) continue;
+      if (!motifParoi.test(ligne) || !estDescriptif(ligne)) continue;
       if (/non isol[ée]|sans isolation|isolation\s*:?\s*non\b/i.test(ligne)) return 'nonIsole';
       if (/\bisol[ée]e?s?\b|isolation\s*:?\s*oui\b/i.test(ligne)) vuIsole = true;
     }

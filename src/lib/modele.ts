@@ -122,6 +122,8 @@ export interface Diagnostic {
     /** Identifiant du petit dessin qui illustre la notion. */
     schema?: string;
     points: string[];
+    /** Questions que le lecteur peut ouvrir sans quitter le passage. */
+    suites?: { question: string; points: string[] }[];
     extrait: string;
   }[];
   /**
