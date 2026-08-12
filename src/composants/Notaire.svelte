@@ -391,50 +391,46 @@
     <!-- La synthèse : les huit diagnostics d'un coup d'œil, avec ce qu'ils
          concluent, jusqu'à quand ils valent, et ce qu'ils ne couvrent pas. -->
     <h2><span class="num">I</span>La synthèse du dossier</h2>
-    <table class="synthese">
-      <thead>
-        <tr>
-          <th>Diagnostic</th>
-          <th>Ce qu’il conclut</th>
-          <th>Validité</th>
-          <th>Ce qu’il ne couvre pas</th>
-        </tr>
-      </thead>
-      <tbody>
-        {#each synthese as l (l.type)}
-          <tr
-            class={l.gravite}
-            class:ouverte={ouvert === l.type}
+    <!-- Un encart par rapport. Un tableau se lit ligne à ligne ; un dossier de
+         présentation se parcourt du regard, et chaque pièce y a sa place. -->
+    <div class="encarts">
+      {#each synthese as l (l.type)}
+        <article class="encart {l.gravite}" class:ouvert={ouvert === l.type}>
+          <button
+            type="button"
+            class="tete-encart"
+            aria-expanded={ouvert === l.type}
             onclick={() => (ouvert = ouvert === l.type ? null : l.type)}
           >
-            <th scope="row">{l.titre}</th>
-            <td class="conclusion">{l.conclusion}</td>
-            <td class="validite" class:perimee={l.perimee}>{l.validite}</td>
-            <td class="reserve-courte">{l.reserve}</td>
-          </tr>
+            <p class="quoi-encart">{l.titre}</p>
+            <p class="conclusion">{l.conclusion}</p>
+            <p class="validite" class:perimee={l.perimee}>{l.validite}</p>
+          </button>
+
+          <p class="reserve-courte">
+            <span>Ne couvre pas</span>
+            {l.reserve}
+          </p>
+
           {#if ouvert === l.type}
-            <tr class="explication {l.gravite}">
-              <td colspan="4">
-                <div class="deplie apparait">
-                  <div>
-                    <p class="titre-deplie">Ce que dit le rapport</p>
-                    <p><MotsExpliques texte={l.verdict} /></p>
-                  </div>
-                  <div>
-                    <p class="titre-deplie">Ce qu’il faut faire</p>
-                    <p><MotsExpliques texte={l.conseil} /></p>
-                  </div>
-                  <div>
-                    <p class="titre-deplie">Pour vendre</p>
-                    <p><MotsExpliques texte={l.vente} /></p>
-                  </div>
-                </div>
-              </td>
-            </tr>
+            <div class="deplie apparait">
+              <div>
+                <p class="titre-deplie">Ce que dit le rapport</p>
+                <p><MotsExpliques texte={l.verdict} /></p>
+              </div>
+              <div>
+                <p class="titre-deplie">Ce qu’il faut faire</p>
+                <p><MotsExpliques texte={l.conseil} /></p>
+              </div>
+              <div>
+                <p class="titre-deplie">Pour vendre</p>
+                <p><MotsExpliques texte={l.vente} /></p>
+              </div>
+            </div>
           {/if}
-        {/each}
-      </tbody>
-    </table>
+        </article>
+      {/each}
+    </div>
 
     {#if caracteristiques.length}
       <!-- L'état descriptif, relevé ligne à ligne. Le descriptif en toutes
@@ -633,69 +629,102 @@
   }
 
 
-  /* La synthèse : le tableau qu'on lit en premier et qu'on relit en dernier. */
-  .synthese {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 8px;
-    font-size: 0.9rem;
+  /* Les encarts : un par rapport, comme les pièces d'un dossier de
+     présentation. La grille se remplit d'elle-même selon la largeur, et
+     l'encart ouvert prend toute la ligne pour laisser entrer son détail. */
+  .encarts {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
+    gap: var(--e3);
+    margin-bottom: var(--e2);
   }
 
-  .synthese th,
-  .synthese td {
-    text-align: left;
-    vertical-align: top;
-    padding: 11px 14px 11px 0;
-    border-bottom: 1px solid rgb(255 255 255 / 10%);
+  .encart {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgb(255 255 255 / 11%);
+    border-top: 2px solid var(--gravite, var(--gris));
+    border-radius: var(--rayon-petit);
+    background: rgb(255 255 255 / 4%);
+    padding: var(--e4);
+    transition: background 0.2s ease, border-color 0.2s ease;
   }
 
-  .synthese thead th {
-    font-family: var(--police);
-    font-size: 0.66rem;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--gris);
-    border-bottom-color: var(--trait-or);
+  .encart:hover {
+    background: rgb(255 255 255 / 8%);
+    border-color: rgb(230 200 148 / 32%);
+    border-top-color: var(--gravite, var(--gris));
   }
 
-  /* Le nom du diagnostic porte le liseré de sa gravité : la colonne se lit à
-     la couleur avant de se lire au mot. */
-  .synthese tbody th {
-    padding-left: 13px;
-    border-left: 3px solid var(--gravite, var(--gris));
-    font-weight: 650;
-    color: var(--sur-fond);
-    width: 22%;
+  /* L'encart ouvert grandit sur place. Le faire passer pleine largeur
+     déplaçait toute la grille sous les yeux du lecteur : on perd le fil pour
+     gagner une colonne. */
+  .encart.ouvert {
+    background: rgb(255 255 255 / 9%);
+    border-color: rgb(230 200 148 / 40%);
+    border-top-color: var(--gravite, var(--gris));
   }
 
-  .synthese tr.bon {
+  .encart.bon {
     --gravite: #4c9c72;
   }
-  .synthese tr.attention {
+  .encart.attention {
     --gravite: #c98a2e;
   }
-  .synthese tr.alerte {
+  .encart.alerte {
     --gravite: #c0503c;
   }
-  .synthese tr.neutre {
+  .encart.neutre {
     --gravite: var(--gris);
   }
 
+  /* La tête de l'encart est le bouton : la cible fait toute la carte. */
+  .tete-encart {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: inherit;
+  }
+
+  .quoi-encart {
+    display: flex;
+    align-items: center;
+    gap: var(--e2);
+    margin: 0 0 var(--e2);
+    font-size: var(--t-micro);
+    letter-spacing: var(--suivi);
+    text-transform: uppercase;
+    color: var(--gris);
+  }
+
+  .quoi-encart::before {
+    content: '';
+    flex: none;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--gravite, var(--gris));
+  }
+
   .conclusion {
+    margin: 0 0 var(--e2);
     font-family: var(--police-titre);
-    font-size: 1.04rem;
+    font-size: var(--t-lead);
+    font-weight: 500;
     letter-spacing: -0.022em;
+    line-height: 1.2;
     color: var(--sur-fond);
-    width: 24%;
   }
 
   .validite {
+    margin: 0;
     font-family: var(--mono);
-    font-size: 0.8rem;
+    font-size: var(--t-petit);
     color: var(--sur-fond-doux);
-    width: 20%;
-    white-space: nowrap;
   }
 
   .validite.perimee {
@@ -703,97 +732,52 @@
     font-weight: 700;
   }
 
+  /* La réserve ferme l'encart : une conclusion sans sa limite se lit comme une
+     garantie. */
   .reserve-courte {
-    font-size: 0.86rem;
+    margin: var(--e3) 0 0;
+    padding-top: var(--e3);
+    border-top: 1px solid rgb(255 255 255 / 10%);
+    font-size: var(--t-petit);
     line-height: 1.45;
     color: var(--sur-fond-doux);
     opacity: 0.82;
   }
 
-  /* Toute la ligne s'ouvre : la cible est large, on ne vise pas un chevron. */
-  .synthese tbody tr:not(.explication) {
-    cursor: pointer;
-    transition: background 0.18s ease;
+  .reserve-courte span {
+    display: block;
+    margin-bottom: 2px;
+    font-size: var(--t-micro);
+    letter-spacing: var(--suivi);
+    text-transform: uppercase;
+    color: var(--gris);
+    opacity: 0.9;
   }
 
-  .synthese tbody tr:not(.explication):hover {
-    background: rgb(255 255 255 / 5%);
-  }
-
-  .synthese tr.ouverte {
-    background: rgb(255 255 255 / 7%);
-  }
-
-  .synthese tr.ouverte td,
-  .synthese tr.ouverte th {
-    border-bottom-color: transparent;
-  }
-
-  .explication td {
-    padding: 0 0 18px 13px;
-    border-left: 3px solid var(--gravite, var(--gris));
-    background: rgb(255 255 255 / 7%);
-  }
-
-  /* Trois colonnes : ce que dit le rapport, quoi faire, l'enjeu à la vente. */
+  /* Trois temps empilés dans l'encart : ce que dit le rapport, quoi faire,
+     l'enjeu à la vente. */
   .deplie {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 4px 36px;
-    padding-top: 4px;
+    gap: var(--e3);
+    margin-top: var(--e4);
+    padding-top: var(--e4);
+    border-top: 1px solid var(--trait-or);
   }
 
   .deplie p {
     margin: 0;
-    font-size: 0.92rem;
+    font-size: var(--t-base);
     line-height: 1.5;
     color: var(--sur-fond-doux);
   }
 
   .titre-deplie {
-    font-size: 0.66rem !important;
+    font-size: var(--t-micro) !important;
     font-weight: 700;
-    letter-spacing: 0.14em;
+    letter-spacing: var(--suivi);
     text-transform: uppercase;
     color: var(--or) !important;
-    margin-bottom: 4px !important;
-  }
-
-  @media (max-width: 760px) {
-    /* Sur téléphone, un tableau à quatre colonnes devient illisible : chaque
-       ligne se replie en bloc, avec ses intitulés en préfixe. */
-    .synthese thead {
-      display: none;
-    }
-
-    .synthese tr {
-      display: block;
-      padding: 12px 0;
-      border-bottom: 1px solid rgb(255 255 255 / 10%);
-    }
-
-    .synthese th,
-    .synthese td {
-      display: block;
-      width: auto;
-      border: none;
-      padding: 2px 0;
-    }
-
-    .synthese tbody th {
-      padding-left: 12px;
-    }
-
-    .validite::before {
-      content: 'Validité — ';
-      font-family: var(--police);
-      color: var(--gris);
-    }
-
-    .reserve-courte::before {
-      content: 'Ne couvre pas — ';
-      color: var(--gris);
-    }
+    margin-bottom: var(--e1) !important;
   }
 
   /* L'état descriptif : un relevé au filet, comme une notice d'architecte. */
