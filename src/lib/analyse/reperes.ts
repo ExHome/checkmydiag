@@ -4,6 +4,9 @@
  * Le lecteur a son rapport sous les yeux : plutôt que de lui servir un cours à
  * côté, on pointe la ligne qui compte et on l'explique. Les coordonnées viennent
  * de l'extraction du texte : on sait où chaque phrase se trouve sur la page.
+ *
+ * Les explications sont des puces, pas des paragraphes : trois ou quatre mots
+ * par ligne, ce qui compte et rien d'autre.
  */
 import type { PageTexte } from '../lignes';
 import type { TypeDiag } from '../modele';
@@ -17,7 +20,8 @@ export interface Repere {
   largeur: number;
   hauteur: number;
   titre: string;
-  texte: string;
+  /** L'explication, en puces courtes. */
+  points: string[];
   /** La ligne du rapport elle-même : sert à la retrouver dans le texte. */
   extrait: string;
 }
@@ -25,7 +29,7 @@ export interface Repere {
 interface Cible {
   motif: RegExp;
   titre: string;
-  texte: string;
+  points: string[];
 }
 
 const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
@@ -33,31 +37,46 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
     {
       motif: /émet\s*[\d\s.,]+\s*kg\s*de\s*CO/i,
       titre: 'Les émissions de CO₂',
-      texte:
-        'C’est le gaz rejeté pour chauffer le logement. Il dépend surtout de l’énergie utilisée : le gaz et le fioul en rejettent beaucoup, l’électricité et le bois beaucoup moins.'
+      points: [
+        'Le gaz rejeté pour chauffer le logement',
+        'Dépend de l’énergie : gaz et fioul en rejettent beaucoup',
+        'Électricité et bois : beaucoup moins',
+        'Donne la deuxième lettre du DPE'
+      ]
     },
     {
       motif: /entre\s*[\d\s.,]+\s*€\s*et\s*[\d\s.,]+\s*€\s*par an/i,
       titre: 'Le coût annoncé',
-      texte:
-        'Ce n’est pas votre facture, c’est un calcul. Il suppose qu’on chauffe à 19 °C et qu’on vive normalement dans le logement. Votre facture réelle dépend de vous, de l’hiver et du prix de l’énergie.'
+      points: [
+        'Compte : chauffage, eau chaude, clim, éclairage, ventilation',
+        'Ne compte pas : électroménager, télé, box',
+        'Calculé à 19 °C, occupation moyenne',
+        'Ce n’est pas votre facture'
+      ]
     },
     {
       motif: /Surface\s+(?:de référence|habitable)/i,
       titre: 'La surface de référence',
-      texte:
-        'C’est elle qui sert à calculer la note. Attention : elle n’est pas forcément égale à la surface écrite dans l’acte de vente (la loi Carrez), qui se mesure autrement.'
+      points: [
+        'Compte : pièces chauffées, couloirs, placards',
+        'Ne compte pas : garage, cave, balcon',
+        'Sert à calculer la note',
+        'Différente de la surface de l’acte de vente'
+      ]
     },
     {
       motif: /N°\s*ADEME/i,
       titre: 'Le numéro ADEME',
-      texte:
-        'Chaque DPE est enregistré dans une base publique de l’État. Ce numéro prouve que le diagnostic existe officiellement — sans lui, le document n’a aucune valeur.'
+      points: [
+        'Enregistrement dans la base publique de l’État',
+        'Prouve que le DPE existe officiellement',
+        'Sans lui : aucune valeur'
+      ]
     },
     {
       motif: /[Vv]alable jusqu/i,
-      titre: 'La date de fin de validité',
-      texte: 'Un DPE vaut dix ans. Passé cette date, il faut le refaire pour vendre ou louer.'
+      titre: 'La date de fin',
+      points: ['Un DPE vaut 10 ans', 'Après : à refaire pour vendre ou louer']
     }
   ],
 
@@ -65,14 +84,22 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
     {
       motif: /Total.*Non mesur.*Classe 0/i,
       titre: 'Le tableau qui résume tout',
-      texte:
-        'La seule ligne à regarder vraiment : le nombre d’éléments en classe 3. Ce sont les peintures dégradées, celles qui font de la poussière. Les classes 0, 1 et 2 ne créent aucune obligation.'
+      points: [
+        'Seule la colonne « classe 3 » compte vraiment',
+        'Classe 3 = peinture dégradée, qui fait de la poussière',
+        'Classes 0, 1, 2 : aucune obligation',
+        'Une seule classe 3 déclenche des travaux'
+      ]
     },
     {
       motif: /classe 3/i,
       titre: 'Ce que déclenche une classe 3',
-      texte:
-        'Dès qu’il y a une classe 3, le propriétaire doit faire des travaux pour supprimer le risque, et prévenir les occupants ainsi que toute entreprise qui viendra travailler.'
+      points: [
+        'Travaux obligatoires pour le propriétaire',
+        'Occupants à prévenir',
+        'Entreprises intervenant sur place à prévenir',
+        'Validité réduite à 1 an pour une vente'
+      ]
     }
   ],
 
@@ -80,14 +107,20 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
     {
       motif: /(?:n'a pas été repéré|présence).{0,60}indice.{0,30}termites?/i,
       titre: 'La conclusion',
-      texte:
-        'Elle ne vaut que pour ce qui était visible le jour de la visite, et seulement six mois. Le diagnostiqueur n’a rien démonté.'
+      points: [
+        'Vaut pour ce qui était visible ce jour-là',
+        'Rien n’a été démonté ni percé',
+        'Validité : 6 mois seulement'
+      ]
     },
     {
       motif: /arrêté préfectoral/i,
-      titre: 'Pourquoi ce diagnostic est demandé',
-      texte:
-        'Il n’est obligatoire que dans les communes où le préfet a constaté la présence de termites. Si votre commune est citée ici, c’est le cas.'
+      titre: 'Pourquoi ce diagnostic',
+      points: [
+        'Obligatoire seulement dans les communes classées',
+        'Votre commune est citée ici',
+        'C’est le préfet qui décide'
+      ]
     }
   ],
 
@@ -95,14 +128,20 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
     {
       motif: /Conclusion relative à l'évaluation des risques/i,
       titre: 'La conclusion, cochée à la main',
-      texte:
-        'Deux phrases sont imprimées, une seule est cochée. Regardez laquelle porte la coche : c’est le résultat de votre installation. Un programme ne peut pas lire une case.'
+      points: [
+        'Deux phrases imprimées, une seule cochée',
+        'Cherchez la coche : c’est votre résultat',
+        'Un programme ne peut pas lire une case'
+      ]
     },
     {
       motif: /différentiel/i,
       titre: 'Le point le plus important',
-      texte:
-        'Le dispositif différentiel coupe le courant quand l’électricité fuit vers une personne. Son absence est l’anomalie la plus grave, et la plus fréquente dans les logements anciens.'
+      points: [
+        'Coupe le courant qui fuit vers une personne',
+        'Son absence : l’anomalie la plus grave',
+        'La plus fréquente dans les logements anciens'
+      ]
     }
   ],
 
@@ -110,23 +149,33 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
     {
       motif: /^Conclusion|H\.\s*-\s*Conclusion/i,
       titre: 'La conclusion, cochée à la main',
-      texte:
-        'Quatre phrases sont imprimées : aucune anomalie, A1, A2, DGI. Une seule est cochée. DGI veut dire danger grave et immédiat : dans ce cas, le gaz est coupé le jour même.'
+      points: [
+        'Quatre phrases imprimées, une seule cochée',
+        'A1 : à réparer un jour',
+        'A2 : à réparer vite',
+        'DGI : gaz coupé le jour même'
+      ]
     }
   ],
 
   erp: [
     {
       motif: /le bien se situe dans une zone/i,
-      titre: 'Le risque qui concerne votre terrain',
-      texte:
-        'Cette phrase décrit votre parcelle, pas la commune entière. C’est celle qui compte pour votre assurance et pour d’éventuels travaux.'
+      titre: 'Le risque de votre terrain',
+      points: [
+        'Cette phrase décrit votre parcelle',
+        'Pas la commune entière',
+        'Compte pour l’assurance et les travaux'
+      ]
     },
     {
       motif: /sismique/i,
       titre: 'La sismicité',
-      texte:
-        'Presque tout le sud-ouest est en zone 2, dite « faible ». Cela ne veut pas dire qu’un tremblement de terre est attendu : c’est un classement qui impose des règles aux constructions neuves.'
+      points: [
+        'Presque tout le Sud-Ouest est en zone 2 (faible)',
+        'Aucun tremblement de terre attendu',
+        'Impose des règles aux constructions neuves'
+      ]
     }
   ],
 
@@ -134,17 +183,24 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
     {
       motif: /Liste [ABC]\s*:/i,
       titre: 'Les listes A, B et C',
-      texte:
-        'La liste A, ce sont les matériaux les plus dangereux (flocages, calorifugeages). La liste B, les plus courants : dalles de sol, conduits, toitures. La C ne concerne que les démolitions.'
+      points: [
+        'A : flocages, calorifugeages — les plus dangereux',
+        'B : dalles, conduits, toitures — les plus courants',
+        'C : uniquement avant démolition'
+      ]
     }
   ],
 
   carrez: [
     {
       motif: /superficie.{0,20}carrez.{0,20}totale|surface.{0,20}carrez.{0,20}totale/i,
-      titre: 'Le chiffre qui ira dans l’acte',
-      texte:
-        'C’est cette surface qui engage le vendeur. Si la surface réelle est inférieure de plus de 5 %, l’acheteur peut demander une baisse du prix dans l’année qui suit la vente.'
+      titre: 'Le chiffre de l’acte',
+      points: [
+        'C’est lui qui engage le vendeur',
+        'Compte le sol sous plus de 1,80 m',
+        'Murs et cloisons déduits',
+        'Écart de plus de 5 % : baisse de prix possible'
+      ]
     }
   ]
 };
@@ -173,7 +229,7 @@ export function reperer(type: TypeDiag, pages: PageTexte[]): Repere[] {
         largeur: ligne.largeur,
         hauteur: ligne.hauteur,
         titre: cible.titre,
-        texte: cible.texte,
+        points: cible.points,
         extrait: ligne.texte
       });
     }

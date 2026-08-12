@@ -142,7 +142,11 @@
             <div class="apparait">
               <p class="sur-titre">Ce passage</p>
               <h3>{choisi.titre}</h3>
-              <p>{choisi.texte}</p>
+              <ul class="points">
+                {#each choisi.points as point}
+                  <li>{point}</li>
+                {/each}
+              </ul>
               <button type="button" class="retour" onclick={() => (choisi = null)}>
                 ← Revenir au résumé
               </button>
@@ -418,6 +422,33 @@
     font-weight: 600;
     cursor: pointer;
     font-size: 0.92rem;
+  }
+
+  /* Des puces, pas des paragraphes : trois ou quatre mots par ligne. */
+  .points {
+    list-style: none;
+    margin: 0 0 14px;
+    padding: 0;
+    display: grid;
+    gap: 7px;
+  }
+
+  .points li {
+    position: relative;
+    padding-left: 20px;
+    font-size: 0.97rem;
+    line-height: 1.4;
+  }
+
+  .points li::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 0.55em;
+    width: 7px;
+    height: 7px;
+    border-radius: 2px;
+    background: var(--or);
   }
 
   .schema {

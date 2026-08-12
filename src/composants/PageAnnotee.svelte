@@ -79,7 +79,11 @@
       {#key actif.titre}
         <div class="texte apparait">
           <h4>{actif.titre}</h4>
-          <p>{actif.texte}</p>
+          <ul>
+            {#each actif.points as point}
+              <li>{point}</li>
+            {/each}
+          </ul>
         </div>
       {/key}
     {/if}
@@ -200,9 +204,30 @@
     margin-bottom: 6px;
   }
 
-  .texte p {
+  .texte ul {
+    list-style: none;
     margin: 0;
-    font-size: 0.97rem;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+
+  .texte li {
+    position: relative;
+    padding-left: 18px;
+    font-size: 0.96rem;
+    line-height: 1.4;
+  }
+
+  .texte li::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 0.55em;
+    width: 6px;
+    height: 6px;
+    border-radius: 2px;
+    background: var(--or);
   }
 
   @media (max-width: 760px) {

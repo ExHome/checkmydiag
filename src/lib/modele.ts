@@ -119,7 +119,7 @@ export interface Diagnostic {
     largeur: number;
     hauteur: number;
     titre: string;
-    texte: string;
+    points: string[];
     extrait: string;
   }[];
   /**
