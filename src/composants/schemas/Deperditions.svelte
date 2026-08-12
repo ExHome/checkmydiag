@@ -1,11 +1,14 @@
 <script lang="ts">
   /**
-   * La maison, en illustration de livre : aplats de couleur, formes rondes, un
-   * arbre, un soleil. On la regarde avant de la lire, et on touche ce qu'on veut
-   * savoir.
+   * La maison du dossier : un trait sobre, la palette de la maison, et les
+   * parois de ce logement-là.
+   *
+   * Le dessin d'album — soleil, arbre, aplats vifs — a été abandonné : il jurait
+   * avec le reste et donnait au sujet un air de manuel scolaire. Restent les
+   * formes justes, l'or et le vert, et six souffles de chaleur.
    *
    * Les pourcentages sont des ordres de grandeur moyens (source ADEME). Quand le
-   * rapport dit ce qui est isolé, la pastille le montre — vert ou rouge.
+   * rapport dit ce qui est isolé, la pastille le montre.
    */
   import type { EtatIsolation, Isolation, Lettre } from '../../lib/modele';
 
@@ -166,35 +169,22 @@
 <figure>
   <p class="invite">Touchez la maison.</p>
 
-  <svg viewBox="0 0 500 396" role="group" aria-label="Une maison illustrée : les six endroits par où la chaleur s’échappe.">
-    <!-- Le ciel et le décor -->
-    <circle cx="62" cy="52" r="24" class="soleil" />
-    <path d="M38 52 L20 52M62 28 L62 10M45 35 L33 23M79 35 L91 23" class="rayons" />
-    <ellipse cx="418" cy="60" rx="34" ry="16" class="nuage" />
-    <ellipse cx="396" cy="54" rx="20" ry="14" class="nuage" />
+  <svg viewBox="0 0 500 396" role="group" aria-label="La maison du dossier : les six endroits par où la chaleur s’échappe.">
+    <!-- Le sol : un filet, pas une pelouse. -->
+    <path d="M40 344 H460" class="sol" />
 
-    <!-- L'arbre -->
-    <rect x="420" y="300" width="12" height="46" rx="4" class="tronc" />
-    <circle cx="426" cy="288" r="30" class="feuillage" />
-    <circle cx="404" cy="302" r="20" class="feuillage" />
-    <circle cx="448" cy="302" r="18" class="feuillage" />
-
-    <!-- Le sol -->
-    <rect x="0" y="344" width="500" height="52" class="pelouse" />
-
-    <!-- La maison -->
+    <!-- La maison : un trait fin, deux valeurs de crème, le toit en vert. -->
     <path d="M136 132 L250 56 L364 132 Z" class="toit" />
-    <path d="M250 56 L250 42" class="cheminee-tige" />
-    <rect x="300" y="66" width="26" height="46" rx="4" class="cheminee" />
+    <rect x="300" y="66" width="24" height="46" class="cheminee" />
     <rect x="152" y="132" width="196" height="164" class="facade" />
-    <rect x="152" y="296" width="196" height="18" class="fondation" />
+    <rect x="152" y="296" width="196" height="16" class="fondation" />
 
     <!-- Fenêtres et porte -->
-    <rect x="180" y="178" width="52" height="52" rx="6" class="vitre" />
-    <rect x="286" y="178" width="52" height="52" rx="6" class="vitre" />
+    <rect x="180" y="178" width="52" height="52" class="vitre" />
+    <rect x="286" y="178" width="52" height="52" class="vitre" />
     <path d="M206 178v52M180 204h52M312 178v52M286 204h52" class="croisillon" />
-    <rect x="228" y="240" width="46" height="56" rx="5" class="porte" />
-    <circle cx="266" cy="270" r="3.6" class="poignee" />
+    <rect x="228" y="240" width="46" height="56" class="porte" />
+    <circle cx="266" cy="270" r="3" class="poignee" />
 
     <!-- La classe du logement, posée sur sa façade : c'est sa maison. -->
     {#if lettre}
@@ -273,6 +263,33 @@
          raconte, paroi par paroi. -->
     <figcaption class="constat">{constat}</figcaption>
   {/if}
+
+  <!-- Le relevé : chaque endroit, ce que le rapport en dit, et son poids dans
+       la facture. C'est le détail qu'on cherche après avoir vu le dessin. -->
+  <table class="releve">
+    <thead>
+      <tr>
+        <th>Par où</th>
+        <th>Ce que dit le rapport</th>
+        <th>Part des pertes</th>
+      </tr>
+    </thead>
+    <tbody>
+      {#each FUITES as fuite (fuite.id)}
+        {@const etat = etatDe(fuite)}
+        <tr class:vise={choisi === fuite.id}>
+          <th scope="row">{fuite.nom}</th>
+          <td class={etat ?? 'muet'}>
+            {#if etat === 'isole'}Isolé
+            {:else if etat === 'nonIsole'}Sans isolant
+            {:else if fuite.paroi}Non renseigné
+            {:else}—{/if}
+          </td>
+          <td class="part">{fuite.part}</td>
+        </tr>
+      {/each}
+    </tbody>
+  </table>
 </figure>
 
 <style>
@@ -281,12 +298,12 @@
   }
 
   .invite {
-    margin: 0 0 8px;
-    font-size: 0.84rem;
-    letter-spacing: 0.04em;
+    margin: 0 0 10px;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    font-weight: 700;
-    color: #9a7231;
+    font-weight: 600;
+    color: var(--or-fonce);
   }
 
   svg {
@@ -296,78 +313,107 @@
     margin-inline: auto;
   }
 
-  /* Décor : des aplats francs, comme dans un album. */
-  .soleil {
-    fill: #f6c445;
-  }
-
-  .rayons {
-    stroke: #f6c445;
-    stroke-width: 4;
-    stroke-linecap: round;
-  }
-
-  .nuage {
-    fill: #ffffff;
-    opacity: 0.9;
-  }
-
-  .pelouse {
-    fill: #8ec89a;
-  }
-
-  .tronc {
-    fill: #9a6b3f;
-  }
-
-  .feuillage {
-    fill: #4f9c62;
+  /* La palette de la maison : vert DGLM, or, crème, encre. Rien d'autre. */
+  .sol {
+    stroke: var(--trait);
+    stroke-width: 2;
   }
 
   .toit {
-    fill: #c2503c;
-    stroke: #9c3d2d;
-    stroke-width: 3;
+    fill: var(--vert-700);
+    stroke: var(--vert-900);
+    stroke-width: 1.5;
     stroke-linejoin: round;
   }
 
   .cheminee {
-    fill: #9c3d2d;
-  }
-
-  .cheminee-tige {
-    stroke: none;
+    fill: var(--vert-900);
   }
 
   .facade {
-    fill: #fdf3e0;
-    stroke: #d8c39c;
-    stroke-width: 3;
+    fill: var(--papier-doux);
+    stroke: var(--trait);
+    stroke-width: 1.5;
   }
 
   .fondation {
-    fill: #d8c39c;
+    fill: var(--trait);
   }
 
   .vitre {
-    fill: #ffe9a8;
-    stroke: #d8a93c;
-    stroke-width: 3;
+    fill: var(--or-pale);
+    stroke: var(--or);
+    stroke-width: 1.5;
   }
 
   .croisillon {
-    stroke: #d8a93c;
-    stroke-width: 3;
+    stroke: var(--or);
+    stroke-width: 1.2;
   }
 
   .porte {
-    fill: #6b8f6f;
-    stroke: #4f7254;
-    stroke-width: 3;
+    fill: var(--vert-700);
+    stroke: var(--vert-900);
+    stroke-width: 1.5;
   }
 
   .poignee {
-    fill: #f6c445;
+    fill: var(--or);
+  }
+
+  /* Le relevé sous le dessin : ce que le rapport dit de chaque endroit. */
+  .releve {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 18px;
+    font-size: 0.88rem;
+  }
+
+  .releve th,
+  .releve td {
+    text-align: left;
+    padding: 9px 4px;
+    border-bottom: 1px solid var(--trait-fin);
+  }
+
+  .releve thead th {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gris);
+    border-bottom-color: var(--trait);
+  }
+
+  .releve tbody th {
+    font-weight: 700;
+    color: var(--encre);
+    width: 30%;
+  }
+
+  .releve tr.vise {
+    background: var(--papier-doux);
+  }
+
+  .releve .isole {
+    color: var(--ok);
+    font-weight: 600;
+  }
+
+  .releve .nonIsole {
+    color: var(--alerte);
+    font-weight: 600;
+  }
+
+  .releve .muet {
+    color: var(--gris);
+  }
+
+  .releve .part {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    color: var(--encre-doux);
+    white-space: nowrap;
   }
 
   .cible {
@@ -389,45 +435,45 @@
   .cible:hover .zone,
   .cible:focus-visible .zone,
   .cible.actif .zone {
-    fill: rgb(226 106 60 / 20%);
-    stroke: #e26a3c;
+    fill: rgb(192 144 72 / 18%);
+    stroke: var(--or);
   }
 
   .souffle {
-    stroke: #e26a3c;
-    stroke-width: 8;
+    stroke: var(--or-fonce);
+    stroke-width: 5;
     stroke-linecap: round;
     fill: none;
     transition: stroke-width 0.2s ease;
   }
 
   .cible.actif .souffle {
-    stroke-width: 12;
+    stroke-width: 8;
   }
 
   .bout {
-    fill: #c2503c;
+    fill: var(--or-fonce);
   }
 
   .fond-pastille {
-    fill: #ffffff;
-    stroke: #d8c39c;
-    stroke-width: 2;
+    fill: #fff;
+    stroke: var(--trait);
+    stroke-width: 1.4;
   }
 
   .cible.actif .fond-pastille {
-    stroke: #e26a3c;
-    stroke-width: 3;
+    stroke: var(--or);
+    stroke-width: 2;
   }
 
   .fond-pastille.isole {
-    fill: #e4f3e8;
-    stroke: #4f9c62;
+    fill: var(--ok-fond);
+    stroke: var(--ok);
   }
 
   .fond-pastille.non-isole {
-    fill: #fbe6e0;
-    stroke: #c2503c;
+    fill: var(--alerte-fond);
+    stroke: var(--alerte);
   }
 
   .classe {
@@ -437,35 +483,35 @@
   }
 
   .nom {
-    font-size: 14px;
-    font-weight: 800;
-    fill: #16241e;
+    font-size: 13px;
+    font-weight: 700;
+    fill: var(--encre);
     text-anchor: middle;
   }
 
   .part {
-    font-size: 11.5px;
-    fill: #5b6a62;
+    font-size: 11px;
+    fill: var(--gris);
     text-anchor: middle;
     font-weight: 700;
   }
 
   .part.etat-lu {
-    fill: #16241e;
+    fill: var(--encre);
   }
 
   .reponse {
     margin-top: 10px;
     padding: 16px 20px;
-    background: #fdf3e0;
-    border-left: 5px solid #e26a3c;
-    border-radius: 14px;
+    background: var(--papier-doux);
+    border-left: 3px solid var(--or);
+    border-radius: var(--rayon-petit);
   }
 
   .reponse .titre {
     margin: 0 0 4px;
-    font-weight: 800;
-    color: #c2503c;
+    font-weight: 700;
+    color: var(--vert-700);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     font-size: 0.88rem;
@@ -474,14 +520,14 @@
   .reponse p:last-of-type {
     margin: 0 0 10px;
     font-size: 0.98rem;
-    color: #4a3d24;
+    color: var(--encre-doux);
   }
 
   .fermer {
     background: none;
     border: none;
     padding: 0;
-    color: #c2503c;
+    color: var(--or-fonce);
     font-weight: 800;
     font-size: 0.9rem;
     cursor: pointer;
