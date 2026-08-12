@@ -126,6 +126,64 @@
       </g>
     {/each}
   </svg>
+{:else if id === 'identite'}
+  <!-- La carte d'identité du dossier : qui, quoi, quand, où. Ces quatre lignes
+       reviennent dans chaque rapport, et ce sont elles qui le rattachent à un
+       logement précis. -->
+  <svg viewBox="0 0 300 96" role="img" aria-label="La carte d’identité du dossier : le numéro, le bien, la date, le diagnostiqueur.">
+    <rect x="10" y="12" width="280" height="72" rx="8" class="dedans" />
+    <path d="M10 40h280" class="cloison" />
+    <text x="24" y="31" class="mini oui">N° DE DOSSIER</text>
+    <text x="164" y="31" class="mini oui">LE BIEN</text>
+    <text x="24" y="60" class="mini oui">LA DATE</text>
+    <text x="164" y="60" class="mini oui">LE DIAGNOSTIQUEUR</text>
+    <text x="150" y="78" class="mini">tout le dossier tient à ces quatre lignes</text>
+  </svg>
+{:else if id === 'energie'}
+  <!-- Énergie primaire et finale : ce qu'on ponctionne à la nature, et ce qui
+       arrive au compteur. L'écart, c'est ce qui se perd en route. -->
+  <svg viewBox="0 0 300 96" role="img" aria-label="L’énergie primaire est prélevée dans la nature, l’énergie finale arrive au compteur.">
+    <rect x="10" y="26" width="76" height="40" rx="8" class="dehors" />
+    <text x="48" y="44" class="mini non">PRIMAIRE</text>
+    <text x="48" y="58" class="mini">la source</text>
+
+    <path d="M92 46h34" class="fleche-mini" />
+    <text x="109" y="34" class="mini">pertes</text>
+
+    <rect x="132" y="26" width="76" height="40" rx="8" class="dedans" />
+    <text x="170" y="44" class="mini oui">FINALE</text>
+    <text x="170" y="58" class="mini">le compteur</text>
+
+    <path d="M214 46h34" class="fleche-mini" />
+    <rect x="254" y="26" width="36" height="40" rx="8" class="dedans" />
+    <text x="272" y="50" class="mini oui">chez vous</text>
+  </svg>
+{:else if id === 'perimetre'}
+  <!-- Ce qui a été regardé, et ce qui ne l'a pas été. La nuance qui décide de
+       la valeur d'un « aucun indice ». -->
+  <svg viewBox="0 0 300 96" role="img" aria-label="Le diagnostiqueur regarde ce qui est visible ; ce qui est fermé n’est pas contrôlé.">
+    <rect x="10" y="16" width="130" height="64" rx="6" class="dedans" />
+    <text x="75" y="42" class="mini oui">VISIBLE</text>
+    <text x="75" y="60" class="mini">contrôlé à l’œil</text>
+
+    <rect x="160" y="16" width="130" height="64" rx="6" class="dehors" />
+    <text x="225" y="36" class="mini non">FERMÉ, ENCOMBRÉ</text>
+    <text x="225" y="52" class="mini">non contrôlé</text>
+    <text x="225" y="68" class="mini">on ne démonte rien</text>
+  </svg>
+{:else if id === 'obligation'}
+  <!-- L'année de construction commande la liste des diagnostics. -->
+  <svg viewBox="0 0 300 80" role="img" aria-label="Avant 1949 : plomb. Avant 1997 : amiante. Après : ni l’un ni l’autre.">
+    <line x1="16" y1="48" x2="284" y2="48" class="axe" />
+    {#each [{ x: 16, l: '1949', t: 'plomb' }, { x: 150, l: '1997', t: 'amiante' }] as b}
+      <g>
+        <circle cx={b.x} cy="48" r="5" class="borne" />
+        <text x={b.x} y="70" class="mini">{b.l}</text>
+        <text x={b.x + 66} y="36" class="mini non">{b.t}</text>
+      </g>
+    {/each}
+    <text x="240" y="36" class="mini oui">plus rien</text>
+  </svg>
 {/if}
 
 <style>
@@ -210,6 +268,12 @@
 
   .perime {
     fill: rgb(255 95 109 / 22%);
+  }
+
+  .fleche-mini {
+    stroke: var(--encre-doux);
+    stroke-width: 1.6;
+    marker-end: none;
   }
 
   .borne {

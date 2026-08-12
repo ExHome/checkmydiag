@@ -19,6 +19,7 @@
   import Fiche from './Fiche.svelte';
   import Curieux from './Curieux.svelte';
   import Conclusions from './Conclusions.svelte';
+  import { FICHES } from '../lib/analyse/fiches';
 
   interface Props {
     analyse: Analyse;
@@ -117,7 +118,6 @@
 
   /** Le détail et le schéma, sous la synthèse. Le lecteur décide s'il y va. */
   let detailOuvert = $state(false);
-  let schemaOuvert = $state(false);
   let suiteOuverte = $state<string | null>(null);
 
   // Changer de sujet remet tout au premier niveau : on ne garde pas l'état
@@ -125,7 +125,6 @@
   $effect(() => {
     void actifId;
     detailOuvert = false;
-    schemaOuvert = false;
     suiteOuverte = null;
   });
 
@@ -255,21 +254,37 @@
 
                 <p class="synthese">{actif.repere.points[0]}</p>
 
+                <!-- Le dessin, tout de suite et en grand. C'est lui qui fait
+                     comprendre : le cacher derrière un bouton, c'était le
+                     traiter comme une note de bas de page.
+
+                     Un repère qui a son propre croquis le montre ; un constat
+                     de diagnostic montre le schéma de sa famille. -->
+                {#if actif.repere.schema}
+                  <div class="feuille">
+                    <MiniSchema id={actif.repere.schema} />
+                    {#if diagnostic}
+                      <p class="risque">{FICHES[diagnostic.type].risque}</p>
+                    {/if}
+                  </div>
+                {:else if actif.repere.famille === 'constat' && diagnostic}
+                  <div class="feuille">
+                    <Explicatif
+                      type={diagnostic.type}
+                      isolation={diagnostic.schema?.genre === 'dpe'
+                        ? diagnostic.schema.isolation
+                        : null}
+                      lettre={diagnostic.schema?.genre === 'dpe' ? diagnostic.schema.finale : null}
+                    />
+                    <p class="risque">{FICHES[diagnostic.type].risque}</p>
+                  </div>
+                {/if}
+
                 <!-- La phrase qui ramène au logement. Elle ne saute jamais. -->
                 <p class="pratique">{actif.repere.pratique}</p>
 
-                <div class="ouvertures">
-                  {#if actif.repere.schema}
-                    <button
-                      type="button"
-                      class="creuser"
-                      class:ouvert={schemaOuvert}
-                      onclick={() => (schemaOuvert = !schemaOuvert)}
-                    >
-                      {schemaOuvert ? 'Fermer le schéma' : 'Voir le schéma'}
-                    </button>
-                  {/if}
-                  {#if actif.repere.points.length > 1}
+                {#if actif.repere.points.length > 1}
+                  <div class="ouvertures">
                     <button
                       type="button"
                       class="creuser"
@@ -278,13 +293,6 @@
                     >
                       {detailOuvert ? 'Fermer le détail' : 'Le détail'}
                     </button>
-                  {/if}
-                </div>
-
-                {#if schemaOuvert && actif.repere.schema}
-                  <!-- Un dessin se regarde sur du papier, pas sur du vert. -->
-                  <div class="feuille apparait">
-                    <MiniSchema id={actif.repere.schema} />
                   </div>
                 {/if}
 
@@ -345,13 +353,17 @@
                 <!-- Le fond du sujet, rattaché au diagnostic de ce passage. -->
                 {#if diagnostic}
                   <div class="passerelles">
-                    <button
-                      type="button"
-                      class:ouverte={rubrique === 'schema'}
-                      onclick={() => (rubrique = rubrique === 'schema' ? null : 'schema')}
-                    >
-                      Le schéma
-                    </button>
+                    <!-- Inutile de proposer le schéma du diagnostic quand il est
+                         déjà dessiné plus haut. -->
+                    {#if actif.repere.famille !== 'constat'}
+                      <button
+                        type="button"
+                        class:ouverte={rubrique === 'schema'}
+                        onclick={() => (rubrique = rubrique === 'schema' ? null : 'schema')}
+                      >
+                        Le schéma
+                      </button>
+                    {/if}
                     <button
                       type="button"
                       class:ouverte={rubrique === 'fiche'}
@@ -423,7 +435,7 @@
      clique, il se décale pour laisser entrer l'explication. */
   .deux-colonnes {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 366px;
+    grid-template-columns: minmax(0, 1fr) 430px;
     gap: 28px;
     align-items: start;
     transition: grid-template-columns 0.3s ease;
@@ -771,14 +783,41 @@
   }
 
   /* La feuille : tout ce qui est dessiné se pose sur du papier crème, avec son
-     encre sombre. Sur le vert, un schéma disparaît. */
+     encre sombre. Sur le vert, un schéma disparaît.
+
+     Elle déborde des marges de l'encart : le dessin est la pièce principale,
+     pas une illustration glissée dans un paragraphe. */
   .feuille {
     background: var(--papier);
     border-radius: var(--rayon-petit);
-    padding: 16px 18px;
-    margin-bottom: 14px;
+    padding: 18px 16px;
+    margin: 0 -17px 16px;
     color: var(--encre);
     box-shadow: var(--ombre);
+  }
+
+  .feuille :global(svg) {
+    width: 100%;
+    height: auto;
+  }
+
+  /* Le risque, posé sur la même feuille que le dessin : un schéma qui ne dit
+     pas ce qu'on encourt n'est qu'une jolie image. */
+  .risque {
+    display: flex;
+    gap: 9px;
+    margin: 14px 0 0;
+    padding-top: 12px;
+    border-top: 1px solid var(--trait-fin);
+    font-size: 0.92rem;
+    line-height: 1.45;
+    color: #8d3323;
+  }
+
+  .risque::before {
+    content: '△';
+    flex: none;
+    font-weight: 700;
   }
 
   /* Des puces, pas des paragraphes : trois ou quatre mots par ligne. */

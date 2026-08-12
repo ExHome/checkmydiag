@@ -142,6 +142,7 @@ const COMMUNES: Cible[] = [
   {
     motif: /Num[ée]ro de dossier/i,
     titre: 'Le numéro de dossier',
+      schema: 'identite',
     points: [
       'La référence interne du diagnostiqueur',
       'À citer pour toute question ou réclamation',
@@ -153,6 +154,7 @@ const COMMUNES: Cible[] = [
   {
     motif: /Date du rep[ée]rage|Date de la visite/i,
     titre: 'La date de la visite',
+      schema: 'validite',
     points: [
       'Le jour où le diagnostiqueur est venu',
       'C’est de là que court la validité',
@@ -164,6 +166,7 @@ const COMMUNES: Cible[] = [
   {
     motif: /Norme m[ée]thodologique|selon la norme|NF\s*[XP]/i,
     titre: 'La méthode suivie',
+      schema: 'identite',
     points: [
       'Chaque diagnostic a sa norme officielle',
       'Elle dit quoi contrôler, et comment',
@@ -175,6 +178,7 @@ const COMMUNES: Cible[] = [
   {
     motif: /N°\s*de certification|Organisme de certification/i,
     titre: 'La certification',
+      schema: 'identite',
     points: [
       'Le diagnostiqueur est certifié par un organisme agréé',
       'Certification à repasser tous les 5 à 7 ans',
@@ -186,6 +190,7 @@ const COMMUNES: Cible[] = [
   {
     motif: /P[ée]rim[èe]tre de rep[ée]rage/i,
     titre: 'Ce qui a été regardé',
+      schema: 'perimetre',
     points: [
       'Précise l’étendue de la visite',
       '« Sans démontage ni destruction » = à l’œil seulement',
@@ -197,6 +202,7 @@ const COMMUNES: Cible[] = [
   {
     motif: /R[ée]f[ée]rences cadastrales/i,
     titre: 'Les références cadastrales',
+      schema: 'identite',
     points: [
       'L’identité officielle du terrain',
       'Section et numéro de parcelle',
@@ -208,6 +214,7 @@ const COMMUNES: Cible[] = [
   {
     motif: /Ann[ée]e de construction/i,
     titre: 'L’année de construction',
+      schema: 'obligation',
     points: ['C’est elle qui décide des diagnostics obligatoires'],
     suites: [
       {
@@ -231,6 +238,7 @@ const COMMUNES: Cible[] = [
   {
     motif: /^Type de bien/i,
     titre: 'Le type de bien',
+      schema: 'identite',
     points: ['Maison ou appartement — ça change la liste des diagnostics'],
     suites: [
       {
@@ -387,6 +395,7 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
     {
       motif: /non isol[ée]/i,
       titre: '« Non isolé »',
+      schema: 'perimetre',
       points: [
         'Le diagnostiqueur n’a vu aucun isolant',
         'Deux explications possibles — touchez-les'
@@ -425,6 +434,7 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
     {
       motif: /N°\s*ADEME/i,
       titre: 'Le numéro ADEME',
+      schema: 'identite',
       points: [
         'Enregistrement dans la base publique de l’État',
         'Prouve que le DPE existe officiellement',
@@ -508,6 +518,7 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
     {
       motif: /(?:n'a pas été repéré|présence).{0,60}indice.{0,30}termites?/i,
       titre: 'La conclusion',
+      schema: 'case',
       points: [
         'Vaut pour ce qui était visible ce jour-là',
         'Rien n’a été démonté ni percé',
@@ -517,6 +528,7 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
     {
       motif: /arrêté préfectoral/i,
       titre: 'Pourquoi ce diagnostic',
+      schema: 'identite',
       points: [
         'Obligatoire seulement dans les communes classées',
         'Votre commune est citée ici',
@@ -529,6 +541,7 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
     {
       motif: /Conclusion relative [àa] l.[ée]valuation des risques|Conclusion.{0,40}s[ée]curit[ée] des personnes/i,
       titre: 'La conclusion électricité',
+      schema: 'terre',
       famille: 'constat',
       ton: 'moyen',
       points: ['Ici, le rapport dit si l’installation est sûre'],
@@ -576,6 +589,7 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
     {
       motif: /différentiel/i,
       titre: 'Le point le plus important',
+      schema: 'terre',
       points: [
         'Coupe le courant qui fuit vers une personne',
         'Son absence : l’anomalie la plus grave',
@@ -588,6 +602,7 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
     {
       motif: /^H\.?\s*[-–]\s*Conclusion|^Conclusion\s*:$/i,
       titre: 'La conclusion gaz',
+      schema: 'case',
       famille: 'constat',
       ton: 'moyen',
       points: ['Ici, le rapport dit si le gaz est sûr'],
@@ -676,6 +691,7 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
     {
       motif: /le bien se situe dans une zone/i,
       titre: 'Le risque de votre terrain',
+      schema: 'identite',
       points: [
         'Cette phrase décrit votre parcelle',
         'Pas la commune entière',
@@ -685,6 +701,7 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
     {
       motif: /sismique/i,
       titre: 'La sismicité',
+      schema: 'identite',
       points: [
         'Presque tout le Sud-Ouest est en zone 2 (faible)',
         'Aucun tremblement de terre attendu',
