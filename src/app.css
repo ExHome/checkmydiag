@@ -22,19 +22,22 @@
   --vert-300: #57a684;
   --vert-100: #e4efe7;
 
-  --or: #c09048;
-  --or-fonce: #8a6224;
-  --or-clair: #e6cb9a;
+  /* L'or de la plaquette, relevé au pixel sur les médaillons. */
+  --or: #d2a358;
+  --or-fonce: #9a7231;
+  --or-clair: #e6c894;
 
   --encre: #16241e;
   --encre-doux: #5b6a62;
   --papier: #fdfaf3;
   --papier-doux: #f5efe1;
-  /* Fond vert émeraude : les cartes crème s'y détachent franchement. */
-  --fond: #064e3b;
-  --fond-clair: #0a6b51;
-  --sur-fond: #f2f7f3;
-  --sur-fond-doux: #a9cbbb;
+  /* Le vert de la plaquette DGLM, relevé au pixel sur l'affiche enjoy : c'est
+     lui le fond de la maison. Les cartes crème et l'or s'y détachent comme sur
+     le papier. */
+  --fond: #063f30;
+  --fond-clair: #1c5043;
+  --sur-fond: #f4f7f4;
+  --sur-fond-doux: #b6cdc0;
   --trait: #e6ded0;
 
   --alerte: #b03422;
@@ -58,8 +61,10 @@
   --ombre: 0 1px 2px rgb(9 63 48 / 6%), 0 16px 36px -22px rgb(9 63 48 / 30%);
   --ombre-forte: 0 2px 4px rgb(9 63 48 / 8%), 0 26px 56px -26px rgb(9 63 48 / 38%);
 
+  /* Comme sur la plaquette : un serif pour les titres, une linéale pour le
+     corps. C'est ce contraste qui fait le sérieux de la maison. */
   --police: 'Segoe UI Variable Display', 'Segoe UI', system-ui, -apple-system, sans-serif;
-  --police-titre: 'Segoe UI Variable Display', 'Segoe UI', system-ui, sans-serif;
+  --police-titre: 'Playfair Display', Georgia, 'Times New Roman', serif;
 }
 
 * {
@@ -76,12 +81,11 @@ body {
   padding: 0;
 }
 
+/* Le vert DGLM en aplat, sans dégradé ni motif : c'est le fond de la plaquette,
+   et il ne cherche pas à se faire remarquer. Tout le contraste vient des cartes
+   crème, de l'or et du ruban A→G. */
 body {
-  background:
-    radial-gradient(1200px 680px at 78% -12%, rgb(16 185 129 / 22%), transparent 62%),
-    radial-gradient(900px 520px at 4% 0%, rgb(192 144 72 / 16%), transparent 58%),
-    var(--fond);
-  background-attachment: fixed;
+  background: var(--fond);
   color: var(--sur-fond);
   font-family: var(--police);
   font-size: 17px;
@@ -95,10 +99,10 @@ h2,
 h3,
 h4 {
   font-family: var(--police-titre);
-  font-weight: 800;
-  line-height: 1.1;
+  font-weight: 700;
+  line-height: 1.15;
   margin: 0 0 0.4em;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.01em;
 }
 
 /* Les titres en italique : ça donne le ton éditorial, sans toucher au corps du
@@ -204,10 +208,11 @@ main > .essai {
   color: var(--sur-fond-doux);
 }
 
+/* Les titres posés sur le vert prennent l'or, comme sur la plaquette. */
 main > .resume h1,
 main > .resume h2,
 main > .accroche h1 {
-  color: var(--sur-fond);
+  color: var(--or-clair);
 }
 
 .petit {

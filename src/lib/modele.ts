@@ -126,6 +126,12 @@ export interface Diagnostic {
     points: string[];
     /** Questions que le lecteur peut ouvrir sans quitter le passage. */
     suites?: { question: string; ton?: 'bon' | 'moyen' | 'mauvais'; points: string[] }[];
+    /** Ce que dit la ligne : bonne nouvelle, à regarder, ça coince, donnée. */
+    ton?: 'bon' | 'moyen' | 'mauvais' | 'info';
+    /** Constat du diagnostic, donnée du dossier, ou mot du métier. */
+    famille?: 'constat' | 'donnee' | 'mot';
+    /** « Chez vous, en pratique, c'est ça. » */
+    pratique?: string;
     extrait: string;
   }[];
   /**

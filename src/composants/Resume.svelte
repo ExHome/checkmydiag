@@ -91,26 +91,16 @@
   {:else}
   <h2 class="titre-bilan">Ce que dit votre dossier</h2>
 
-  <div class="compteurs">
-    <div class="compteur alerte">
-      <span class="nombre">{importants.length}</span>
-      <span class="libelle">à traiter</span>
-    </div>
-    <div class="compteur attention">
-      <span class="nombre">{aRegarder.length}</span>
-      <span class="libelle">à regarder</span>
-    </div>
-    <div class="compteur bon">
-      <span class="nombre">{tranquilles.length}</span>
-      <span class="libelle">sans souci</span>
-    </div>
+  <!-- Le compte, sur une seule ligne. Quatre cartes côte à côte, c'était quatre
+       informations à comparer avant d'avoir rien compris. -->
+  <p class="compte">
+    <span class="alerte"><b>{importants.length}</b> à traiter</span>
+    <span class="attention"><b>{aRegarder.length}</b> à regarder</span>
+    <span class="bon"><b>{tranquilles.length}</b> sans souci</span>
     {#if analyse.controles.length}
-      <div class="compteur controle">
-        <span class="nombre">{analyse.controles.length}</span>
-        <span class="libelle">à vérifier</span>
-      </div>
+      <span class="controle"><b>{analyse.controles.length}</b> à vérifier</span>
     {/if}
-  </div>
+  </p>
 
   <div class="tuiles">
     {#each analyse.diagnostics as d, i (d.type)}
@@ -181,47 +171,34 @@
     margin-bottom: 22px;
   }
 
-  .compteurs {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 12px;
-    margin-bottom: 22px;
+  .compte {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 26px;
+    margin: 0 0 26px;
+    font-size: 0.98rem;
+    color: var(--sur-fond-doux);
   }
 
-  .compteur {
-    background: var(--papier);
-    border: 1px solid var(--trait);
-    border-radius: var(--rayon);
-    padding: 16px 18px;
-    display: grid;
-    gap: 2px;
-    box-shadow: var(--ombre);
-  }
-
-  .nombre {
-    font-size: 2.1rem;
+  .compte b {
+    font-size: 1.5rem;
     font-weight: 800;
-    line-height: 1;
     letter-spacing: -0.03em;
+    margin-right: 6px;
+    vertical-align: -1px;
   }
 
-  .libelle {
-    font-size: 0.86rem;
-    color: var(--encre-doux);
-    font-weight: 600;
+  .compte .alerte b {
+    color: #fc7060;
   }
-
-  .compteur.alerte .nombre {
-    color: var(--alerte);
+  .compte .attention b {
+    color: #fcb650;
   }
-  .compteur.attention .nombre {
-    color: var(--attention);
+  .compte .bon b {
+    color: #5fd3a0;
   }
-  .compteur.bon .nombre {
-    color: var(--ok);
-  }
-  .compteur.controle .nombre {
-    color: var(--or);
+  .compte .controle b {
+    color: var(--or-clair);
   }
 
   /* Des tuiles franches, lisibles au premier coup d'œil sur téléphone comme sur
@@ -352,21 +329,28 @@
     border-left-color: var(--trait);
   }
 
-  /* Le picto est gros : c'est lui qu'on voit avant de lire. */
+  /* Le médaillon rond et doré des plaquettes DGLM : c'est lui qu'on voit avant
+     de lire, et il ramène la marque sur chaque tuile. */
   .picto {
     display: grid;
     place-items: center;
     width: 74px;
     height: 74px;
-    border-radius: 20px;
-    padding: 13px;
-    background: rgb(255 255 255 / 96%);
-    box-shadow: 0 3px 0 rgb(0 0 0 / 18%);
+    border-radius: 50%;
+    font-size: 36px;
+    background: radial-gradient(circle at 32% 26%, #e9d2a5, #c09048 60%, #a3762f);
+    box-shadow:
+      inset 0 -3px 7px rgb(0 0 0 / 22%),
+      inset 0 2px 3px rgb(255 255 255 / 45%),
+      0 4px 0 rgb(0 0 0 / 22%);
   }
 
   /* L'étiquette DPE remplit sa case : c'est un graphique, pas une icône. */
   .picto.etiquette {
+    border-radius: 16px;
     padding: 8px 10px;
+    background: rgb(255 255 255 / 96%);
+    box-shadow: 0 3px 0 rgb(0 0 0 / 18%);
   }
 
   .verdict-court {
@@ -402,19 +386,6 @@
     color: var(--vert-500);
   }
 
-
-  .tuile.bon .picto {
-    color: var(--ok);
-  }
-  .tuile.attention .picto {
-    color: var(--attention);
-  }
-  .tuile.alerte .picto {
-    color: var(--alerte);
-  }
-  .tuile.neutre .picto {
-    color: var(--encre-doux);
-  }
 
   .dit {
     display: grid;

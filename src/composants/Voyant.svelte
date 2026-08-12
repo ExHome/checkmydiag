@@ -38,35 +38,12 @@
     width: 82px;
     height: 82px;
     flex: none;
-    border-radius: 22px;
-    background: var(--papier);
-    border: 1px solid var(--trait);
-  }
-
-  .picto {
-    padding: 17px;
-  }
-
-  .bon .picto {
-    color: var(--ok);
-    background: rgb(46 233 139 / 12%);
-    border-color: rgb(46 233 139 / 35%);
-  }
-
-  .attention .picto {
-    color: var(--attention);
-    background: rgb(255 165 58 / 12%);
-    border-color: rgb(255 165 58 / 35%);
-  }
-
-  .alerte .picto {
-    color: var(--alerte);
-    background: rgb(255 95 109 / 12%);
-    border-color: rgb(255 95 109 / 35%);
-  }
-
-  .neutre .picto {
-    color: var(--encre-doux);
+    border-radius: 50%;
+    font-size: 40px;
+    background: radial-gradient(circle at 32% 26%, #e9d2a5, #c09048 60%, #a3762f);
+    box-shadow:
+      inset 0 -3px 8px rgb(0 0 0 / 22%),
+      inset 0 2px 3px rgb(255 255 255 / 45%);
   }
 
   .libelle {

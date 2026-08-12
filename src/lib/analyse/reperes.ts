@@ -27,6 +27,12 @@ export interface Repere {
   points: string[];
   /** Ce qu'on peut demander ensuite, sans quitter le passage. */
   suites?: Suite[];
+  /** Bonne nouvelle, à regarder, ça coince, ou simple donnée. */
+  ton?: Ton;
+  /** Constat du diagnostic, donnée du dossier, ou mot du métier. */
+  famille?: Famille;
+  /** « Chez vous, en pratique, c'est ça. » Toujours présente. */
+  pratique?: string;
   /** La ligne du rapport elle-même : sert à la retrouver dans le texte. */
   extrait: string;
 }
@@ -44,6 +50,52 @@ export interface Suite {
   points: string[];
 }
 
+/**
+ * La couleur d'un repère vient de ce que dit la ligne, pas de sa place dans la
+ * page : vert quand c'est une bonne nouvelle, orange quand il faut regarder,
+ * rouge quand ça coince, or quand c'est une donnée neutre — un numéro, une date.
+ */
+export type Ton = 'bon' | 'moyen' | 'mauvais' | 'info';
+
+/**
+ * Trois familles, pour que le panneau tienne en trois lignes fermées : ce que
+ * le diagnostic constate, les données du dossier, les mots du métier.
+ */
+export type Famille = 'constat' | 'donnee' | 'mot';
+
+/** Testé en premier : « absence de mise à la terre » est une mauvaise nouvelle. */
+const DIT_MAUVAIS =
+  /non isol|d[ée]grad|anomalie|non conforme|infestation|amiante|classe\s*3|dangereu|absence de mise [àa] la terre|absence de liaison|fuite|à traiter|obligatoire/i;
+
+const DIT_BON =
+  /aucune anomalie|aucun indice|absence de|n[ée]ant|bon [ée]tat|non d[ée]grad|conforme|pas de |isol[ée]/i;
+
+const DIT_MOYEN = /[àa] surveiller|non visit|non accessible|impossible|n.a pas pu|sous r[ée]serve/i;
+
+export function tonDeLaLigne(texte: string): Ton {
+  if (DIT_MOYEN.test(texte)) return 'moyen';
+  if (DIT_MAUVAIS.test(texte)) return 'mauvais';
+  if (DIT_BON.test(texte)) return 'bon';
+  return 'info';
+}
+
+/**
+ * La phrase en italique qui suit chaque explication.
+ *
+ * Elle ne parle jamais de la règle : elle dit ce que ça change dans ce
+ * logement-là. Sans elle, on retombe dans le cours.
+ */
+const PRATIQUE: Record<Ton, string> = {
+  bon: 'Chez vous : rien à faire de ce côté-là, et rien à négocier dessus.',
+  moyen: 'Chez vous : ce n’est pas tranché. Le diagnostiqueur n’a pas pu voir, ou il a une réserve.',
+  mauvais: 'Chez vous : c’est un point qui coûte — en travaux, en loyer, ou au moment de vendre.',
+  info: 'Chez vous : c’est la donnée sur laquelle tout le reste du rapport est calculé.'
+};
+
+export function pratiqueDe(ton: Ton): string {
+  return PRATIQUE[ton];
+}
+
 interface Cible {
   motif: RegExp;
   titre: string;
@@ -52,6 +104,10 @@ interface Cible {
   points: string[];
   /** Ce qu'on peut demander ensuite, sans quitter le passage. */
   suites?: Suite[];
+  /** Forcé quand la ligne seule ne suffit pas à trancher. */
+  ton?: Ton;
+  /** « Chez vous, en pratique, c'est ça. » */
+  pratique?: string;
 }
 
 /**
@@ -360,7 +416,15 @@ export function reperer(type: TypeDiag, pages: PageTexte[]): Repere[] {
   // Du plus précis au plus général : les cibles du diagnostic, puis les lignes
   // communes à tous les rapports, puis les mots du métier. À ligne égale, c'est
   // l'explication la plus précise qui l'emporte.
-  const cibles: Cible[] = [...propres, ...COMMUNES, ...GLOSSAIRE];
+  //
+  // La famille sert à ranger le panneau : ce que dit le diagnostic d'abord, les
+  // données du dossier ensuite, le vocabulaire en dernier. Sans ce classement,
+  // le lecteur reçoit vingt lignes d'un coup.
+  const cibles: (Cible & { famille: Famille })[] = [
+    ...propres.map((c) => ({ ...c, famille: 'constat' as const })),
+    ...COMMUNES.map((c) => ({ ...c, famille: 'donnee' as const })),
+    ...GLOSSAIRE.map((c) => ({ ...c, famille: 'mot' as const }))
+  ];
 
   const reperes: Repere[] = [];
   const dejaVus = new Set<string>();
@@ -381,6 +445,7 @@ export function reperer(type: TypeDiag, pages: PageTexte[]): Repere[] {
 
       dejaVus.add(cible.titre);
       lignesPrises.add(ligne.texte);
+      const ton = cible.ton ?? tonDeLaLigne(ligne.texte);
       reperes.push({
         page: page.numero,
         x: ligne.x,
@@ -391,6 +456,11 @@ export function reperer(type: TypeDiag, pages: PageTexte[]): Repere[] {
         ...(cible.schema ? { schema: cible.schema } : {}),
         points: cible.points,
         ...(cible.suites ? { suites: cible.suites } : {}),
+        ton,
+        // Le tiroir « ce que dit le diagnostic » ne contient que des constats.
+        // Un numéro de dossier reste un chiffre, même dans un rapport DPE.
+        famille: cible.famille === 'mot' ? 'mot' : ton === 'info' ? 'donnee' : 'constat',
+        pratique: cible.pratique ?? pratiqueDe(ton),
         extrait: ligne.texte
       });
     }

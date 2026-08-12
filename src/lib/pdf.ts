@@ -22,6 +22,12 @@ export interface Document {
    * dimensions en unités PDF — indispensable pour poser des repères dessus.
    */
   rendre: (numero: number, largeurCible?: number) => Promise<PageRendue | null>;
+  /**
+   * Ouvre le document de dessin sans rien dessiner. Sur un gros rapport, cette
+   * ouverture prend plusieurs secondes ; la compter dans le délai imparti à la
+   * première page la faisait échouer alors que le dessin, lui, va vite.
+   */
+  prechauffer: () => Promise<void>;
   fermer: () => Promise<void>;
 }
 
@@ -78,6 +84,10 @@ export async function ouvrirPdf(
 
   return {
     pages,
+
+    async prechauffer() {
+      await documentDeDessin();
+    },
 
     async rendre(numero, largeurCible = 900) {
       if (numero < 1 || numero > pdf.numPages) return null;

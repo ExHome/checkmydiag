@@ -48,7 +48,15 @@
 
     const fichier = new File([complet.pdf], garde.nomFichier, { type: 'application/pdf' });
     const document = await ouvrirPdf(fichier);
-    void dessinerPages(document, garde.analyse);
+
+    // Le rapport est relu, pas resservi : le moteur s'améliore, et un dossier
+    // gardé la semaine dernière doit profiter de ce qu'on sait lire aujourd'hui.
+    // On ne réécrit rien dans le coffre : le PDF y est déjà, et l'analyse se
+    // refait à chaque ouverture.
+    const frais = analyser(document.pages);
+    analyse = frais;
+
+    void dessinerPages(document, frais);
   }
 
   function montrerExemple(): void {
@@ -119,6 +127,25 @@
   }
 
   /**
+   * pdf.js dessine au rythme des rafraîchissements de l'écran. Dans un onglet
+   * passé en arrière-plan, le navigateur les suspend : le dessin ne se termine
+   * jamais et finit par expirer. Plutôt que de gâcher le délai, on attend que
+   * l'onglet revienne — c'est de toute façon le seul moment où l'image sert.
+   */
+  function ongletDevant(): Promise<void> {
+    const page = globalThis.document;
+    if (page.visibilityState === 'visible') return Promise.resolve();
+    return new Promise((pret) => {
+      const revient = (): void => {
+        if (page.visibilityState !== 'visible') return;
+        page.removeEventListener('visibilitychange', revient);
+        pret();
+      };
+      page.addEventListener('visibilitychange', revient);
+    });
+  }
+
+  /**
    * Dessine, en tâche de fond, les pages que le lecteur va parcourir annotées.
    * Chaque page s'affiche dès qu'elle est prête ; si l'une échoue, les autres
    * continuent et l'analyse reste lisible.
@@ -138,11 +165,17 @@
       (window as unknown as { mesuresRendu?: unknown }).mesuresRendu = mesures;
     }
 
+    // Ouvrir le document de dessin avant de compter : sur un rapport de cent
+    // pages, cette ouverture mangeait à elle seule le délai de la première page.
+    await document.prechauffer();
+    await ongletDevant();
+
     for (const numero of aFaire) {
       try {
         // Sur certains rapports très lourds, le dessin d'une page n'aboutit
         // jamais. Ce n'est pas une raison pour laisser le lecteur attendre :
         // au-delà de huit secondes, on passe à la suivante.
+        await ongletDevant();
         const debut = performance.now();
         const rendu = await Promise.race([
           document.rendre(numero, 900),
@@ -297,20 +330,29 @@
     z-index: 10;
   }
 
-  /* La marque : italique comme les titres, l'or pour « My » — c'est la seule
-     signature du site, elle doit être reconnaissable d'un coup d'œil. */
+  /* La marque porte l'échelle du DPE dans ses lettres : vert à gauche, rouge à
+     droite, en couleurs vives. C'est la signature — on doit penser
+     « diagnostic » avant même d'avoir lu le mot. */
   .marque {
     font-family: var(--police-titre);
-    font-size: 1.34rem;
+    font-size: 1.42rem;
     font-weight: 800;
     font-style: italic;
-    color: var(--sur-fond);
     text-decoration: none;
     letter-spacing: -0.035em;
-  }
-
-  .marque span {
-    color: var(--or-clair);
+    background: linear-gradient(
+      92deg,
+      #319834 0%,
+      #33cc31 16%,
+      #cbfc34 32%,
+      #fbfe06 48%,
+      #fbcc05 64%,
+      #fc9935 80%,
+      #fc0205 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 
   main {

@@ -134,31 +134,21 @@
     border-color: #b9dfc9;
   }
 
+  /* Le même médaillon rond que sur les tuiles et les plaquettes. */
   .picto {
     display: grid;
     place-items: center;
     width: 46px;
     height: 46px;
-    border-radius: 13px;
-    padding: 8px;
-    background: rgb(255 255 255 / 75%);
+    border-radius: 50%;
+    font-size: 22px;
+    background: radial-gradient(circle at 32% 26%, #e9d2a5, #c09048 60%, #a3762f);
+    box-shadow: inset 0 -2px 5px rgb(0 0 0 / 20%);
   }
 
   .picto.vide {
     background: none;
-  }
-
-  li.bloque .picto {
-    color: var(--alerte);
-  }
-  li.coute .picto {
-    color: var(--attention);
-  }
-  li.ok .picto {
-    color: var(--ok);
-  }
-  li.verifier .picto {
-    color: var(--encre-doux);
+    box-shadow: none;
   }
 
   .quoi {
