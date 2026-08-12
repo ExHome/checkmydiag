@@ -1,0 +1,29 @@
+{
+  "name": "checkmydiag",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Check My Diag — déposez votre rapport de diagnostic immobilier, obtenez une explication claire et un schéma.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "dump": "node scripts/dump-pdf.mjs"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^5.0.3",
+    "@tsconfig/svelte": "^5.0.4",
+    "@types/node": "^26.2.0",
+    "svelte": "^5.20.0",
+    "svelte-check": "^4.1.4",
+    "typescript": "^5.7.3",
+    "vite": "^6.1.0",
+    "vitest": "^3.0.5"
+  },
+  "dependencies": {
+    "pdfjs-dist": "^4.10.38"
+  }
+}

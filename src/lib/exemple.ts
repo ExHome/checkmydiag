@@ -1,0 +1,117 @@
+/**
+ * Dossier de démonstration.
+ *
+ * Ce sont de fausses pages, écrites dans la mise en forme réelle des rapports,
+ * et passées par le moteur d'analyse comme n'importe quel PDF déposé : ce que le
+ * visiteur voit en exemple est produit par le même code que son propre rapport.
+ * Aucune donnée réelle ici — l'adresse et les chiffres sont inventés.
+ */
+import type { PageTexte } from './lignes';
+
+export function pagesExemple(): PageTexte[] {
+  return [
+    {
+      numero: 1,
+      lignes: [
+        'Dossier Technique Immobilier',
+        'Numéro de dossier : 26/EXE/0001',
+        'Date du repérage : 12/03/2026',
+        'Adresse : ........... 12 rue de l’Exemple',
+        'Commune : ....... 33000 BORDEAUX (France)',
+        'Objet de la mission :',
+        'Dossier Technique Amiante Métrage (Loi Carrez) Etat des Installations électriques',
+        'Exposition au plomb (CREP) Diagnostic énergétique Etat des Installations gaz',
+        'Etat relatif à la présence de termites Etat des Risques et Pollutions Audit énergétique'
+      ]
+    },
+    {
+      numero: 2,
+      lignes: [
+        'N°ADEME : 2633E2660001X',
+        'Diagnostic de performance',
+        'Etabli le : 12/03/2026',
+        'énergétique (logement) Valable jusqu’au : 11/03/2036',
+        'Adresse : 12 rue de l’Exemple',
+        '33000 BORDEAUX (France)',
+        'Type de bien : Appartement',
+        'Année de construction : Avant 1948',
+        'Surface de référence : 48.5 m²',
+        'Ce logement émet 1 260 kg de CO ₂ par an,',
+        'entre 1 890 € et 2 560 € par an'
+      ]
+    },
+    {
+      numero: 3,
+      lignes: [
+        'DPE Diagnostic de performance énergétique (logement) p. 3',
+        'Montants et consommations annuels d’énergie',
+        'chauffage Gaz naturel 13 400 (12 100 é.f.) entre 1 340 € et 1 810 €',
+        'eau chaude Gaz naturel 4 100 (3 700 é.f.) entre 410 € et 560 €',
+        'éclairage Electrique 260 (113 é.f.) entre 20 € et 40 €',
+        'auxiliaires Electrique 340 (148 é.f.) entre 30 € et 60 €',
+        'énergie totale pour les 18 100 kWh entre 1 890 € et 2 560 €'
+      ]
+    },
+    {
+      numero: 4,
+      lignes: [
+        'Etat de l’installation intérieure d’électricité n° 26/EXE/0001',
+        'L’installation intérieure d’électricité comporte 4 anomalies.',
+        'Date de la visite : 12/03/2026',
+        'Appareil général de commande et de protection : accessible',
+        'Dispositif de protection différentielle à l’origine de l’installation : absent',
+        'Installation de mise à la terre : prise de terre non conforme',
+        'Matériels électriques vétustes ou inadaptés à l’usage constatés dans le séjour',
+        'Conducteurs non protégés mécaniquement dans le couloir'
+      ]
+    },
+    {
+      numero: 5,
+      lignes: [
+        "Constat de risque d'exposition au plomb n° 26/EXE/0001",
+        'Ce Constat de Risque d’Exposition au Plomb a été rédigé par EXEMPLE le 12/03/2026',
+        'Conclusion des mesures de concentration en plomb',
+        'Total Non mesurées Classe 0 Classe 1 Classe 2 Classe 3',
+        'Nombre d’unités',
+        '54 12 33 5 2 2',
+        '% 100 22,2 % 61,1 % 9,3 % 3,7 % 3,7 %',
+        "Dans le cadre de la mission, il a été repéré des unités de diagnostics de classe 3."
+      ]
+    },
+    {
+      numero: 6,
+      lignes: [
+        'Etat relatif à la présence de termites n° 26/EXE/0001',
+        'Date du repérage : 12/03/2026',
+        'Le bien est situé dans une zone soumise à un arrêté préfectoral:',
+        "Niveau d'infestation moyen",
+        'Piece 1 Sol - Carrelage Absence d’indices d’infestation de termites',
+        'Piece 1 Plinthes - A, B - Bois Absence d’indices d’infestation de termites',
+        'Piece 2 Sol - Parquet Absence d’indices d’infestation de termites',
+        'Piece 3 Charpente - Bois Absence d’indices d’infestation de termites',
+        "Il n'a pas été repéré d'indice d'infestation de termites."
+      ]
+    },
+    {
+      numero: 7,
+      lignes: [
+        'Etat des Risques et Pollutions n° 26/EXE/0001',
+        'Selon les informations mises à disposition dans le Dossier Communal d’Information :',
+        '- Le risque sismique (niveau 2, sismicité Faible) et par la réglementation de',
+        'construction parasismique EUROCODE 8.',
+        "Le bien se situe dans une zone d'exposition forte du phénomène de retrait -",
+        'gonflement des sols argileux.',
+        "Le bien ne se situe pas dans une zone d'un Plan d'Exposition au Bruit.",
+        'Aucun secteur d’information sur les sols ne concerne la parcelle.'
+      ]
+    },
+    {
+      numero: 8,
+      lignes: [
+        'Repérage des matériaux et produits contenant de l’amiante n° 26/EXE/0001',
+        'Date du repérage : 12/03/2026',
+        "Il n'a pas été repéré de matériaux et produits contenant de l'amiante dans les parties visitées."
+      ]
+    }
+  ];
+}

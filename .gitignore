@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.DS_Store
+*.local
+
+# Jamais de rapports de diagnostic dans le dépôt : ils contiennent le nom et
+# l'adresse de vraies personnes. Les tests lisent un dossier hors dépôt.
+*.pdf
+rapports/

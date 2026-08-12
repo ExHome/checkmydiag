@@ -1,0 +1,177 @@
+/* ---------------------------------------------------------------------------
+   Mon diag expliqué — design system
+   Sobre, lisible, mobile-first. Le lecteur type est un particulier stressé qui
+   vient de recevoir 60 pages de PDF technique.
+   --------------------------------------------------------------------------- */
+
+:root {
+  color-scheme: light dark;
+
+  --vert-900: #0b3d26;
+  --vert-700: #0f5132;
+  --vert-500: #1a7a4c;
+  --vert-100: #e6f2ec;
+  --or: #b8860b;
+
+  --encre: #14231c;
+  --encre-doux: #4a5a52;
+  --papier: #ffffff;
+  --papier-doux: #f5f8f6;
+  --trait: #dde5e0;
+
+  --alerte: #b42318;
+  --alerte-fond: #fdeceb;
+  --attention: #b54708;
+  --attention-fond: #fdf3e7;
+  --ok: #1a7a4c;
+  --ok-fond: #e6f2ec;
+
+  /* Étiquettes réglementaires A→G : couleurs officielles de l'arrêté DPE. */
+  --etq-a: #319834;
+  --etq-b: #33cc31;
+  --etq-c: #cbfc34;
+  --etq-d: #fbfe06;
+  --etq-e: #fbcc05;
+  --etq-f: #fc9935;
+  --etq-g: #fc0205;
+
+  --rayon: 12px;
+  --ombre: 0 1px 2px rgb(20 35 28 / 6%), 0 8px 24px rgb(20 35 28 / 6%);
+
+  --police: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+  --police-titre: Lora, Georgia, 'Times New Roman', serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #e8efea;
+    --encre-doux: #a5b5ac;
+    --papier: #101815;
+    --papier-doux: #17211d;
+    --trait: #2a3831;
+    --vert-100: #17352a;
+    --vert-500: #4bb583;
+    --alerte-fond: #35191a;
+    --attention-fond: #33220f;
+    --ok-fond: #15302a;
+    --ombre: 0 1px 2px rgb(0 0 0 / 40%), 0 8px 24px rgb(0 0 0 / 30%);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--papier-doux);
+  color: var(--encre);
+  font-family: var(--police);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--police-titre);
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 0 0 0.4em;
+  letter-spacing: -0.01em;
+}
+
+h1 {
+  font-size: clamp(1.75rem, 5vw, 2.6rem);
+}
+h2 {
+  font-size: clamp(1.3rem, 3.5vw, 1.7rem);
+}
+h3 {
+  font-size: 1.1rem;
+}
+
+p {
+  margin: 0 0 1em;
+}
+
+a {
+  color: var(--vert-500);
+}
+
+button {
+  font: inherit;
+}
+
+.enveloppe {
+  width: min(100%, 980px);
+  margin-inline: auto;
+  padding-inline: clamp(16px, 4vw, 32px);
+}
+
+.carte {
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  border-radius: var(--rayon);
+  box-shadow: var(--ombre);
+  padding: clamp(16px, 4vw, 28px);
+}
+
+.bouton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--vert-700);
+  color: #fff;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 12px 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.bouton:hover {
+  background: var(--vert-500);
+}
+
+.bouton:active {
+  transform: translateY(1px);
+}
+
+.bouton--fantome {
+  background: transparent;
+  color: var(--vert-500);
+  border-color: var(--trait);
+}
+
+.bouton--fantome:hover {
+  background: var(--vert-100);
+  color: var(--vert-700);
+}
+
+:focus-visible {
+  outline: 3px solid var(--vert-500);
+  outline-offset: 2px;
+}
+
+.muet {
+  color: var(--encre-doux);
+}
+
+.petit {
+  font-size: 0.9rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
