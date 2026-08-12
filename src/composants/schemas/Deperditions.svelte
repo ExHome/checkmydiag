@@ -1,16 +1,14 @@
 <script lang="ts">
   /**
-   * Par où la chaleur s'échappe — illustration cliquable.
+   * La maison, en illustration de livre : aplats de couleur, formes rondes, un
+   * arbre, un soleil. On la regarde avant de la lire, et on touche ce qu'on veut
+   * savoir.
    *
-   * Le lecteur ne lit pas un paragraphe : il touche le toit, et le toit lui
-   * répond. Chaque zone porte sa part de déperdition et son explication.
-   *
-   * Les pourcentages sont des ordres de grandeur moyens (source ADEME) : le DPE
-   * ne publie pas ceux du logement sous une forme lisible par un programme.
+   * Les pourcentages sont des ordres de grandeur moyens (source ADEME). Quand le
+   * rapport dit ce qui est isolé, la pastille le montre — vert ou rouge.
    */
   import type { EtatIsolation, Isolation } from '../../lib/modele';
 
-  /** Isolation relevée dans le rapport ; absente, le schéma reste générique. */
   const { isolation = null }: { isolation?: Isolation | null } = $props();
 
   interface Fuite {
@@ -18,14 +16,12 @@
     nom: string;
     part: string;
     texte: string;
-    /** Paroi correspondante dans le descriptif du rapport. */
     paroi?: keyof Isolation;
-    /** Départ et arrivée du souffle de chaleur. */
+    /** Souffle de chaleur : départ, arrivée. */
     de: [number, number];
     vers: [number, number];
-    /** Ancre de la pastille de libellé. */
+    /** Pastille du libellé. */
     pastille: [number, number];
-    /** Zone cliquable sur le dessin. */
     zone: { x: number; y: number; w: number; h: number; r?: number };
   }
 
@@ -34,85 +30,73 @@
       id: 'toit',
       nom: 'Toit',
       part: '25-30 %',
+      paroi: 'toit',
       texte:
-        'C’est par là que part le plus de chaleur : elle monte. C’est aussi le poste le moins cher à traiter — souvent quelques heures de travail dans les combles.',
-      de: [270, 104],
-      vers: [270, 44],
-      pastille: [270, 26],
-      zone: { x: 168, y: 52, w: 204, h: 56 },
-      paroi: 'toit'
+        'La chaleur monte. C’est par là qu’il en part le plus — et c’est le moins cher à traiter : quelques heures dans les combles.',
+      de: [250, 96],
+      vers: [250, 40],
+      pastille: [250, 24],
+      zone: { x: 150, y: 44, w: 200, h: 58 }
     },
     {
       id: 'air',
       nom: 'Air',
       part: '20-25 %',
       texte:
-        'L’air chaud s’en va, l’air froid entre : par la ventilation, mais surtout par les fuites — bas de porte, prises, trappes. Une VMC bien réglée coûte moins cher qu’une chaudière.',
-      de: [206, 168],
-      vers: [126, 118],
-      pastille: [96, 100],
-      zone: { x: 196, y: 148, w: 56, h: 44 }
+        'L’air chaud s’en va, l’air froid entre : par la ventilation, mais surtout par les fuites — bas de porte, prises, trappes.',
+      de: [186, 176],
+      vers: [110, 128],
+      pastille: [86, 108],
+      zone: { x: 174, y: 156, w: 52, h: 44 }
     },
     {
       id: 'murs',
       nom: 'Murs',
       part: '20-25 %',
+      paroi: 'murs',
       texte:
-        'Deuxième poste. Les isoler coûte cher, mais c’est ce qui change le plus le confort : un mur froid, on le sent même quand la pièce est à 20 °C.',
-      de: [180, 232],
-      vers: [110, 232],
-      pastille: [78, 232],
-      zone: { x: 176, y: 200, w: 26, h: 78 },
-      paroi: 'murs'
+        'Deuxième poste. Cher à isoler, mais c’est ce qui change le plus le confort : un mur froid, on le sent même à 20 °C.',
+      de: [156, 244],
+      vers: [92, 244],
+      pastille: [66, 244],
+      zone: { x: 152, y: 212, w: 26, h: 78 }
     },
     {
       id: 'fenetres',
       nom: 'Fenêtres',
       part: '10-15 %',
+      paroi: 'fenetres',
       texte:
-        'Moins que ce qu’on croit. Changer ses fenêtres avant d’isoler les combles, c’est beaucoup dépenser pour peu gagner. En revanche, on le voit et on l’entend tout de suite.',
-      de: [360, 192],
-      vers: [430, 192],
-      pastille: [462, 192],
-      zone: { x: 292, y: 172, w: 48, h: 48, r: 4 },
-      paroi: 'fenetres'
+        'Moins que ce qu’on croit. Les changer avant d’isoler les combles, c’est beaucoup dépenser pour peu gagner.',
+      de: [344, 200],
+      vers: [412, 200],
+      pastille: [440, 200],
+      zone: { x: 286, y: 178, w: 52, h: 52, r: 6 }
     },
     {
       id: 'ponts',
       nom: 'Jonctions',
       part: '5-10 %',
       texte:
-        'Les endroits où l’isolant s’interrompt : entre un mur et un plancher, autour d’une fenêtre, sur un balcon. Le froid y passe comme dans un couloir — et c’est là qu’apparaît la moisissure.',
-      de: [360, 272],
-      vers: [430, 272],
-      pastille: [462, 272],
-      zone: { x: 340, y: 258, w: 22, h: 28 }
+        'Là où l’isolant s’arrête : angle de mur, contour de fenêtre, balcon. Le froid y passe comme dans un couloir, et la moisissure suit.',
+      de: [344, 282],
+      vers: [412, 282],
+      pastille: [440, 282],
+      zone: { x: 330, y: 268, w: 22, h: 28 }
     },
     {
       id: 'sol',
       nom: 'Sol',
       part: '7-10 %',
+      paroi: 'plancher',
       texte:
-        'Le plancher bas, surtout s’il donne sur une cave ou un vide sanitaire. Le poste le plus discret, et souvent le plus simple à traiter par en dessous.',
-      de: [270, 292],
-      vers: [270, 336],
-      pastille: [270, 356],
-      zone: { x: 176, y: 284, w: 188, h: 16 },
-      paroi: 'plancher'
+        'Le plancher bas, surtout au-dessus d’une cave. Le plus discret, et souvent le plus simple à traiter par en dessous.',
+      de: [250, 306],
+      vers: [250, 350],
+      pastille: [250, 370],
+      zone: { x: 152, y: 296, w: 196, h: 18 }
     }
   ];
-
-  /** Ce que le rapport dit de cette paroi — ou rien, s'il n'en dit rien. */
-  function etatDe(fuite: Fuite): 'isole' | 'nonIsole' | null {
-    if (!isolation || !fuite.paroi) return null;
-    const etat: EtatIsolation = isolation[fuite.paroi];
-    return etat === 'inconnu' ? null : etat;
-  }
-
-  const MENTION: Record<'isole' | 'nonIsole', string> = {
-    isole: 'isolé',
-    nonIsole: 'non isolé'
-  };
 
   let choisi = $state<string | null>(null);
   const detail = $derived(FUITES.find((f) => f.id === choisi) ?? null);
@@ -120,55 +104,50 @@
   function basculer(id: string): void {
     choisi = choisi === id ? null : id;
   }
+
+  function etatDe(fuite: Fuite): 'isole' | 'nonIsole' | null {
+    if (!isolation || !fuite.paroi) return null;
+    const etat: EtatIsolation = isolation[fuite.paroi];
+    return etat === 'inconnu' ? null : etat;
+  }
+
+  const MENTION = { isole: 'isolé', nonIsole: 'non isolé' } as const;
 </script>
 
 <figure>
-  <p class="invite muet petit">Touchez une partie du logement.</p>
+  <p class="invite muet petit">Touchez la maison.</p>
 
-  <svg viewBox="0 0 540 380" role="group" aria-label="Coupe d’une maison : les six endroits par où la chaleur s’échappe.">
-    <defs>
-      <linearGradient id="ciel" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="var(--vert-100)" stop-opacity="0.55" />
-        <stop offset="100%" stop-color="var(--vert-100)" stop-opacity="0" />
-      </linearGradient>
-      <linearGradient id="toiture" x1="0" y1="0" x2="0.4" y2="1">
-        <stop offset="0%" stop-color="#2f6f52" />
-        <stop offset="100%" stop-color="#17513a" />
-      </linearGradient>
-      <linearGradient id="facade" x1="0" y1="0" x2="0.3" y2="1">
-        <stop offset="0%" stop-color="#fbfdfb" />
-        <stop offset="100%" stop-color="#e7efe9" />
-      </linearGradient>
-      <linearGradient id="vitre" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#bfe3f5" />
-        <stop offset="55%" stop-color="#8fd0ee" />
-        <stop offset="100%" stop-color="#d8f0fb" />
-      </linearGradient>
-      <linearGradient id="chaleur" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stop-color="#f5a524" stop-opacity="0.15" />
-        <stop offset="45%" stop-color="#f0762b" stop-opacity="0.85" />
-        <stop offset="100%" stop-color="#e5484d" />
-      </linearGradient>
-      <filter id="pose" x="-30%" y="-30%" width="160%" height="180%">
-        <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#0b3d26" flood-opacity="0.18" />
-      </filter>
-    </defs>
+  <svg viewBox="0 0 500 396" role="group" aria-label="Une maison illustrée : les six endroits par où la chaleur s’échappe.">
+    <!-- Le ciel et le décor -->
+    <circle cx="62" cy="52" r="24" class="soleil" />
+    <path d="M38 52 L20 52M62 28 L62 10M45 35 L33 23M79 35 L91 23" class="rayons" />
+    <ellipse cx="418" cy="60" rx="34" ry="16" class="nuage" />
+    <ellipse cx="396" cy="54" rx="20" ry="14" class="nuage" />
 
-    <rect x="0" y="0" width="540" height="380" fill="url(#ciel)" rx="18" />
+    <!-- L'arbre -->
+    <rect x="420" y="300" width="12" height="46" rx="4" class="tronc" />
+    <circle cx="426" cy="288" r="30" class="feuillage" />
+    <circle cx="404" cy="302" r="20" class="feuillage" />
+    <circle cx="448" cy="302" r="18" class="feuillage" />
 
-    <!-- Le bâti -->
-    <g filter="url(#pose)">
-      <path d="M156 140 L270 62 L384 140 Z" fill="url(#toiture)" stroke-linejoin="round" />
-      <rect x="176" y="140" width="188" height="144" fill="url(#facade)" />
-      <rect x="176" y="284" width="188" height="16" fill="#c7d6cc" />
-      <rect x="196" y="172" width="48" height="48" rx="4" fill="url(#vitre)" />
-      <rect x="292" y="172" width="48" height="48" rx="4" fill="url(#vitre)" />
-      <path d="M196 196h48M220 172v48M292 196h48M316 172v48" stroke="#ffffff" stroke-width="2.5" opacity="0.85" />
-      <rect x="248" y="228" width="44" height="56" rx="3" fill="#9fb8a8" />
-      <circle cx="284" cy="258" r="2.6" fill="#f3f8f4" />
-    </g>
+    <!-- Le sol -->
+    <rect x="0" y="344" width="500" height="52" class="pelouse" />
 
-    <!-- Souffles de chaleur -->
+    <!-- La maison -->
+    <path d="M136 132 L250 56 L364 132 Z" class="toit" />
+    <path d="M250 56 L250 42" class="cheminee-tige" />
+    <rect x="300" y="66" width="26" height="46" rx="4" class="cheminee" />
+    <rect x="152" y="132" width="196" height="164" class="facade" />
+    <rect x="152" y="296" width="196" height="18" class="fondation" />
+
+    <!-- Fenêtres et porte -->
+    <rect x="180" y="178" width="52" height="52" rx="6" class="vitre" />
+    <rect x="286" y="178" width="52" height="52" rx="6" class="vitre" />
+    <path d="M206 178v52M180 204h52M312 178v52M286 204h52" class="croisillon" />
+    <rect x="228" y="240" width="46" height="56" rx="5" class="porte" />
+    <circle cx="266" cy="270" r="3.6" class="poignee" />
+
+    <!-- Souffles de chaleur et libellés -->
     {#each FUITES as fuite (fuite.id)}
       {@const actif = choisi === fuite.id}
       {@const etat = etatDe(fuite)}
@@ -179,7 +158,7 @@
         role="button"
         tabindex="0"
         aria-pressed={actif}
-        aria-label="{fuite.nom} : {fuite.part} des pertes de chaleur"
+        aria-label="{fuite.nom} : {fuite.part} des pertes"
         onclick={() => basculer(fuite.id)}
         onkeydown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
@@ -193,30 +172,25 @@
           y={fuite.zone.y}
           width={fuite.zone.w}
           height={fuite.zone.h}
-          rx={fuite.zone.r ?? 6}
+          rx={fuite.zone.r ?? 8}
           class="zone"
         />
+        <path d="M{fuite.de[0]} {fuite.de[1]} L{fuite.vers[0]} {fuite.vers[1]}" class="souffle" />
+        <circle cx={fuite.vers[0]} cy={fuite.vers[1]} r="6" class="bout" />
 
-        <path
-          d="M{fuite.de[0]} {fuite.de[1]} L{fuite.vers[0]} {fuite.vers[1]}"
-          class="souffle"
-          stroke="url(#chaleur)"
-        />
-        <circle cx={fuite.vers[0]} cy={fuite.vers[1]} r="5" class="bout" />
-
-        <g class="libelle" transform="translate({fuite.pastille[0]} {fuite.pastille[1]})">
+        <g transform="translate({fuite.pastille[0]} {fuite.pastille[1]})">
           <rect
-            x="-56"
-            y="-15"
-            width="112"
-            height="30"
-            rx="15"
+            x="-54"
+            y="-16"
+            width="108"
+            height="32"
+            rx="16"
             class="fond-pastille"
             class:isole={etat === 'isole'}
             class:non-isole={etat === 'nonIsole'}
           />
           <text x="0" y="-1" class="nom">{fuite.nom}</text>
-          <text x="0" y="10" class="part" class:etat-lu={etat !== null}>
+          <text x="0" y="11" class="part" class:etat-lu={etat !== null}>
             {etat ? MENTION[etat] : fuite.part}
           </text>
         </g>
@@ -226,18 +200,14 @@
 
   {#if detail}
     <div class="reponse apparait">
-      <p class="titre">{detail.nom} · {detail.part} de la chaleur</p>
+      <p class="titre">{detail.nom} · {detail.part}</p>
       <p>{detail.texte}</p>
-      <!-- Le retour doit être évident : on ne piège jamais le lecteur dans un
-           détail dont il ne sait pas comment sortir. -->
-      <button type="button" class="fermer" onclick={() => (choisi = null)}>
-        ← Revenir au schéma
-      </button>
+      <button type="button" class="fermer" onclick={() => (choisi = null)}>← Revenir</button>
     </div>
   {:else}
     <figcaption class="muet petit">
-      Ordres de grandeur pour une maison mal isolée (source&nbsp;: ADEME). Le schéma de
-      <em>votre</em> logement est en page 2 de votre DPE.
+      Ordres de grandeur moyens (ADEME). Quand votre rapport le dit, la pastille indique ce qui est
+      isolé chez vous.
     </figcaption>
   {/if}
 </figure>
@@ -254,9 +224,83 @@
   svg {
     width: 100%;
     height: auto;
-    max-width: 560px;
+    max-width: 540px;
     display: block;
     margin-inline: auto;
+  }
+
+  /* Décor : des aplats francs, comme dans un album. */
+  .soleil {
+    fill: #f6c445;
+  }
+
+  .rayons {
+    stroke: #f6c445;
+    stroke-width: 4;
+    stroke-linecap: round;
+  }
+
+  .nuage {
+    fill: #ffffff;
+    opacity: 0.9;
+  }
+
+  .pelouse {
+    fill: #8ec89a;
+  }
+
+  .tronc {
+    fill: #9a6b3f;
+  }
+
+  .feuillage {
+    fill: #4f9c62;
+  }
+
+  .toit {
+    fill: #c2503c;
+    stroke: #9c3d2d;
+    stroke-width: 3;
+    stroke-linejoin: round;
+  }
+
+  .cheminee {
+    fill: #9c3d2d;
+  }
+
+  .cheminee-tige {
+    stroke: none;
+  }
+
+  .facade {
+    fill: #fdf3e0;
+    stroke: #d8c39c;
+    stroke-width: 3;
+  }
+
+  .fondation {
+    fill: #d8c39c;
+  }
+
+  .vitre {
+    fill: #ffe9a8;
+    stroke: #d8a93c;
+    stroke-width: 3;
+  }
+
+  .croisillon {
+    stroke: #d8a93c;
+    stroke-width: 3;
+  }
+
+  .porte {
+    fill: #6b8f6f;
+    stroke: #4f7254;
+    stroke-width: 3;
+  }
+
+  .poignee {
+    fill: #f6c445;
   }
 
   .cible {
@@ -271,107 +315,101 @@
   .zone {
     fill: transparent;
     stroke: transparent;
-    stroke-width: 2.5;
+    stroke-width: 3;
     transition: fill 0.2s ease, stroke 0.2s ease;
   }
 
   .cible:hover .zone,
   .cible:focus-visible .zone,
   .cible.actif .zone {
-    fill: rgb(240 118 43 / 16%);
-    stroke: #f0762b;
+    fill: rgb(226 106 60 / 20%);
+    stroke: #e26a3c;
   }
 
   .souffle {
-    stroke-width: 7;
+    stroke: #e26a3c;
+    stroke-width: 8;
     stroke-linecap: round;
     fill: none;
     transition: stroke-width 0.2s ease;
   }
 
   .cible.actif .souffle {
-    stroke-width: 11;
+    stroke-width: 12;
   }
 
   .bout {
-    fill: #e5484d;
+    fill: #c2503c;
   }
 
   .fond-pastille {
-    fill: var(--papier);
-    stroke: var(--trait);
-    stroke-width: 1;
-    filter: drop-shadow(0 2px 5px rgb(11 61 38 / 14%));
-    transition: fill 0.2s ease, stroke 0.2s ease;
+    fill: #ffffff;
+    stroke: #d8c39c;
+    stroke-width: 2;
   }
 
   .cible.actif .fond-pastille {
-    fill: #fff3ec;
-    stroke: #f0762b;
+    stroke: #e26a3c;
+    stroke-width: 3;
   }
 
-  /* Quand le rapport dit ce qui est isolé, la pastille le montre. */
   .fond-pastille.isole {
-    fill: var(--ok-fond);
-    stroke: var(--ok);
+    fill: #e4f3e8;
+    stroke: #4f9c62;
   }
 
   .fond-pastille.non-isole {
-    fill: var(--alerte-fond);
-    stroke: var(--alerte);
-  }
-
-  .part.etat-lu {
-    font-weight: 700;
-    fill: var(--encre);
+    fill: #fbe6e0;
+    stroke: #c2503c;
   }
 
   .nom {
-    font-size: 13.5px;
-    font-weight: 700;
-    fill: var(--encre);
+    font-size: 14px;
+    font-weight: 800;
+    fill: #16241e;
     text-anchor: middle;
   }
 
   .part {
-    font-size: 11px;
-    fill: var(--encre-doux);
+    font-size: 11.5px;
+    fill: #5b6a62;
     text-anchor: middle;
-    font-weight: 600;
+    font-weight: 700;
   }
 
-  .cible.actif .part {
-    fill: #d1451b;
+  .part.etat-lu {
+    fill: #16241e;
   }
 
   .reponse {
     margin-top: 10px;
     padding: 16px 20px;
-    background: linear-gradient(135deg, #fff3ec, transparent 150%);
-    border-left: 4px solid #f0762b;
-    border-radius: var(--rayon-petit);
+    background: #fdf3e0;
+    border-left: 5px solid #e26a3c;
+    border-radius: 14px;
   }
 
   .reponse .titre {
     margin: 0 0 4px;
     font-weight: 800;
-    color: #d1451b;
-    font-size: 0.94rem;
+    color: #c2503c;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    font-size: 0.88rem;
   }
 
   .reponse p:last-of-type {
     margin: 0 0 10px;
     font-size: 0.98rem;
+    color: #4a3d24;
   }
 
   .fermer {
     background: none;
     border: none;
     padding: 0;
-    color: var(--vert-300);
-    font-weight: 700;
+    color: #c2503c;
+    font-weight: 800;
     font-size: 0.9rem;
     cursor: pointer;
   }

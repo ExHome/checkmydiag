@@ -257,24 +257,40 @@
     transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
   }
 
+  /* Couleurs pleines et franches, comme des boutons de jeu : on voit la
+     couleur avant de lire le mot. */
   .tuile.bon {
-    background: linear-gradient(150deg, #e8f6ee, #d5ecdf);
-    border-color: #b9dfc9;
+    background: linear-gradient(150deg, #22a06b, #17835a);
+    border-color: #146f4c;
+    color: #fff;
+    box-shadow: 0 6px 0 #0f5e40;
   }
 
   .tuile.attention {
-    background: linear-gradient(150deg, #fdf3e0, #f8e6c6);
-    border-color: #eed4a4;
+    background: linear-gradient(150deg, #f0a132, #dd8418);
+    border-color: #c1720f;
+    color: #fff;
+    box-shadow: 0 6px 0 #a75f08;
   }
 
   .tuile.alerte {
-    background: linear-gradient(150deg, #fceeea, #f7dcd4);
-    border-color: #f0c3b6;
+    background: linear-gradient(150deg, #e0563f, #c53f2c);
+    border-color: #a83422;
+    color: #fff;
+    box-shadow: 0 6px 0 #8d2b1b;
   }
 
   .tuile.neutre {
-    background: linear-gradient(150deg, var(--papier), var(--papier-doux));
-    border-color: var(--trait);
+    background: linear-gradient(150deg, #7d8f86, #667a70);
+    border-color: #566a60;
+    color: #fff;
+    box-shadow: 0 6px 0 #47584f;
+  }
+
+  /* Le bouton s'enfonce quand on appuie. */
+  .tuile:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 rgb(0 0 0 / 35%);
   }
 
   /* Les tuiles apparaissent l'une après l'autre, et se soulèvent au survol :
@@ -344,8 +360,8 @@
     height: 74px;
     border-radius: 20px;
     padding: 13px;
-    background: rgb(255 255 255 / 72%);
-    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 60%);
+    background: rgb(255 255 255 / 96%);
+    box-shadow: 0 3px 0 rgb(0 0 0 / 18%);
   }
 
   /* L'étiquette DPE remplit sa case : c'est un graphique, pas une icône. */
@@ -360,19 +376,18 @@
     line-height: 1.15;
   }
 
-  .tuile.bon .verdict-court {
-    color: var(--ok);
-  }
-  .tuile.attention .verdict-court {
-    color: var(--attention);
-  }
-  .tuile.alerte .verdict-court {
-    color: var(--alerte);
+  .verdict-court {
+    color: #fff;
+    text-shadow: 0 1px 2px rgb(0 0 0 / 25%);
   }
 
   .quoi {
     font-size: 0.88rem;
-    color: var(--encre-doux);
+    color: rgb(255 255 255 / 82%);
+  }
+
+  .fleche {
+    color: rgb(255 255 255 / 75%);
   }
 
   .fleche {
