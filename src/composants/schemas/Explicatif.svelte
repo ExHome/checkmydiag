@@ -14,7 +14,9 @@
   import CheminTermites from './CheminTermites.svelte';
   import SurfaceCarrez from './SurfaceCarrez.svelte';
 
-  const { type }: { type: TypeDiag } = $props();
+  import type { Isolation } from '../../lib/modele';
+
+  const { type, isolation = null }: { type: TypeDiag; isolation?: Isolation | null } = $props();
 
   const TITRES: Partial<Record<TypeDiag, string>> = {
     dpe: 'Par où part la chaleur',
@@ -34,7 +36,7 @@
   <section class="explicatif">
     <h3>{titre}</h3>
     {#if type === 'dpe'}
-      <Deperditions />
+      <Deperditions {isolation} />
     {:else if type === 'plomb'}
       <ChainePlomb />
     {:else if type === 'electricite'}

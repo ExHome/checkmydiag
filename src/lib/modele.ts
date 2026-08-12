@@ -38,6 +38,16 @@ export interface Etiquette {
   recalculee: boolean;
 }
 
+/** Ce que le rapport dit de l'isolation d'une paroi. */
+export type EtatIsolation = 'isole' | 'nonIsole' | 'inconnu';
+
+export interface Isolation {
+  murs: EtatIsolation;
+  toit: EtatIsolation;
+  plancher: EtatIsolation;
+  fenetres: EtatIsolation;
+}
+
 export type Schema =
   | {
       genre: 'dpe';
@@ -46,6 +56,8 @@ export type Schema =
       /** Classe finale au double seuil énergie/climat. */
       finale: Lettre | null;
       postes: { nom: string; kwh: number; cout?: string }[];
+      /** État d'isolation relevé dans le rapport, paroi par paroi. */
+      isolation: Isolation;
     }
   | {
       genre: 'plomb';

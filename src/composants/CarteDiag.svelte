@@ -95,7 +95,10 @@
         </section>
       {/if}
 
-      <Explicatif type={diagnostic.type} />
+      <Explicatif
+        type={diagnostic.type}
+        isolation={diagnostic.schema?.genre === 'dpe' ? diagnostic.schema.isolation : null}
+      />
 
       {#each diagnostic.explication as paragraphe}
         <p>{paragraphe}</p>

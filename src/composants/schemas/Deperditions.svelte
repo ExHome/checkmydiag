@@ -8,11 +8,18 @@
    * Les pourcentages sont des ordres de grandeur moyens (source ADEME) : le DPE
    * ne publie pas ceux du logement sous une forme lisible par un programme.
    */
+  import type { EtatIsolation, Isolation } from '../../lib/modele';
+
+  /** Isolation relevée dans le rapport ; absente, le schéma reste générique. */
+  const { isolation = null }: { isolation?: Isolation | null } = $props();
+
   interface Fuite {
     id: string;
     nom: string;
     part: string;
     texte: string;
+    /** Paroi correspondante dans le descriptif du rapport. */
+    paroi?: keyof Isolation;
     /** Départ et arrivée du souffle de chaleur. */
     de: [number, number];
     vers: [number, number];
@@ -32,7 +39,8 @@
       de: [270, 104],
       vers: [270, 44],
       pastille: [270, 26],
-      zone: { x: 168, y: 52, w: 204, h: 56 }
+      zone: { x: 168, y: 52, w: 204, h: 56 },
+      paroi: 'toit'
     },
     {
       id: 'air',
@@ -54,7 +62,8 @@
       de: [180, 232],
       vers: [110, 232],
       pastille: [78, 232],
-      zone: { x: 176, y: 200, w: 26, h: 78 }
+      zone: { x: 176, y: 200, w: 26, h: 78 },
+      paroi: 'murs'
     },
     {
       id: 'fenetres',
@@ -65,7 +74,8 @@
       de: [360, 192],
       vers: [430, 192],
       pastille: [462, 192],
-      zone: { x: 292, y: 172, w: 48, h: 48, r: 4 }
+      zone: { x: 292, y: 172, w: 48, h: 48, r: 4 },
+      paroi: 'fenetres'
     },
     {
       id: 'ponts',
@@ -87,9 +97,22 @@
       de: [270, 292],
       vers: [270, 336],
       pastille: [270, 356],
-      zone: { x: 176, y: 284, w: 188, h: 16 }
+      zone: { x: 176, y: 284, w: 188, h: 16 },
+      paroi: 'plancher'
     }
   ];
+
+  /** Ce que le rapport dit de cette paroi — ou rien, s'il n'en dit rien. */
+  function etatDe(fuite: Fuite): 'isole' | 'nonIsole' | null {
+    if (!isolation || !fuite.paroi) return null;
+    const etat: EtatIsolation = isolation[fuite.paroi];
+    return etat === 'inconnu' ? null : etat;
+  }
+
+  const MENTION: Record<'isole' | 'nonIsole', string> = {
+    isole: 'isolé',
+    nonIsole: 'non isolé'
+  };
 
   let choisi = $state<string | null>(null);
   const detail = $derived(FUITES.find((f) => f.id === choisi) ?? null);
@@ -148,6 +171,7 @@
     <!-- Souffles de chaleur -->
     {#each FUITES as fuite (fuite.id)}
       {@const actif = choisi === fuite.id}
+      {@const etat = etatDe(fuite)}
       <g
         class="cible"
         class:actif
@@ -181,9 +205,20 @@
         <circle cx={fuite.vers[0]} cy={fuite.vers[1]} r="5" class="bout" />
 
         <g class="libelle" transform="translate({fuite.pastille[0]} {fuite.pastille[1]})">
-          <rect x="-52" y="-15" width="104" height="30" rx="15" class="fond-pastille" />
+          <rect
+            x="-56"
+            y="-15"
+            width="112"
+            height="30"
+            rx="15"
+            class="fond-pastille"
+            class:isole={etat === 'isole'}
+            class:non-isole={etat === 'nonIsole'}
+          />
           <text x="0" y="-1" class="nom">{fuite.nom}</text>
-          <text x="0" y="10" class="part">{fuite.part}</text>
+          <text x="0" y="10" class="part" class:etat-lu={etat !== null}>
+            {etat ? MENTION[etat] : fuite.part}
+          </text>
         </g>
       </g>
     {/each}
@@ -268,6 +303,22 @@
   .cible.actif .fond-pastille {
     fill: #fff3ec;
     stroke: #f0762b;
+  }
+
+  /* Quand le rapport dit ce qui est isolé, la pastille le montre. */
+  .fond-pastille.isole {
+    fill: var(--ok-fond);
+    stroke: var(--ok);
+  }
+
+  .fond-pastille.non-isole {
+    fill: var(--alerte-fond);
+    stroke: var(--alerte);
+  }
+
+  .part.etat-lu {
+    font-weight: 700;
+    fill: var(--encre);
   }
 
   .nom {

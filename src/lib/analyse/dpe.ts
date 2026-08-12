@@ -6,7 +6,7 @@
  * surface de référence et les émissions de CO₂ sont du texte : on refait le
  * calcul réglementaire, ce qui donne la même lettre — et on le dit au lecteur.
  */
-import type { Diagnostic, Etiquette, Fait, Lettre } from '../modele';
+import type { Diagnostic, EtatIsolation, Etiquette, Fait, Isolation, Lettre } from '../modele';
 import { contient, nombre, trouver } from './texte';
 
 const LETTRES: Lettre[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
@@ -160,6 +160,41 @@ function postes(lignes: string[]): { nom: string; kwh: number; cout?: string }[]
     }
   }
   return res;
+}
+
+/**
+ * Ce que le rapport dit de l'isolation, paroi par paroi.
+ *
+ * Le descriptif détaillé du DPE décrit chaque paroi en toutes lettres : « Mur 2
+ * Est d'épaisseur 25 cm avec un doublage rapporté non isolé ». C'est la seule
+ * partie du DPE qui dise, en texte, ce qui est isolé et ce qui ne l'est pas.
+ *
+ * On ne conclut que sur ce qui est affirmé : une paroi jamais décrite reste
+ * « inconnue », et le schéma la laisse en gris.
+ */
+function lireIsolation(lignes: string[]): Isolation {
+  function etat(motifParoi: RegExp): EtatIsolation {
+    let vuIsole = false;
+    for (const ligne of lignes) {
+      if (!motifParoi.test(ligne)) continue;
+      if (/non isol[ée]|sans isolation|isolation\s*:?\s*non\b/i.test(ligne)) return 'nonIsole';
+      if (/\bisol[ée]e?s?\b|isolation\s*:?\s*oui\b/i.test(ligne)) vuIsole = true;
+    }
+    return vuIsole ? 'isole' : 'inconnu';
+  }
+
+  const fenetres: EtatIsolation = lignes.some((l) => /simple vitrage/i.test(l))
+    ? 'nonIsole'
+    : lignes.some((l) => /double vitrage|triple vitrage/i.test(l))
+      ? 'isole'
+      : 'inconnu';
+
+  return {
+    murs: etat(/^\s*Mur\s*\d|murs? (?:donnant|d'épaisseur|ext)/i),
+    toit: etat(/plafond|toiture|combles|rampant/i),
+    plancher: etat(/plancher (?:bas|haut)?|dalle b[ée]ton/i),
+    fenetres
+  };
 }
 
 function phraseVerdict(finale: Lettre | null): { verdict: string; gravite: Diagnostic['gravite'] } {
@@ -328,7 +363,14 @@ export function analyserDpe(lignes: string[], plage: [number, number]): Diagnost
         ? 'Un logement, c’est une bouteille thermos. Une bonne thermos garde le café chaud toute la journée. Celle-ci, c’est plutôt une casserole sans couvercle : vous chauffez, et ça part au plafond. Le chauffage, lui, tourne pour rattraper.'
         : 'Un logement, c’est une bouteille thermos. Plus elle est étanche, moins vous avez besoin de rallumer le chauffage. La lettre du DPE, c’est la note de votre thermos.',
     aFaire: aFaire(finale),
-    schema: { genre: 'dpe', energie, climat, finale, postes: detailPostes },
+    schema: {
+      genre: 'dpe',
+      energie,
+      climat,
+      finale,
+      postes: detailPostes,
+      isolation: lireIsolation(lignes)
+    },
     pages: plage,
     ...(etabli?.[1] ? { date: etabli[1] } : {})
   };
