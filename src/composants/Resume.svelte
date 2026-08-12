@@ -7,6 +7,7 @@
    */
   import type { Analyse, TypeDiag } from '../lib/modele';
   import Picto from './Picto.svelte';
+  import { libelleCourt } from '../lib/libelle';
 
   /** Nom court, pour écrire une phrase qui se lit à voix haute. */
   const NOMS: Record<TypeDiag, string> = {
@@ -116,8 +117,8 @@
       <button type="button" class="tuile {d.gravite}" onclick={() => allerVers?.(d.type)}>
         <span class="picto"><Picto type={d.type} /></span>
         <span class="dit">
-          <strong>{d.titre}</strong>
-          <span class="petit">{d.verdict}</span>
+          <span class="verdict-court">{libelleCourt(d)}</span>
+          <span class="quoi">{d.titre}</span>
         </span>
         <span class="fleche" aria-hidden="true">→</span>
       </button>
@@ -224,9 +225,9 @@
 
   .tuile {
     display: grid;
-    grid-template-columns: 38px 1fr 18px;
-    align-items: start;
-    gap: 12px;
+    grid-template-columns: 54px 1fr 18px;
+    align-items: center;
+    gap: 14px;
     text-align: left;
     font: inherit;
     cursor: pointer;
@@ -258,14 +259,37 @@
     border-left-color: var(--trait);
   }
 
+  /* Le picto est gros : c'est lui qu'on voit avant de lire. */
   .picto {
     display: grid;
     place-items: center;
-    width: 38px;
-    height: 38px;
-    border-radius: 11px;
-    padding: 7px;
+    width: 54px;
+    height: 54px;
+    border-radius: 14px;
+    padding: 10px;
     background: var(--papier-doux);
+  }
+
+  .verdict-court {
+    font-size: 1.2rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+
+  .tuile.bon .verdict-court {
+    color: var(--ok);
+  }
+  .tuile.attention .verdict-court {
+    color: var(--attention);
+  }
+  .tuile.alerte .verdict-court {
+    color: var(--alerte);
+  }
+
+  .quoi {
+    font-size: 0.88rem;
+    color: var(--encre-doux);
   }
 
   .fleche {
@@ -280,9 +304,6 @@
     color: var(--vert-500);
   }
 
-  .dit strong {
-    font-size: 1.02rem;
-  }
 
   .tuile.bon .picto {
     color: var(--ok);
@@ -306,14 +327,6 @@
     min-width: 0;
   }
 
-  .dit .petit {
-    color: var(--encre-doux);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
 
   .actions {
     display: flex;

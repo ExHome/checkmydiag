@@ -241,7 +241,9 @@
         <!-- Le schéma de la notion, à la demande : il ne s'impose pas, mais il
              est toujours à un clic. -->
         {#if diagnostic}
-          <details class="schema">
+          <!-- Le schéma est ouvert d'emblée : c'est lui qui fait comprendre,
+               il n'a rien à faire derrière un repli. -->
+          <details class="schema" open>
             <summary>Le schéma</summary>
             <Explicatif
               type={diagnostic.type}
