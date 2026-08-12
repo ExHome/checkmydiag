@@ -80,20 +80,35 @@ export function tonDeLaLigne(texte: string): Ton {
 }
 
 /**
+ * La valeur que porte la ligne : ce qui suit le deux-points.
+ *
+ * « Type de bien : Appartement » → « Appartement ». C'est ce mot-là qu'il faut
+ * répéter au lecteur : sans lui, l'explication redevient un cours.
+ */
+export function valeurDe(texte: string): string | null {
+  const coupe = texte.split(/\s*:\s*/);
+  if (coupe.length < 2) return null;
+  const valeur = coupe.slice(1).join(' : ').trim();
+  if (!valeur || valeur.length > 90) return null;
+  return valeur;
+}
+
+/**
  * La phrase en italique qui suit chaque explication.
  *
  * Elle ne parle jamais de la règle : elle dit ce que ça change dans ce
- * logement-là. Sans elle, on retombe dans le cours.
+ * logement-là, en reprenant la valeur écrite dans le rapport. Sans elle, on
+ * retombe dans le cours.
  */
-const PRATIQUE: Record<Ton, string> = {
-  bon: 'Chez vous : rien à faire de ce côté-là, et rien à négocier dessus.',
-  moyen: 'Chez vous : ce n’est pas tranché. Le diagnostiqueur n’a pas pu voir, ou il a une réserve.',
-  mauvais: 'Chez vous : c’est un point qui coûte — en travaux, en loyer, ou au moment de vendre.',
-  info: 'Chez vous : c’est la donnée sur laquelle tout le reste du rapport est calculé.'
+const PRATIQUE: Record<Ton, (v: string | null) => string> = {
+  bon: (v) => (v ? `${v} → rien à faire, rien à négocier.` : 'Rien à faire, rien à négocier.'),
+  moyen: (v) => (v ? `${v} → pas tranché, à faire préciser.` : 'Pas tranché, à faire préciser.'),
+  mauvais: (v) => (v ? `${v} → ça coûte : travaux, loyer, ou prix.` : 'Ça coûte : travaux, loyer, ou prix.'),
+  info: (v) => (v ? `${v} → c’est de là que part le calcul.` : 'C’est de là que part le calcul.')
 };
 
-export function pratiqueDe(ton: Ton): string {
-  return PRATIQUE[ton];
+export function pratiqueDe(ton: Ton, valeur: string | null): string {
+  return PRATIQUE[ton](valeur);
 }
 
 interface Cible {
@@ -106,8 +121,11 @@ interface Cible {
   suites?: Suite[];
   /** Forcé quand la ligne seule ne suffit pas à trancher. */
   ton?: Ton;
-  /** « Chez vous, en pratique, c'est ça. » */
-  pratique?: string;
+  /**
+   * « Chez vous, en pratique, c'est ça. » Reçoit la valeur lue sur la ligne,
+   * pour que la phrase parle du logement et pas de la théorie.
+   */
+  pratique?: (valeur: string | null) => string;
 }
 
 /**
@@ -173,20 +191,45 @@ const COMMUNES: Cible[] = [
   {
     motif: /Ann[ée]e de construction/i,
     titre: 'L’année de construction',
-    points: [
-      'Elle décide des diagnostics obligatoires',
-      'Avant 1949 : constat plomb',
-      'Avant 1997 : repérage amiante'
-    ]
+    points: ['C’est elle qui décide des diagnostics obligatoires'],
+    suites: [
+      {
+        question: 'Pourquoi cette date compte ?',
+        ton: 'moyen',
+        points: [
+          'Avant 1949 : peintures au plomb autorisées',
+          'Avant 1997 : amiante autorisée',
+          'Après 1997 : ni l’un ni l’autre'
+        ]
+      }
+    ],
+    pratique: (v) => {
+      const annee = Number(v?.match(/\d{4}/)?.[0]);
+      if (!annee) return 'C’est cette date qui décide des diagnostics obligatoires.';
+      if (annee < 1949) return `${annee} → plomb ET amiante obligatoires.`;
+      if (annee < 1997) return `${annee} → amiante obligatoire, plomb non.`;
+      return `${annee} → ni plomb ni amiante : déjà interdits.`;
+    }
   },
   {
     motif: /^Type de bien/i,
     titre: 'Le type de bien',
-    points: [
-      'Maison ou appartement',
-      'Change les diagnostics exigés',
-      'Un appartement ajoute le mesurage Carrez'
-    ]
+    points: ['Maison ou appartement — ça change la liste des diagnostics'],
+    suites: [
+      {
+        question: 'Ça change quoi, concrètement ?',
+        ton: 'moyen',
+        points: [
+          'Appartement : mesurage Carrez en plus',
+          'Maison : audit énergétique pour vendre en F ou G',
+          'Maison : quatre façades exposées au froid'
+        ]
+      }
+    ],
+    pratique: (v) =>
+      /appart/i.test(v ?? '')
+        ? 'Appartement → mesurage Carrez obligatoire.'
+        : 'Maison → pas de Carrez, mais audit si F ou G.'
   }
 ];
 
@@ -196,33 +239,132 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
       motif: /émet\s*[\d\s.,]+\s*kg\s*de\s*CO/i,
       titre: 'Les émissions de CO₂',
       schema: 'co2',
-      points: [
-        'Le gaz rejeté pour chauffer le logement',
-        'Dépend de l’énergie : gaz et fioul en rejettent beaucoup',
-        'Électricité et bois : beaucoup moins',
-        'Donne la deuxième lettre du DPE'
+      points: ['Le gaz rejeté pour chauffer le logement'],
+      pratique: (v) =>
+        v
+          ? `${v} → deuxième note. On garde la pire des deux.`
+          : 'Deuxième note du DPE. On garde la pire.',
+      suites: [
+        {
+          question: 'Pourquoi deux notes ?',
+          ton: 'moyen',
+          points: [
+            'Une pour ce qu’on consomme',
+            'Une pour ce qu’on rejette',
+            'La lettre affichée est la plus mauvaise des deux'
+          ]
+        },
+        {
+          question: 'Ça dépend de quoi ?',
+          ton: 'bon',
+          points: [
+            'De l’énergie, pas de l’isolation',
+            'Fioul et gaz : beaucoup',
+            'Électricité et bois : très peu'
+          ]
+        },
+        {
+          question: 'Je peux la baisser ?',
+          ton: 'mauvais',
+          points: [
+            'En changeant d’énergie, surtout',
+            'Sortir du fioul fait gagner plusieurs lettres',
+            'Isoler agit sur l’autre note'
+          ]
+        }
       ]
     },
     {
       motif: /entre\s*[\d\s.,]+\s*€\s*et\s*[\d\s.,]+\s*€\s*par an/i,
       titre: 'Le coût annoncé',
       schema: 'cout',
-      points: [
-        'Compte : chauffage, eau chaude, clim, éclairage, ventilation',
-        'Ne compte pas : électroménager, télé, box',
-        'Calculé à 19 °C, occupation moyenne',
-        'Ce n’est pas votre facture'
+      points: ['Ce que le logement coûterait en énergie sur un an'],
+      pratique: (v) =>
+        v ? `${v} → un calcul, pas votre facture.` : 'Un calcul à 19 °C, pas votre facture.',
+      suites: [
+        {
+          question: 'Ce sera ma facture ?',
+          ton: 'mauvais',
+          points: [
+            'Non. C’est un calcul, pas un relevé',
+            'Toutes les pièces à 19 °C',
+            'Une occupation moyenne, pas la vôtre',
+            'Un prix de l’énergie figé une fois par an'
+          ]
+        },
+        {
+          question: 'Qu’est-ce qui est compté ?',
+          ton: 'bon',
+          points: [
+            'Oui : chauffage, eau chaude, refroidissement',
+            'Oui : éclairage, ventilation',
+            'Non : électroménager, télé, box, plaques'
+          ]
+        },
+        {
+          question: 'Pourquoi une fourchette ?',
+          ton: 'moyen',
+          points: [
+            'Le prix de l’énergie bouge',
+            'La borne basse : tarif le plus bas de l’année',
+            'La haute : le plus élevé'
+          ]
+        },
+        {
+          question: 'Comment on l’a calculé ?',
+          ton: 'bon',
+          points: [
+            'On prend la consommation calculée du logement',
+            'On la multiplie par le prix de chaque énergie',
+            'On additionne les cinq postes'
+          ]
+        }
       ]
     },
     {
       motif: /Surface\s+(?:de référence|habitable)/i,
       titre: 'La surface de référence',
       schema: 'surface',
-      points: [
-        'Compte : pièces chauffées, couloirs, placards',
-        'Ne compte pas : garage, cave, balcon',
-        'Sert à calculer la note',
-        'Différente de la surface de l’acte de vente'
+      points: ['La surface chauffée du logement'],
+      pratique: (v) =>
+        v ? `${v} → c’est le diviseur de la note.` : 'C’est le diviseur de la note.',
+      suites: [
+        {
+          question: 'Qu’est-ce qui compte dedans ?',
+          ton: 'bon',
+          points: [
+            'Oui : pièces chauffées, couloirs, placards',
+            'Non : garage, cave, combles perdus',
+            'Non : balcon, terrasse, véranda non chauffée'
+          ]
+        },
+        {
+          question: 'À quoi elle sert ?',
+          ton: 'moyen',
+          points: [
+            'On divise la consommation par elle',
+            'Résultat : des kWh par m²',
+            'C’est ce chiffre-là qui donne la lettre'
+          ]
+        },
+        {
+          question: 'Pourquoi elle diffère du Carrez ?',
+          ton: 'moyen',
+          points: [
+            'Carrez : ce qu’on achète, sous 1,80 m exclu',
+            'Ici : ce qu’on chauffe',
+            'Deux chiffres différents, c’est normal'
+          ]
+        },
+        {
+          question: 'Comment on la calcule ?',
+          ton: 'bon',
+          points: [
+            'On mesure chaque pièce chauffée au sol',
+            'On additionne',
+            'Murs et cloisons déduits'
+          ]
+        }
       ]
     },
     {
@@ -446,6 +588,7 @@ export function reperer(type: TypeDiag, pages: PageTexte[]): Repere[] {
       dejaVus.add(cible.titre);
       lignesPrises.add(ligne.texte);
       const ton = cible.ton ?? tonDeLaLigne(ligne.texte);
+      const valeur = valeurDe(ligne.texte);
       reperes.push({
         page: page.numero,
         x: ligne.x,
@@ -460,7 +603,7 @@ export function reperer(type: TypeDiag, pages: PageTexte[]): Repere[] {
         // Le tiroir « ce que dit le diagnostic » ne contient que des constats.
         // Un numéro de dossier reste un chiffre, même dans un rapport DPE.
         famille: cible.famille === 'mot' ? 'mot' : ton === 'info' ? 'donnee' : 'constat',
-        pratique: cible.pratique ?? pratiqueDe(ton),
+        pratique: cible.pratique ? cible.pratique(valeur) : pratiqueDe(ton, valeur),
         extrait: ligne.texte
       });
     }

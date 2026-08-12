@@ -79,22 +79,9 @@
     id: string;
     mot: string;
     teinte: string;
-    groupe: string;
     repere?: Repere;
     rubrique?: 'schema' | 'fiche' | 'curieux';
   }
-
-  /* L'ordre est celui de la curiosité : le constat, puis les chiffres, puis le
-     vocabulaire, puis le fond. On ne commence jamais par la théorie. */
-  const GROUPES = [
-    { cle: 'constat', titre: 'Ce que dit le diagnostic' },
-    { cle: 'donnee', titre: 'Les chiffres du dossier' },
-    { cle: 'mot', titre: 'Les mots du métier' },
-    { cle: 'fond', titre: 'Aller plus loin' }
-  ];
-
-  /** Le tiroir ouvert dans la carte. Le premier l'est d'office. */
-  let tiroir = $state<string | null>('constat');
 
   const entrees = $derived.by<Entree[]>(() => {
     if (!feuillet) return [];
@@ -102,25 +89,12 @@
       id: `r${i}`,
       mot: r.titre,
       teinte: TEINTES[r.ton ?? 'info'],
-      groupe: r.famille ?? 'donnee',
       repere: r
     }));
     liste.push(
-      { id: 'schema', mot: 'Le schéma', teinte: TEINTES.info, groupe: 'fond', rubrique: 'schema' },
-      {
-        id: 'fiche',
-        mot: 'Pourquoi ? Quoi faire ?',
-        teinte: TEINTES.info,
-        groupe: 'fond',
-        rubrique: 'fiche'
-      },
-      {
-        id: 'curieux',
-        mot: 'Le saviez-vous ?',
-        teinte: TEINTES.info,
-        groupe: 'fond',
-        rubrique: 'curieux'
-      }
+      { id: 'schema', mot: 'Le schéma', teinte: TEINTES.info, rubrique: 'schema' },
+      { id: 'fiche', mot: 'Pourquoi ? Quoi faire ?', teinte: TEINTES.info, rubrique: 'fiche' },
+      { id: 'curieux', mot: 'Le saviez-vous ?', teinte: TEINTES.info, rubrique: 'curieux' }
     );
     return liste;
   });
@@ -152,6 +126,27 @@
 
   function epingler(id: string): void {
     epingle = epingle === id ? null : id;
+  }
+
+  /* ---- La lecture guidée -------------------------------------------------
+     Personne ne sait par où commencer dans un rapport de cent pages. Alors on
+     prend le lecteur par la main : passage après passage, dans l'ordre où ils
+     viennent, avec le rapport qui suit tout seul. Il peut sortir quand il veut
+     en cliquant ailleurs. */
+
+  const nbReperes = $derived(feuillet?.reperes.length ?? 0);
+  /** Rang du passage ouvert dans la lecture, ou -1 si on est ailleurs. */
+  const rang = $derived(actifId?.startsWith('r') ? Number(actifId.slice(1)) : -1);
+
+  function allerAu(i: number): void {
+    if (i < 0 || i >= nbReperes) return;
+    epingle = `r${i}`;
+    // Le rapport suit : le passage dont on parle vient se placer sous les yeux.
+    requestAnimationFrame(() => {
+      document
+        .getElementById(`repere-r${i}`)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
   }
 
   function cadre(r: Repere) {
@@ -205,6 +200,7 @@
               {#if c}
                 <button
                   type="button"
+                  id="repere-r{i}"
                   class="surligne"
                   class:actif={actifId === `r${i}`}
                   class:epingle={epingle === `r${i}`}
@@ -235,6 +231,7 @@
                   {@const r = feuillet.reperes[idx]}
                   <button
                     type="button"
+                    id="repere-r{idx}"
                     class="ligne surlignee"
                     class:actif={actifId === `r${idx}`}
                     style:--teinte={TEINTES[r?.ton ?? 'info']}
@@ -295,7 +292,8 @@
                 </div>
 
                 {#if schemaOuvert && actif.repere.schema}
-                  <div class="detail apparait">
+                  <!-- Un dessin se regarde sur du papier, pas sur du vert. -->
+                  <div class="feuille apparait">
                     <MiniSchema id={actif.repere.schema} />
                   </div>
                 {/if}
@@ -331,73 +329,76 @@
                   </div>
                 {/if}
 
-                <!-- D'ici, on peut toujours aller plus loin. -->
+                <!-- La lecture avance toute seule : passage suivant, dans
+                     l'ordre du rapport, avec le document qui suit. -->
+                <div class="pas-a-pas">
+                  <button
+                    type="button"
+                    class="fleche"
+                    disabled={rang <= 0}
+                    onclick={() => allerAu(rang - 1)}
+                    aria-label="Passage précédent"
+                  >
+                    ←
+                  </button>
+                  <span class="compteur">{rang + 1} / {nbReperes}</span>
+                  <button
+                    type="button"
+                    class="suivant"
+                    disabled={rang < 0 || rang >= nbReperes - 1}
+                    onclick={() => allerAu(rang + 1)}
+                  >
+                    Suivant →
+                  </button>
+                </div>
+
                 <div class="passerelles">
                   <button type="button" onclick={() => epingler('schema')}>Le schéma</button>
                   <button type="button" onclick={() => epingler('fiche')}>Quoi faire ?</button>
                 </div>
               {:else if actif.rubrique === 'schema' && diagnostic}
-                <Explicatif
-                  type={diagnostic.type}
-                  isolation={diagnostic.schema?.genre === 'dpe'
-                    ? diagnostic.schema.isolation
-                    : null}
-                />
+                <div class="feuille">
+                  <Explicatif
+                    type={diagnostic.type}
+                    isolation={diagnostic.schema?.genre === 'dpe'
+                      ? diagnostic.schema.isolation
+                      : null}
+                  />
+                </div>
               {:else if actif.rubrique === 'fiche' && diagnostic}
-                <Fiche type={diagnostic.type} />
+                <div class="feuille">
+                  <Fiche type={diagnostic.type} />
+                </div>
               {:else if actif.rubrique === 'curieux' && diagnostic}
-                <Curieux type={diagnostic.type} />
+                <div class="feuille">
+                  <Curieux type={diagnostic.type} />
+                </div>
               {/if}
             </div>
           {/key}
         {:else}
-          <!-- Rien n'est touché : on ne dit rien, on montre juste où aller. -->
+          <!-- Au repos : le verdict, et où cliquer. Rien d'autre. Le sommaire
+               des passages, c'est le rapport lui-même, avec ses numéros. -->
           {#if diagnostic}
             <Voyant {diagnostic} />
           {/if}
 
           <RubanDpe epaisseur={7} />
 
-          <p class="invite">Promenez-vous sur le rapport. Ça s’explique tout seul.</p>
+          {#if nbReperes}
+            <button type="button" class="commencer" onclick={() => allerAu(0)}>
+              Lire le rapport avec moi
+              <em>{nbReperes} passages, dans l’ordre</em>
+            </button>
+          {/if}
 
-          <!-- Trois tiroirs fermés plutôt que vingt lignes ouvertes : on voit
-               tout de suite ce qu'il y a, on ouvre ce qu'on veut. -->
-          {#each GROUPES as groupe (groupe.cle)}
-            {@const dedans = entrees.filter((e) => e.groupe === groupe.cle)}
-            {#if dedans.length}
-              <div class="tiroir">
-                <button
-                  type="button"
-                  class="tete"
-                  class:ouvert={tiroir === groupe.cle}
-                  onclick={() => (tiroir = tiroir === groupe.cle ? null : groupe.cle)}
-                >
-                  <span class="titre-tiroir">{groupe.titre}</span>
-                  <span class="combien">{dedans.length}</span>
-                  <span class="chevron" aria-hidden="true"></span>
-                </button>
+          <p class="invite">Ou cliquez directement sur un numéro dans le rapport.</p>
 
-                {#if tiroir === groupe.cle}
-                  <ul class="mots apparait">
-                    {#each dedans as e (e.id)}
-                      <li>
-                        <button
-                          type="button"
-                          class="mot"
-                          style:--teinte={e.teinte}
-                          onclick={() => epingler(e.id)}
-                        >
-                          <span class="pastille"></span>
-                          <span class="intitule">{e.mot}</span>
-                          <span class="chevron" aria-hidden="true"></span>
-                        </button>
-                      </li>
-                    {/each}
-                  </ul>
-                {/if}
-              </div>
-            {/if}
-          {/each}
+          <div class="portes">
+            <button type="button" onclick={() => epingler('schema')}>Le schéma</button>
+            <button type="button" onclick={() => epingler('fiche')}>Pourquoi ? Quoi faire ?</button>
+            <button type="button" onclick={() => epingler('curieux')}>Le saviez-vous ?</button>
+          </div>
         {/if}
       </aside>
     </div>
@@ -653,114 +654,114 @@
     font-style: italic;
   }
 
-  /* Les tiroirs : trois lignes fermées, tout est dedans. */
-  .tiroir {
-    margin-bottom: 8px;
+  /* Le bouton qui prend le lecteur par la main. C'est l'action principale de
+     l'écran : elle a le droit d'être grosse et dorée. */
+  .commencer {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: linear-gradient(135deg, #e6c894, #d2a358 62%, #b8873f);
+    border: none;
+    border-radius: 14px;
+    padding: 15px 20px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    color: #17301f;
+    font-size: 1.06rem;
+    font-weight: 750;
+    letter-spacing: -0.01em;
+    box-shadow: var(--ombre);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
   }
 
-  .tete {
-    display: grid;
-    grid-template-columns: 1fr auto 14px;
+  .commencer:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--ombre-forte);
+    filter: brightness(1.04);
+  }
+
+  .commencer em {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    font-style: normal;
+    opacity: 0.72;
+    margin-top: 2px;
+  }
+
+  /* La progression : où j'en suis, et la suite. */
+  .pas-a-pas {
+    display: flex;
     align-items: center;
     gap: 12px;
-    width: 100%;
-    background: none;
-    border: none;
-    border-bottom: 1px solid rgb(230 200 148 / 26%);
-    padding: 13px 2px;
-    cursor: pointer;
-    text-align: left;
-    transition: border-color 0.2s ease;
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid rgb(230 200 148 / 24%);
   }
 
-  .tete:hover {
-    border-bottom-color: var(--or);
-  }
-
-  .titre-tiroir {
-    font-family: var(--police-titre);
-    font-weight: 700;
-    font-size: 1.04rem;
-    color: var(--or-clair);
-    font-style: italic;
-  }
-
-  .combien {
-    display: grid;
-    place-items: center;
-    min-width: 22px;
-    height: 22px;
-    padding: 0 6px;
-    border-radius: 999px;
-    background: rgb(255 255 255 / 10%);
-    color: var(--sur-fond-doux);
-    font-size: 0.75rem;
-    font-weight: 800;
-  }
-
-  .tete.ouvert .chevron {
-    transform: rotate(45deg);
-  }
-
-  /* Les mots-clés : la carte du territoire. On voit où aller. */
-  .mots {
-    list-style: none;
-    margin: 8px 0 12px;
-    padding: 0;
-    display: grid;
-    gap: 7px;
-  }
-
-  .mot {
-    display: grid;
-    grid-template-columns: 10px 1fr 14px;
-    align-items: center;
-    gap: 13px;
-    width: 100%;
-    text-align: left;
-    background: rgb(255 255 255 / 6%);
-    border: 1px solid rgb(255 255 255 / 9%);
-    border-left: 3px solid var(--teinte);
-    border-radius: 12px;
-    padding: 12px 15px;
-    cursor: pointer;
-    font-weight: 650;
-    font-size: 0.95rem;
-    color: var(--sur-fond);
-    transition: background 0.18s ease, border-color 0.18s ease, transform 0.15s ease;
-  }
-
-  .mot:hover {
-    background: rgb(255 255 255 / 12%);
-    border-color: rgb(230 200 148 / 40%);
-    border-left-color: var(--teinte);
-    transform: translateX(3px);
-  }
-
-  .pastille {
-    width: 10px;
-    height: 10px;
+  .pas-a-pas .fleche {
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
-    background: var(--teinte);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--teinte) 26%, transparent);
+    border: 1px solid rgb(230 200 148 / 40%);
+    background: none;
+    color: var(--or-clair);
+    font-size: 1rem;
+    cursor: pointer;
   }
 
-  .mot.rubrique .pastille {
-    background: radial-gradient(circle at 32% 26%, #e9d2a5, #c09048 60%, #a3762f);
+  .pas-a-pas .compteur {
+    font-size: 0.84rem;
+    color: var(--sur-fond-doux);
+    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
   }
 
-  .intitule {
-    min-width: 0;
-    line-height: 1.25;
+  .pas-a-pas .suivant {
+    margin-left: auto;
+    background: var(--or);
+    border: none;
+    border-radius: 999px;
+    padding: 10px 20px;
+    color: #17301f;
+    font-weight: 750;
+    font-size: 0.92rem;
+    cursor: pointer;
+    transition: filter 0.18s ease;
   }
 
-  .chevron {
-    width: 7px;
-    height: 7px;
-    border-right: 2px solid rgb(230 200 148 / 70%);
-    border-bottom: 2px solid rgb(230 200 148 / 70%);
-    transform: rotate(-45deg);
-    justify-self: end;
+  .pas-a-pas .suivant:hover:not(:disabled) {
+    filter: brightness(1.06);
+  }
+
+  .pas-a-pas button:disabled {
+    opacity: 0.32;
+    cursor: default;
+  }
+
+  /* Trois portes, en petit, sous l'invite. Elles ne se comptent pas et ne se
+     rangent pas : elles sont là si on veut. */
+  .portes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .portes button {
+    background: none;
+    border: 1px solid rgb(230 200 148 / 35%);
+    color: var(--or-clair);
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-size: 0.86rem;
+    font-weight: 650;
+    cursor: pointer;
+    transition: background 0.18s ease, border-color 0.18s ease;
+  }
+
+  .portes button:hover {
+    background: rgb(255 255 255 / 10%);
+    border-color: var(--or);
   }
 
   /* L'encart : une seule chose à la fois. */
@@ -851,6 +852,17 @@
 
   .detail {
     margin-bottom: 14px;
+  }
+
+  /* La feuille : tout ce qui est dessiné se pose sur du papier crème, avec son
+     encre sombre. Sur le vert, un schéma disparaît. */
+  .feuille {
+    background: var(--papier);
+    border-radius: var(--rayon-petit);
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    color: var(--encre);
+    box-shadow: var(--ombre);
   }
 
   /* Des puces, pas des paragraphes : trois ou quatre mots par ligne. */
