@@ -225,9 +225,9 @@
 
   .tuile {
     display: grid;
-    grid-template-columns: 54px 1fr 18px;
+    grid-template-columns: 74px 1fr 18px;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
     text-align: left;
     font: inherit;
     cursor: pointer;
@@ -263,10 +263,10 @@
   .picto {
     display: grid;
     place-items: center;
-    width: 54px;
-    height: 54px;
-    border-radius: 14px;
-    padding: 10px;
+    width: 74px;
+    height: 74px;
+    border-radius: 18px;
+    padding: 12px;
     background: var(--papier-doux);
   }
 

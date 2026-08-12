@@ -35,16 +35,16 @@
   .picto {
     display: grid;
     place-items: center;
-    width: 62px;
-    height: 62px;
+    width: 82px;
+    height: 82px;
     flex: none;
-    border-radius: 18px;
-    background: rgb(255 255 255 / 5%);
+    border-radius: 22px;
+    background: var(--papier);
     border: 1px solid var(--trait);
   }
 
   .picto {
-    padding: 14px;
+    padding: 17px;
   }
 
   .bon .picto {
