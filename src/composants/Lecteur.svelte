@@ -8,6 +8,7 @@
    */
   import type { Analyse, Diagnostic } from '../lib/modele';
   import type { PageRendue } from '../lib/pdf';
+  import Explicatif from './schemas/Explicatif.svelte';
 
   interface Props {
     analyse: Analyse;
@@ -175,6 +176,18 @@
               ? 's'
               : ''} sur cette page — touchez-les.
           </p>
+        {/if}
+
+        <!-- Le schéma de la notion, à la demande : il ne s'impose pas, mais il
+             est toujours à un clic. -->
+        {#if diagnostic}
+          <details class="schema">
+            <summary>Voir le schéma</summary>
+            <Explicatif
+              type={diagnostic.type}
+              isolation={diagnostic.schema?.genre === 'dpe' ? diagnostic.schema.isolation : null}
+            />
+          </details>
         {/if}
       </aside>
     </div>
@@ -405,6 +418,45 @@
     font-weight: 600;
     cursor: pointer;
     font-size: 0.92rem;
+  }
+
+  .schema {
+    margin-top: 16px;
+    border-top: 1px solid var(--trait);
+    padding-top: 14px;
+  }
+
+  .schema summary {
+    cursor: pointer;
+    list-style: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: var(--vert-300);
+    background: rgb(46 233 139 / 10%);
+    border: 1px solid var(--trait);
+    border-radius: 999px;
+    padding: 8px 16px;
+  }
+
+  .schema summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .schema summary::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(-45deg);
+    transition: transform 0.2s ease;
+  }
+
+  .schema[open] summary::before {
+    transform: rotate(45deg);
   }
 
   @media (max-width: 820px) {
