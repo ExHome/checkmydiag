@@ -119,6 +119,8 @@
   /** Le détail et le schéma, sous la synthèse. Le lecteur décide s'il y va. */
   let detailOuvert = $state(false);
   let suiteOuverte = $state<string | null>(null);
+  /** Le schéma déplié sur tout l'écran. */
+  let plein = $state(false);
 
   // Changer de sujet remet tout au premier niveau : on ne garde pas l'état
   // d'exploration du passage précédent.
@@ -126,6 +128,7 @@
     void actifId;
     detailOuvert = false;
     suiteOuverte = null;
+    plein = false;
   });
 
   // Ouvrir un passage referme la rubrique de fond : une chose à la fois.
@@ -260,15 +263,22 @@
 
                      Un repère qui a son propre croquis le montre ; un constat
                      de diagnostic montre le schéma de sa famille. -->
-                {#if actif.repere.schema}
-                  <div class="feuille">
+                <!-- Tout tient sur la feuille du schéma : le dessin, le risque,
+                     et les questions posées comme sa légende. Le lecteur n'a
+                     qu'un objet devant lui, pas un dessin suivi d'une liste. -->
+                <div class="feuille">
+                  <button
+                    type="button"
+                    class="agrandir"
+                    onclick={() => (plein = true)}
+                    aria-label="Voir le schéma en pleine page"
+                  >
+                    ⤢
+                  </button>
+
+                  {#if actif.repere.schema}
                     <MiniSchema id={actif.repere.schema} />
-                    {#if diagnostic}
-                      <p class="risque">{FICHES[diagnostic.type].risque}</p>
-                    {/if}
-                  </div>
-                {:else if actif.repere.famille === 'constat' && diagnostic}
-                  <div class="feuille">
+                  {:else if diagnostic}
                     <Explicatif
                       type={diagnostic.type}
                       isolation={diagnostic.schema?.genre === 'dpe'
@@ -276,56 +286,59 @@
                         : null}
                       lettre={diagnostic.schema?.genre === 'dpe' ? diagnostic.schema.finale : null}
                     />
+                  {/if}
+
+                  {#if diagnostic}
                     <p class="risque">{FICHES[diagnostic.type].risque}</p>
-                  </div>
-                {/if}
+                  {/if}
 
-                <!-- La phrase qui ramène au logement. Elle ne saute jamais. -->
-                <p class="pratique">{actif.repere.pratique}</p>
+                  {#if actif.repere.suites?.length}
+                    <div class="legende">
+                      {#each actif.repere.suites as suite (suite.question)}
+                        <button
+                          type="button"
+                          class="etiquette {suite.ton ?? 'moyen'}"
+                          class:ouverte={suiteOuverte === suite.question}
+                          onclick={() =>
+                            (suiteOuverte =
+                              suiteOuverte === suite.question ? null : suite.question)}
+                        >
+                          {suite.question}
+                        </button>
+                      {/each}
+                    </div>
 
-                {#if actif.repere.points.length > 1}
-                  <div class="ouvertures">
+                    {#each actif.repere.suites.filter((s) => s.question === suiteOuverte) as suite (suite.question)}
+                      <ul class="points reponse apparait {suite.ton ?? 'moyen'}">
+                        {#each suite.points as point}
+                          <li>{point}</li>
+                        {/each}
+                      </ul>
+                    {/each}
+                  {/if}
+
+                  {#if actif.repere.points.length > 1}
                     <button
                       type="button"
                       class="creuser"
                       class:ouvert={detailOuvert}
                       onclick={() => (detailOuvert = !detailOuvert)}
                     >
-                      {detailOuvert ? 'Fermer le détail' : 'Le détail'}
+                      {detailOuvert ? 'Fermer' : 'Tout le détail'}
                     </button>
-                  </div>
-                {/if}
 
-                {#if detailOuvert && actif.repere.points.length > 1}
-                  <ul class="points detail apparait">
-                    {#each actif.repere.points.slice(1) as point}
-                      <li>{point}</li>
-                    {/each}
-                  </ul>
-                {/if}
+                    {#if detailOuvert}
+                      <ul class="points detail apparait">
+                        {#each actif.repere.points.slice(1) as point}
+                          <li>{point}</li>
+                        {/each}
+                      </ul>
+                    {/if}
+                  {/if}
+                </div>
 
-                {#if actif.repere.suites?.length}
-                  <div class="suites">
-                    {#each actif.repere.suites as suite (suite.question)}
-                      <button
-                        type="button"
-                        class="suite {suite.ton ?? 'moyen'}"
-                        class:ouverte={suiteOuverte === suite.question}
-                        onclick={() =>
-                          (suiteOuverte = suiteOuverte === suite.question ? null : suite.question)}
-                      >
-                        {suite.question}
-                      </button>
-                      {#if suiteOuverte === suite.question}
-                        <ul class="points reponse-suite apparait {suite.ton ?? 'moyen'}">
-                          {#each suite.points as point}
-                            <li>{point}</li>
-                          {/each}
-                        </ul>
-                      {/if}
-                    {/each}
-                  </div>
-                {/if}
+                <!-- La phrase qui ramène au logement. Elle ne saute jamais. -->
+                <p class="pratique">{actif.repere.pratique}</p>
 
                 <!-- La lecture avance toute seule : passage suivant, dans
                      l'ordre du rapport, avec le document qui suit. -->
@@ -418,7 +431,69 @@
       </button>
     {/if}
   </section>
+
+  <!-- Le schéma en pleine page. Dans le bandeau de droite, un dessin reste une
+       vignette ; ici il occupe l'écran, et ses zones restent cliquables. -->
+  {#if plein && actif?.repere}
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div class="pleine-page" onclick={() => (plein = false)}>
+      <!-- svelte-ignore a11y_click_events_have_key_events -->
+      <!-- svelte-ignore a11y_no_static_element_interactions -->
+      <div class="grand-format apparait" onclick={(e) => e.stopPropagation()}>
+        <button type="button" class="fermer-plein" onclick={() => (plein = false)}>
+          Fermer ✕
+        </button>
+
+        <h2>{actif.mot}</h2>
+
+        {#if actif.repere.schema}
+          <MiniSchema id={actif.repere.schema} />
+        {:else if diagnostic}
+          <Explicatif
+            type={diagnostic.type}
+            isolation={diagnostic.schema?.genre === 'dpe' ? diagnostic.schema.isolation : null}
+            lettre={diagnostic.schema?.genre === 'dpe' ? diagnostic.schema.finale : null}
+          />
+        {/if}
+
+        {#if diagnostic}
+          <p class="risque">{FICHES[diagnostic.type].risque}</p>
+        {/if}
+
+        {#if actif.repere.suites?.length}
+          <div class="legende">
+            {#each actif.repere.suites as suite (suite.question)}
+              <button
+                type="button"
+                class="etiquette {suite.ton ?? 'moyen'}"
+                class:ouverte={suiteOuverte === suite.question}
+                onclick={() =>
+                  (suiteOuverte = suiteOuverte === suite.question ? null : suite.question)}
+              >
+                {suite.question}
+              </button>
+            {/each}
+          </div>
+
+          {#each actif.repere.suites.filter((s) => s.question === suiteOuverte) as suite (suite.question)}
+            <ul class="points reponse apparait {suite.ton ?? 'moyen'}">
+              {#each suite.points as point}
+                <li>{point}</li>
+              {/each}
+            </ul>
+          {/each}
+        {/if}
+      </div>
+    </div>
+  {/if}
 {/if}
+
+<svelte:window
+  onkeydown={(e) => {
+    if (e.key === 'Escape') plein = false;
+  }}
+/>
 
 <style>
   /* Pas de caisson autour du lecteur : le rapport se pose directement sur le
@@ -788,6 +863,7 @@
      Elle déborde des marges de l'encart : le dessin est la pièce principale,
      pas une illustration glissée dans un paragraphe. */
   .feuille {
+    position: relative;
     background: var(--papier);
     border-radius: var(--rayon-petit);
     padding: 18px 16px;
@@ -799,6 +875,148 @@
   .feuille :global(svg) {
     width: 100%;
     height: auto;
+  }
+
+  /* Le schéma en pleine page : le fond du site s'assombrit, la feuille prend
+     l'écran. On en sort au clic, à la croix, ou avec Échap. */
+  .pleine-page {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background: rgb(0 20 14 / 72%);
+    backdrop-filter: blur(4px);
+    display: grid;
+    place-items: center;
+    padding: clamp(12px, 3vw, 40px);
+    overflow-y: auto;
+  }
+
+  .grand-format {
+    position: relative;
+    width: min(100%, 940px);
+    background: var(--papier);
+    border-radius: var(--rayon);
+    padding: clamp(22px, 4vw, 44px);
+    color: var(--encre);
+    box-shadow: var(--ombre-forte);
+  }
+
+  .grand-format h2 {
+    color: var(--vert-700);
+    margin-bottom: 22px;
+  }
+
+  .grand-format :global(svg) {
+    width: 100%;
+    height: auto;
+  }
+
+  .fermer-plein {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: 1px solid var(--trait);
+    border-radius: 0;
+    padding: 9px 15px;
+    font-size: 0.76rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--encre-doux);
+    cursor: pointer;
+  }
+
+  .fermer-plein:hover {
+    background: var(--vert-700);
+    border-color: var(--vert-700);
+    color: var(--papier);
+  }
+
+  /* Le petit bouton d'agrandissement, dans le coin de la vignette. */
+  .agrandir {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 30px;
+    height: 30px;
+    background: none;
+    border: 1px solid var(--trait);
+    border-radius: 0;
+    color: var(--encre-doux);
+    cursor: pointer;
+    font-size: 0.86rem;
+    line-height: 1;
+  }
+
+  .agrandir:hover {
+    background: var(--vert-700);
+    border-color: var(--vert-700);
+    color: var(--papier);
+  }
+
+  /* Les questions, posées en légende du dessin : elles font partie du schéma,
+     ce n'est pas une liste à côté. */
+  .legende {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--trait-fin);
+  }
+
+  .etiquette {
+    background: none;
+    border: 1px solid var(--trait);
+    border-left: 3px solid var(--teinte-legende, var(--gris));
+    border-radius: 0;
+    padding: 9px 14px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--encre);
+    cursor: pointer;
+    transition: background 0.18s ease, border-color 0.18s ease;
+  }
+
+  .etiquette.bon {
+    --teinte-legende: #4c9c72;
+  }
+  .etiquette.moyen {
+    --teinte-legende: #c98a2e;
+  }
+  .etiquette.mauvais {
+    --teinte-legende: #c0503c;
+  }
+
+  .etiquette:hover,
+  .etiquette.ouverte {
+    background: var(--papier-doux);
+    border-color: var(--teinte-legende);
+  }
+
+  .reponse {
+    margin-top: 12px;
+    padding-left: 15px;
+    border-left: 2px solid var(--teinte-legende, var(--trait));
+  }
+
+  .reponse.bon {
+    --teinte-legende: #4c9c72;
+  }
+  .reponse.moyen {
+    --teinte-legende: #c98a2e;
+  }
+  .reponse.mauvais {
+    --teinte-legende: #c0503c;
+  }
+
+  .reponse li {
+    color: var(--encre);
+  }
+
+  .reponse li::before {
+    background: var(--teinte-legende, var(--gris));
   }
 
   /* Le risque, posé sur la même feuille que le dessin : un schéma qui ne dit
