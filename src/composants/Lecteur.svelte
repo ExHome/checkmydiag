@@ -19,6 +19,7 @@
   import Fiche from './Fiche.svelte';
   import Curieux from './Curieux.svelte';
   import Essentiel from './Essentiel.svelte';
+  import Notaire from './Notaire.svelte';
   import { FICHES } from '../lib/analyse/fiches';
 
   interface Props {
@@ -174,8 +175,12 @@
 
 {#if reperes.length}
   <section class="lecteur">
-    <!-- Ce que l'analyse a trouvé, classé par ce que ça change. Chaque ligne
-         renvoie à la page du rapport où c'est écrit. -->
+    <!-- Le point qu'on ferait à l'étude : de quel bien il s'agit, ce que le
+         dossier établit, où il se situe, et ce qu'il faut faire. -->
+    <Notaire {analyse} />
+
+    <!-- Puis le détail, classé par ce que ça change. Chaque ligne renvoie à la
+         page du rapport où c'est écrit. -->
     <Essentiel {analyse} allerA={allerAuDiagnostic} />
 
     <div class="deux-colonnes" class:seul={!actif}>
