@@ -1,30 +1,37 @@
 /* ---------------------------------------------------------------------------
-   Mon diag expliqué — design system
-   Sobre, lisible, mobile-first. Le lecteur type est un particulier stressé qui
-   vient de recevoir 60 pages de PDF technique.
+   Check My Diag — design system
+
+   Le lecteur arrive inquiet, avec un PDF illisible. La page doit lui donner
+   envie de lire : de l'air, des couleurs franches, une réponse énorme en haut
+   de chaque carte. Surtout pas une mise en page de manuel scolaire.
    --------------------------------------------------------------------------- */
 
 :root {
   color-scheme: light dark;
 
-  --vert-900: #0b3d26;
-  --vert-700: #0f5132;
-  --vert-500: #1a7a4c;
-  --vert-100: #e6f2ec;
-  --or: #b8860b;
+  /* Vert de marque, plus vif et plus profond que le vert administratif. */
+  --vert-900: #06301f;
+  --vert-700: #0a5c39;
+  --vert-500: #12a05f;
+  --vert-300: #5fd39b;
+  --vert-100: #e3f7ec;
 
-  --encre: #14231c;
-  --encre-doux: #4a5a52;
+  --or: #d99b1c;
+  --corail: #e5484d;
+
+  --encre: #0f1e18;
+  --encre-doux: #55675e;
   --papier: #ffffff;
-  --papier-doux: #f5f8f6;
-  --trait: #dde5e0;
+  --papier-doux: #f4f8f5;
+  --fond: #eef4f0;
+  --trait: #dde8e1;
 
-  --alerte: #b42318;
-  --alerte-fond: #fdeceb;
-  --attention: #b54708;
-  --attention-fond: #fdf3e7;
-  --ok: #1a7a4c;
-  --ok-fond: #e6f2ec;
+  --alerte: #cc2b31;
+  --alerte-fond: #fdecec;
+  --attention: #b26a05;
+  --attention-fond: #fdf4e3;
+  --ok: #0f8a51;
+  --ok-fond: #e3f7ec;
 
   /* Étiquettes réglementaires A→G : couleurs officielles de l'arrêté DPE. */
   --etq-a: #319834;
@@ -35,31 +42,43 @@
   --etq-f: #fc9935;
   --etq-g: #fc0205;
 
-  --rayon: 12px;
-  --ombre: 0 1px 2px rgb(20 35 28 / 6%), 0 8px 24px rgb(20 35 28 / 6%);
+  --rayon: 18px;
+  --rayon-petit: 10px;
+  --ombre: 0 1px 2px rgb(9 40 27 / 5%), 0 12px 32px -12px rgb(9 40 27 / 18%);
+  --ombre-forte: 0 2px 4px rgb(9 40 27 / 6%), 0 24px 48px -20px rgb(9 40 27 / 28%);
 
-  --police: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
-  --police-titre: Lora, Georgia, 'Times New Roman', serif;
+  --police: 'Segoe UI Variable Display', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --police-titre: 'Segoe UI Variable Display', 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --encre: #e8efea;
-    --encre-doux: #a5b5ac;
-    --papier: #101815;
-    --papier-doux: #17211d;
-    --trait: #2a3831;
-    --vert-100: #17352a;
-    --vert-500: #4bb583;
-    --alerte-fond: #35191a;
-    --attention-fond: #33220f;
-    --ok-fond: #15302a;
-    --ombre: 0 1px 2px rgb(0 0 0 / 40%), 0 8px 24px rgb(0 0 0 / 30%);
+    --encre: #eaf2ed;
+    --encre-doux: #9db0a6;
+    --papier: #111a16;
+    --papier-doux: #16211c;
+    --fond: #0b120f;
+    --trait: #26332c;
+    --vert-100: #12352513;
+    --vert-500: #35c47f;
+    --vert-300: #7ee0b0;
+    --alerte: #ff6b6b;
+    --alerte-fond: #2c1618;
+    --attention: #e2a33a;
+    --attention-fond: #2a2010;
+    --ok: #35c47f;
+    --ok-fond: #102c20;
+    --ombre: 0 1px 2px rgb(0 0 0 / 40%), 0 12px 32px -12px rgb(0 0 0 / 60%);
+    --ombre-forte: 0 2px 4px rgb(0 0 0 / 50%), 0 24px 48px -20px rgb(0 0 0 / 70%);
   }
 }
 
 * {
   box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 html,
@@ -69,32 +88,32 @@ body {
 }
 
 body {
-  background: var(--papier-doux);
+  background: var(--fond);
   color: var(--encre);
   font-family: var(--police);
   font-size: 17px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 h1,
 h2,
-h3 {
+h3,
+h4 {
   font-family: var(--police-titre);
-  font-weight: 600;
-  line-height: 1.25;
+  font-weight: 700;
+  line-height: 1.12;
   margin: 0 0 0.4em;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.025em;
 }
 
 h1 {
-  font-size: clamp(1.75rem, 5vw, 2.6rem);
+  font-size: clamp(2rem, 6vw, 3.4rem);
 }
+
 h2 {
-  font-size: clamp(1.3rem, 3.5vw, 1.7rem);
-}
-h3 {
-  font-size: 1.1rem;
+  font-size: clamp(1.4rem, 4vw, 1.95rem);
 }
 
 p {
@@ -110,7 +129,7 @@ button {
 }
 
 .enveloppe {
-  width: min(100%, 980px);
+  width: min(100%, 1040px);
   margin-inline: auto;
   padding-inline: clamp(16px, 4vw, 32px);
 }
@@ -120,45 +139,52 @@ button {
   border: 1px solid var(--trait);
   border-radius: var(--rayon);
   box-shadow: var(--ombre);
-  padding: clamp(16px, 4vw, 28px);
+  padding: clamp(18px, 4vw, 32px);
 }
 
 .bouton {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: var(--vert-700);
+  gap: 10px;
+  background: linear-gradient(135deg, var(--vert-700), var(--vert-500));
   color: #fff;
-  border: 1px solid transparent;
+  border: none;
   border-radius: 999px;
-  padding: 12px 24px;
-  font-weight: 600;
+  padding: 15px 30px;
+  font-weight: 650;
+  font-size: 1.02rem;
   cursor: pointer;
-  transition: background 0.15s ease, transform 0.15s ease;
+  box-shadow: 0 8px 20px -8px rgb(18 160 95 / 60%);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
 }
 
 .bouton:hover {
-  background: var(--vert-500);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px -10px rgb(18 160 95 / 70%);
+  filter: brightness(1.04);
 }
 
 .bouton:active {
-  transform: translateY(1px);
+  transform: translateY(0);
 }
 
 .bouton--fantome {
-  background: transparent;
+  background: var(--papier);
   color: var(--vert-500);
-  border-color: var(--trait);
+  border: 1px solid var(--trait);
+  box-shadow: none;
 }
 
 .bouton--fantome:hover {
   background: var(--vert-100);
   color: var(--vert-700);
+  box-shadow: none;
 }
 
 :focus-visible {
   outline: 3px solid var(--vert-500);
-  outline-offset: 2px;
+  outline-offset: 3px;
+  border-radius: 6px;
 }
 
 .muet {
@@ -169,8 +195,29 @@ button {
   font-size: 0.9rem;
 }
 
+/* Apparition douce des cartes : la page se déroule au lieu de tomber d'un bloc. */
+@keyframes apparait {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.apparait {
+  animation: apparait 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  * {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  .apparait {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }

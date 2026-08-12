@@ -79,6 +79,11 @@ export interface Diagnostic {
   gravite: Gravite;
   /** Chiffres clés extraits du rapport. */
   faits: Fait[];
+  /**
+   * L'image du quotidien qui fait tout comprendre d'un coup. Affichée en tête,
+   * avant les chiffres : c'est elle qui donne envie de lire la suite.
+   */
+  analogie?: string;
   /** Ce que ça veut dire concrètement (2-4 paragraphes). */
   explication: string[];
   /** Ce que ça implique pour le propriétaire / l'acheteur. */
@@ -88,6 +93,20 @@ export interface Diagnostic {
   pages: [number, number];
   /** Date de réalisation, au format JJ/MM/AAAA, si elle a été lue. */
   date?: string;
+  /**
+   * Passages du rapport à montrer du doigt, avec leur explication. Le type
+   * complet vit dans analyse/reperes.ts ; on le garde souple ici pour ne pas
+   * faire dépendre le modèle de l'extraction.
+   */
+  reperes?: {
+    page: number;
+    x: number;
+    y: number;
+    largeur: number;
+    hauteur: number;
+    titre: string;
+    texte: string;
+  }[];
   /**
    * Renseigné quand le verdict vient de la page de synthèse du dossier et non
    * du rapport détaillé : le lecteur a le droit de savoir d'où sort la phrase.

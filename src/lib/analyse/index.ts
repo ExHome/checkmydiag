@@ -10,6 +10,7 @@ import { analyserAmiante, analyserTermites } from './reperages';
 import { analyserElectricite, analyserGaz } from './securite';
 import { analyserAssainissement, analyserCarrez, analyserErp } from './risques';
 import { controler } from './coherence';
+import { reperer } from './reperes';
 import { conclusionDe, graviteDe, lireSynthese, type BlocSynthese } from './synthese';
 import { nombre, trouver } from './texte';
 
@@ -83,7 +84,17 @@ const APOSTROPHES = new RegExp('[\\u2019\\u02bc]', 'g');
 function normaliserPages(pages: PageTexte[]): PageTexte[] {
   return pages.map((p) => ({
     numero: p.numero,
-    lignes: p.lignes.map((l) => l.replace(APOSTROPHES, "'"))
+    lignes: p.lignes.map((l) => l.replace(APOSTROPHES, "'")),
+    // Les coordonnées doivent survivre à la normalisation : sans elles, plus
+    // moyen de montrer du doigt la ligne dans le rapport.
+    ...(p.positions
+      ? {
+          positions: p.positions.map((pos) => ({
+            ...pos,
+            texte: pos.texte.replace(APOSTROPHES, "'")
+          }))
+        }
+      : {})
   }));
 }
 
@@ -100,7 +111,9 @@ export function analyser(brutes: PageTexte[]): Analyse {
     const extracteur = EXTRACTEURS[section.type];
     // La page de synthèse porte souvent la conclusion la plus explicite : on la
     // joint à la section pour que les extracteurs puissent s'en servir.
-    diagnostics.push(extracteur([...section.lignes, ...synthese], section.plage));
+    const diag = extracteur([...section.lignes, ...synthese], section.plage);
+    const reperes = reperer(section.type, section.pages);
+    diagnostics.push(reperes.length ? { ...diag, reperes } : diag);
   }
 
   // Un diagnostic peut figurer au dossier sans que son rapport détaillé ait été

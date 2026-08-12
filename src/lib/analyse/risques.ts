@@ -110,6 +110,8 @@ export function analyserErp(lignes: string[], plage: [number, number]): Diagnost
       : 'Aucun risque majeur recensé pour ce bien dans les documents consultés.',
     gravite: alertes.length ? 'alerte' : concernes.length ? 'attention' : 'bon',
     faits,
+    analogie:
+      'L’argile, c’est une éponge. Quand il pleut, elle gonfle. Quand il fait sec, elle rétrécit. Et votre maison est posée dessus : elle suit le mouvement, et les murs finissent par se fissurer.',
     explication: [
       'Personne n’est venu mesurer quoi que ce soit chez vous. Le diagnostiqueur recopie ce que l’administration sait déjà du terrain : les risques connus de la commune et de la parcelle.',
       'Un risque dans la liste ne veut pas dire qu’il se passe quelque chose. Il veut dire que la zone est classée. Résultat : des règles s’appliquent quand on construit, et l’assurance en tient compte.',
@@ -156,6 +158,8 @@ export function analyserCarrez(lignes: string[], plage: [number, number]): Diagn
         : 'Un mesurage est présent dans le dossier, mais la surface n’a pas pu être lue.',
     gravite: surface !== null ? 'bon' : 'neutre',
     faits,
+    analogie:
+      '1,80 m, c’est la hauteur sous laquelle vous ne tenez pas debout. La loi considère que cette surface-là ne compte pas. Voilà pourquoi votre logement paraît plus petit sur le papier que dans la réalité.',
     explication: [
       'La loi Carrez sert à vendre un logement en copropriété. On mesure le sol des pièces, mais seulement là où le plafond est à plus de 1,80 m. On enlève les murs, les cloisons et les gaines techniques.',
       'Ce chiffre n’est pas le même que la surface écrite dans un bail (la loi Boutin), ni que celle du DPE. Trois chiffres différents pour le même logement, c’est normal : ils ne servent pas à la même chose.',
@@ -209,6 +213,8 @@ export function analyserAssainissement(lignes: string[], plage: [number, number]
     verdict,
     gravite,
     faits,
+    analogie:
+      'Vos eaux usées partent forcément quelque part : soit dans le tout-à-l’égout de la commune, soit dans une installation à vous, enterrée dans le jardin. Ce contrôle dit laquelle des deux, et si elle fait son travail.',
     explication: collectif
       ? [
           'Ce contrôle vérifie où partent les eaux du logement : les eaux usées (cuisine, salle de bains, WC) doivent rejoindre le réseau collectif de la commune, le tout-à-l’égout.',

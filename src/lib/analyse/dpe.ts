@@ -323,6 +323,10 @@ export function analyserDpe(lignes: string[], plage: [number, number]): Diagnost
     gravite,
     faits,
     explication,
+    analogie:
+      finale === 'F' || finale === 'G'
+        ? 'Un logement, c’est une bouteille thermos. Une bonne thermos garde le café chaud toute la journée. Celle-ci, c’est plutôt une casserole sans couvercle : vous chauffez, et ça part au plafond. Le chauffage, lui, tourne pour rattraper.'
+        : 'Un logement, c’est une bouteille thermos. Plus elle est étanche, moins vous avez besoin de rallumer le chauffage. La lettre du DPE, c’est la note de votre thermos.',
     aFaire: aFaire(finale),
     schema: { genre: 'dpe', energie, climat, finale, postes: detailPostes },
     pages: plage,

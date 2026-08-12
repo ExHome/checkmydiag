@@ -109,6 +109,8 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
     verdict,
     gravite,
     faits,
+    analogie:
+      'Le plomb d’une vieille peinture, c’est du sucre glace pris dans un gâteau. Tant que le gâteau est entier, rien ne s’échappe. Dès qu’il s’effrite, la poudre se répand — sur le sol, sur les jouets, sur les mains.',
     explication,
     aFaire,
     schema: chiffres

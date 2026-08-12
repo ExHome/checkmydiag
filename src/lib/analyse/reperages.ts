@@ -68,6 +68,8 @@ export function analyserTermites(lignes: string[], plage: [number, number]): Dia
       : 'Aucun indice d’infestation de termites n’a été relevé dans les parties visitées.',
     gravite: infeste ? 'alerte' : 'bon',
     faits,
+    analogie:
+      'Les termites mangent le bois de l’intérieur et laissent la surface intacte. C’est la pomme véreuse : de l’extérieur, elle est parfaite.',
     explication: [
       'Le diagnostiqueur cherche des traces de termites : des galeries dans le bois, des petits cordons de terre le long des murs, du bois qui sonne creux. Il regarde ce qui est visible et accessible, sans rien démonter.',
       'Il ne peut donc pas garantir qu’il n’y a aucun termite dans le logement. Un mur fermé, une cave inaccessible, une charpente qu’on ne peut pas atteindre : tout cela reste invisible.',
@@ -143,6 +145,8 @@ export function analyserAmiante(lignes: string[], plage: [number, number]): Diag
         : 'Aucun matériau contenant de l’amiante n’a été repéré dans les parties accessibles.',
     gravite: !conclusionLue ? 'neutre' : amianteTrouvee ? 'attention' : 'bon',
     faits,
+    analogie:
+      'L’amiante, ce sont des fibres minuscules emprisonnées dans du ciment, de la colle ou une dalle. Tant que le bloc tient, elles restent prisonnières. C’est la perceuse qui les libère, pas le temps qui passe.',
     explication: [
       'On ne cherche l’amiante que dans les logements construits avant juillet 1997 : après cette date, elle était interdite. Le diagnostiqueur contrôle une liste précise de matériaux — faux plafonds, dalles de sol, conduits, toitures.',
       'Trouver de l’amiante n’est pas une catastrophe. Tant que le matériau est en bon état et qu’on n’y touche pas, il ne libère rien. Le danger vient de la poussière, quand on perce, on ponce ou on casse.',

@@ -2,7 +2,8 @@
   import Depot from './composants/Depot.svelte';
   import CarteDiag from './composants/CarteDiag.svelte';
   import Controles from './composants/Controles.svelte';
-  import { lirePdf } from './lib/pdf';
+  import Resume from './composants/Resume.svelte';
+  import { ouvrirPdf, type PageRendue } from './lib/pdf';
   import { analyser } from './lib/analyse';
   import { pagesExemple } from './lib/exemple';
   import type { Analyse } from './lib/modele';
@@ -13,10 +14,13 @@
   let erreur = $state<string | null>(null);
   let nomFichier = $state('');
   let exemple = $state(false);
+  /** Pages du rapport dessinées, pour les montrer annotées. */
+  let rendus = $state<Map<number, PageRendue>>(new Map());
 
   function montrerExemple(): void {
     exemple = true;
     nomFichier = 'dossier de démonstration';
+    rendus = new Map(); // pas de vrai PDF : pas de page à montrer
     analyse = analyser(pagesExemple());
     etat = 'resultat';
   }
@@ -35,15 +39,74 @@
     progression = { fait: 0, total: 1 };
 
     try {
-      const pages = await lirePdf(fichier, (fait, total) => (progression = { fait, total }));
-      analyse = analyser(pages);
+      const document = await ouvrirPdf(fichier, (fait, total) => (progression = { fait, total }));
+      const resultat = analyser(document.pages);
+
+      // Les résultats s'affichent tout de suite : dessiner les pages prend
+      // plusieurs secondes sur un gros dossier, et le lecteur n'a aucune raison
+      // d'attendre pour savoir si c'est grave.
+      rendus = new Map();
+      analyse = resultat;
       etat = 'resultat';
+
+      if (import.meta.env.DEV) {
+        (window as unknown as { analyseCourante?: unknown }).analyseCourante = resultat;
+      }
+
+      void dessinerPages(document, resultat);
     } catch (e) {
       erreur = `Impossible de lire ce PDF (${e instanceof Error ? e.message : 'erreur inconnue'}).`;
       etat = 'accueil';
     } finally {
       progression = null;
     }
+  }
+
+  // Aide de mise au point : en développement seulement, permet de charger un
+  // rapport depuis une URL locale pour vérifier le rendu annoté sans passer par
+  // la boîte de dialogue du système.
+  if (import.meta.env.DEV) {
+    (window as unknown as { chargerPourEssai?: (url: string) => Promise<void> }).chargerPourEssai =
+      async (url: string) => {
+        const reponse = await fetch(url);
+        const blob = await reponse.blob();
+        await traiter(new File([blob], url.split('/').pop() ?? 'essai.pdf', { type: 'application/pdf' }));
+      };
+  }
+
+  /**
+   * Dessine, en tâche de fond, les pages que le lecteur va parcourir annotées.
+   * Chaque page s'affiche dès qu'elle est prête ; si l'une échoue, les autres
+   * continuent et l'analyse reste lisible.
+   */
+  async function dessinerPages(
+    document: Awaited<ReturnType<typeof ouvrirPdf>>,
+    resultat: Analyse
+  ): Promise<void> {
+    const aFaire = new Set<number>();
+    for (const diag of resultat.diagnostics) {
+      const numero = diag.reperes?.[0]?.page;
+      if (numero !== undefined) aFaire.add(numero);
+    }
+
+    for (const numero of aFaire) {
+      try {
+        // Sur certains rapports très lourds, le dessin d'une page n'aboutit
+        // jamais. Ce n'est pas une raison pour laisser le lecteur attendre :
+        // au-delà de huit secondes, on passe à la suivante.
+        const rendu = await Promise.race([
+          document.rendre(numero, 900),
+          new Promise<null>((resoudre) => setTimeout(() => resoudre(null), 8000))
+        ]);
+        if (rendu) rendus = new Map(rendus).set(numero, rendu);
+      } catch (e) {
+        // Une page illisible n'empêche pas de lire le reste du dossier, mais on
+        // veut le savoir en développement.
+        if (import.meta.env.DEV) console.error(`page ${numero} non dessinée`, e);
+      }
+    }
+
+    await document.fermer();
   }
 
   function recommencer(): void {
@@ -111,34 +174,7 @@
       </div>
     </section>
   {:else if analyse}
-    <section class="resume">
-      {#if exemple}
-        <p class="bandeau-exemple">
-          Exemple de démonstration — ce logement n’existe pas. Les chiffres sont inventés, mais ils
-          traversent exactement le même moteur d’analyse que votre rapport.
-        </p>
-      {/if}
-      <p class="muet petit">{nomFichier} — {analyse.nbPages} pages</p>
-      <h1>
-        {analyse.diagnostics.length} diagnostic{analyse.diagnostics.length > 1 ? 's' : ''} lu{analyse.diagnostics.length > 1 ? 's' : ''}
-      </h1>
-      {#if analyse.bien.adresse || analyse.bien.commune}
-        <p class="bien">
-          {analyse.bien.adresse ?? ''}{analyse.bien.commune ? `, ${analyse.bien.commune}` : ''}
-        </p>
-      {/if}
-
-      <div class="tuiles">
-        {#each analyse.diagnostics as d (d.type)}
-          <a class="tuile {d.gravite}" href="#{d.type}">
-            <strong>{d.titre}</strong>
-            <span class="petit">{d.verdict}</span>
-          </a>
-        {/each}
-      </div>
-
-      <button class="bouton bouton--fantome" onclick={recommencer}>Analyser un autre rapport</button>
-    </section>
+    <Resume {analyse} {nomFichier} {exemple} {recommencer} />
 
     {#if analyse.illisible}
       <p class="erreur" role="alert">
@@ -156,7 +192,9 @@
     <Controles controles={analyse.controles} />
 
     {#each analyse.diagnostics as d (d.type)}
-      <div id={d.type}><CarteDiag diagnostic={d} /></div>
+      <div id={d.type}>
+        <CarteDiag diagnostic={d} page={d.reperes?.[0] ? (rendus.get(d.reperes[0].page) ?? null) : null} />
+      </div>
     {/each}
 
     <p class="avertissement muet petit">
@@ -224,64 +262,6 @@
     margin: 0;
   }
 
-  .resume {
-    margin-bottom: 32px;
-  }
-
-  .resume h1 {
-    margin: 4px 0 2px;
-  }
-
-  .bien {
-    color: var(--encre-doux);
-    margin-bottom: 20px;
-  }
-
-  .tuiles {
-    display: grid;
-    gap: 10px;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    margin-bottom: 22px;
-  }
-
-  .tuile {
-    display: grid;
-    gap: 3px;
-    padding: 12px 14px;
-    border-radius: 10px;
-    border: 1px solid var(--trait);
-    border-left-width: 4px;
-    background: var(--papier);
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .tuile:hover {
-    border-color: var(--vert-500);
-  }
-
-  .tuile.bon {
-    border-left-color: var(--ok);
-  }
-  .tuile.attention {
-    border-left-color: var(--attention);
-  }
-  .tuile.alerte {
-    border-left-color: var(--alerte);
-  }
-  .tuile.neutre {
-    border-left-color: var(--trait);
-  }
-
-  .tuile span {
-    color: var(--encre-doux);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
   .essai {
     text-align: center;
     margin-top: 16px;
@@ -297,15 +277,6 @@
     font-weight: 600;
     text-decoration: underline;
     cursor: pointer;
-  }
-
-  .bandeau-exemple {
-    background: var(--vert-100);
-    border-left: 4px solid var(--vert-500);
-    border-radius: 8px;
-    padding: 12px 16px;
-    margin-bottom: 18px;
-    font-size: 0.94rem;
   }
 
   .erreur {
