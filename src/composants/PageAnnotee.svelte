@@ -8,6 +8,7 @@
    */
   import type { Diagnostic } from '../lib/modele';
   import type { PageRendue } from '../lib/pdf';
+  import MiniSchema from './MiniSchema.svelte';
 
   interface Props {
     reperes: NonNullable<Diagnostic['reperes']>;
@@ -79,6 +80,9 @@
       {#key actif.titre}
         <div class="texte apparait">
           <h4>{actif.titre}</h4>
+          {#if actif.schema}
+            <MiniSchema id={actif.schema} />
+          {/if}
           <ul>
             {#each actif.points as point}
               <li>{point}</li>

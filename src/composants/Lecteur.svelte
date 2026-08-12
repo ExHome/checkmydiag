@@ -9,6 +9,7 @@
   import type { Analyse, Diagnostic } from '../lib/modele';
   import type { PageRendue } from '../lib/pdf';
   import Explicatif from './schemas/Explicatif.svelte';
+  import MiniSchema from './MiniSchema.svelte';
 
   interface Props {
     analyse: Analyse;
@@ -142,6 +143,9 @@
             <div class="apparait">
               <p class="sur-titre">Ce passage</p>
               <h3>{choisi.titre}</h3>
+              {#if choisi.schema}
+                <MiniSchema id={choisi.schema} />
+              {/if}
               <ul class="points">
                 {#each choisi.points as point}
                   <li>{point}</li>

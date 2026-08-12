@@ -20,6 +20,8 @@ export interface Repere {
   largeur: number;
   hauteur: number;
   titre: string;
+  /** Identifiant du petit dessin qui illustre la notion. */
+  schema?: string;
   /** L'explication, en puces courtes. */
   points: string[];
   /** La ligne du rapport elle-même : sert à la retrouver dans le texte. */
@@ -29,6 +31,8 @@ export interface Repere {
 interface Cible {
   motif: RegExp;
   titre: string;
+  /** Identifiant du petit dessin qui illustre la notion. */
+  schema?: string;
   points: string[];
 }
 
@@ -37,6 +41,7 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
     {
       motif: /émet\s*[\d\s.,]+\s*kg\s*de\s*CO/i,
       titre: 'Les émissions de CO₂',
+      schema: 'co2',
       points: [
         'Le gaz rejeté pour chauffer le logement',
         'Dépend de l’énergie : gaz et fioul en rejettent beaucoup',
@@ -47,6 +52,7 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
     {
       motif: /entre\s*[\d\s.,]+\s*€\s*et\s*[\d\s.,]+\s*€\s*par an/i,
       titre: 'Le coût annoncé',
+      schema: 'cout',
       points: [
         'Compte : chauffage, eau chaude, clim, éclairage, ventilation',
         'Ne compte pas : électroménager, télé, box',
@@ -57,6 +63,7 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
     {
       motif: /Surface\s+(?:de référence|habitable)/i,
       titre: 'La surface de référence',
+      schema: 'surface',
       points: [
         'Compte : pièces chauffées, couloirs, placards',
         'Ne compte pas : garage, cave, balcon',
@@ -76,6 +83,7 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
     {
       motif: /[Vv]alable jusqu/i,
       titre: 'La date de fin',
+      schema: 'validite',
       points: ['Un DPE vaut 10 ans', 'Après : à refaire pour vendre ou louer']
     }
   ],
@@ -84,6 +92,7 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
     {
       motif: /Total.*Non mesur.*Classe 0/i,
       titre: 'Le tableau qui résume tout',
+      schema: 'classes',
       points: [
         'Seule la colonne « classe 3 » compte vraiment',
         'Classe 3 = peinture dégradée, qui fait de la poussière',
@@ -128,6 +137,7 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
     {
       motif: /Conclusion relative à l'évaluation des risques/i,
       titre: 'La conclusion, cochée à la main',
+      schema: 'case',
       points: [
         'Deux phrases imprimées, une seule cochée',
         'Cherchez la coche : c’est votre résultat',
@@ -149,6 +159,7 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
     {
       motif: /^Conclusion|H\.\s*-\s*Conclusion/i,
       titre: 'La conclusion, cochée à la main',
+      schema: 'case',
       points: [
         'Quatre phrases imprimées, une seule cochée',
         'A1 : à réparer un jour',
@@ -183,6 +194,7 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
     {
       motif: /Liste [ABC]\s*:/i,
       titre: 'Les listes A, B et C',
+      schema: 'listes',
       points: [
         'A : flocages, calorifugeages — les plus dangereux',
         'B : dalles, conduits, toitures — les plus courants',
@@ -229,6 +241,7 @@ export function reperer(type: TypeDiag, pages: PageTexte[]): Repere[] {
         largeur: ligne.largeur,
         hauteur: ligne.hauteur,
         titre: cible.titre,
+        ...(cible.schema ? { schema: cible.schema } : {}),
         points: cible.points,
         extrait: ligne.texte
       });

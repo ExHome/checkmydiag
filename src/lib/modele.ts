@@ -119,6 +119,8 @@ export interface Diagnostic {
     largeur: number;
     hauteur: number;
     titre: string;
+    /** Identifiant du petit dessin qui illustre la notion. */
+    schema?: string;
     points: string[];
     extrait: string;
   }[];
