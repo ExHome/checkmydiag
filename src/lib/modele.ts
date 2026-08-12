@@ -65,6 +65,8 @@ export type Schema =
       classes: [number, number, number, number];
       nonMesurees: number;
       total: number;
+      /** Où se trouve le plomb qui compte, pièce par pièce. */
+      emplacements: { zone: string; element: string; classe: number }[];
     }
   | {
       genre: 'pieces';

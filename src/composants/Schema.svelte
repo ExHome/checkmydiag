@@ -77,6 +77,22 @@
         </li>
       {/each}
     </ul>
+
+    {#if schema.emplacements.length}
+      <div class="ou">
+        <h4>Où exactement</h4>
+        <ul class="lieux">
+          {#each schema.emplacements as lieu (lieu.zone + lieu.element + lieu.classe)}
+            <li class:grave={lieu.classe === 3}>
+              <strong>{lieu.zone}</strong> — {lieu.element.toLowerCase()}
+              <span class="etat">
+                {lieu.classe === 3 ? 'peinture dégradée' : 'peinture usée'}
+              </span>
+            </li>
+          {/each}
+        </ul>
+      </div>
+    {/if}
   </div>
 
 {:else if schema.genre === 'pieces'}
@@ -189,6 +205,44 @@
 
   .legende .eteint {
     opacity: 0.45;
+  }
+
+  .ou {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--trait);
+  }
+
+  .lieux {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 8px;
+  }
+
+  .lieux li {
+    background: var(--attention-fond);
+    border-left: 4px solid var(--attention);
+    border-radius: var(--rayon-petit);
+    padding: 10px 14px;
+    font-size: 0.95rem;
+  }
+
+  .lieux li.grave {
+    background: var(--alerte-fond);
+    border-left-color: var(--alerte);
+  }
+
+  .etat {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--encre-doux);
+  }
+
+  .lieux li.grave .etat {
+    color: var(--alerte);
+    font-weight: 600;
   }
 
   .pastille {

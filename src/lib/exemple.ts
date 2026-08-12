@@ -96,7 +96,17 @@ export function pagesExemple(): PageTexte[] {
         'Nombre d’unités',
         '54 12 33 5 2 2',
         '% 100 22,2 % 61,1 % 9,3 % 3,7 % 3,7 %',
-        "Dans le cadre de la mission, il a été repéré des unités de diagnostics de classe 3."
+        "Dans le cadre de la mission, il a été repéré des unités de diagnostics de classe 3.",
+        'N° Zone Unité de diagnostic Substrat Revêtement apparent Etat de conservation Classement UD',
+        'Salle de bain',
+        'A Porte (P1) Bois Peinture 3',
+        'B Plinthes Bois Peinture 2',
+        'Chambre 1',
+        'A Fenêtre (F1) Bois Peinture 3',
+        'B Mur Plâtre Peinture 0',
+        'Cuisine',
+        'A Plinthes Bois Peinture 2',
+        'B Plafond Plâtre Peinture 0'
       ]
     },
     {

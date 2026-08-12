@@ -37,6 +37,51 @@ function compter(lignes: string[]): {
   return null;
 }
 
+/** Éléments que le CREP mesure, tels qu'ils sont nommés dans le tableau. */
+const ELEMENTS =
+  /^(?:[A-Z]\s+)?(Plinthes?|Portes?(?:\s*\([^)]*\))?|Murs?|Plafonds?|Fen[êe]tres?(?:\s*\([^)]*\))?|Sols?|Volets?|Placards?|Radiateurs?|Escaliers?|Rampes?|Cloisons?|Huisseries?)\b/i;
+
+/** Noms de pièce, écrits seuls sur une ligne au-dessus de leur bloc de mesures. */
+const PIECES =
+  /^(Cuisine|S[ée]jour|Salon|Chambre\s*\d*|Salle de bain|Salle d'eau|WC|Toilettes|Couloir|D[ée]gagement|Entr[ée]e|Buanderie|Cellier|Garage|Cave|Grenier|Combles|Balcon|Terrasse|Jardin|Ext[ée]rieur|Palier|Escalier|Bureau|Mezzanine)(\s*\/\s*\S.*)?$/i;
+
+/**
+ * Où se trouve le plomb, pièce par pièce.
+ *
+ * Le tableau de mesures donne une ligne par élément contrôlé, terminée par son
+ * classement (0 à 3). Le nom de la pièce, lui, est écrit une seule fois
+ * au-dessus du bloc : on le mémorise et on l'applique aux lignes qui suivent.
+ */
+function emplacements(lignes: string[]): { zone: string; element: string; classe: number }[] {
+  const trouves: { zone: string; element: string; classe: number }[] = [];
+  let zone = '';
+
+  for (const ligne of lignes) {
+    const brut = ligne.trim();
+
+    const piece = brut.match(PIECES);
+    if (piece?.[1] && brut.length < 40) {
+      zone = brut;
+      continue;
+    }
+
+    const element = brut.match(ELEMENTS);
+    if (!element?.[1]) continue;
+
+    // Le classement est le dernier entier de la ligne, entre 0 et 3.
+    const nombres = brut.match(/(?:^|\s)([0-3])(?:\s|$)/g);
+    const dernier = nombres?.[nombres.length - 1]?.trim();
+    if (dernier === undefined) continue;
+
+    const classe = Number(dernier);
+    if (!Number.isInteger(classe) || classe < 0 || classe > 3) continue;
+
+    trouves.push({ zone: zone || 'Emplacement non précisé', element: element[1], classe });
+  }
+
+  return trouves;
+}
+
 export function analyserPlomb(lignes: string[], plage: [number, number]): Diagnostic {
   const chiffres = compter(lignes);
   const c2 = chiffres?.classes[2] ?? 0;
@@ -118,7 +163,9 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
           genre: 'plomb',
           classes: chiffres.classes,
           nonMesurees: chiffres.nonMesurees,
-          total: chiffres.total
+          total: chiffres.total,
+          // On ne montre que ce qui mérite l'attention : classes 2 et 3.
+          emplacements: emplacements(lignes).filter((e) => e.classe >= 2)
         }
       : null,
     pages: plage,
