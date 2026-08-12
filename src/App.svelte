@@ -276,25 +276,28 @@
 <style>
   .entete {
     padding: 18px 0;
-    border-bottom: 1px solid var(--trait);
-    background: rgb(247 244 236 / 88%);
+    border-bottom: 1px solid rgb(255 255 255 / 12%);
+    background: rgb(6 78 59 / 82%);
     backdrop-filter: blur(10px);
     position: sticky;
     top: 0;
     z-index: 10;
   }
 
+  /* La marque : italique comme les titres, l'or pour « My » — c'est la seule
+     signature du site, elle doit être reconnaissable d'un coup d'œil. */
   .marque {
     font-family: var(--police-titre);
-    font-size: 1.3rem;
+    font-size: 1.34rem;
     font-weight: 800;
-    color: var(--vert-700);
+    font-style: italic;
+    color: var(--sur-fond);
     text-decoration: none;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.035em;
   }
 
   .marque span {
-    color: var(--or);
+    color: var(--or-clair);
   }
 
   main {

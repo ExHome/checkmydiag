@@ -28,9 +28,13 @@
 
   --encre: #16241e;
   --encre-doux: #5b6a62;
-  --papier: #ffffff;
-  --papier-doux: #faf7f0;
-  --fond: #f7f4ec;
+  --papier: #fdfaf3;
+  --papier-doux: #f5efe1;
+  /* Fond vert émeraude : les cartes crème s'y détachent franchement. */
+  --fond: #064e3b;
+  --fond-clair: #0a6b51;
+  --sur-fond: #f2f7f3;
+  --sur-fond-doux: #a9cbbb;
   --trait: #e6ded0;
 
   --alerte: #b03422;
@@ -74,11 +78,11 @@ body {
 
 body {
   background:
-    radial-gradient(1100px 620px at 80% -10%, rgb(28 122 86 / 10%), transparent 62%),
-    radial-gradient(900px 520px at 5% 2%, rgb(192 144 72 / 12%), transparent 58%),
+    radial-gradient(1200px 680px at 78% -12%, rgb(16 185 129 / 22%), transparent 62%),
+    radial-gradient(900px 520px at 4% 0%, rgb(192 144 72 / 16%), transparent 58%),
     var(--fond);
   background-attachment: fixed;
-  color: var(--encre);
+  color: var(--sur-fond);
   font-family: var(--police);
   font-size: 17px;
   line-height: 1.6;
@@ -95,6 +99,13 @@ h4 {
   line-height: 1.1;
   margin: 0 0 0.4em;
   letter-spacing: -0.03em;
+}
+
+/* Les titres en italique : ça donne le ton éditorial, sans toucher au corps du
+   texte qui doit rester droit pour être lu vite. */
+h1,
+h2 {
+  font-style: italic;
 }
 
 h1 {
@@ -180,6 +191,23 @@ button {
 
 .muet {
   color: var(--encre-doux);
+}
+
+/* Sur le fond émeraude, l'encre sombre ne se lit pas : les textes posés hors
+   carte prennent les teintes claires. */
+main > .resume .muet,
+main > .resume .phrase,
+main > .resume .bien,
+main > .avertissement,
+main > .accroche .chapeau,
+main > .essai {
+  color: var(--sur-fond-doux);
+}
+
+main > .resume h1,
+main > .resume h2,
+main > .accroche h1 {
+  color: var(--sur-fond);
 }
 
 .petit {
