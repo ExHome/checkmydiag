@@ -18,7 +18,7 @@
   import MiniSchema from './MiniSchema.svelte';
   import Fiche from './Fiche.svelte';
   import Curieux from './Curieux.svelte';
-  import Conclusions from './Conclusions.svelte';
+  import Essentiel from './Essentiel.svelte';
   import { FICHES } from '../lib/analyse/fiches';
 
   interface Props {
@@ -174,9 +174,9 @@
 
 {#if reperes.length}
   <section class="lecteur">
-    <!-- Le relevé des conclusions, en tête : chacune renvoie à la page où elle
-         est écrite. C'est le sommaire du dossier, pas un tableau de bord. -->
-    <Conclusions {analyse} allerA={allerAuDiagnostic} />
+    <!-- Ce que l'analyse a trouvé, classé par ce que ça change. Chaque ligne
+         renvoie à la page du rapport où c'est écrit. -->
+    <Essentiel {analyse} allerA={allerAuDiagnostic} />
 
     <div class="deux-colonnes" class:seul={!actif}>
       <div class="document">
