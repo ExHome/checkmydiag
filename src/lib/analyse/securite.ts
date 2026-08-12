@@ -116,11 +116,16 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
             'Aucune anomalie relevée ne veut pas dire installation neuve : le diagnostic ne contrôle que six points de sécurité.'
           ],
     schema: groupes.length ? { genre: 'anomalies', groupes, total: total ?? 0 } : null,
-    pages: plage
+    pages: plage,
+    ...(date?.[1] ? { date: date[1] } : {})
   };
 }
 
 export function analyserGaz(lignes: string[], plage: [number, number]): Diagnostic {
+  const dateVisite = trouver(
+    lignes,
+    /Date (?:du|de la) (?:rep[ée]rage|visite|diagnostic|contr[ôo]le)\s*:?[\s.]*(\d{2}\/\d{2}\/\d{4})/i
+  );
   const { etat, nombre: total } = conclure(lignes, /installation(?: int[ée]rieure(?: de gaz)?)?/);
 
   // Même piège pour les types d'anomalie : la page de conclusion du rapport
@@ -186,6 +191,7 @@ export function analyserGaz(lignes: string[], plage: [number, number]): Diagnost
           'Un détecteur de monoxyde de carbone coûte quelques dizaines d’euros et se pose en cinq minutes.'
         ],
     schema: null,
-    pages: plage
+    pages: plage,
+    ...(dateVisite?.[1] ? { date: dateVisite[1] } : {})
   };
 }

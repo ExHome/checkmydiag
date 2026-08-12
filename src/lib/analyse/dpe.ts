@@ -167,29 +167,29 @@ function phraseVerdict(finale: Lettre | null): { verdict: string; gravite: Diagn
     case 'A':
     case 'B':
       return {
-        verdict: `Logement très performant (classe ${finale}) : consommation et émissions faibles.`,
+        verdict: `Classe ${finale} : ce logement consomme très peu. Il est bien isolé et bien chauffé.`,
         gravite: 'bon'
       };
     case 'C':
     case 'D':
       return {
-        verdict: `Performance moyenne (classe ${finale}) : le logement est dans la moyenne française.`,
+        verdict: `Classe ${finale} : ce logement consomme comme la plupart des logements français. Ni bon élève, ni mauvais.`,
         gravite: 'bon'
       };
     case 'E':
       return {
-        verdict: 'Classe E : logement énergivore, sans être encore une « passoire thermique ».',
+        verdict: 'Classe E : ce logement consomme beaucoup. Il n’est pas encore dans les deux pires classes, mais il s’en approche.',
         gravite: 'attention'
       };
     case 'F':
     case 'G':
       return {
-        verdict: `Classe ${finale} : le logement est une « passoire thermique », avec des conséquences légales à la location.`,
+        verdict: `Classe ${finale} : ce logement fait partie des plus gros consommateurs. On dit qu’il est une « passoire thermique ». La loi limite ce qu’on peut en faire.`,
         gravite: 'alerte'
       };
     default:
       return {
-        verdict: "Le DPE est présent, mais ses chiffres n'ont pas pu être lus automatiquement.",
+        verdict: 'Il y a bien un DPE dans ce dossier, mais ses chiffres n’ont pas pu être lus.',
         gravite: 'neutre'
       };
   }
@@ -197,22 +197,24 @@ function phraseVerdict(finale: Lettre | null): { verdict: string; gravite: Diagn
 
 function aFaire(finale: Lettre | null): string[] {
   const commun = [
-    'Un DPE est valable 10 ans. Depuis 2021 il est « opposable » : ses conclusions engagent le diagnostiqueur, ce ne sont plus de simples informations.',
-    'Les montants annoncés sont des estimations calculées, pas vos factures : elles supposent un usage standard (19 °C, occupation moyenne).'
+    'Un DPE est valable 10 ans.',
+    'Les sommes annoncées sont des calculs, pas vos vraies factures. Elles supposent qu’on chauffe à 19 °C et qu’on vit normalement dans le logement.',
+    'Depuis 2021, le diagnostiqueur est responsable de ce qu’il écrit. Si le résultat est faux, on peut se retourner contre lui.'
   ];
 
   switch (finale) {
     case 'F':
     case 'G':
       return [
-        'À la location : depuis le 1ᵉʳ janvier 2025, un logement classé G ne peut plus faire l’objet d’un nouveau bail ; les F suivront au 1ᵉʳ janvier 2028 (loi Climat et Résilience).',
-        'À la vente d’une maison ou d’un immeuble en monopropriété classé F ou G, un audit énergétique doit être remis à l’acquéreur dès la visite.',
-        'Le loyer d’un logement F ou G est gelé : il ne peut plus être augmenté entre deux locataires ni lors d’un renouvellement.',
+        'Louer : depuis le 1ᵉʳ janvier 2025, on ne peut plus louer un logement classé G à un nouveau locataire. Les logements F seront interdits à partir de 2028.',
+        'Le loyer est bloqué. On ne peut plus l’augmenter, ni quand un nouveau locataire arrive, ni quand on renouvelle le bail.',
+        'Vendre : si c’est une maison, il faut faire faire un audit énergétique et le donner à l’acheteur dès la première visite.',
         ...commun
       ];
     case 'E':
       return [
-        'Anticipez : la vente d’une maison classée E impose déjà un audit énergétique, et le gel des loyers touchera cette classe à partir de 2034.',
+        'Pour vendre une maison classée E, il faut déjà fournir un audit énergétique.',
+        'Le blocage des loyers touchera cette classe à partir de 2034.',
         ...commun
       ];
     default:
@@ -257,7 +259,11 @@ export function analyserDpe(lignes: string[], plage: [number, number]): Diagnost
   const typeBien = trouver(lignes, /[Tt]ype de bien\s*:?[\s.]*([A-Za-zÀ-ÿ' -]{3,30})/);
   const annee = trouver(lignes, /[Aa]nnée de construction\s*:?[\s.]*([A-Za-zÀ-ÿ0-9 ]{3,20})/);
 
-  if (m.surface !== null) faits.push({ libelle: 'Surface de référence', valeur: `${m.surface} m²` });
+  if (m.surface !== null)
+    faits.push({
+      libelle: 'Surface de référence',
+      valeur: `${m.surface.toLocaleString('fr-FR', { maximumFractionDigits: 2 })} m²`
+    });
   if (typeBien?.[1]) faits.push({ libelle: 'Type de bien', valeur: typeBien[1].trim() });
   if (annee?.[1]) faits.push({ libelle: 'Année de construction', valeur: annee[1].trim() });
   if (m.consoTotale !== null)
@@ -319,7 +325,8 @@ export function analyserDpe(lignes: string[], plage: [number, number]): Diagnost
     explication,
     aFaire: aFaire(finale),
     schema: { genre: 'dpe', energie, climat, finale, postes: detailPostes },
-    pages: plage
+    pages: plage,
+    ...(etabli?.[1] ? { date: etabli[1] } : {})
   };
 }
 

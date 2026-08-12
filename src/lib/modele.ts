@@ -86,6 +86,8 @@ export interface Diagnostic {
   schema: Schema | null;
   /** Pages du PDF où se trouve ce diagnostic (1-indexé). */
   pages: [number, number];
+  /** Date de réalisation, au format JJ/MM/AAAA, si elle a été lue. */
+  date?: string;
   /**
    * Renseigné quand le verdict vient de la page de synthèse du dossier et non
    * du rapport détaillé : le lecteur a le droit de savoir d'où sort la phrase.
@@ -103,9 +105,24 @@ export interface Bien {
   dateRepérage?: string;
 }
 
+/** Un point du dossier qui mérite d'être vérifié. */
+export interface PointDeControle {
+  /** Ce qui cloche, en une ligne. */
+  titre: string;
+  /** Pourquoi ça compte, en français de tous les jours. */
+  explication: string;
+  /** Ce que le lecteur peut faire. */
+  quoiFaire: string;
+  genre: 'perime' | 'manque' | 'incoherence' | 'attention';
+  /** Diagnostic concerné, quand il y en a un. */
+  type?: TypeDiag;
+}
+
 export interface Analyse {
   bien: Bien;
   diagnostics: Diagnostic[];
+  /** Contrôles automatiques sur la cohérence du dossier. */
+  controles: PointDeControle[];
   /** Types repérés dans le sommaire mais non exploités par le moteur. */
   nonExploites: string[];
   /** Vrai si le PDF ne contenait quasiment aucun texte (rapport scanné/image). */

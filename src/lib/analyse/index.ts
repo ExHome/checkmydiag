@@ -9,6 +9,7 @@ import { analyserPlomb } from './plomb';
 import { analyserAmiante, analyserTermites } from './reperages';
 import { analyserElectricite, analyserGaz } from './securite';
 import { analyserAssainissement, analyserCarrez, analyserErp } from './risques';
+import { controler } from './coherence';
 import { conclusionDe, graviteDe, lireSynthese, type BlocSynthese } from './synthese';
 import { nombre, trouver } from './texte';
 
@@ -121,9 +122,12 @@ export function analyser(brutes: PageTexte[]): Analyse {
 
   diagnostics.sort((a, b) => ORDRE.indexOf(a.type) - ORDRE.indexOf(b.type));
 
+  const bien = identifierBien(pages, horsSection);
+
   return {
-    bien: identifierBien(pages, horsSection),
+    bien,
     diagnostics,
+    controles: controler(bien, diagnostics),
     nonExploites: [],
     illisible,
     nbPages: pages.length

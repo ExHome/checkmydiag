@@ -119,7 +119,8 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
           total: chiffres.total
         }
       : null,
-    pages: plage
+    pages: plage,
+    ...(date?.[1] ? { date: date[1] } : {})
   };
 }
 

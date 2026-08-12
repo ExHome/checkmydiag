@@ -84,7 +84,8 @@ export function analyserTermites(lignes: string[], plage: [number, number]): Dia
           'Le rapport ne couvre que les parties visitées : lisez la liste des zones non accessibles, elle figure dans le rapport.'
         ],
     schema: zones.length ? { genre: 'pieces', zones } : null,
-    pages: plage
+    pages: plage,
+    ...(date?.[1] ? { date: date[1] } : {})
   };
 }
 
@@ -158,7 +159,8 @@ export function analyserAmiante(lignes: string[], plage: [number, number]): Diag
           'Avant des travaux touchant la structure, un repérage « avant travaux » (plus poussé, avec sondages) reste obligatoire.'
         ],
     schema: null,
-    pages: plage
+    pages: plage,
+    ...(date?.[1] ? { date: date[1] } : {})
   };
 }
 

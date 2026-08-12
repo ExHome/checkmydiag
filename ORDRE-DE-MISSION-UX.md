@@ -3,6 +3,18 @@
 Cadre permanent. Il s'applique à toute évolution du site, sans qu'on ait à le
 rappeler. En cas d'arbitrage, il tranche.
 
+## Ce que le site fait
+
+On dépose un diagnostic. On obtient trois choses, dans cet ordre :
+
+1. **Ce que ça veut dire**, expliqué avec un schéma ;
+2. **Si c'est grave**, et ce que ça change concrètement ;
+3. **Ce qui cloche dans le dossier** — dates dépassées, diagnostic manquant,
+   chiffres qui ne concordent pas.
+
+Le troisième point est ce qui donne son nom au site : on ne se contente pas de
+traduire le rapport, on le **vérifie**.
+
 ## Pour qui on travaille
 
 Une personne qui vient de recevoir soixante pages de PDF technique, qui n'y
@@ -12,27 +24,52 @@ Elle n'est pas diagnostiqueur. Elle n'est pas agent immobilier. Elle est souvent
 inquiète, parfois pressée, généralement sur un téléphone. Elle ne lira pas un
 paragraphe de dix lignes.
 
+## La règle au-dessus des autres
+
+**Un jeune de quinze ans doit comprendre.** Pas « un adulte non spécialiste » :
+quinze ans. C'est le niveau à viser pour chaque phrase du site.
+
+En pratique :
+
+- des phrases courtes, une idée par phrase ;
+- des mots de tous les jours — si un mot ne se dit pas à table, il est expliqué
+  ou il saute ;
+- pas de tournure administrative : « il ne peut plus faire l'objet d'un
+  nouveau bail » devient « on ne peut plus le louer » ;
+- les sigles (DPE, CREP, ERP, DGI) toujours accompagnés de ce qu'ils veulent
+  dire, à chaque fois ;
+- une date plutôt qu'un renvoi à un texte de loi.
+
 ## Les six règles
 
-### 1. Le schéma explique, le texte confirme
+### 1. Le schéma explique, le texte confirme — et le schéma est simple
 
 Chaque diagnostic doit être compris **par son dessin**, avant toute lecture. Un
 schéma qui se contente de rejouer les chiffres du rapport n'explique rien : le
 bon schéma montre le **mécanisme** — par où part la chaleur, comment le plomb
 arrive dans un enfant, pourquoi une grille bouchée tue.
 
+Simple veut dire : **une seule idée par schéma**, six éléments au maximum, de
+grandes formes, des mots courts posés à côté de ce qu'ils désignent. Pas de
+légende à numéros qu'il faut faire correspondre au dessin. Si on doit expliquer
+le schéma, c'est qu'il a échoué.
+
 Avant d'ajouter un diagnostic, la question est : *quel dessin le fait
 comprendre ?* Si on n'a pas la réponse, on n'a pas fini de réfléchir.
 
-### 2. Compréhensible par tout le monde
+### 2. Signaler ce qui cloche, sans accuser
 
-Aucun terme technique sans sa traduction immédiate. « Unité de diagnostic »
-devient « une porte, une plinthe, un mur ». « Énergie primaire » s'explique ou
-disparaît. Les sigles (DPE, CREP, ERP, DGI, A1/A2) sont toujours accompagnés de
-ce qu'ils veulent dire, à chaque apparition — personne ne remonte le fil.
+Le site vérifie le dossier : diagnostic périmé, diagnostic manquant, surfaces qui
+ne concordent pas, dates éloignées les unes des autres. Ces points sont
+présentés comme **des choses à vérifier**, jamais comme une faute du
+diagnostiqueur — on n'a pas le rapport complet sous les yeux, et il existe
+souvent une bonne raison.
 
-Test : la phrase tient-elle debout lue à voix haute à quelqu'un qui n'a jamais
-vendu de logement ?
+Le ton juste : « Ce point mérite une question au professionnel. » Jamais :
+« Votre diagnostic est faux. »
+
+Et la règle du chiffre inventé s'applique ici plus qu'ailleurs : on ne signale
+une incohérence que si les deux valeurs comparées ont été lues sans ambiguïté.
 
 ### 3. Simple et fluide
 
@@ -83,3 +120,6 @@ Un écran est bon quand, en **dix secondes** et sans aide :
 3. il sait ce qu'il doit faire, s'il doit faire quelque chose.
 
 Si l'une des trois manque, l'écran n'est pas fini.
+
+Et le test qui prime sur tous les autres : **le faire lire à quelqu'un de
+quinze ans**. S'il bute sur un mot, c'est le mot qui a tort.

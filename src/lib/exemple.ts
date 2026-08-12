@@ -82,7 +82,9 @@ export function pagesExemple(): PageTexte[] {
       numero: 6,
       lignes: [
         'Etat relatif à la présence de termites n° 26/EXE/0001',
-        'Date du repérage : 12/03/2026',
+        // Volontairement plus ancien que le reste du dossier : le contrôle de
+        // validité doit le signaler, c'est le cas le plus fréquent en vrai.
+        'Date du repérage : 02/09/2025',
         'Le bien est situé dans une zone soumise à un arrêté préfectoral:',
         "Niveau d'infestation moyen",
         'Piece 1 Sol - Carrelage Absence d’indices d’infestation de termites',
@@ -111,6 +113,17 @@ export function pagesExemple(): PageTexte[] {
         'Repérage des matériaux et produits contenant de l’amiante n° 26/EXE/0001',
         'Date du repérage : 12/03/2026',
         "Il n'a pas été repéré de matériaux et produits contenant de l'amiante dans les parties visitées."
+      ]
+    },
+    {
+      numero: 9,
+      lignes: [
+        'Certificat de superficie n° 26/EXE/0001',
+        'Certificat de superficie de la partie privative',
+        // 42 m² face aux 48,5 m² du DPE : l'écart dépasse la tolérance et doit
+        // déclencher une question.
+        'Superficie Loi Carrez totale : 42,00 m²',
+        'Surface au sol totale : 44,80 m²'
       ]
     }
   ];

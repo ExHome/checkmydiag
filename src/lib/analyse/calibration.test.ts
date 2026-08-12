@@ -79,6 +79,10 @@ describe.skipIf(!disponible)('calibration sur rapports réels', () => {
         for (const d of analyse.diagnostics.filter((x) => x.gravite === 'alerte')) {
           console.log(`      ⚠ ${d.type} : ${d.verdict.slice(0, 150)}`);
         }
+        // Idem pour les contrôles : une fausse alerte ferait douter d'un dossier sain.
+        for (const c of analyse.controles) {
+          console.log(`      ⌾ [${c.genre}] ${c.titre} — ${c.explication.slice(0, 110)}`);
+        }
 
         if (analyse.diagnostics.length === 0) muets.push(fichier);
         for (const d of analyse.diagnostics) {

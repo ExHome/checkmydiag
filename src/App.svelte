@@ -1,6 +1,7 @@
 <script lang="ts">
   import Depot from './composants/Depot.svelte';
   import CarteDiag from './composants/CarteDiag.svelte';
+  import Controles from './composants/Controles.svelte';
   import { lirePdf } from './lib/pdf';
   import { analyser } from './lib/analyse';
   import { pagesExemple } from './lib/exemple';
@@ -151,6 +152,8 @@
         ou d’une mise en page que Check My Diag ne sait pas encore lire.
       </p>
     {/if}
+
+    <Controles controles={analyse.controles} />
 
     {#each analyse.diagnostics as d (d.type)}
       <div id={d.type}><CarteDiag diagnostic={d} /></div>

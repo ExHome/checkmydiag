@@ -121,7 +121,8 @@ export function analyserErp(lignes: string[], plage: [number, number]): Diagnost
       'Vérifiez auprès de votre assureur ce que couvre votre contrat en cas de catastrophe naturelle : la franchise légale s’applique.'
     ],
     schema: risques.length ? { genre: 'risques', risques } : null,
-    pages: plage
+    pages: plage,
+    ...(date?.[1] ? { date: date[1] } : {})
   };
 }
 
@@ -135,12 +136,14 @@ export function analyserCarrez(lignes: string[], plage: [number, number]): Diagn
 
   const auSol = nombre(trouver(lignes, /surface au sol totale\s*:?[\s.]*([\d\s.,]+)\s*m/i)?.[1]);
 
+  const fr = (n: number) => n.toLocaleString('fr-FR', { maximumFractionDigits: 2 });
+
   const faits: Fait[] = [];
-  if (surface !== null) faits.push({ libelle: 'Superficie privative', valeur: `${surface} m²` });
+  if (surface !== null) faits.push({ libelle: 'Superficie privative', valeur: `${fr(surface)} m²` });
   if (auSol !== null)
     faits.push({
       libelle: 'Surface au sol',
-      valeur: `${auSol} m²`,
+      valeur: `${fr(auSol)} m²`,
       precision: 'avant déduction des murs et des hauteurs sous 1,80 m'
     });
 
@@ -149,7 +152,7 @@ export function analyserCarrez(lignes: string[], plage: [number, number]): Diagn
     titre: 'Superficie (loi Carrez)',
     verdict:
       surface !== null
-        ? `Superficie privative mesurée : ${surface} m²${auSol !== null ? ` (${auSol} m² au sol)` : ''}.`
+        ? `Superficie privative mesurée : ${fr(surface)} m²${auSol !== null ? ` (${fr(auSol)} m² au sol)` : ''}.`
         : 'Un mesurage est présent dans le dossier, mais la surface n’a pas pu être lue.',
     gravite: surface !== null ? 'bon' : 'neutre',
     faits,

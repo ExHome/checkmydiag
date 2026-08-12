@@ -60,7 +60,8 @@ describe('analyse d’un DPE', () => {
     const libelles = diag.faits.map((f) => f.libelle);
     expect(libelles).toContain('N° ADEME');
     expect(libelles).toContain('Valable jusqu’au');
-    expect(diag.faits.find((f) => f.libelle === 'Surface de référence')?.valeur).toBe('22.4 m²');
+    // Les nombres s'écrivent à la française, virgule comprise.
+    expect(diag.faits.find((f) => f.libelle === 'Surface de référence')?.valeur).toBe('22,4 m²');
   });
 
   it('répartit les postes de consommation', () => {
