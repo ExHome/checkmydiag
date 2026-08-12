@@ -13,8 +13,8 @@
 
   const LETTRES: Lettre[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 
-  const HAUTEUR = 30;
-  const ECART = 6;
+  const HAUTEUR = 24;
+  const ECART = 5;
   const LARGEUR_MIN = 96;
   const LARGEUR_MAX = 250;
 

@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Diagnostic } from '../lib/modele';
   import Schema from './Schema.svelte';
+  import Explicatif from './schemas/Explicatif.svelte';
 
   const { diagnostic }: { diagnostic: Diagnostic } = $props();
 
@@ -10,6 +11,16 @@
     alerte: 'Point important',
     neutre: 'Pour information'
   };
+
+  // Quatre chiffres suffisent à l'écran ; le reste alourdit sans éclairer.
+  const faitsVisibles = $derived(diagnostic.faits.slice(0, 4));
+
+  // Quand le diagnostic engage vraiment le lecteur, les deux premières
+  // conséquences restent à l'écran : ce sont les obligations et les délais. Le
+  // reste — l'explication de fond — attend derrière « En savoir plus ».
+  const urgent = $derived(diagnostic.gravite === 'alerte');
+  const aFaireVisible = $derived(urgent ? diagnostic.aFaire.slice(0, 2) : []);
+  const aFaireReste = $derived(urgent ? diagnostic.aFaire.slice(2) : diagnostic.aFaire);
 </script>
 
 <article class="carte diag">
@@ -21,9 +32,9 @@
     <p class="verdict">{diagnostic.verdict}</p>
   </header>
 
-  {#if diagnostic.faits.length}
+  {#if faitsVisibles.length}
     <dl class="faits">
-      {#each diagnostic.faits as fait (fait.libelle)}
+      {#each faitsVisibles as fait (fait.libelle)}
         <div>
           <dt>{fait.libelle}</dt>
           <dd>
@@ -41,37 +52,51 @@
     </section>
   {/if}
 
-  <section class="bloc">
-    <h3>Ce que ça veut dire</h3>
-    {#each diagnostic.explication as paragraphe}
-      <p>{paragraphe}</p>
-    {/each}
-  </section>
+  <Explicatif type={diagnostic.type} />
 
-  {#if diagnostic.aFaire.length}
-    <section class="bloc">
-      <h3>Ce que ça change pour vous</h3>
+  {#if aFaireVisible.length}
+    <section class="bloc urgent">
+      <h4>Ce que ça change pour vous</h4>
       <ul>
-        {#each diagnostic.aFaire as point}
+        {#each aFaireVisible as point}
           <li>{point}</li>
         {/each}
       </ul>
     </section>
   {/if}
 
-  <footer class="muet petit">
-    {#if diagnostic.source === 'synthese'}
-      Verdict repris de la page de synthèse du dossier (pages {diagnostic.pages[0]} à
-      {diagnostic.pages[1]}) : le rapport détaillé n’a pas pu être lu automatiquement.
-    {:else}
-      Rapport, pages {diagnostic.pages[0]} à {diagnostic.pages[1]}
-    {/if}
-  </footer>
+  <details>
+    <summary>En savoir plus</summary>
+
+    <div class="detail">
+      {#each diagnostic.explication as paragraphe}
+        <p>{paragraphe}</p>
+      {/each}
+
+      {#if aFaireReste.length}
+        <h4>{urgent ? 'Autres conséquences' : 'Ce que ça change pour vous'}</h4>
+        <ul>
+          {#each aFaireReste as point}
+            <li>{point}</li>
+          {/each}
+        </ul>
+      {/if}
+
+      <p class="muet petit source">
+        {#if diagnostic.source === 'synthese'}
+          Verdict repris de la page de synthèse du dossier (pages {diagnostic.pages[0]} à
+          {diagnostic.pages[1]}) : le rapport détaillé n’a pas pu être lu automatiquement.
+        {:else}
+          Rapport, pages {diagnostic.pages[0]} à {diagnostic.pages[1]}
+        {/if}
+      </p>
+    </div>
+  </details>
 </article>
 
 <style>
   .diag {
-    margin-bottom: 24px;
+    margin-bottom: 20px;
   }
 
   .titre {
@@ -114,16 +139,17 @@
   }
 
   .verdict {
-    font-size: 1.1rem;
+    font-size: 1.12rem;
     margin: 10px 0 0;
+    text-wrap: pretty;
   }
 
   .faits {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 14px;
-    margin: 22px 0 0;
-    padding: 18px 0 0;
+    margin: 20px 0 0;
+    padding: 16px 0 0;
     border-top: 1px solid var(--trait);
   }
 
@@ -132,7 +158,7 @@
   }
 
   dt {
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: var(--encre-doux);
@@ -150,18 +176,62 @@
   }
 
   .bloc {
-    margin-top: 26px;
+    margin-top: 24px;
     padding-top: 20px;
     border-top: 1px solid var(--trait);
   }
 
-  h3 {
+  details {
+    margin-top: 22px;
+    border-top: 1px solid var(--trait);
+    padding-top: 14px;
+  }
+
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.94rem;
+    color: var(--vert-500);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(-45deg);
+    transition: transform 0.2s ease;
+  }
+
+  details[open] summary::before {
+    transform: rotate(45deg);
+  }
+
+  .detail {
+    padding-top: 14px;
+  }
+
+  h4 {
     font-family: var(--police);
     font-size: 0.95rem;
+    margin: 20px 0 8px;
+  }
+
+  .urgent h4 {
+    margin-top: 0;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: var(--encre-doux);
-    margin-bottom: 10px;
+    font-size: 0.9rem;
+    color: var(--alerte);
   }
 
   ul {
@@ -173,7 +243,7 @@
     margin-bottom: 8px;
   }
 
-  footer {
-    margin-top: 20px;
+  .source {
+    margin: 18px 0 0;
   }
 </style>

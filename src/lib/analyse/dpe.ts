@@ -264,7 +264,7 @@ export function analyserDpe(lignes: string[], plage: [number, number]): Diagnost
     faits.push({
       libelle: 'Consommation annuelle',
       valeur: `${m.consoTotale.toLocaleString('fr-FR')} kWh`,
-      precision: 'énergie primaire, 5 usages'
+      precision: 'chauffage, eau chaude, clim, éclairage, ventilation'
     });
   if (m.emissions !== null)
     faits.push({ libelle: 'Émissions', valeur: `${m.emissions.toLocaleString('fr-FR')} kg CO₂/an` });

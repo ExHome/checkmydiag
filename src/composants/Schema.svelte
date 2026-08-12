@@ -9,10 +9,10 @@
 
   const COULEURS_PLOMB = ['var(--ok)', 'var(--etq-c)', 'var(--attention)', 'var(--alerte)'];
   const LIBELLES_PLOMB = [
-    'Classe 0 — pas de plomb',
-    'Classe 1 — plomb, revêtement intact',
-    'Classe 2 — état d’usage',
-    'Classe 3 — dégradé'
+    'Pas de plomb (classe 0)',
+    'Du plomb, mais la peinture est intacte (classe 1)',
+    'Peinture usée ou éraflée (classe 2)',
+    'Peinture dégradée : c’est celle qui pose problème (classe 3)'
   ];
 </script>
 
@@ -56,7 +56,7 @@
 {:else if schema.genre === 'plomb'}
   {@const mesurees = schema.total - schema.nonMesurees}
   <div class="plomb">
-    <h4>{mesurees} éléments mesurés sur {schema.total}</h4>
+    <h4>{mesurees} éléments mesurés sur {schema.total} contrôlés</h4>
     <div class="bandeau">
       {#each schema.classes as nb, i}
         {#if nb > 0}

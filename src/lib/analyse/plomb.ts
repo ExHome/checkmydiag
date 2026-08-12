@@ -63,14 +63,22 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
 
   const faits: Fait[] = [];
   if (chiffres) {
-    faits.push({ libelle: 'Éléments contrôlés', valeur: `${chiffres.total} unités de diagnostic` });
     faits.push({
-      libelle: 'Classe 3 (dégradé)',
-      valeur: String(c3),
-      precision: 'travaux obligatoires'
+      libelle: 'Éléments contrôlés',
+      valeur: String(chiffres.total),
+      precision: 'murs, portes, plinthes, fenêtres…'
     });
-    faits.push({ libelle: 'Classe 2 (état d’usage)', valeur: String(c2) });
-    faits.push({ libelle: 'Classe 1 (non dégradé)', valeur: String(chiffres.classes[1]) });
+    faits.push({
+      libelle: 'En mauvais état',
+      valeur: String(c3),
+      precision: c3 > 0 ? 'travaux obligatoires' : 'classe 3'
+    });
+    faits.push({ libelle: 'Usés ou éraflés', valeur: String(c2), precision: 'classe 2' });
+    faits.push({
+      libelle: 'Avec plomb, mais intacts',
+      valeur: String(chiffres.classes[1]),
+      precision: 'classe 1'
+    });
   }
   const date = trouver(lignes, /rédigé par .{0,40}? le\s*(\d{2}\/\d{2}\/\d{4})/i);
   if (date?.[1]) faits.push({ libelle: 'Date du constat', valeur: date[1] });
