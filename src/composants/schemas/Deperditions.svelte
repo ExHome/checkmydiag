@@ -142,14 +142,14 @@
     const debut = lettre ? `Votre logement est classé ${lettre}.` : 'Votre logement.';
     if (!isolation) return `${debut} Le rapport ne dit pas ce qui est isolé.`;
 
-    const nues = Object.entries(isolation)
-      .filter(([, etat]) => etat === 'nonIsole')
-      .map(([paroi]) => NOM_PAROI[paroi])
-      .filter(Boolean);
-    const faites = Object.entries(isolation)
-      .filter(([, etat]) => etat === 'isole')
-      .map(([paroi]) => NOM_PAROI[paroi])
-      .filter(Boolean);
+    const nommees = (cherche: EtatIsolation): string[] =>
+      Object.entries(isolation)
+        .filter(([, etat]) => etat === cherche)
+        .map(([paroi]) => NOM_PAROI[paroi])
+        .filter((nom): nom is string => nom !== undefined);
+
+    const nues = nommees('nonIsole');
+    const faites = nommees('isole');
 
     if (!nues.length && !faites.length) return `${debut} Le rapport ne dit pas ce qui est isolé.`;
 
