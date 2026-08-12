@@ -3,6 +3,7 @@
   import Controles from './composants/Controles.svelte';
   import Resume from './composants/Resume.svelte';
   import Lecteur from './composants/Lecteur.svelte';
+  import Profils from './composants/Profils.svelte';
   import { ouvrirPdf, type PageRendue } from './lib/pdf';
   import { analyser } from './lib/analyse';
   import { pagesExemple } from './lib/exemple';
@@ -270,6 +271,10 @@
       partie="bilan"
       allerVers={(type) => (demande = type)}
     />
+
+    <!-- Le même dossier ne se lit pas pareil selon qu'on vend, qu'on achète ou
+         qu'on fait signer. -->
+    <Profils {analyse} />
 
     <Controles controles={analyse.controles} />
 
