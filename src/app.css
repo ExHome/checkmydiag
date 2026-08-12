@@ -12,33 +12,33 @@
    --------------------------------------------------------------------------- */
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 
-  /* Verts DGLM, assombris pour l'écran */
-  --vert-900: #04160f;
-  --vert-800: #07231a;
+  /* Charte DGLM : vert profond, or, crème */
+  --vert-900: #002924;
+  --vert-800: #063527;
   --vert-700: #093f30;
-  --vert-500: #2ee98b;
-  --vert-300: #7dffc0;
-  --vert-100: #0e3524;
+  --vert-500: #1c7a56;
+  --vert-300: #57a684;
+  --vert-100: #e4efe7;
 
-  --or: #ffc857;
-  --or-fonce: #c09048;
-  --or-clair: #ffe0a3;
+  --or: #c09048;
+  --or-fonce: #8a6224;
+  --or-clair: #e6cb9a;
 
-  --encre: #e8fff4;
-  --encre-doux: #92b7a5;
-  --papier: #0a2419;
-  --papier-doux: #0e2c20;
-  --fond: #04160f;
-  --trait: #174a33;
+  --encre: #16241e;
+  --encre-doux: #5b6a62;
+  --papier: #ffffff;
+  --papier-doux: #faf7f0;
+  --fond: #f7f4ec;
+  --trait: #e6ded0;
 
-  --alerte: #ff5f6d;
-  --alerte-fond: #2a1116;
-  --attention: #ffa53a;
-  --attention-fond: #2a1d0d;
-  --ok: #2ee98b;
-  --ok-fond: #0c2c1f;
+  --alerte: #b03422;
+  --alerte-fond: #fbeee9;
+  --attention: #a06a12;
+  --attention-fond: #fcf3e2;
+  --ok: #1c7a56;
+  --ok-fond: #e4efe7;
 
   /* Étiquettes réglementaires A→G : couleurs officielles de l'arrêté DPE. */
   --etq-a: #319834;
@@ -51,9 +51,8 @@
 
   --rayon: 16px;
   --rayon-petit: 10px;
-  --ombre: 0 1px 0 rgb(255 255 255 / 4%) inset, 0 18px 40px -24px rgb(0 0 0 / 90%);
-  --ombre-forte: 0 1px 0 rgb(255 255 255 / 6%) inset, 0 28px 60px -28px rgb(0 0 0 / 95%);
-  --lueur: 0 0 24px -6px var(--vert-500);
+  --ombre: 0 1px 2px rgb(9 63 48 / 6%), 0 16px 36px -22px rgb(9 63 48 / 30%);
+  --ombre-forte: 0 2px 4px rgb(9 63 48 / 8%), 0 26px 56px -26px rgb(9 63 48 / 38%);
 
   --police: 'Segoe UI Variable Display', 'Segoe UI', system-ui, -apple-system, sans-serif;
   --police-titre: 'Segoe UI Variable Display', 'Segoe UI', system-ui, sans-serif;
@@ -75,8 +74,8 @@ body {
 
 body {
   background:
-    radial-gradient(1100px 620px at 78% -8%, rgb(46 233 139 / 12%), transparent 62%),
-    radial-gradient(900px 520px at 8% 4%, rgb(255 200 87 / 8%), transparent 60%),
+    radial-gradient(1100px 620px at 80% -10%, rgb(28 122 86 / 10%), transparent 62%),
+    radial-gradient(900px 520px at 5% 2%, rgb(192 144 72 / 12%), transparent 58%),
     var(--fond);
   background-attachment: fixed;
   color: var(--encre);
@@ -124,9 +123,8 @@ button {
   padding-inline: clamp(16px, 4vw, 32px);
 }
 
-/* Surface « en verre » : c'est la brique de toute l'interface. */
 .carte {
-  background: linear-gradient(160deg, rgb(255 255 255 / 5%), rgb(255 255 255 / 1%)), var(--papier);
+  background: var(--papier);
   border: 1px solid var(--trait);
   border-radius: var(--rayon);
   box-shadow: var(--ombre);
@@ -137,23 +135,23 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  background: linear-gradient(135deg, var(--vert-500), #12b96a);
-  color: #04160f;
+  background: linear-gradient(135deg, var(--vert-700), var(--vert-500));
+  color: #fff;
   border: none;
   border-radius: 999px;
   padding: 15px 30px;
-  font-weight: 800;
+  font-weight: 750;
   font-size: 1.02rem;
   letter-spacing: -0.01em;
   cursor: pointer;
-  box-shadow: 0 0 0 1px rgb(46 233 139 / 40%), 0 10px 30px -10px rgb(46 233 139 / 70%);
+  box-shadow: 0 10px 26px -12px rgb(9 63 48 / 70%);
   transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
 }
 
 .bouton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 0 0 1px rgb(46 233 139 / 60%), 0 16px 40px -12px rgb(46 233 139 / 85%);
-  filter: brightness(1.08);
+  box-shadow: 0 16px 34px -14px rgb(9 63 48 / 80%);
+  filter: brightness(1.06);
 }
 
 .bouton:active {
@@ -161,21 +159,21 @@ button {
 }
 
 .bouton--fantome {
-  background: rgb(255 255 255 / 4%);
-  color: var(--vert-300);
+  background: var(--papier);
+  color: var(--vert-700);
   border: 1px solid var(--trait);
   box-shadow: none;
 }
 
 .bouton--fantome:hover {
-  background: rgb(46 233 139 / 12%);
+  background: var(--vert-100);
   border-color: var(--vert-500);
   box-shadow: none;
-  color: var(--vert-300);
+  color: var(--vert-700);
 }
 
 :focus-visible {
-  outline: 2px solid var(--vert-500);
+  outline: 2px solid var(--or);
   outline-offset: 3px;
   border-radius: 8px;
 }

@@ -71,10 +71,10 @@
       />
     </svg>
 
-    <p class="titre">Déposez votre rapport de diagnostic</p>
-    <p class="muet">un fichier PDF — DPE, électricité, gaz, amiante, plomb, termites, ERP…</p>
+    <p class="titre">Check my diag</p>
+    <p class="muet">déposez votre PDF — DPE, électricité, gaz, amiante, plomb, termites, ERP…</p>
 
-    <span class="faux-bouton">Choisir un fichier</span>
+    <span class="faux-bouton">Choisir mon rapport</span>
 
     <p class="muet petit confidentialite">
       🔒 Votre document reste sur votre appareil : il est lu par votre navigateur et n’est envoyé à
@@ -97,9 +97,9 @@
     width: 100%;
     font: inherit;
     color: inherit;
-    border: 2px dashed var(--trait);
-    border-radius: 16px;
-    background: var(--papier);
+    border: 2px dashed var(--vert-300);
+    border-radius: 20px;
+    background: linear-gradient(180deg, var(--papier), var(--papier-doux));
     padding: clamp(28px, 7vw, 56px) 24px;
     text-align: center;
     cursor: pointer;

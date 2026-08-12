@@ -10,6 +10,7 @@
  */
 import type { PageTexte } from '../lignes';
 import type { TypeDiag } from '../modele';
+import { GLOSSAIRE } from './glossaire';
 
 export interface Repere {
   /** Page du PDF où poser le repère (1-indexé). */
@@ -356,12 +357,16 @@ export function reperer(type: TypeDiag, pages: PageTexte[]): Repere[] {
   const propres = CIBLES[type];
   if (!propres) return [];
 
-  // Les cibles propres au diagnostic passent en premier : à texte égal, c'est
-  // l'explication la plus précise qui gagne.
-  const cibles = [...propres, ...COMMUNES];
+  // Du plus précis au plus général : les cibles du diagnostic, puis les lignes
+  // communes à tous les rapports, puis les mots du métier. À ligne égale, c'est
+  // l'explication la plus précise qui l'emporte.
+  const cibles: Cible[] = [...propres, ...COMMUNES, ...GLOSSAIRE];
 
   const reperes: Repere[] = [];
   const dejaVus = new Set<string>();
+  // Une ligne ne porte qu'un seul repère : sinon deux explications se
+  // superposeraient au même endroit du rapport.
+  const lignesPrises = new Set<string>();
 
   for (const page of pages) {
     if (!page.positions) continue;
@@ -369,10 +374,13 @@ export function reperer(type: TypeDiag, pages: PageTexte[]): Repere[] {
     for (const cible of cibles) {
       if (dejaVus.has(cible.titre)) continue;
 
-      const ligne = page.positions.find((l) => cible.motif.test(l.texte));
+      const ligne = page.positions.find(
+        (l) => cible.motif.test(l.texte) && !lignesPrises.has(l.texte)
+      );
       if (!ligne) continue;
 
       dejaVus.add(cible.titre);
+      lignesPrises.add(ligne.texte);
       reperes.push({
         page: page.numero,
         x: ligne.x,

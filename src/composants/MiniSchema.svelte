@@ -79,6 +79,43 @@
       <line x1="46" y1="72" x2="240" y2="72" class="texte-vrai" />
     </g>
   </svg>
+{:else if id === 'pont-thermique'}
+  <svg viewBox="0 0 300 96" role="img" aria-label="L’isolant s’interrompt à la jonction : le froid passe.">
+    <rect x="20" y="20" width="120" height="26" class="isolant" />
+    <rect x="180" y="20" width="100" height="26" class="isolant" />
+    <rect x="140" y="20" width="40" height="26" class="trou" />
+    <rect x="20" y="46" width="260" height="30" class="paroi" />
+    <path d="M160 14 v-8 M152 8 l8 -8 8 8" class="fleche-froid" />
+    <text x="160" y="92" class="mini non">le froid passe ici</text>
+  </svg>
+{:else if id === 'terre'}
+  <svg viewBox="0 0 300 96" role="img" aria-label="Le courant qui fuit part dans la terre au lieu de passer par vous.">
+    <rect x="30" y="18" width="60" height="44" rx="5" class="dedans" />
+    <path d="M90 40 H150" class="fil-vert" />
+    <path d="M150 40 V70" class="fil-vert" />
+    <path d="M126 70h48M134 78h32M142 86h16" class="terre-trait" />
+    <circle cx="215" cy="40" r="13" class="perso" />
+    <path d="M215 53v18M203 84l12-13 12 13" class="perso" />
+    <text x="215" y="94" class="mini oui">protégé</text>
+  </svg>
+{:else if id === 'vmc'}
+  <svg viewBox="0 0 300 96" role="img" aria-label="La VMC extrait l’air humide et fait entrer l’air neuf.">
+    <rect x="40" y="20" width="220" height="52" rx="6" class="paroi" />
+    <path d="M52 60 H120" class="air-entrant" />
+    <text x="86" y="52" class="mini oui">air neuf</text>
+    <path d="M180 60 H248" class="air-sortant" />
+    <text x="214" y="52" class="mini non">air humide</text>
+    <circle cx="150" cy="46" r="14" class="dedans" />
+    <path d="M150 36v20M140 46h20" class="helice" />
+  </svg>
+{:else if id === 'fibrociment'}
+  <svg viewBox="0 0 300 96" role="img" aria-label="Plaque de fibrociment intacte, et la même percée qui libère des fibres.">
+    <path d="M20 66 L76 38 L132 66 L76 94 Z" class="dedans" />
+    <text x="76" y="26" class="mini oui">intacte</text>
+    <path d="M168 66 L224 38 L280 66 L224 94 Z" class="dehors" />
+    <path d="M224 38 L216 66 L232 80" class="fissure-mini" />
+    <text x="224" y="26" class="mini non">percée</text>
+  </svg>
 {:else if id === 'listes'}
   <svg viewBox="0 0 300 96" role="img" aria-label="Liste A : flocages. Liste B : dalles, conduits, toiture. Liste C : avant démolition.">
     {#each [{ l: 'A', t: 'flocages', fort: true }, { l: 'B', t: 'dalles, toiture', fort: false }, { l: 'C', t: 'démolition', fort: false }] as e, i}
@@ -208,5 +245,79 @@
     stroke-width: 4;
     stroke-linecap: round;
     opacity: 0.8;
+  }
+
+  .isolant {
+    fill: rgb(46 233 139 / 22%);
+    stroke: var(--ok);
+    stroke-width: 1.5;
+  }
+
+  .trou {
+    fill: rgb(255 95 109 / 22%);
+    stroke: var(--alerte);
+    stroke-width: 1.5;
+  }
+
+  .paroi {
+    fill: rgb(255 255 255 / 6%);
+    stroke: var(--trait);
+    stroke-width: 1.5;
+  }
+
+  .fleche-froid {
+    fill: none;
+    stroke: var(--alerte);
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .fil-vert {
+    stroke: var(--ok);
+    stroke-width: 3;
+    fill: none;
+    stroke-linecap: round;
+  }
+
+  .terre-trait {
+    stroke: var(--ok);
+    stroke-width: 2.6;
+    stroke-linecap: round;
+  }
+
+  .perso {
+    fill: none;
+    stroke: var(--encre-doux);
+    stroke-width: 2.4;
+    stroke-linecap: round;
+  }
+
+  .air-entrant {
+    stroke: var(--ok);
+    stroke-width: 3;
+    stroke-dasharray: 6 4;
+    stroke-linecap: round;
+  }
+
+  .air-sortant {
+    stroke: var(--attention);
+    stroke-width: 3;
+    stroke-dasharray: 6 4;
+    stroke-linecap: round;
+  }
+
+  .helice {
+    stroke: var(--ok);
+    stroke-width: 2.4;
+    stroke-linecap: round;
+  }
+
+  .fissure-mini {
+    fill: none;
+    stroke: var(--alerte);
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 </style>

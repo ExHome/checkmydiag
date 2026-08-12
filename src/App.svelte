@@ -7,6 +7,7 @@
   import { analyser } from './lib/analyse';
   import { pagesExemple } from './lib/exemple';
   import type { Analyse } from './lib/modele';
+  import { depuis, dossiersGardes, garder, oublier, type DossierGarde } from './lib/memoire';
 
   let etat = $state<'accueil' | 'lecture' | 'resultat'>('accueil');
   let progression = $state<{ fait: number; total: number } | null>(null);
@@ -16,6 +17,16 @@
   let exemple = $state(false);
   /** Pages du rapport dessinées, pour les montrer annotées. */
   let rendus = $state<Map<number, PageRendue>>(new Map());
+  /** Dossiers déjà analysés, gardés sur l'appareil. */
+  let dossiers = $state<DossierGarde[]>(dossiersGardes());
+
+  function rouvrir(dossier: DossierGarde): void {
+    exemple = false;
+    nomFichier = dossier.nomFichier;
+    rendus = new Map(); // le PDF n'est pas gardé : pas d'image à remontrer
+    analyse = dossier.analyse;
+    etat = 'resultat';
+  }
 
   function montrerExemple(): void {
     exemple = true;
@@ -48,6 +59,7 @@
       rendus = new Map();
       analyse = resultat;
       etat = 'resultat';
+      dossiers = garder(fichier.name, resultat, new Date());
 
       if (import.meta.env.DEV) {
         (window as unknown as { analyseCourante?: unknown }).analyseCourante = resultat;
@@ -163,6 +175,40 @@
       </p>
     {/if}
 
+    {#if dossiers.length && etat !== 'lecture'}
+      <!-- Les dossiers déjà lus restent sur l'appareil : on les rouvre sans
+           redéposer le fichier. -->
+      <section class="gardes">
+        <h3>Vos dossiers</h3>
+        <ul>
+          {#each dossiers as dossier (dossier.id)}
+            <li>
+              <button type="button" class="dossier" onclick={() => rouvrir(dossier)}>
+                <strong>{dossier.nomFichier}</strong>
+                <span class="muet petit">
+                  {dossier.analyse.diagnostics.length} diagnostics · {depuis(
+                    dossier.quand,
+                    new Date()
+                  )}
+                </span>
+              </button>
+              <button
+                type="button"
+                class="oublier"
+                aria-label="Oublier {dossier.nomFichier}"
+                onclick={() => (dossiers = oublier(dossier.id))}
+              >
+                ✕
+              </button>
+            </li>
+          {/each}
+        </ul>
+        <p class="muet petit">
+          Gardés sur cet appareil uniquement, dans votre navigateur. Rien n’est envoyé.
+        </p>
+      </section>
+    {/if}
+
     <section class="arguments">
       <div>
         <h3>Rien n’est envoyé</h3>
@@ -223,7 +269,7 @@
   .entete {
     padding: 18px 0;
     border-bottom: 1px solid var(--trait);
-    background: rgb(4 22 15 / 72%);
+    background: rgb(247 244 236 / 88%);
     backdrop-filter: blur(10px);
     position: sticky;
     top: 0;
@@ -234,14 +280,13 @@
     font-family: var(--police-titre);
     font-size: 1.3rem;
     font-weight: 800;
-    color: var(--encre);
+    color: var(--vert-700);
     text-decoration: none;
     letter-spacing: -0.03em;
-    text-shadow: 0 0 24px rgb(46 233 139 / 35%);
   }
 
   .marque span {
-    color: var(--vert-500);
+    color: var(--or);
   }
 
   main {
@@ -296,6 +341,66 @@
     font-weight: 600;
     text-decoration: underline;
     cursor: pointer;
+  }
+
+  .gardes {
+    margin-top: 34px;
+  }
+
+  .gardes h3 {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--encre-doux);
+    margin-bottom: 10px;
+  }
+
+  .gardes ul {
+    list-style: none;
+    margin: 0 0 10px;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+
+  .gardes li {
+    display: flex;
+    align-items: stretch;
+    gap: 6px;
+  }
+
+  .dossier {
+    flex: 1;
+    display: grid;
+    gap: 2px;
+    text-align: left;
+    background: var(--papier);
+    border: 1px solid var(--trait);
+    border-radius: var(--rayon-petit);
+    padding: 12px 16px;
+    cursor: pointer;
+    color: inherit;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+
+  .dossier:hover {
+    border-color: var(--vert-500);
+    background: var(--papier-doux);
+  }
+
+  .oublier {
+    background: none;
+    border: 1px solid var(--trait);
+    border-radius: var(--rayon-petit);
+    color: var(--encre-doux);
+    width: 42px;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+
+  .oublier:hover {
+    border-color: var(--alerte);
+    color: var(--alerte);
   }
 
   .erreur {

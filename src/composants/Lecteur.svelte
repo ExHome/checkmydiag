@@ -385,12 +385,15 @@
     box-shadow: 0 0 0 2px rgb(192 144 72 / 45%);
   }
 
+  /* L'encart crème : c'est là que l'explication arrive, en face du rapport. */
   .panneau {
     position: sticky;
     top: 16px;
-    background: var(--papier-doux);
+    background: linear-gradient(180deg, #fdfaf2, var(--papier-doux));
+    border: 1px solid var(--trait);
     border-radius: var(--rayon);
-    padding: 20px 22px;
+    padding: 22px 24px;
+    box-shadow: var(--ombre);
   }
 
   .sur-titre {
