@@ -72,14 +72,11 @@
     </svg>
 
     <p class="titre">Check my diag</p>
-    <p class="muet">déposez votre PDF — DPE, électricité, gaz, amiante, plomb, termites, ERP…</p>
+    <p class="muet">DPE · électricité · gaz · amiante · plomb · termites · ERP</p>
 
-    <span class="faux-bouton">Choisir mon rapport</span>
+    <span class="faux-bouton">Choisir mon PDF</span>
 
-    <p class="muet petit confidentialite">
-      🔒 Votre document reste sur votre appareil : il est lu par votre navigateur et n’est envoyé à
-      aucun serveur.
-    </p>
+    <p class="muet petit confidentialite">🔒 Rien n’est envoyé. Tout reste sur votre appareil.</p>
   {/if}
 </button>
 

@@ -24,11 +24,10 @@
 
 {#if controles.length}
   <section class="carte controles">
-    <h2>À vérifier dans ce dossier</h2>
+    <h2>À vérifier</h2>
     <p class="chapeau muet">
-      {controles.length === 1 ? 'Un point mérite' : `${controles.length} points méritent`} une
-      question au vendeur ou au diagnostiqueur. Ce ne sont pas forcément des erreurs : il y a
-      souvent une explication.
+      {controles.length === 1 ? '1 question' : `${controles.length} questions`} à poser au vendeur.
+      Pas forcément des erreurs.
     </p>
 
     <ul>

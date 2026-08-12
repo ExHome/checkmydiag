@@ -156,11 +156,10 @@
 <main class="enveloppe">
   {#if etat !== 'resultat'}
     <section class="accroche">
-      <h1>L’antisèche de votre diagnostic immobilier</h1>
+      <h1>Votre diag, en clair</h1>
       <p class="chapeau">
-        Soixante pages de jargon. Une seule question : <em>est-ce que c’est grave ?</em>
-        Déposez votre rapport → il devient cliquable. Chaque ligne s’explique, avec un schéma et
-        les points à vérifier.
+        60 pages de jargon → une question : <em>c’est grave ?</em><br />
+        Déposez le PDF. Il devient cliquable.
       </p>
     </section>
 
@@ -214,24 +213,15 @@
     <section class="arguments">
       <div>
         <h3>Rien n’est envoyé</h3>
-        <p class="muet">
-          Le PDF est lu par votre navigateur. Aucun serveur, aucun compte, aucune trace : vous
-          pouvez couper votre connexion après le chargement de la page.
-        </p>
+        <p class="muet">Lu par votre navigateur. Aucun compte, aucune trace.</p>
       </div>
       <div>
-        <h3>Neuf diagnostics couverts</h3>
-        <p class="muet">
-          DPE, électricité, gaz, amiante, plomb, termites, état des risques, assainissement,
-          superficie Carrez — y compris quand tout est réuni dans un seul dossier.
-        </p>
+        <h3>9 diagnostics</h3>
+        <p class="muet">DPE, élec, gaz, amiante, plomb, termites, ERP, assainissement, Carrez.</p>
       </div>
       <div>
-        <h3>On vérifie aussi le dossier</h3>
-        <p class="muet">
-          Diagnostic périmé, rapport qui manque, surfaces qui ne correspondent pas : ces points
-          sont signalés, avec la question à poser.
-        </p>
+        <h3>On vérifie aussi</h3>
+        <p class="muet">Périmé, manquant, surfaces qui ne collent pas.</p>
       </div>
     </section>
   {:else if analyse}
@@ -266,9 +256,7 @@
     <Lecteur {analyse} {rendus} {demande} />
 
     <p class="avertissement muet petit">
-      Check My Diag est un outil de lecture : il reformule votre rapport, il ne le remplace pas et
-      n’a aucune valeur réglementaire. En cas de doute, la référence reste le rapport signé par
-      votre diagnostiqueur certifié.
+      Outil de lecture. Aucune valeur réglementaire — la référence reste le rapport signé.
     </p>
   {/if}
 </main>

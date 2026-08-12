@@ -38,6 +38,9 @@
 
   const { analyse, nomFichier, exemple, recommencer, partie, allerVers }: Props = $props();
 
+  /** Diagnostics déjà ouverts : on explore un dossier comme on découvre une carte. */
+  let vues = $state<Set<string>>(new Set());
+
   const importants = $derived(analyse.diagnostics.filter((d) => d.gravite === 'alerte'));
   const aRegarder = $derived(analyse.diagnostics.filter((d) => d.gravite === 'attention'));
   const tranquilles = $derived(analyse.diagnostics.filter((d) => d.gravite === 'bon'));
@@ -47,15 +50,11 @@
       const noms = importants.map((d) => NOMS[d.type]);
       const liste =
         noms.length === 1 ? noms[0] : `${noms.slice(0, -1).join(', ')} et ${noms[noms.length - 1]}`;
-      return `Ce qui demande votre attention : ${liste}. Le reste du dossier ne pose pas de problème.`;
+      return `À regarder : ${liste}. Le reste est propre.`;
     }
-    if (aRegarder.length > 0) {
-      return 'Rien de grave dans ce dossier, mais quelques points méritent votre attention avant de signer.';
-    }
-    if (tranquilles.length > 0) {
-      return 'Bonne nouvelle : aucun diagnostic de ce dossier ne signale de problème.';
-    }
-    return 'Voici ce que contient votre dossier.';
+    if (aRegarder.length > 0) return 'Rien de grave. Quelques points à voir avant de signer.';
+    if (tranquilles.length > 0) return 'Rien à signaler dans ce dossier.';
+    return 'Voici votre dossier.';
   });
 </script>
 
@@ -113,8 +112,18 @@
   </div>
 
   <div class="tuiles">
-    {#each analyse.diagnostics as d (d.type)}
-      <button type="button" class="tuile {d.gravite}" onclick={() => allerVers?.(d.type)}>
+    {#each analyse.diagnostics as d, i (d.type)}
+      <button
+        type="button"
+        class="tuile {d.gravite}"
+        class:vue={vues.has(d.type)}
+        style:animation-delay="{i * 55}ms"
+        onclick={() => {
+          vues.add(d.type);
+          vues = new Set(vues);
+          allerVers?.(d.type);
+        }}
+      >
         <span class="picto"><Picto type={d.type} /></span>
         <span class="dit">
           <span class="verdict-court">{libelleCourt(d)}</span>
@@ -241,9 +250,50 @@
     transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
 
+  /* Les tuiles apparaissent l'une après l'autre, et se soulèvent au survol :
+     on explore son dossier, on ne remplit pas un formulaire. */
+  .tuile {
+    animation: surgit 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes surgit {
+    from {
+      opacity: 0;
+      transform: translateY(12px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
   .tuile:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--ombre);
+    transform: translateY(-3px);
+    box-shadow: var(--ombre-forte);
+  }
+
+  .tuile:hover .picto {
+    transform: scale(1.06) rotate(-3deg);
+  }
+
+  .picto {
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* Une pastille discrète marque ce qu'on a déjà ouvert. */
+  .tuile.vue::after {
+    content: '✓';
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--ok);
+    opacity: 0.6;
+  }
+
+  .tuile {
+    position: relative;
   }
 
   .tuile.bon {
