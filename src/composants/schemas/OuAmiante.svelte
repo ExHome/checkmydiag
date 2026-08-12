@@ -1,45 +1,65 @@
 <script lang="ts">
   /**
-   * Où l'amiante se cache dans un logement d'avant 1997, et pourquoi il n'est
-   * dangereux que lorsqu'on y touche.
+   * Une seule idée : l'amiante est enfermée dans des matériaux, et elle n'en
+   * sort que si on les abîme. Quatre emplacements suffisent à le montrer — la
+   * liste réglementaire complète n'aurait aucun intérêt ici.
+   *
+   * Les libellés sont posés à l'intérieur du viewBox, avec assez de marge pour
+   * ne jamais être coupés.
    */
-  const endroits = [
-    { nom: 'Toiture et bardage en fibrociment', x: 300, y: 46, cx: 250, cy: 66 },
-    { nom: 'Conduits et calorifugeage', x: 82, y: 118, cx: 152, cy: 128 },
-    { nom: 'Dalles de sol et leur colle', x: 300, y: 196, cx: 232, cy: 196 },
-    { nom: 'Faux plafonds, cloisons', x: 82, y: 88, cx: 176, cy: 100 }
+  interface Lieu {
+    nom: string;
+    /** Point sur le bâti. */
+    point: [number, number];
+    /** Ancre du texte, et son côté. */
+    texte: [number, number];
+    cote: 'gauche' | 'droite';
+  }
+
+  const LIEUX: Lieu[] = [
+    { nom: 'Toiture en fibrociment', point: [300, 74], texte: [372, 62], cote: 'droite' },
+    { nom: 'Conduits, tuyaux', point: [252, 132], texte: [372, 122], cote: 'droite' },
+    { nom: 'Faux plafond', point: [216, 116], texte: [178, 100], cote: 'gauche' },
+    { nom: 'Dalles de sol et leur colle', point: [240, 202], texte: [178, 200], cote: 'gauche' }
   ];
 </script>
 
 <figure>
-  <svg viewBox="0 0 420 230" role="img" aria-label="Coupe d’une maison indiquant les emplacements typiques de l’amiante : toiture en fibrociment, conduits calorifugés, dalles de sol et leur colle, faux plafonds.">
-    <!-- Maison en coupe -->
-    <path d="M130 76 L200 36 L270 76 Z" class="toit" />
-    <rect x="140" y="76" width="120" height="126" class="mur" />
-    <line x1="140" y1="112" x2="260" y2="112" class="dalle" />
-    <rect x="140" y="190" width="120" height="12" class="sol" />
-    <rect x="146" y="118" width="14" height="74" class="conduit" />
+  <svg
+    viewBox="0 0 560 240"
+    role="img"
+    aria-label="Coupe d’une maison montrant quatre endroits où l’on trouve de l’amiante : la toiture en fibrociment, les conduits, les faux plafonds, les dalles de sol et leur colle."
+  >
+    <!-- Maison en coupe, au centre -->
+    <path d="M196 84 L266 44 L336 84 Z" class="toit" />
+    <rect x="206" y="84" width="120" height="126" class="mur" />
+    <line x1="206" y1="116" x2="326" y2="116" class="separation" />
+    <rect x="206" y="198" width="120" height="12" class="separation-pleine" />
+    <rect x="246" y="122" width="14" height="76" class="conduit" />
 
-    <!-- Points d'attention -->
-    {#each endroits as lieu (lieu.nom)}
-      <circle cx={lieu.cx} cy={lieu.cy} r="7" class="point" />
+    {#each LIEUX as lieu (lieu.nom)}
       <line
-        x1={lieu.cx}
-        y1={lieu.cy}
-        x2={lieu.x > 200 ? lieu.x - 8 : lieu.x + 8}
-        y2={lieu.y - 4}
+        x1={lieu.point[0]}
+        y1={lieu.point[1]}
+        x2={lieu.cote === 'droite' ? lieu.texte[0] - 8 : lieu.texte[0] + 8}
+        y2={lieu.texte[1] - 4}
         class="amorce"
       />
-      <text x={lieu.x} y={lieu.y} class="etiquette" text-anchor={lieu.x > 200 ? 'start' : 'end'}>
+      <circle cx={lieu.point[0]} cy={lieu.point[1]} r="7" class="point" />
+      <text
+        x={lieu.texte[0]}
+        y={lieu.texte[1]}
+        class="etiquette"
+        text-anchor={lieu.cote === 'droite' ? 'start' : 'end'}
+      >
         {lieu.nom}
       </text>
     {/each}
   </svg>
 
   <p class="regle">
-    <strong>La règle à retenir :</strong> un matériau amianté en bon état, qu’on laisse tranquille,
-    ne libère rien. Le danger commence quand on perce, ponce, scie ou casse — ou quand le matériau
-    se dégrade tout seul.
+    <strong>À retenir :</strong> tant qu’on n’y touche pas, ces matériaux ne libèrent rien. Le
+    danger commence quand on perce, on ponce, on scie — ou quand le matériau se dégrade tout seul.
   </p>
 </figure>
 
@@ -66,8 +86,12 @@
     stroke-width: 2;
   }
 
-  .dalle,
-  .sol,
+  .separation {
+    stroke: var(--encre-doux);
+    stroke-width: 2;
+  }
+
+  .separation-pleine,
   .conduit {
     fill: var(--trait);
     stroke: var(--encre-doux);
@@ -83,11 +107,11 @@
   .amorce {
     stroke: var(--attention);
     stroke-width: 1.5;
-    stroke-dasharray: 3 2;
+    stroke-dasharray: 3 3;
   }
 
   .etiquette {
-    font-size: 12px;
+    font-size: 13px;
     fill: var(--encre);
   }
 

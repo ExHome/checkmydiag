@@ -111,9 +111,9 @@ export function analyserErp(lignes: string[], plage: [number, number]): Diagnost
     gravite: alertes.length ? 'alerte' : concernes.length ? 'attention' : 'bon',
     faits,
     explication: [
-      'L’état des risques n’est pas une visite du logement : le diagnostiqueur recopie les arrêtés préfectoraux et les zonages officiels qui s’appliquent à la parcelle. Personne n’a mesuré quoi que ce soit chez vous.',
-      'Un risque listé ne veut pas dire qu’un sinistre est en cours : il indique que la commune est classée, donc que des règles de construction ou d’information s’appliquent — et que l’assurance en tiendra compte.',
-      'Le retrait-gonflement des argiles, très courant dans le Sud-Ouest, est le risque qui touche le plus de maisons : le sol argileux se rétracte en été et gonfle en hiver, ce qui fissure les murs des constructions mal fondées.'
+      'Personne n’est venu mesurer quoi que ce soit chez vous. Le diagnostiqueur recopie ce que l’administration sait déjà du terrain : les risques connus de la commune et de la parcelle.',
+      'Un risque dans la liste ne veut pas dire qu’il se passe quelque chose. Il veut dire que la zone est classée. Résultat : des règles s’appliquent quand on construit, et l’assurance en tient compte.',
+      'Le plus fréquent, surtout dans le Sud-Ouest, c’est l’argile. En été elle sèche et se tasse, en hiver elle gonfle. La maison bouge avec elle, et les murs se fissurent.'
     ],
     aFaire: [
       'Validité : six mois. C’est le diagnostic qui périme le plus vite, avec les termites.',
@@ -157,9 +157,9 @@ export function analyserCarrez(lignes: string[], plage: [number, number]): Diagn
     gravite: surface !== null ? 'bon' : 'neutre',
     faits,
     explication: [
-      'La loi Carrez mesure la surface privative des lots en copropriété : on compte le plancher sous plus de 1,80 m de hauteur, murs, cloisons, gaines et embrasures déduits.',
-      'Elle n’est pas identique à la « surface habitable » (loi Boutin) utilisée pour les baux, ni à la surface de référence du DPE : trois chiffres différents pour un même logement, c’est normal.',
-      'Caves, garages, balcons et terrasses ne comptent pas.'
+      'La loi Carrez sert à vendre un logement en copropriété. On mesure le sol des pièces, mais seulement là où le plafond est à plus de 1,80 m. On enlève les murs, les cloisons et les gaines techniques.',
+      'Ce chiffre n’est pas le même que la surface écrite dans un bail (la loi Boutin), ni que celle du DPE. Trois chiffres différents pour le même logement, c’est normal : ils ne servent pas à la même chose.',
+      'Les caves, les garages, les balcons et les terrasses ne comptent pas.'
     ],
     aFaire: [
       'Si la superficie réelle est inférieure de plus de 5 % à celle annoncée à l’acte, l’acquéreur peut demander une réduction du prix au prorata, dans l’année qui suit la vente.',

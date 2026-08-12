@@ -19,7 +19,7 @@
   const TITRES: Partial<Record<TypeDiag, string>> = {
     dpe: 'Par où part la chaleur',
     plomb: 'Pourquoi une vieille peinture est dangereuse',
-    electricite: 'Les six points contrôlés, et à quoi ils servent',
+    electricite: 'Ce que fait le différentiel quand le courant fuit',
     gaz: 'Le gaz, l’air et les fumées : trois trajets à ne jamais boucher',
     amiante: 'Où se cache l’amiante dans un logement',
     termites: 'Par où les termites arrivent',

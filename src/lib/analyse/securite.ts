@@ -99,9 +99,9 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
     gravite,
     faits,
     explication: [
-      'Ce diagnostic ne juge pas la conformité à la norme actuelle : il vérifie six points de sécurité sur une installation de plus de quinze ans — coupure d’urgence, protection différentielle, mise à la terre, protection contre les surcharges, sécurité de la salle d’eau, matériels dangereux.',
-      'Une anomalie ne signifie pas que le logement est inhabitable, mais qu’un risque d’électrisation ou d’incendie existe. Les plus fréquentes, et les plus sérieuses, portent sur l’absence de différentiel 30 mA et sur la mise à la terre.',
-      'Le diagnostic est purement visuel, sans démontage : il ne dit rien de l’état des câbles à l’intérieur des murs.'
+      'Ce diagnostic ne dit pas si l’installation est aux normes d’aujourd’hui. Il contrôle six points de sécurité, sur les installations qui ont plus de quinze ans.',
+      'Une anomalie ne veut pas dire que le logement est inhabitable. Elle veut dire qu’il existe un risque : prendre une décharge, ou déclencher un incendie. Les deux plus fréquentes sont l’absence de différentiel et une mise à la terre qui ne fonctionne pas.',
+      'Le diagnostiqueur ne démonte rien. Il ne peut donc rien dire de l’état des fils à l’intérieur des murs.'
     ],
     aFaire:
       total && total > 0
@@ -175,9 +175,9 @@ export function analyserGaz(lignes: string[], plage: [number, number]): Diagnost
     gravite,
     faits,
     explication: [
-      'Le diagnostic gaz contrôle la tuyauterie fixe, les appareils raccordés, la ventilation de la pièce et l’évacuation des produits de combustion. Deux risques sont visés : la fuite de gaz et l’intoxication au monoxyde de carbone.',
-      'Les anomalies sont graduées. A1 : à corriger lors d’une prochaine intervention. A2 : à corriger dans les meilleurs délais. DGI : danger grave et immédiat — le diagnostiqueur coupe l’alimentation de la partie concernée sur-le-champ et prévient le distributeur.',
-      'Le monoxyde de carbone est inodore et invisible : c’est pourquoi une ventilation obstruée est traitée aussi sérieusement qu’une fuite.'
+      'Le diagnostiqueur vérifie les tuyaux, les appareils branchés au gaz, la ventilation de la pièce et le conduit qui évacue les fumées. Il cherche deux dangers : une fuite de gaz, et une intoxication au monoxyde de carbone.',
+      'Les défauts sont classés en trois niveaux. A1 : à réparer un jour, sans urgence. A2 : à réparer vite. DGI, pour « danger grave et immédiat » : le diagnostiqueur coupe le gaz sur place, le jour même, et prévient le fournisseur.',
+      'Le monoxyde de carbone ne se voit pas et ne sent rien. C’est pour ça qu’une grille de ventilation bouchée est prise aussi au sérieux qu’une fuite.'
     ],
     aFaire: dgi
       ? [

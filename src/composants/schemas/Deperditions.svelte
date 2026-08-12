@@ -32,8 +32,10 @@
 </script>
 
 <figure>
+  <!-- Le cadre est plus large que le dessin : les libellés des flèches doivent
+       tenir dedans, sinon ils sont coupés à l'écran. -->
   <svg
-    viewBox="0 0 500 330"
+    viewBox="-20 0 560 350"
     role="img"
     aria-label="Coupe d’une maison montrant par où la chaleur s’échappe : le toit 25 à 30 %, l’air renouvelé 20 à 25 %, les murs 20 à 25 %, les fenêtres 10 à 15 %, les ponts thermiques 5 à 10 %, le sol 7 à 10 %."
   >

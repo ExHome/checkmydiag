@@ -66,11 +66,11 @@
 <main class="enveloppe">
   {#if etat !== 'resultat'}
     <section class="accroche">
-      <h1>Votre diagnostic immobilier, expliqué en français</h1>
+      <h1>Votre diagnostic immobilier, expliqué simplement</h1>
       <p class="chapeau">
-        Soixante pages de vocabulaire technique, et une seule question :
-        <em>est-ce que c’est grave ?</em> Déposez votre rapport, vous obtenez le verdict de chaque
-        diagnostic, les schémas qui vont avec, et ce que ça change concrètement pour vous.
+        Soixante pages de jargon, et une seule question : <em>est-ce que c’est grave ?</em>
+        Déposez votre rapport. Vous obtenez ce que dit chaque diagnostic, un schéma pour le
+        comprendre, et les points du dossier à vérifier.
       </p>
     </section>
 
@@ -103,10 +103,10 @@
         </p>
       </div>
       <div>
-        <h3>Aucun jugement inventé</h3>
+        <h3>On vérifie aussi le dossier</h3>
         <p class="muet">
-          Tout ce qui est affiché vient de votre rapport. Quand un chiffre est illisible, c’est
-          écrit — jamais deviné.
+          Diagnostic périmé, rapport qui manque, surfaces qui ne correspondent pas : ces points
+          sont signalés, avec la question à poser.
         </p>
       </div>
     </section>

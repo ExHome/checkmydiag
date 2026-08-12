@@ -69,9 +69,9 @@ export function analyserTermites(lignes: string[], plage: [number, number]): Dia
     gravite: infeste ? 'alerte' : 'bon',
     faits,
     explication: [
-      'Le diagnostic termites est un examen visuel : le diagnostiqueur cherche des indices (galeries, cordonnets, bois altéré) sur ce qui est accessible sans rien démonter ni percer.',
-      'Il ne garantit donc pas l’absence de termites dans les parties cachées — murs fermés, sous-sol inaccessible, charpente non visitable. C’est une photographie à un instant donné.',
-      'Ce diagnostic n’est obligatoire que dans les communes couvertes par un arrêté préfectoral. Sa durée de validité est courte : six mois.'
+      'Le diagnostiqueur cherche des traces de termites : des galeries dans le bois, des petits cordons de terre le long des murs, du bois qui sonne creux. Il regarde ce qui est visible et accessible, sans rien démonter.',
+      'Il ne peut donc pas garantir qu’il n’y a aucun termite dans le logement. Un mur fermé, une cave inaccessible, une charpente qu’on ne peut pas atteindre : tout cela reste invisible.',
+      'Ce diagnostic n’est demandé que dans les communes où le préfet a signalé la présence de termites. Il ne vaut que six mois.'
     ],
     aFaire: infeste
       ? [
@@ -144,9 +144,9 @@ export function analyserAmiante(lignes: string[], plage: [number, number]): Diag
     gravite: !conclusionLue ? 'neutre' : amianteTrouvee ? 'attention' : 'bon',
     faits,
     explication: [
-      'Le repérage amiante ne concerne que les immeubles dont le permis de construire est antérieur au 1ᵉʳ juillet 1997. Il porte sur une liste réglementaire de matériaux (flocages, calorifugeages, faux plafonds, dalles de sol, conduits, toitures…).',
-      'Trouver de l’amiante n’est pas une catastrophe en soi : un matériau amianté en bon état et non friable ne libère pas de fibres. Le danger apparaît quand il se dégrade, ou quand on le perce, ponce ou casse.',
-      'Le repérage « avant vente » est visuel et non destructif : il ne voit pas ce qui est enfermé dans les murs. Un repérage plus poussé est exigé avant travaux ou démolition.'
+      'On ne cherche l’amiante que dans les logements construits avant juillet 1997 : après cette date, elle était interdite. Le diagnostiqueur contrôle une liste précise de matériaux — faux plafonds, dalles de sol, conduits, toitures.',
+      'Trouver de l’amiante n’est pas une catastrophe. Tant que le matériau est en bon état et qu’on n’y touche pas, il ne libère rien. Le danger vient de la poussière, quand on perce, on ponce ou on casse.',
+      'Le diagnostiqueur regarde, il ne casse rien. Il ne peut donc pas voir ce qui est enfermé dans les murs. Avant des travaux, un repérage plus poussé est obligatoire : celui-là fait des trous.'
     ],
     aFaire: amianteTrouvee
       ? [
