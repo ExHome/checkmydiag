@@ -1,54 +1,137 @@
 <script lang="ts">
   /**
-   * Pourquoi une vieille peinture est dangereuse : la chaîne complète, en quatre
-   * temps. C'est ce qui manque le plus au lecteur d'un CREP — le rapport lui
-   * donne des classes, pas le mécanisme.
+   * Le plomb en trois temps : la peinture tient, la peinture s'écaille, la
+   * poussière est avalée. On touche une étape, elle s'explique.
    */
-  const etapes = [
-    { titre: 'Peinture ancienne', texte: 'Avant 1949, les peintures contenaient du plomb. Intacte, elle ne présente pas de danger.' },
-    { titre: 'Elle se dégrade', texte: 'Frottements, humidité, chocs : la peinture s’écaille et part en poussière.' },
-    { titre: 'Poussière au sol', texte: 'La poussière se dépose sur les sols, les rebords, les jouets. Elle est invisible.' },
-    { titre: 'Un enfant l’ingère', texte: 'Main à la bouche : c’est la voie d’intoxication principale. On parle de saturnisme.' }
+  interface Etape {
+    id: string;
+    titre: string;
+    mot: string;
+    danger: boolean;
+    points: string[];
+  }
+
+  const ETAPES: Etape[] = [
+    {
+      id: 'intacte',
+      titre: 'Peinture intacte',
+      mot: 'Aucun danger',
+      danger: false,
+      points: [
+        'Le plomb est enfermé sous la peinture',
+        'Rien ne s’échappe',
+        'On peut vivre à côté sans risque'
+      ]
+    },
+    {
+      id: 'ecaille',
+      titre: 'Peinture qui s’écaille',
+      mot: 'Poussière',
+      danger: true,
+      points: [
+        'Frottements, humidité, chocs',
+        'La peinture part en écailles',
+        'La poussière tombe au sol',
+        'Elle est invisible'
+      ]
+    },
+    {
+      id: 'enfant',
+      titre: 'Un enfant l’avale',
+      mot: 'Saturnisme',
+      danger: true,
+      points: [
+        'Main au sol, puis à la bouche',
+        'C’est la voie d’intoxication principale',
+        'Maladie grave, irréversible',
+        'Jeunes enfants et femmes enceintes surtout'
+      ]
+    }
   ];
+
+  let choisi = $state<string | null>(null);
+  const detail = $derived(ETAPES.find((e) => e.id === choisi) ?? null);
+
+  function basculer(id: string): void {
+    choisi = choisi === id ? null : id;
+  }
 </script>
 
 <figure>
-  <div class="chaine">
-    {#each etapes as etape, i (etape.titre)}
-      <div class="etape">
-        <div class="dessin" aria-hidden="true">
-          <svg viewBox="0 0 80 80">
-            {#if i === 0}
-              <rect x="14" y="14" width="52" height="52" rx="3" class="mur" />
-              <path d="M22 26h36M22 38h36M22 50h24" class="trait-mur" />
-            {:else if i === 1}
-              <rect x="14" y="14" width="52" height="52" rx="3" class="mur" />
-              <path d="M30 20 l8 14 -12 6 10 12 -8 10" class="fissure" />
-              <path d="M52 44 l6 5 -3 7" class="ecaille" />
-            {:else if i === 2}
-              <rect x="14" y="54" width="52" height="12" rx="2" class="sol-plomb" />
-              <g class="poussiere">
-                <circle cx="26" cy="46" r="2.5" />
-                <circle cx="40" cy="40" r="2" />
-                <circle cx="52" cy="48" r="3" />
-                <circle cx="34" cy="52" r="1.8" />
-                <circle cx="58" cy="38" r="1.8" />
-              </g>
-            {:else}
-              <circle cx="40" cy="28" r="13" class="enfant" />
-              <path d="M27 68c0-9 6-15 13-15s13 6 13 15" class="enfant" />
-              <circle cx="55" cy="40" r="4" class="danger" />
-            {/if}
-          </svg>
-        </div>
-        <h4>{etape.titre}</h4>
-        <p class="muet petit">{etape.texte}</p>
-      </div>
-      {#if i < etapes.length - 1}
-        <div class="lien" aria-hidden="true">→</div>
+  <p class="invite muet petit">Touchez une étape.</p>
+
+  <svg viewBox="0 0 460 210" role="group" aria-label="Trois étapes : peinture intacte sans danger, peinture qui s’écaille et fait de la poussière, enfant qui l’avale.">
+    {#each ETAPES as etape, i (etape.id)}
+      {@const actif = choisi === etape.id}
+      {@const dx = i * 155}
+      <g
+        class="cible"
+        class:actif
+        class:efface={choisi !== null && !actif}
+        role="button"
+        tabindex="0"
+        aria-pressed={actif}
+        aria-label="{etape.titre} : {etape.mot}"
+        onclick={() => basculer(etape.id)}
+        onkeydown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            basculer(etape.id);
+          }
+        }}
+      >
+        <rect x={12 + dx} y="20" width="132" height="172" rx="14" class="zone" />
+        <text x={78 + dx} y="42" class="titre-cas">{etape.titre}</text>
+
+        <g transform="translate({dx} 0)">
+          {#if i === 0}
+            <rect x="38" y="58" width="80" height="76" rx="4" class="mur" />
+            <path d="M50 76h56M50 92h56M50 108h34" class="lignes" />
+          {:else if i === 1}
+            <rect x="38" y="58" width="80" height="76" rx="4" class="mur" />
+            <path d="M56 66 l10 16 -14 8 12 14 -9 12" class="fissure" />
+            <path d="M92 96 l8 7 -4 9" class="fissure" />
+            <g class="poussiere">
+              <circle cx="52" cy="146" r="3" />
+              <circle cx="72" cy="152" r="2.4" />
+              <circle cx="92" cy="145" r="3.4" />
+              <circle cx="108" cy="153" r="2" />
+            </g>
+          {:else}
+            <circle cx="78" cy="76" r="15" class="enfant" />
+            <path d="M78 92 v34 M60 146 l18 -20 18 20 M60 104 h36" class="enfant" />
+            <circle cx="102" cy="104" r="5" class="danger" />
+          {/if}
+        </g>
+
+        <g transform="translate({78 + dx} 172)">
+          <rect x="-58" y="-15" width="116" height="30" rx="15" class="verdict" class:mauvais={etape.danger} />
+          <text x="0" y="5" class="mot">{etape.mot}</text>
+        </g>
+      </g>
+
+      {#if i < ETAPES.length - 1}
+        <path d="M{150 + dx} 106 l12 0" class="fleche" />
+        <path d="M{158 + dx} 101 l6 5 -6 5" class="fleche" />
       {/if}
     {/each}
-  </div>
+  </svg>
+
+  {#if detail}
+    <div class="reponse apparait" class:mauvais={detail.danger}>
+      <p class="titre">{detail.titre}</p>
+      <ul>
+        {#each detail.points as point}
+          <li>{point}</li>
+        {/each}
+      </ul>
+      <button type="button" class="fermer" onclick={() => (choisi = null)}>← Revenir au schéma</button>
+    </div>
+  {:else}
+    <figcaption class="muet petit">
+      Le danger ne vient pas du plomb lui-même, mais de la peinture qui se dégrade.
+    </figcaption>
+  {/if}
 </figure>
 
 <style>
@@ -56,73 +139,76 @@
     margin: 0;
   }
 
-  .chaine {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 4px;
-    align-items: start;
+  .invite {
+    margin: 0 0 4px;
   }
 
-  .etape {
-    text-align: center;
-    padding: 0 4px;
+  svg {
+    width: 100%;
+    height: auto;
+    max-width: 520px;
+    display: block;
+    margin-inline: auto;
   }
 
-  .dessin svg {
-    width: 68px;
-    height: 68px;
+  .cible {
+    cursor: pointer;
+    transition: opacity 0.25s ease;
   }
 
-  h4 {
-    font-family: var(--police);
-    font-size: 0.9rem;
-    margin: 4px 0 4px;
+  .cible.efface {
+    opacity: 0.32;
   }
 
-  .etape p {
-    margin: 0;
-    font-size: 0.82rem;
-    line-height: 1.45;
+  .zone {
+    fill: rgb(255 255 255 / 3%);
+    stroke: var(--trait);
+    stroke-width: 1.5;
+    transition: fill 0.2s ease, stroke 0.2s ease;
   }
 
-  .lien {
-    display: none;
+  .cible:hover .zone,
+  .cible:focus-visible .zone,
+  .cible.actif .zone {
+    fill: rgb(255 255 255 / 7%);
+    stroke: var(--vert-500);
+  }
+
+  .titre-cas {
+    font-size: 12.5px;
+    font-weight: 700;
+    fill: var(--encre);
+    text-anchor: middle;
   }
 
   .mur {
-    fill: var(--papier-doux);
-    stroke: var(--encre-doux);
+    fill: #e7efe9;
+    stroke: #9db0a6;
     stroke-width: 2;
   }
 
-  .trait-mur {
-    stroke: var(--trait);
-    stroke-width: 2;
-    fill: none;
+  .lignes {
+    stroke: #c3d0c8;
+    stroke-width: 2.4;
   }
 
-  .fissure,
-  .ecaille {
+  .fissure {
     fill: none;
     stroke: var(--attention);
-    stroke-width: 2.5;
+    stroke-width: 2.8;
     stroke-linecap: round;
     stroke-linejoin: round;
   }
 
-  .sol-plomb {
-    fill: var(--trait);
-  }
-
   .poussiere circle {
     fill: var(--attention);
-    opacity: 0.8;
+    opacity: 0.9;
   }
 
   .enfant {
     fill: none;
     stroke: var(--encre-doux);
-    stroke-width: 2.5;
+    stroke-width: 2.8;
     stroke-linecap: round;
   }
 
@@ -130,45 +216,96 @@
     fill: var(--alerte);
   }
 
-  /* Sur petit écran, la chaîne se lit de haut en bas. */
-  @media (max-width: 620px) {
-    .chaine {
-      grid-template-columns: 1fr;
-      gap: 2px;
-    }
+  .fleche {
+    fill: none;
+    stroke: var(--encre-doux);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.6;
+  }
 
-    .etape {
-      display: grid;
-      grid-template-columns: 60px 1fr;
-      column-gap: 12px;
-      text-align: left;
-      align-items: center;
-    }
+  .verdict {
+    fill: rgb(46 233 139 / 16%);
+    stroke: var(--ok);
+    stroke-width: 1.5;
+  }
 
-    .dessin {
-      grid-row: span 2;
-    }
+  .verdict.mauvais {
+    fill: rgb(255 95 109 / 16%);
+    stroke: var(--alerte);
+  }
 
-    .dessin svg {
-      width: 56px;
-      height: 56px;
-    }
+  .mot {
+    font-size: 12.5px;
+    font-weight: 800;
+    fill: var(--encre);
+    text-anchor: middle;
+  }
 
-    h4 {
-      align-self: end;
-      margin: 0;
-    }
+  .reponse {
+    margin-top: 12px;
+    padding: 16px 20px;
+    background: rgb(46 233 139 / 10%);
+    border-left: 4px solid var(--ok);
+    border-radius: var(--rayon-petit);
+  }
 
-    .etape p {
-      align-self: start;
-    }
+  .reponse.mauvais {
+    background: rgb(255 95 109 / 10%);
+    border-left-color: var(--alerte);
+  }
 
-    .lien {
-      display: block;
-      color: var(--trait);
-      transform: rotate(90deg);
-      margin-left: 22px;
-      line-height: 1;
-    }
+  .reponse .titre {
+    margin: 0 0 8px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.9rem;
+    color: var(--ok);
+  }
+
+  .reponse.mauvais .titre {
+    color: var(--alerte);
+  }
+
+  .reponse ul {
+    list-style: none;
+    margin: 0 0 10px;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+
+  .reponse li {
+    position: relative;
+    padding-left: 18px;
+    font-size: 0.96rem;
+  }
+
+  .reponse li::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 0.55em;
+    width: 6px;
+    height: 6px;
+    border-radius: 2px;
+    background: currentColor;
+    opacity: 0.6;
+  }
+
+  .fermer {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--vert-300);
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  figcaption {
+    margin-top: 12px;
   }
 </style>

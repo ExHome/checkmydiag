@@ -1,42 +1,117 @@
 <script lang="ts">
   /**
-   * Pourquoi trois surfaces différentes coexistent pour un même logement.
-   * C'est la question que tout acheteur se pose devant son dossier.
+   * La loi Carrez en une idée : la barre des 1,80 m. Au-dessus ça compte,
+   * en dessous non.
    */
+  interface Partie {
+    id: string;
+    titre: string;
+    mot: string;
+    compte: boolean;
+    points: string[];
+  }
+
+  const PARTIES: Partie[] = [
+    {
+      id: 'compte',
+      titre: 'Au-dessus de 1,80 m',
+      mot: 'Ça compte',
+      compte: true,
+      points: [
+        'Le sol des pièces où l’on tient debout',
+        'Couloirs et placards inclus',
+        'C’est ce chiffre qui va dans l’acte'
+      ]
+    },
+    {
+      id: 'compte-pas',
+      titre: 'En dessous de 1,80 m',
+      mot: 'Ça ne compte pas',
+      compte: false,
+      points: [
+        'Sous les rampants, sous l’escalier',
+        'Murs, cloisons et gaines déduits',
+        'Caves, garages, balcons exclus',
+        'D’où l’écart avec la surface annoncée'
+      ]
+    }
+  ];
+
+  let choisi = $state<string | null>(null);
+  const detail = $derived(PARTIES.find((p) => p.id === choisi) ?? null);
+
+  function basculer(id: string): void {
+    choisi = choisi === id ? null : id;
+  }
 </script>
 
 <figure>
-  <svg viewBox="0 0 460 200" role="img" aria-label="Coupe sous combles : sous 1,80 mètre de hauteur, la surface ne compte pas dans la loi Carrez. Les murs, cloisons et gaines sont également déduits.">
-    <!-- Coupe sous rampant -->
-    <path d="M40 160 L230 40 L420 160 Z" class="volume" />
-    <rect x="40" y="160" width="380" height="10" class="plancher" />
+  <p class="invite muet petit">Touchez une zone.</p>
 
-    <!-- Ligne des 1,80 m -->
-    <line x1="40" y1="112" x2="420" y2="112" class="ligne-seuil" />
-    <text x="230" y="106" class="seuil">1,80 m de hauteur</text>
+  <svg viewBox="0 0 460 230" role="group" aria-label="Coupe sous combles : au-dessus de 1,80 mètre la surface compte, en dessous elle ne compte pas.">
+    <!-- Le volume sous rampants -->
+    <path d="M40 186 L230 56 L420 186 Z" class="volume" />
+    <rect x="40" y="186" width="380" height="10" class="plancher" />
 
-    <!-- Zone comptée -->
-    <path d="M133 112 L230 51 L327 112 Z" class="comptee" />
-    <text x="230" y="98" class="dedans">compté</text>
+    <!-- La zone qui compte -->
+    <path d="M126 132 L230 62 L334 132 Z" class="comptee" />
 
-    <!-- Zones non comptées -->
-    <text x="86" y="146" class="dehors">non compté</text>
-    <text x="376" y="146" class="dehors">non compté</text>
+    <!-- La ligne des 1,80 m -->
+    <line x1="40" y1="132" x2="420" y2="132" class="ligne-seuil" />
+    <text x="230" y="124" class="seuil">1,80 m</text>
 
-    <!-- Cotes -->
-    <path d="M133 120 v22 M327 120 v22 M133 131 H327" class="cote" />
-    <text x="230" y="158" class="repere">surface loi Carrez</text>
+    <!-- Zones cliquables -->
+    {#each PARTIES as partie (partie.id)}
+      {@const actif = choisi === partie.id}
+      <g
+        class="cible"
+        class:actif
+        class:efface={choisi !== null && !actif}
+        role="button"
+        tabindex="0"
+        aria-pressed={actif}
+        aria-label="{partie.titre} : {partie.mot}"
+        onclick={() => basculer(partie.id)}
+        onkeydown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            basculer(partie.id);
+          }
+        }}
+      >
+        {#if partie.compte}
+          <path d="M126 132 L230 62 L334 132 Z" class="zone" />
+          <g transform="translate(230 100)">
+            <rect x="-58" y="-15" width="116" height="30" rx="15" class="verdict oui" />
+            <text x="0" y="5" class="mot">{partie.mot}</text>
+          </g>
+        {:else}
+          <path d="M40 186 L126 132 L126 186 Z M334 132 L420 186 L334 186 Z" class="zone" />
+          <g transform="translate(230 214)">
+            <rect x="-70" y="-15" width="140" height="30" rx="15" class="verdict non" />
+            <text x="0" y="5" class="mot">{partie.mot}</text>
+          </g>
+        {/if}
+      </g>
+    {/each}
   </svg>
 
-  <ul class="comparaison">
-    <li><strong>Loi Carrez</strong> — pour la vente d’un lot en copropriété. Plancher sous 1,80 m exclu, murs et cloisons déduits.</li>
-    <li><strong>Loi Boutin</strong> — pour le bail d’habitation. Règles voisines, mais périmètre différent.</li>
-    <li><strong>Surface de référence du DPE</strong> — sert au calcul énergétique, pas à la vente.</li>
-  </ul>
-  <p class="muet petit">
-    Trois chiffres différents pour le même logement, c’est normal : ils ne répondent pas à la même
-    question.
-  </p>
+  {#if detail}
+    <div class="reponse apparait" class:non={!detail.compte}>
+      <p class="titre">{detail.titre}</p>
+      <ul>
+        {#each detail.points as point}
+          <li>{point}</li>
+        {/each}
+      </ul>
+      <button type="button" class="fermer" onclick={() => (choisi = null)}>← Revenir au schéma</button>
+    </div>
+  {:else}
+    <figcaption class="muet petit">
+      Trois surfaces différentes pour le même logement, c’est normal : Carrez pour vendre, Boutin
+      pour louer, surface de référence pour le DPE.
+    </figcaption>
+  {/if}
 </figure>
 
 <style>
@@ -44,14 +119,21 @@
     margin: 0;
   }
 
+  .invite {
+    margin: 0 0 4px;
+  }
+
   svg {
     width: 100%;
     height: auto;
+    max-width: 520px;
+    display: block;
+    margin-inline: auto;
   }
 
   .volume {
-    fill: var(--papier-doux);
-    stroke: var(--encre-doux);
+    fill: rgb(255 255 255 / 5%);
+    stroke: var(--trait);
     stroke-width: 2;
     stroke-linejoin: round;
   }
@@ -61,56 +143,128 @@
   }
 
   .comptee {
-    fill: var(--vert-100);
-    stroke: var(--vert-500);
+    fill: rgb(46 233 139 / 20%);
+    stroke: var(--ok);
     stroke-width: 2;
   }
 
   .ligne-seuil {
-    stroke: var(--vert-500);
+    stroke: var(--ok);
     stroke-width: 2;
-    stroke-dasharray: 6 4;
+    stroke-dasharray: 7 5;
   }
 
   .seuil {
-    font-size: 12px;
-    fill: var(--vert-500);
+    font-size: 13px;
+    fill: var(--ok);
     text-anchor: middle;
-    font-weight: 600;
+    font-weight: 800;
   }
 
-  .dedans {
-    font-size: 12px;
-    fill: var(--vert-700);
-    text-anchor: middle;
-    font-weight: 600;
+  .cible {
+    cursor: pointer;
+    transition: opacity 0.25s ease;
   }
 
-  .dehors {
-    font-size: 12px;
-    fill: var(--encre-doux);
-    text-anchor: middle;
+  .cible.efface {
+    opacity: 0.35;
   }
 
-  .cote {
-    stroke: var(--encre-doux);
+  .zone {
+    fill: transparent;
+    stroke: transparent;
+    stroke-width: 2.5;
+    transition: fill 0.2s ease, stroke 0.2s ease;
+  }
+
+  .cible:hover .zone,
+  .cible:focus-visible .zone,
+  .cible.actif .zone {
+    fill: rgb(255 255 255 / 10%);
+    stroke: var(--vert-500);
+  }
+
+  .verdict {
+    fill: rgb(46 233 139 / 18%);
+    stroke: var(--ok);
     stroke-width: 1.5;
-    fill: none;
   }
 
-  .repere {
-    font-size: 12px;
-    fill: var(--encre-doux);
+  .verdict.non {
+    fill: rgb(255 255 255 / 8%);
+    stroke: var(--encre-doux);
+  }
+
+  .mot {
+    font-size: 13px;
+    font-weight: 800;
+    fill: var(--encre);
     text-anchor: middle;
   }
 
-  .comparaison {
-    margin: 16px 0 8px;
-    padding-left: 1.1em;
-    font-size: 0.94rem;
+  .reponse {
+    margin-top: 12px;
+    padding: 16px 20px;
+    background: rgb(46 233 139 / 10%);
+    border-left: 4px solid var(--ok);
+    border-radius: var(--rayon-petit);
   }
 
-  .comparaison li {
-    margin-bottom: 6px;
+  .reponse.non {
+    background: rgb(255 255 255 / 5%);
+    border-left-color: var(--encre-doux);
+  }
+
+  .reponse .titre {
+    margin: 0 0 8px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.9rem;
+    color: var(--ok);
+  }
+
+  .reponse.non .titre {
+    color: var(--encre-doux);
+  }
+
+  .reponse ul {
+    list-style: none;
+    margin: 0 0 10px;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+
+  .reponse li {
+    position: relative;
+    padding-left: 18px;
+    font-size: 0.96rem;
+  }
+
+  .reponse li::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 0.55em;
+    width: 6px;
+    height: 6px;
+    border-radius: 2px;
+    background: currentColor;
+    opacity: 0.6;
+  }
+
+  .fermer {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--vert-300);
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  figcaption {
+    margin-top: 12px;
   }
 </style>

@@ -1,45 +1,133 @@
 <script lang="ts">
   /**
-   * Ce que contrôle le diagnostic gaz : le trajet du gaz, celui de l'air, et
-   * celui des fumées. Les trois doivent être libres — le monoxyde de carbone
-   * vient toujours d'un de ces trois trajets bouché.
+   * Le gaz en une idée : une flamme mange de l'air. Si l'air n'entre plus, elle
+   * fabrique du monoxyde de carbone.
+   *
+   * Deux vignettes, deux verdicts. Rien d'autre.
    */
+  interface Cas {
+    id: string;
+    titre: string;
+    mot: string;
+    danger: boolean;
+    points: string[];
+  }
+
+  const CAS: Cas[] = [
+    {
+      id: 'ok',
+      titre: 'Grille dégagée',
+      mot: 'Combustion propre',
+      danger: false,
+      points: [
+        'L’air entre par la grille basse',
+        'La flamme brûle complètement',
+        'Les fumées partent par le conduit'
+      ]
+    },
+    {
+      id: 'bouche',
+      titre: 'Grille bouchée',
+      mot: 'Monoxyde de carbone',
+      danger: true,
+      points: [
+        'La flamme manque d’air',
+        'Elle fabrique du monoxyde de carbone',
+        'Invisible, sans odeur',
+        'Il endort, puis il tue'
+      ]
+    }
+  ];
+
+  let choisi = $state<string | null>(null);
+  const detail = $derived(CAS.find((c) => c.id === choisi) ?? null);
+
+  function basculer(id: string): void {
+    choisi = choisi === id ? null : id;
+  }
 </script>
 
 <figure>
-  <svg viewBox="0 0 460 250" role="img" aria-label="Coupe d’une pièce avec une chaudière : le gaz arrive par la tuyauterie, l’air entre par la grille basse, les fumées sortent par le conduit. Une grille obstruée provoque du monoxyde de carbone.">
-    <rect x="20" y="30" width="420" height="190" rx="4" class="piece" />
+  <p class="invite muet petit">Touchez une situation.</p>
 
-    <!-- Chaudière -->
-    <rect x="230" y="96" width="86" height="96" rx="4" class="chaudiere" />
-    <rect x="246" y="150" width="54" height="28" rx="3" class="foyer" />
-    <path d="M256 172c2-8 8-8 8-16 4 6 10 8 10 16" class="flamme" />
-    <path d="M280 172c1-6 6-6 6-12 3 5 7 6 7 12" class="flamme" />
+  <svg viewBox="0 0 460 260" role="group" aria-label="À gauche, la grille de ventilation est dégagée et la flamme brûle proprement. À droite, la grille est bouchée et la combustion produit du monoxyde de carbone.">
+    {#each CAS as cas, i (cas.id)}
+      {@const actif = choisi === cas.id}
+      {@const dx = i * 240}
+      <g
+        class="cible"
+        class:actif
+        class:efface={choisi !== null && !actif}
+        role="button"
+        tabindex="0"
+        aria-pressed={actif}
+        aria-label="{cas.titre} : {cas.mot}"
+        onclick={() => basculer(cas.id)}
+        onkeydown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            basculer(cas.id);
+          }
+        }}
+      >
+        <rect x={20 + dx} y="26" width="184" height="206" rx="14" class="zone" />
+        <text x={112 + dx} y="48" class="titre-cas">{cas.titre}</text>
 
-    <!-- Arrivée de gaz -->
-    <path d="M20 176 H230" class="gaz" />
-    <text x="40" y="168" class="repere gaz-texte">gaz</text>
+        <g transform="translate({dx} 0)">
+          <!-- La chaudière -->
+          <rect x="112" y="86" width="70" height="86" rx="6" class="chaudiere" />
+          <rect x="126" y="128" width="42" height="30" rx="4" class="foyer" />
 
-    <!-- Évacuation des fumées -->
-    <path d="M273 96 V52 H400 V30" class="fumee" />
-    <text x="330" y="44" class="repere fumee-texte">fumées</text>
+          <!-- La flamme : franche à gauche, molle et jaune à droite -->
+          {#if cas.danger}
+            <path d="M138 152c1-8 6-9 7-16 4 6 9 8 9 16" class="flamme sale" />
+          {:else}
+            <path d="M138 152c1-9 7-10 8-18 5 7 10 9 10 18" class="flamme" />
+          {/if}
 
-    <!-- Entrée d'air : grille basse -->
-    <rect x="60" y="186" width="46" height="26" rx="2" class="grille" />
-    <path d="M66 192h34M66 199h34M66 206h34" class="barreaux" />
-    <path d="M112 199 H226" class="air" />
-    <text x="83" y="182" class="repere">grille d’air</text>
+          <!-- Conduit de fumées -->
+          <path d="M147 86 V56 H186" class="conduit" />
 
-    <!-- Ce qui arrive si la grille est bouchée -->
-    <g class="alerte-groupe">
-      <path d="M83 226 v-10" class="croix-amorce" />
-      <circle cx="83" cy="234" r="11" class="rond-alerte" />
-      <path d="M78 229l10 10M88 229l-10 10" class="croix" />
-      <text x="106" y="239" class="avertissement">
-        Grille bouchée = monoxyde de carbone (invisible et inodore)
-      </text>
-    </g>
+          <!-- Grille d'air -->
+          <rect x="40" y="150" width="42" height="26" rx="3" class="grille" class:fermee={cas.danger} />
+          <path d="M46 157h30M46 164h30M46 171h30" class="barreaux" class:fermee={cas.danger} />
+
+          {#if cas.danger}
+            <!-- Le carton qui bouche, et le CO qui revient -->
+            <rect x="36" y="146" width="50" height="34" rx="3" class="obstacle" />
+            <g class="co">
+              <circle cx="104" cy="112" r="5" />
+              <circle cx="92" cy="98" r="4" />
+              <circle cx="116" cy="94" r="3.4" />
+            </g>
+          {:else}
+            <path d="M86 163 H112" class="air" />
+          {/if}
+        </g>
+
+        <g transform="translate({112 + dx} 210)">
+          <rect x="-84" y="-16" width="168" height="32" rx="16" class="verdict" class:mauvais={cas.danger} />
+          <text x="0" y="5" class="mot">{cas.mot}</text>
+        </g>
+      </g>
+    {/each}
   </svg>
+
+  {#if detail}
+    <div class="reponse apparait" class:mauvais={detail.danger}>
+      <p class="titre">{detail.titre}</p>
+      <ul>
+        {#each detail.points as point}
+          <li>{point}</li>
+        {/each}
+      </ul>
+      <button type="button" class="fermer" onclick={() => (choisi = null)}>← Revenir au schéma</button>
+    </div>
+  {:else}
+    <figcaption class="muet petit">
+      Ne bouchez jamais une grille de ventilation, même en hiver, même si ça souffle.
+    </figcaption>
+  {/if}
 </figure>
 
 <style>
@@ -47,104 +135,195 @@
     margin: 0;
   }
 
+  .invite {
+    margin: 0 0 4px;
+  }
+
   svg {
     width: 100%;
     height: auto;
-    overflow: visible;
+    max-width: 520px;
+    display: block;
+    margin-inline: auto;
   }
 
-  .piece {
-    fill: var(--papier-doux);
-    stroke: var(--encre-doux);
-    stroke-width: 2;
+  .cible {
+    cursor: pointer;
+    transition: opacity 0.25s ease;
+  }
+
+  .cible.efface {
+    opacity: 0.32;
+  }
+
+  .zone {
+    fill: rgb(255 255 255 / 3%);
+    stroke: var(--trait);
+    stroke-width: 1.5;
+    transition: fill 0.2s ease, stroke 0.2s ease;
+  }
+
+  .cible:hover .zone,
+  .cible:focus-visible .zone,
+  .cible.actif .zone {
+    fill: rgb(255 255 255 / 7%);
+    stroke: var(--vert-500);
+  }
+
+  .titre-cas {
+    font-size: 13px;
+    font-weight: 700;
+    fill: var(--encre);
+    text-anchor: middle;
   }
 
   .chaudiere {
-    fill: var(--papier);
-    stroke: var(--encre-doux);
+    fill: #cfd8d2;
+    stroke: #7d8a83;
     stroke-width: 2;
   }
 
   .foyer {
-    fill: var(--papier-doux);
-    stroke: var(--encre-doux);
-    stroke-width: 1.5;
+    fill: #2a3a33;
   }
 
   .flamme {
     fill: none;
+    stroke: #4fd1ff;
+    stroke-width: 3.4;
+    stroke-linecap: round;
+  }
+
+  .flamme.sale {
     stroke: var(--attention);
-    stroke-width: 2.5;
-    stroke-linecap: round;
   }
 
-  .gaz {
-    stroke: var(--or);
-    stroke-width: 4;
+  .conduit {
     fill: none;
-    stroke-linecap: round;
-  }
-
-  .fumee {
-    stroke: var(--encre-doux);
-    stroke-width: 3;
-    fill: none;
+    stroke: #7d8a83;
+    stroke-width: 3.4;
     stroke-dasharray: 7 5;
     stroke-linecap: round;
   }
 
+  .grille {
+    fill: rgb(46 233 139 / 18%);
+    stroke: var(--ok);
+    stroke-width: 2;
+  }
+
+  .grille.fermee {
+    fill: rgb(255 95 109 / 14%);
+    stroke: var(--alerte);
+  }
+
+  .barreaux {
+    stroke: var(--ok);
+    stroke-width: 1.6;
+  }
+
+  .barreaux.fermee {
+    stroke: var(--alerte);
+  }
+
+  .obstacle {
+    fill: #8a6224;
+    opacity: 0.9;
+  }
+
   .air {
-    stroke: var(--vert-500);
-    stroke-width: 3;
-    fill: none;
+    stroke: var(--ok);
+    stroke-width: 3.4;
     stroke-dasharray: 6 5;
     stroke-linecap: round;
   }
 
-  .grille {
-    fill: var(--vert-100);
-    stroke: var(--encre-doux);
-    stroke-width: 2;
+  .co circle {
+    fill: var(--alerte);
+    opacity: 0.75;
   }
 
-  .barreaux {
-    stroke: var(--encre-doux);
+  .verdict {
+    fill: rgb(46 233 139 / 16%);
+    stroke: var(--ok);
     stroke-width: 1.5;
-    fill: none;
   }
 
-  .repere {
-    font-size: 12px;
-    fill: var(--encre-doux);
+  .verdict.mauvais {
+    fill: rgb(255 95 109 / 16%);
+    stroke: var(--alerte);
+  }
+
+  .mot {
+    font-size: 13px;
+    font-weight: 800;
+    fill: var(--encre);
     text-anchor: middle;
   }
 
-  .gaz-texte {
-    fill: var(--or);
-    font-weight: 600;
+  .reponse {
+    margin-top: 12px;
+    padding: 16px 20px;
+    background: rgb(46 233 139 / 10%);
+    border-left: 4px solid var(--ok);
+    border-radius: var(--rayon-petit);
   }
 
-  .rond-alerte {
-    fill: var(--alerte-fond);
-    stroke: var(--alerte);
-    stroke-width: 2;
+  .reponse.mauvais {
+    background: rgb(255 95 109 / 10%);
+    border-left-color: var(--alerte);
   }
 
-  .croix {
-    stroke: var(--alerte);
-    stroke-width: 2.5;
-    stroke-linecap: round;
+  .reponse .titre {
+    margin: 0 0 8px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.9rem;
+    color: var(--ok);
   }
 
-  .croix-amorce {
-    stroke: var(--alerte);
-    stroke-width: 1.5;
-    stroke-dasharray: 3 2;
+  .reponse.mauvais .titre {
+    color: var(--alerte);
   }
 
-  .avertissement {
-    font-size: 12.5px;
-    fill: var(--alerte);
-    font-weight: 600;
+  .reponse ul {
+    list-style: none;
+    margin: 0 0 10px;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+
+  .reponse li {
+    position: relative;
+    padding-left: 18px;
+    font-size: 0.96rem;
+  }
+
+  .reponse li::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 0.55em;
+    width: 6px;
+    height: 6px;
+    border-radius: 2px;
+    background: currentColor;
+    opacity: 0.6;
+  }
+
+  .fermer {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--vert-300);
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  figcaption {
+    margin-top: 12px;
   }
 </style>
