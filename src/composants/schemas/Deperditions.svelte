@@ -228,6 +228,11 @@
     <div class="reponse apparait">
       <p class="titre">{detail.nom} · {detail.part} de la chaleur</p>
       <p>{detail.texte}</p>
+      <!-- Le retour doit être évident : on ne piège jamais le lecteur dans un
+           détail dont il ne sait pas comment sortir. -->
+      <button type="button" class="fermer" onclick={() => (choisi = null)}>
+        ← Revenir au schéma
+      </button>
     </div>
   {:else}
     <figcaption class="muet petit">
@@ -356,9 +361,19 @@
     letter-spacing: 0.05em;
   }
 
-  .reponse p:last-child {
-    margin: 0;
+  .reponse p:last-of-type {
+    margin: 0 0 10px;
     font-size: 0.98rem;
+  }
+
+  .fermer {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--vert-300);
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
   }
 
   figcaption {
