@@ -7,6 +7,7 @@
    */
   import type { Analyse, TypeDiag } from '../lib/modele';
   import Picto from './Picto.svelte';
+  import MiniEtiquette from './MiniEtiquette.svelte';
   import { libelleCourt } from '../lib/libelle';
 
   /** Nom court, pour écrire une phrase qui se lit à voix haute. */
@@ -124,7 +125,13 @@
           allerVers?.(d.type);
         }}
       >
-        <span class="picto"><Picto type={d.type} /></span>
+        <span class="picto" class:etiquette={d.type === 'dpe'}>
+          {#if d.type === 'dpe' && d.schema?.genre === 'dpe'}
+            <MiniEtiquette lettre={d.schema.finale} />
+          {:else}
+            <Picto type={d.type} />
+          {/if}
+        </span>
         <span class="dit">
           <span class="verdict-court">{libelleCourt(d)}</span>
           <span class="quoi">{d.titre}</span>
@@ -232,22 +239,42 @@
     }
   }
 
+  /* Des tuiles pleines : la couleur de la gravité occupe toute la carte, comme
+     un bouton qu'on a envie d'appuyer. */
   .tuile {
     display: grid;
-    grid-template-columns: 74px 1fr 18px;
+    grid-template-columns: 74px 1fr 20px;
     align-items: center;
-    gap: 16px;
+    gap: 18px;
     text-align: left;
     font: inherit;
     cursor: pointer;
-    padding: 14px 16px;
-    border-radius: var(--rayon-petit);
-    border: 1px solid var(--trait);
-    border-left-width: 5px;
-    background: var(--papier);
-    color: inherit;
+    padding: 20px 22px;
+    border-radius: 18px;
+    border: 2px solid transparent;
+    color: var(--encre);
     text-decoration: none;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  }
+
+  .tuile.bon {
+    background: linear-gradient(150deg, #e8f6ee, #d5ecdf);
+    border-color: #b9dfc9;
+  }
+
+  .tuile.attention {
+    background: linear-gradient(150deg, #fdf3e0, #f8e6c6);
+    border-color: #eed4a4;
+  }
+
+  .tuile.alerte {
+    background: linear-gradient(150deg, #fceeea, #f7dcd4);
+    border-color: #f0c3b6;
+  }
+
+  .tuile.neutre {
+    background: linear-gradient(150deg, var(--papier), var(--papier-doux));
+    border-color: var(--trait);
   }
 
   /* Les tuiles apparaissent l'une après l'autre, et se soulèvent au survol :
@@ -315,9 +342,15 @@
     place-items: center;
     width: 74px;
     height: 74px;
-    border-radius: 18px;
-    padding: 12px;
-    background: var(--papier-doux);
+    border-radius: 20px;
+    padding: 13px;
+    background: rgb(255 255 255 / 72%);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 60%);
+  }
+
+  /* L'étiquette DPE remplit sa case : c'est un graphique, pas une icône. */
+  .picto.etiquette {
+    padding: 8px 10px;
   }
 
   .verdict-court {
@@ -357,15 +390,12 @@
 
   .tuile.bon .picto {
     color: var(--ok);
-    background: var(--ok-fond);
   }
   .tuile.attention .picto {
     color: var(--attention);
-    background: var(--attention-fond);
   }
   .tuile.alerte .picto {
     color: var(--alerte);
-    background: var(--alerte-fond);
   }
   .tuile.neutre .picto {
     color: var(--encre-doux);

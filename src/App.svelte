@@ -7,7 +7,15 @@
   import { analyser } from './lib/analyse';
   import { pagesExemple } from './lib/exemple';
   import type { Analyse } from './lib/modele';
-  import { depuis, dossiersGardes, garder, oublier, type DossierGarde } from './lib/memoire';
+  import {
+    chargerDossier,
+    depuis,
+    garderDossier,
+    listerDossiers,
+    oublierDossier,
+    poids,
+    type DossierGarde
+  } from './lib/coffre';
 
   let etat = $state<'accueil' | 'lecture' | 'resultat'>('accueil');
   let progression = $state<{ fait: number; total: number } | null>(null);
@@ -17,17 +25,29 @@
   let exemple = $state(false);
   /** Pages du rapport dessinées, pour les montrer annotées. */
   let rendus = $state<Map<number, PageRendue>>(new Map());
-  /** Dossiers déjà analysés, gardés sur l'appareil. */
-  let dossiers = $state<DossierGarde[]>(dossiersGardes());
+  /** Dossiers déjà analysés, gardés sur l'appareil — PDF compris. */
+  let dossiers = $state<DossierGarde[]>([]);
+  listerDossiers().then((liste) => (dossiers = liste));
   /** Diagnostic demandé depuis le bilan : le lecteur ouvre son onglet. */
   let demande = $state<string | null>(null);
 
-  function rouvrir(dossier: DossierGarde): void {
+  /**
+   * Rouvre un dossier gardé. Le PDF ayant été conservé, on redessine ses pages :
+   * le lecteur retrouve son rapport annoté, sans redéposer le fichier.
+   */
+  async function rouvrir(garde: DossierGarde): Promise<void> {
     exemple = false;
-    nomFichier = dossier.nomFichier;
-    rendus = new Map(); // le PDF n'est pas gardé : pas d'image à remontrer
-    analyse = dossier.analyse;
+    nomFichier = garde.nomFichier;
+    rendus = new Map();
+    analyse = garde.analyse;
     etat = 'resultat';
+
+    const complet = await chargerDossier(garde.id);
+    if (!complet?.pdf) return;
+
+    const fichier = new File([complet.pdf], garde.nomFichier, { type: 'application/pdf' });
+    const document = await ouvrirPdf(fichier);
+    void dessinerPages(document, garde.analyse);
   }
 
   function montrerExemple(): void {
@@ -61,7 +81,11 @@
       rendus = new Map();
       analyse = resultat;
       etat = 'resultat';
-      dossiers = garder(fichier.name, resultat, new Date());
+      // Le rapport lui-même est gardé, pas seulement son analyse : c'est ce qui
+      // permet de le rouvrir annoté.
+      void garderDossier(fichier.name, resultat, fichier, new Date()).then(
+        (liste) => (dossiers = liste)
+      );
 
       if (import.meta.env.DEV) {
         (window as unknown as { analyseCourante?: unknown }).analyseCourante = resultat;
@@ -184,29 +208,25 @@
         <ul>
           {#each dossiers as dossier (dossier.id)}
             <li>
-              <button type="button" class="dossier" onclick={() => rouvrir(dossier)}>
+              <button type="button" class="dossier" onclick={() => void rouvrir(dossier)}>
                 <strong>{dossier.nomFichier}</strong>
                 <span class="muet petit">
-                  {dossier.analyse.diagnostics.length} diagnostics · {depuis(
-                    dossier.quand,
-                    new Date()
-                  )}
+                  {dossier.analyse.diagnostics.length} diags · {depuis(dossier.quand, new Date())}
+                  {#if dossier.pdf}· {poids(dossier.pdf.size)}{/if}
                 </span>
               </button>
               <button
                 type="button"
                 class="oublier"
                 aria-label="Oublier {dossier.nomFichier}"
-                onclick={() => (dossiers = oublier(dossier.id))}
+                onclick={() => void oublierDossier(dossier.id).then((liste) => (dossiers = liste))}
               >
                 ✕
               </button>
             </li>
           {/each}
         </ul>
-        <p class="muet petit">
-          Gardés sur cet appareil uniquement, dans votre navigateur. Rien n’est envoyé.
-        </p>
+        <p class="muet petit">Gardés sur cet appareil. Rien n’est envoyé.</p>
       </section>
     {/if}
 
