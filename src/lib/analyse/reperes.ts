@@ -18,6 +18,8 @@ export interface Repere {
   hauteur: number;
   titre: string;
   texte: string;
+  /** La ligne du rapport elle-même : sert à la retrouver dans le texte. */
+  extrait: string;
 }
 
 interface Cible {
@@ -171,7 +173,8 @@ export function reperer(type: TypeDiag, pages: PageTexte[]): Repere[] {
         largeur: ligne.largeur,
         hauteur: ligne.hauteur,
         titre: cible.titre,
-        texte: cible.texte
+        texte: cible.texte,
+        extrait: ligne.texte
       });
     }
   }

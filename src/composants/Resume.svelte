@@ -25,9 +25,14 @@
     nomFichier: string;
     exemple: boolean;
     recommencer: () => void;
+    /**
+     * L'écran se lit en deux temps : l'en-tête annonce le dossier, le bilan le
+     * referme une fois qu'on a tout parcouru.
+     */
+    partie: 'entete' | 'bilan';
   }
 
-  const { analyse, nomFichier, exemple, recommencer }: Props = $props();
+  const { analyse, nomFichier, exemple, recommencer, partie }: Props = $props();
 
   const importants = $derived(analyse.diagnostics.filter((d) => d.gravite === 'alerte'));
   const aRegarder = $derived(analyse.diagnostics.filter((d) => d.gravite === 'attention'));
@@ -51,6 +56,7 @@
 </script>
 
 <section class="resume">
+  {#if partie === 'entete'}
   {#if exemple}
     <p class="bandeau-exemple">
       <strong>Exemple de démonstration.</strong> Ce logement n’existe pas. Les chiffres sont inventés,
@@ -78,6 +84,8 @@
       {analyse.bien.adresse ?? ''}{analyse.bien.commune ? `, ${analyse.bien.commune}` : ''}
     </p>
   {/if}
+  {:else}
+  <h2 class="titre-bilan">Le bilan de votre dossier</h2>
 
   <div class="compteurs">
     <div class="compteur alerte">
@@ -110,6 +118,7 @@
   </div>
 
   <button class="bouton bouton--fantome" onclick={recommencer}>Analyser un autre rapport</button>
+  {/if}
 </section>
 
 <style>
@@ -124,6 +133,10 @@
   h1 {
     margin: 0 0 10px;
     text-wrap: balance;
+  }
+
+  .titre-bilan {
+    margin-bottom: 18px;
   }
 
   .phrase {

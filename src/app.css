@@ -1,43 +1,44 @@
 /* ---------------------------------------------------------------------------
    Check My Diag — design system
 
-   Couleurs reprises de la charte DGLM : vert profond #093F30, or #C09048, fond
-   crème #F7F4EC. Une palette chaude, qui tranche avec le blanc administratif
-   des rapports — et qui donne envie de lire.
+   Vert DGLM poussé en mode sombre : fond vert-nuit, surfaces en verre, accents
+   néon et or. L'esprit est celui d'un tableau de bord de jeu — on scanne son
+   dossier, on voit les voyants, on ouvre les détails — pas celui d'un formulaire
+   administratif.
 
-   Le lecteur arrive inquiet, avec un PDF illisible. La page doit lui donner
-   envie : de l'air, des couleurs franches, une réponse énorme en haut de chaque
-   carte. Surtout pas une mise en page de manuel scolaire.
+   Contrainte qui ne bouge pas : ça doit rester lisible par tout le monde. Les
+   textes gardent un fort contraste sur le fond, les lueurs ne servent qu'aux
+   chiffres et aux bordures.
    --------------------------------------------------------------------------- */
 
 :root {
-  color-scheme: light dark;
+  color-scheme: dark;
 
-  /* Verts de la charte */
-  --vert-900: #002924;
+  /* Verts DGLM, assombris pour l'écran */
+  --vert-900: #04160f;
+  --vert-800: #07231a;
   --vert-700: #093f30;
-  --vert-500: #1c6a51;
-  --vert-300: #7c8b84;
-  --vert-100: #e7efe9;
+  --vert-500: #2ee98b;
+  --vert-300: #7dffc0;
+  --vert-100: #0e3524;
 
-  /* Ors de la charte */
-  --or: #c09048;
-  --or-fonce: #8a6224;
-  --or-clair: #d9b778;
+  --or: #ffc857;
+  --or-fonce: #c09048;
+  --or-clair: #ffe0a3;
 
-  --encre: #1e2e28;
-  --encre-doux: #5b6a62;
-  --papier: #ffffff;
-  --papier-doux: #faf8f3;
-  --fond: #f7f4ec;
-  --trait: #ede7da;
+  --encre: #e8fff4;
+  --encre-doux: #92b7a5;
+  --papier: #0a2419;
+  --papier-doux: #0e2c20;
+  --fond: #04160f;
+  --trait: #174a33;
 
-  --alerte: #a8321f;
-  --alerte-fond: #fbeeea;
-  --attention: #8a6224;
-  --attention-fond: #f9f1e2;
-  --ok: #1c6a51;
-  --ok-fond: #e7efe9;
+  --alerte: #ff5f6d;
+  --alerte-fond: #2a1116;
+  --attention: #ffa53a;
+  --attention-fond: #2a1d0d;
+  --ok: #2ee98b;
+  --ok-fond: #0c2c1f;
 
   /* Étiquettes réglementaires A→G : couleurs officielles de l'arrêté DPE. */
   --etq-a: #319834;
@@ -48,37 +49,14 @@
   --etq-f: #fc9935;
   --etq-g: #fc0205;
 
-  --rayon: 18px;
+  --rayon: 16px;
   --rayon-petit: 10px;
-  --ombre: 0 1px 2px rgb(9 63 48 / 6%), 0 12px 32px -12px rgb(9 63 48 / 18%);
-  --ombre-forte: 0 2px 4px rgb(9 63 48 / 8%), 0 24px 48px -20px rgb(9 63 48 / 30%);
+  --ombre: 0 1px 0 rgb(255 255 255 / 4%) inset, 0 18px 40px -24px rgb(0 0 0 / 90%);
+  --ombre-forte: 0 1px 0 rgb(255 255 255 / 6%) inset, 0 28px 60px -28px rgb(0 0 0 / 95%);
+  --lueur: 0 0 24px -6px var(--vert-500);
 
   --police: 'Segoe UI Variable Display', 'Segoe UI', system-ui, -apple-system, sans-serif;
-  /* Lora si elle est installée, sinon une serif chaude — comme le site DGLM. */
-  --police-titre: Lora, 'Iowan Old Style', Georgia, 'Times New Roman', serif;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --encre: #efeadc;
-    --encre-doux: #a8b3ac;
-    --papier: #10201a;
-    --papier-doux: #152a22;
-    --fond: #0a1712;
-    --trait: #24382f;
-    --vert-100: #163026;
-    --vert-500: #4fae8a;
-    --vert-300: #7c8b84;
-    --or: #d9b778;
-    --alerte: #e0674f;
-    --alerte-fond: #2e1913;
-    --attention: #d9b778;
-    --attention-fond: #2a2214;
-    --ok: #4fae8a;
-    --ok-fond: #132a22;
-    --ombre: 0 1px 2px rgb(0 0 0 / 45%), 0 12px 32px -12px rgb(0 0 0 / 65%);
-    --ombre-forte: 0 2px 4px rgb(0 0 0 / 55%), 0 24px 48px -20px rgb(0 0 0 / 75%);
-  }
+  --police-titre: 'Segoe UI Variable Display', 'Segoe UI', system-ui, sans-serif;
 }
 
 * {
@@ -96,7 +74,11 @@ body {
 }
 
 body {
-  background: var(--fond);
+  background:
+    radial-gradient(1100px 620px at 78% -8%, rgb(46 233 139 / 12%), transparent 62%),
+    radial-gradient(900px 520px at 8% 4%, rgb(255 200 87 / 8%), transparent 60%),
+    var(--fond);
+  background-attachment: fixed;
   color: var(--encre);
   font-family: var(--police);
   font-size: 17px;
@@ -106,29 +88,22 @@ body {
 }
 
 h1,
-h2 {
-  font-family: var(--police-titre);
-  font-weight: 600;
-  line-height: 1.14;
-  margin: 0 0 0.4em;
-  letter-spacing: -0.02em;
-}
-
+h2,
 h3,
 h4 {
-  font-family: var(--police);
-  font-weight: 700;
-  line-height: 1.2;
+  font-family: var(--police-titre);
+  font-weight: 800;
+  line-height: 1.1;
   margin: 0 0 0.4em;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.03em;
 }
 
 h1 {
-  font-size: clamp(2rem, 5.6vw, 3.2rem);
+  font-size: clamp(2.1rem, 6vw, 3.4rem);
 }
 
 h2 {
-  font-size: clamp(1.4rem, 4vw, 1.95rem);
+  font-size: clamp(1.45rem, 4vw, 2rem);
 }
 
 p {
@@ -144,13 +119,14 @@ button {
 }
 
 .enveloppe {
-  width: min(100%, 1040px);
+  width: min(100%, 1060px);
   margin-inline: auto;
   padding-inline: clamp(16px, 4vw, 32px);
 }
 
+/* Surface « en verre » : c'est la brique de toute l'interface. */
 .carte {
-  background: var(--papier);
+  background: linear-gradient(160deg, rgb(255 255 255 / 5%), rgb(255 255 255 / 1%)), var(--papier);
   border: 1px solid var(--trait);
   border-radius: var(--rayon);
   box-shadow: var(--ombre);
@@ -161,22 +137,23 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  background: linear-gradient(135deg, var(--vert-700), var(--vert-500));
-  color: #fff;
+  background: linear-gradient(135deg, var(--vert-500), #12b96a);
+  color: #04160f;
   border: none;
   border-radius: 999px;
   padding: 15px 30px;
-  font-weight: 650;
+  font-weight: 800;
   font-size: 1.02rem;
+  letter-spacing: -0.01em;
   cursor: pointer;
-  box-shadow: 0 8px 20px -8px rgb(9 63 48 / 55%);
+  box-shadow: 0 0 0 1px rgb(46 233 139 / 40%), 0 10px 30px -10px rgb(46 233 139 / 70%);
   transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
 }
 
 .bouton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 28px -10px rgb(9 63 48 / 65%);
-  filter: brightness(1.06);
+  box-shadow: 0 0 0 1px rgb(46 233 139 / 60%), 0 16px 40px -12px rgb(46 233 139 / 85%);
+  filter: brightness(1.08);
 }
 
 .bouton:active {
@@ -184,21 +161,23 @@ button {
 }
 
 .bouton--fantome {
-  background: var(--papier);
-  color: var(--vert-700);
+  background: rgb(255 255 255 / 4%);
+  color: var(--vert-300);
   border: 1px solid var(--trait);
   box-shadow: none;
 }
 
 .bouton--fantome:hover {
-  background: var(--vert-100);
+  background: rgb(46 233 139 / 12%);
+  border-color: var(--vert-500);
   box-shadow: none;
+  color: var(--vert-300);
 }
 
 :focus-visible {
-  outline: 3px solid var(--or);
+  outline: 2px solid var(--vert-500);
   outline-offset: 3px;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 .muet {

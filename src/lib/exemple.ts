@@ -8,8 +8,29 @@
  */
 import type { PageTexte } from './lignes';
 
+/**
+ * Le dossier de démonstration n'a pas de vraies coordonnées, puisqu'il n'y a pas
+ * de PDF derrière. On en fabrique de plausibles — une ligne sous l'autre, sur une
+ * page A4 — pour que la démonstration montre aussi le rapport annoté.
+ */
+function avecPositions(pages: PageTexte[]): PageTexte[] {
+  const HAUT = 780;
+  const INTERLIGNE = 26;
+
+  return pages.map((page) => ({
+    ...page,
+    positions: page.lignes.map((texte, i) => ({
+      texte,
+      x: 62,
+      y: HAUT - i * INTERLIGNE,
+      largeur: Math.min(470, texte.length * 5.2),
+      hauteur: 12
+    }))
+  }));
+}
+
 export function pagesExemple(): PageTexte[] {
-  return [
+  return avecPositions([
     {
       numero: 1,
       lignes: [
@@ -126,5 +147,5 @@ export function pagesExemple(): PageTexte[] {
         'Surface au sol totale : 44,80 m²'
       ]
     }
-  ];
+  ]);
 }

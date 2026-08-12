@@ -106,6 +106,7 @@ export interface Diagnostic {
     hauteur: number;
     titre: string;
     texte: string;
+    extrait: string;
   }[];
   /**
    * Renseigné quand le verdict vient de la page de synthèse du dossier et non
@@ -140,6 +141,11 @@ export interface PointDeControle {
 export interface Analyse {
   bien: Bien;
   diagnostics: Diagnostic[];
+  /**
+   * Texte des pages qui portent des repères, indexé par numéro de page. Sert à
+   * montrer le rapport même quand son image n'a pas pu être dessinée.
+   */
+  textePages: Record<number, string[]>;
   /** Contrôles automatiques sur la cohérence du dossier. */
   controles: PointDeControle[];
   /** Types repérés dans le sommaire mais non exploités par le moteur. */

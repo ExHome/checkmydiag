@@ -3,6 +3,7 @@
   import CarteDiag from './composants/CarteDiag.svelte';
   import Controles from './composants/Controles.svelte';
   import Resume from './composants/Resume.svelte';
+  import Lecteur from './composants/Lecteur.svelte';
   import { ouvrirPdf, type PageRendue } from './lib/pdf';
   import { analyser } from './lib/analyse';
   import { pagesExemple } from './lib/exemple';
@@ -187,7 +188,7 @@
       </div>
     </section>
   {:else if analyse}
-    <Resume {analyse} {nomFichier} {exemple} {recommencer} />
+    <Resume {analyse} {nomFichier} {exemple} {recommencer} partie="entete" />
 
     {#if analyse.illisible}
       <p class="erreur" role="alert">
@@ -202,6 +203,8 @@
       </p>
     {/if}
 
+    <Lecteur {analyse} {rendus} />
+
     <Controles controles={analyse.controles} />
 
     {#each analyse.diagnostics as d (d.type)}
@@ -209,6 +212,8 @@
         <CarteDiag diagnostic={d} page={d.reperes?.[0] ? (rendus.get(d.reperes[0].page) ?? null) : null} />
       </div>
     {/each}
+
+    <Resume {analyse} {nomFichier} {exemple} {recommencer} partie="bilan" />
 
     <p class="avertissement muet petit">
       Check My Diag est un outil de lecture : il reformule votre rapport, il ne le remplace pas et
@@ -222,20 +227,25 @@
   .entete {
     padding: 18px 0;
     border-bottom: 1px solid var(--trait);
-    background: var(--papier);
+    background: rgb(4 22 15 / 72%);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
   }
 
   .marque {
     font-family: var(--police-titre);
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--vert-700);
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--encre);
     text-decoration: none;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
+    text-shadow: 0 0 24px rgb(46 233 139 / 35%);
   }
 
   .marque span {
-    color: var(--or);
+    color: var(--vert-500);
   }
 
   main {

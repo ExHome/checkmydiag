@@ -137,9 +137,20 @@ export function analyser(brutes: PageTexte[]): Analyse {
 
   const bien = identifierBien(pages, horsSection);
 
+  // On conserve le texte des seules pages annotées : de quoi montrer le rapport
+  // au lecteur sans garder cent pages en mémoire.
+  const textePages: Record<number, string[]> = {};
+  for (const diag of diagnostics) {
+    const numero = diag.reperes?.[0]?.page;
+    if (numero === undefined || textePages[numero]) continue;
+    const page = pages.find((p) => p.numero === numero);
+    if (page) textePages[numero] = page.lignes;
+  }
+
   return {
     bien,
     diagnostics,
+    textePages,
     controles: controler(bien, diagnostics),
     nonExploites: [],
     illisible,
