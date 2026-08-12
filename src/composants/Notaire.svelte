@@ -390,7 +390,7 @@
   <div class="feuille">
     <!-- La synthèse : les huit diagnostics d'un coup d'œil, avec ce qu'ils
          concluent, jusqu'à quand ils valent, et ce qu'ils ne couvrent pas. -->
-    <h2>La synthèse du dossier</h2>
+    <h2><span class="num">I</span>La synthèse du dossier</h2>
     <table class="synthese">
       <thead>
         <tr>
@@ -439,7 +439,7 @@
     {#if caracteristiques.length}
       <!-- L'état descriptif, relevé ligne à ligne. Le descriptif en toutes
            lettres est déjà en page de garde : on ne le répète pas. -->
-      <h2>L’état descriptif</h2>
+      <h2 class="apres"><span class="num">II</span>L’état descriptif</h2>
       <dl class="caracteristiques">
         {#each caracteristiques as c (c.libelle)}
           <div>
@@ -455,7 +455,7 @@
     <div class="planches">
       {#if dpe?.schema?.genre === 'dpe'}
         <div class="planche">
-          <h2 class="apres">Par où ce logement perd sa chaleur</h2>
+          <h2 class="apres"><span class="num">III</span>Par où la chaleur s’en va</h2>
           <Deperditions isolation={dpe.schema.isolation} {lettre} />
           <p class="pourquoi"><MotsExpliques texte={pourquoi} /></p>
         </div>
@@ -463,7 +463,7 @@
 
       {#if lettre}
         <div class="planche">
-          <h2 class="apres">Où se situe ce logement</h2>
+          <h2 class="apres"><span class="num">IV</span>Où se situe ce logement</h2>
           <Positionnement {lettre} />
         </div>
       {/if}
@@ -473,7 +473,7 @@
       <!-- Les chiffres du logement, à leur place : juste après ce qui les
            produit. Ils étaient plus bas dans un relevé séparé, qui répétait
            déjà la moitié du conseil. -->
-      <h2 class="apres">Les chiffres du logement</h2>
+      <h2 class="apres"><span class="num">V</span>D’où sort cette classe</h2>
       <ul class="chiffres">
         {#each chiffres as c (c.quoi)}
           <li>
@@ -488,7 +488,7 @@
       </ul>
     {/if}
 
-    <h2 class="apres">Ce que je vous conseille</h2>
+    <h2 class="apres"><span class="num">VI</span>Ce que je vous conseille</h2>
     <div class="conseils">
       {#each conseils as bloc (bloc.titre)}
         <div class="conseil">
@@ -505,7 +505,7 @@
     {#if lexique.length}
       <!-- L'annexe : tous les termes employés, définis. Le document part chez
            des gens qui n'en connaissent aucun. -->
-      <h2 class="apres">Les mots employés</h2>
+      <h2 class="apres"><span class="num">VII</span>Les mots employés</h2>
       <dl class="lexique">
         {#each lexique as mot (mot.nom)}
           <div>
@@ -534,16 +534,37 @@
     color: var(--sur-fond);
   }
 
+  /* Les sections sont numérotées en chiffres romains, comme les articles d'un
+     acte. Le numéro est posé dans la marge : il rythme sans encombrer. */
   h2 {
-    font-size: clamp(1.2rem, 2.6vw, 1.5rem);
+    display: flex;
+    align-items: baseline;
+    gap: var(--e4);
+    font-size: var(--t-titre);
     color: var(--or-clair);
-    margin-bottom: 14px;
+    margin-bottom: var(--e4);
   }
 
+  .num {
+    flex: none;
+    width: 2rem;
+    font-family: var(--police);
+    font-size: var(--t-petit);
+    font-weight: 600;
+    font-style: normal;
+    letter-spacing: var(--suivi);
+    color: var(--or);
+    /* Aligné sur la ligne de base du titre, pas sur son haut. */
+    align-self: baseline;
+  }
+
+  /* Un filet double sous chaque section : le trait or ténu, puis le blanc.
+     C'est le détail qui distingue un document d'une page web. */
   h2.apres {
-    margin-top: 38px;
-    padding-top: 24px;
-    border-top: 1px solid rgb(255 255 255 / 12%);
+    margin-top: var(--e7);
+    padding-top: var(--e5);
+    border-top: 1px solid rgb(255 255 255 / 10%);
+    box-shadow: 0 -3px 0 -2px var(--trait-or);
   }
 
   ul {
@@ -820,10 +841,13 @@
   /* La page de garde : filet or, objet du document, adresse en grand, et la
      ligne de références sous le trait. C'est à ça qu'on reconnaît un document
      d'agence posé sur une table. */
+  /* Le filet de garde est double : un trait or plein, un cheveu blanc dessous.
+     C'est la signature d'un document imprimé. */
   .garde {
     border-top: 2px solid var(--or);
-    padding-top: 22px;
-    margin-bottom: 40px;
+    box-shadow: 0 3px 0 -2px rgb(255 255 255 / 22%);
+    padding-top: var(--e5);
+    margin-bottom: var(--e7);
   }
 
   .ligne-haute {

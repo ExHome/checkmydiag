@@ -76,6 +76,33 @@
   --etq-f: #fc9935;
   --etq-g: #fc0205;
 
+  /* Une échelle d'espacement, pas des valeurs au jugé. Tout ce qui respire
+     dans la page prend une de ces huit valeurs — c'est ce qui donne à un
+     document son rythme, et à une interface sa tenue. */
+  --e1: 4px;
+  --e2: 8px;
+  --e3: 12px;
+  --e4: 18px;
+  --e5: 26px;
+  --e6: 38px;
+  --e7: 56px;
+  --e8: 80px;
+
+  /* L'échelle typographique, en quinte : chaque cran se distingue du suivant
+     sans qu'on ait à les comparer. */
+  --t-micro: 0.68rem;
+  --t-petit: 0.82rem;
+  --t-base: 0.96rem;
+  --t-lead: 1.14rem;
+  --t-titre: clamp(1.3rem, 2.6vw, 1.65rem);
+  --t-section: clamp(1.6rem, 3.4vw, 2.1rem);
+  --t-affiche: clamp(2rem, 5vw, 3.2rem);
+
+  /* Les interlettrages des capitales : trois valeurs, jamais une de plus. */
+  --suivi-large: 0.2em;
+  --suivi: 0.14em;
+  --suivi-serre: 0.08em;
+
   /* La charte ne roule pas les angles : des rayons discrets, presque droits. */
   --rayon: 6px;
   --rayon-petit: 4px;
@@ -105,11 +132,14 @@ body {
   padding: 0;
 }
 
-/* Le vert DGLM en aplat, sans dégradé ni motif : c'est le fond de la plaquette,
-   et il ne cherche pas à se faire remarquer. Tout le contraste vient des cartes
-   crème, de l'or et du ruban A→G. */
+/* Le vert DGLM en aplat. Une seule licence : un halo très bas, en haut de page,
+   qui donne au fond la profondeur d'un papier teinté plutôt que d'un aplat
+   d'imprimerie. On le devine, on ne le voit pas. */
 body {
-  background: var(--fond);
+  background:
+    radial-gradient(120% 60% at 50% -10%, rgb(255 255 255 / 4%), transparent 70%),
+    var(--fond);
+  background-attachment: fixed;
   color: var(--sur-fond);
   font-family: var(--police);
   font-size: 17px;
