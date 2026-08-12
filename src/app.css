@@ -204,6 +204,65 @@ button {
   animation: apparait 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* ---------------------------------------------------------------------------
+   Impression : l'antisèche sur papier.
+
+   On repasse en encre noire sur blanc, on déplie tout ce qui est replié, et on
+   retire ce qui ne sert qu'à l'écran — l'en-tête collante, les boutons, le
+   fac-similé du rapport (le lecteur a déjà son rapport en main).
+   --------------------------------------------------------------------------- */
+@media print {
+  body {
+    background: #fff;
+    color: #000;
+    font-size: 11pt;
+  }
+
+  .entete,
+  .depot,
+  .actions,
+  .onglets,
+  .document,
+  .invite,
+  .apparait {
+    display: none !important;
+  }
+
+  .carte {
+    border: 1px solid #999;
+    box-shadow: none;
+    break-inside: avoid;
+    background: #fff;
+  }
+
+  details {
+    display: block !important;
+  }
+
+  details > summary {
+    display: none;
+  }
+
+  details > * {
+    display: block !important;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  p,
+  li,
+  dd,
+  dt {
+    color: #000 !important;
+  }
+
+  .deux-colonnes {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

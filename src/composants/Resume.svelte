@@ -117,7 +117,13 @@
     {/each}
   </div>
 
-  <button class="bouton bouton--fantome" onclick={recommencer}>Analyser un autre rapport</button>
+  <div class="actions">
+    <button class="bouton bouton--fantome" onclick={recommencer}>Analyser un autre rapport</button>
+    <!-- Une antisèche, ça s'emporte : chez le notaire, face au vendeur. -->
+    <button class="bouton bouton--fantome" onclick={() => window.print()}>
+      Imprimer l’antisèche
+    </button>
+  </div>
   {/if}
 </section>
 
@@ -239,6 +245,12 @@
     line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
   }
 
   .bandeau-exemple {

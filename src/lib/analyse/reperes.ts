@@ -30,9 +30,16 @@ export interface Repere {
   extrait: string;
 }
 
-/** Une question que le lecteur se pose en lisant l'explication. */
+/**
+ * Une question que le lecteur se pose en lisant l'explication.
+ *
+ * Le `ton` reprend l'échelle de couleurs du DPE, que tout le monde a déjà en
+ * tête : vert pour la bonne nouvelle, jaune pour l'incertain, rouge pour la
+ * mauvaise. Pas besoin d'apprendre un nouveau code.
+ */
 export interface Suite {
   question: string;
+  ton?: 'bon' | 'moyen' | 'mauvais';
   points: string[];
 }
 
@@ -171,6 +178,7 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
       suites: [
         {
           question: 'Il n’y a vraiment pas d’isolant',
+          ton: 'mauvais',
           points: [
             'Fréquent avant 1975 : on ne posait rien',
             'C’est le premier poste de travaux à envisager',
@@ -179,6 +187,7 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
         },
         {
           question: 'Le diagnostiqueur n’a pas pu voir',
+          ton: 'moyen',
           points: [
             'Un isolant derrière une cloison ne se voit pas',
             'Sans preuve, la règle l’oblige à écrire « non isolé »',
@@ -187,6 +196,7 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
         },
         {
           question: 'J’ai les factures des travaux',
+          ton: 'bon',
           points: [
             'Apportez-les au diagnostiqueur',
             'Factures, devis, photos de chantier : il peut les prendre en compte',

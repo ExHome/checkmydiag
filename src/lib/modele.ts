@@ -123,7 +123,7 @@ export interface Diagnostic {
     schema?: string;
     points: string[];
     /** Questions que le lecteur peut ouvrir sans quitter le passage. */
-    suites?: { question: string; points: string[] }[];
+    suites?: { question: string; ton?: 'bon' | 'moyen' | 'mauvais'; points: string[] }[];
     extrait: string;
   }[];
   /**

@@ -12,6 +12,7 @@
   import MiniSchema from './MiniSchema.svelte';
   import Voyant from './Voyant.svelte';
   import Fiche from './Fiche.svelte';
+  import Curieux from './Curieux.svelte';
 
   interface Props {
     analyse: Analyse;
@@ -76,9 +77,9 @@
 {#if feuillet}
   <section class="carte lecteur">
     <header class="entete">
-      <h2>Votre rapport, expliqué</h2>
+      <h2>L’antisèche de votre dossier</h2>
       <p class="muet petit">
-        Touchez un passage surligné : son explication s’affiche à côté.
+        Touchez un passage surligné : l’explication arrive à côté.
       </p>
     </header>
 
@@ -167,7 +168,7 @@
                   {#each choisi.suites as suite (suite.question)}
                     <button
                       type="button"
-                      class="suite"
+                      class="suite {suite.ton ?? 'moyen'}"
                       class:ouverte={suiteOuverte === suite.question}
                       onclick={() =>
                         (suiteOuverte = suiteOuverte === suite.question ? null : suite.question)}
@@ -175,7 +176,7 @@
                       {suite.question}
                     </button>
                     {#if suiteOuverte === suite.question}
-                      <ul class="points reponse-suite apparait">
+                      <ul class="points reponse-suite apparait {suite.ton ?? 'moyen'}">
                         {#each suite.points as point}
                           <li>{point}</li>
                         {/each}
@@ -231,6 +232,8 @@
               <Fiche type={diagnostic.type} />
             </div>
           </details>
+
+          <Curieux type={diagnostic.type} />
         {/if}
       </aside>
     </div>
@@ -500,16 +503,20 @@
     margin-bottom: 14px;
   }
 
+  /* Les cascades reprennent l'échelle du DPE : vert quand c'est une bonne
+     nouvelle, jaune quand c'est incertain, rouge quand ça coûte. Le lecteur
+     connaît déjà ce code par cœur. */
   .suite {
     text-align: left;
-    background: rgb(255 200 87 / 8%);
     border: 1px solid var(--trait);
+    border-left-width: 5px;
     border-radius: var(--rayon-petit);
     padding: 9px 13px;
     cursor: pointer;
-    color: var(--or-clair);
     font-size: 0.93rem;
     font-weight: 650;
+    color: var(--encre);
+    background: rgb(255 255 255 / 4%);
     transition: background 0.15s ease, border-color 0.15s ease;
   }
 
@@ -518,16 +525,54 @@
     opacity: 0.7;
   }
 
+  .suite.bon {
+    border-left-color: var(--etq-a);
+  }
+
+  .suite.moyen {
+    border-left-color: var(--etq-d);
+  }
+
+  .suite.mauvais {
+    border-left-color: var(--etq-g);
+  }
+
   .suite:hover,
   .suite.ouverte {
-    background: rgb(255 200 87 / 16%);
-    border-color: var(--or);
+    background: rgb(255 255 255 / 9%);
+  }
+
+  .suite.bon.ouverte,
+  .suite.bon:hover {
+    border-color: var(--etq-a);
+  }
+
+  .suite.moyen.ouverte,
+  .suite.moyen:hover {
+    border-color: var(--etq-d);
+  }
+
+  .suite.mauvais.ouverte,
+  .suite.mauvais:hover {
+    border-color: var(--etq-g);
   }
 
   .reponse-suite {
     margin: 0 0 4px;
     padding-left: 14px;
-    border-left: 2px solid var(--or);
+    border-left: 3px solid var(--trait);
+  }
+
+  .reponse-suite.bon {
+    border-left-color: var(--etq-a);
+  }
+
+  .reponse-suite.moyen {
+    border-left-color: var(--etq-d);
+  }
+
+  .reponse-suite.mauvais {
+    border-left-color: var(--etq-g);
   }
 
   .schema {

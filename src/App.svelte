@@ -142,11 +142,11 @@
 <main class="enveloppe">
   {#if etat !== 'resultat'}
     <section class="accroche">
-      <h1>Votre diagnostic immobilier, expliqué simplement</h1>
+      <h1>L’antisèche de votre diagnostic immobilier</h1>
       <p class="chapeau">
-        Soixante pages de jargon, et une seule question : <em>est-ce que c’est grave ?</em>
-        Déposez votre rapport. Vous obtenez ce que dit chaque diagnostic, un schéma pour le
-        comprendre, et les points du dossier à vérifier.
+        Soixante pages de jargon. Une seule question : <em>est-ce que c’est grave ?</em>
+        Déposez votre rapport → il devient cliquable. Chaque ligne s’explique, avec un schéma et
+        les points à vérifier.
       </p>
     </section>
 
