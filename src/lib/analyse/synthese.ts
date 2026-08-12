@@ -135,7 +135,9 @@ export function conclusionDe(blocs: BlocSynthese[], type: TypeDiag): string | nu
   if (!bloc) return null;
   const texte = bloc.lignes.join(' ').replace(/\s+/g, ' ').trim();
   if (texte.length <= 15 || estFormulaire(texte)) return null;
-  return abreger(texte, 300);
+  // Les apostrophes ont été redressées pour l'analyse ; on les rétablit pour
+  // l'affichage, puisque cette phrase est montrée telle quelle au lecteur.
+  return abreger(texte, 300).replace(/'/g, '’');
 }
 
 /**

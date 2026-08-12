@@ -71,7 +71,23 @@ function identifierBien(pages: PageTexte[], horsSection: string[]): Bien {
   return bien;
 }
 
-export function analyser(pages: PageTexte[]): Analyse {
+/** Apostrophes typographiques, utilisées par une partie des générateurs. */
+const APOSTROPHES = new RegExp('[\\u2019\\u02bc]', 'g');
+
+/**
+ * Uniformise les apostrophes avant toute analyse : « l'installation » et
+ * « l’installation » doivent déclencher les mêmes motifs, sans quoi la moitié
+ * des rapports passe à travers selon le logiciel qui les a produits.
+ */
+function normaliserPages(pages: PageTexte[]): PageTexte[] {
+  return pages.map((p) => ({
+    numero: p.numero,
+    lignes: p.lignes.map((l) => l.replace(APOSTROPHES, "'"))
+  }));
+}
+
+export function analyser(brutes: PageTexte[]): Analyse {
+  const pages = normaliserPages(brutes);
   const { sections, horsSection, synthese, plageSynthese } = decouper(pages);
   const blocs = lireSynthese(synthese);
 
