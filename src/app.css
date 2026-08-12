@@ -11,10 +11,28 @@
    chiffres et aux bordures.
    --------------------------------------------------------------------------- */
 
+/* La police de la maison, telle qu'elle est servie sur dglmexpertises.fr. */
+@font-face {
+  font-family: 'Fraunces';
+  src: url('/polices/fraunces.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Fraunces';
+  src: url('/polices/fraunces-italic.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
 :root {
   color-scheme: light;
 
-  /* Charte DGLM : vert profond, or, crème */
+  /* Les variables de dglmexpertises.fr, reprises telles quelles. Aucune n'est
+     réinventée : c'est la même maison, ce doit être la même couleur. */
   --vert-900: #002924;
   --vert-800: #063527;
   --vert-700: #093f30;
@@ -22,23 +40,25 @@
   --vert-300: #57a684;
   --vert-100: #e4efe7;
 
-  /* L'or de la plaquette, relevé au pixel sur les médaillons. */
-  --or: #d2a358;
-  --or-fonce: #9a7231;
-  --or-clair: #e6c894;
+  --or: #c09048;
+  --or-fonce: #8a6224;
+  --or-clair: #d9b778;
+  --or-pale: #ebd9b8;
 
-  --encre: #16241e;
-  --encre-doux: #5b6a62;
-  --papier: #fdfaf3;
-  --papier-doux: #f5efe1;
-  /* Le vert de la plaquette DGLM, relevé au pixel sur l'affiche enjoy : c'est
-     lui le fond de la maison. Les cartes crème et l'or s'y détachent comme sur
-     le papier. */
-  --fond: #063f30;
-  --fond-clair: #1c5043;
-  --sur-fond: #f4f7f4;
-  --sur-fond-doux: #b6cdc0;
-  --trait: #e6ded0;
+  --encre: #1e2e28;
+  --encre-doux: #41544c;
+  --gris: #7c8b84;
+  --papier: #faf8f3;
+  --papier-doux: #f4f1e9;
+  --fond: #093f30;
+  --fond-clair: #002924;
+  --sur-fond: #faf8f3;
+  --sur-fond-doux: #a8bdb2;
+
+  /* Des filets, pas des bordures : la charte se tient sur des traits fins. */
+  --trait: rgb(9 63 48 / 16%);
+  --trait-fin: rgb(9 63 48 / 9%);
+  --trait-or: rgb(192 144 72 / 40%);
 
   --alerte: #b03422;
   --alerte-fond: #fbeee9;
@@ -56,17 +76,19 @@
   --etq-f: #fc9935;
   --etq-g: #fc0205;
 
-  --rayon: 20px;
-  --rayon-petit: 12px;
-  /* Des ombres larges et basses, comme un papier posé sur une table. Pas de
-     relief plastique : la profondeur vient de la diffusion, pas du contraste. */
-  --ombre: 0 1px 1px rgb(0 20 14 / 5%), 0 18px 40px -26px rgb(0 20 14 / 45%);
-  --ombre-forte: 0 2px 3px rgb(0 20 14 / 7%), 0 34px 64px -30px rgb(0 20 14 / 55%);
+  /* La charte ne roule pas les angles : des rayons discrets, presque droits. */
+  --rayon: 6px;
+  --rayon-petit: 4px;
+  --ombre: 0 1px 1px rgb(0 20 14 / 4%), 0 14px 32px -24px rgb(0 20 14 / 40%);
+  --ombre-forte: 0 2px 3px rgb(0 20 14 / 6%), 0 28px 56px -28px rgb(0 20 14 / 50%);
 
-  /* Comme sur la plaquette : un serif pour les titres, une linéale pour le
-     corps. C'est ce contraste qui fait le sérieux de la maison. */
-  --police: 'Segoe UI Variable Display', 'Segoe UI', system-ui, -apple-system, sans-serif;
-  --police-titre: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  /* Les deux polices du site : Fraunces pour les titres, la linéale du système
+     pour le corps. */
+  --police: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --police-titre: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+  --mesure: 42rem;
 }
 
 * {
@@ -96,30 +118,55 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Fraunces en graisse 500, jamais en gras : c'est le réglage du site. Le
+   caractère vient du dessin de la lettre, pas de l'épaisseur. */
 h1,
 h2,
 h3,
 h4 {
   font-family: var(--police-titre);
-  font-weight: 700;
-  line-height: 1.15;
+  font-weight: 500;
+  line-height: 1.05;
   margin: 0 0 0.4em;
-  letter-spacing: -0.01em;
-}
-
-/* Les titres en italique : ça donne le ton éditorial, sans toucher au corps du
-   texte qui doit rester droit pour être lu vite. */
-h1,
-h2 {
-  font-style: italic;
+  letter-spacing: -0.022em;
 }
 
 h1 {
-  font-size: clamp(2.1rem, 6vw, 3.4rem);
+  font-size: clamp(2rem, 5.2vw, 3.1rem);
 }
 
 h2 {
-  font-size: clamp(1.45rem, 4vw, 2rem);
+  font-size: clamp(1.35rem, 3.4vw, 1.9rem);
+}
+
+/* Le chapeau : Fraunces en italique, la seule italique de la charte. */
+.chapeau {
+  font-family: var(--police-titre);
+  font-style: italic;
+  font-size: clamp(1.05rem, 2.2vw, 1.28rem);
+  line-height: 1.5;
+  max-width: var(--mesure);
+}
+
+/* Le sur-titre en capitales espacées, suivi d'un filet : c'est la respiration
+   de la charte, présente sur chaque section du site. */
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 0 0 14px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gris);
+}
+
+.eyebrow::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--trait-or);
 }
 
 p {
@@ -142,79 +189,64 @@ button {
 
 .carte {
   background: var(--papier);
-  border: 1px solid var(--trait);
+  border: 1px solid var(--trait-fin);
   border-radius: var(--rayon);
   box-shadow: var(--ombre);
   padding: clamp(18px, 4vw, 32px);
 }
 
+/* Le bouton du site : un cadre fin, des capitales espacées, pas de fond. Il ne
+   crie pas — il attend. C'est ce qui fait la tenue de la marque. */
 .bouton {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
-  background: linear-gradient(135deg, var(--vert-700), var(--vert-500));
-  color: #fff;
-  border: none;
-  border-radius: 999px;
-  padding: 15px 30px;
-  font-weight: 750;
-  font-size: 1.02rem;
-  letter-spacing: -0.01em;
+  background: none;
+  color: var(--sur-fond);
+  border: 1px solid var(--trait-or);
+  border-radius: 0;
+  padding: 17px 30px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   cursor: pointer;
-  box-shadow: 0 10px 26px -12px rgb(9 63 48 / 70%);
-  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+  transition: background 0.22s ease, border-color 0.22s ease, color 0.22s ease;
 }
 
 .bouton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 16px 34px -14px rgb(9 63 48 / 80%);
-  filter: brightness(1.06);
+  background: var(--or);
+  border-color: var(--or);
+  color: var(--vert-900);
 }
 
-.bouton:active {
-  transform: translateY(0);
-}
-
+/* Sur crème, le même bouton passe en encre. */
 .bouton--fantome {
-  background: var(--papier);
   color: var(--vert-700);
-  border: 1px solid var(--trait);
-  box-shadow: none;
+  border-color: var(--trait);
 }
 
 .bouton--fantome:hover {
-  background: var(--vert-100);
-  border-color: var(--vert-500);
-  box-shadow: none;
-  color: var(--vert-700);
+  background: var(--vert-700);
+  border-color: var(--vert-700);
+  color: var(--papier);
+}
+
+/* Le numéro, la date, le compteur : en mono, comme le bandeau du site. */
+.chiffre {
+  font-family: var(--mono);
+  font-feature-settings: 'tnum';
 }
 
 :focus-visible {
-  outline: 2px solid var(--or);
+  outline: 1px solid var(--or);
   outline-offset: 3px;
-  border-radius: 8px;
+  border-radius: 2px;
 }
 
 .muet {
   color: var(--encre-doux);
-}
-
-/* Sur le fond émeraude, l'encre sombre ne se lit pas : les textes posés hors
-   carte prennent les teintes claires. */
-main > .resume .muet,
-main > .resume .phrase,
-main > .resume .bien,
-main > .avertissement,
-main > .accroche .chapeau,
-main > .essai {
-  color: var(--sur-fond-doux);
-}
-
-/* Les titres posés sur le vert prennent l'or, comme sur la plaquette. */
-main > .resume h1,
-main > .resume h2,
-main > .accroche h1 {
-  color: var(--or-clair);
 }
 
 .petit {

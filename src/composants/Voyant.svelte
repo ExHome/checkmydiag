@@ -21,7 +21,7 @@
 
   <div class="dit">
     <p class="libelle">{libelle}</p>
-    <p class="type muet">{diagnostic.titre}</p>
+    <p class="type">{diagnostic.titre}</p>
   </div>
 </div>
 
@@ -46,26 +46,46 @@
       inset 0 2px 3px rgb(255 255 255 / 45%);
   }
 
+  /* Le verdict est posé sur le vert : il prend le crème, et la gravité passe
+     par une pastille, pas par la couleur du texte — un rouge sombre sur vert
+     sombre ne se lit pas. */
   .libelle {
     margin: 0;
-    font-size: clamp(1.3rem, 3.4vw, 1.7rem);
-    font-weight: 800;
-    letter-spacing: -0.03em;
+    font-family: var(--police-titre);
+    font-size: clamp(1.3rem, 3.4vw, 1.65rem);
+    font-weight: 500;
+    letter-spacing: -0.022em;
     line-height: 1.1;
-  }
-
-  .bon .libelle {
-    color: var(--ok);
-  }
-  .attention .libelle {
-    color: var(--attention);
-  }
-  .alerte .libelle {
-    color: var(--alerte);
+    color: var(--sur-fond);
   }
 
   .type {
-    margin: 2px 0 0;
-    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 5px 0 0;
+    font-size: 0.76rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--sur-fond-doux);
+  }
+
+  .type::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--gravite, var(--gris));
+    flex: none;
+  }
+
+  .bon {
+    --gravite: #4c9c72;
+  }
+  .attention {
+    --gravite: #c98a2e;
+  }
+  .alerte {
+    --gravite: #c0503c;
   }
 </style>

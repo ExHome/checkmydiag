@@ -276,39 +276,29 @@
 </main>
 
 <style>
+  /* Le bandeau du site : vert profond, un filet or en dessous. */
   .entete {
-    padding: 18px 0;
-    border-bottom: 1px solid rgb(255 255 255 / 12%);
-    background: rgb(6 78 59 / 82%);
-    backdrop-filter: blur(10px);
+    padding: 20px 0;
+    border-bottom: 1px solid var(--trait-or);
+    background: var(--fond-clair);
     position: sticky;
     top: 0;
     z-index: 10;
   }
 
-  /* La marque porte l'échelle du DPE dans ses lettres : vert à gauche, rouge à
-     droite, en couleurs vives. C'est la signature — on doit penser
-     « diagnostic » avant même d'avoir lu le mot. */
+  /* La marque en Fraunces, comme les titres du site. « My » prend l'or : une
+     seule couleur d'accent, pas un arc-en-ciel. */
   .marque {
     font-family: var(--police-titre);
-    font-size: 1.42rem;
-    font-weight: 800;
-    font-style: italic;
+    font-size: 1.34rem;
+    font-weight: 500;
+    letter-spacing: -0.022em;
     text-decoration: none;
-    letter-spacing: -0.035em;
-    background: linear-gradient(
-      92deg,
-      #319834 0%,
-      #33cc31 16%,
-      #cbfc34 32%,
-      #fbfe06 48%,
-      #fbcc05 64%,
-      #fc9935 80%,
-      #fc0205 100%
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: var(--sur-fond);
+  }
+
+  .marque span {
+    color: var(--or-clair);
   }
 
   main {

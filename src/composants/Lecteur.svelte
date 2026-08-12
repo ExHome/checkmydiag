@@ -1,34 +1,28 @@
 <script lang="ts">
   /**
-   * Le rapport à gauche, l'explication à droite.
+   * Le rapport, et rien d'autre.
    *
-   * On promène une loupe sur son rapport. Quand elle passe sur un passage
-   * repéré, l'encart s'ouvre à droite ; quand on s'en va, il se referme. Une
-   * seule chose à la fois : un passage, ou une rubrique. Jamais les deux.
+   * Les pages se suivent, centrées, comme le document qu'elles sont. Les
+   * passages repérés y sont surlignés et numérotés. Tant qu'on ne clique sur
+   * rien, il n'y a rien à lire d'autre — pas de bandeau, pas de sommaire, pas
+   * de résumé. On clique : l'explication s'ouvre à côté. On referme : elle
+   * disparaît et le document reprend toute la place.
    *
-   * Un clic épingle l'encart — pour le lire tranquillement, ou pour descendre
-   * dedans aussi loin qu'on veut.
-   *
-   * Les couleurs sont celles du DPE, et elles disent ce que dit la ligne : vert
+   * Les couleurs sont celles du DPE et elles disent ce que dit la ligne : vert
    * quand c'est bon, orange quand il faut regarder, rouge quand ça coince, or
    * quand c'est une simple donnée.
    */
-  import type { Analyse, Diagnostic } from '../lib/modele';
+  import type { Analyse, Diagnostic, TypeDiag } from '../lib/modele';
   import type { PageRendue } from '../lib/pdf';
   import Explicatif from './schemas/Explicatif.svelte';
   import MiniSchema from './MiniSchema.svelte';
-  import Voyant from './Voyant.svelte';
   import Fiche from './Fiche.svelte';
   import Curieux from './Curieux.svelte';
-  import RubanDpe from './RubanDpe.svelte';
-  import Picto from './Picto.svelte';
-  import MiniEtiquette from './MiniEtiquette.svelte';
-  import { libelleCourt } from '../lib/libelle';
 
   interface Props {
     analyse: Analyse;
     rendus: Map<number, PageRendue>;
-    /** Diagnostic demandé depuis le bilan, pour ouvrir le bon onglet. */
+    /** Diagnostic demandé de l'extérieur : on descend jusqu'à sa première page. */
     demande?: string | null;
   }
 
@@ -44,65 +38,76 @@
     info: '#c09048'
   } as const;
 
-  const feuillets = $derived(
+  /**
+   * Tous les repères du dossier, dans l'ordre du document.
+   *
+   * Le rapport est un seul document : le découper par diagnostic obligeait le
+   * lecteur à choisir un onglet avant d'avoir rien compris. Ici il descend, et
+   * ce qui est surligné s'explique — peu importe de quel diagnostic ça vient.
+   */
+  const reperes = $derived(
     analyse.diagnostics
-      .filter((d): d is Diagnostic & { reperes: Repere[] } => (d.reperes?.length ?? 0) > 0)
-      .map((d) => ({
-        type: d.type,
-        titre: d.titre,
-        gravite: d.gravite,
-        diag: d,
-        numero: d.reperes[0]?.page ?? 1,
-        pages: d.feuillets?.filter((n) => analyse.textePages[n]) ?? [d.reperes[0]?.page ?? 1],
-        reperes: d.reperes
-      }))
+      .flatMap((d) => (d.reperes ?? []).map((r) => ({ repere: r, type: d.type })))
+      .sort((a, b) => a.repere.page - b.repere.page)
   );
 
-  let ouvert = $state(0);
+  /** Les pages dessinées qui portent au moins un repère. */
+  const pages = $derived(
+    [...new Set(reperes.map((r) => r.repere.page))]
+      .filter((n) => rendus.has(n))
+      .sort((a, b) => a - b)
+  );
 
-  // Le bilan désigne un diagnostic : on ouvre son onglet et on l'amène à l'écran.
+  function reperesDe(numero: number): { repere: Repere; type: TypeDiag; rang: number }[] {
+    return reperes
+      .map((r, rang) => ({ ...r, rang }))
+      .filter((r) => r.repere.page === numero);
+  }
+
+  // Une demande venue de l'extérieur amène la première page du diagnostic à
+  // l'écran, sans rien ouvrir.
   $effect(() => {
     if (!demande) return;
-    const index = feuillets.findIndex((f) => f.type === demande);
-    if (index >= 0) ouvert = index;
-    document.querySelector('.lecteur')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const cible = reperes.find((r) => r.type === demande);
+    if (!cible) return;
+    requestAnimationFrame(() => {
+      document
+        .getElementById(`page-${cible.repere.page}`)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
   });
 
-  const feuillet = $derived(feuillets[ouvert] ?? feuillets[0] ?? null);
-  const page = $derived(feuillet ? (rendus.get(feuillet.numero) ?? null) : null);
-  const diagnostic = $derived(
-    feuillet ? (analyse.diagnostics.find((d) => d.type === feuillet.type) ?? null) : null
-  );
-
-  /** Ce qu'on peut ouvrir : les passages du rapport, puis les rubriques de fond. */
+  /** Ce qu'on peut ouvrir : un passage du rapport, ou une rubrique de fond. */
   interface Entree {
     id: string;
     mot: string;
     teinte: string;
     repere?: Repere;
+    type: TypeDiag;
     rubrique?: 'schema' | 'fiche' | 'curieux';
   }
 
   const entrees = $derived.by<Entree[]>(() => {
-    if (!feuillet) return [];
-    const liste: Entree[] = feuillet.reperes.map((r, i) => ({
+    const liste: Entree[] = reperes.map(({ repere, type }, i) => ({
       id: `r${i}`,
-      mot: r.titre,
-      teinte: TEINTES[r.ton ?? 'info'],
-      repere: r
+      mot: repere.titre,
+      teinte: TEINTES[repere.ton ?? 'info'],
+      repere,
+      type
     }));
-    liste.push(
-      { id: 'schema', mot: 'Le schéma', teinte: TEINTES.info, rubrique: 'schema' },
-      { id: 'fiche', mot: 'Pourquoi ? Quoi faire ?', teinte: TEINTES.info, rubrique: 'fiche' },
-      { id: 'curieux', mot: 'Le saviez-vous ?', teinte: TEINTES.info, rubrique: 'curieux' }
-    );
     return liste;
   });
 
   /** Ouvert au clic, et seulement au clic. Reclic : ça se referme. */
   let epingle = $state<string | null>(null);
+  /** La rubrique de fond ouverte, rattachée au diagnostic du passage courant. */
+  let rubrique = $state<'schema' | 'fiche' | 'curieux' | null>(null);
   const actifId = $derived(epingle);
   const actif = $derived(entrees.find((e) => e.id === actifId) ?? null);
+  /** Le diagnostic dont relève le passage ouvert : c'est lui qu'on approfondit. */
+  const diagnostic = $derived(
+    actif ? (analyse.diagnostics.find((d) => d.type === actif.type) ?? null) : null
+  );
 
   /** Le détail et le schéma, sous la synthèse. Le lecteur décide s'il y va. */
   let detailOuvert = $state(false);
@@ -118,10 +123,10 @@
     suiteOuverte = null;
   });
 
-  // Changer de diagnostic referme tout.
+  // Ouvrir un passage referme la rubrique de fond : une chose à la fois.
   $effect(() => {
-    void ouvert;
-    epingle = null;
+    void actifId;
+    rubrique = null;
   });
 
   function epingler(id: string): void {
@@ -130,12 +135,11 @@
 
   /* ---- La lecture guidée -------------------------------------------------
      Personne ne sait par où commencer dans un rapport de cent pages. Alors on
-     prend le lecteur par la main : passage après passage, dans l'ordre où ils
-     viennent, avec le rapport qui suit tout seul. Il peut sortir quand il veut
-     en cliquant ailleurs. */
+     prend le lecteur par la main : passage après passage, dans l'ordre du
+     document. Il sort quand il veut en refermant. */
 
-  const nbReperes = $derived(feuillet?.reperes.length ?? 0);
-  /** Rang du passage ouvert dans la lecture, ou -1 si on est ailleurs. */
+  const nbReperes = $derived(reperes.length);
+  /** Rang du passage ouvert dans la lecture, ou -1 si rien n'est ouvert. */
   const rang = $derived(actifId?.startsWith('r') ? Number(actifId.slice(1)) : -1);
 
   function allerAu(i: number): void {
@@ -149,8 +153,7 @@
     });
   }
 
-  function cadre(r: Repere) {
-    if (!page) return null;
+  function cadre(r: Repere, page: PageRendue) {
     const marge = 3;
     return {
       left: ((r.x - marge) / page.largeur) * 100,
@@ -159,85 +162,62 @@
       height: ((r.hauteur + marge * 2) / page.hauteur) * 100
     };
   }
-
 </script>
 
-{#if feuillet}
+{#if reperes.length}
   <section class="lecteur">
-    <!-- Les tuiles sont la navigation : on choisit son diagnostic à la couleur
-         et au médaillon, pas dans une liste d'onglets. -->
-    <nav class="tuiles" aria-label="Diagnostics du dossier">
-      {#each feuillets as f, i (f.type)}
-        <button
-          type="button"
-          class="tuile {f.gravite}"
-          class:actif={i === ouvert}
-          onclick={() => (ouvert = i)}
-        >
-          <span class="medaille" class:etiquette={f.type === 'dpe'}>
-            {#if f.type === 'dpe' && f.diag.schema?.genre === 'dpe'}
-              <MiniEtiquette lettre={f.diag.schema.finale} />
-            {:else}
-              <Picto type={f.type} />
-            {/if}
-          </span>
-          <span class="dit">
-            <span class="verdict">{libelleCourt(f.diag)}</span>
-            <span class="quoi">{f.titre}</span>
-          </span>
-        </button>
-      {/each}
-    </nav>
-
-    <div class="deux-colonnes">
+    <div class="deux-colonnes" class:seul={!actif}>
       <div class="document">
-        {#if page}
-          <div class="page">
-            <img src={page.image} alt="Page {feuillet.numero} de votre rapport" />
+        {#if pages.length}
+          <!-- Les pages à la suite : c'est un document, il se déroule. -->
+          {#each pages as numero (numero)}
+            {@const page = rendus.get(numero)}
+            {#if page}
+              <div class="page" id="page-{numero}">
+                <img src={page.image} alt="Page {numero} de votre rapport" />
 
-            {#each feuillet.reperes as repere, i (repere.titre)}
-              {@const c = cadre(repere)}
-              {#if c}
-                <button
-                  type="button"
-                  id="repere-r{i}"
-                  class="surligne"
-                  class:actif={actifId === `r${i}`}
-                  class:epingle={epingle === `r${i}`}
-                  style:--teinte={TEINTES[repere.ton ?? 'info']}
-                  style:left="{c.left}%"
-                  style:top="{c.top}%"
-                  style:width="{c.width}%"
-                  style:height="{c.height}%"
-                  aria-label={repere.titre}
-                  onclick={() => epingler(`r${i}`)}
-                >
-                  <span class="puce">{i + 1}</span>
-                </button>
-              {/if}
-            {/each}
-          </div>
-        {:else}
-          <!-- Pas d'image de page : le texte du rapport, page après page, avec
-               les mêmes lignes vivantes. -->
-          <div class="page-texte" aria-label="Texte du rapport">
-            {#each feuillet.pages as numero (numero)}
-              <p class="numero-page">page {numero}</p>
-              {#each analyse.textePages[numero] ?? [] as ligne}
-                {@const idx = feuillet.reperes.findIndex(
-                  (r) => r.page === numero && ligne.includes(r.extrait)
-                )}
-                {#if idx >= 0}
-                  {@const r = feuillet.reperes[idx]}
+                {#each reperesDe(numero) as { repere, rang: i } (repere.titre)}
+                  {@const c = cadre(repere, page)}
                   <button
                     type="button"
-                    id="repere-r{idx}"
-                    class="ligne surlignee"
-                    class:actif={actifId === `r${idx}`}
-                    style:--teinte={TEINTES[r?.ton ?? 'info']}
-                    onclick={() => epingler(`r${idx}`)}
+                    id="repere-r{i}"
+                    class="surligne"
+                    class:actif={actifId === `r${i}`}
+                    style:--teinte={TEINTES[repere.ton ?? 'info']}
+                    style:left="{c.left}%"
+                    style:top="{c.top}%"
+                    style:width="{c.width}%"
+                    style:height="{c.height}%"
+                    aria-label={repere.titre}
+                    onclick={() => epingler(`r${i}`)}
                   >
-                    <span class="puce-ligne">{idx + 1}</span>
+                    <span class="puce">{i + 1}</span>
+                  </button>
+                {/each}
+              </div>
+            {/if}
+          {/each}
+        {:else}
+          <!-- Pas d'image : le texte du rapport, page après page, avec les
+               mêmes lignes vivantes. -->
+          <div class="page-texte" aria-label="Texte du rapport">
+            {#each [...new Set(reperes.map((r) => r.repere.page))].sort((a, b) => a - b) as numero (numero)}
+              <p class="numero-page">page {numero}</p>
+              {#each analyse.textePages[numero] ?? [] as ligne}
+                {@const trouve = reperes.findIndex(
+                  (r) => r.repere.page === numero && ligne.includes(r.repere.extrait)
+                )}
+                {#if trouve >= 0}
+                  {@const r = reperes[trouve]?.repere}
+                  <button
+                    type="button"
+                    id="repere-r{trouve}"
+                    class="ligne surlignee"
+                    class:actif={actifId === `r${trouve}`}
+                    style:--teinte={TEINTES[r?.ton ?? 'info']}
+                    onclick={() => epingler(`r${trouve}`)}
+                  >
+                    <span class="puce-ligne">{trouve + 1}</span>
                     {ligne}
                   </button>
                 {:else}
@@ -249,7 +229,7 @@
         {/if}
       </div>
 
-      <aside class="panneau">
+      <aside class="panneau" class:absent={!actif}>
         {#if actif}
           {#key actif.id}
             <div class="encart apparait" style:--teinte={actif.teinte}>
@@ -352,57 +332,69 @@
                   </button>
                 </div>
 
-                <div class="passerelles">
-                  <button type="button" onclick={() => epingler('schema')}>Le schéma</button>
-                  <button type="button" onclick={() => epingler('fiche')}>Quoi faire ?</button>
-                </div>
-              {:else if actif.rubrique === 'schema' && diagnostic}
-                <div class="feuille">
-                  <Explicatif
-                    type={diagnostic.type}
-                    isolation={diagnostic.schema?.genre === 'dpe'
-                      ? diagnostic.schema.isolation
-                      : null}
-                    lettre={diagnostic.schema?.genre === 'dpe' ? diagnostic.schema.finale : null}
-                  />
-                </div>
-              {:else if actif.rubrique === 'fiche' && diagnostic}
-                <div class="feuille">
-                  <Fiche type={diagnostic.type} />
-                </div>
-              {:else if actif.rubrique === 'curieux' && diagnostic}
-                <div class="feuille">
-                  <Curieux type={diagnostic.type} />
-                </div>
+                <!-- Le fond du sujet, rattaché au diagnostic de ce passage. -->
+                {#if diagnostic}
+                  <div class="passerelles">
+                    <button
+                      type="button"
+                      class:ouverte={rubrique === 'schema'}
+                      onclick={() => (rubrique = rubrique === 'schema' ? null : 'schema')}
+                    >
+                      Le schéma
+                    </button>
+                    <button
+                      type="button"
+                      class:ouverte={rubrique === 'fiche'}
+                      onclick={() => (rubrique = rubrique === 'fiche' ? null : 'fiche')}
+                    >
+                      Quoi faire ?
+                    </button>
+                    <button
+                      type="button"
+                      class:ouverte={rubrique === 'curieux'}
+                      onclick={() => (rubrique = rubrique === 'curieux' ? null : 'curieux')}
+                    >
+                      Le saviez-vous ?
+                    </button>
+                  </div>
+
+                  {#if rubrique === 'schema'}
+                    <div class="feuille apparait">
+                      <Explicatif
+                        type={diagnostic.type}
+                        isolation={diagnostic.schema?.genre === 'dpe'
+                          ? diagnostic.schema.isolation
+                          : null}
+                        lettre={diagnostic.schema?.genre === 'dpe'
+                          ? diagnostic.schema.finale
+                          : null}
+                      />
+                    </div>
+                  {:else if rubrique === 'fiche'}
+                    <div class="feuille apparait">
+                      <Fiche type={diagnostic.type} />
+                    </div>
+                  {:else if rubrique === 'curieux'}
+                    <div class="feuille apparait">
+                      <Curieux type={diagnostic.type} />
+                    </div>
+                  {/if}
+                {/if}
               {/if}
             </div>
           {/key}
-        {:else}
-          <!-- Au repos : le verdict, et où cliquer. Rien d'autre. Le sommaire
-               des passages, c'est le rapport lui-même, avec ses numéros. -->
-          {#if diagnostic}
-            <Voyant {diagnostic} />
-          {/if}
-
-          <RubanDpe epaisseur={7} />
-
-          {#if nbReperes}
-            <button type="button" class="commencer" onclick={() => allerAu(0)}>
-              Lire le rapport avec moi
-              <em>{nbReperes} passages, dans l’ordre</em>
-            </button>
-          {/if}
-
-          <p class="invite">Ou cliquez directement sur un numéro dans le rapport.</p>
-
-          <div class="portes">
-            <button type="button" onclick={() => epingler('schema')}>Le schéma</button>
-            <button type="button" onclick={() => epingler('fiche')}>Pourquoi ? Quoi faire ?</button>
-            <button type="button" onclick={() => epingler('curieux')}>Le saviez-vous ?</button>
-          </div>
         {/if}
       </aside>
     </div>
+
+    <!-- Au repos, le seul texte de l'écran : la porte d'entrée de la lecture
+         guidée. Tout le reste attend un clic. -->
+    {#if !actif && nbReperes}
+      <button type="button" class="commencer" onclick={() => allerAu(0)}>
+        Lire le rapport avec moi
+        <em>{nbReperes} passages, dans l’ordre</em>
+      </button>
+    {/if}
   </section>
 {/if}
 
@@ -413,103 +405,38 @@
     margin-bottom: 40px;
   }
 
-  /* Les tuiles : la navigation du dossier. On les lit à la couleur avant de les
-     lire au mot. Celle qu'on regarde est pleine ; les autres attendent. */
-  .tuiles {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-    gap: 10px;
-    margin-bottom: 24px;
-  }
 
-  .tuile {
-    display: grid;
-    grid-template-columns: 46px 1fr;
-    align-items: center;
-    gap: 13px;
-    text-align: left;
-    padding: 12px 14px;
-    border-radius: 14px;
-    border: 1px solid rgb(255 255 255 / 12%);
-    background: rgb(255 255 255 / 6%);
-    color: var(--sur-fond);
-    cursor: pointer;
-    transition: background 0.18s ease, border-color 0.18s ease, transform 0.15s ease;
-  }
 
-  .tuile:hover {
-    background: rgb(255 255 255 / 12%);
-    transform: translateY(-2px);
-  }
 
-  /* La tuile ouverte prend la couleur de sa gravité, pleine. */
-  .tuile.actif {
-    color: #fff;
-    border-color: transparent;
-    box-shadow: var(--ombre-forte);
-  }
 
-  .tuile.actif.bon {
-    background: linear-gradient(150deg, #22a06b, #17835a);
-  }
-
-  .tuile.actif.attention {
-    background: linear-gradient(150deg, #e79a2e, #cf7f16);
-  }
-
-  .tuile.actif.alerte {
-    background: linear-gradient(150deg, #dd5540, #c33e2b);
-  }
-
-  .tuile.actif.neutre {
-    background: linear-gradient(150deg, #6f8279, #586b62);
-  }
-
-  .medaille {
-    display: grid;
-    place-items: center;
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    font-size: 22px;
-    background: radial-gradient(circle at 32% 26%, #e9d2a5, #d2a358 60%, #a3762f);
-    box-shadow: inset 0 -2px 5px rgb(0 0 0 / 22%);
-  }
-
-  .medaille.etiquette {
-    border-radius: 10px;
-    padding: 5px 6px;
-    background: rgb(255 255 255 / 94%);
-    box-shadow: none;
-  }
-
-  .verdict {
-    display: block;
-    font-weight: 750;
-    font-size: 0.98rem;
-    line-height: 1.2;
-    letter-spacing: -0.01em;
-  }
-
-  .quoi {
-    display: block;
-    font-size: 0.8rem;
-    opacity: 0.72;
-    line-height: 1.25;
-  }
-
-  /* Le rapport tient les deux tiers : c'est ce qu'on est venu lire. L'encart
-     l'accompagne, il ne lui dispute pas la place. */
+  /* Tant que rien n'est ouvert, le rapport est seul et centré. Dès qu'on
+     clique, il se décale pour laisser entrer l'explication. */
   .deux-colonnes {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 366px;
     gap: 28px;
     align-items: start;
+    transition: grid-template-columns 0.3s ease;
+  }
+
+  .deux-colonnes.seul {
+    grid-template-columns: minmax(0, 860px);
+    justify-content: center;
+  }
+
+  .panneau.absent {
+    display: none;
+  }
+
+  /* Les pages du rapport, l'une sous l'autre. */
+  .document {
+    display: grid;
+    gap: 18px;
   }
 
   .page {
     position: relative;
-    border-radius: 6px;
+    border-radius: 2px;
     overflow: hidden;
     box-shadow: var(--ombre-forte);
     background: #fff;
@@ -648,46 +575,42 @@
     margin: 16px 0 14px;
   }
 
-  .invite {
-    margin: 0 0 18px;
-    font-size: 0.93rem;
-    color: var(--sur-fond-doux);
-    font-style: italic;
-  }
 
   /* Le bouton qui prend le lecteur par la main. C'est l'action principale de
      l'écran : elle a le droit d'être grosse et dorée. */
+  /* Posé sous le document, centré comme lui. */
   .commencer {
     display: block;
-    width: 100%;
-    text-align: left;
-    background: linear-gradient(135deg, #e6c894, #d2a358 62%, #b8873f);
-    border: none;
-    border-radius: 14px;
-    padding: 15px 20px;
-    margin-bottom: 16px;
+    margin: 22px auto 0;
+    text-align: center;
+    background: none;
+    border: 1px solid var(--trait-or);
+    border-radius: 0;
+    padding: 17px 34px;
     cursor: pointer;
-    color: #17301f;
-    font-size: 1.06rem;
-    font-weight: 750;
-    letter-spacing: -0.01em;
-    box-shadow: var(--ombre);
-    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+    color: var(--sur-fond);
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    transition: background 0.22s ease, border-color 0.22s ease, color 0.22s ease;
   }
 
   .commencer:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--ombre-forte);
-    filter: brightness(1.04);
+    background: var(--or);
+    border-color: var(--or);
+    color: var(--vert-900);
   }
 
   .commencer em {
     display: block;
-    font-size: 0.82rem;
-    font-weight: 600;
+    font-family: var(--mono);
+    font-size: 0.74rem;
     font-style: normal;
-    opacity: 0.72;
-    margin-top: 2px;
+    letter-spacing: 0.04em;
+    text-transform: none;
+    opacity: 0.66;
+    margin-top: 5px;
   }
 
   /* La progression : où j'en suis, et la suite. */
@@ -703,8 +626,8 @@
   .pas-a-pas .fleche {
     width: 38px;
     height: 38px;
-    border-radius: 50%;
-    border: 1px solid rgb(230 200 148 / 40%);
+    border-radius: 0;
+    border: 1px solid var(--trait-or);
     background: none;
     color: var(--or-clair);
     font-size: 1rem;
@@ -712,27 +635,31 @@
   }
 
   .pas-a-pas .compteur {
-    font-size: 0.84rem;
+    font-family: var(--mono);
+    font-size: 0.8rem;
     color: var(--sur-fond-doux);
-    letter-spacing: 0.04em;
-    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
   }
 
   .pas-a-pas .suivant {
     margin-left: auto;
-    background: var(--or);
-    border: none;
-    border-radius: 999px;
-    padding: 10px 20px;
-    color: #17301f;
-    font-weight: 750;
-    font-size: 0.92rem;
+    background: none;
+    border: 1px solid var(--trait-or);
+    border-radius: 0;
+    padding: 12px 22px;
+    color: var(--or-clair);
+    font-weight: 500;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
     cursor: pointer;
-    transition: filter 0.18s ease;
+    transition: background 0.22s ease, color 0.22s ease, border-color 0.22s ease;
   }
 
   .pas-a-pas .suivant:hover:not(:disabled) {
-    filter: brightness(1.06);
+    background: var(--or);
+    border-color: var(--or);
+    color: var(--vert-900);
   }
 
   .pas-a-pas button:disabled {
@@ -740,30 +667,8 @@
     cursor: default;
   }
 
-  /* Trois portes, en petit, sous l'invite. Elles ne se comptent pas et ne se
-     rangent pas : elles sont là si on veut. */
-  .portes {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
 
-  .portes button {
-    background: none;
-    border: 1px solid rgb(230 200 148 / 35%);
-    color: var(--or-clair);
-    border-radius: 999px;
-    padding: 8px 16px;
-    font-size: 0.86rem;
-    font-weight: 650;
-    cursor: pointer;
-    transition: background 0.18s ease, border-color 0.18s ease;
-  }
 
-  .portes button:hover {
-    background: rgb(255 255 255 / 10%);
-    border-color: var(--or);
-  }
 
   /* L'encart : une seule chose à la fois. */
   .encart {

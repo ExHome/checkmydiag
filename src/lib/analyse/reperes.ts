@@ -150,7 +150,9 @@ const COMMUNES: Cible[] = [
       'Le jour où le diagnostiqueur est venu',
       'C’est de là que court la validité',
       'Pas la date d’envoi du rapport'
-    ]
+    ],
+    pratique: (v) =>
+      v ? `${v} → la validité court à partir de ce jour.` : 'La validité court à partir de ce jour.'
   },
   {
     motif: /Norme m[ée]thodologique|selon la norme|NF\s*[XP]/i,
