@@ -14,6 +14,7 @@
   import Positionnement from './Positionnement.svelte';
   import Deperditions from './schemas/Deperditions.svelte';
   import MotsExpliques from './MotsExpliques.svelte';
+  import RubanDpe from './RubanDpe.svelte';
   import { motsEmployes } from '../lib/lexique';
   import { libelleCourt } from '../lib/libelle';
 
@@ -99,6 +100,21 @@
     plancher: 'Plancher bas',
     fenetres: 'Menuiseries'
   };
+
+  /** Les références du dossier, pour la ligne sous le trait de la page de garde. */
+  const reference = $derived(
+    analyse.diagnostics
+      .flatMap((d) => d.faits)
+      .find((f) => /num[ée]ro de dossier|dossier n/i.test(f.libelle))?.valeur ?? null
+  );
+
+  const visite = $derived(
+    analyse.diagnostics.find((d) => d.date)?.date ??
+      analyse.diagnostics
+        .flatMap((d) => d.faits)
+        .find((f) => /date de la visite|date du rep[ée]rage/i.test(f.libelle))?.valeur ??
+      null
+  );
 
   /**
    * Pourquoi ce logement-là perd sa chaleur.
@@ -233,21 +249,44 @@
 </script>
 
 <section class="notaire">
-  <div class="chapeau-doc">
-    <p class="eyebrow">Le point avant signature</p>
-    <!-- Le document s'emporte : chez le notaire, face au vendeur, à la banque. -->
-    <button type="button" class="editer" onclick={() => window.print()}>
-      Éditer le document
-    </button>
-  </div>
+  <!-- La page de garde. Un document qu'une agence pose sur une table se
+       reconnaît à son en-tête : le filet, l'objet, l'adresse en grand, et la
+       ligne de références sous le trait. -->
+  <header class="garde">
+    <div class="ligne-haute">
+      <p class="objet">Dossier de diagnostic technique</p>
+      <!-- Le document s'emporte : chez le notaire, face au vendeur, à la banque. -->
+      <button type="button" class="editer" onclick={() => window.print()}>
+        Éditer le document
+      </button>
+    </div>
+
+    <h1 class="adresse">{analyse.bien.adresse || 'Le bien'}</h1>
+    {#if analyse.bien.commune}
+      <p class="commune">{analyse.bien.commune}</p>
+    {/if}
+
+    <p class="sous-titre">{descriptif}</p>
+
+    <dl class="references">
+      {#if reference}
+        <div><dt>Référence</dt><dd>{reference}</dd></div>
+      {/if}
+      {#if visite}
+        <div><dt>Visite</dt><dd>{visite}</dd></div>
+      {/if}
+      <div><dt>Diagnostics</dt><dd>{analyse.diagnostics.length}</dd></div>
+      <div><dt>Pages du rapport</dt><dd>{analyse.nbPages}</dd></div>
+    </dl>
+
+    <RubanDpe epaisseur={5} />
+  </header>
 
   <div class="feuille">
-    <!-- De quoi on parle, en une ligne. Avant tout le reste. -->
-    <h2>Le bien</h2>
-    <p class="descriptif">{descriptif}</p>
-
     {#if caracteristiques.length}
-      <!-- L'état descriptif, relevé ligne à ligne comme dans un dossier. -->
+      <!-- L'état descriptif, relevé ligne à ligne. Le descriptif en toutes
+           lettres est déjà en page de garde : on ne le répète pas. -->
+      <h2>L’état descriptif</h2>
       <dl class="caracteristiques">
         {#each caracteristiques as c (c.libelle)}
           <div>
@@ -257,13 +296,6 @@
         {/each}
       </dl>
     {/if}
-
-    <h2 class="apres">L’état du bien</h2>
-    <ul class="etat">
-      {#each etat as ligne}
-        <li>{ligne}</li>
-      {/each}
-    </ul>
 
     <!-- Les deux planches côte à côte : la maison et l'échelle se répondent,
          et l'écran large cesse d'être une longue colonne étroite. -->
@@ -368,22 +400,7 @@
     background: var(--or);
   }
 
-  /* L'état du bien se lit comme un relevé : deux colonnes, pas de commentaire. */
-  .etat {
-    columns: 2;
-    column-gap: 34px;
-  }
 
-  .etat li {
-    break-inside: avoid;
-    color: var(--sur-fond-doux);
-  }
-
-  @media (max-width: 700px) {
-    .etat {
-      columns: 1;
-    }
-  }
 
   /* Les deux planches se répondent côte à côte dès qu'il y a la place. */
   .planches {
@@ -422,14 +439,6 @@
     color: var(--or);
   }
 
-  .descriptif {
-    margin: 0;
-    font-family: var(--police-titre);
-    font-style: italic;
-    font-size: clamp(1.05rem, 2.2vw, 1.3rem);
-    line-height: 1.45;
-    color: var(--sur-fond);
-  }
 
   /* L'état descriptif : un relevé au filet, comme une notice d'architecte. */
   .caracteristiques {
@@ -471,17 +480,85 @@
     color: var(--sur-fond-doux);
   }
 
-  .chapeau-doc {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    margin-bottom: 6px;
+
+
+  /* La page de garde : filet or, objet du document, adresse en grand, et la
+     ligne de références sous le trait. C'est à ça qu'on reconnaît un document
+     d'agence posé sur une table. */
+  .garde {
+    border-top: 2px solid var(--or);
+    padding-top: 22px;
+    margin-bottom: 40px;
   }
 
-  .chapeau-doc .eyebrow {
-    flex: 1;
+  .ligne-haute {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 26px;
+  }
+
+  .objet {
     margin: 0;
+    font-size: 0.74rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--or);
+  }
+
+  .adresse {
+    font-size: clamp(1.9rem, 4.6vw, 3rem);
+    line-height: 1.05;
+    margin: 0;
+    color: var(--sur-fond);
+  }
+
+  .commune {
+    margin: 4px 0 0;
+    font-family: var(--police-titre);
+    font-size: clamp(1.2rem, 2.6vw, 1.6rem);
+    color: var(--sur-fond-doux);
+  }
+
+  .sous-titre {
+    margin: 16px 0 0;
+    font-family: var(--police-titre);
+    font-style: italic;
+    font-size: clamp(1rem, 2vw, 1.16rem);
+    line-height: 1.5;
+    max-width: var(--mesure);
+    color: var(--sur-fond-doux);
+  }
+
+  /* Les références : en mono, comme le bandeau du site. */
+  .references {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 44px;
+    margin: 26px 0 20px;
+    padding-top: 18px;
+    border-top: 1px solid rgb(255 255 255 / 12%);
+  }
+
+  .references div {
+    display: grid;
+    gap: 3px;
+  }
+
+  .references dt {
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gris);
+  }
+
+  .references dd {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    color: var(--sur-fond);
   }
 
   .editer {
