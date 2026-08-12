@@ -1,9 +1,6 @@
 <script lang="ts">
   import Depot from './composants/Depot.svelte';
-  import Controles from './composants/Controles.svelte';
-  import Resume from './composants/Resume.svelte';
   import Lecteur from './composants/Lecteur.svelte';
-  import Profils from './composants/Profils.svelte';
   import { ouvrirPdf, type PageRendue } from './lib/pdf';
   import { analyser } from './lib/analyse';
   import { pagesExemple } from './lib/exemple';
@@ -14,7 +11,6 @@
     garderDossier,
     listerDossiers,
     oublierDossier,
-    poids,
     type DossierGarde
   } from './lib/coffre';
 
@@ -23,7 +19,6 @@
   let analyse = $state<Analyse | null>(null);
   let erreur = $state<string | null>(null);
   let nomFichier = $state('');
-  let exemple = $state(false);
   /** Pages du rapport dessinées, pour les montrer annotées. */
   let rendus = $state<Map<number, PageRendue>>(new Map());
   /** Dossiers déjà analysés, gardés sur l'appareil — PDF compris. */
@@ -37,7 +32,7 @@
    * le lecteur retrouve son rapport annoté, sans redéposer le fichier.
    */
   async function rouvrir(garde: DossierGarde): Promise<void> {
-    exemple = false;
+
     nomFichier = garde.nomFichier;
     rendus = new Map();
     analyse = garde.analyse;
@@ -60,7 +55,7 @@
   }
 
   function montrerExemple(): void {
-    exemple = true;
+
     nomFichier = 'dossier de démonstration';
     rendus = new Map(); // pas de vrai PDF : pas de page à montrer
     analyse = analyser(pagesExemple());
@@ -69,7 +64,7 @@
 
   async function traiter(fichier: File): Promise<void> {
     erreur = null;
-    exemple = false;
+
     nomFichier = fichier.name;
 
     if (!/\.pdf$/i.test(fichier.name) && fichier.type !== 'application/pdf') {
@@ -198,7 +193,7 @@
     analyse = null;
     erreur = null;
     nomFichier = '';
-    exemple = false;
+
     etat = 'accueil';
   }
 </script>
@@ -211,43 +206,38 @@
   </div>
 </header>
 
+<!--
+  Deux écrans, pas un de plus.
+
+  On glisse son fichier. Ensuite on a son rapport, et l'explication à côté. Tout
+  ce qui s'intercalait entre les deux — chapeau, arguments, bilan, compteurs,
+  profils — a été retiré : c'était du remplissage entre le geste et la réponse.
+-->
 <main class="enveloppe">
   {#if etat !== 'resultat'}
-    <section class="accroche">
-      <h1>Votre diag, en clair</h1>
-      <p class="chapeau">
-        60 pages de jargon → une question : <em>c’est grave ?</em><br />
-        Déposez le PDF. Il devient cliquable.
-      </p>
-    </section>
+    <section class="seuil">
+      {#if erreur}
+        <p class="erreur" role="alert">{erreur}</p>
+      {/if}
 
-    {#if erreur}
-      <p class="erreur" role="alert">{erreur}</p>
-    {/if}
+      <Depot surFichier={traiter} occupe={etat === 'lecture'} {progression} />
 
-    <Depot surFichier={traiter} occupe={etat === 'lecture'} {progression} />
+      {#if etat !== 'lecture'}
+        <p class="essai">
+          Pas de rapport sous la main ?
+          <button type="button" class="lien" onclick={montrerExemple}>Voir un exemple</button>
+        </p>
+      {/if}
 
-    {#if etat !== 'lecture'}
-      <p class="essai">
-        Pas de rapport sous la main ?
-        <button type="button" class="lien" onclick={montrerExemple}>Voir un exemple</button>
-      </p>
-    {/if}
-
-    {#if dossiers.length && etat !== 'lecture'}
-      <!-- Les dossiers déjà lus restent sur l'appareil : on les rouvre sans
-           redéposer le fichier. -->
-      <section class="gardes">
-        <h3>Vos dossiers</h3>
-        <ul>
+      {#if dossiers.length && etat !== 'lecture'}
+        <!-- Les rapports déjà lus restent sur l'appareil : on les rouvre sans
+             redéposer le fichier. -->
+        <ul class="gardes">
           {#each dossiers as dossier (dossier.id)}
             <li>
               <button type="button" class="dossier" onclick={() => void rouvrir(dossier)}>
                 <strong>{dossier.nomFichier}</strong>
-                <span class="muet petit">
-                  {dossier.analyse.diagnostics.length} diags · {depuis(dossier.quand, new Date())}
-                  {#if dossier.pdf}· {poids(dossier.pdf.size)}{/if}
-                </span>
+                <span class="quand">{depuis(dossier.quand, new Date())}</span>
               </button>
               <button
                 type="button"
@@ -260,27 +250,9 @@
             </li>
           {/each}
         </ul>
-        <p class="muet petit">Gardés sur cet appareil. Rien n’est envoyé.</p>
-      </section>
-    {/if}
-
-    <section class="arguments">
-      <div>
-        <h3>Rien n’est envoyé</h3>
-        <p class="muet">Lu par votre navigateur. Aucun compte, aucune trace.</p>
-      </div>
-      <div>
-        <h3>9 diagnostics</h3>
-        <p class="muet">DPE, élec, gaz, amiante, plomb, termites, ERP, assainissement, Carrez.</p>
-      </div>
-      <div>
-        <h3>On vérifie aussi</h3>
-        <p class="muet">Périmé, manquant, surfaces qui ne collent pas.</p>
-      </div>
+      {/if}
     </section>
   {:else if analyse}
-    <Resume {analyse} {nomFichier} {exemple} {recommencer} partie="entete" />
-
     {#if analyse.illisible}
       <p class="erreur" role="alert">
         Ce PDF ne contient presque pas de texte : il a probablement été scanné. Les rapports
@@ -294,25 +266,11 @@
       </p>
     {/if}
 
-    <!-- On arrive sur son rapport, pas sur un bilan. Les tuiles servent de
-         navigation, et tout se découvre en cliquant dedans. -->
     <Lecteur {analyse} {rendus} {demande} />
 
-    <!-- Le même dossier ne se lit pas pareil selon qu'on vend, qu'on achète ou
-         qu'on fait signer. -->
-    <Profils {analyse} />
-
-    <Controles controles={analyse.controles} />
-
-    <div class="reprendre">
-      <button class="bouton bouton--fantome" onclick={recommencer}>Analyser un autre rapport</button>
-      <button class="bouton bouton--fantome" onclick={() => window.print()}>
-        Imprimer l’antisèche
-      </button>
-    </div>
-
-    <p class="avertissement muet petit">
-      Outil de lecture. Aucune valeur réglementaire — la référence reste le rapport signé.
+    <p class="avertissement">
+      {nomFichier} — outil de lecture, sans valeur réglementaire. La référence reste le rapport
+      signé.
     </p>
   {/if}
 </main>
@@ -357,81 +315,38 @@
     padding: clamp(28px, 6vw, 56px) 0 80px;
   }
 
-  .reprendre {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin: 28px 0 18px;
-  }
-
-  .accroche {
-    text-align: center;
-    max-width: 52ch;
-    margin: 0 auto clamp(24px, 5vw, 40px);
-  }
-
-  .accroche .chapeau {
-    max-width: none;
-  }
-
-  .chapeau {
-    color: var(--encre-doux);
-    font-size: 1.05rem;
-  }
-
-  .arguments {
-    display: grid;
-    gap: 24px;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    margin-top: 48px;
-  }
-
-  .arguments h3 {
-    font-family: var(--police);
-    font-size: 1rem;
-    margin-bottom: 6px;
-  }
-
-  .arguments p {
-    font-size: 0.94rem;
-    margin: 0;
+  /* Le seuil : une seule chose à faire, au milieu de l'écran. */
+  .seuil {
+    max-width: 640px;
+    margin-inline: auto;
+    padding-top: clamp(20px, 8vh, 70px);
   }
 
   .essai {
     text-align: center;
-    margin-top: 16px;
-    color: var(--encre-doux);
-    font-size: 0.94rem;
+    margin-top: 18px;
+    color: var(--sur-fond-doux);
+    font-size: 0.92rem;
   }
 
   .lien {
     background: none;
     border: none;
     padding: 0;
-    color: var(--vert-500);
-    font-weight: 600;
+    color: var(--or-clair);
+    font-weight: 700;
     text-decoration: underline;
+    text-underline-offset: 3px;
     cursor: pointer;
   }
 
+  /* Les rapports gardés : une ligne chacun, sobre. Pas un tableau de bord. */
   .gardes {
-    margin-top: 34px;
-  }
-
-  .gardes h3 {
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--encre-doux);
-    margin-bottom: 10px;
-  }
-
-  .gardes ul {
     list-style: none;
-    margin: 0 0 10px;
+    margin: 40px 0 0;
     padding: 0;
     display: grid;
-    gap: 8px;
+    gap: 6px;
   }
 
   .gardes li {
@@ -442,54 +357,60 @@
 
   .dossier {
     flex: 1;
-    display: grid;
-    gap: 2px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
     text-align: left;
-    background: var(--papier);
-    border: 1px solid var(--trait);
-    border-radius: var(--rayon-petit);
-    padding: 12px 16px;
+    background: rgb(255 255 255 / 6%);
+    border: 1px solid rgb(255 255 255 / 10%);
+    border-radius: 12px;
+    padding: 13px 18px;
     cursor: pointer;
-    color: inherit;
-    transition: border-color 0.15s ease, background 0.15s ease;
+    color: var(--sur-fond);
+    transition: border-color 0.18s ease, background 0.18s ease;
   }
 
   .dossier:hover {
-    border-color: var(--vert-500);
-    background: var(--papier-doux);
+    border-color: rgb(230 200 148 / 45%);
+    background: rgb(255 255 255 / 11%);
+  }
+
+  .quand {
+    font-size: 0.84rem;
+    color: var(--sur-fond-doux);
+    white-space: nowrap;
   }
 
   .oublier {
     background: none;
-    border: 1px solid var(--trait);
-    border-radius: var(--rayon-petit);
-    color: var(--encre-doux);
+    border: 1px solid rgb(255 255 255 / 10%);
+    border-radius: 12px;
+    color: var(--sur-fond-doux);
     width: 42px;
     cursor: pointer;
     font-size: 0.9rem;
   }
 
   .oublier:hover {
-    border-color: var(--alerte);
-    color: var(--alerte);
+    border-color: #fc7060;
+    color: #fc7060;
   }
 
   .erreur {
-    background: var(--alerte-fond);
-    border: 1px solid var(--alerte);
-    color: var(--alerte);
-    border-radius: var(--rayon);
+    background: rgb(252 112 96 / 12%);
+    border: 1px solid rgb(252 112 96 / 55%);
+    color: #ffd9d3;
+    border-radius: var(--rayon-petit);
     padding: 14px 18px;
     margin-bottom: 20px;
   }
 
   .avertissement {
     margin-top: 40px;
-    padding-top: 20px;
-    border-top: 1px solid var(--trait);
-  }
-
-  h1 {
-    text-wrap: balance;
+    padding-top: 18px;
+    border-top: 1px solid rgb(255 255 255 / 10%);
+    font-size: 0.84rem;
+    color: var(--sur-fond-doux);
   }
 </style>
