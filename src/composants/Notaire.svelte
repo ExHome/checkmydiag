@@ -13,6 +13,8 @@
   import type { Analyse } from '../lib/modele';
   import Positionnement from './Positionnement.svelte';
   import Deperditions from './schemas/Deperditions.svelte';
+  import MotsExpliques from './MotsExpliques.svelte';
+  import { motsEmployes } from '../lib/lexique';
   import { libelleCourt } from '../lib/libelle';
 
   const { analyse }: { analyse: Analyse } = $props();
@@ -223,10 +225,21 @@
 
     return liste;
   });
+  /** Les termes employés dans ce document-ci, pour l'annexe. */
+  const lexique = $derived(
+    motsEmployes([pourquoi, ...conseils.flatMap((c) => c.points), ...etat])
+  );
+
 </script>
 
 <section class="notaire">
-  <p class="eyebrow">Le point avant signature</p>
+  <div class="chapeau-doc">
+    <p class="eyebrow">Le point avant signature</p>
+    <!-- Le document s'emporte : chez le notaire, face au vendeur, à la banque. -->
+    <button type="button" class="editer" onclick={() => window.print()}>
+      Éditer le document
+    </button>
+  </div>
 
   <div class="feuille">
     <!-- De quoi on parle, en une ligne. Avant tout le reste. -->
@@ -252,30 +265,52 @@
       {/each}
     </ul>
 
-    {#if dpe?.schema?.genre === 'dpe'}
-      <!-- La maison du dossier : ses parois portent ce que le rapport en dit,
-           et le texte explique pourquoi la chaleur part par là. -->
-      <h2 class="apres">Par où ce logement perd sa chaleur</h2>
-      <Deperditions isolation={dpe.schema.isolation} {lettre} />
-      <p class="pourquoi">{pourquoi}</p>
-    {/if}
+    <!-- Les deux planches côte à côte : la maison et l'échelle se répondent,
+         et l'écran large cesse d'être une longue colonne étroite. -->
+    <div class="planches">
+      {#if dpe?.schema?.genre === 'dpe'}
+        <div class="planche">
+          <h2 class="apres">Par où ce logement perd sa chaleur</h2>
+          <Deperditions isolation={dpe.schema.isolation} {lettre} />
+          <p class="pourquoi"><MotsExpliques texte={pourquoi} /></p>
+        </div>
+      {/if}
 
-    {#if lettre}
-      <h2 class="apres">Où se situe ce logement</h2>
-      <Positionnement {lettre} />
-    {/if}
+      {#if lettre}
+        <div class="planche">
+          <h2 class="apres">Où se situe ce logement</h2>
+          <Positionnement {lettre} />
+        </div>
+      {/if}
+    </div>
 
     <h2 class="apres">Ce que je vous conseille</h2>
-    {#each conseils as bloc (bloc.titre)}
-      <div class="conseil">
-        <p class="titre-conseil">{bloc.titre}</p>
-        <ul>
-          {#each bloc.points as point}
-            <li>{point}</li>
-          {/each}
-        </ul>
-      </div>
-    {/each}
+    <div class="conseils">
+      {#each conseils as bloc (bloc.titre)}
+        <div class="conseil">
+          <p class="titre-conseil">{bloc.titre}</p>
+          <ul>
+            {#each bloc.points as point}
+              <li><MotsExpliques texte={point} /></li>
+            {/each}
+          </ul>
+        </div>
+      {/each}
+    </div>
+
+    {#if lexique.length}
+      <!-- L'annexe : tous les termes employés, définis. Le document part chez
+           des gens qui n'en connaissent aucun. -->
+      <h2 class="apres">Les mots employés</h2>
+      <dl class="lexique">
+        {#each lexique as mot (mot.nom)}
+          <div>
+            <dt>{mot.nom}</dt>
+            <dd>{mot.definition}</dd>
+          </div>
+        {/each}
+      </dl>
+    {/if}
 
     <p class="reserve">
       Ce point de situation est une lecture du dossier, pas un acte. Seul le rapport signé par le
@@ -350,8 +385,32 @@
     }
   }
 
+  /* Les deux planches se répondent côte à côte dès qu'il y a la place. */
+  .planches {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+    gap: 0 44px;
+  }
+
+  .planche {
+    min-width: 0;
+  }
+
+  /* Le conseil se lit en colonnes : chaque bloc est un sujet, pas une suite. */
+  .conseils {
+    columns: 2;
+    column-gap: 44px;
+  }
+
+  @media (max-width: 820px) {
+    .conseils {
+      columns: 1;
+    }
+  }
+
   .conseil {
-    margin-bottom: 20px;
+    break-inside: avoid;
+    margin-bottom: 26px;
   }
 
   .titre-conseil {
@@ -409,6 +468,74 @@
     margin: 16px 0 0;
     font-size: 0.97rem;
     line-height: 1.55;
+    color: var(--sur-fond-doux);
+  }
+
+  .chapeau-doc {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 6px;
+  }
+
+  .chapeau-doc .eyebrow {
+    flex: 1;
+    margin: 0;
+  }
+
+  .editer {
+    flex: none;
+    background: none;
+    border: 1px solid var(--trait-or);
+    border-radius: 0;
+    padding: 11px 20px;
+    font-size: 0.76rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--or-clair);
+    cursor: pointer;
+    transition: background 0.22s ease, color 0.22s ease, border-color 0.22s ease;
+  }
+
+  .editer:hover {
+    background: var(--or);
+    border-color: var(--or);
+    color: var(--vert-900);
+  }
+
+  /* L'annexe : un terme, sa définition, en deux colonnes. */
+  .lexique {
+    margin: 0;
+    columns: 2;
+    column-gap: 44px;
+  }
+
+  @media (max-width: 820px) {
+    .lexique {
+      columns: 1;
+    }
+  }
+
+  .lexique div {
+    break-inside: avoid;
+    margin-bottom: 14px;
+  }
+
+  .lexique dt {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--or);
+    margin-bottom: 3px;
+  }
+
+  .lexique dd {
+    margin: 0;
+    font-size: 0.92rem;
+    line-height: 1.5;
     color: var(--sur-fond-doux);
   }
 

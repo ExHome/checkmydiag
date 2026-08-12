@@ -270,48 +270,79 @@ button {
 }
 
 /* ---------------------------------------------------------------------------
-   Impression : l'antisèche sur papier.
+   Le document remis.
 
-   On repasse en encre noire sur blanc, on déplie tout ce qui est replié, et on
-   retire ce qui ne sert qu'à l'écran — l'en-tête collante, les boutons, le
-   fac-similé du rapport (le lecteur a déjà son rapport en main).
+   Ce qui s'imprime n'est pas l'écran : c'est la pièce que le client emporte
+   chez son notaire, sa banque ou son artisan. On garde donc le point avant
+   signature et le relevé de ce qui compte, et on retire tout le reste — la
+   navigation, les boutons, le fac-similé du rapport que le client a déjà.
+
+   Encre noire sur blanc, filets gris, titres verts : la charte tient au papier.
    --------------------------------------------------------------------------- */
 @media print {
-  body {
-    background: #fff;
-    color: #000;
-    font-size: 11pt;
+  @page {
+    margin: 16mm 14mm;
   }
 
+  body {
+    background: #fff;
+    color: #1e2e28;
+    font-size: 10.5pt;
+    line-height: 1.45;
+  }
+
+  /* Ce qui ne sert qu'à l'écran. */
   .entete,
   .depot,
-  .actions,
-  .onglets,
+  .essai,
+  .gardes,
   .document,
+  .panneau,
+  .commencer,
+  .editer,
   .invite,
-  .apparait {
+  .agrandir,
+  .pleine-page,
+  .portes,
+  .passerelles,
+  .pas-a-pas,
+  .creuser,
+  .reprendre {
     display: none !important;
   }
 
-  .carte {
-    border: 1px solid #999;
-    box-shadow: none;
+  main {
+    padding: 0 !important;
+  }
+
+  .enveloppe {
+    width: 100% !important;
+    padding-inline: 0 !important;
+  }
+
+  /* Les deux planches restent côte à côte : elles se lisent ensemble. */
+  .planches {
     break-inside: avoid;
-    background: #fff;
   }
 
-  details {
-    display: block !important;
+  .lexique,
+  .conseils,
+  .caracteristiques,
+  .etat {
+    break-inside: auto;
   }
 
-  details > summary {
-    display: none;
+  .conseil,
+  .lexique div,
+  .caracteristiques div {
+    break-inside: avoid;
   }
 
-  details > * {
-    display: block !important;
+  h2 {
+    break-after: avoid;
   }
 
+  /* L'encre du papier : sombre sur blanc, filets gris. */
   h1,
   h2,
   h3,
@@ -319,12 +350,55 @@ button {
   p,
   li,
   dd,
-  dt {
-    color: #000 !important;
+  .descriptif,
+  .quoi,
+  .verdict {
+    color: #1e2e28 !important;
   }
 
-  .deux-colonnes {
-    grid-template-columns: 1fr !important;
+  h2,
+  .eyebrow,
+  .titre-conseil,
+  dt,
+  .source {
+    color: #093f30 !important;
+  }
+
+  .feuille,
+  .carte,
+  .notaire .feuille {
+    background: #fff !important;
+    box-shadow: none !important;
+    border-color: #ccc !important;
+  }
+
+  /* Sur papier, les blancs translucides deviennent invisibles : on les remonte
+     en gris francs. */
+  .caracteristiques div,
+  .lexique div,
+  h2.apres,
+  .reserve,
+  .rien {
+    border-color: #ccc !important;
+  }
+
+  .donc li,
+  .etat li,
+  .lexique dd,
+  .pourquoi,
+  .reserve {
+    color: #41544c !important;
+  }
+
+  .apparait {
+    animation: none !important;
+  }
+
+  /* Les mots du métier ne se cliquent pas sur papier : le lexique en annexe
+     les reprend tous. */
+  .terme {
+    text-decoration: none !important;
+    font-weight: 600;
   }
 }
 

@@ -20,6 +20,7 @@
   import Curieux from './Curieux.svelte';
   import Essentiel from './Essentiel.svelte';
   import Notaire from './Notaire.svelte';
+  import Diagnostics from './Diagnostics.svelte';
   import { FICHES } from '../lib/analyse/fiches';
 
   interface Props {
@@ -182,6 +183,11 @@
     <!-- Puis le détail, classé par ce que ça change. Chaque ligne renvoie à la
          page du rapport où c'est écrit. -->
     <Essentiel {analyse} allerA={allerAuDiagnostic} />
+
+    <!-- Puis le dossier diagnostic par diagnostic : conclusion, dessin,
+         chiffres, canevas, réserves. De quoi tout comprendre sur un seul
+         document imprimé. -->
+    <Diagnostics {analyse} />
 
     <div class="deux-colonnes" class:seul={!actif}>
       <div class="document">
