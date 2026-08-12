@@ -37,7 +37,21 @@ export async function ouvrirPdf(
   surProgression?: (fait: number, total: number) => void
 ): Promise<Document> {
   const donnees = new Uint8Array(await fichier.arrayBuffer());
+  // pdf.js consomme le tableau passé à getDocument : on garde une copie pour
+  // pouvoir rouvrir le document au moment du dessin.
+  const copie = donnees.slice();
   const pdf = await pdfjs.getDocument({ data: donnees, useSystemFonts: true }).promise;
+
+  /**
+   * Le dessin se fait sur un second document, ouvert à la demande. Le premier a
+   * servi à extraire le texte de toutes les pages : dans cet état, ses rendus
+   * ne se terminent pas.
+   */
+  let pourDessin: pdfjs.PDFDocumentProxy | null = null;
+  async function documentDeDessin(): Promise<pdfjs.PDFDocumentProxy> {
+    pourDessin ??= await pdfjs.getDocument({ data: copie.slice(), useSystemFonts: true }).promise;
+    return pourDessin;
+  }
 
   const pages: PageTexte[] = [];
   for (let n = 1; n <= pdf.numPages; n++) {
@@ -68,7 +82,8 @@ export async function ouvrirPdf(
     async rendre(numero, largeurCible = 900) {
       if (numero < 1 || numero > pdf.numPages) return null;
 
-      const page = await pdf.getPage(numero);
+      const doc = await documentDeDessin();
+      const page = await doc.getPage(numero);
       const base = page.getViewport({ scale: 1 });
       // On plafonne l'échelle : au-delà, l'image pèse lourd sans rien apporter.
       const echelle = Math.min(largeurCible / base.width, 2.5);
@@ -77,22 +92,32 @@ export async function ouvrirPdf(
       const canvas = document.createElement('canvas');
       canvas.width = Math.floor(viewport.width);
       canvas.height = Math.floor(viewport.height);
-      const contexte = canvas.getContext('2d');
-      if (!contexte) return null;
 
-      // Fond blanc : sans lui, les zones non peintes du PDF sortent en noir.
-      contexte.fillStyle = '#ffffff';
-      contexte.fillRect(0, 0, canvas.width, canvas.height);
+      // Le canevas doit vivre dans le document : détaché, le rendu de certaines
+      // pages ne se termine jamais. On le place hors écran, puis on le retire.
+      canvas.style.cssText = 'position:fixed;left:-10000px;top:0;';
+      document.body.append(canvas);
 
-      await page.render({ canvasContext: contexte, viewport }).promise;
-      const image = canvas.toDataURL('image/jpeg', 0.82);
-      page.cleanup();
+      try {
+        const contexte = canvas.getContext('2d');
+        if (!contexte) return null;
 
-      return { image, largeur: base.width, hauteur: base.height };
+        // Fond blanc : sans lui, les zones non peintes du PDF sortent en noir.
+        contexte.fillStyle = '#ffffff';
+        contexte.fillRect(0, 0, canvas.width, canvas.height);
+
+        await page.render({ canvasContext: contexte, viewport }).promise;
+        const image = canvas.toDataURL('image/jpeg', 0.82);
+        return { image, largeur: base.width, hauteur: base.height };
+      } finally {
+        canvas.remove();
+        page.cleanup();
+      }
     },
 
     async fermer() {
       await pdf.destroy();
+      if (pourDessin) await pourDessin.destroy();
     }
   };
 }

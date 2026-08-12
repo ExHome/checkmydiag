@@ -53,6 +53,10 @@
         (window as unknown as { analyseCourante?: unknown }).analyseCourante = resultat;
       }
 
+      if (import.meta.env.DEV) {
+        (window as unknown as { docCourant?: unknown }).docCourant = document;
+      }
+
       void dessinerPages(document, resultat);
     } catch (e) {
       erreur = `Impossible de lire ce PDF (${e instanceof Error ? e.message : 'erreur inconnue'}).`;
@@ -66,6 +70,7 @@
   // rapport depuis une URL locale pour vérifier le rendu annoté sans passer par
   // la boîte de dialogue du système.
   if (import.meta.env.DEV) {
+    (window as unknown as { ouvrirPdfPourEssai?: typeof ouvrirPdf }).ouvrirPdfPourEssai = ouvrirPdf;
     (window as unknown as { chargerPourEssai?: (url: string) => Promise<void> }).chargerPourEssai =
       async (url: string) => {
         const reponse = await fetch(url);
@@ -89,15 +94,22 @@
       if (numero !== undefined) aFaire.add(numero);
     }
 
+    const mesures: { page: number; ms: number; ok: boolean }[] = [];
+    if (import.meta.env.DEV) {
+      (window as unknown as { mesuresRendu?: unknown }).mesuresRendu = mesures;
+    }
+
     for (const numero of aFaire) {
       try {
         // Sur certains rapports très lourds, le dessin d'une page n'aboutit
         // jamais. Ce n'est pas une raison pour laisser le lecteur attendre :
         // au-delà de huit secondes, on passe à la suivante.
+        const debut = performance.now();
         const rendu = await Promise.race([
           document.rendre(numero, 900),
           new Promise<null>((resoudre) => setTimeout(() => resoudre(null), 8000))
         ]);
+        mesures.push({ page: numero, ms: Math.round(performance.now() - debut), ok: rendu !== null });
         if (rendu) rendus = new Map(rendus).set(numero, rendu);
       } catch (e) {
         // Une page illisible n'empêche pas de lire le reste du dossier, mais on
@@ -106,7 +118,8 @@
       }
     }
 
-    await document.fermer();
+    // En développement, on garde le document ouvert pour pouvoir l'inspecter.
+    if (!import.meta.env.DEV) await document.fermer();
   }
 
   function recommencer(): void {

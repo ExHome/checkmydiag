@@ -1,37 +1,43 @@
 /* ---------------------------------------------------------------------------
    Check My Diag — design system
 
+   Couleurs reprises de la charte DGLM : vert profond #093F30, or #C09048, fond
+   crème #F7F4EC. Une palette chaude, qui tranche avec le blanc administratif
+   des rapports — et qui donne envie de lire.
+
    Le lecteur arrive inquiet, avec un PDF illisible. La page doit lui donner
-   envie de lire : de l'air, des couleurs franches, une réponse énorme en haut
-   de chaque carte. Surtout pas une mise en page de manuel scolaire.
+   envie : de l'air, des couleurs franches, une réponse énorme en haut de chaque
+   carte. Surtout pas une mise en page de manuel scolaire.
    --------------------------------------------------------------------------- */
 
 :root {
   color-scheme: light dark;
 
-  /* Vert de marque, plus vif et plus profond que le vert administratif. */
-  --vert-900: #06301f;
-  --vert-700: #0a5c39;
-  --vert-500: #12a05f;
-  --vert-300: #5fd39b;
-  --vert-100: #e3f7ec;
+  /* Verts de la charte */
+  --vert-900: #002924;
+  --vert-700: #093f30;
+  --vert-500: #1c6a51;
+  --vert-300: #7c8b84;
+  --vert-100: #e7efe9;
 
-  --or: #d99b1c;
-  --corail: #e5484d;
+  /* Ors de la charte */
+  --or: #c09048;
+  --or-fonce: #8a6224;
+  --or-clair: #d9b778;
 
-  --encre: #0f1e18;
-  --encre-doux: #55675e;
+  --encre: #1e2e28;
+  --encre-doux: #5b6a62;
   --papier: #ffffff;
-  --papier-doux: #f4f8f5;
-  --fond: #eef4f0;
-  --trait: #dde8e1;
+  --papier-doux: #faf8f3;
+  --fond: #f7f4ec;
+  --trait: #ede7da;
 
-  --alerte: #cc2b31;
-  --alerte-fond: #fdecec;
-  --attention: #b26a05;
-  --attention-fond: #fdf4e3;
-  --ok: #0f8a51;
-  --ok-fond: #e3f7ec;
+  --alerte: #a8321f;
+  --alerte-fond: #fbeeea;
+  --attention: #8a6224;
+  --attention-fond: #f9f1e2;
+  --ok: #1c6a51;
+  --ok-fond: #e7efe9;
 
   /* Étiquettes réglementaires A→G : couleurs officielles de l'arrêté DPE. */
   --etq-a: #319834;
@@ -44,32 +50,34 @@
 
   --rayon: 18px;
   --rayon-petit: 10px;
-  --ombre: 0 1px 2px rgb(9 40 27 / 5%), 0 12px 32px -12px rgb(9 40 27 / 18%);
-  --ombre-forte: 0 2px 4px rgb(9 40 27 / 6%), 0 24px 48px -20px rgb(9 40 27 / 28%);
+  --ombre: 0 1px 2px rgb(9 63 48 / 6%), 0 12px 32px -12px rgb(9 63 48 / 18%);
+  --ombre-forte: 0 2px 4px rgb(9 63 48 / 8%), 0 24px 48px -20px rgb(9 63 48 / 30%);
 
   --police: 'Segoe UI Variable Display', 'Segoe UI', system-ui, -apple-system, sans-serif;
-  --police-titre: 'Segoe UI Variable Display', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  /* Lora si elle est installée, sinon une serif chaude — comme le site DGLM. */
+  --police-titre: Lora, 'Iowan Old Style', Georgia, 'Times New Roman', serif;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --encre: #eaf2ed;
-    --encre-doux: #9db0a6;
-    --papier: #111a16;
-    --papier-doux: #16211c;
-    --fond: #0b120f;
-    --trait: #26332c;
-    --vert-100: #12352513;
-    --vert-500: #35c47f;
-    --vert-300: #7ee0b0;
-    --alerte: #ff6b6b;
-    --alerte-fond: #2c1618;
-    --attention: #e2a33a;
-    --attention-fond: #2a2010;
-    --ok: #35c47f;
-    --ok-fond: #102c20;
-    --ombre: 0 1px 2px rgb(0 0 0 / 40%), 0 12px 32px -12px rgb(0 0 0 / 60%);
-    --ombre-forte: 0 2px 4px rgb(0 0 0 / 50%), 0 24px 48px -20px rgb(0 0 0 / 70%);
+    --encre: #efeadc;
+    --encre-doux: #a8b3ac;
+    --papier: #10201a;
+    --papier-doux: #152a22;
+    --fond: #0a1712;
+    --trait: #24382f;
+    --vert-100: #163026;
+    --vert-500: #4fae8a;
+    --vert-300: #7c8b84;
+    --or: #d9b778;
+    --alerte: #e0674f;
+    --alerte-fond: #2e1913;
+    --attention: #d9b778;
+    --attention-fond: #2a2214;
+    --ok: #4fae8a;
+    --ok-fond: #132a22;
+    --ombre: 0 1px 2px rgb(0 0 0 / 45%), 0 12px 32px -12px rgb(0 0 0 / 65%);
+    --ombre-forte: 0 2px 4px rgb(0 0 0 / 55%), 0 24px 48px -20px rgb(0 0 0 / 75%);
   }
 }
 
@@ -98,18 +106,25 @@ body {
 }
 
 h1,
-h2,
+h2 {
+  font-family: var(--police-titre);
+  font-weight: 600;
+  line-height: 1.14;
+  margin: 0 0 0.4em;
+  letter-spacing: -0.02em;
+}
+
 h3,
 h4 {
-  font-family: var(--police-titre);
+  font-family: var(--police);
   font-weight: 700;
-  line-height: 1.12;
+  line-height: 1.2;
   margin: 0 0 0.4em;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.015em;
 }
 
 h1 {
-  font-size: clamp(2rem, 6vw, 3.4rem);
+  font-size: clamp(2rem, 5.6vw, 3.2rem);
 }
 
 h2 {
@@ -154,14 +169,14 @@ button {
   font-weight: 650;
   font-size: 1.02rem;
   cursor: pointer;
-  box-shadow: 0 8px 20px -8px rgb(18 160 95 / 60%);
+  box-shadow: 0 8px 20px -8px rgb(9 63 48 / 55%);
   transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
 }
 
 .bouton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 28px -10px rgb(18 160 95 / 70%);
-  filter: brightness(1.04);
+  box-shadow: 0 14px 28px -10px rgb(9 63 48 / 65%);
+  filter: brightness(1.06);
 }
 
 .bouton:active {
@@ -170,19 +185,18 @@ button {
 
 .bouton--fantome {
   background: var(--papier);
-  color: var(--vert-500);
+  color: var(--vert-700);
   border: 1px solid var(--trait);
   box-shadow: none;
 }
 
 .bouton--fantome:hover {
   background: var(--vert-100);
-  color: var(--vert-700);
   box-shadow: none;
 }
 
 :focus-visible {
-  outline: 3px solid var(--vert-500);
+  outline: 3px solid var(--or);
   outline-offset: 3px;
   border-radius: 6px;
 }
