@@ -17,9 +17,11 @@
   interface Props {
     analyse: Analyse;
     rendus: Map<number, PageRendue>;
+    /** Diagnostic demandé depuis le bilan, pour ouvrir le bon onglet. */
+    demande?: string | null;
   }
 
-  const { analyse, rendus }: Props = $props();
+  const { analyse, rendus, demande = null }: Props = $props();
 
   type Repere = NonNullable<Diagnostic['reperes']>[number];
 
@@ -38,6 +40,14 @@
   );
 
   let ouvert = $state(0);
+
+  // Le bilan désigne un diagnostic : on ouvre son onglet et on l'amène à l'écran.
+  $effect(() => {
+    if (!demande) return;
+    const index = feuillets.findIndex((f) => f.type === demande);
+    if (index >= 0) ouvert = index;
+    document.querySelector('.lecteur')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
   const feuillet = $derived(feuillets[ouvert] ?? feuillets[0] ?? null);
   const page = $derived(feuillet ? (rendus.get(feuillet.numero) ?? null) : null);
 
@@ -159,6 +169,14 @@
             <div class="apparait">
               <p class="sur-titre">Ce passage</p>
               <h3>{choisi.titre}</h3>
+
+              <!-- D'abord ce que dit son dossier, ensuite seulement la règle
+                   générale : la théorie ne vaut que rapportée à son cas. -->
+              <p class="extrait">
+                <span class="mot-cle">Dans votre rapport</span>
+                {choisi.extrait}
+              </p>
+
               {#if choisi.schema}
                 <MiniSchema id={choisi.schema} />
               {/if}
@@ -495,6 +513,28 @@
     font-weight: 600;
     cursor: pointer;
     font-size: 0.92rem;
+  }
+
+  /* La ligne du rapport, citée telle quelle, avant toute explication. */
+  .extrait {
+    margin: 0 0 14px;
+    padding: 12px 14px;
+    background: #fdf6e6;
+    border: 1px dashed var(--or);
+    border-radius: var(--rayon-petit);
+    font-size: 0.92rem;
+    color: #4a3d24;
+    line-height: 1.45;
+  }
+
+  .mot-cle {
+    display: block;
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--or-fonce);
+    margin-bottom: 3px;
   }
 
   /* Des puces, pas des paragraphes : trois ou quatre mots par ligne. */

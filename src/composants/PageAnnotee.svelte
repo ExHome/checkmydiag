@@ -80,6 +80,13 @@
       {#key actif.titre}
         <div class="texte apparait">
           <h4>{actif.titre}</h4>
+
+          <!-- La ligne du rapport avant la règle générale. -->
+          <p class="extrait">
+            <span class="mot-cle">Dans votre rapport</span>
+            {actif.extrait}
+          </p>
+
           {#if actif.schema}
             <MiniSchema id={actif.schema} />
           {/if}
@@ -206,6 +213,27 @@
   .texte h4 {
     font-size: 1.06rem;
     margin-bottom: 6px;
+  }
+
+  .extrait {
+    margin: 0 0 12px;
+    padding: 11px 13px;
+    background: #fdf6e6;
+    border: 1px dashed var(--or);
+    border-radius: var(--rayon-petit);
+    font-size: 0.9rem;
+    color: #4a3d24;
+    line-height: 1.45;
+  }
+
+  .mot-cle {
+    display: block;
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--or-fonce);
+    margin-bottom: 3px;
   }
 
   .texte ul {

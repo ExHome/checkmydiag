@@ -6,6 +6,7 @@
    * fâchent, et une phrase qui répond à la seule question du lecteur.
    */
   import type { Analyse, TypeDiag } from '../lib/modele';
+  import Picto from './Picto.svelte';
 
   /** Nom court, pour écrire une phrase qui se lit à voix haute. */
   const NOMS: Record<TypeDiag, string> = {
@@ -25,6 +26,8 @@
     nomFichier: string;
     exemple: boolean;
     recommencer: () => void;
+    /** Ouvrir ce diagnostic dans le lecteur, plus bas. */
+    allerVers?: (type: TypeDiag) => void;
     /**
      * L'écran se lit en deux temps : l'en-tête annonce le dossier, le bilan le
      * referme une fois qu'on a tout parcouru.
@@ -32,7 +35,7 @@
     partie: 'entete' | 'bilan';
   }
 
-  const { analyse, nomFichier, exemple, recommencer, partie }: Props = $props();
+  const { analyse, nomFichier, exemple, recommencer, partie, allerVers }: Props = $props();
 
   const importants = $derived(analyse.diagnostics.filter((d) => d.gravite === 'alerte'));
   const aRegarder = $derived(analyse.diagnostics.filter((d) => d.gravite === 'attention'));
@@ -110,10 +113,14 @@
 
   <div class="tuiles">
     {#each analyse.diagnostics as d (d.type)}
-      <a class="tuile {d.gravite}" href="#{d.type}">
-        <strong>{d.titre}</strong>
-        <span class="petit">{d.verdict}</span>
-      </a>
+      <button type="button" class="tuile {d.gravite}" onclick={() => allerVers?.(d.type)}>
+        <span class="picto"><Picto type={d.type} /></span>
+        <span class="dit">
+          <strong>{d.titre}</strong>
+          <span class="petit">{d.verdict}</span>
+        </span>
+        <span class="fleche" aria-hidden="true">→</span>
+      </button>
     {/each}
   </div>
 
@@ -200,16 +207,29 @@
     color: var(--or);
   }
 
+  /* Des tuiles franches, lisibles au premier coup d'œil sur téléphone comme sur
+     écran large : deux colonnes au maximum, jamais des vignettes serrées. */
   .tuiles {
     display: grid;
-    gap: 10px;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     margin-bottom: 22px;
+  }
+
+  @media (max-width: 700px) {
+    .tuiles {
+      grid-template-columns: 1fr;
+    }
   }
 
   .tuile {
     display: grid;
-    gap: 4px;
+    grid-template-columns: 38px 1fr 18px;
+    align-items: start;
+    gap: 12px;
+    text-align: left;
+    font: inherit;
+    cursor: pointer;
     padding: 14px 16px;
     border-radius: var(--rayon-petit);
     border: 1px solid var(--trait);
@@ -238,7 +258,55 @@
     border-left-color: var(--trait);
   }
 
-  .tuile span {
+  .picto {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    padding: 7px;
+    background: var(--papier-doux);
+  }
+
+  .fleche {
+    align-self: center;
+    color: var(--encre-doux);
+    font-weight: 700;
+    transition: transform 0.15s ease;
+  }
+
+  .tuile:hover .fleche {
+    transform: translateX(3px);
+    color: var(--vert-500);
+  }
+
+  .dit strong {
+    font-size: 1.02rem;
+  }
+
+  .tuile.bon .picto {
+    color: var(--ok);
+    background: var(--ok-fond);
+  }
+  .tuile.attention .picto {
+    color: var(--attention);
+    background: var(--attention-fond);
+  }
+  .tuile.alerte .picto {
+    color: var(--alerte);
+    background: var(--alerte-fond);
+  }
+  .tuile.neutre .picto {
+    color: var(--encre-doux);
+  }
+
+  .dit {
+    display: grid;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  .dit .petit {
     color: var(--encre-doux);
     display: -webkit-box;
     -webkit-line-clamp: 2;

@@ -19,6 +19,8 @@
   let rendus = $state<Map<number, PageRendue>>(new Map());
   /** Dossiers déjà analysés, gardés sur l'appareil. */
   let dossiers = $state<DossierGarde[]>(dossiersGardes());
+  /** Diagnostic demandé depuis le bilan : le lecteur ouvre son onglet. */
+  let demande = $state<string | null>(null);
 
   function rouvrir(dossier: DossierGarde): void {
     exemple = false;
@@ -250,11 +252,18 @@
 
     <!-- Ce qui intéresse d'abord : l'état du dossier. Le rapport vient après,
          pour ceux qui veulent aller voir. -->
-    <Resume {analyse} {nomFichier} {exemple} {recommencer} partie="bilan" />
+    <Resume
+      {analyse}
+      {nomFichier}
+      {exemple}
+      {recommencer}
+      partie="bilan"
+      allerVers={(type) => (demande = type)}
+    />
 
     <Controles controles={analyse.controles} />
 
-    <Lecteur {analyse} {rendus} />
+    <Lecteur {analyse} {rendus} {demande} />
 
     <p class="avertissement muet petit">
       Check My Diag est un outil de lecture : il reformule votre rapport, il ne le remplace pas et
