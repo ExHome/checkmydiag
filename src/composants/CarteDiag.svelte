@@ -4,6 +4,9 @@
   import Schema from './Schema.svelte';
   import Explicatif from './schemas/Explicatif.svelte';
   import PageAnnotee from './PageAnnotee.svelte';
+  import Voyant from './Voyant.svelte';
+  import Fiche from './Fiche.svelte';
+  import { enPratique } from '../lib/analyse/fiches';
 
   interface Props {
     diagnostic: Diagnostic;
@@ -30,15 +33,23 @@
   const aFaireReste = $derived(urgent ? diagnostic.aFaire.slice(2) : diagnostic.aFaire);
 
   const annotable = $derived(page !== null && (diagnostic.reperes?.length ?? 0) > 0);
+  const pratique = $derived(enPratique(diagnostic.type, diagnostic.gravite));
 </script>
 
 <article class="carte diag {diagnostic.gravite}">
   <header>
     <div class="titre">
-      <h2>{diagnostic.titre}</h2>
+      <Voyant {diagnostic} />
       <span class="pastille">{ETIQUETTES_GRAVITE[diagnostic.gravite]}</span>
     </div>
     <p class="verdict">{diagnostic.verdict}</p>
+
+    {#if pratique}
+      <p class="pratique">
+        <span class="mot-cle">En pratique</span>
+        {pratique}
+      </p>
+    {/if}
   </header>
 
   {#if diagnostic.analogie}
@@ -100,9 +111,9 @@
         isolation={diagnostic.schema?.genre === 'dpe' ? diagnostic.schema.isolation : null}
       />
 
-      {#each diagnostic.explication as paragraphe}
-        <p>{paragraphe}</p>
-      {/each}
+      <section class="bloc-detail">
+        <Fiche type={diagnostic.type} />
+      </section>
 
       {#if aFaireReste.length}
         <h4>{urgent ? 'Autres conséquences' : 'Ce que ça change pour vous'}</h4>
@@ -162,10 +173,6 @@
     justify-content: space-between;
   }
 
-  h2 {
-    margin: 0;
-  }
-
   .pastille {
     font-size: 0.74rem;
     font-weight: 700;
@@ -200,6 +207,17 @@
     letter-spacing: -0.015em;
     margin: 14px 0 0;
     text-wrap: pretty;
+  }
+
+  /* La traduction du verdict en conséquence concrète, juste sous la phrase du
+     rapport : c'est la question que tout le monde se pose. */
+  .pratique {
+    margin: 12px 0 0;
+    padding: 12px 16px;
+    background: rgb(255 200 87 / 8%);
+    border-left: 3px solid var(--or);
+    border-radius: var(--rayon-petit);
+    font-size: 0.97rem;
   }
 
   /* L'image du quotidien, mise en avant : c'est elle qui accroche le lecteur. */
