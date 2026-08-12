@@ -13,7 +13,7 @@
 import type { Bien, Diagnostic, PointDeControle, TypeDiag } from '../modele';
 
 /** Durée de validité, en mois, pour une vente. */
-const VALIDITE_MOIS: Partial<Record<TypeDiag, number>> = {
+export const VALIDITE_MOIS: Partial<Record<TypeDiag, number>> = {
   dpe: 120,
   termites: 6,
   erp: 6,

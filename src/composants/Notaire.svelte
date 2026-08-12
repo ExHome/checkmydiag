@@ -10,13 +10,15 @@
    * Le devoir de conseil est ici une contrainte d'écriture : on ne se contente
    * pas de rapporter, on dit ce qui engage, ce qui coûte et ce qui se négocie.
    */
-  import type { Analyse } from '../lib/modele';
+  import type { Analyse, Diagnostic, TypeDiag } from '../lib/modele';
+  import { enDate, VALIDITE_MOIS } from '../lib/analyse/coherence';
   import Positionnement from './Positionnement.svelte';
   import Deperditions from './schemas/Deperditions.svelte';
   import MotsExpliques from './MotsExpliques.svelte';
   import RubanDpe from './RubanDpe.svelte';
   import { motsEmployes } from '../lib/lexique';
   import { libelleCourt } from '../lib/libelle';
+  import { enPratique, FICHES } from '../lib/analyse/fiches';
 
   const { analyse }: { analyse: Analyse } = $props();
 
@@ -201,6 +203,67 @@
     return [{ quoi: `Classe ${lettre}`, donc }];
   });
 
+  /**
+   * La synthèse : une ligne par diagnostic.
+   *
+   * Quatre colonnes, parce que ce sont les quatre questions qu'on pose devant
+   * un dossier — de quoi s'agit-il, qu'est-ce qu'il dit, jusqu'à quand il vaut,
+   * et qu'est-ce qu'il ne couvre pas. La dernière colonne compte autant que la
+   * deuxième : une conclusion rassurante sans sa réserve se lit comme une
+   * garantie.
+   */
+  const RESERVE_COURTE: Partial<Record<TypeDiag, string>> = {
+    dpe: 'Un calcul, pas votre facture. Les parois non vues sont estimées.',
+    amiante: 'Les seuls matériaux de la liste, contrôlés à l’œil.',
+    plomb: 'Les revêtements accessibles. Une unité non mesurée reste inconnue.',
+    electricite: 'Six points de sécurité. Rien de démonté, rien d’encastré.',
+    gaz: 'Les parties visibles. Les tuyauteries encastrées ne sont pas vues.',
+    termites: 'Là où c’était accessible. Ni mur fermé, ni vide sanitaire.',
+    erp: 'Une recopie des zonages. Personne n’est venu sonder le terrain.',
+    carrez: 'Les parties privatives sous 1,80 m. Ni cave, ni garage, ni balcon.',
+    assainissement: 'Ce qui était accessible. Rien n’est mis au jour.'
+  };
+
+  /** L'échéance d'un diagnostic, calculée depuis sa date de visite. */
+  function echeance(d: Diagnostic): { texte: string; perimee: boolean } {
+    const duree = VALIDITE_MOIS[d.type];
+    if (duree === undefined) return { texte: 'Sans limite', perimee: false };
+
+    const depart = enDate(d.date);
+    if (!depart) return { texte: `${duree >= 12 ? duree / 12 + ' ans' : duree + ' mois'}`, perimee: false };
+
+    const fin = new Date(depart);
+    fin.setMonth(fin.getMonth() + duree);
+    const perimee = fin.getTime() < Date.now();
+    return {
+      texte: `${perimee ? 'Périmé depuis le ' : 'Jusqu’au '}${fin.toLocaleDateString('fr-FR')}`,
+      perimee
+    };
+  }
+
+  const synthese = $derived(
+    analyse.diagnostics.map((d) => {
+      const e = echeance(d);
+      return {
+        type: d.type,
+        titre: d.titre,
+        gravite: d.gravite,
+        conclusion: libelleCourt(d),
+        validite: e.texte,
+        perimee: e.perimee,
+        reserve: RESERVE_COURTE[d.type] ?? 'Ce qui était visible le jour de la visite.',
+        // Ce qui s'ouvre au clic : la phrase du rapport, le conseil, l'enjeu
+        // à la vente. Trois colonnes, pas un pavé.
+        verdict: d.verdict,
+        conseil: enPratique(d.type, d.gravite) ?? FICHES[d.type].quoiFaire,
+        vente: FICHES[d.type].vente
+      };
+    })
+  );
+
+  /** La ligne dépliée. Une seule à la fois. */
+  let ouvert = $state<TypeDiag | null>(null);
+
   const perimes = $derived(analyse.controles.filter((c) => c.genre === 'perime'));
   const manquants = $derived(analyse.controles.filter((c) => c.genre === 'manque'));
   const anomalies = $derived(
@@ -325,6 +388,54 @@
   </header>
 
   <div class="feuille">
+    <!-- La synthèse : les huit diagnostics d'un coup d'œil, avec ce qu'ils
+         concluent, jusqu'à quand ils valent, et ce qu'ils ne couvrent pas. -->
+    <h2>La synthèse du dossier</h2>
+    <table class="synthese">
+      <thead>
+        <tr>
+          <th>Diagnostic</th>
+          <th>Ce qu’il conclut</th>
+          <th>Validité</th>
+          <th>Ce qu’il ne couvre pas</th>
+        </tr>
+      </thead>
+      <tbody>
+        {#each synthese as l (l.type)}
+          <tr
+            class={l.gravite}
+            class:ouverte={ouvert === l.type}
+            onclick={() => (ouvert = ouvert === l.type ? null : l.type)}
+          >
+            <th scope="row">{l.titre}</th>
+            <td class="conclusion">{l.conclusion}</td>
+            <td class="validite" class:perimee={l.perimee}>{l.validite}</td>
+            <td class="reserve-courte">{l.reserve}</td>
+          </tr>
+          {#if ouvert === l.type}
+            <tr class="explication {l.gravite}">
+              <td colspan="4">
+                <div class="deplie apparait">
+                  <div>
+                    <p class="titre-deplie">Ce que dit le rapport</p>
+                    <p><MotsExpliques texte={l.verdict} /></p>
+                  </div>
+                  <div>
+                    <p class="titre-deplie">Ce qu’il faut faire</p>
+                    <p><MotsExpliques texte={l.conseil} /></p>
+                  </div>
+                  <div>
+                    <p class="titre-deplie">Pour vendre</p>
+                    <p><MotsExpliques texte={l.vente} /></p>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          {/if}
+        {/each}
+      </tbody>
+    </table>
+
     {#if caracteristiques.length}
       <!-- L'état descriptif, relevé ligne à ligne. Le descriptif en toutes
            lettres est déjà en page de garde : on ne le répète pas. -->
@@ -500,6 +611,169 @@
     color: var(--or);
   }
 
+
+  /* La synthèse : le tableau qu'on lit en premier et qu'on relit en dernier. */
+  .synthese {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+  }
+
+  .synthese th,
+  .synthese td {
+    text-align: left;
+    vertical-align: top;
+    padding: 11px 14px 11px 0;
+    border-bottom: 1px solid rgb(255 255 255 / 10%);
+  }
+
+  .synthese thead th {
+    font-family: var(--police);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gris);
+    border-bottom-color: var(--trait-or);
+  }
+
+  /* Le nom du diagnostic porte le liseré de sa gravité : la colonne se lit à
+     la couleur avant de se lire au mot. */
+  .synthese tbody th {
+    padding-left: 13px;
+    border-left: 3px solid var(--gravite, var(--gris));
+    font-weight: 650;
+    color: var(--sur-fond);
+    width: 22%;
+  }
+
+  .synthese tr.bon {
+    --gravite: #4c9c72;
+  }
+  .synthese tr.attention {
+    --gravite: #c98a2e;
+  }
+  .synthese tr.alerte {
+    --gravite: #c0503c;
+  }
+  .synthese tr.neutre {
+    --gravite: var(--gris);
+  }
+
+  .conclusion {
+    font-family: var(--police-titre);
+    font-size: 1.04rem;
+    letter-spacing: -0.022em;
+    color: var(--sur-fond);
+    width: 24%;
+  }
+
+  .validite {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--sur-fond-doux);
+    width: 20%;
+    white-space: nowrap;
+  }
+
+  .validite.perimee {
+    color: #fc7060;
+    font-weight: 700;
+  }
+
+  .reserve-courte {
+    font-size: 0.86rem;
+    line-height: 1.45;
+    color: var(--sur-fond-doux);
+    opacity: 0.82;
+  }
+
+  /* Toute la ligne s'ouvre : la cible est large, on ne vise pas un chevron. */
+  .synthese tbody tr:not(.explication) {
+    cursor: pointer;
+    transition: background 0.18s ease;
+  }
+
+  .synthese tbody tr:not(.explication):hover {
+    background: rgb(255 255 255 / 5%);
+  }
+
+  .synthese tr.ouverte {
+    background: rgb(255 255 255 / 7%);
+  }
+
+  .synthese tr.ouverte td,
+  .synthese tr.ouverte th {
+    border-bottom-color: transparent;
+  }
+
+  .explication td {
+    padding: 0 0 18px 13px;
+    border-left: 3px solid var(--gravite, var(--gris));
+    background: rgb(255 255 255 / 7%);
+  }
+
+  /* Trois colonnes : ce que dit le rapport, quoi faire, l'enjeu à la vente. */
+  .deplie {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 4px 36px;
+    padding-top: 4px;
+  }
+
+  .deplie p {
+    margin: 0;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--sur-fond-doux);
+  }
+
+  .titre-deplie {
+    font-size: 0.66rem !important;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--or) !important;
+    margin-bottom: 4px !important;
+  }
+
+  @media (max-width: 760px) {
+    /* Sur téléphone, un tableau à quatre colonnes devient illisible : chaque
+       ligne se replie en bloc, avec ses intitulés en préfixe. */
+    .synthese thead {
+      display: none;
+    }
+
+    .synthese tr {
+      display: block;
+      padding: 12px 0;
+      border-bottom: 1px solid rgb(255 255 255 / 10%);
+    }
+
+    .synthese th,
+    .synthese td {
+      display: block;
+      width: auto;
+      border: none;
+      padding: 2px 0;
+    }
+
+    .synthese tbody th {
+      padding-left: 12px;
+    }
+
+    .validite::before {
+      content: 'Validité — ';
+      font-family: var(--police);
+      color: var(--gris);
+    }
+
+    .reserve-courte::before {
+      content: 'Ne couvre pas — ';
+      color: var(--gris);
+    }
+  }
 
   /* L'état descriptif : un relevé au filet, comme une notice d'architecte. */
   .caracteristiques {
