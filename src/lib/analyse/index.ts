@@ -113,7 +113,8 @@ export function analyser(brutes: PageTexte[]): Analyse {
     // joint à la section pour que les extracteurs puissent s'en servir.
     const diag = extracteur([...section.lignes, ...synthese], section.plage);
     const reperes = reperer(section.type, section.pages);
-    diagnostics.push(reperes.length ? { ...diag, reperes } : diag);
+    const feuillets = section.pages.map((p) => p.numero);
+    diagnostics.push({ ...diag, feuillets, ...(reperes.length ? { reperes } : {}) });
   }
 
   // Un diagnostic peut figurer au dossier sans que son rapport détaillé ait été
@@ -137,14 +138,16 @@ export function analyser(brutes: PageTexte[]): Analyse {
 
   const bien = identifierBien(pages, horsSection);
 
-  // On conserve le texte des seules pages annotées : de quoi montrer le rapport
-  // au lecteur sans garder cent pages en mémoire.
+  // Le lecteur doit pouvoir descendre dans son rapport : on garde le texte de
+  // toutes les pages des diagnostics reconnus, plafonné pour ne pas retenir un
+  // dossier de cent pages en entier.
+  const MAX_PAGES = 60;
   const textePages: Record<number, string[]> = {};
-  for (const diag of diagnostics) {
-    const numero = diag.reperes?.[0]?.page;
-    if (numero === undefined || textePages[numero]) continue;
-    const page = pages.find((p) => p.numero === numero);
-    if (page) textePages[numero] = page.lignes;
+  for (const section of sections) {
+    for (const page of section.pages) {
+      if (Object.keys(textePages).length >= MAX_PAGES) break;
+      textePages[page.numero] ??= page.lignes;
+    }
   }
 
   return {

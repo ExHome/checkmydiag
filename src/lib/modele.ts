@@ -105,6 +105,8 @@ export interface Diagnostic {
   schema: Schema | null;
   /** Pages du PDF où se trouve ce diagnostic (1-indexé). */
   pages: [number, number];
+  /** Numéros de toutes les pages du diagnostic, pour les faire défiler. */
+  feuillets?: number[];
   /** Date de réalisation, au format JJ/MM/AAAA, si elle a été lue. */
   date?: string;
   /**

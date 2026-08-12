@@ -396,14 +396,7 @@ export function reperer(type: TypeDiag, pages: PageTexte[]): Repere[] {
     }
   }
 
-  // Une page à la fois : les repères d'une même page se lisent ensemble.
-  const parPage = new Map<number, Repere[]>();
-  for (const r of reperes) {
-    const liste = parPage.get(r.page);
-    if (liste) liste.push(r);
-    else parPage.set(r.page, [r]);
-  }
-
-  const meilleure = [...parPage.entries()].sort((a, b) => b[1].length - a[1].length)[0];
-  return meilleure ? meilleure[1] : [];
+  // Tous les repères du diagnostic, dans l'ordre des pages : le lecteur descend
+  // dans son rapport et touche ce qu'il veut, où qu'il soit.
+  return reperes.sort((a, b) => a.page - b.page || b.y - a.y);
 }

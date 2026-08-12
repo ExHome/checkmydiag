@@ -31,6 +31,8 @@
         titre: d.titre,
         gravite: d.gravite,
         numero: d.reperes[0]?.page ?? 1,
+        // Toutes les pages du diagnostic, pour pouvoir descendre dedans.
+        pages: d.feuillets?.filter((n) => analyse.textePages[n]) ?? [d.reperes[0]?.page ?? 1],
         reperes: d.reperes
       }))
   );
@@ -38,7 +40,6 @@
   let ouvert = $state(0);
   const feuillet = $derived(feuillets[ouvert] ?? feuillets[0] ?? null);
   const page = $derived(feuillet ? (rendus.get(feuillet.numero) ?? null) : null);
-  const texte = $derived(feuillet ? (analyse.textePages[feuillet.numero] ?? []) : []);
 
   const diagnostic = $derived(
     feuillet ? (analyse.diagnostics.find((d) => d.type === feuillet.type) ?? null) : null
@@ -124,25 +125,29 @@
             {/each}
           </div>
         {:else}
-          <!-- L'image de la page n'a pas pu être dessinée : on montre son texte,
-               avec les mêmes passages mis en avant. -->
-          <div class="page-texte" aria-label="Texte de la page {feuillet.numero}">
-            {#each texte as ligne}
-              {@const repere = feuillet.reperes.find((r) => ligne.includes(r.extrait))}
-              {#if repere}
-                <button
-                  type="button"
-                  class="ligne surlignee"
-                  class:actif={choisi?.titre === repere.titre}
-                  onmouseenter={() => (choisi = repere)}
-                  onfocus={() => (choisi = repere)}
-                  onclick={() => (choisi = repere)}
-                >
-                  {ligne}
-                </button>
-              {:else}
-                <p class="ligne">{ligne}</p>
-              {/if}
+          <!-- L'image de la page n'a pas pu être dessinée : on montre le texte
+               du rapport, page après page, avec les mêmes passages cliquables.
+               Le lecteur descend dans son document et touche ce qu'il veut. -->
+          <div class="page-texte" aria-label="Texte du rapport">
+            {#each feuillet.pages as numero (numero)}
+              <p class="numero-page">page {numero}</p>
+              {#each analyse.textePages[numero] ?? [] as ligne}
+                {@const repere = feuillet.reperes.find((r) => r.page === numero && ligne.includes(r.extrait))}
+                {#if repere}
+                  <button
+                    type="button"
+                    class="ligne surlignee"
+                    class:actif={choisi?.titre === repere.titre}
+                    onmouseenter={() => (choisi = repere)}
+                    onfocus={() => (choisi = repere)}
+                    onclick={() => (choisi = repere)}
+                  >
+                    {ligne}
+                  </button>
+                {:else}
+                  <p class="ligne">{ligne}</p>
+                {/if}
+              {/each}
             {/each}
           </div>
         {/if}
@@ -350,12 +355,32 @@
     border: 1px solid var(--trait);
     border-radius: var(--rayon-petit);
     padding: 20px 22px;
-    max-height: 560px;
+    max-height: 640px;
     overflow-y: auto;
     font-size: 0.82rem;
     line-height: 1.55;
     color: #43514a;
     box-shadow: var(--ombre);
+    scroll-behavior: smooth;
+  }
+
+  /* Le rapport défile page après page : on garde le repère du numéro. */
+  .numero-page {
+    position: sticky;
+    top: -20px;
+    margin: 18px -22px 10px;
+    padding: 5px 22px;
+    background: #f2ede0;
+    color: #7a6a4d;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border-block: 1px solid #e6ded0;
+  }
+
+  .numero-page:first-child {
+    margin-top: -20px;
   }
 
   .ligne {
