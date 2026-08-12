@@ -170,14 +170,26 @@
   <p class="invite">Touchez la maison.</p>
 
   <svg viewBox="0 0 500 396" role="group" aria-label="La maison du dossier : les six endroits par où la chaleur s’échappe.">
-    <!-- Le sol : un filet, pas une pelouse. -->
+    <!-- Le terrain : un filet et ses hachures, comme sur une coupe. -->
     <path d="M40 344 H460" class="sol" />
+    {#each Array.from({ length: 22 }, (_, i) => 44 + i * 19) as x}
+      <path d="M{x} 344 l-9 12" class="hachure" />
+    {/each}
 
-    <!-- La maison : un trait fin, deux valeurs de crème, le toit en vert. -->
+    <!-- La maison : un trait, rien de plus. Le volume se lit aux arêtes. -->
     <path d="M136 132 L250 56 L364 132 Z" class="toit" />
     <rect x="300" y="66" width="24" height="46" class="cheminee" />
     <rect x="152" y="132" width="196" height="164" class="facade" />
     <rect x="152" y="296" width="196" height="16" class="fondation" />
+
+    <!-- Les cotes : c'est ce qui donne au dessin son air de planche. -->
+    <g class="cote">
+      <path d="M152 332 H348M152 327 v10M348 327 v10" />
+      <text x="250" y="324" class="cotation">le bâti</text>
+    </g>
+    <g class="cote">
+      <path d="M124 132 V296M119 132 h10M119 296 h10" />
+    </g>
 
     <!-- Fenêtres et porte -->
     <rect x="180" y="178" width="52" height="52" class="vitre" />
@@ -314,46 +326,76 @@
   }
 
   /* La palette de la maison : vert DGLM, or, crème, encre. Rien d'autre. */
+  /* La maison est dessinée à l'encre du contexte : posée sur le vert elle est
+     claire, posée sur du papier elle est sombre. Un seul dessin, deux fonds. */
   .sol {
-    stroke: var(--trait);
-    stroke-width: 2;
+    stroke: currentColor;
+    stroke-width: 1.2;
+    opacity: 0.35;
+  }
+
+  .hachure {
+    stroke: currentColor;
+    stroke-width: 0.8;
+    opacity: 0.22;
+  }
+
+  /* Les cotes : le trait de la planche d'exécution, en or, très fin. */
+  .cote path {
+    stroke: var(--or);
+    stroke-width: 0.9;
+    fill: none;
+    opacity: 0.75;
+  }
+
+  .cotation {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    fill: var(--or);
+    text-anchor: middle;
+    opacity: 0.85;
   }
 
   .toit {
-    fill: var(--vert-700);
-    stroke: var(--vert-900);
-    stroke-width: 1.5;
+    fill: rgb(192 144 72 / 22%);
+    stroke: var(--or);
+    stroke-width: 1.8;
     stroke-linejoin: round;
   }
 
   .cheminee {
-    fill: var(--vert-900);
+    fill: none;
+    stroke: var(--or);
+    stroke-width: 1.8;
   }
 
   .facade {
-    fill: var(--papier-doux);
-    stroke: var(--trait);
+    fill: rgb(255 255 255 / 5%);
+    stroke: currentColor;
     stroke-width: 1.5;
   }
 
   .fondation {
-    fill: var(--trait);
+    fill: currentColor;
+    opacity: 0.18;
   }
 
   .vitre {
-    fill: var(--or-pale);
+    fill: rgb(192 144 72 / 16%);
     stroke: var(--or);
-    stroke-width: 1.5;
+    stroke-width: 1.4;
   }
 
   .croisillon {
     stroke: var(--or);
-    stroke-width: 1.2;
+    stroke-width: 1;
+    opacity: 0.7;
   }
 
   .porte {
-    fill: var(--vert-700);
-    stroke: var(--vert-900);
+    fill: none;
+    stroke: currentColor;
     stroke-width: 1.5;
   }
 
@@ -456,9 +498,9 @@
   }
 
   .fond-pastille {
-    fill: #fff;
-    stroke: var(--trait);
-    stroke-width: 1.4;
+    fill: rgb(255 255 255 / 92%);
+    stroke: var(--or);
+    stroke-width: 1.2;
   }
 
   .cible.actif .fond-pastille {

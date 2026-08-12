@@ -53,6 +53,52 @@
   });
 
   /**
+   * L'état descriptif : les caractéristiques du bien, relevées une à une.
+   *
+   * On ne garde que ce qui décrit le logement — sa nature, son âge, ses
+   * surfaces, son enveloppe. Les compteurs de contrôle et les références de
+   * dossier n'ont rien à faire ici : ils décrivent la mission, pas le bien.
+   */
+  const DECRIT = /type de bien|ann[ée]e de construction|surface|superficie|[ée]tage|niveau/i;
+  const ECARTE = /contr[ôo]l|mesur|zones|unit[ée]s|risques concernant/i;
+
+  const caracteristiques = $derived.by<{ libelle: string; valeur: string }[]>(() => {
+    const liste: { libelle: string; valeur: string }[] = [];
+    const vus = new Set<string>();
+
+    for (const fait of analyse.diagnostics.flatMap((d) => d.faits)) {
+      if (!DECRIT.test(fait.libelle) || ECARTE.test(fait.libelle)) continue;
+      const cle = fait.libelle.toLowerCase();
+      if (vus.has(cle)) continue;
+      vus.add(cle);
+      liste.push({ libelle: fait.libelle, valeur: fait.valeur });
+    }
+
+    // L'enveloppe fait partie du descriptif : c'est elle qu'on décrit quand on
+    // parle de « matériaux » dans un état des lieux.
+    if (dpe?.schema?.genre === 'dpe') {
+      for (const [paroi, etat] of Object.entries(dpe.schema.isolation)) {
+        if (etat === 'inconnu') continue;
+        // « avec » et « sans » ne s'accordent pas : « menuiseries isolé »
+        // sautait aux yeux, et l'accord dépendait du genre de chaque paroi.
+        liste.push({
+          libelle: NOM_PAROI[paroi] ?? paroi,
+          valeur: etat === 'isole' ? 'avec isolant' : 'sans isolant'
+        });
+      }
+    }
+
+    return liste;
+  });
+
+  const NOM_PAROI: Record<string, string> = {
+    murs: 'Murs',
+    toit: 'Toiture',
+    plancher: 'Plancher bas',
+    fenetres: 'Menuiseries'
+  };
+
+  /**
    * Pourquoi ce logement-là perd sa chaleur.
    *
    * On nomme les parois que le rapport donne sans isolant, on rappelle l'ordre
@@ -187,6 +233,18 @@
     <h2>Le bien</h2>
     <p class="descriptif">{descriptif}</p>
 
+    {#if caracteristiques.length}
+      <!-- L'état descriptif, relevé ligne à ligne comme dans un dossier. -->
+      <dl class="caracteristiques">
+        {#each caracteristiques as c (c.libelle)}
+          <div>
+            <dt>{c.libelle}</dt>
+            <dd>{c.valeur}</dd>
+          </div>
+        {/each}
+      </dl>
+    {/if}
+
     <h2 class="apres">L’état du bien</h2>
     <ul class="etat">
       {#each etat as ligne}
@@ -231,26 +289,22 @@
     margin-bottom: 34px;
   }
 
-  /* Tout le retour tient sur une seule feuille de papier : c'est un document
-     qu'on remet, pas une succession d'encarts. */
+  /* Le retour se pose à même le vert : pas d'encart, pas de caisson. Ce qui
+     structure, ce sont les titres et les filets. */
   .feuille {
-    background: var(--papier);
-    border-radius: var(--rayon);
-    padding: clamp(20px, 4vw, 40px);
-    color: var(--encre);
-    box-shadow: var(--ombre);
+    color: var(--sur-fond);
   }
 
   h2 {
     font-size: clamp(1.2rem, 2.6vw, 1.5rem);
-    color: var(--vert-700);
+    color: var(--or-clair);
     margin-bottom: 14px;
   }
 
   h2.apres {
-    margin-top: 34px;
-    padding-top: 22px;
-    border-top: 1px solid var(--trait-fin);
+    margin-top: 38px;
+    padding-top: 24px;
+    border-top: 1px solid rgb(255 255 255 / 12%);
   }
 
   ul {
@@ -287,7 +341,7 @@
 
   .etat li {
     break-inside: avoid;
-    color: var(--encre-doux);
+    color: var(--sur-fond-doux);
   }
 
   @media (max-width: 700px) {
@@ -306,7 +360,7 @@
     font-size: 0.76rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--or-fonce);
+    color: var(--or);
   }
 
   .descriptif {
@@ -315,22 +369,56 @@
     font-style: italic;
     font-size: clamp(1.05rem, 2.2vw, 1.3rem);
     line-height: 1.45;
-    color: var(--encre);
+    color: var(--sur-fond);
+  }
+
+  /* L'état descriptif : un relevé au filet, comme une notice d'architecte. */
+  .caracteristiques {
+    margin: 22px 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 0 40px;
+  }
+
+  .caracteristiques div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 9px 0;
+    border-bottom: 1px solid rgb(255 255 255 / 10%);
+  }
+
+  .caracteristiques dt {
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gris);
+  }
+
+  .caracteristiques dd {
+    margin: 0;
+    font-size: 0.98rem;
+    font-weight: 600;
+    color: var(--sur-fond);
+    text-align: right;
+    white-space: nowrap;
   }
 
   .pourquoi {
     margin: 16px 0 0;
     font-size: 0.97rem;
     line-height: 1.55;
-    color: var(--encre-doux);
+    color: var(--sur-fond-doux);
   }
 
   .reserve {
-    margin: 26px 0 0;
-    padding-top: 16px;
-    border-top: 1px solid var(--trait-fin);
+    margin: 30px 0 0;
+    padding-top: 18px;
+    border-top: 1px solid rgb(255 255 255 / 12%);
     font-size: 0.86rem;
     line-height: 1.5;
-    color: var(--gris);
+    color: var(--sur-fond-doux);
+    opacity: 0.75;
   }
 </style>
