@@ -1,6 +1,5 @@
 <script lang="ts">
   import Depot from './composants/Depot.svelte';
-  import CarteDiag from './composants/CarteDiag.svelte';
   import Controles from './composants/Controles.svelte';
   import Resume from './composants/Resume.svelte';
   import Lecteur from './composants/Lecteur.svelte';
@@ -203,15 +202,12 @@
       </p>
     {/if}
 
+    <!-- Un seul endroit où lire : le rapport et son explication. Les cartes
+         détaillées répétaient ce que le lecteur dit déjà — la page en devenait
+         trois fois trop longue. -->
     <Lecteur {analyse} {rendus} />
 
     <Controles controles={analyse.controles} />
-
-    {#each analyse.diagnostics as d (d.type)}
-      <div id={d.type}>
-        <CarteDiag diagnostic={d} page={d.reperes?.[0] ? (rendus.get(d.reperes[0].page) ?? null) : null} />
-      </div>
-    {/each}
 
     <Resume {analyse} {nomFichier} {exemple} {recommencer} partie="bilan" />
 

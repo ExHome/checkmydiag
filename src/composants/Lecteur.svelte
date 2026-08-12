@@ -10,6 +10,8 @@
   import type { PageRendue } from '../lib/pdf';
   import Explicatif from './schemas/Explicatif.svelte';
   import MiniSchema from './MiniSchema.svelte';
+  import Voyant from './Voyant.svelte';
+  import Fiche from './Fiche.svelte';
 
   interface Props {
     analyse: Analyse;
@@ -189,19 +191,15 @@
             </div>
           {/key}
         {:else if diagnostic}
-          <p class="sur-titre">{feuillet.titre}</p>
+          <Voyant {diagnostic} />
 
           {#if diagnostic.analogie}
-            <h3>Ce que c’est</h3>
             <p class="analogie">{diagnostic.analogie}</p>
           {/if}
 
-          <h3>Pour votre logement</h3>
-          <p class="verdict">{diagnostic.verdict}</p>
-
           {#if diagnostic.faits.length}
             <dl class="chiffres">
-              {#each diagnostic.faits.slice(0, 4) as fait (fait.libelle)}
+              {#each diagnostic.faits.slice(0, 3) as fait (fait.libelle)}
                 <div>
                   <dt>{fait.libelle}</dt>
                   <dd>{fait.valeur}</dd>
@@ -211,10 +209,8 @@
           {/if}
 
           <p class="muet petit indice">
-            {feuillet.reperes.length} passage{feuillet.reperes.length > 1 ? 's' : ''} expliqué{feuillet
-              .reperes.length > 1
-              ? 's'
-              : ''} sur cette page — touchez-les.
+            {feuillet.reperes.length} passage{feuillet.reperes.length > 1 ? 's' : ''} à toucher sur
+            cette page.
           </p>
         {/if}
 
@@ -222,11 +218,18 @@
              est toujours à un clic. -->
         {#if diagnostic}
           <details class="schema">
-            <summary>Voir le schéma</summary>
+            <summary>Le schéma</summary>
             <Explicatif
               type={diagnostic.type}
               isolation={diagnostic.schema?.genre === 'dpe' ? diagnostic.schema.isolation : null}
             />
+          </details>
+
+          <details class="schema">
+            <summary>Pourquoi · Comment · Risque · Quoi faire</summary>
+            <div class="fiche-repliee">
+              <Fiche type={diagnostic.type} />
+            </div>
           </details>
         {/if}
       </aside>
@@ -411,8 +414,14 @@
 
   .analogie {
     border-left: 3px solid var(--vert-500);
-    padding-left: 12px;
+    padding-left: 14px;
+    margin: 16px 0;
     color: var(--encre-doux);
+    font-size: 0.97rem;
+  }
+
+  .fiche-repliee {
+    padding-top: 14px;
   }
 
   .indice {
@@ -446,9 +455,6 @@
     font-weight: 700;
   }
 
-  .panneau h3 + p {
-    margin-bottom: 14px;
-  }
 
   .retour {
     background: none;
