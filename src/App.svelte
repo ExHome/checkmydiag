@@ -51,6 +51,10 @@
     const frais = analyser(document.pages);
     analyse = frais;
 
+    if (import.meta.env.DEV) {
+      (window as unknown as { analyseCourante?: unknown }).analyseCourante = frais;
+    }
+
     void dessinerPages(document, frais);
   }
 

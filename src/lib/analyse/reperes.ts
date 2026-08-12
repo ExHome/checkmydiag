@@ -122,6 +122,11 @@ interface Cible {
   /** Forcé quand la ligne seule ne suffit pas à trancher. */
   ton?: Ton;
   /**
+   * Forcé pour les conclusions : leur ligne ressemble à une donnée neutre — un
+   * titre de section — alors qu'elle ouvre le constat du diagnostic.
+   */
+  famille?: Famille;
+  /**
    * « Chez vous, en pratique, c'est ça. » Reçoit la valeur lue sur la ligne,
    * pour que la phrase parle du logement et pas de la théorie.
    */
@@ -141,7 +146,9 @@ const COMMUNES: Cible[] = [
       'La référence interne du diagnostiqueur',
       'À citer pour toute question ou réclamation',
       'Le même pour tous les diagnostics du dossier'
-    ]
+    ],
+    pratique: (v) =>
+      v ? `${v} → à citer pour toute réclamation.` : 'À citer pour toute réclamation.'
   },
   {
     motif: /Date du rep[ée]rage|Date de la visite/i,
@@ -161,7 +168,9 @@ const COMMUNES: Cible[] = [
       'Chaque diagnostic a sa norme officielle',
       'Elle dit quoi contrôler, et comment',
       'Le diagnostiqueur ne peut pas s’en écarter'
-    ]
+    ],
+    pratique: (v) =>
+      v ? `${v} → c’est le mode d’emploi que le diagnostiqueur a suivi.` : 'C’est le mode d’emploi que le diagnostiqueur a suivi.'
   },
   {
     motif: /N°\s*de certification|Organisme de certification/i,
@@ -170,7 +179,9 @@ const COMMUNES: Cible[] = [
       'Le diagnostiqueur est certifié par un organisme agréé',
       'Certification à repasser tous les 5 à 7 ans',
       'Vérifiable sur l’annuaire officiel du ministère'
-    ]
+    ],
+    pratique: (v) =>
+      v ? `${v} → vérifiable sur l’annuaire du ministère.` : 'Vérifiable sur l’annuaire du ministère.'
   },
   {
     motif: /P[ée]rim[èe]tre de rep[ée]rage/i,
@@ -179,7 +190,9 @@ const COMMUNES: Cible[] = [
       'Précise l’étendue de la visite',
       '« Sans démontage ni destruction » = à l’œil seulement',
       'Ce qui est fermé ou encombré n’a pas été vu'
-    ]
+    ],
+    pratique: (v) =>
+      v ? `${v} → hors de ce périmètre, rien n’a été contrôlé.` : 'Hors de ce périmètre, rien n’a été contrôlé.'
   },
   {
     motif: /R[ée]f[ée]rences cadastrales/i,
@@ -188,7 +201,9 @@ const COMMUNES: Cible[] = [
       'L’identité officielle du terrain',
       'Section et numéro de parcelle',
       '« Non communiquées » est fréquent et sans gravité'
-    ]
+    ],
+    pratique: (v) =>
+      v ? `${v} → l’identité officielle du terrain, au cadastre.` : 'L’identité officielle du terrain, au cadastre.'
   },
   {
     motif: /Ann[ée]e de construction/i,
@@ -414,13 +429,17 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
         'Enregistrement dans la base publique de l’État',
         'Prouve que le DPE existe officiellement',
         'Sans lui : aucune valeur'
-      ]
+      ],
+      pratique: (v) =>
+        v ? `${v} → sans ce numéro, le DPE n’a aucune valeur.` : 'Sans ce numéro, le DPE n’a aucune valeur.'
     },
     {
       motif: /[Vv]alable jusqu/i,
       titre: 'La date de fin',
       schema: 'validite',
-      points: ['Un DPE vaut 10 ans', 'Après : à refaire pour vendre ou louer']
+      points: ['Un DPE vaut 10 ans', 'Après : à refaire pour vendre ou louer'],
+      pratique: (v) =>
+        v ? `${v} → après cette date, à refaire pour vendre ou louer.` : 'Après cette date, à refaire pour vendre ou louer.'
     }
   ],
 
@@ -450,6 +469,43 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
 
   termites: [
     {
+      motif: /[ÉE]tat relatif [àa] la pr[ée]sence de termites|Conclusion.{0,30}termite/i,
+      titre: 'La conclusion termites',
+      famille: 'constat',
+      ton: 'moyen',
+      points: ['Ici, le rapport dit s’il a vu des traces de termites'],
+      pratique: () => 'Ce qu’il a vu, là où il pouvait regarder. Valable 6 mois.',
+      suites: [
+        {
+          question: '« Aucun indice », ça veut dire quoi ?',
+          ton: 'moyen',
+          points: [
+            'Rien vu là où c’était visible',
+            'Un mur fermé, un vide sanitaire : non contrôlés',
+            'Ce n’est pas une garantie'
+          ]
+        },
+        {
+          question: 'S’il y en a, ça coûte quoi ?',
+          ton: 'mauvais',
+          points: [
+            'Déclaration en mairie, obligatoire',
+            'Traitement : 2 000 à 8 000 €',
+            'Charpente mangée : bien plus'
+          ]
+        },
+        {
+          question: 'Pourquoi 6 mois seulement ?',
+          ton: 'bon',
+          points: [
+            'Une colonie avance vite',
+            'Le document doit être frais le jour de la signature',
+            'Souvent le premier du dossier à périmer'
+          ]
+        }
+      ]
+    },
+    {
       motif: /(?:n'a pas été repéré|présence).{0,60}indice.{0,30}termites?/i,
       titre: 'La conclusion',
       points: [
@@ -470,6 +526,43 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
   ],
 
   electricite: [
+    {
+      motif: /Conclusion relative [àa] l.[ée]valuation des risques|Conclusion.{0,40}s[ée]curit[ée] des personnes/i,
+      titre: 'La conclusion électricité',
+      famille: 'constat',
+      ton: 'moyen',
+      points: ['Ici, le rapport dit si l’installation est sûre'],
+      pratique: () => 'Deux cases imprimées, une seule cochée : c’est la synthèse du dossier qui tranche.',
+      suites: [
+        {
+          question: 'C’est dangereux ?',
+          ton: 'mauvais',
+          points: [
+            'Une anomalie = un endroit où le courant peut blesser',
+            'Les deux graves : pas de différentiel, pas de terre',
+            'Rien ne prend feu demain matin pour autant'
+          ]
+        },
+        {
+          question: 'Je dois faire les travaux ?',
+          ton: 'bon',
+          points: [
+            'Non, rien n’est obligatoire pour vendre',
+            'Le vendeur n’a rien à réparer',
+            'L’acheteur fait ce qu’il veut ensuite'
+          ]
+        },
+        {
+          question: 'Ça change le prix ?',
+          ton: 'moyen',
+          points: [
+            'Chaque anomalie est un argument de négociation',
+            'Un tableau à refaire : 800 à 2 500 €',
+            'Faites chiffrer avant de signer'
+          ]
+        }
+      ]
+    },
     {
       motif: /Conclusion relative à l'évaluation des risques/i,
       titre: 'La conclusion, cochée à la main',
@@ -493,6 +586,43 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
 
   gaz: [
     {
+      motif: /^H\.?\s*[-–]\s*Conclusion|^Conclusion\s*:$/i,
+      titre: 'La conclusion gaz',
+      famille: 'constat',
+      ton: 'moyen',
+      points: ['Ici, le rapport dit si le gaz est sûr'],
+      pratique: () => 'Trois niveaux : A1 tranquille, A2 pressé, DGI tout de suite.',
+      suites: [
+        {
+          question: 'A1, A2, DGI : ça veut dire quoi ?',
+          ton: 'moyen',
+          points: [
+            'A1 : à réparer un jour, sans urgence',
+            'A2 : à réparer vite',
+            'DGI : danger grave, le gaz est coupé sur-le-champ'
+          ]
+        },
+        {
+          question: 'Le vrai danger, c’est quoi ?',
+          ton: 'mauvais',
+          points: [
+            'Le monoxyde de carbone : invisible, sans odeur',
+            'Il endort, puis il tue',
+            'Il vient d’une évacuation bouchée ou d’une pièce mal ventilée'
+          ]
+        },
+        {
+          question: 'Et pour acheter ?',
+          ton: 'bon',
+          points: [
+            'Un DGI se règle avant l’état des lieux',
+            'Le reste ne bloque pas la vente',
+            'Mais ça se négocie'
+          ]
+        }
+      ]
+    },
+    {
       motif: /^Conclusion|H\.\s*-\s*Conclusion/i,
       titre: 'La conclusion, cochée à la main',
       schema: 'case',
@@ -506,6 +636,43 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
   ],
 
   erp: [
+    {
+      motif: /zone de sismicit[ée] class[ée]e|Zonage de sismicit[ée]|zone r[ée]glement[ée]e du risque/i,
+      titre: 'La conclusion risques',
+      famille: 'constat',
+      ton: 'moyen',
+      points: ['Ici, on recopie ce que l’État a classé sous votre terrain'],
+      pratique: () => 'Personne n’est venu mesurer : c’est une carte, pas une visite.',
+      suites: [
+        {
+          question: 'Ça se répare ?',
+          ton: 'mauvais',
+          points: [
+            'Non. C’est le terrain, pas le logement',
+            'On ne déplace pas une maison',
+            'On vit avec, et on s’assure'
+          ]
+        },
+        {
+          question: 'Le risque le plus fréquent ?',
+          ton: 'moyen',
+          points: [
+            'L’argile : elle gonfle l’hiver, se rétracte l’été',
+            'La maison suit le mouvement',
+            'Résultat : des fissures en escalier sur les murs'
+          ]
+        },
+        {
+          question: 'Je fais quoi, concrètement ?',
+          ton: 'bon',
+          points: [
+            'Vérifier ce que couvre l’assurance habitation',
+            'Demander si un sinistre a déjà été indemnisé',
+            'Un sinistre caché peut faire annuler la vente'
+          ]
+        }
+      ]
+    },
     {
       motif: /le bien se situe dans une zone/i,
       titre: 'Le risque de votre terrain',
@@ -528,6 +695,43 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
 
   amiante: [
     {
+      motif: /[ÉE]tat.{0,30}amiante|Rep[ée]rage.{0,30}amiante|Conclusion.{0,30}amiante/i,
+      titre: 'La conclusion amiante',
+      famille: 'constat',
+      ton: 'moyen',
+      points: ['Ici, le rapport dit s’il a vu de l’amiante'],
+      pratique: () => 'Vu ou pas vu — et seulement dans ce qui était visible.',
+      suites: [
+        {
+          question: 'S’il y en a, je fais quoi ?',
+          ton: 'bon',
+          points: [
+            'En bon état : rien du tout',
+            'On ne perce pas, on ne ponce pas, on ne casse pas',
+            'On revérifie tous les 3 ans'
+          ]
+        },
+        {
+          question: 'Pourquoi c’est dangereux ?',
+          ton: 'mauvais',
+          points: [
+            'Cassée, elle libère des fibres invisibles',
+            'Respirées, elles restent dans les poumons',
+            'Le cancer arrive 20 à 40 ans plus tard'
+          ]
+        },
+        {
+          question: 'Et si je fais des travaux ?',
+          ton: 'moyen',
+          points: [
+            'Un repérage plus poussé devient obligatoire',
+            'Le retrait passe par une entreprise certifiée',
+            'Comptez plusieurs milliers d’euros'
+          ]
+        }
+      ]
+    },
+    {
       motif: /Liste [ABC]\s*:/i,
       titre: 'Les listes A, B et C',
       schema: 'listes',
@@ -540,6 +744,45 @@ const CIBLES: Partial<Record<TypeDiag, Cible[]>> = {
   ],
 
   carrez: [
+    {
+      motif: /Surface loi Carrez totale|Superficie Loi Carrez totale/i,
+      titre: 'La conclusion surface',
+      schema: 'surface',
+      famille: 'constat',
+      ton: 'info',
+      points: ['C’est la surface qui part dans l’acte de vente'],
+      pratique: (v) =>
+        v ? `${v} → c’est ce chiffre qui engage le vendeur.` : 'C’est ce chiffre qui engage le vendeur.',
+      suites: [
+        {
+          question: 'Qu’est-ce qu’on compte dedans ?',
+          ton: 'bon',
+          points: [
+            'Le sol, sous plus de 1,80 m de hauteur',
+            'Murs, cloisons et gaines déduits',
+            'Ni cave, ni garage, ni balcon'
+          ]
+        },
+        {
+          question: 'Et si le chiffre est faux ?',
+          ton: 'mauvais',
+          points: [
+            'Plus de 5 % en moins que l’annonce',
+            'L’acheteur a 1 an pour réclamer',
+            'Le prix baisse d’autant'
+          ]
+        },
+        {
+          question: 'Pourquoi ce n’est pas la surface du DPE ?',
+          ton: 'moyen',
+          points: [
+            'Carrez : ce qu’on achète',
+            'DPE : ce qu’on chauffe',
+            'Deux chiffres différents, c’est normal'
+          ]
+        }
+      ]
+    },
     {
       motif: /superficie.{0,20}carrez.{0,20}totale|surface.{0,20}carrez.{0,20}totale/i,
       titre: 'Le chiffre de l’acte',
@@ -564,10 +807,10 @@ export function reperer(type: TypeDiag, pages: PageTexte[]): Repere[] {
   // La famille sert à ranger le panneau : ce que dit le diagnostic d'abord, les
   // données du dossier ensuite, le vocabulaire en dernier. Sans ce classement,
   // le lecteur reçoit vingt lignes d'un coup.
-  const cibles: (Cible & { famille: Famille })[] = [
-    ...propres.map((c) => ({ ...c, famille: 'constat' as const })),
-    ...COMMUNES.map((c) => ({ ...c, famille: 'donnee' as const })),
-    ...GLOSSAIRE.map((c) => ({ ...c, famille: 'mot' as const }))
+  const cibles: (Cible & { origine: Famille })[] = [
+    ...propres.map((c) => ({ ...c, origine: 'constat' as const })),
+    ...COMMUNES.map((c) => ({ ...c, origine: 'donnee' as const })),
+    ...GLOSSAIRE.map((c) => ({ ...c, origine: 'mot' as const }))
   ];
 
   const reperes: Repere[] = [];
@@ -602,9 +845,11 @@ export function reperer(type: TypeDiag, pages: PageTexte[]): Repere[] {
         points: cible.points,
         ...(cible.suites ? { suites: cible.suites } : {}),
         ton,
-        // Le tiroir « ce que dit le diagnostic » ne contient que des constats.
-        // Un numéro de dossier reste un chiffre, même dans un rapport DPE.
-        famille: cible.famille === 'mot' ? 'mot' : ton === 'info' ? 'donnee' : 'constat',
+        // Un numéro de dossier reste un chiffre, même dans un rapport DPE. Les
+        // conclusions, elles, disent leur famille elles-mêmes.
+        famille:
+          cible.famille ??
+          (cible.origine === 'mot' ? 'mot' : ton === 'info' ? 'donnee' : 'constat'),
         pratique: cible.pratique ? cible.pratique(valeur) : pratiqueDe(ton, valeur),
         extrait: ligne.texte
       });

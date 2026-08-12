@@ -18,6 +18,7 @@
   import MiniSchema from './MiniSchema.svelte';
   import Fiche from './Fiche.svelte';
   import Curieux from './Curieux.svelte';
+  import Conclusions from './Conclusions.svelte';
 
   interface Props {
     analyse: Analyse;
@@ -64,17 +65,22 @@
       .filter((r) => r.repere.page === numero);
   }
 
-  // Une demande venue de l'extérieur amène la première page du diagnostic à
-  // l'écran, sans rien ouvrir.
+  /**
+   * Emmène à la conclusion d'un diagnostic.
+   *
+   * On vise le passage qui porte un constat, pas le premier venu : sinon
+   * cliquer sur « Anomalies » ouvrait le numéro de dossier, qui se trouve être
+   * la première ligne repérée de la partie.
+   */
+  function allerAuDiagnostic(type: TypeDiag): void {
+    const constat = reperes.findIndex((r) => r.type === type && r.repere.famille === 'constat');
+    const i = constat >= 0 ? constat : reperes.findIndex((r) => r.type === type);
+    if (i >= 0) allerAu(i);
+  }
+
+  // Une demande venue de l'extérieur ouvre le diagnostic voulu.
   $effect(() => {
-    if (!demande) return;
-    const cible = reperes.find((r) => r.type === demande);
-    if (!cible) return;
-    requestAnimationFrame(() => {
-      document
-        .getElementById(`page-${cible.repere.page}`)
-        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
+    if (demande) allerAuDiagnostic(demande as TypeDiag);
   });
 
   /** Ce qu'on peut ouvrir : un passage du rapport, ou une rubrique de fond. */
@@ -166,6 +172,10 @@
 
 {#if reperes.length}
   <section class="lecteur">
+    <!-- Le relevé des conclusions, en tête : chacune renvoie à la page où elle
+         est écrite. C'est le sommaire du dossier, pas un tableau de bord. -->
+    <Conclusions {analyse} allerA={allerAuDiagnostic} />
+
     <div class="deux-colonnes" class:seul={!actif}>
       <div class="document">
         {#if pages.length}
