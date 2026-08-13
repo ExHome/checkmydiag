@@ -143,6 +143,33 @@
   /** Le schéma déplié sur tout l'écran. */
   let plein = $state(false);
 
+  /**
+   * Le schéma en pleine page se pilotait à la souris seule.
+   *
+   * Au clavier, ouvrir laissait le focus derrière, sur un bouton devenu
+   * invisible : on tabulait dans une page qu'on ne voyait plus. On note donc
+   * d'où l'on vient, on pose le focus sur « Fermer » à l'ouverture, et on le
+   * rend à son bouton d'origine à la fermeture — la place qu'on avait dans le
+   * document n'est jamais perdue.
+   */
+  let declencheur: HTMLElement | null = null;
+  let boutonFermer: HTMLButtonElement | undefined = $state();
+
+  function ouvrirPlein(e: MouseEvent): void {
+    declencheur = e.currentTarget as HTMLElement;
+    plein = true;
+  }
+
+  function fermerPlein(): void {
+    plein = false;
+    declencheur?.focus();
+    declencheur = null;
+  }
+
+  $effect(() => {
+    if (plein) boutonFermer?.focus();
+  });
+
   // Changer de sujet remet tout au premier niveau : on ne garde pas l'état
   // d'exploration du passage précédent.
   $effect(() => {
@@ -352,7 +379,7 @@
                   <button
                     type="button"
                     class="agrandir"
-                    onclick={() => (plein = true)}
+                    onclick={ouvrirPlein}
                     aria-label="Voir le schéma en pleine page"
                   >
                     ⤢
@@ -525,11 +552,23 @@
   {#if plein && actif?.repere}
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
-    <div class="pleine-page" onclick={() => (plein = false)}>
+    <div class="pleine-page" onclick={fermerPlein}>
       <!-- svelte-ignore a11y_click_events_have_key_events -->
       <!-- svelte-ignore a11y_no_static_element_interactions -->
-      <div class="grand-format apparait" onclick={(e) => e.stopPropagation()}>
-        <button type="button" class="fermer-plein" onclick={() => (plein = false)}>
+      <div
+        class="grand-format apparait"
+        role="dialog"
+        aria-modal="true"
+        aria-label={actif.mot}
+        tabindex="-1"
+        onclick={(e) => e.stopPropagation()}
+      >
+        <button
+          type="button"
+          class="fermer-plein"
+          bind:this={boutonFermer}
+          onclick={fermerPlein}
+        >
           Fermer ✕
         </button>
 
@@ -579,7 +618,7 @@
 
 <svelte:window
   onkeydown={(e) => {
-    if (e.key === 'Escape') plein = false;
+    if (e.key === 'Escape' && plein) fermerPlein();
   }}
 />
 
