@@ -8,6 +8,7 @@
  */
 import type { Diagnostic, Fait, Gravite } from '../modele';
 import { trouver, trouverToutes } from './texte';
+import { releverTout } from './anomalies';
 
 /** Thèmes de la norme XC 16-600, dans l'ordre où ils apparaissent au rapport. */
 const THEMES_ELEC: { motif: RegExp; nom: string }[] = [
@@ -66,7 +67,18 @@ function conclure(lignes: string[], sujet: RegExp): Conclusion {
 }
 
 export function analyserElectricite(lignes: string[], plage: [number, number]): Diagnostic {
-  const { etat, nombre: total } = conclure(lignes, /installation int[ée]rieure d'[ée]lectricit[ée]/);
+  const conclusion = conclure(lignes, /installation int[ée]rieure d'[ée]lectricit[ée]/);
+  const releves = releverTout(lignes);
+  const anomalies = releves.filter((r) => r.genre === 'anomalie');
+
+  /*
+   * La liste « Anomalies avérées selon les domaines suivants » tranche ce que
+   * la case cochée ne permettait pas de lire : elle n'est imprimée que s'il y
+   * a des anomalies. Là où le moteur se taisait — deux rapports lus sur
+   * vingt-neuf —, il peut désormais conclure, et dire lesquelles.
+   */
+  const etat = conclusion.etat === 'inconnu' && anomalies.length > 0 ? 'anomalies' : conclusion.etat;
+  const total = conclusion.nombre ?? (anomalies.length > 0 ? anomalies.length : null);
 
   const groupes = THEMES_ELEC.map((t) => ({
     nom: t.nom,
@@ -81,14 +93,36 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
     verdict = 'L’installation électrique ne présente aucune anomalie.';
   } else if (etat === 'anomalies') {
     gravite = total !== null && total >= 5 ? 'alerte' : 'attention';
-    verdict =
-      total !== null
-        ? `L’installation électrique présente ${total} anomalie${total > 1 ? 's' : ''}.`
-        : 'L’installation électrique présente des anomalies : le rapport recommande d’agir pour éliminer les dangers.';
+
+    /*
+     * Deux comptes à ne pas confondre, et c'est une question d'exactitude :
+     * le rapport annonce parfois lui-même un nombre d'anomalies — on le cite
+     * alors tel quel. Sinon, on ne dispose que des points qu'il énumère
+     * (domaines et libellés), ce qui n'est pas la même chose : un domaine peut
+     * en recouvrir plusieurs. On dit donc « points relevés », pas
+     * « anomalies », plutôt que d'affirmer un chiffre que le rapport n'écrit
+     * nulle part.
+     */
+    if (conclusion.nombre !== null) {
+      verdict = `L’installation électrique présente ${conclusion.nombre} anomalie${conclusion.nombre > 1 ? 's' : ''}.`;
+    } else if (anomalies.length > 0) {
+      verdict = `L’installation électrique présente des anomalies : ${anomalies.length} point${anomalies.length > 1 ? 's' : ''} relevé${anomalies.length > 1 ? 's' : ''} dans le rapport.`;
+    } else {
+      verdict =
+        'L’installation électrique présente des anomalies : le rapport recommande d’agir pour éliminer les dangers.';
+    }
   }
 
   const faits: Fait[] = [];
-  if (total !== null) faits.push({ libelle: 'Anomalies relevées', valeur: String(total) });
+  if (conclusion.nombre !== null) {
+    faits.push({ libelle: 'Anomalies relevées', valeur: String(conclusion.nombre) });
+  } else if (anomalies.length > 0) {
+    faits.push({
+      libelle: 'Points relevés',
+      valeur: String(anomalies.length),
+      precision: 'domaines et libellés énumérés par le rapport'
+    });
+  }
   const date = trouver(lignes, /Date (?:du|de la) (?:rep[ée]rage|visite|diagnostic)\s*:?[\s.]*(\d{2}\/\d{2}\/\d{4})/i);
   if (date?.[1]) faits.push({ libelle: 'Date de la visite', valeur: date[1] });
 
@@ -119,6 +153,7 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
           ],
     schema: groupes.length ? { genre: 'anomalies', groupes, total: total ?? 0 } : null,
     pages: plage,
+    ...(releves.length ? { releves } : {}),
     ...(date?.[1] ? { date: date[1] } : {})
   };
 }
@@ -128,7 +163,15 @@ export function analyserGaz(lignes: string[], plage: [number, number]): Diagnost
     lignes,
     /Date (?:du|de la) (?:rep[ée]rage|visite|diagnostic|contr[ôo]le)\s*:?[\s.]*(\d{2}\/\d{2}\/\d{4})/i
   );
-  const { etat, nombre: total } = conclure(lignes, /installation(?: int[ée]rieure(?: de gaz)?)?/);
+  const conclusion = conclure(lignes, /installation(?: int[ée]rieure(?: de gaz)?)?/);
+  const releves = releverTout(lignes);
+  const anomalies = releves.filter((r) => r.genre === 'anomalie');
+
+  // Même levier que pour l'électricité : la liste des domaines tranche là où
+  // la case cochée reste illisible. Le gaz en avait le plus besoin — six
+  // rapports sur sept restaient sans verdict.
+  const etat = conclusion.etat === 'inconnu' && anomalies.length > 0 ? 'anomalies' : conclusion.etat;
+  const total = conclusion.nombre ?? (anomalies.length > 0 ? anomalies.length : null);
 
   // Même piège pour les types d'anomalie : la page de conclusion du rapport
   // énumère A1, A2 et DGI, chacun dans sa propre phrase, avec une case à cocher.
@@ -196,6 +239,7 @@ export function analyserGaz(lignes: string[], plage: [number, number]): Diagnost
           'Faites entretenir votre chaudière chaque année : c’est une obligation, et c’est ce qui évite la plupart des A2.',
           'Un détecteur de monoxyde de carbone coûte quelques dizaines d’euros et se pose en cinq minutes.'
         ],
+    ...(releves.length ? { releves } : {}),
     schema: null,
     pages: plage,
     ...(dateVisite?.[1] ? { date: dateVisite[1] } : {})

@@ -145,6 +145,20 @@ export interface Diagnostic {
    * C'est ce qui empêche d'écrire « le rapport dit » au-dessus d'une déduction.
    */
   origine?: 'rapport' | 'synthese' | 'calcul' | 'illisible';
+  /**
+   * Tout ce que le rapport signale, un point par entrée : anomalies, mais
+   * aussi ce qui n'a pas pu être visité ou vérifié.
+   *
+   * Exhaustif par construction — si le rapport en liste dix-sept, il y en a
+   * dix-sept ici. Rien n'est trié par intérêt : l'affichage hiérarchise, le
+   * modèle n'omet pas.
+   */
+  releves?: {
+    libelle: string;
+    code?: string;
+    ou?: string;
+    genre: 'anomalie' | 'nonVisite' | 'nonVerifie' | 'complement';
+  }[];
 }
 
 export interface Bien {

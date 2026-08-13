@@ -86,6 +86,8 @@ describe.skipIf(!disponible)('calibration sur rapports réels', () => {
     const origines = new Map<string, number>();
     /** Confiance de chaque dossier, pour en tirer une moyenne. */
     const confiances: number[] = [];
+    /** Ce que le moteur restitue point par point, par nature de relevé. */
+    const releves = new Map<string, number>();
     let analyses = 0;
     let dossiers = 0;
 
@@ -158,6 +160,15 @@ describe.skipIf(!disponible)('calibration sur rapports réels', () => {
         }
         confiances.push(analyse.confiance);
 
+        // Contrôle de complétude : ce que le rapport énumère doit se retrouver
+        // dans ce qu'on restitue, point par point. Un compte qui diverge est un
+        // traitement inachevé, pas un détail.
+        for (const d of analyse.diagnostics) {
+          for (const r of d.releves ?? []) {
+            releves.set(r.genre, (releves.get(r.genre) ?? 0) + 1);
+          }
+        }
+
         if (famille.nom === 'dossier technique') {
           dossiers++;
           const trouves = new Set(analyse.diagnostics.map((d) => d.type));
@@ -199,6 +210,15 @@ describe.skipIf(!disponible)('calibration sur rapports réels', () => {
       ? Math.round((confiances.reduce((a, b) => a + b, 0) / confiances.length) * 100) / 100
       : 0;
     console.log(`  confiance moyenne par dossier : ${moyenne}`);
+
+    // Le contrôle de complétude : ce que le rapport énumère, et ce qu'on en
+    // restitue. Tant que ces points ne sont pas tous affichés au lecteur, le
+    // travail n'est pas fini — les compter est la première étape.
+    console.log('\n--- ce qui est restitué, point par point ---');
+    if (!releves.size) console.log('  aucun relevé');
+    for (const [genre, n] of [...releves.entries()].sort((a, b) => b[1] - a[1])) {
+      console.log(`  ${genre.padEnd(12)} ${String(n).padStart(4)}`);
+    }
 
     console.log('\n--- réclamations « il manque ce diagnostic » ---');
     for (const [cle, n] of [...reclamations.entries()].sort()) console.log(`  ${cle.padEnd(34)} ${n}`);
