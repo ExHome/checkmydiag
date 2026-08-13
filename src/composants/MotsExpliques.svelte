@@ -90,8 +90,8 @@
     display: inline;
     background: none;
     border: none;
-    padding: 11px 0;
-    margin: -11px 0;
+    padding: var(--e3) 0;
+    margin: -var(--e3) 0;
     font: inherit;
     color: inherit;
     cursor: help;
@@ -108,8 +108,8 @@
 
   .definition {
     display: block;
-    margin: 8px 0 4px;
-    padding: 10px 13px;
+    margin: var(--e2) 0 var(--e1);
+    padding: var(--e2) var(--e3);
     border-left: 2px solid var(--or);
     background: rgb(255 255 255 / 6%);
     border-radius: 0 var(--rayon-petit) var(--rayon-petit) 0;

@@ -90,7 +90,7 @@
   }
 
   .invite {
-    margin: 0 0 4px;
+    margin: 0 0 var(--e1);
   }
 
   svg {
@@ -168,6 +168,6 @@
   }
 
   figcaption {
-    margin-top: 12px;
+    margin-top: var(--e3);
   }
 </style>

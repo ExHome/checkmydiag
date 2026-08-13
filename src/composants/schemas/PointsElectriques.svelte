@@ -165,8 +165,8 @@
   }
 
   .regle {
-    margin: 14px 0 0;
-    padding: 12px 14px;
+    margin: var(--e3) 0 0;
+    padding: var(--e3) var(--e3);
     background: var(--papier-doux);
     border-left: 4px solid var(--vert-500);
     border-radius: 8px;

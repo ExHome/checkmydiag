@@ -130,7 +130,7 @@
   }
 
   .invite {
-    margin: 0 0 8px;
+    margin: 0 0 var(--e2);
     font-size: var(--t-micro);
     font-weight: 600;
     letter-spacing: 0.14em;
@@ -141,14 +141,14 @@
   .echelle {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
+    gap: var(--e1);
   }
 
   .barreau {
     position: relative;
     border: none;
     border-radius: 2px;
-    padding: 18px 0 16px;
+    padding: var(--e4) 0 var(--e4);
     font-family: var(--police-titre);
     font-size: 1.3rem;
     font-weight: 700;
@@ -190,9 +190,9 @@
   .echeances {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px 18px;
-    margin-top: 26px;
-    padding-top: 12px;
+    gap: var(--e1) var(--e4);
+    margin-top: var(--e5);
+    padding-top: var(--e3);
     border-top: 1px solid var(--trait-fin);
     font-size: var(--t-petit);
     color: var(--encre-doux);
@@ -209,15 +209,15 @@
   }
 
   .reponse {
-    margin-top: 14px;
-    padding: 12px 14px;
+    margin-top: var(--e3);
+    padding: var(--e3) var(--e3);
     background: var(--papier-doux);
     border-left: 3px solid var(--or);
     border-radius: var(--rayon-petit);
   }
 
   .nom {
-    margin: 0 0 6px;
+    margin: 0 0 var(--e1);
     font-weight: 700;
     font-size: var(--t-base);
     color: var(--vert-700);
@@ -228,12 +228,12 @@
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 5px;
+    gap: var(--e1);
   }
 
   .reponse li {
     position: relative;
-    padding-left: 17px;
+    padding-left: var(--e4);
     font-size: var(--t-base);
     line-height: 1.4;
     color: var(--encre);

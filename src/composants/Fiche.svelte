@@ -61,18 +61,18 @@
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 10px;
+    gap: var(--e2);
   }
 
   li {
     display: grid;
     grid-template-columns: 40px 1fr;
-    gap: 12px;
+    gap: var(--e3);
     align-items: start;
     background: rgb(255 255 255 / 3%);
     border: 1px solid var(--trait);
     border-radius: var(--rayon-petit);
-    padding: 12px 14px;
+    padding: var(--e3) var(--e3);
   }
 
   .icone {
@@ -110,7 +110,7 @@
   }
 
   .mot {
-    margin: 0 0 2px;
+    margin: 0 0 var(--e1);
     font-size: var(--t-micro);
     font-weight: 800;
     letter-spacing: 0.1em;

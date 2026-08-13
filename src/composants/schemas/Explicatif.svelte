@@ -77,7 +77,7 @@
     letter-spacing: -0.01em;
     text-transform: none;
     color: var(--vert-700);
-    margin-bottom: 14px;
+    margin-bottom: var(--e3);
   }
 
   /* Le schéma est la pièce maîtresse de l'encart : il prend toute la largeur

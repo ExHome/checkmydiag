@@ -133,33 +133,33 @@
 
 <style>
   .planche {
-    padding: 24px;
+    padding: var(--e5);
     background: var(--papier);
     min-height: 100vh;
     color: var(--encre);
   }
 
   header {
-    margin-bottom: 24px;
+    margin-bottom: var(--e5);
   }
 
   h1 {
     font-family: var(--police-titre);
     font-size: 1.4rem;
-    margin: 0 0 12px;
+    margin: 0 0 var(--e3);
     color: var(--vert-700);
   }
 
   .controles {
     display: flex;
-    gap: 8px;
+    gap: var(--e2);
     flex-wrap: wrap;
   }
 
   .controles button {
     font: inherit;
     font-size: var(--t-petit);
-    padding: 6px 12px;
+    padding: var(--e1) var(--e3);
     border: 1px solid var(--trait);
     background: #fff;
     border-radius: 999px;
@@ -175,7 +175,7 @@
   .grille {
     display: flex;
     flex-wrap: wrap;
-    gap: 28px;
+    gap: var(--e5);
     align-items: start;
   }
 
@@ -189,14 +189,14 @@
     text-transform: uppercase;
     font-weight: 700;
     color: var(--or-fonce);
-    margin: 0 0 8px;
+    margin: 0 0 var(--e2);
   }
 
   .feuille {
     background: #fff;
     border: 1px solid var(--trait);
     border-radius: var(--rayon);
-    padding: 20px;
+    padding: var(--e4);
     box-shadow: var(--ombre);
   }
 </style>

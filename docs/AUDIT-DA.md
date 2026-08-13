@@ -62,15 +62,39 @@ Le reste sont les titres fluides en `clamp()`, qui doivent le rester.
 Aucune régression : 115 tests verts, `svelte-check` à 0 erreur, rendu vérifié
 au navigateur.
 
+## Le rythme, ensuite
+
+Même méthode pour la respiration : **300 valeurs ramenées à l'échelle**, dans
+27 fichiers. Les corrections les plus fréquentes disent bien ce qui se passait —
+`14px → 12px` (33 fois), `16px → 18px` (23 fois), `10px → 8px` (20 fois),
+`20px → 18px` (17 fois) : à chaque fois, une valeur choisie au jugé, à un ou
+deux pixels d'un cran existant.
+
+| | avant | après |
+| --- | --- | --- |
+| `padding` | 5 % | **90 %** |
+| `margin` | 4 % | **97 %** |
+| `gap` | — | **96 %** |
+
+Mesuré sur l'écran de résultat rendu : **99 % des espacements réellement peints
+tombent sur l'échelle**, et les huit crans s'y enchaînent naturellement —
+4 px (286 fois), 12 px (113), 8 px (103), 18 px (96), 26 px (51), 38 px (8),
+56 px (6). Douze valeurs distinctes en tout.
+
+C'est cela, le « rythme vertical maîtrisé » : non pas des marges plus grandes,
+mais des marges qui se répondent.
+
+Ce qu'on n'a **pas** touché, volontairement : les `clamp()` et valeurs fluides,
+qui portent le responsive ; les `em`/`rem`, relatifs au texte donc voulus ; et
+tout écart de plus de 5 px à un cran, qui relève d'une composition et non d'un
+rythme.
+
 ## Ce qui reste, par ordre d'écart
 
-1. **Espacements — 4 %.** C'est le plus gros chantier restant, et celui qui
-   porte la « respiration » de l'ordre de mission. 115 marges et retraits en
-   dur, alors que huit crans existent (`--e1` à `--e8`).
-2. **Rayons — 40 %.** Dix valeurs différentes (0, 1, 2, 4, 8, 10, 12, 14, 20 px,
+1. **Rayons — 40 %.** Dix valeurs différentes (0, 1, 2, 4, 8, 10, 12, 14, 20 px,
    50 %, 999 px) pour deux crans déclarés. La charte annonce « des rayons
    discrets, presque droits » : les 20 px et les 999 px la contredisent.
-3. **Couleurs — 89 %.** 32 teintes en dur subsistent. Le point sensible : trois
+2. **Couleurs — 89 %.** 32 teintes en dur subsistent. Le point sensible : trois
    verts cohabitent — `#093f30` (le système), `#0c6b4f` et `#08402f` (venus du
    brief). L'ordre de mission tranche : **on garde le vert du projet**, les deux
    autres doivent disparaître.

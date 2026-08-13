@@ -60,7 +60,7 @@
     display: inline-block;
     width: 6px;
     height: 6px;
-    margin-left: 5px;
+    margin-left: var(--e1);
     border-radius: 50%;
     background: var(--or);
     vertical-align: 2px;

@@ -160,7 +160,7 @@
     color: var(--encre);
     border-top: 3px solid var(--or);
     border-radius: 14px 14px 0 0;
-    padding: 18px 20px 28px;
+    padding: var(--e4) var(--e4) var(--e5);
     box-shadow: var(--ombre-forte);
   }
 
@@ -178,8 +178,8 @@
   header {
     display: flex;
     align-items: start;
-    gap: 12px;
-    margin-bottom: 10px;
+    gap: var(--e3);
+    margin-bottom: var(--e2);
   }
 
   .fil {
@@ -200,7 +200,7 @@
 
   .separateur {
     color: var(--gris);
-    margin: 0 4px;
+    margin: 0 var(--e1);
   }
 
   .ici {
@@ -209,7 +209,7 @@
     font-weight: 700;
     color: var(--vert-700);
     display: block;
-    margin-top: 2px;
+    margin-top: var(--e1);
   }
 
   .fermer {
@@ -225,14 +225,14 @@
   }
 
   .definition {
-    margin: 0 0 16px;
+    margin: 0 0 var(--e4);
     font-size: var(--t-base);
     line-height: 1.5;
     color: var(--encre);
   }
 
   .dessin {
-    margin-bottom: 18px;
+    margin-bottom: var(--e4);
   }
 
   .questions,
@@ -249,14 +249,14 @@
   .question {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--e2);
     width: 100%;
     font: inherit;
     font-weight: 650;
     text-align: left;
     background: none;
     border: none;
-    padding: 13px 0;
+    padding: var(--e3) 0;
     cursor: pointer;
     color: var(--encre);
   }
@@ -285,9 +285,9 @@
 
   /* Les quatre registres se distinguent au trait, pas au ton (§ 15). */
   .reponse {
-    padding: 4px 0 16px 30px;
+    padding: var(--e1) 0 var(--e4) var(--e5);
     border-left: 2px solid var(--trait);
-    margin-left: 9px;
+    margin-left: var(--e2);
     font-size: var(--t-base);
   }
 
@@ -310,7 +310,7 @@
   }
 
   .registre {
-    margin: 0 0 8px;
+    margin: 0 0 var(--e2);
     font-size: var(--t-micro);
     letter-spacing: var(--suivi);
     text-transform: uppercase;
@@ -329,7 +329,7 @@
   }
 
   .reserve {
-    margin: 10px 0 0;
+    margin: var(--e2) 0 0;
     font-size: var(--t-petit);
     color: var(--gris);
   }

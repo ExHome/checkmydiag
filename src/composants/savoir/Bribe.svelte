@@ -78,13 +78,13 @@
 
 <style>
   li {
-    margin: 0 0 9px;
+    margin: 0 0 var(--e2);
     line-height: 1.5;
   }
 
   .suites {
     display: block;
-    margin-top: 5px;
+    margin-top: var(--e1);
     font-size: var(--t-base);
   }
 </style>

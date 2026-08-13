@@ -196,7 +196,7 @@
 
 <style>
   .diagnostics {
-    margin-bottom: 36px;
+    margin-bottom: var(--e6);
   }
 
   /* Le sommaire : une ligne par rapport, cliquable, avec ce qu'il conclut et
@@ -204,13 +204,13 @@
   .sommaire {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2px;
+    gap: var(--e1);
     margin-bottom: var(--e6);
   }
 
   .entree {
     display: grid;
-    gap: 2px;
+    gap: var(--e1);
     align-content: start;
     min-height: 52px;
     padding: var(--e3) var(--e4);
@@ -270,7 +270,7 @@
   }
 
   .fiche-diag {
-    padding: 26px 0;
+    padding: var(--e5) 0;
     border-top: 1px solid rgb(255 255 255 / 12%);
     break-inside: avoid;
     /* La barre des vues est collante : sans cette marge, une ancre déposait le
@@ -279,15 +279,15 @@
   }
 
   .jusqua-fiche {
-    margin: 0 0 6px;
+    margin: 0 0 var(--e1);
     font-size: var(--t-petit);
     color: var(--sur-fond-doux);
   }
 
   header {
     border-left: 3px solid var(--gravite, var(--sur-fond-doux));
-    padding-left: 16px;
-    margin-bottom: 20px;
+    padding-left: var(--e4);
+    margin-bottom: var(--e4);
   }
 
   .fiche-diag.bon {
@@ -304,7 +304,7 @@
   }
 
   .quoi {
-    margin: 0 0 4px;
+    margin: 0 0 var(--e1);
     font-size: var(--t-micro);
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -316,7 +316,7 @@
     font-weight: 500;
     font-size: clamp(1.2rem, 2.6vw, 1.5rem);
     letter-spacing: -0.022em;
-    margin: 0 0 6px;
+    margin: 0 0 var(--e1);
     color: var(--or-clair);
   }
 
@@ -331,7 +331,7 @@
   .corps {
     display: grid;
     grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-    gap: 30px;
+    gap: var(--e5);
     align-items: start;
   }
 
@@ -344,12 +344,12 @@
   .dessin {
     background: var(--papier);
     border-radius: var(--rayon-petit);
-    padding: 16px 18px;
+    padding: var(--e4) var(--e4);
     color: var(--encre);
   }
 
   .pratique {
-    margin: 0 0 16px;
+    margin: 0 0 var(--e4);
     font-style: italic;
     font-size: var(--t-base);
     line-height: 1.5;
@@ -359,12 +359,12 @@
   .chiffres {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 0 26px;
-    margin: 0 0 18px;
+    gap: 0 var(--e5);
+    margin: 0 0 var(--e4);
   }
 
   .chiffres div {
-    padding: 8px 0;
+    padding: var(--e2) 0;
     border-bottom: 1px solid rgb(255 255 255 / 10%);
   }
 
@@ -376,7 +376,7 @@
   }
 
   .chiffres dd {
-    margin: 2px 0 0;
+    margin: var(--e1) 0 0;
     font-size: var(--t-base);
     font-weight: 650;
     color: var(--sur-fond);
@@ -393,7 +393,7 @@
   .canevas {
     margin: 0;
     display: grid;
-    gap: 12px;
+    gap: var(--e3);
   }
 
   .canevas div {
@@ -406,7 +406,7 @@
     letter-spacing: 0.13em;
     text-transform: uppercase;
     color: var(--or);
-    margin-bottom: 3px;
+    margin-bottom: var(--e1);
   }
 
   .canevas dd {
@@ -418,14 +418,14 @@
 
   /* Les réserves ferment la fiche : c'est la limite de ce qui vient d'être dit. */
   .reserves {
-    margin-top: 18px;
-    padding-top: 14px;
+    margin-top: var(--e4);
+    padding-top: var(--e3);
     border-top: 1px solid rgb(255 255 255 / 12%);
     break-inside: avoid;
   }
 
   .titre-reserves {
-    margin: 0 0 7px;
+    margin: 0 0 var(--e2);
     font-size: var(--t-micro);
     font-weight: 700;
     letter-spacing: 0.13em;
@@ -438,12 +438,12 @@
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 4px;
+    gap: var(--e1);
   }
 
   .reserves li {
     position: relative;
-    padding-left: 16px;
+    padding-left: var(--e4);
     font-size: var(--t-base);
     line-height: 1.45;
     color: var(--sur-fond-doux);

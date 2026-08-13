@@ -35,9 +35,9 @@
 
 <style>
   .curieux {
-    margin-top: 12px;
+    margin-top: var(--e3);
     border-top: 1px solid var(--trait);
-    padding-top: 14px;
+    padding-top: var(--e3);
   }
 
   summary {
@@ -45,14 +45,14 @@
     list-style: none;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--e2);
     font-weight: 700;
     font-size: var(--t-base);
     color: var(--vert-300);
     background: rgb(46 233 139 / 8%);
     border: 1px solid var(--trait);
     border-radius: 0;
-    padding: 8px 16px 8px 10px;
+    padding: var(--e2) var(--e4) var(--e2) var(--e2);
     transition: background 0.15s ease, border-color 0.15s ease;
   }
 
@@ -91,15 +91,15 @@
 
   ul {
     list-style: none;
-    margin: 14px 0 0;
+    margin: var(--e3) 0 0;
     padding: 0;
     display: grid;
-    gap: 8px;
+    gap: var(--e2);
   }
 
   li {
     position: relative;
-    padding-left: 20px;
+    padding-left: var(--e4);
     font-size: var(--t-base);
     line-height: 1.45;
     color: var(--encre-doux);

@@ -626,7 +626,7 @@
   /* Pas de caisson autour du lecteur : le rapport se pose directement sur le
      vert, comme une feuille sur un bureau. C'est lui la matière, pas le cadre. */
   .lecteur {
-    margin-bottom: 40px;
+    margin-bottom: var(--e6);
   }
 
 
@@ -637,11 +637,11 @@
   .vues {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
+    gap: var(--e1);
     position: sticky;
     top: 0;
     z-index: 8;
-    margin-bottom: 34px;
+    margin-bottom: var(--e6);
     background: var(--fond);
     border-bottom: 1px solid rgb(255 255 255 / 12%);
   }
@@ -651,7 +651,7 @@
     background: none;
     border: none;
     border-bottom: 2px solid transparent;
-    padding: 16px 4px 14px;
+    padding: var(--e4) var(--e1) var(--e3);
     cursor: pointer;
     color: var(--sur-fond-doux);
     transition: color 0.2s ease, border-color 0.2s ease;
@@ -680,7 +680,7 @@
 
   .quoi-vue {
     display: block;
-    margin-top: 2px;
+    margin-top: var(--e1);
     font-size: var(--t-micro);
     letter-spacing: 0.06em;
     opacity: 0.7;
@@ -701,7 +701,7 @@
   .deux-colonnes {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 430px;
-    gap: 28px;
+    gap: var(--e5);
     align-items: start;
     transition: grid-template-columns 0.3s ease;
   }
@@ -718,7 +718,7 @@
   /* Les pages du rapport, l'une sous l'autre. */
   .document {
     display: grid;
-    gap: 18px;
+    gap: var(--e4);
   }
 
   .page {
@@ -778,7 +778,7 @@
     background: #fdfcf8;
     border: 1px solid var(--trait);
     border-radius: var(--rayon-petit);
-    padding: 20px 22px;
+    padding: var(--e4) var(--e4);
     max-height: 640px;
     overflow-y: auto;
     font-size: var(--t-petit);
@@ -791,8 +791,8 @@
   .numero-page {
     position: sticky;
     top: -20px;
-    margin: 18px -22px 10px;
-    padding: 5px 22px;
+    margin: var(--e4) -var(--e4) var(--e2);
+    padding: var(--e1) var(--e4);
     background: #f2ede0;
     color: #7a6a4d;
     font-size: var(--t-micro);
@@ -803,11 +803,11 @@
   }
 
   .numero-page:first-child {
-    margin-top: -20px;
+    margin-top: -var(--e4);
   }
 
   .ligne {
-    margin: 0 0 3px;
+    margin: 0 0 var(--e1);
     text-align: left;
   }
 
@@ -818,8 +818,8 @@
     border: none;
     border-left: 4px solid var(--teinte);
     border-radius: 4px;
-    padding: 5px 9px;
-    margin: 5px 0;
+    padding: var(--e1) var(--e2);
+    margin: var(--e1) 0;
     cursor: pointer;
     color: #2f2416;
     font: inherit;
@@ -838,7 +838,7 @@
     place-items: center;
     width: 18px;
     height: 18px;
-    margin-right: 6px;
+    margin-right: var(--e1);
     border-radius: 50%;
     background: var(--teinte);
     color: #fff;
@@ -852,14 +852,14 @@
   .panneau {
     position: sticky;
     top: 16px;
-    padding: 4px 0 0 4px;
+    padding: var(--e1) 0 0 var(--e1);
     max-height: calc(100vh - 32px);
     overflow-y: auto;
     color: var(--sur-fond);
   }
 
   .panneau :global(.ruban) {
-    margin: 16px 0 14px;
+    margin: var(--e4) 0 var(--e3);
   }
 
 
@@ -868,12 +868,12 @@
   /* Posé sous le document, centré comme lui. */
   .commencer {
     display: block;
-    margin: 22px auto 0;
+    margin: var(--e4) auto 0;
     text-align: center;
     background: none;
     border: 1px solid var(--trait-or);
     border-radius: 0;
-    padding: 17px 34px;
+    padding: var(--e4) var(--e6);
     cursor: pointer;
     color: var(--sur-fond);
     font-size: var(--t-base);
@@ -897,16 +897,16 @@
     letter-spacing: 0.04em;
     text-transform: none;
     opacity: 0.66;
-    margin-top: 5px;
+    margin-top: var(--e1);
   }
 
   /* La progression : où j'en suis, et la suite. */
   .pas-a-pas {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-top: 18px;
-    padding-top: 16px;
+    gap: var(--e3);
+    margin-top: var(--e4);
+    padding-top: var(--e4);
     border-top: 1px solid rgb(230 200 148 / 24%);
   }
 
@@ -933,7 +933,7 @@
     background: none;
     border: 1px solid var(--trait-or);
     border-radius: 0;
-    padding: 12px 22px;
+    padding: var(--e3) var(--e4);
     color: var(--or-clair);
     font-weight: 500;
     font-size: var(--t-petit);
@@ -960,7 +960,7 @@
   /* L'encart : une seule chose à la fois. */
   .encart {
     border-left: 3px solid var(--teinte);
-    padding-left: 17px;
+    padding-left: var(--e4);
   }
 
   .encart h3 {
@@ -968,7 +968,7 @@
     font-style: italic;
     font-size: var(--t-titre);
     font-weight: 700;
-    margin: 8px 0 14px;
+    margin: var(--e2) 0 var(--e3);
     color: var(--or-clair);
   }
 
@@ -989,8 +989,8 @@
 
   /* La ligne du rapport, citée telle quelle, avant toute explication. */
   .extrait {
-    margin: 0 0 14px;
-    padding: 12px 14px;
+    margin: 0 0 var(--e3);
+    padding: var(--e3) var(--e3);
     background: rgb(255 255 255 / 8%);
     border-left: 2px solid color-mix(in srgb, var(--teinte) 70%, transparent);
     border-radius: 4px;
@@ -1002,7 +1002,7 @@
 
   /* Ce qui se passe, en une ligne. Le reste est facultatif. */
   .synthese {
-    margin: 0 0 12px;
+    margin: 0 0 var(--e3);
     font-size: var(--t-lead);
     font-weight: 650;
     line-height: 1.4;
@@ -1011,7 +1011,7 @@
 
   /* Chez vous, en pratique. La phrase qui empêche de retomber dans le cours. */
   .pratique {
-    margin: 0 0 18px;
+    margin: 0 0 var(--e4);
     font-style: italic;
     font-size: var(--t-base);
     line-height: 1.5;
@@ -1021,15 +1021,15 @@
   .ouvertures {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 14px;
+    gap: var(--e2);
+    margin-bottom: var(--e3);
   }
 
   .creuser {
     background: none;
     border: 1px solid rgb(230 200 148 / 40%);
     border-radius: 0;
-    padding: 8px 17px;
+    padding: var(--e2) var(--e4);
     font-size: var(--t-petit);
     font-weight: 700;
     color: var(--or-clair);
@@ -1044,7 +1044,7 @@
   }
 
   .detail {
-    margin-bottom: 14px;
+    margin-bottom: var(--e3);
   }
 
   /* La feuille : tout ce qui est dessiné se pose sur du papier crème, avec son
@@ -1056,8 +1056,8 @@
     position: relative;
     background: var(--papier);
     border-radius: var(--rayon-petit);
-    padding: 18px 16px;
-    margin: 0 -17px 16px;
+    padding: var(--e4) var(--e4);
+    margin: 0 -var(--e4) var(--e4);
     color: var(--encre);
     box-shadow: var(--ombre);
   }
@@ -1093,7 +1093,7 @@
 
   .grand-format h2 {
     color: var(--vert-700);
-    margin-bottom: 22px;
+    margin-bottom: var(--e4);
   }
 
   .grand-format :global(svg) {
@@ -1108,7 +1108,7 @@
     background: none;
     border: 1px solid var(--trait);
     border-radius: 0;
-    padding: 9px 15px;
+    padding: var(--e2) var(--e3);
     font-size: var(--t-petit);
     font-weight: 500;
     letter-spacing: 0.12em;
@@ -1150,9 +1150,9 @@
   .legende {
     display: flex;
     flex-wrap: wrap;
-    gap: 7px;
-    margin-top: 14px;
-    padding-top: 14px;
+    gap: var(--e2);
+    margin-top: var(--e3);
+    padding-top: var(--e3);
     border-top: 1px solid var(--trait-fin);
   }
 
@@ -1161,7 +1161,7 @@
     border: 1px solid var(--trait);
     border-left: 3px solid var(--teinte-legende, var(--gris));
     border-radius: 0;
-    padding: 9px 14px;
+    padding: var(--e2) var(--e3);
     font-size: var(--t-petit);
     font-weight: 600;
     color: var(--encre);
@@ -1186,8 +1186,8 @@
   }
 
   .reponse {
-    margin-top: 12px;
-    padding-left: 15px;
+    margin-top: var(--e3);
+    padding-left: var(--e3);
     border-left: 2px solid var(--teinte-legende, var(--trait));
   }
 
@@ -1213,9 +1213,9 @@
      pas ce qu'on encourt n'est qu'une jolie image. */
   .risque {
     display: flex;
-    gap: 9px;
-    margin: 14px 0 0;
-    padding-top: 12px;
+    gap: var(--e2);
+    margin: var(--e3) 0 0;
+    padding-top: var(--e3);
     border-top: 1px solid var(--trait-fin);
     font-size: var(--t-base);
     line-height: 1.45;
@@ -1231,15 +1231,15 @@
   /* Des puces, pas des paragraphes : trois ou quatre mots par ligne. */
   .points {
     list-style: none;
-    margin: 10px 0 0;
+    margin: var(--e2) 0 0;
     padding: 0;
     display: grid;
-    gap: 9px;
+    gap: var(--e2);
   }
 
   .points li {
     position: relative;
-    padding-left: 21px;
+    padding-left: var(--e4);
     font-size: var(--t-base);
     line-height: 1.45;
     color: var(--sur-fond);
@@ -1259,8 +1259,8 @@
   /* Les questions de second niveau : on creuse sans quitter le passage. */
   .suites {
     display: grid;
-    gap: 6px;
-    margin-bottom: 12px;
+    gap: var(--e1);
+    margin-bottom: var(--e3);
   }
 
   .suite {
@@ -1268,7 +1268,7 @@
     border: 1px solid rgb(255 255 255 / 12%);
     border-left-width: 3px;
     border-radius: var(--rayon-petit);
-    padding: 10px 14px;
+    padding: var(--e2) var(--e3);
     cursor: pointer;
     font-size: var(--t-base);
     font-weight: 650;
@@ -1295,8 +1295,8 @@
   }
 
   .reponse-suite {
-    margin: 0 0 4px;
-    padding-left: 15px;
+    margin: 0 0 var(--e1);
+    padding-left: var(--e3);
     border-left: 2px solid rgb(255 255 255 / 18%);
   }
 
@@ -1316,9 +1316,9 @@
   .passerelles {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 18px;
-    padding-top: 14px;
+    gap: var(--e2);
+    margin-top: var(--e4);
+    padding-top: var(--e3);
     border-top: 1px solid rgb(230 200 148 / 24%);
   }
 
@@ -1327,7 +1327,7 @@
     border: 1px solid rgb(230 200 148 / 45%);
     color: var(--or-clair);
     border-radius: 0;
-    padding: 8px 16px;
+    padding: var(--e2) var(--e4);
     font-size: var(--t-petit);
     font-weight: 700;
     cursor: pointer;

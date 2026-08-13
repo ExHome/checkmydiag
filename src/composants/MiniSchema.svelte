@@ -639,7 +639,7 @@
   }
 
   .invite {
-    margin: 0 0 6px;
+    margin: 0 0 var(--e1);
     font-size: var(--t-micro);
     font-weight: 600;
     letter-spacing: 0.14em;
@@ -676,15 +676,15 @@
   }
 
   .reponse {
-    margin-top: 12px;
-    padding: 12px 14px;
+    margin-top: var(--e3);
+    padding: var(--e3) var(--e3);
     background: var(--papier-doux);
     border-left: 3px solid var(--or);
     border-radius: var(--rayon-petit);
   }
 
   .nom {
-    margin: 0 0 6px;
+    margin: 0 0 var(--e1);
     font-weight: 700;
     font-size: var(--t-base);
     color: var(--vert-700);
@@ -695,12 +695,12 @@
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 5px;
+    gap: var(--e1);
   }
 
   .reponse li {
     position: relative;
-    padding-left: 17px;
+    padding-left: var(--e4);
     font-size: var(--t-base);
     line-height: 1.4;
     color: var(--encre);

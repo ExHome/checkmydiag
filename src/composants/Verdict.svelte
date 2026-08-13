@@ -297,7 +297,7 @@
     margin: var(--e5) 0 0;
     padding: 0;
     display: grid;
-    gap: 2px;
+    gap: var(--e1);
   }
 
   .entree {

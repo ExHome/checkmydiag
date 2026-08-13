@@ -100,33 +100,33 @@
 
   h2 {
     font-size: var(--t-titre);
-    margin-bottom: 2px;
+    margin-bottom: var(--e1);
   }
 
   .version {
     font-size: var(--t-petit);
     opacity: 0.7;
-    margin-bottom: 18px;
+    margin-bottom: var(--e4);
   }
 
   .brouillon {
     background: rgb(252 112 96 / 12%);
     border: 1px solid rgb(252 112 96 / 55%);
     border-radius: 8px;
-    padding: 10px 14px;
-    margin-bottom: 18px;
+    padding: var(--e2) var(--e3);
+    margin-bottom: var(--e4);
     font-size: var(--t-base);
   }
 
   .essentiel {
     list-style: none;
     display: grid;
-    gap: 12px;
-    margin-bottom: 20px;
+    gap: var(--e3);
+    margin-bottom: var(--e4);
   }
 
   .essentiel li {
-    padding-left: 20px;
+    padding-left: var(--e4);
     position: relative;
     line-height: 1.5;
   }
@@ -154,20 +154,20 @@
   }
 
   .texte {
-    margin-top: 18px;
+    margin-top: var(--e4);
     max-height: 46vh;
     overflow-y: auto;
-    padding-right: 8px;
+    padding-right: var(--e2);
   }
 
   .texte h3 {
     font-size: var(--t-base);
-    margin: 18px 0 6px;
+    margin: var(--e4) 0 var(--e1);
   }
 
   .texte p {
     line-height: 1.55;
-    margin-bottom: 8px;
+    margin-bottom: var(--e2);
     font-size: var(--t-base);
   }
 
@@ -179,9 +179,9 @@
   .decision {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: var(--e3);
     align-items: center;
-    margin-top: 24px;
+    margin-top: var(--e5);
   }
 
   .accepter {
@@ -189,7 +189,7 @@
     color: #fff;
     border: none;
     border-radius: 999px;
-    padding: 14px 26px;
+    padding: var(--e3) var(--e5);
     font: inherit;
     font-weight: 600;
     cursor: pointer;
@@ -202,7 +202,7 @@
   .refuser {
     background: none;
     border: none;
-    padding: 14px 4px;
+    padding: var(--e3) var(--e1);
     font: inherit;
     color: inherit;
     opacity: 0.75;
@@ -216,6 +216,6 @@
   }
 
   .une-fois {
-    margin-top: 10px;
+    margin-top: var(--e2);
   }
 </style>

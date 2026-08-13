@@ -154,7 +154,7 @@
   }
 
   .invite {
-    margin: 0 0 4px;
+    margin: 0 0 var(--e1);
   }
 
   svg {
@@ -265,8 +265,8 @@
 
 
   .reponse {
-    margin-top: 12px;
-    padding: 16px 20px;
+    margin-top: var(--e3);
+    padding: var(--e4) var(--e4);
     background: rgb(46 233 139 / 10%);
     border-left: 4px solid var(--ok);
     border-radius: var(--rayon-petit);
@@ -278,7 +278,7 @@
   }
 
   .reponse .titre {
-    margin: 0 0 8px;
+    margin: 0 0 var(--e2);
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -292,15 +292,15 @@
 
   .reponse ul {
     list-style: none;
-    margin: 0 0 10px;
+    margin: 0 0 var(--e2);
     padding: 0;
     display: grid;
-    gap: 6px;
+    gap: var(--e1);
   }
 
   .reponse li {
     position: relative;
-    padding-left: 18px;
+    padding-left: var(--e4);
     font-size: var(--t-base);
   }
 
@@ -327,6 +327,6 @@
   }
 
   figcaption {
-    margin-top: 12px;
+    margin-top: var(--e3);
   }
 </style>

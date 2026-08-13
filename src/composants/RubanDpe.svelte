@@ -33,7 +33,7 @@
 <style>
   .ruban {
     display: flex;
-    gap: 3px;
+    gap: var(--e1);
     align-items: stretch;
   }
 

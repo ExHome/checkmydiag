@@ -126,7 +126,7 @@
     width: 48px;
     height: 48px;
     color: var(--vert-500);
-    margin-bottom: 8px;
+    margin-bottom: var(--e2);
   }
 
   .titre {
@@ -158,11 +158,11 @@
 
   .faux-bouton {
     display: inline-block;
-    margin-top: 18px;
+    margin-top: var(--e4);
     background: var(--vert-700);
     color: #fff;
     border-radius: 0;
-    padding: 12px 24px;
+    padding: var(--e3) var(--e5);
     font-weight: 600;
   }
 
@@ -171,14 +171,14 @@
   }
 
   .confidentialite {
-    margin: 22px auto 0;
+    margin: var(--e4) auto 0;
     max-width: 42ch;
   }
 
   .barre {
     width: min(100%, 320px);
     height: 8px;
-    margin: 16px auto 8px;
+    margin: var(--e4) auto var(--e2);
     border-radius: 999px;
     background: var(--trait);
     overflow: hidden;

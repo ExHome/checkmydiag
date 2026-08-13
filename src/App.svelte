@@ -361,7 +361,7 @@
      Entre une marque toujours visible et une navigation toujours visible, c'est
      la navigation qui reste. */
   .entete {
-    padding: 20px 0;
+    padding: var(--e4) 0;
     border-bottom: 1px solid var(--trait-or);
     background: var(--fond-clair);
   }
@@ -385,7 +385,7 @@
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: 16px;
+    gap: var(--e4);
     flex-wrap: wrap;
   }
 
@@ -418,7 +418,7 @@
 
   .essai {
     text-align: center;
-    margin-top: 18px;
+    margin-top: var(--e4);
     color: var(--sur-fond-doux);
     font-size: var(--t-base);
   }
@@ -437,16 +437,16 @@
   /* Les rapports gardés : une ligne chacun, sobre. Pas un tableau de bord. */
   .gardes {
     list-style: none;
-    margin: 40px 0 0;
+    margin: var(--e6) 0 0;
     padding: 0;
     display: grid;
-    gap: 6px;
+    gap: var(--e1);
   }
 
   .gardes li {
     display: flex;
     align-items: stretch;
-    gap: 6px;
+    gap: var(--e1);
   }
 
   .dossier {
@@ -454,12 +454,12 @@
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: 14px;
+    gap: var(--e3);
     text-align: left;
     background: rgb(255 255 255 / 6%);
     border: 1px solid rgb(255 255 255 / 10%);
     border-radius: 12px;
-    padding: 13px 18px;
+    padding: var(--e3) var(--e4);
     cursor: pointer;
     color: var(--sur-fond);
     transition: border-color 0.18s ease, background 0.18s ease;
@@ -496,13 +496,13 @@
     border: 1px solid rgb(252 112 96 / 55%);
     color: #ffd9d3;
     border-radius: var(--rayon-petit);
-    padding: 14px 18px;
-    margin-bottom: 20px;
+    padding: var(--e3) var(--e4);
+    margin-bottom: var(--e4);
   }
 
   .avertissement {
-    margin-top: 40px;
-    padding-top: 18px;
+    margin-top: var(--e6);
+    padding-top: var(--e4);
     border-top: 1px solid rgb(255 255 255 / 10%);
     font-size: var(--t-petit);
     color: var(--sur-fond-doux);

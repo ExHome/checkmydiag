@@ -456,7 +456,7 @@
 
 <style>
   .notaire {
-    margin-bottom: 34px;
+    margin-bottom: var(--e6);
   }
 
   /* Le retour se pose à même le vert : pas d'encart, pas de caisson. Ce qui
@@ -505,12 +505,12 @@
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 6px;
+    gap: var(--e1);
   }
 
   li {
     position: relative;
-    padding-left: 18px;
+    padding-left: var(--e4);
     font-size: var(--t-base);
     line-height: 1.5;
   }
@@ -568,12 +568,12 @@
     }
 
     .conseil {
-      margin-bottom: 26px;
+      margin-bottom: var(--e5);
     }
   }
 
   .titre-conseil {
-    margin: 0 0 8px;
+    margin: 0 0 var(--e2);
     font-weight: 700;
     font-size: var(--t-petit);
     letter-spacing: 0.14em;
@@ -587,18 +587,18 @@
 
   /* L'état descriptif : un relevé au filet, comme une notice d'architecte. */
   .caracteristiques {
-    margin: 22px 0 0;
+    margin: var(--e4) 0 0;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: 0 40px;
+    gap: 0 var(--e6);
   }
 
   .caracteristiques div {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: 14px;
-    padding: 9px 0;
+    gap: var(--e3);
+    padding: var(--e2) 0;
     border-bottom: 1px solid rgb(255 255 255 / 10%);
   }
 
@@ -619,7 +619,7 @@
   }
 
   .pourquoi {
-    margin: 16px 0 0;
+    margin: var(--e4) 0 0;
     font-size: var(--t-base);
     line-height: 1.55;
     color: var(--sur-fond-doux);
@@ -643,8 +643,8 @@
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 24px;
-    margin-bottom: 26px;
+    gap: var(--e5);
+    margin-bottom: var(--e5);
   }
 
   .objet {
@@ -664,14 +664,14 @@
   }
 
   .commune {
-    margin: 4px 0 0;
+    margin: var(--e1) 0 0;
     font-family: var(--police-titre);
     font-size: clamp(1.2rem, 2.6vw, 1.6rem);
     color: var(--sur-fond-doux);
   }
 
   .sous-titre {
-    margin: 16px 0 0;
+    margin: var(--e4) 0 0;
     font-family: var(--police-titre);
     font-style: italic;
     font-size: clamp(1rem, 2vw, 1.16rem);
@@ -684,15 +684,15 @@
   .references {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px 44px;
-    margin: 26px 0 20px;
-    padding-top: 18px;
+    gap: var(--e2) 44px;
+    margin: var(--e5) 0 var(--e4);
+    padding-top: var(--e4);
     border-top: 1px solid rgb(255 255 255 / 12%);
   }
 
   .references div {
     display: grid;
-    gap: 3px;
+    gap: var(--e1);
   }
 
   .references dt {
@@ -716,7 +716,7 @@
     background: none;
     border: 1px solid var(--trait-or);
     border-radius: 0;
-    padding: 11px 20px;
+    padding: var(--e3) var(--e4);
     font-size: var(--t-petit);
     font-weight: 500;
     letter-spacing: 0.14em;
@@ -747,7 +747,7 @@
 
   .lexique div {
     break-inside: avoid;
-    margin-bottom: 14px;
+    margin-bottom: var(--e3);
   }
 
   .lexique dt {
@@ -756,7 +756,7 @@
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--or);
-    margin-bottom: 3px;
+    margin-bottom: var(--e1);
   }
 
   .lexique dd {
@@ -767,8 +767,8 @@
   }
 
   .reserve {
-    margin: 30px 0 0;
-    padding-top: 18px;
+    margin: var(--e5) 0 0;
+    padding-top: var(--e4);
     border-top: 1px solid rgb(255 255 255 / 12%);
     font-size: var(--t-petit);
     line-height: 1.5;
