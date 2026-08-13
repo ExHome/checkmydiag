@@ -90,10 +90,15 @@
 
   /* L'échelle typographique, en quinte : chaque cran se distingue du suivant
      sans qu'on ait à les comparer. */
-  --t-micro: 0.68rem;
-  --t-petit: 0.82rem;
-  --t-base: 0.96rem;
-  --t-lead: 1.14rem;
+  /* Relevée le 13/08/2026 pour l'accessibilité. Le corps était à 15,4 px et
+     les mentions à 10,9 — sous le plancher communément admis de 12 px, et
+     employées 132 fois sur l'écran de résultat. Un texte qu'on plisse les yeux
+     pour lire n'est pas premium, il est raté. Le corps revient à 16 px, le
+     plancher à 12 ; les proportions entre crans sont conservées. */
+  --t-micro: 0.75rem;
+  --t-petit: 0.875rem;
+  --t-base: 1rem;
+  --t-lead: 1.1875rem;
   --t-titre: clamp(1.3rem, 2.6vw, 1.65rem);
   --t-section: clamp(1.6rem, 3.4vw, 2.1rem);
   --t-affiche: clamp(2rem, 5vw, 3.2rem);
