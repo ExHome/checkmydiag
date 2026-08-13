@@ -20,7 +20,13 @@
   import { echeance } from '../lib/echeance';
   import { etiquetteDe } from '../lib/analyse/confiance';
 
-  const { analyse }: { analyse: Analyse } = $props();
+  interface Props {
+    analyse: Analyse;
+    /** Ouvre le rapport à l'endroit exact d'où sort ce verdict. */
+    surVoirDansLeRapport?: (type: Diagnostic['type']) => void;
+  }
+
+  const { analyse, surVoirDansLeRapport }: Props = $props();
 
   /** « page 12 » ou « pages 12 à 18 » — le lecteur y va, il ne devine pas. */
   function pageDite([debut, fin]: [number, number]): string {
@@ -159,7 +165,16 @@
           <span class="marque" aria-hidden="true"></span>
           <span>{etiquetteDe(d.origine ?? 'rapport')}</span>
           {#if d.pages}
-            <span class="page">{pageDite(d.pages)}</span>
+            {#if surVoirDansLeRapport}
+              <!-- La page n'est plus une mention, c'est un chemin : un clic
+                   ouvre le rapport au passage exact. Une preuve qu'on ne peut
+                   pas atteindre ne prouve rien. -->
+              <button type="button" class="page" onclick={() => surVoirDansLeRapport(d.type)}>
+                {pageDite(d.pages)} — voir dans mon rapport
+              </button>
+            {:else}
+              <span class="page">{pageDite(d.pages)}</span>
+            {/if}
           {/if}
         </p>
       </header>
@@ -378,6 +393,24 @@
   .provenance .page {
     color: var(--or-clair);
     white-space: nowrap;
+  }
+
+  /* Bouton, mais dessiné comme un lien : ce n'est pas une action du produit,
+     c'est un renvoi vers le document. Il se souligne au survol plutôt que de
+     s'entourer d'un cadre. */
+  button.page {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    font-size: var(--t-petit);
+    cursor: pointer;
+    border-bottom: 1px solid transparent;
+  }
+
+  button.page:hover,
+  button.page:focus-visible {
+    border-bottom-color: var(--or);
   }
 
   .provenance .page::before {

@@ -12,6 +12,7 @@
    * quand c'est bon, orange quand il faut regarder, rouge quand ça coince, or
    * quand c'est une simple donnée.
    */
+  import { tick } from 'svelte';
   import type { Analyse, Diagnostic, TypeDiag } from '../lib/modele';
   import type { PageRendue } from '../lib/pdf';
   import Explicatif from './schemas/Explicatif.svelte';
@@ -75,13 +76,29 @@
    * cliquer sur « Anomalies » ouvrait le numéro de dossier, qui se trouve être
    * la première ligne repérée de la partie.
    */
-  function allerAuDiagnostic(type: TypeDiag): void {
+  async function allerAuDiagnostic(type: TypeDiag): Promise<void> {
     const constat = reperes.findIndex((r) => r.type === type && r.repere.famille === 'constat');
     const i = constat >= 0 ? constat : reperes.findIndex((r) => r.type === type);
     if (i < 0) return;
     // Aller dans le rapport, c'est changer de vue : sans ça, le clic ouvrait
     // un passage que le lecteur ne voyait pas.
     vue = 'rapport';
+    // Et il faut attendre que cette vue existe à l'écran avant de viser le
+    // passage : sans ce temps d'arrêt, on faisait défiler une vue encore
+    // cachée, et le lecteur voyait l'onglet changer sans que rien ne bouge.
+    await tick();
+
+    /*
+     * Deux défilements, et non un seul : le fac-similé du rapport a son propre
+     * ascenseur. `allerAu` y centre le passage, mais cela ne déplace pas la
+     * page — le bloc entier pouvait rester mille pixels plus bas, et le clic
+     * semblait sans effet. On amène donc d'abord le document sous les yeux.
+     *
+     * Le premier saut est instantané, le second reste doux : deux défilements
+     * animés en même temps s'annulent, et le lecteur ne bougeait pas d'un
+     * pixel.
+     */
+    document.getElementById('document-rapport')?.scrollIntoView({ behavior: 'instant', block: 'start' });
     allerAu(i);
   }
 
@@ -284,11 +301,14 @@
     <div class="vue" class:cachee={vue !== 'diags'}>
       <!-- Le dossier diagnostic par diagnostic : conclusion, dessin, chiffres,
            canevas, réserves. -->
-      <Diagnostics {analyse} />
+      <!-- La fiche donne le verdict, le rapport en donne la preuve. Le passage
+           entre les deux existait pour le sommaire ; il manquait là où le doute
+           naît vraiment : sous la phrase elle-même. -->
+      <Diagnostics {analyse} surVoirDansLeRapport={allerAuDiagnostic} />
     </div>
 
     <div class="vue" class:cachee={vue !== 'rapport'} class:deux-colonnes={true} class:seul={!actif}>
-      <div class="document">
+      <div class="document" id="document-rapport">
         {#if pages.length}
           <!-- Les pages à la suite : c'est un document, il se déroule. -->
           {#each pages as numero (numero)}
