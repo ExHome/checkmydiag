@@ -356,7 +356,7 @@
   .signe {
     flex: none;
     font-family: var(--mono);
-    font-size: 1.1rem;
+    font-size: var(--t-lead);
     color: var(--or-clair);
   }
 

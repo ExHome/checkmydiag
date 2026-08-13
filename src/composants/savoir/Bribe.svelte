@@ -85,6 +85,6 @@
   .suites {
     display: block;
     margin-top: 5px;
-    font-size: 0.9rem;
+    font-size: var(--t-base);
   }
 </style>

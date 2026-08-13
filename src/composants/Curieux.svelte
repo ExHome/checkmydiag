@@ -47,7 +47,7 @@
     align-items: center;
     gap: 10px;
     font-weight: 700;
-    font-size: 0.93rem;
+    font-size: var(--t-base);
     color: var(--vert-300);
     background: rgb(46 233 139 / 8%);
     border: 1px solid var(--trait);
@@ -82,7 +82,7 @@
 
   .mention {
     margin-left: auto;
-    font-size: 0.72rem;
+    font-size: var(--t-micro);
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -100,7 +100,7 @@
   li {
     position: relative;
     padding-left: 20px;
-    font-size: 0.95rem;
+    font-size: var(--t-base);
     line-height: 1.45;
     color: var(--encre-doux);
   }

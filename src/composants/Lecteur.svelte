@@ -669,7 +669,7 @@
   .nom-vue {
     display: block;
     font-family: var(--police-titre);
-    font-size: 1.06rem;
+    font-size: var(--t-lead);
     font-weight: 500;
     letter-spacing: -0.022em;
   }
@@ -681,7 +681,7 @@
   .quoi-vue {
     display: block;
     margin-top: 2px;
-    font-size: 0.74rem;
+    font-size: var(--t-micro);
     letter-spacing: 0.06em;
     opacity: 0.7;
   }
@@ -767,7 +767,7 @@
     border-radius: 50%;
     background: var(--teinte);
     color: #fff;
-    font-size: 0.72rem;
+    font-size: var(--t-micro);
     font-weight: 800;
     line-height: 22px;
     text-align: center;
@@ -781,7 +781,7 @@
     padding: 20px 22px;
     max-height: 640px;
     overflow-y: auto;
-    font-size: 0.82rem;
+    font-size: var(--t-petit);
     line-height: 1.55;
     color: #43514a;
     box-shadow: var(--ombre);
@@ -795,7 +795,7 @@
     padding: 5px 22px;
     background: #f2ede0;
     color: #7a6a4d;
-    font-size: 0.7rem;
+    font-size: var(--t-micro);
     font-weight: 800;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -842,7 +842,7 @@
     border-radius: 50%;
     background: var(--teinte);
     color: #fff;
-    font-size: 0.66rem;
+    font-size: var(--t-micro);
     font-weight: 800;
     vertical-align: text-bottom;
   }
@@ -876,7 +876,7 @@
     padding: 17px 34px;
     cursor: pointer;
     color: var(--sur-fond);
-    font-size: 0.9rem;
+    font-size: var(--t-base);
     font-weight: 500;
     letter-spacing: 0.16em;
     text-transform: uppercase;
@@ -892,7 +892,7 @@
   .commencer em {
     display: block;
     font-family: var(--mono);
-    font-size: 0.74rem;
+    font-size: var(--t-micro);
     font-style: normal;
     letter-spacing: 0.04em;
     text-transform: none;
@@ -917,13 +917,13 @@
     border: 1px solid var(--trait-or);
     background: none;
     color: var(--or-clair);
-    font-size: 1rem;
+    font-size: var(--t-base);
     cursor: pointer;
   }
 
   .pas-a-pas .compteur {
     font-family: var(--mono);
-    font-size: 0.8rem;
+    font-size: var(--t-petit);
     color: var(--sur-fond-doux);
     font-feature-settings: 'tnum';
   }
@@ -936,7 +936,7 @@
     padding: 12px 22px;
     color: var(--or-clair);
     font-weight: 500;
-    font-size: 0.78rem;
+    font-size: var(--t-petit);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     cursor: pointer;
@@ -966,7 +966,7 @@
   .encart h3 {
     font-family: var(--police-titre);
     font-style: italic;
-    font-size: 1.32rem;
+    font-size: var(--t-titre);
     font-weight: 700;
     margin: 8px 0 14px;
     color: var(--or-clair);
@@ -979,7 +979,7 @@
     color: var(--sur-fond-doux);
     font-weight: 700;
     cursor: pointer;
-    font-size: 0.84rem;
+    font-size: var(--t-petit);
     letter-spacing: 0.02em;
   }
 
@@ -994,7 +994,7 @@
     background: rgb(255 255 255 / 8%);
     border-left: 2px solid color-mix(in srgb, var(--teinte) 70%, transparent);
     border-radius: 4px;
-    font-size: 0.88rem;
+    font-size: var(--t-petit);
     color: var(--sur-fond-doux);
     line-height: 1.5;
     font-style: italic;
@@ -1003,7 +1003,7 @@
   /* Ce qui se passe, en une ligne. Le reste est facultatif. */
   .synthese {
     margin: 0 0 12px;
-    font-size: 1.08rem;
+    font-size: var(--t-lead);
     font-weight: 650;
     line-height: 1.4;
     color: var(--sur-fond);
@@ -1013,7 +1013,7 @@
   .pratique {
     margin: 0 0 18px;
     font-style: italic;
-    font-size: 1rem;
+    font-size: var(--t-base);
     line-height: 1.5;
     color: var(--or-clair);
   }
@@ -1030,7 +1030,7 @@
     border: 1px solid rgb(230 200 148 / 40%);
     border-radius: 0;
     padding: 8px 17px;
-    font-size: 0.86rem;
+    font-size: var(--t-petit);
     font-weight: 700;
     color: var(--or-clair);
     cursor: pointer;
@@ -1109,7 +1109,7 @@
     border: 1px solid var(--trait);
     border-radius: 0;
     padding: 9px 15px;
-    font-size: 0.76rem;
+    font-size: var(--t-petit);
     font-weight: 500;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -1135,7 +1135,7 @@
     border-radius: 0;
     color: var(--encre-doux);
     cursor: pointer;
-    font-size: 0.86rem;
+    font-size: var(--t-petit);
     line-height: 1;
   }
 
@@ -1162,7 +1162,7 @@
     border-left: 3px solid var(--teinte-legende, var(--gris));
     border-radius: 0;
     padding: 9px 14px;
-    font-size: 0.88rem;
+    font-size: var(--t-petit);
     font-weight: 600;
     color: var(--encre);
     cursor: pointer;
@@ -1217,7 +1217,7 @@
     margin: 14px 0 0;
     padding-top: 12px;
     border-top: 1px solid var(--trait-fin);
-    font-size: 0.92rem;
+    font-size: var(--t-base);
     line-height: 1.45;
     color: #8d3323;
   }
@@ -1240,7 +1240,7 @@
   .points li {
     position: relative;
     padding-left: 21px;
-    font-size: 1rem;
+    font-size: var(--t-base);
     line-height: 1.45;
     color: var(--sur-fond);
   }
@@ -1270,7 +1270,7 @@
     border-radius: var(--rayon-petit);
     padding: 10px 14px;
     cursor: pointer;
-    font-size: 0.95rem;
+    font-size: var(--t-base);
     font-weight: 650;
     color: var(--sur-fond);
     background: rgb(255 255 255 / 6%);
@@ -1328,7 +1328,7 @@
     color: var(--or-clair);
     border-radius: 0;
     padding: 8px 16px;
-    font-size: 0.86rem;
+    font-size: var(--t-petit);
     font-weight: 700;
     cursor: pointer;
     transition: background 0.18s ease;

@@ -111,7 +111,7 @@
 
   .mot {
     margin: 0 0 2px;
-    font-size: 0.72rem;
+    font-size: var(--t-micro);
     font-weight: 800;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -132,7 +132,7 @@
 
   .texte {
     margin: 0;
-    font-size: 0.96rem;
+    font-size: var(--t-base);
     line-height: 1.5;
     text-wrap: pretty;
   }

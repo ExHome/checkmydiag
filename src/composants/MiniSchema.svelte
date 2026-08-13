@@ -640,7 +640,7 @@
 
   .invite {
     margin: 0 0 6px;
-    font-size: 0.72rem;
+    font-size: var(--t-micro);
     font-weight: 600;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -686,7 +686,7 @@
   .nom {
     margin: 0 0 6px;
     font-weight: 700;
-    font-size: 0.94rem;
+    font-size: var(--t-base);
     color: var(--vert-700);
   }
 
@@ -701,7 +701,7 @@
   .reponse li {
     position: relative;
     padding-left: 17px;
-    font-size: 0.92rem;
+    font-size: var(--t-base);
     line-height: 1.4;
     color: var(--encre);
   }
@@ -748,7 +748,7 @@
 
   .oui {
     fill: var(--ok);
-    font-size: 11px;
+    font-size: var(--t-micro);
     font-weight: 700;
   }
 
@@ -757,12 +757,12 @@
   }
 
   text.non {
-    font-size: 11px;
+    font-size: var(--t-micro);
     font-weight: 700;
   }
 
   .mini {
-    font-size: 10.5px;
+    font-size: var(--t-micro);
     fill: var(--encre-doux);
     text-anchor: middle;
     font-weight: 600;
@@ -777,7 +777,7 @@
   }
 
   .chiffre {
-    font-size: 17px;
+    font-size: var(--t-lead);
     font-weight: 800;
     fill: var(--ok);
     text-anchor: middle;

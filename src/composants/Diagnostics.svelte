@@ -250,7 +250,7 @@
 
   .verdict-court {
     font-family: var(--police-titre);
-    font-size: 1.14rem;
+    font-size: var(--t-lead);
     font-weight: 500;
     letter-spacing: -0.022em;
     color: var(--or-clair);
@@ -305,7 +305,7 @@
 
   .quoi {
     margin: 0 0 4px;
-    font-size: 0.72rem;
+    font-size: var(--t-micro);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--sur-fond-doux);
@@ -322,7 +322,7 @@
 
   .verdict {
     margin: 0;
-    font-size: 0.97rem;
+    font-size: var(--t-base);
     line-height: 1.5;
     color: var(--sur-fond);
   }
@@ -351,7 +351,7 @@
   .pratique {
     margin: 0 0 16px;
     font-style: italic;
-    font-size: 1rem;
+    font-size: var(--t-base);
     line-height: 1.5;
     color: var(--or-clair);
   }
@@ -369,7 +369,7 @@
   }
 
   .chiffres dt {
-    font-size: 0.68rem;
+    font-size: var(--t-micro);
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--sur-fond-doux);
@@ -377,14 +377,14 @@
 
   .chiffres dd {
     margin: 2px 0 0;
-    font-size: 1.02rem;
+    font-size: var(--t-base);
     font-weight: 650;
     color: var(--sur-fond);
   }
 
   .precision {
     display: block;
-    font-size: 0.8rem;
+    font-size: var(--t-petit);
     font-weight: 400;
     color: var(--sur-fond-doux);
   }
@@ -401,7 +401,7 @@
   }
 
   .canevas dt {
-    font-size: 0.7rem;
+    font-size: var(--t-micro);
     font-weight: 700;
     letter-spacing: 0.13em;
     text-transform: uppercase;
@@ -411,7 +411,7 @@
 
   .canevas dd {
     margin: 0;
-    font-size: 0.95rem;
+    font-size: var(--t-base);
     line-height: 1.5;
     color: var(--sur-fond-doux);
   }
@@ -426,7 +426,7 @@
 
   .titre-reserves {
     margin: 0 0 7px;
-    font-size: 0.7rem;
+    font-size: var(--t-micro);
     font-weight: 700;
     letter-spacing: 0.13em;
     text-transform: uppercase;
@@ -444,7 +444,7 @@
   .reserves li {
     position: relative;
     padding-left: 16px;
-    font-size: 0.9rem;
+    font-size: var(--t-base);
     line-height: 1.45;
     color: var(--sur-fond-doux);
   }

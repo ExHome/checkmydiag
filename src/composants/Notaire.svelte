@@ -511,7 +511,7 @@
   li {
     position: relative;
     padding-left: 18px;
-    font-size: 0.97rem;
+    font-size: var(--t-base);
     line-height: 1.5;
   }
 
@@ -575,7 +575,7 @@
   .titre-conseil {
     margin: 0 0 8px;
     font-weight: 700;
-    font-size: 0.76rem;
+    font-size: var(--t-petit);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--or);
@@ -603,7 +603,7 @@
   }
 
   .caracteristiques dt {
-    font-size: 0.72rem;
+    font-size: var(--t-micro);
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--sur-fond-doux);
@@ -611,7 +611,7 @@
 
   .caracteristiques dd {
     margin: 0;
-    font-size: 0.98rem;
+    font-size: var(--t-base);
     font-weight: 600;
     color: var(--sur-fond);
     text-align: right;
@@ -620,7 +620,7 @@
 
   .pourquoi {
     margin: 16px 0 0;
-    font-size: 0.97rem;
+    font-size: var(--t-base);
     line-height: 1.55;
     color: var(--sur-fond-doux);
   }
@@ -649,7 +649,7 @@
 
   .objet {
     margin: 0;
-    font-size: 0.74rem;
+    font-size: var(--t-micro);
     font-weight: 500;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -696,7 +696,7 @@
   }
 
   .references dt {
-    font-size: 0.66rem;
+    font-size: var(--t-micro);
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--sur-fond-doux);
@@ -705,7 +705,7 @@
   .references dd {
     margin: 0;
     font-family: var(--mono);
-    font-size: 0.9rem;
+    font-size: var(--t-base);
     color: var(--sur-fond);
   }
 
@@ -717,7 +717,7 @@
     border: 1px solid var(--trait-or);
     border-radius: 0;
     padding: 11px 20px;
-    font-size: 0.76rem;
+    font-size: var(--t-petit);
     font-weight: 500;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -751,7 +751,7 @@
   }
 
   .lexique dt {
-    font-size: 0.72rem;
+    font-size: var(--t-micro);
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -761,7 +761,7 @@
 
   .lexique dd {
     margin: 0;
-    font-size: 0.92rem;
+    font-size: var(--t-base);
     line-height: 1.5;
     color: var(--sur-fond-doux);
   }
@@ -770,7 +770,7 @@
     margin: 30px 0 0;
     padding-top: 18px;
     border-top: 1px solid rgb(255 255 255 / 12%);
-    font-size: 0.86rem;
+    font-size: var(--t-petit);
     line-height: 1.5;
     color: var(--sur-fond-doux);
     opacity: 0.75;

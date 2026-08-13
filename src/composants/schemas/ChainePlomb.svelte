@@ -184,7 +184,7 @@
   }
 
   .titre-cas {
-    font-size: 12.5px;
+    font-size: var(--t-petit);
     font-weight: 700;
     fill: var(--encre);
     text-anchor: middle;
@@ -255,7 +255,7 @@
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    font-size: 0.9rem;
+    font-size: var(--t-base);
     color: var(--ok);
   }
 
@@ -274,7 +274,7 @@
   .reponse li {
     position: relative;
     padding-left: 18px;
-    font-size: 0.96rem;
+    font-size: var(--t-base);
   }
 
   .reponse li::before {
@@ -295,7 +295,7 @@
     padding: 0;
     color: var(--vert-300);
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: var(--t-base);
     cursor: pointer;
   }
 

@@ -48,7 +48,7 @@
   }
 
   b {
-    font-size: 0.72rem;
+    font-size: var(--t-micro);
     font-weight: 900;
     letter-spacing: 0;
   }

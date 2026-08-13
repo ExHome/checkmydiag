@@ -370,7 +370,7 @@
      seule couleur d'accent, pas un arc-en-ciel. */
   .marque {
     font-family: var(--police-titre);
-    font-size: 1.34rem;
+    font-size: var(--t-titre);
     font-weight: 500;
     letter-spacing: -0.022em;
     text-decoration: none;
@@ -392,7 +392,7 @@
   /* Le lien vers la rubrique : il attend, il n'appelle pas. Celui qui a son
      rapport dépose son fichier ; celui qui n'en a pas trouve la sortie. */
   .rubrique {
-    font-size: 0.74rem;
+    font-size: var(--t-micro);
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--or-clair);
@@ -420,7 +420,7 @@
     text-align: center;
     margin-top: 18px;
     color: var(--sur-fond-doux);
-    font-size: 0.92rem;
+    font-size: var(--t-base);
   }
 
   .lien {
@@ -471,7 +471,7 @@
   }
 
   .quand {
-    font-size: 0.84rem;
+    font-size: var(--t-petit);
     color: var(--sur-fond-doux);
     white-space: nowrap;
   }
@@ -483,7 +483,7 @@
     color: var(--sur-fond-doux);
     width: 42px;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: var(--t-base);
   }
 
   .oublier:hover {
@@ -504,7 +504,7 @@
     margin-top: 40px;
     padding-top: 18px;
     border-top: 1px solid rgb(255 255 255 / 10%);
-    font-size: 0.84rem;
+    font-size: var(--t-petit);
     color: var(--sur-fond-doux);
   }
 </style>

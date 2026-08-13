@@ -158,7 +158,7 @@
 
   .controles button {
     font: inherit;
-    font-size: 0.82rem;
+    font-size: var(--t-petit);
     padding: 6px 12px;
     border: 1px solid var(--trait);
     background: #fff;
@@ -184,7 +184,7 @@
   }
 
   .etiquette {
-    font-size: 0.7rem;
+    font-size: var(--t-micro);
     letter-spacing: var(--suivi);
     text-transform: uppercase;
     font-weight: 700;

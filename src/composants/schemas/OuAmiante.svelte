@@ -193,7 +193,7 @@
   }
 
   .titre-cas {
-    font-size: 13px;
+    font-size: var(--t-petit);
     font-weight: 700;
     fill: var(--encre);
     text-anchor: middle;
@@ -249,7 +249,7 @@
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    font-size: 0.9rem;
+    font-size: var(--t-base);
     color: var(--ok);
   }
 
@@ -259,7 +259,7 @@
 
   .reponse p:last-of-type {
     margin: 0 0 10px;
-    font-size: 0.98rem;
+    font-size: var(--t-base);
   }
 
   .fermer {
@@ -268,7 +268,7 @@
     padding: 0;
     color: var(--vert-300);
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: var(--t-base);
     cursor: pointer;
   }
 

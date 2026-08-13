@@ -77,7 +77,7 @@
 
   .invite {
     margin: 0 0 10px;
-    font-size: 0.72rem;
+    font-size: var(--t-micro);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     font-weight: 600;
@@ -190,6 +190,6 @@
     background: var(--papier-doux);
     border-left: 4px solid var(--vert-500);
     border-radius: 8px;
-    font-size: 0.94rem;
+    font-size: var(--t-base);
   }
 </style>

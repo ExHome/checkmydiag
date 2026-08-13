@@ -172,7 +172,7 @@
   }
 
   .etiquette {
-    font-size: 12.5px;
+    font-size: var(--t-petit);
     font-weight: 700;
     fill: var(--encre);
     paint-order: stroke;

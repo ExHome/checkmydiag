@@ -75,7 +75,7 @@
   }
 
   .titre {
-    font-size: 13px;
+    font-size: var(--t-petit);
     font-weight: 600;
     fill: var(--encre);
     text-anchor: middle;
@@ -133,7 +133,7 @@
   }
 
   .mention {
-    font-size: 11px;
+    font-size: var(--t-micro);
     fill: var(--vert-700);
     text-anchor: middle;
     font-weight: 600;
@@ -145,7 +145,7 @@
   }
 
   .conclusion {
-    font-size: 13px;
+    font-size: var(--t-petit);
     font-weight: 600;
     text-anchor: middle;
   }
@@ -159,7 +159,7 @@
   }
 
   .sous-conclusion {
-    font-size: 11.5px;
+    font-size: var(--t-micro);
     fill: var(--encre-doux);
     text-anchor: middle;
   }
@@ -170,6 +170,6 @@
     background: var(--papier-doux);
     border-left: 4px solid var(--vert-500);
     border-radius: 8px;
-    font-size: 0.94rem;
+    font-size: var(--t-base);
   }
 </style>

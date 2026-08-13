@@ -72,7 +72,7 @@
   h3 {
     font-family: var(--police-titre);
     font-style: italic;
-    font-size: 1.24rem;
+    font-size: var(--t-lead);
     font-weight: 700;
     letter-spacing: -0.01em;
     text-transform: none;

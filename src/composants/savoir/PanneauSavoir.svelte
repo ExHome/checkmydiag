@@ -184,7 +184,7 @@
 
   .fil {
     flex: 1;
-    font-size: 0.78rem;
+    font-size: var(--t-petit);
     line-height: 1.5;
   }
 
@@ -205,7 +205,7 @@
 
   .ici {
     font-family: var(--police-titre);
-    font-size: 1.2rem;
+    font-size: var(--t-lead);
     font-weight: 700;
     color: var(--vert-700);
     display: block;
@@ -226,7 +226,7 @@
 
   .definition {
     margin: 0 0 16px;
-    font-size: 1rem;
+    font-size: var(--t-base);
     line-height: 1.5;
     color: var(--encre);
   }
@@ -275,7 +275,7 @@
     background: var(--vert-100);
     color: var(--vert-700);
     font-weight: 800;
-    font-size: 0.9rem;
+    font-size: var(--t-base);
   }
 
   .question.chez-moi .chevron {
@@ -288,7 +288,7 @@
     padding: 4px 0 16px 30px;
     border-left: 2px solid var(--trait);
     margin-left: 9px;
-    font-size: 0.95rem;
+    font-size: var(--t-base);
   }
 
   .reponse.fait {
@@ -311,7 +311,7 @@
 
   .registre {
     margin: 0 0 8px;
-    font-size: 0.68rem;
+    font-size: var(--t-micro);
     letter-spacing: var(--suivi);
     text-transform: uppercase;
     font-weight: 700;
@@ -330,7 +330,7 @@
 
   .reserve {
     margin: 10px 0 0;
-    font-size: 0.8rem;
+    font-size: var(--t-petit);
     color: var(--gris);
   }
 </style>

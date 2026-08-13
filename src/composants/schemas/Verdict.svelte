@@ -45,7 +45,7 @@
   }
 
   text {
-    font-size: 13px;
+    font-size: var(--t-petit);
     font-weight: 800;
     fill: var(--encre);
     text-anchor: middle;

@@ -277,7 +277,7 @@
 
   .invite {
     margin: 0 0 10px;
-    font-size: 0.72rem;
+    font-size: var(--t-micro);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     font-weight: 600;
@@ -315,7 +315,7 @@
   }
 
   .cotation {
-    font-size: 10px;
+    font-size: var(--t-micro);
     letter-spacing: 0.12em;
     text-transform: uppercase;
     fill: var(--or);
@@ -405,14 +405,14 @@
   }
 
   .classe {
-    font-size: 22px;
+    font-size: var(--t-titre);
     font-weight: 900;
     text-anchor: middle;
   }
 
   .constat {
     margin-top: 14px;
-    font-size: 1rem;
+    font-size: var(--t-base);
     font-weight: 650;
     line-height: 1.45;
     color: var(--encre-doux);
@@ -444,7 +444,7 @@
     width: 100%;
     border-collapse: collapse;
     margin-top: 18px;
-    font-size: 0.88rem;
+    font-size: var(--t-petit);
   }
 
   @media print {
@@ -461,7 +461,7 @@
   }
 
   .releve thead th {
-    font-size: 0.68rem;
+    font-size: var(--t-micro);
     font-weight: 600;
     letter-spacing: 0.12em;
     text-transform: uppercase;

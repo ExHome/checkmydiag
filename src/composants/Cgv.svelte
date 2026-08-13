@@ -99,12 +99,12 @@
   }
 
   h2 {
-    font-size: 1.35rem;
+    font-size: var(--t-titre);
     margin-bottom: 2px;
   }
 
   .version {
-    font-size: 0.85rem;
+    font-size: var(--t-petit);
     opacity: 0.7;
     margin-bottom: 18px;
   }
@@ -115,7 +115,7 @@
     border-radius: 8px;
     padding: 10px 14px;
     margin-bottom: 18px;
-    font-size: 0.92rem;
+    font-size: var(--t-base);
   }
 
   .essentiel {
@@ -161,14 +161,14 @@
   }
 
   .texte h3 {
-    font-size: 1rem;
+    font-size: var(--t-base);
     margin: 18px 0 6px;
   }
 
   .texte p {
     line-height: 1.55;
     margin-bottom: 8px;
-    font-size: 0.95rem;
+    font-size: var(--t-base);
   }
 
   .manque {
@@ -211,7 +211,7 @@
   }
 
   .petit {
-    font-size: 0.85rem;
+    font-size: var(--t-petit);
     opacity: 0.7;
   }
 

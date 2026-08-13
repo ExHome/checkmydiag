@@ -113,7 +113,7 @@
     border-left: 2px solid var(--or);
     background: rgb(255 255 255 / 6%);
     border-radius: 0 var(--rayon-petit) var(--rayon-petit) 0;
-    font-size: 0.9rem;
+    font-size: var(--t-base);
     line-height: 1.45;
     color: var(--sur-fond-doux);
   }

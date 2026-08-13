@@ -131,7 +131,7 @@
 
   .invite {
     margin: 0 0 8px;
-    font-size: 0.72rem;
+    font-size: var(--t-micro);
     font-weight: 600;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -180,7 +180,7 @@
     transform: translateX(-50%);
     white-space: nowrap;
     font-family: var(--police);
-    font-size: 0.64rem;
+    font-size: var(--t-micro);
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -194,7 +194,7 @@
     margin-top: 26px;
     padding-top: 12px;
     border-top: 1px solid var(--trait-fin);
-    font-size: 0.78rem;
+    font-size: var(--t-petit);
     color: var(--encre-doux);
   }
 
@@ -219,7 +219,7 @@
   .nom {
     margin: 0 0 6px;
     font-weight: 700;
-    font-size: 0.94rem;
+    font-size: var(--t-base);
     color: var(--vert-700);
   }
 
@@ -234,7 +234,7 @@
   .reponse li {
     position: relative;
     padding-left: 17px;
-    font-size: 0.92rem;
+    font-size: var(--t-base);
     line-height: 1.4;
     color: var(--encre);
   }
