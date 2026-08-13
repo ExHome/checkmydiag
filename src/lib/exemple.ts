@@ -83,7 +83,21 @@ export function pagesExemple(): PageTexte[] {
         'Dispositif de protection différentielle à l’origine de l’installation : absent',
         'Installation de mise à la terre : prise de terre non conforme',
         'Matériels électriques vétustes ou inadaptés à l’usage constatés dans le séjour',
-        'Conducteurs non protégés mécaniquement dans le couloir'
+        'Conducteurs non protégés mécaniquement dans le couloir',
+        // La liste que les vrais rapports impriment, et que le moteur restitue
+        // point par point. Reproduite ici avec ses coupures de fin de colonne :
+        // le dossier de démonstration doit exercer le même chemin qu'un vrai.
+        'Anomalies avérées selon les domaines suivants :',
+        'Dispositif de protection différentiel à l’origine de l’installation / Prise de terre et installation de mise à la',
+        'terre.',
+        'Dispositif de protection contre les surintensités adapté à la section des conducteurs, sur chaque circuit.',
+        'Matériels électriques présentant des risques de contacts directs avec des éléments sous tension -',
+        'Protection mécanique des conducteurs.',
+        'Domaines Anomalies Photo',
+        'Libellé de l’anomalie : B7.3 a L’enveloppe d’au moins un matériel est',
+        'détériorée.',
+        'Parties du bien (pièces et emplacements) n’ayant pu être visitées et justification :',
+        '2ème étage - Combles (Absence de trappe de visite)'
       ]
     },
     {

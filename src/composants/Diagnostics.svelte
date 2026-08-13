@@ -14,6 +14,7 @@
   import type { Analyse, Diagnostic } from '../lib/modele';
   import Explicatif from './schemas/Explicatif.svelte';
   import MotsExpliques from './MotsExpliques.svelte';
+  import Releves from './Releves.svelte';
   import { libelleCourt } from '../lib/libelle';
   import { enPratique, FICHES } from '../lib/analyse/fiches';
   import { echeance } from '../lib/echeance';
@@ -185,6 +186,13 @@
                 </div>
               {/each}
             </dl>
+          {/if}
+
+          <!-- Tout ce que le rapport énumère, sans en retirer un seul. Placé
+               après les chiffres et avant l'explication générale : c'est le
+               constat, il précède la pédagogie. -->
+          {#if d.releves?.length}
+            <Releves releves={d.releves} page={d.pages[0]} />
           {/if}
 
           <dl class="canevas">
