@@ -29,6 +29,19 @@
     quoiFaire: string;
   }
 
+  /**
+   * Les trois niveaux du tableau de bord, dans l'ordre où ils engagent.
+   *
+   * Les mots comptent autant que les chiffres : « nécessite votre attention »
+   * dit ce qu'il faut faire, là où « critique » ne ferait qu'inquiéter. On
+   * alerte sans dramatiser.
+   */
+  const NIVEAUX = [
+    { ton: 'mauvais', singulier: 'nécessite votre attention', pluriel: 'nécessitent votre attention' },
+    { ton: 'moyen', singulier: 'est à surveiller', pluriel: 'sont à surveiller' },
+    { ton: 'bon', singulier: 'est informatif ou rassurant', pluriel: 'sont informatifs ou rassurants' }
+  ] as const;
+
   const parGenre = (genre: PointDeControle['genre']): PointDeControle[] =>
     analyse.controles.filter((c) => c.genre === genre);
 
@@ -142,27 +155,27 @@
     lignes.some((l) => l.ton === 'mauvais') ? 'mauvais' : lignes.length ? 'moyen' : 'bon'
   );
 
-  /** Le titre en trois mots, et la phrase qui dit quoi en faire. */
+  /**
+   * Le titre en trois mots, et la phrase qui dit quoi en faire.
+   *
+   * Elle ne recompte pas : le tableau de bord juste dessous donne déjà les
+   * chiffres. Dire « 3 points sont à régler » au-dessus de « 3 nécessitent
+   * votre attention » serait la même information deux fois, à trois
+   * centimètres d'écart. La phrase dit donc ce que les chiffres ne disent
+   * pas : ce qu'il faut en faire.
+   */
   const annonce = $derived.by<{ titre: string; suite: string }>(() => {
-    const n = bloquants.length + dangers.length;
-
     if (ton === 'mauvais') {
       return {
         titre: 'Le dossier n’est pas complet',
-        suite:
-          n === 1
-            ? 'Un point est à régler avant de signer. Le reste du dossier se lit plus bas.'
-            : `${n} points sont à régler avant de signer. Le reste du dossier se lit plus bas.`
+        suite: 'À régler avec le vendeur avant de signer.'
       };
     }
 
     if (ton === 'moyen') {
       return {
         titre: 'Rien ne bloque la vente',
-        suite:
-          lignes.length === 1
-            ? 'Un point se chiffre et se négocie — il ne vous empêche pas de signer.'
-            : `${lignes.length} points se chiffrent et se négocient — ils ne vous empêchent pas de signer.`
+        suite: 'Ce qui suit se chiffre et se négocie.'
       };
     }
 
@@ -214,6 +227,41 @@
   </div>
 
   {#if lignes.length}
+    <!--
+      Le tableau de bord, avant la liste.
+
+      Trois secondes doivent suffire à savoir de quoi il retourne : combien de
+      points, et lesquels pèsent. Les chiffres portent seuls — pas de carte,
+      pas de fond, pas de pictogramme. Ce qui vient ensuite les détaille ; ici,
+      on ne fait que dire l'ampleur.
+    -->
+    <div class="bilan">
+      <p class="total">
+        <strong>{lignes.length}</strong>
+        {lignes.length > 1 ? 'points identifiés' : 'point identifié'}
+      </p>
+
+      <dl class="repartition">
+        {#each NIVEAUX as niveau (niveau.ton)}
+          {@const n = lignes.filter((l) => l.ton === niveau.ton).length}
+          {#if n > 0}
+            <div class={niveau.ton}>
+              <dt>{n}</dt>
+              <dd>{n > 1 ? niveau.pluriel : niveau.singulier}</dd>
+            </div>
+          {/if}
+        {/each}
+      </dl>
+
+      <!-- La preuve : autant expliqués que trouvés. Chaque ligne s'ouvre. -->
+      <p class="expliques">
+        {lignes.length} identifié{lignes.length > 1 ? 's' : ''} · {lignes.length} expliqué{lignes.length >
+        1
+          ? 's'
+          : ''}
+      </p>
+    </div>
+
     <ul class="lignes">
       {#each lignes as ligne (ligne.cle)}
         <li class={ligne.ton}>
@@ -297,6 +345,94 @@
   }
 
   /* Une ligne par chose à faire, dans l'ordre où on s'en occupe. */
+  /* Le tableau de bord : rien qu'un filet au-dessus, de l'espace, et des
+     chiffres. Une carte ici ajouterait un cadre à ce qui n'en demande pas. */
+  .bilan {
+    margin: var(--e5) 0 var(--e4);
+    padding-top: var(--e4);
+    border-top: 1px solid var(--trait-or);
+  }
+
+  .total {
+    margin: 0 0 var(--e4);
+    font-size: var(--t-base);
+    color: var(--sur-fond-doux);
+  }
+
+  /* Le grand chiffre en Fraunces : c'est lui qu'on retient en trois secondes. */
+  .total strong {
+    font-family: var(--police-titre);
+    font-size: clamp(2.4rem, 6vw, 3.4rem);
+    font-weight: 500;
+    line-height: 1;
+    color: var(--sur-fond);
+    margin-right: var(--e2);
+    letter-spacing: -0.03em;
+  }
+
+  .repartition {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: var(--e4);
+    margin: 0;
+  }
+
+  /* Au téléphone, une information par respiration : deux colonnes de cent
+     soixante-huit pixels obligent à lire en accordéon, ce qui annule le
+     bénéfice du chiffre. */
+  @media (max-width: 560px) {
+    .repartition {
+      grid-template-columns: 1fr;
+      gap: var(--e3);
+    }
+  }
+
+  .repartition div {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+    gap: var(--e2);
+    padding-left: var(--e3);
+    border-left: 2px solid var(--trait);
+  }
+
+  /* La couleur porte le niveau, mais elle n'est pas seule à le faire : le mot
+     le dit aussi. Personne ne dépend de la couleur pour comprendre. */
+  .repartition .mauvais {
+    border-left-color: #d4604a;
+  }
+
+  .repartition .moyen {
+    border-left-color: var(--or);
+  }
+
+  .repartition .bon {
+    border-left-color: var(--vert-300);
+  }
+
+  .repartition dt {
+    font-family: var(--police-titre);
+    font-size: var(--t-section);
+    font-weight: 500;
+    line-height: 1;
+    color: var(--sur-fond);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .repartition dd {
+    margin: 0;
+    font-size: var(--t-petit);
+    line-height: 1.35;
+    color: var(--sur-fond-doux);
+  }
+
+  .expliques {
+    margin: var(--e4) 0 0;
+    font-size: var(--t-petit);
+    color: var(--sur-fond-doux);
+    opacity: 0.8;
+  }
+
   .lignes {
     list-style: none;
     margin: var(--e5) 0 0;

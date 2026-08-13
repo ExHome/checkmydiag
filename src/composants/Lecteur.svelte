@@ -775,7 +775,7 @@
 
   /* Le fac-similé imite la feuille du rapport : fond clair, encre sombre. */
   .page-texte {
-    background: #fdfcf8;
+    background: var(--papier);
     border: 1px solid var(--trait);
     border-radius: var(--rayon-petit);
     padding: var(--e4) var(--e4);
@@ -783,7 +783,7 @@
     overflow-y: auto;
     font-size: var(--t-petit);
     line-height: 1.55;
-    color: #43514a;
+    color: var(--encre-doux);
     box-shadow: var(--ombre);
     scroll-behavior: smooth;
   }
@@ -793,8 +793,8 @@
     top: -20px;
     margin: var(--e4) -var(--e4) var(--e2);
     padding: var(--e1) var(--e4);
-    background: #f2ede0;
-    color: #7a6a4d;
+    background: var(--papier-doux);
+    color: var(--or-fonce);
     font-size: var(--t-micro);
     font-weight: 800;
     letter-spacing: 0.12em;

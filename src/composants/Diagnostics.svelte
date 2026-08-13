@@ -429,7 +429,6 @@
   .chiffres dt {
     font-size: var(--t-micro);
     letter-spacing: 0.12em;
-    text-transform: uppercase;
     color: var(--sur-fond-doux);
   }
 
@@ -462,7 +461,6 @@
     font-size: var(--t-micro);
     font-weight: 700;
     letter-spacing: 0.13em;
-    text-transform: uppercase;
     color: var(--or);
     margin-bottom: var(--e1);
   }
