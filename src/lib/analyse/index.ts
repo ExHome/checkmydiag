@@ -10,6 +10,7 @@ import { analyserAmiante, analyserTermites } from './reperages';
 import { analyserElectricite, analyserGaz } from './securite';
 import { analyserAssainissement, analyserCarrez, analyserErp } from './risques';
 import { controler } from './coherence';
+import { confianceDuDossier, origineDe } from './confiance';
 import { reperer } from './reperes';
 import { conclusionDe, graviteDe, lireSynthese, type BlocSynthese } from './synthese';
 import { nombre, trouver } from './texte';
@@ -136,6 +137,12 @@ export function analyser(brutes: PageTexte[]): Analyse {
 
   diagnostics.sort((a, b) => ORDRE.indexOf(a.type) - ORDRE.indexOf(b.type));
 
+  // L'origine se calcule en dernier : elle dépend du verdict final, une fois
+  // que la synthèse a éventuellement pris le relais d'un extracteur muet.
+  for (const [i, diag] of diagnostics.entries()) {
+    diagnostics[i] = { ...diag, origine: origineDe(diag) };
+  }
+
   const bien = identifierBien(pages, horsSection);
 
   // Le lecteur doit pouvoir descendre dans son rapport : on garde le texte de
@@ -157,7 +164,8 @@ export function analyser(brutes: PageTexte[]): Analyse {
     controles: controler(bien, diagnostics, new Date(), plageSynthese !== null),
     nonExploites: [],
     illisible,
-    nbPages: pages.length
+    nbPages: pages.length,
+    confiance: confianceDuDossier(diagnostics)
   };
 }
 

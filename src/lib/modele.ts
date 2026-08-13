@@ -139,6 +139,12 @@ export interface Diagnostic {
    * du rapport détaillé : le lecteur a le droit de savoir d'où sort la phrase.
    */
   source?: 'synthese';
+  /**
+   * D'où vient ce verdict : lu au rapport, repris de la synthèse, recalculé,
+   * ou pas lisible du tout. Calculé en fin d'analyse (`analyse/confiance.ts`).
+   * C'est ce qui empêche d'écrire « le rapport dit » au-dessus d'une déduction.
+   */
+  origine?: 'rapport' | 'synthese' | 'calcul' | 'illisible';
 }
 
 export interface Bien {
@@ -179,4 +185,9 @@ export interface Analyse {
   /** Vrai si le PDF ne contenait quasiment aucun texte (rapport scanné/image). */
   illisible: boolean;
   nbPages: number;
+  /**
+   * Part de ce qui a été réellement lu, de 0 à 1. Sert à surveiller le moteur
+   * — « part des extractions à faible confiance » — jamais à juger le logement.
+   */
+  confiance: number;
 }

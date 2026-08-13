@@ -82,6 +82,10 @@ describe.skipIf(!disponible)('calibration sur rapports réels', () => {
     const absents = new Map<TypeDiag, number>();
     /** Réclamations « il manque ce diagnostic », par famille de document. */
     const reclamations = new Map<string, number>();
+    /** D'où viennent les verdicts affichés : lu, repris, recalculé, illisible. */
+    const origines = new Map<string, number>();
+    /** Confiance de chaque dossier, pour en tirer une moyenne. */
+    const confiances: number[] = [];
     let analyses = 0;
     let dossiers = 0;
 
@@ -146,6 +150,14 @@ describe.skipIf(!disponible)('calibration sur rapports réels', () => {
         // liste des extracteurs qui manquent, dite par les rapports eux-mêmes.
         for (const t of analyse.nonExploites) ignores.set(t, (ignores.get(t) ?? 0) + 1);
 
+        // D'où sort ce qu'on affiche. Un dossier majoritairement « synthèse »
+        // ou « calcul » n'est pas vraiment lu : on recopie sa page de garde.
+        for (const d of analyse.diagnostics) {
+          const o = d.origine ?? 'rapport';
+          origines.set(o, (origines.get(o) ?? 0) + 1);
+        }
+        confiances.push(analyse.confiance);
+
         if (famille.nom === 'dossier technique') {
           dossiers++;
           const trouves = new Set(analyse.diagnostics.map((d) => d.type));
@@ -175,6 +187,18 @@ describe.skipIf(!disponible)('calibration sur rapports réels', () => {
         `  ${type.padEnd(16)} ${String(c.vu).padStart(4)} ${String(c.synthese).padStart(13)} ${String(c.neutre).padStart(13)} ${String(absents.get(type) ?? 0).padStart(7)}`
       );
     }
+
+    console.log('\n--- d’où vient ce qu’on affiche ---');
+    const totalOrigines = [...origines.values()].reduce((a, b) => a + b, 0);
+    for (const cle of ['rapport', 'synthese', 'calcul', 'illisible']) {
+      const n = origines.get(cle) ?? 0;
+      const part = totalOrigines ? Math.round((n / totalOrigines) * 100) : 0;
+      console.log(`  ${cle.padEnd(12)} ${String(n).padStart(4)}  ${String(part).padStart(3)} %`);
+    }
+    const moyenne = confiances.length
+      ? Math.round((confiances.reduce((a, b) => a + b, 0) / confiances.length) * 100) / 100
+      : 0;
+    console.log(`  confiance moyenne par dossier : ${moyenne}`);
 
     console.log('\n--- réclamations « il manque ce diagnostic » ---');
     for (const [cle, n] of [...reclamations.entries()].sort()) console.log(`  ${cle.padEnd(34)} ${n}`);
