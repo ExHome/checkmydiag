@@ -3,6 +3,8 @@
    * Le plomb en trois temps : la peinture tient, la peinture s'écaille, la
    * poussière est avalée. On touche une étape, elle s'explique.
    */
+  import ClipDessin from '../savoir/ClipDessin.svelte';
+
   interface Etape {
     id: string;
     titre: string;
@@ -42,9 +44,9 @@
       danger: true,
       points: [
         'Main au sol, puis à la bouche',
-        'C’est la voie d’intoxication principale',
-        'Maladie grave, irréversible',
-        'Jeunes enfants et femmes enceintes surtout'
+        'C’est comme ça qu’on s’empoisonne, presque toujours',
+        'Saturnisme : la maladie du plomb, grave et définitive',
+        'Les jeunes enfants et les femmes enceintes risquent le plus'
       ]
     }
   ];
@@ -60,7 +62,7 @@
 <figure>
   <p class="invite muet petit">Touchez une étape.</p>
 
-  <svg viewBox="0 0 460 210" role="group" aria-label="Trois étapes : peinture intacte sans danger, peinture qui s’écaille et fait de la poussière, enfant qui l’avale.">
+  <svg viewBox="0 0 460 248" role="group" aria-label="Trois étapes : peinture intacte sans danger, peinture qui s’écaille et fait de la poussière, enfant qui l’avale.">
     {#each ETAPES as etape, i (etape.id)}
       {@const actif = choisi === etape.id}
       {@const dx = i * 155}
@@ -105,7 +107,7 @@
         </g>
 
         <g transform="translate({78 + dx} 172)">
-          <rect x="-58" y="-15" width="116" height="30" rx="15" class="verdict" class:mauvais={etape.danger} />
+          <rect x="-64" y="-15" width="128" height="30" rx="15" class="verdict" class:mauvais={etape.danger} />
           <text x="0" y="5" class="mot">{etape.mot}</text>
         </g>
       </g>
@@ -115,6 +117,11 @@
         <path d="M{158 + dx} 101 l6 5 -6 5" class="fleche" />
       {/if}
     {/each}
+
+    <!-- L'état de la peinture, et la maladie qu'il provoque : les deux mots que
+         le rapport emploie et que personne n'explique. -->
+    <ClipDessin id="classe-3" x={150} y={228} depuis={[233, 140]} cote="droite" />
+    <ClipDessin id="saturnisme" x={312} y={228} depuis={[388, 152]} cote="droite" />
   </svg>
 
   {#if detail}

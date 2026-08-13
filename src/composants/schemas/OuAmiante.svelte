@@ -5,6 +5,9 @@
    * Deux vignettes, deux mots. Le reste — où elle se trouve dans ce logement-là —
    * vient du rapport, pas du schéma.
    */
+  import Clip from '../savoir/Clip.svelte';
+  import ClipDessin from '../savoir/ClipDessin.svelte';
+
   interface Cas {
     id: string;
     titre: string;
@@ -25,7 +28,7 @@
     {
       id: 'abime',
       titre: 'Matériau percé ou cassé',
-      mot: 'Fibres libérées',
+      mot: 'Des fibres s’envolent',
       danger: true,
       texte:
         'Une perceuse, une ponceuse, une scie — ou simplement un matériau qui se dégrade — libèrent des fibres invisibles. Respirées, elles restent dans les poumons et provoquent des cancers, parfois trente ans plus tard.'
@@ -53,7 +56,7 @@
 <figure>
   <p class="invite muet petit">Touchez une situation.</p>
 
-  <svg viewBox="0 0 460 250" role="group" aria-label="À gauche, un matériau amianté intact ne libère rien. À droite, percé, il libère des fibres.">
+  <svg viewBox="0 0 460 264" role="group" aria-label="À gauche, un matériau amianté intact ne libère rien. À droite, percé, il libère des fibres.">
     <defs>
       <linearGradient id="plaqueSaine" x1="0" y1="0" x2="0.3" y2="1">
         <stop offset="0%" stop-color="#cfd8d2" />
@@ -118,11 +121,16 @@
 
         <!-- Le verdict, en gros -->
         <g transform="translate({112 + dx} 206)">
-          <rect x="-72" y="-16" width="144" height="32" rx="16" class="verdict" class:mauvais={cas.danger} />
+          <rect x="-80" y="-16" width="160" height="32" rx="16" class="verdict" class:mauvais={cas.danger} />
           <text x="0" y="5" class="mot">{cas.mot}</text>
         </g>
       </g>
     {/each}
+
+    <!-- Le matériau d'un côté, ce qui s'en échappe de l'autre : c'est tout le
+         diagnostic amiante en deux mots. -->
+    <ClipDessin id="fibrociment" x={40} y={242} depuis={[80, 162]} cote="droite" />
+    <ClipDessin id="fibre-amiante" x={444} y={242} depuis={[366, 108]} cote="gauche" />
   </svg>
 
   {#if detail}
@@ -137,6 +145,10 @@
       ce qu’on lui fait.
     </figcaption>
   {/if}
+
+  <p class="creuser">
+    <Clip id="amiante" />
+  </p>
 </figure>
 
 <style>

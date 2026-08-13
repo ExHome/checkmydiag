@@ -5,11 +5,15 @@
    * d'isolement se termine par un déclic ou par une électrocution.
    *
    * Une idée, deux images : sans, avec.
+   *
+   * Le dessin démontre ; les clips désignent. Deux seulement, parce que deux
+   * points seulement protègent les personnes — le reste protège les fils.
    */
+  import ClipDessin from '../savoir/ClipDessin.svelte';
 </script>
 
 <figure>
-  <svg viewBox="0 0 460 200" role="img" aria-label="Sans dispositif différentiel, le courant qui fuit traverse la personne. Avec un différentiel, il coupe l’alimentation en une fraction de seconde.">
+  <svg viewBox="0 0 460 246" role="group" aria-label="Sans dispositif différentiel, le courant qui fuit traverse la personne. Avec un différentiel, il coupe l’alimentation en une fraction de seconde.">
     {#each [{ x: 0, avec: false }, { x: 240, avec: true }] as vue (vue.avec)}
       <g transform="translate({vue.x} 0)">
         <text x="100" y="18" class="titre">
@@ -46,12 +50,17 @@
         <path d="M0 150 H200" class="terre" />
       </g>
     {/each}
+
+    <!-- Les deux points qui protègent les personnes. Le reste du diagnostic
+         protège les fils : ce n'est pas la même chose, et ça se désigne. -->
+    <ClipDessin id="mise-a-la-terre" x={60} y={218} depuis={[100, 152]} cote="droite" />
+    <ClipDessin id="differentiel" x={250} y={218} depuis={[341, 84]} cote="droite" />
   </svg>
 
   <p class="regle">
-    C’est le point le plus important des six que contrôle ce diagnostic. Les autres : la coupure
-    d’urgence, la mise à la terre, les disjoncteurs adaptés aux fils, les règles de la salle de
-    bains, et le matériel trop vieux ou cassé.
+    C’est le point le plus important des six que contrôle ce diagnostic. Les cinq autres : la
+    coupure d’urgence — pouvoir tout couper d’un geste —, la mise à la terre, des disjoncteurs
+    adaptés à la section des fils, les règles de la salle de bains, et le matériel vétuste ou cassé.
   </p>
 </figure>
 

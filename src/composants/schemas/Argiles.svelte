@@ -5,6 +5,9 @@
    *
    * Deux saisons, deux verdicts.
    */
+  import Clip from '../savoir/Clip.svelte';
+  import ClipDessin from '../savoir/ClipDessin.svelte';
+
   interface Saison {
     id: string;
     titre: string;
@@ -51,7 +54,7 @@
 <figure>
   <p class="invite muet petit">Touchez une saison.</p>
 
-  <svg viewBox="0 0 460 250" role="group" aria-label="En été le sol argileux sèche et se tasse, la maison s’affaisse. En hiver il gonfle et la soulève.">
+  <svg viewBox="0 0 460 266" role="group" aria-label="En été le sol argileux sèche et se tasse, la maison s’affaisse. En hiver il gonfle et la soulève.">
     {#each SAISONS as saison, i (saison.id)}
       {@const actif = choisi === saison.id}
       {@const dx = i * 240}
@@ -110,6 +113,9 @@
         </g>
       </g>
     {/each}
+
+    <!-- Le phénomène porte un nom, et c'est celui que le rapport emploie. -->
+    <ClipDessin id="retrait-gonflement" x={126} y={244} depuis={[112, 200]} cote="droite" />
   </svg>
 
   {#if detail}
@@ -128,6 +134,10 @@
       votre assurance.
     </figcaption>
   {/if}
+
+  <p class="creuser">
+    <Clip id="erp" />
+  </p>
 </figure>
 
 <style>

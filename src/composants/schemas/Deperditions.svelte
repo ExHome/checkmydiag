@@ -1,21 +1,37 @@
 <script lang="ts">
   /**
-   * La maison du dossier : un trait sobre, la palette de la maison, et les
-   * parois de ce logement-là.
+   * La maison du dossier — le schéma-mère de Check My Diag.
    *
-   * Le dessin d'album — soleil, arbre, aplats vifs — a été abandonné : il jurait
-   * avec le reste et donnait au sujet un air de manuel scolaire. Restent les
-   * formes justes, l'or et le vert, et six souffles de chaleur.
+   * C'est ici que le langage se voit en entier : huit éléments dessinés, huit
+   * clips, et derrière chacun une notion qui descend jusqu'à « et chez moi ? »
+   * (§ 2 de ORDRE-DE-MISSION-SCHEMAS.md). Le dessin n'illustre pas le propos :
+   * il est le propos.
    *
-   * Les pourcentages sont des ordres de grandeur moyens (source ADEME). Quand le
-   * rapport dit ce qui est isolé, la pastille le montre.
+   * Le tableau qui doublait le dessin a été retiré : ce qu'il disait — isolé,
+   * sans isolant, non renseigné — est désormais porté par la couleur du point,
+   * et détaillé au niveau 8 de chaque notion. Une seule information, un seul
+   * endroit (§ 11).
+   *
+   * Sans mot, on doit encore comprendre (§ 8) : six souffles sortent du logement,
+   * gros là où l'on perd le plus.
    */
   import type { EtatIsolation, Isolation, Lettre } from '../../lib/modele';
+  import ClipDessin from '../savoir/ClipDessin.svelte';
 
   const {
     isolation = null,
-    lettre = null
-  }: { isolation?: Isolation | null; lettre?: Lettre | null } = $props();
+    lettre = null,
+    papier = false
+  }: {
+    isolation?: Isolation | null;
+    lettre?: Lettre | null;
+    /**
+     * Le document remis. Sur papier on ne clique pas : l'invitation disparaît,
+     * les points cessent d'appeler, et le relevé reprend son rôle — c'est le
+     * seul endroit où il ne fait pas double emploi avec les clips.
+     */
+    papier?: boolean;
+  } = $props();
 
   /** Les couleurs officielles de l'étiquette, pour poser la classe sur la maison. */
   const TEINTE_LETTRE: Record<Lettre, string> = {
@@ -28,107 +44,61 @@
     G: '#fc0205'
   };
 
-  interface Fuite {
-    id: string;
-    nom: string;
-    part: string;
-    texte: string;
+  interface Sortie {
+    /** La notion qui s'ouvre au clic. */
+    notion: string;
+    /** Le libellé posé sur le dessin, quand il doit être plus court que le terme. */
+    libelle?: string;
+    /** La paroi correspondante dans le rapport, s'il y en a une. */
     paroi?: keyof Isolation;
-    /** Souffle de chaleur : départ, arrivée. */
+    /** Le souffle de chaleur : départ, arrivée. L'arrivée porte le clip. */
     de: [number, number];
     vers: [number, number];
-    /** Pastille du libellé. */
-    pastille: [number, number];
-    zone: { x: number; y: number; w: number; h: number; r?: number };
+    /** L'épaisseur du souffle dit le poids du poste, sans écrire un chiffre. */
+    poids: number;
+    /** L'ordre de grandeur ADEME, écrit seulement sur le document remis. */
+    part: string;
+    cote: 'gauche' | 'droite';
   }
 
-  const FUITES: Fuite[] = [
-    {
-      id: 'toit',
-      nom: 'Toit',
-      part: '25-30 %',
-      paroi: 'toit',
-      texte:
-        'La chaleur monte. C’est par là qu’il en part le plus — et c’est le moins cher à traiter : quelques heures dans les combles.',
-      de: [250, 96],
-      vers: [250, 40],
-      pastille: [250, 24],
-      zone: { x: 150, y: 44, w: 200, h: 58 }
-    },
-    {
-      id: 'air',
-      nom: 'Air',
-      part: '20-25 %',
-      texte:
-        'L’air chaud s’en va, l’air froid entre : par la ventilation, mais surtout par les fuites — bas de porte, prises, trappes.',
-      de: [186, 176],
-      vers: [110, 128],
-      pastille: [86, 108],
-      zone: { x: 174, y: 156, w: 52, h: 44 }
-    },
-    {
-      id: 'murs',
-      nom: 'Murs',
-      part: '20-25 %',
-      paroi: 'murs',
-      texte:
-        'Deuxième poste. Cher à isoler, mais c’est ce qui change le plus le confort : un mur froid, on le sent même à 20 °C.',
-      de: [156, 244],
-      vers: [92, 244],
-      pastille: [66, 244],
-      zone: { x: 152, y: 212, w: 26, h: 78 }
-    },
-    {
-      id: 'fenetres',
-      nom: 'Fenêtres',
-      part: '10-15 %',
-      paroi: 'fenetres',
-      texte:
-        'Moins que ce qu’on croit. Les changer avant d’isoler les combles, c’est beaucoup dépenser pour peu gagner.',
-      de: [344, 200],
-      vers: [412, 200],
-      pastille: [440, 200],
-      zone: { x: 286, y: 178, w: 52, h: 52, r: 6 }
-    },
-    {
-      id: 'ponts',
-      nom: 'Jonctions',
-      part: '5-10 %',
-      texte:
-        'Là où l’isolant s’arrête : angle de mur, contour de fenêtre, balcon. Le froid y passe comme dans un couloir, et la moisissure suit.',
-      de: [344, 282],
-      vers: [412, 282],
-      pastille: [440, 282],
-      zone: { x: 330, y: 268, w: 22, h: 28 }
-    },
-    {
-      id: 'sol',
-      nom: 'Sol',
-      part: '7-10 %',
-      paroi: 'plancher',
-      texte:
-        'Le plancher bas, surtout au-dessus d’une cave. Le plus discret, et souvent le plus simple à traiter par en dessous.',
-      de: [250, 306],
-      vers: [250, 350],
-      pastille: [250, 370],
-      zone: { x: 152, y: 296, w: 196, h: 18 }
-    }
+  /**
+   * Les six chemins par où la chaleur s'en va. Les épaisseurs suivent les ordres
+   * de grandeur de l'ADEME — toiture d'abord, plancher bas en dernier.
+   */
+  const SORTIES: Sortie[] = [
+    { notion: 'toiture', paroi: 'toit', de: [250, 96], vers: [250, 44], poids: 7, part: '25-30 %', cote: 'droite' },
+    { notion: 'ventilation', de: [186, 176], vers: [110, 128], poids: 6, part: '20-25 %', cote: 'gauche' },
+    { notion: 'murs', paroi: 'murs', de: [156, 244], vers: [92, 244], poids: 6, part: '20-25 %', cote: 'gauche' },
+    { notion: 'fenetres', paroi: 'fenetres', de: [344, 200], vers: [412, 200], poids: 4.5, part: '10-15 %', cote: 'droite' },
+    { notion: 'pont-thermique', libelle: 'Jonctions', de: [344, 282], vers: [396, 282], poids: 3.5, part: '5-10 %', cote: 'droite' },
+    { notion: 'plancher-bas', libelle: 'Plancher', paroi: 'plancher', de: [250, 306], vers: [250, 372], poids: 4, part: '7-10 %', cote: 'droite' }
   ];
 
-  let choisi = $state<string | null>(null);
-  const detail = $derived(FUITES.find((f) => f.id === choisi) ?? null);
+  /** Le libellé lisible d'une sortie, pour le relevé du document remis. */
+  const NOM_SORTIE: Record<string, string> = {
+    toiture: 'Toiture',
+    ventilation: 'Air renouvelé',
+    murs: 'Murs',
+    fenetres: 'Fenêtres',
+    'pont-thermique': 'Jonctions',
+    'plancher-bas': 'Plancher bas'
+  };
 
-  function basculer(id: string): void {
-    choisi = choisi === id ? null : id;
-  }
+  /**
+   * Les deux équipements. Ils ne laissent pas partir la chaleur : ils la
+   * produisent. D'où le filet fin plutôt qu'un souffle — le dessin ne doit pas
+   * dire d'eux ce qui est faux.
+   */
+  const EQUIPEMENTS = [
+    { notion: 'chauffage', depuis: [201, 268] as [number, number], point: [96, 320] as [number, number], cote: 'gauche' as const },
+    { notion: 'eau-chaude', libelle: 'Eau chaude', depuis: [308, 268] as [number, number], point: [404, 320] as [number, number], cote: 'droite' as const }
+  ];
 
-  function etatDe(fuite: Fuite): 'isole' | 'nonIsole' | null {
-    if (!isolation || !fuite.paroi) return null;
-    const etat: EtatIsolation = isolation[fuite.paroi];
+  function etatDe(sortie: Sortie): 'isole' | 'nonIsole' | null {
+    if (!isolation || !sortie.paroi) return null;
+    const etat: EtatIsolation = isolation[sortie.paroi];
     return etat === 'inconnu' ? null : etat;
   }
-
-  const MENTION = { isole: 'isolé', nonIsole: 'non isolé' } as const;
 
   const NOM_PAROI: Record<string, string> = {
     toit: 'le toit',
@@ -166,10 +136,14 @@
   });
 </script>
 
-<figure>
-  <p class="invite">Touchez la maison.</p>
+<figure class:papier>
+  {#if !papier}
+    <p class="invite">Touchez un point de la maison.</p>
+  {/if}
 
-  <svg viewBox="0 0 500 396" role="group" aria-label="La maison du dossier : les six endroits par où la chaleur s’échappe.">
+  <!-- Le cadre déborde à gauche et à droite du dessin : les libellés des clips
+       font partie du schéma, pas de sa marge. -->
+  <svg viewBox="-8 0 522 420" role="group" aria-label="La maison du dossier : les endroits par où la chaleur s’échappe, et les deux équipements qui la produisent.">
     <!-- Le terrain : un filet et ses hachures, comme sur une coupe. -->
     <path d="M40 344 H460" class="sol" />
     {#each Array.from({ length: 22 }, (_, i) => 44 + i * 19) as x}
@@ -198,6 +172,19 @@
     <rect x="228" y="240" width="46" height="56" class="porte" />
     <circle cx="266" cy="270" r="3" class="poignee" />
 
+    <!-- La chaudière et le ballon : les deux seuls objets de l'intérieur. Ils
+         suffisent à dire que le logement produit sa chaleur et son eau chaude. -->
+    <g class="equipement">
+      <rect x="186" y="248" width="30" height="40" rx="3" />
+      <path d="M193 258h16M193 266h16M193 274h10" class="detail" />
+      <path d="M201 248 v-10 h14" class="tuyau" />
+    </g>
+    <g class="equipement">
+      <rect x="296" y="246" width="24" height="44" rx="12" />
+      <path d="M308 246 v-8" class="tuyau" />
+      <path d="M302 262 q6 6 12 0" class="detail" />
+    </g>
+
     <!-- La classe du logement, posée sur sa façade : c'est sa maison. -->
     {#if lettre}
       <g transform="translate(196 152)">
@@ -213,95 +200,74 @@
       </g>
     {/if}
 
-    <!-- Souffles de chaleur et libellés -->
-    {#each FUITES as fuite (fuite.id)}
-      {@const actif = choisi === fuite.id}
-      {@const etat = etatDe(fuite)}
-      <g
-        class="cible"
-        class:actif
-        class:efface={choisi !== null && !actif}
-        role="button"
-        tabindex="0"
-        aria-pressed={actif}
-        aria-label="{fuite.nom} : {fuite.part} des pertes"
-        onclick={() => basculer(fuite.id)}
-        onkeydown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            basculer(fuite.id);
-          }
-        }}
-      >
-        <rect
-          x={fuite.zone.x}
-          y={fuite.zone.y}
-          width={fuite.zone.w}
-          height={fuite.zone.h}
-          rx={fuite.zone.r ?? 8}
-          class="zone"
-        />
-        <path d="M{fuite.de[0]} {fuite.de[1]} L{fuite.vers[0]} {fuite.vers[1]}" class="souffle" />
-        <circle cx={fuite.vers[0]} cy={fuite.vers[1]} r="6" class="bout" />
+    <!-- Les souffles : le dessin dit « ça part par là » avant toute lecture. -->
+    {#each SORTIES as sortie (sortie.notion)}
+      {@const etat = etatDe(sortie)}
+      <path
+        d="M{sortie.de[0]} {sortie.de[1]} L{sortie.vers[0]} {sortie.vers[1]}"
+        class="souffle"
+        class:isole={etat === 'isole'}
+        class:non-isole={etat === 'nonIsole'}
+        style:stroke-width={sortie.poids}
+      />
+    {/each}
 
-        <g transform="translate({fuite.pastille[0]} {fuite.pastille[1]})">
-          <rect
-            x="-54"
-            y="-16"
-            width="108"
-            height="32"
-            rx="16"
-            class="fond-pastille"
-            class:isole={etat === 'isole'}
-            class:non-isole={etat === 'nonIsole'}
-          />
-          <text x="0" y="-1" class="nom">{fuite.nom}</text>
-          <text x="0" y="11" class="part" class:etat-lu={etat !== null}>
-            {etat ? MENTION[etat] : fuite.part}
-          </text>
-        </g>
-      </g>
+    <!-- Les filets des équipements : fins, ils ne disent pas une fuite. -->
+    {#each EQUIPEMENTS as equipement (equipement.notion)}
+      <ClipDessin
+        id={equipement.notion}
+        libelle={equipement.libelle}
+        x={equipement.point[0]}
+        y={equipement.point[1]}
+        depuis={equipement.depuis}
+        cote={equipement.cote}
+      />
+    {/each}
+
+    {#each SORTIES as sortie (sortie.notion)}
+      <ClipDessin
+        id={sortie.notion}
+        libelle={sortie.libelle}
+        x={sortie.vers[0]}
+        y={sortie.vers[1]}
+        cote={sortie.cote}
+        etat={etatDe(sortie)}
+      />
     {/each}
   </svg>
 
-  {#if detail}
-    <div class="reponse apparait">
-      <p class="titre">{detail.nom} · {detail.part}</p>
-      <p>{detail.texte}</p>
-      <button type="button" class="fermer" onclick={() => (choisi = null)}>← Revenir</button>
-    </div>
-  {:else}
-    <!-- On ne pose pas une question au lecteur : on lui dit ce que son rapport
-         raconte, paroi par paroi. -->
-    <figcaption class="constat">{constat}</figcaption>
+  <!-- Le relevé, sur le document remis seulement : le lecteur qui tient une
+       feuille ne peut pas ouvrir « et chez moi ? ». -->
+  {#if papier}
+    <table class="releve">
+      <thead>
+        <tr>
+          <th>Par où</th>
+          <th>Ce que dit le rapport</th>
+          <th>Part des pertes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {#each SORTIES as sortie (sortie.notion)}
+          {@const etat = etatDe(sortie)}
+          <tr>
+            <th scope="row">{NOM_SORTIE[sortie.notion]}</th>
+            <td class={etat ?? 'muet'}>
+              {#if etat === 'isole'}Isolé
+              {:else if etat === 'nonIsole'}Sans isolant
+              {:else if sortie.paroi}Non renseigné
+              {:else}—{/if}
+            </td>
+            <td class="part">{sortie.part}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
   {/if}
 
-  <!-- Le relevé : chaque endroit, ce que le rapport en dit, et son poids dans
-       la facture. C'est le détail qu'on cherche après avoir vu le dessin. -->
-  <table class="releve">
-    <thead>
-      <tr>
-        <th>Par où</th>
-        <th>Ce que dit le rapport</th>
-        <th>Part des pertes</th>
-      </tr>
-    </thead>
-    <tbody>
-      {#each FUITES as fuite (fuite.id)}
-        {@const etat = etatDe(fuite)}
-        <tr class:vise={choisi === fuite.id}>
-          <th scope="row">{fuite.nom}</th>
-          <td class={etat ?? 'muet'}>
-            {#if etat === 'isole'}Isolé
-            {:else if etat === 'nonIsole'}Sans isolant
-            {:else if fuite.paroi}Non renseigné
-            {:else}—{/if}
-          </td>
-          <td class="part">{fuite.part}</td>
-        </tr>
-      {/each}
-    </tbody>
-  </table>
+  <!-- On ne pose pas une question au lecteur : on lui dit ce que son rapport
+       raconte. Le détail se prend sur le dessin. -->
+  <figcaption class="constat">{constat}</figcaption>
 </figure>
 
 <style>
@@ -403,12 +369,88 @@
     fill: var(--or);
   }
 
-  /* Le relevé sous le dessin : ce que le rapport dit de chaque endroit. */
+  /* Les équipements : même trait que la maison, en plus discret. Ils sont là
+     pour être désignés, pas pour être admirés. */
+  .equipement rect {
+    fill: rgb(255 255 255 / 7%);
+    stroke: currentColor;
+    stroke-width: 1.4;
+    opacity: 0.85;
+  }
+
+  .equipement .detail,
+  .equipement .tuyau {
+    stroke: currentColor;
+    stroke-width: 1.2;
+    fill: none;
+    opacity: 0.55;
+  }
+
+  /* Le souffle : la seule chose qui doit se comprendre sans un mot. Son
+     épaisseur dit le poids du poste ; sa couleur, ce que le rapport en sait. */
+  .souffle {
+    stroke: var(--or-fonce);
+    stroke-linecap: round;
+    fill: none;
+    opacity: 0.9;
+  }
+
+  .souffle.isole {
+    stroke: var(--ok);
+    opacity: 0.55;
+  }
+
+  .souffle.non-isole {
+    stroke: var(--alerte);
+  }
+
+  .classe {
+    font-size: 22px;
+    font-weight: 900;
+    text-anchor: middle;
+  }
+
+  .constat {
+    margin-top: 14px;
+    font-size: 1rem;
+    font-weight: 650;
+    line-height: 1.45;
+    color: #2f3d36;
+  }
+
+  /* Sur le document remis, les points ne clignent plus et ne se laissent pas
+     survoler : ils redeviennent de simples repères de planche. */
+  .papier :global(.clip) {
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .papier :global(.clip .halo) {
+    animation: none;
+    opacity: 0;
+  }
+
+  /* Le relevé sous le dessin : ce que le rapport dit de chaque endroit.
+
+     À l'écran, il ne s'affiche pas. Le dessin porte déjà les six mêmes lignes
+     avec les six mêmes valeurs : le tableau les redisait mot pour mot, juste
+     en dessous. Un schéma qu'il faut doubler d'un tableau est un schéma qui a
+     échoué — et celui-ci n'a pas échoué.
+
+     Sur le papier, il revient : le lecteur qui tient une feuille ne peut rien
+     toucher, et c'est là que le relevé reprend son utilité. */
   .releve {
+    display: none;
     width: 100%;
     border-collapse: collapse;
     margin-top: 18px;
     font-size: 0.88rem;
+  }
+
+  @media print {
+    .releve {
+      display: table;
+    }
   }
 
   .releve th,
@@ -433,10 +475,6 @@
     width: 30%;
   }
 
-  .releve tr.vise {
-    background: var(--papier-doux);
-  }
-
   .releve .isole {
     color: var(--ok);
     font-weight: 600;
@@ -456,130 +494,5 @@
     font-variant-numeric: tabular-nums;
     color: var(--encre-doux);
     white-space: nowrap;
-  }
-
-  .cible {
-    cursor: pointer;
-    transition: opacity 0.25s ease;
-  }
-
-  .cible.efface {
-    opacity: 0.3;
-  }
-
-  .zone {
-    fill: transparent;
-    stroke: transparent;
-    stroke-width: 3;
-    transition: fill 0.2s ease, stroke 0.2s ease;
-  }
-
-  .cible:hover .zone,
-  .cible:focus-visible .zone,
-  .cible.actif .zone {
-    fill: rgb(192 144 72 / 18%);
-    stroke: var(--or);
-  }
-
-  .souffle {
-    stroke: var(--or-fonce);
-    stroke-width: 5;
-    stroke-linecap: round;
-    fill: none;
-    transition: stroke-width 0.2s ease;
-  }
-
-  .cible.actif .souffle {
-    stroke-width: 8;
-  }
-
-  .bout {
-    fill: var(--or-fonce);
-  }
-
-  .fond-pastille {
-    fill: rgb(255 255 255 / 92%);
-    stroke: var(--or);
-    stroke-width: 1.2;
-  }
-
-  .cible.actif .fond-pastille {
-    stroke: var(--or);
-    stroke-width: 2;
-  }
-
-  .fond-pastille.isole {
-    fill: var(--ok-fond);
-    stroke: var(--ok);
-  }
-
-  .fond-pastille.non-isole {
-    fill: var(--alerte-fond);
-    stroke: var(--alerte);
-  }
-
-  .classe {
-    font-size: 22px;
-    font-weight: 900;
-    text-anchor: middle;
-  }
-
-  .nom {
-    font-size: 13px;
-    font-weight: 700;
-    fill: var(--encre);
-    text-anchor: middle;
-  }
-
-  .part {
-    font-size: 11px;
-    fill: var(--gris);
-    text-anchor: middle;
-    font-weight: 700;
-  }
-
-  .part.etat-lu {
-    fill: var(--encre);
-  }
-
-  .reponse {
-    margin-top: 10px;
-    padding: 16px 20px;
-    background: var(--papier-doux);
-    border-left: 3px solid var(--or);
-    border-radius: var(--rayon-petit);
-  }
-
-  .reponse .titre {
-    margin: 0 0 4px;
-    font-weight: 700;
-    color: var(--vert-700);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-size: 0.88rem;
-  }
-
-  .reponse p:last-of-type {
-    margin: 0 0 10px;
-    font-size: 0.98rem;
-    color: var(--encre-doux);
-  }
-
-  .fermer {
-    background: none;
-    border: none;
-    padding: 0;
-    color: var(--or-fonce);
-    font-weight: 800;
-    font-size: 0.9rem;
-    cursor: pointer;
-  }
-
-  .constat {
-    margin-top: 14px;
-    font-size: 1rem;
-    font-weight: 650;
-    line-height: 1.45;
-    color: #2f3d36;
   }
 </style>

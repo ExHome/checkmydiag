@@ -154,7 +154,7 @@ export function analyser(brutes: PageTexte[]): Analyse {
     bien,
     diagnostics,
     textePages,
-    controles: controler(bien, diagnostics),
+    controles: controler(bien, diagnostics, new Date(), plageSynthese !== null),
     nonExploites: [],
     illisible,
     nbPages: pages.length

@@ -13,6 +13,23 @@
   </head>
   <body>
     <div id="app"></div>
+    <!--
+      L'analyse d'un PDF se fait dans le navigateur : sans JavaScript, il n'y a
+      rien à afficher. Plutôt qu'une page blanche, on donne la sortie utile —
+      les explications, qui sont, elles, de vraies pages HTML.
+    -->
+    <noscript>
+      <h1>Check My Diag</h1>
+      <p>
+        Cet outil lit votre rapport de diagnostic immobilier directement dans votre navigateur :
+        il a besoin de JavaScript pour fonctionner, et c’est ce qui garantit que votre document
+        ne part sur aucun serveur.
+      </p>
+      <p>
+        Pour comprendre les diagnostics sans déposer de fichier :
+        <a href="./pour-les-nuls/">Les diags pour les nuls</a>.
+      </p>
+    </noscript>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

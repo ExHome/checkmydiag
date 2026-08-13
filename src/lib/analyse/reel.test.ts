@@ -17,7 +17,7 @@ const disponible = DOSSIER.length > 0 && existsSync(DOSSIER);
 
 async function pagesDe(chemin: string): Promise<PageTexte[]> {
   const donnees = new Uint8Array(readFileSync(chemin));
-  const pdf = await getDocument({ data: donnees, useSystemFonts: true }).promise;
+  const pdf = await getDocument({ data: donnees, useSystemFonts: true, verbosity: 0 }).promise;
   const pages: PageTexte[] = [];
   for (let n = 1; n <= pdf.numPages; n++) {
     const page = await pdf.getPage(n);
@@ -46,7 +46,15 @@ describe.skipIf(!disponible)('rapports réels', () => {
     const details: string[] = [];
 
     for (const fichier of fichiers) {
-      const analyse = analyser(await pagesDe(join(DOSSIER, fichier)));
+      // Un fichier vide ou tronqué se signale et ne fait pas tomber l'épreuve :
+      // ce que l'on mesure ici, c'est ce que le moteur tire d'un rapport lisible.
+      let analyse;
+      try {
+        analyse = analyser(await pagesDe(join(DOSSIER, fichier)));
+      } catch (e) {
+        details.push(`${fichier.slice(0, 24)}… → illisible (${e instanceof Error ? e.message : '?'})`);
+        continue;
+      }
       if (analyse.diagnostics.length > 0) avecDiag++;
       details.push(
         `${fichier.slice(0, 24)}… → ${

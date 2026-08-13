@@ -105,9 +105,34 @@ function perimes(diagnostics: Diagnostic[], aujourdhui: Date): PointDeControle[]
   return points;
 }
 
-/** Contrôle 2 — un diagnostic obligatoire manque-t-il, vu l'âge du bien ? */
-function manquants(bien: Bien, presents: Set<TypeDiag>): PointDeControle[] {
+/**
+ * Âge à partir duquel l'état de l'installation électrique devient obligatoire
+ * pour vendre. C'est l'âge de l'INSTALLATION, pas du bâtiment : on ne peut donc
+ * que poser la question, jamais affirmer que le dossier est incomplet.
+ */
+const ANS_INSTALLATION = 15;
+
+/**
+ * Contrôle 2 — un diagnostic obligatoire manque-t-il, vu l'âge du bien ?
+ *
+ * Garde-fou : « il manque X dans ce dossier » n'a de sens que si le document
+ * déposé EST un dossier. Un audit énergétique n'est pas un dossier incomplet,
+ * c'est un autre document — et sur de vrais rapports, quinze réclamations
+ * infondées partaient ainsi vers des audits, souvent accompagnés d'un simple
+ * état termites.
+ *
+ * Deux signes valent preuve : la page « résumé de l'expertise », qui n'existe
+ * que dans un dossier technique, ou trois diagnostics de types différents.
+ */
+function manquants(
+  bien: Bien,
+  presents: Set<TypeDiag>,
+  aujourdhui: Date,
+  avecSynthese: boolean
+): PointDeControle[] {
   const points: PointDeControle[] = [];
+  if (!avecSynthese && presents.size < 3) return points;
+
   const annee = anneeDe(bien.anneeConstruction);
   if (annee === null) return points;
 
@@ -128,6 +153,25 @@ function manquants(bien: Bien, presents: Set<TypeDiag>): PointDeControle[] {
       titre: 'Il n’y a pas de constat plomb dans ce dossier',
       explication: `Le logement date ${formuleAnnee(bien.anneeConstruction)}. Avant 1949, les peintures contenaient du plomb : le constat est obligatoire pour vendre ou louer.`,
       quoiFaire: 'Demandez si ce rapport existe. Il est peut-être dans un autre fichier que celui-ci.'
+    });
+  }
+
+  /**
+   * L'électricité est le diagnostic le plus souvent absent des vrais dossiers :
+   * sur trente dossiers techniques mesurés, il manque dans les deux tiers.
+   *
+   * On ne le réclame pas pour le gaz : un logement tout électrique n'a aucun
+   * diagnostic gaz à fournir, et rien dans le dossier ne dit de façon sûre si
+   * le logement est raccordé. Réclamer à tort serait pire que se taire.
+   */
+  if (annee <= aujourdhui.getFullYear() - ANS_INSTALLATION && !presents.has('electricite')) {
+    points.push({
+      genre: 'manque',
+      type: 'electricite',
+      titre: 'Il n’y a pas de diagnostic électricité dans ce dossier',
+      explication: `Le logement date ${formuleAnnee(bien.anneeConstruction)}. Pour vendre, l’état de l’installation électrique est obligatoire dès que l’installation a plus de quinze ans. Ce dossier ne dit pas si elle a été refaite depuis.`,
+      quoiFaire:
+        'Posez la question : ce rapport existe-t-il, ou l’installation a-t-elle été refaite il y a moins de quinze ans ? Dans ce cas, l’attestation de l’électricien remplace le diagnostic.'
     });
   }
 
@@ -203,13 +247,15 @@ function illisibles(diagnostics: Diagnostic[]): PointDeControle[] {
 export function controler(
   bien: Bien,
   diagnostics: Diagnostic[],
-  aujourdhui: Date = new Date()
+  aujourdhui: Date = new Date(),
+  /** Le document porte une page « résumé de l'expertise » : c'est un dossier. */
+  avecSynthese = false
 ): PointDeControle[] {
   const presents = new Set(diagnostics.map((d) => d.type));
 
   return [
     ...perimes(diagnostics, aujourdhui),
-    ...manquants(bien, presents),
+    ...manquants(bien, presents, aujourdhui, avecSynthese),
     ...surfaces(bien, diagnostics),
     ...datesEparpillees(diagnostics),
     ...illisibles(diagnostics)

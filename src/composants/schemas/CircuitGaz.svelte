@@ -5,23 +5,28 @@
    *
    * Deux vignettes, deux verdicts. Rien d'autre.
    */
+  import Clip from '../savoir/Clip.svelte';
+  import ClipDessin from '../savoir/ClipDessin.svelte';
+
   interface Cas {
     id: string;
     titre: string;
     mot: string;
     danger: boolean;
     points: string[];
+    /** Les mots du métier que ce cas permet d'aller creuser. */
+    clips?: string[];
   }
 
   const CAS: Cas[] = [
     {
       id: 'ok',
       titre: 'Grille dégagée',
-      mot: 'Combustion propre',
+      mot: 'La flamme brûle bien',
       danger: false,
       points: [
-        'L’air entre par la grille basse',
-        'La flamme brûle complètement',
+        'L’air entre par la grille du bas',
+        'La flamme a de quoi brûler jusqu’au bout',
         'Les fumées partent par le conduit'
       ]
     },
@@ -33,9 +38,10 @@
       points: [
         'La flamme manque d’air',
         'Elle fabrique du monoxyde de carbone',
-        'Invisible, sans odeur',
+        'On ne le voit pas, on ne le sent pas',
         'Il endort, puis il tue'
-      ]
+      ],
+      clips: ['monoxyde-de-carbone']
     }
   ];
 
@@ -50,7 +56,7 @@
 <figure>
   <p class="invite muet petit">Touchez une situation.</p>
 
-  <svg viewBox="0 0 460 260" role="group" aria-label="À gauche, la grille de ventilation est dégagée et la flamme brûle proprement. À droite, la grille est bouchée et la combustion produit du monoxyde de carbone.">
+  <svg viewBox="0 0 460 272" role="group" aria-label="À gauche, la grille de ventilation est dégagée et la flamme brûle proprement. À droite, la grille est bouchée et la combustion produit du monoxyde de carbone.">
     {#each CAS as cas, i (cas.id)}
       {@const actif = choisi === cas.id}
       {@const dx = i * 240}
@@ -111,6 +117,12 @@
         </g>
       </g>
     {/each}
+
+    <!-- Les trois objets du diagnostic : ce qui fait entrer l'air, ce qui fait
+         sortir les fumées, et ce qui arrive quand l'un des deux manque. -->
+    <ClipDessin id="ventilation" x={40} y={250} depuis={[61, 178]} cote="droite" />
+    <ClipDessin id="conduit-de-fumees" x={150} y={250} depuis={[186, 58]} cote="droite" />
+    <ClipDessin id="monoxyde-de-carbone" x={444} y={250} depuis={[344, 100]} cote="gauche" />
   </svg>
 
   {#if detail}
@@ -121,6 +133,11 @@
           <li>{point}</li>
         {/each}
       </ul>
+      {#if detail.clips?.length}
+        <p class="creuser">
+          {#each detail.clips as id (id)}<Clip {id} />{/each}
+        </p>
+      {/if}
       <button type="button" class="fermer" onclick={() => (choisi = null)}>← Revenir au schéma</button>
     </div>
   {:else}

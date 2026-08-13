@@ -13,6 +13,7 @@
   import CircuitGaz from './CircuitGaz.svelte';
   import CheminTermites from './CheminTermites.svelte';
   import SurfaceCarrez from './SurfaceCarrez.svelte';
+  import Assainissement from './Assainissement.svelte';
 
   import type { Isolation, Lettre } from '../../lib/modele';
 
@@ -27,11 +28,12 @@
     dpe: 'Par où la chaleur part de chez vous',
     plomb: 'Pourquoi une vieille peinture est dangereuse',
     electricite: 'Ce que fait le différentiel quand le courant fuit',
-    gaz: 'Le gaz, l’air et les fumées : trois trajets à ne jamais boucher',
-    amiante: 'Où se cache l’amiante dans un logement',
+    gaz: 'Ce qui se passe quand la grille d’air est bouchée',
+    amiante: 'Tant qu’on n’y touche pas, l’amiante reste enfermée',
     termites: 'Par où les termites arrivent',
-    erp: 'Le risque le plus fréquent : l’argile qui gonfle et se rétracte',
-    carrez: 'Ce qui compte dans la surface, et ce qui ne compte pas'
+    erp: 'Le sol argileux gonfle l’hiver et se tasse l’été',
+    carrez: 'Ce qui compte dans la surface, et ce qui ne compte pas',
+    assainissement: 'Où va l’eau usée quand il n’y a pas de tout-à-l’égout'
   };
 
   const titre = $derived(TITRES[type]);
@@ -56,6 +58,8 @@
       <Argiles />
     {:else if type === 'carrez'}
       <SurfaceCarrez />
+    {:else if type === 'assainissement'}
+      <Assainissement />
     {/if}
   </section>
 {/if}

@@ -3,6 +3,8 @@
    * La loi Carrez en une idée : la barre des 1,80 m. Au-dessus ça compte,
    * en dessous non.
    */
+  import ClipDessin from '../savoir/ClipDessin.svelte';
+
   interface Partie {
     id: string;
     titre: string;
@@ -30,9 +32,9 @@
       compte: false,
       points: [
         'Sous les rampants, sous l’escalier',
-        'Murs, cloisons et gaines déduits',
-        'Caves, garages, balcons exclus',
-        'D’où l’écart avec la surface annoncée'
+        'On déduit aussi les murs, les cloisons et les gaines — les coffres qui cachent les tuyaux',
+        'Cave, garage et balcon ne comptent pas non plus',
+        'C’est pour ça que le chiffre est plus petit que celui de l’annonce'
       ]
     }
   ];
@@ -94,6 +96,10 @@
         {/if}
       </g>
     {/each}
+
+    <!-- La règle, et la partie du toit qui lui échappe. -->
+    <ClipDessin id="loi-carrez" x={404} y={54} depuis={[300, 108]} cote="gauche" />
+    <ClipDessin id="rampant" x={58} y={96} depuis={[112, 138]} cote="droite" />
   </svg>
 
   {#if detail}

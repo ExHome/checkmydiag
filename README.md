@@ -48,7 +48,7 @@ collectif, superficie loi Carrez.
 Un « dossier technique » qui réunit plusieurs diagnostics dans un seul PDF est
 découpé automatiquement, rapport par rapport.
 
-## Deux pièges déjà traités
+## Trois pièges déjà traités
 
 Ils expliquent la forme du code, autant les connaître avant d'y toucher.
 
@@ -61,6 +61,64 @@ Ils expliquent la forme du code, autant les connaître avant d'y toucher.
   gains après travaux (« - 476 kWhEP/m²/an ») dans le même format que la
   consommation réelle. Le moteur ne lit donc **que** des valeurs dont la phrase
   d'origine désigne sans ambiguïté ce logement-ci, à son état actuel.
+- **Il n'existe pas de rapport isolé par diagnostic.** Un diagnostiqueur ne
+  remet pas un `ELEC.pdf` et un `GAZ.pdf` : il remet un dossier technique qui
+  contient tout. Le banc de calibration a longtemps échantillonné par nom de
+  fichier et tirait donc zéro fichier pour six familles sur sept — sans que
+  rien ne le signale. Il mesure aujourd'hui **par diagnostic trouvé**, et
+  imprime une carte de couverture.
+  Ce que cette carte a montré : dans deux tiers des dossiers, il n'y a
+  réellement pas de diagnostic électricité. Le moteur ne le rate pas, il est
+  absent — d'où le contrôle qui le réclame désormais.
+
+## « Les diags pour les nuls »
+
+Une rubrique publique de questions-réponses, à `/pour-les-nuls/` : un thème par
+famille de sujets, une page par question, un dessin quand il explique mieux
+qu'un paragraphe.
+
+Elle ne vit **pas** dans l'application. Ce sont de vraies pages HTML, écrites
+dans `dist/` au moment du build par `scripts/plugin-nuls.ts` — sans bundle, sans
+hydratation, sans appel réseau. C'est une décision de référencement autant que
+d'accessibilité : une réponse qui n'existe qu'après exécution d'un bundle
+n'existe ni pour un moteur de recherche, ni pour un téléphone en bord de réseau.
+
+| Chemin | Rôle |
+| --- | --- |
+| `src/lib/nuls/socle.ts` | les types : une question, un thème, une source |
+| `src/lib/nuls/themes/*.ts` | le contenu, un fichier par thème |
+| `src/lib/nuls/dessins.ts` | les schémas, en SVG écrit à la main |
+| `src/lib/nuls/rendu.ts` | la fabrique des pages, du sitemap et du robots.txt |
+| `scripts/plugin-nuls.ts` | le plugin Vite : sert en dev, écrit au build |
+| `public/pour-les-nuls.css` | la feuille de la rubrique, autonome |
+
+### Avant la première mise en ligne
+
+**Réglez l'adresse du site.** `SITE`, en tête de `src/lib/nuls/rendu.ts`, sert
+aux liens canoniques, aux données structurées et au sitemap. Sa valeur par
+défaut est un exemple. Passez la vôtre par l'environnement :
+
+```bash
+CMD_SITE=https://mon-domaine.fr npm run build
+```
+
+Un canonique qui pointe vers un domaine qui n'est pas le vôtre est pire que pas
+de canonique.
+
+### Ajouter une question
+
+Une entrée dans le tableau `questions` du thème concerné. La réponse courte est
+ce que lira la majorité des gens — et c'est la description de la page dans les
+résultats de recherche : elle doit se suffire.
+
+`npm test` refuse le corpus si un renvoi pointe vers une question qui n'existe
+pas, si deux questions partagent une adresse, si un dessin est appelé sans
+exister, ou si une réponse réglementaire n'est pas datée. Le build s'arrête sur
+les mêmes renvois morts.
+
+En développement, `/pour-les-nuls/planche/` affiche les dessins côte à côte.
+Cette page n'est jamais publiée : elle sert à repérer d'un coup celui qui déborde
+de son cadre.
 
 ## Développement
 

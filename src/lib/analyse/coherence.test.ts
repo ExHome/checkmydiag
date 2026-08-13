@@ -55,31 +55,62 @@ describe('contrôle des dates de validité', () => {
 });
 
 describe('contrôle des diagnostics manquants', () => {
+  /** Un dossier technique : il porte sa page « résumé de l'expertise ». */
+  function surDossier(bien: Bien, ...types: Diagnostic['type'][]) {
+    return controler(bien, types.map((t) => diag(t, '01/07/2026')), AUJOURDHUI, true);
+  }
+
   it('réclame un repérage amiante pour un logement d’avant 1997', () => {
-    const bien: Bien = { anneeConstruction: '1975' };
-    const points = controler(bien, [diag('dpe', '01/07/2026')], AUJOURDHUI);
+    const points = surDossier({ anneeConstruction: '1975' }, 'dpe', 'termites');
     expect(points.some((p) => p.genre === 'manque' && p.type === 'amiante')).toBe(true);
   });
 
   it('réclame un constat plomb pour un logement d’avant 1949', () => {
-    const bien: Bien = { anneeConstruction: 'Avant 1948' };
-    const points = controler(bien, [diag('dpe', '01/07/2026')], AUJOURDHUI);
+    const points = surDossier({ anneeConstruction: 'Avant 1948' }, 'dpe', 'termites');
     expect(points.some((p) => p.genre === 'manque' && p.type === 'plomb')).toBe(true);
   });
 
+  it('réclame le diagnostic électricité au-delà de quinze ans', () => {
+    const points = surDossier({ anneeConstruction: '1975' }, 'dpe', 'termites');
+    const manque = points.find((p) => p.genre === 'manque' && p.type === 'electricite');
+    expect(manque).toBeDefined();
+    // Le ton : une question à poser, jamais un dossier déclaré fautif.
+    expect(manque?.explication).toMatch(/quinze ans/);
+    expect(manque?.explication).not.toMatch(/faux|incomplet|erreur/i);
+  });
+
+  it('ne réclame pas l’électricité pour une installation récente', () => {
+    const points = surDossier({ anneeConstruction: '2020' }, 'dpe', 'termites');
+    expect(points.some((p) => p.type === 'electricite')).toBe(false);
+  });
+
+  it('ne réclame jamais le gaz : rien ne dit que le logement y est raccordé', () => {
+    const points = surDossier({ anneeConstruction: '1930' }, 'dpe', 'termites');
+    expect(points.some((p) => p.type === 'gaz')).toBe(false);
+  });
+
   it('ne réclame rien pour un logement récent', () => {
-    const bien: Bien = { anneeConstruction: '2015' };
-    expect(controler(bien, [diag('dpe', '01/07/2026')], AUJOURDHUI)).toHaveLength(0);
+    expect(surDossier({ anneeConstruction: '2015' }, 'dpe', 'termites')).toHaveLength(0);
   });
 
   it('ne réclame pas ce qui est déjà au dossier', () => {
-    const bien: Bien = { anneeConstruction: '1930' };
-    const points = controler(
-      bien,
-      [diag('dpe', '01/07/2026'), diag('amiante', '01/07/2026'), diag('plomb', '01/07/2026')],
-      AUJOURDHUI
-    );
+    const points = surDossier({ anneeConstruction: '1930' }, 'dpe', 'amiante', 'plomb', 'electricite');
     expect(points.filter((p) => p.genre === 'manque')).toHaveLength(0);
+  });
+
+  it('ne réclame rien à un audit énergétique : ce n’est pas un dossier', () => {
+    // Un audit accompagné d'un état termites reste un audit. Lui reprocher
+    // l'absence de repérage amiante trompe le lecteur sur ce qu'il a déposé.
+    const bien: Bien = { anneeConstruction: 'Avant 1948' };
+    const rapport = [diag('dpe', '01/07/2026'), diag('termites', '01/07/2026')];
+    expect(controler(bien, rapport, AUJOURDHUI).filter((p) => p.genre === 'manque')).toHaveLength(0);
+  });
+
+  it('reconnaît un dossier à ses trois diagnostics, même sans page de synthèse', () => {
+    const bien: Bien = { anneeConstruction: 'Avant 1948' };
+    const dossier = [diag('dpe', '01/07/2026'), diag('termites', '01/07/2026'), diag('erp', '01/07/2026')];
+    const points = controler(bien, dossier, AUJOURDHUI);
+    expect(points.some((p) => p.genre === 'manque' && p.type === 'amiante')).toBe(true);
   });
 });
 
