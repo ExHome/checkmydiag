@@ -17,6 +17,7 @@
    */
   import type { EtatIsolation, Isolation, Lettre } from '../../lib/modele';
   import ClipDessin from '../savoir/ClipDessin.svelte';
+  import Maison from './briques/Maison.svelte';
 
   const {
     isolation = null,
@@ -150,11 +151,9 @@
       <path d="M{x} 344 l-9 12" class="hachure" />
     {/each}
 
-    <!-- La maison : un trait, rien de plus. Le volume se lit aux arêtes. -->
-    <path d="M136 132 L250 56 L364 132 Z" class="toit" />
-    <rect x="300" y="66" width="24" height="46" class="cheminee" />
-    <rect x="152" y="132" width="196" height="164" class="facade" />
-    <rect x="152" y="296" width="196" height="16" class="fondation" />
+    <!-- La maison : la brique commune de la bibliothèque. C'est d'elle que
+         viennent les proportions employées partout ailleurs. -->
+    <Maison x={152} y={132} l={196} cheminee fondation fenetres={2} porte />
 
     <!-- Les cotes : c'est ce qui donne au dessin son air de planche. -->
     <g class="cote">
@@ -165,11 +164,6 @@
       <path d="M124 132 V296M119 132 h10M119 296 h10" />
     </g>
 
-    <!-- Fenêtres et porte -->
-    <rect x="180" y="178" width="52" height="52" class="vitre" />
-    <rect x="286" y="178" width="52" height="52" class="vitre" />
-    <path d="M206 178v52M180 204h52M312 178v52M286 204h52" class="croisillon" />
-    <rect x="228" y="240" width="46" height="56" class="porte" />
     <circle cx="266" cy="270" r="3" class="poignee" />
 
     <!-- La chaudière et le ballon : les deux seuls objets de l'intérieur. Ils
@@ -276,7 +270,7 @@
   }
 
   .invite {
-    margin: 0 0 10px;
+    margin: 0 0 var(--e2);
     font-size: var(--t-micro);
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -323,47 +317,12 @@
     opacity: 0.85;
   }
 
-  .toit {
-    fill: rgb(192 144 72 / 22%);
-    stroke: var(--or);
-    stroke-width: 1.8;
-    stroke-linejoin: round;
-  }
 
-  .cheminee {
-    fill: none;
-    stroke: var(--or);
-    stroke-width: 1.8;
-  }
 
-  .facade {
-    fill: rgb(255 255 255 / 5%);
-    stroke: currentColor;
-    stroke-width: 1.5;
-  }
 
-  .fondation {
-    fill: currentColor;
-    opacity: 0.18;
-  }
 
-  .vitre {
-    fill: rgb(192 144 72 / 16%);
-    stroke: var(--or);
-    stroke-width: 1.4;
-  }
 
-  .croisillon {
-    stroke: var(--or);
-    stroke-width: 1;
-    opacity: 0.7;
-  }
 
-  .porte {
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.5;
-  }
 
   .poignee {
     fill: var(--or);
@@ -411,7 +370,7 @@
   }
 
   .constat {
-    margin-top: 14px;
+    margin-top: var(--e3);
     font-size: var(--t-base);
     font-weight: 650;
     line-height: 1.45;
@@ -443,7 +402,7 @@
     display: none;
     width: 100%;
     border-collapse: collapse;
-    margin-top: 18px;
+    margin-top: var(--e4);
     font-size: var(--t-petit);
   }
 
@@ -456,7 +415,7 @@
   .releve th,
   .releve td {
     text-align: left;
-    padding: 9px 4px;
+    padding: var(--e2) var(--e1);
     border-bottom: 1px solid var(--trait-fin);
   }
 

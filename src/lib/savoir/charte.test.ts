@@ -44,4 +44,15 @@ describe('la charte des schémas', () => {
 
     expect(fautifs).toEqual([]);
   });
+
+  /**
+   * Trois schémas dessinaient trois maisons différentes. Elles viennent
+   * maintenant de la même brique — un seul endroit décide de la silhouette.
+   */
+  it('ne redessine pas la maison dans un schéma', () => {
+    const rebelles = schemas
+      .filter(({ source }) => /^\s*\.(?:toit|facade)\s*\{/m.test(source))
+      .map(({ nom }) => nom);
+    expect(rebelles).toEqual([]);
+  });
 });

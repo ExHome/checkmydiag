@@ -12,6 +12,7 @@
    */
   import ClipDessin from '../savoir/ClipDessin.svelte';
   import Clip from '../savoir/Clip.svelte';
+  import Maison from './briques/Maison.svelte';
 
   /** Les perforations du drain, régulières : c'est ce qui dit « ça s'infiltre ». */
   const GOUTTES = [318, 348, 378, 408, 438];
@@ -28,10 +29,9 @@
       <path d="M{x} 120 l-8 11" class="hachure" />
     {/each}
 
-    <!-- La maison : le strict nécessaire, elle n'est pas le sujet. -->
-    <path d="M20 62 L65 32 L110 62 Z" class="toit" />
-    <rect x="30" y="62" width="70" height="58" class="facade" />
-    <rect x="52" y="86" width="26" height="34" class="porte" />
+    <!-- La maison : le strict nécessaire, elle n'est pas le sujet. C'est la
+         brique commune, posée sur le sol — la même que sur les autres schémas. -->
+    <Maison x={30} y={62} l={70} porte />
 
     <!-- L'eau qui sort du logement. -->
     <path d="M100 100 H132 V150 H150" class="eau" />
@@ -76,7 +76,7 @@
   }
 
   .invite {
-    margin: 0 0 10px;
+    margin: 0 0 var(--e2);
     font-size: var(--t-micro);
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -108,24 +108,8 @@
     opacity: 0.2;
   }
 
-  .toit {
-    fill: rgb(192 144 72 / 22%);
-    stroke: var(--or);
-    stroke-width: 1.8;
-    stroke-linejoin: round;
-  }
 
-  .facade {
-    fill: rgb(255 255 255 / 5%);
-    stroke: currentColor;
-    stroke-width: 1.5;
-  }
 
-  .porte {
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.4;
-  }
 
   /* L'eau : un seul trait bleu-vert, du départ à l'infiltration. */
   .eau,
@@ -185,8 +169,8 @@
   }
 
   .regle {
-    margin: 14px 0 0;
-    padding: 12px 14px;
+    margin: var(--e3) 0 0;
+    padding: var(--e3) var(--e3);
     background: var(--papier-doux);
     border-left: 4px solid var(--vert-500);
     border-radius: 8px;

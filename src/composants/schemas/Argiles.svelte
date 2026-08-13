@@ -7,6 +7,7 @@
    */
   import Clip from '../savoir/Clip.svelte';
   import ClipDessin from '../savoir/ClipDessin.svelte';
+  import Maison from './briques/Maison.svelte';
   import Verdict from './Verdict.svelte';
 
   interface Saison {
@@ -87,10 +88,10 @@
             <path d="M56 160h24M92 168h24M132 158h26" class="gonfle" />
           {/if}
 
-          <!-- La maison, penchée en été -->
+          <!-- La maison, penchée en été. C'est la brique commune : même
+               silhouette que sur le DPE et l'assainissement, à l'échelle près. -->
           <g transform={saison.chaud ? 'rotate(-3.5 112 140)' : ''}>
-            <rect x="70" y="94" width="84" height="46" class="mur" />
-            <path d="M60 94 L112 66 L164 94 Z" class="toit" />
+            <Maison x={80} y={86.4} l={64} />
             {#if saison.chaud}
               <path d="M96 140 l5 -13 -4 -9 6 -10" class="fissure" />
             {:else}
@@ -98,13 +99,14 @@
             {/if}
           </g>
 
-          <!-- Le mouvement -->
+          <!-- Le mouvement : à côté de la maison, jamais dessus — sinon on ne
+               sait plus si la flèche décrit le sol ou le bâti. -->
           {#if saison.chaud}
-            <path d="M84 74 v16" class="mouvement" />
-            <path d="M79 86 l5 6 5 -6" class="pointe" />
+            <path d="M62 96 v20" class="mouvement" />
+            <path d="M57 112 l5 6 5 -6" class="pointe" />
           {:else}
-            <path d="M142 90 v-16" class="mouvement" />
-            <path d="M137 78 l5 -6 5 6" class="pointe" />
+            <path d="M162 116 v-20" class="mouvement" />
+            <path d="M157 100 l5 -6 5 6" class="pointe" />
           {/if}
         </g>
 
@@ -146,7 +148,7 @@
   }
 
   .invite {
-    margin: 0 0 4px;
+    margin: 0 0 var(--e1);
   }
 
   svg {
@@ -207,16 +209,7 @@
     stroke-linecap: round;
   }
 
-  .mur {
-    fill: var(--vert-100);
-  }
 
-  .toit {
-    fill: var(--vert-500);
-    stroke: var(--vert-700);
-    stroke-width: 2;
-    stroke-linejoin: round;
-  }
 
   .fissure {
     fill: none;
@@ -239,8 +232,8 @@
 
 
   .reponse {
-    margin-top: 12px;
-    padding: 16px 20px;
+    margin-top: var(--e3);
+    padding: var(--e4) var(--e4);
     background: rgb(79 209 255 / 10%);
     border-left: 4px solid var(--vert-300);
     border-radius: var(--rayon-petit);
@@ -252,7 +245,7 @@
   }
 
   .reponse .titre {
-    margin: 0 0 8px;
+    margin: 0 0 var(--e2);
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -266,15 +259,15 @@
 
   .reponse ul {
     list-style: none;
-    margin: 0 0 10px;
+    margin: 0 0 var(--e2);
     padding: 0;
     display: grid;
-    gap: 6px;
+    gap: var(--e1);
   }
 
   .reponse li {
     position: relative;
-    padding-left: 18px;
+    padding-left: var(--e4);
     font-size: var(--t-base);
   }
 
@@ -301,6 +294,6 @@
   }
 
   figcaption {
-    margin-top: 12px;
+    margin-top: var(--e3);
   }
 </style>
