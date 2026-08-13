@@ -212,7 +212,7 @@ function gabarit(page: Page): string {
     <title>${html(page.titre)}</title>
     <meta name="description" content="${html(page.description)}" />
     <link rel="canonical" href="${html(url)}" />
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    <meta name="robots" content="${EDITEUR_CONNU ? 'index, follow, max-image-preview:large, max-snippet:-1' : 'noindex, nofollow'}" />
     <meta name="theme-color" content="#093f30" />
     <meta property="og:type" content="article" />
     <meta property="og:site_name" content="${MARQUE}" />
@@ -919,7 +919,34 @@ ${adresses
 `;
 }
 
+/**
+ * Le site est-il ouvert aux moteurs de recherche ?
+ *
+ * Non tant que la société qui l'édite n'est pas immatriculée. Un site qui
+ * donne des informations réglementaires — plomb, monoxyde, décisions à
+ * plusieurs dizaines de milliers d'euros — sans éditeur identifiable ni
+ * conditions opposables ne doit pas être référencé : le gain de quelques
+ * semaines de référencement ne vaut pas ce risque.
+ *
+ * Le site reste **entièrement accessible** : on peut l'ouvrir, le montrer,
+ * l'envoyer. Seuls les robots sont écartés.
+ *
+ * Le jour de l'immatriculation, `EDITEUR_CONNU` passe à `true` — et
+ * l'indexation reprend d'un coup, ici comme dans les pages.
+ */
+export const EDITEUR_CONNU = false;
+
 export function robots(): string {
+  if (!EDITEUR_CONNU) {
+    return `# Le site n'est pas encore ouvert aux moteurs de recherche : la société
+# qui l'édite est en cours de création. Il n'a donc ni mentions légales, ni
+# conditions opposables. Cette page redeviendra « Allow » le jour de
+# l'immatriculation.
+User-agent: *
+Disallow: /
+`;
+  }
+
   return `User-agent: *
 Allow: /
 
