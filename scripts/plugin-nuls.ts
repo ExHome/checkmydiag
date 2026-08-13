@@ -10,20 +10,56 @@
  * rechargent à chaque requête, donc écrire une question et rafraîchir suffit.
  */
 import type { Plugin, ViteDevServer } from 'vite';
-import { pages, robots, sitemap } from '../src/lib/nuls/rendu';
+import { cartes, pages, robots, sitemap, textesDesCartes } from '../src/lib/nuls/rendu';
 import { liensMorts } from '../src/lib/nuls';
+import { FAMILLE, preparerPolice, type PoliceFigee } from './police-cartes';
 
 /** La forme du module de rendu, telle qu'elle est rechargée en développement. */
 type Rendu = {
   pages: typeof pages;
+  cartes: typeof cartes;
+  textesDesCartes: typeof textesDesCartes;
   sitemap: typeof sitemap;
   robots: typeof robots;
   planche: () => string;
 };
 
+/**
+ * La police est préparée une fois puis gardée : la figer et l'écrire coûte une
+ * seconde, et on rend quatre-vingt-dix cartes.
+ */
+let police: Promise<PoliceFigee> | null = null;
+const policeDesCartes = (textes: string[], racine: string): Promise<PoliceFigee> =>
+  (police ??= preparerPolice(textes, racine));
+
+/**
+ * Le rendu d'une carte en PNG.
+ *
+ * Le rastériseur est chargé à la demande : c'est un module natif, il n'a rien à
+ * faire dans la configuration de Vite tant qu'aucune carte n'est demandée.
+ *
+ * `loadSystemFonts` reste actif pour la linéale des mentions ; le titre, lui,
+ * vient du fichier — et seulement de lui, car les polices passées en mémoire
+ * sont ignorées sans le dire (voir `police-cartes.ts`).
+ */
+async function png(svg: string, fichier: string): Promise<Buffer> {
+  const { Resvg } = await import('@resvg/resvg-js');
+  const rendu = new Resvg(svg, {
+    font: { fontFiles: [fichier], loadSystemFonts: true, defaultFontFamily: FAMILLE }
+  });
+  return Buffer.from(rendu.render().asPng());
+}
+
 export function nuls(): Plugin {
+  /** La racine du projet, seule façon fiable de retrouver la police. */
+  let racine = '.';
+
   return {
     name: 'check-my-diag:pour-les-nuls',
+
+    configResolved(config) {
+      racine = config.root;
+    },
 
     /**
      * En développement, le module est relu à chaque requête par le serveur
@@ -32,7 +68,39 @@ export function nuls(): Plugin {
      */
     configureServer(serveur: ViteDevServer) {
       serveur.middlewares.use(async (requete, reponse, suite) => {
-        const chemin = (requete.url ?? '/').split('?')[0] ?? '/';
+        // Sans ce filet, une promesse rejetée ici n'est pas rattrapée par
+        // Connect : Node tue le processus, et le serveur de développement
+        // disparaît sans laisser de message. Vu.
+        try {
+          await servir(serveur, requete.url ?? '/', reponse, suite);
+        } catch (erreur) {
+          serveur.config.logger.error(
+            `[pour-les-nuls] ${requete.url} : ${erreur instanceof Error ? erreur.stack : erreur}`
+          );
+          reponse.statusCode = 500;
+          reponse.end('La rubrique n’a pas pu être fabriquée. Voir le terminal.');
+        }
+      });
+
+      async function servir(
+        serveur: ViteDevServer,
+        url: string,
+        reponse: Parameters<Parameters<ViteDevServer['middlewares']['use']>[0]>[1],
+        suite: () => void
+      ): Promise<void> {
+        const chemin = url.split('?')[0] ?? '/';
+
+        // Les cartes de partage, rendues à la demande : c'est le seul moyen de
+        // les regarder avant une mise en ligne.
+        if (chemin.startsWith('/og/') && chemin.endsWith('.png')) {
+          const rendu = (await serveur.ssrLoadModule('/src/lib/nuls/rendu.ts')) as Rendu;
+          const { fichier, mesure } = await policeDesCartes(rendu.textesDesCartes(), racine);
+          const carte = rendu.cartes(mesure).find((c) => `/${c.chemin}` === chemin);
+          if (!carte) return suite();
+          reponse.setHeader('Content-Type', 'image/png');
+          reponse.end(await png(carte.svg, fichier));
+          return;
+        }
 
         if (chemin === '/sitemap.xml' || chemin === '/robots.txt') {
           const rendu = (await serveur.ssrLoadModule('/src/lib/nuls/rendu.ts')) as Rendu;
@@ -76,7 +144,7 @@ export function nuls(): Plugin {
 
         reponse.setHeader('Content-Type', 'text/html; charset=utf-8');
         reponse.end(await serveur.transformIndexHtml(chemin, page.contenu));
-      });
+      }
     },
 
     /**
@@ -85,7 +153,7 @@ export function nuls(): Plugin {
      * d'être, il ne peut pas y avoir de renvoi vers une question qui n'existe
      * pas.
      */
-    generateBundle() {
+    async generateBundle() {
       const morts = liensMorts();
       if (morts.length) {
         this.error(
@@ -96,6 +164,15 @@ export function nuls(): Plugin {
 
       for (const page of pages()) {
         this.emitFile({ type: 'asset', fileName: page.chemin, source: page.contenu });
+      }
+
+      const { fichier, mesure } = await policeDesCartes(textesDesCartes(), racine);
+      for (const carte of cartes(mesure)) {
+        this.emitFile({
+          type: 'asset',
+          fileName: carte.chemin,
+          source: await png(carte.svg, fichier)
+        });
       }
 
       this.emitFile({ type: 'asset', fileName: 'sitemap.xml', source: sitemap() });

@@ -337,6 +337,96 @@ export const DPE: Theme = {
         'La date de visite figure sur la page de garde de votre DPE. Si elle est antérieure à juillet 2021, ne cherchez pas plus loin : il est à refaire.',
       aussi: ['combien-de-temps-un-diagnostic-est-valable', 'le-dpe-est-il-fiable', 'quels-travaux-pour-gagner-une-classe'],
       verifie: V
+    },
+
+    {
+      id: 'comment-est-calcule-le-dpe',
+      question: 'Comment est calculé le DPE ?',
+      variantes: [
+        'méthode de calcul DPE 3CL',
+        'sur quoi se base le DPE',
+        'que relève le diagnostiqueur pour le DPE'
+      ],
+      court:
+        'Sur les caractéristiques du logement, relevées une par une, puis passées dans un moteur de calcul commun à tous les diagnostiqueurs. Ni vos factures, ni votre consommation réelle n’y entrent.',
+      dessin: 'cinq-postes',
+      points: [
+        'Ce qui est relevé : surfaces et hauteurs, orientation, nature et épaisseur des murs, type de vitrage et de menuiserie, isolation de la toiture et du plancher bas.',
+        'Puis les équipements : générateur de chauffage, production d’eau chaude, ventilation, climatisation, avec leur âge et leur rendement.',
+        'Le calcul applique ensuite un scénario d’occupation conventionnel — même température, même usage pour tout le monde.',
+        'Quand une caractéristique ne peut être ni vue ni prouvée, une valeur par défaut s’applique, volontairement défavorable.',
+        'Le résultat est déposé dans la base publique de l’ADEME, qui lui attribue son numéro à treize caractères.'
+      ],
+      piege:
+        'Le poste qui fait basculer une classe est presque toujours l’isolation, pas la chaudière. Une facture de travaux retrouvée au fond d’un tiroir vaut souvent plus qu’une négociation avec le diagnostiqueur.',
+      chezMoi:
+        'La page « descriptif du bien » de votre DPE liste tout ce qui a été retenu. Les mentions « valeur par défaut » y signalent les points où le doute vous a coûté des points.',
+      aussi: ['le-dpe-est-il-fiable', 'le-dpe-correspond-il-a-mes-factures', 'quels-travaux-pour-gagner-une-classe'],
+      sources: [{ titre: 'Arrêté du 31 mars 2021 — méthode de calcul 3CL-DPE 2021', url: LEGI }],
+      verifie: V
+    },
+
+    {
+      id: 'combien-coute-un-dpe',
+      question: 'Combien coûte un DPE ?',
+      variantes: ['prix DPE maison', 'tarif diagnostic performance énergétique', 'prix DPE appartement'],
+      court:
+        'Les prix sont libres : aucun tarif n’est fixé par la loi. Ce qui les fait varier : la surface, le nombre de niveaux, la complexité du chauffage, la région — et le fait de le commander seul ou avec les autres diagnostics.',
+      points: [
+        'Commandé seul, un DPE porte tout le coût du déplacement : c’est le cas le plus cher au mètre carré.',
+        'Groupé avec les autres diagnostics d’une vente, il revient bien moins cher — une seule visite pour tout.',
+        'L’audit énergétique, lui, est un travail d’une autre ampleur : chiffrage de scénarios de travaux, donc un budget distinct.',
+        'Comparez ce que couvrent les devis avant de comparer les montants, et vérifiez la certification du professionnel.'
+      ],
+      piege:
+        'Le prix ne change rien à la note. Payer plus cher n’achète pas une meilleure classe : ce qui l’améliore, ce sont les justificatifs que vous fournissez.',
+      aussi: ['combien-ca-coute', 'c-est-quoi-l-audit-energetique', 'le-dpe-est-il-fiable'],
+      verifie: V
+    },
+
+    {
+      id: 'c-est-quoi-un-dpe-vierge',
+      question: 'C’est quoi un DPE vierge, et vaut-il encore quelque chose ?',
+      variantes: [
+        'DPE vierge définition',
+        'DPE sans étiquette',
+        'DPE vierge encore valable'
+      ],
+      court:
+        'C’est un DPE sans étiquette, établi avant la réforme de 2021 quand les factures nécessaires au calcul manquaient. Il n’en existe plus : tous les DPE portent aujourd’hui une classe, et un DPE vierge est forcément trop ancien pour servir.',
+      dessin: 'etiquette',
+      points: [
+        'Avant 2021, certains logements — surtout anciens, ou vendus vides depuis longtemps — repartaient sans classe.',
+        'La méthode actuelle calcule à partir du bâti : il n’y a plus de cas où le calcul est impossible.',
+        'Si vous détenez un DPE vierge, il date d’avant juillet 2021 : il est à refaire, sans discussion.',
+        'Une annonce qui affiche encore « DPE vierge » signale un dossier qui n’a pas été mis à jour.'
+      ],
+      aussi: ['mon-ancien-dpe-est-il-encore-valable', 'c-est-quoi-le-dpe', 'comment-est-calcule-le-dpe'],
+      verifie: V
+    },
+
+    {
+      id: 'dpe-petite-surface',
+      question: 'Mon studio est mal noté : les petites surfaces sont-elles pénalisées ?',
+      variantes: [
+        'DPE studio 40m2',
+        'DPE petite surface réforme',
+        'DPE injuste petit logement'
+      ],
+      court:
+        'Elles l’étaient. Le calcul de l’eau chaude sanitaire pesait trop lourd sur les logements de 40 m² ou moins, ce qui les déclassait mécaniquement. Les seuils ont été corrigés en 2024 pour ces surfaces.',
+      dessin: 'deux-etiquettes',
+      points: [
+        'Dans un petit logement, l’eau chaude représente une part énorme du total ramené au mètre carré : c’est ce déséquilibre qui a été corrigé.',
+        'La correction a fait sortir un grand nombre de studios des classes F et G, donc de l’interdiction de louer.',
+        'Un DPE de petite surface établi avant cette correction peut être réédité sans nouvelle visite, par le diagnostiqueur qui l’a produit.',
+        'Vérifiez la date de votre DPE avant de renoncer à louer : la correction peut vous concerner.'
+      ],
+      piege:
+        'Une étiquette qui s’améliore par changement de règle ne change rien au logement lui-même. Il consomme autant qu’avant : c’est la mesure qui était faussée, pas le confort qui s’est amélioré.',
+      aussi: ['puis-je-encore-louer-un-logement-classe-g', 'comment-lire-l-etiquette-dpe', 'mon-ancien-dpe-est-il-encore-valable'],
+      sources: [{ titre: 'Arrêté du 25 mars 2024 modifiant les seuils pour les surfaces de 40 m² ou moins', url: LEGI }],
+      verifie: V
     }
   ]
 };

@@ -199,6 +199,74 @@ export const VENDRE: Theme = {
       aussi: ['que-risque-t-on-sans-diagnostic', 'un-diagnostic-garantit-il-le-logement', 'contester-un-diagnostic'],
       sources: [{ titre: 'Code civil, articles 1641 et suivants (vices cachés)', url: LEGI }],
       verifie: V
+    },
+
+    {
+      id: 'vendre-un-logement-neuf-ou-recent',
+      question: 'Mon logement est récent : ai-je vraiment besoin de diagnostics ?',
+      variantes: [
+        'diagnostic vente maison neuve',
+        'diagnostic appartement récent',
+        'vendre un bien de moins de 10 ans'
+      ],
+      court:
+        'Oui, mais la liste fond. Un bâtiment construit après juillet 1997 échappe à l’amiante et au plomb ; une installation de moins de quinze ans échappe à l’électricité et au gaz. Restent le DPE, l’état des risques, et la loi Carrez en copropriété.',
+      dessin: 'dates-construction',
+      points: [
+        'Le DPE est dû quel que soit l’âge du bien — un logement récent a simplement de bonnes chances d’être bien noté.',
+        'L’état des risques suit l’adresse, pas l’année de construction : il est dû partout où un risque est cartographié.',
+        'Les termites restent dus si la commune est classée, même pour une construction neuve.',
+        'Gardez l’attestation de conformité électrique du constructeur : c’est elle qui vous dispense du diagnostic pendant quinze ans.'
+      ],
+      piege:
+        'C’est la date du permis de construire qui compte, pas celle de votre achat. Un logement acheté neuf il y a vingt-cinq ans a aujourd’hui une installation de plus de quinze ans.',
+      aussi: ['quels-diagnostics-pour-vendre', 'vendre-un-bien-ancien', 'pourquoi-quinze-ans'],
+      verifie: V
+    },
+
+    {
+      id: 'vendre-un-local-commercial',
+      question: 'Et pour un local commercial ou professionnel ?',
+      variantes: [
+        'diagnostic vente local commercial',
+        'diagnostic bureau obligatoire',
+        'DPE tertiaire'
+      ],
+      court:
+        'La liste n’est pas la même. L’état des risques et le repérage amiante restent dus, un DPE tertiaire s’applique dans la plupart des cas — mais les diagnostics électricité et gaz, eux, visent l’habitation.',
+      points: [
+        'Le repérage amiante des immeubles d’avant juillet 1997 s’impose, et prend la forme d’un dossier technique amiante tenu à jour.',
+        'La surface loi Carrez ne concerne pas les locaux commerciaux : c’est la surface du bail qui fait foi, avec ses propres règles.',
+        'Les termites et l’assainissement suivent la même logique qu’en habitation : la commune et le raccordement.',
+        'Les obligations de rénovation énergétique du tertiaire relèvent d’un tout autre dispositif que celui des logements.'
+      ],
+      piege:
+        'Un local d’habitation transformé en bureau, ou l’inverse, brouille les cartes : c’est l’usage réel et la destination du bien qui commandent, pas l’enseigne sur la porte. Faites trancher par votre notaire.',
+      aussi: ['quels-diagnostics-pour-vendre', 'c-est-quoi-les-listes-a-b-c', 'c-est-quoi-l-etat-des-risques'],
+      verifie: V
+    },
+
+    {
+      id: 'vendre-entre-particuliers',
+      question: 'Je vends sans agence : les diagnostics sont-ils obligatoires quand même ?',
+      variantes: [
+        'vente entre particuliers diagnostic obligatoire',
+        'vendre sans agence immobilière diagnostics',
+        'de particulier à particulier DPE'
+      ],
+      court:
+        'Exactement les mêmes, et c’est vous qui portez tout. L’obligation pèse sur le vendeur, pas sur l’agence : sans intermédiaire, personne ne vous rappellera ce qui manque avant le rendez-vous chez le notaire.',
+      dessin: 'dossier',
+      points: [
+        'Le notaire vérifiera le dossier à la signature : un document manquant, et l’acte attend.',
+        'La classe énergie doit figurer dans votre annonce, y compris sur un site de particuliers.',
+        'Sans agence, personne ne détermine la liste applicable à votre bien : donnez au diagnostiqueur l’année du permis de construire et l’adresse exacte, il s’en charge.',
+        'Gardez la preuve de la remise des documents à l’acheteur : c’est elle qui vous protège si un litige survient.'
+      ],
+      chezMoi:
+        'Déposez votre dossier avant de le transmettre : vous verrez ce qu’il contient, et surtout ce qui manque au regard de ce qu’il décrit lui-même.',
+      aussi: ['quels-diagnostics-pour-vendre', 'que-risque-t-on-sans-diagnostic', 'quand-faire-les-diagnostics-pour-vendre'],
+      verifie: V
     }
   ]
 };

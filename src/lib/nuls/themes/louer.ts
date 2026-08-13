@@ -169,6 +169,28 @@ export const LOUER: Theme = {
       savoir: ['rampant'],
       sources: [{ titre: 'Loi n° 89-462 du 6 juillet 1989, article 3', url: LEGI }],
       verifie: V
+    },
+
+    {
+      id: 'etat-des-lieux-et-diagnostics',
+      question: 'Quelle différence entre l’état des lieux et les diagnostics ?',
+      variantes: [
+        'état des lieux ou diagnostic',
+        'différence état des lieux diagnostic technique',
+        'le diagnostiqueur fait-il l’état des lieux'
+      ],
+      court:
+        'Deux documents qui n’ont rien à voir. L’état des lieux décrit ce que vous rendrez en partant — peintures, équipements, propreté — et se fait entre bailleur et locataire. Les diagnostics décrivent la sécurité et l’énergie du logement, et sont faits par un professionnel certifié.',
+      points: [
+        'L’état des lieux se fait deux fois : à l’entrée et à la sortie, et il sert au dépôt de garantie.',
+        'Les diagnostics sont annexés une fois pour toutes au bail, et suivent leur propre durée de validité.',
+        'Un diagnostiqueur ne fait pas d’état des lieux — même si certains cabinets proposent les deux prestations.',
+        'Un défaut noté à l’état des lieux n’a aucun rapport avec une anomalie relevée par un diagnostic.'
+      ],
+      piege:
+        'Une anomalie électrique signalée dans le dossier de diagnostic n’est pas une dégradation de votre fait : ne la laissez pas glisser dans l’état des lieux de sortie.',
+      aussi: ['quels-diagnostics-pour-louer', 'le-bailleur-ne-m-a-rien-donne', 'mon-installation-a-des-anomalies-c-est-grave'],
+      verifie: V
     }
   ]
 };

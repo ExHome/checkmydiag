@@ -10,7 +10,15 @@ import { describe, expect, it } from 'vitest';
 import { DESSINS } from './dessins';
 import { FICHES, liees, liensMorts, THEMES } from './index';
 import { NOTIONS } from '../savoir/notions';
-import { pages, sitemap } from './rendu';
+import { cartes, pages, sitemap } from './rendu';
+import { couper, poser } from './og';
+
+/**
+ * Une mesure grossière, pour les contrôles qui ne dépendent pas de la police :
+ * l'adresse d'une carte est la même quelle que soit la largeur de ses lettres.
+ * La mesure exacte est vérifiée dans `scripts/metriques-police.test.ts`.
+ */
+const mesureApprochee = (texte: string, taille: number): number => texte.length * taille * 0.5;
 
 describe('le corpus', () => {
   it('ne renvoie jamais vers une question qui n’existe pas', () => {
@@ -89,6 +97,22 @@ describe('la forme des réponses', () => {
       expect(liees(fiche).length, fiche.question.id).toBeGreaterThanOrEqual(2);
     }
   });
+
+  it('pose chaque question sur sa carte sans jamais dépasser quatre lignes', () => {
+    for (const { question } of FICHES) {
+      const { taille, lignes } = poser(question.question, 1040, mesureApprochee);
+      expect(lignes.length, question.question).toBeLessThanOrEqual(4);
+      // Un mot plus large que la ligne ne serait pas coupé : il déborderait.
+      for (const ligne of lignes) {
+        expect(mesureApprochee(ligne, taille), ligne).toBeLessThanOrEqual(1040);
+      }
+    }
+  });
+
+  it('coupe aux espaces, sans perdre ni ajouter un mot', () => {
+    const titre = 'Puis-je encore louer un logement classé F ou G ?';
+    expect(couper(titre, 60, 400, mesureApprochee).join(' ')).toBe(titre);
+  });
 });
 
 describe('les pages produites', () => {
@@ -122,6 +146,18 @@ describe('les pages produites', () => {
       );
       expect(bloc, page.chemin).not.toBeNull();
       expect(() => JSON.parse(bloc![1] as string), page.chemin).not.toThrow();
+    }
+  });
+
+  it('donne à chaque page sa propre carte de partage, et elle sera bien produite', () => {
+    const rendues = cartes(mesureApprochee);
+    const adresses = new Set(rendues.map((c) => c.chemin));
+    expect(adresses.size, 'une carte par page, sans doublon d’adresse').toBe(produites.length);
+
+    for (const page of produites) {
+      const carte = page.contenu.match(/og:image" content="[^"]*\/(og\/[^"]+)"/)?.[1];
+      expect(carte, page.chemin).toBeDefined();
+      expect(adresses.has(carte as string), `${page.chemin} → ${carte}`).toBe(true);
     }
   });
 

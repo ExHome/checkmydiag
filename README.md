@@ -89,10 +89,49 @@ n'existe ni pour un moteur de recherche, ni pour un téléphone en bord de rése
 | `src/lib/nuls/themes/*.ts` | le contenu, un fichier par thème |
 | `src/lib/nuls/dessins.ts` | les schémas, en SVG écrit à la main |
 | `src/lib/nuls/rendu.ts` | la fabrique des pages, du sitemap et du robots.txt |
+| `src/lib/nuls/og.ts` | les cartes de partage (1200 × 630) |
 | `scripts/plugin-nuls.ts` | le plugin Vite : sert en dev, écrit au build |
 | `public/pour-les-nuls.css` | la feuille de la rubrique, autonome |
 
+### Les cartes de partage
+
+Une image par page — 89 —, rendue en PNG 1200 × 630 au build par
+`@resvg/resvg-js`, dans `dist/og/`. La question y est écrite en Fraunces, coupée
+en lignes selon la largeur réelle du texte. Elles sont visibles en développement
+à `/og/<thème>/<question>.png`.
+
+Trois pièges y sont déjà tombés, autant les connaître avant d'y toucher :
+
+- **Le rastériseur ignore `fontBuffers`.** Sans rien signaler : il retombe sur
+  une police de secours, et les cartes sortent dans un caractère qui n'est pas
+  celui de la marque. Seul `fontFiles` fonctionne — d'où le fichier temporaire
+  écrit par `scripts/police-cartes.ts`.
+- **Fraunces est une police variable.** Le rastériseur en tire une instance qui
+  n'est pas celle du navigateur, et les largeurs de `hmtx` cessent d'être
+  fiables. Elle est donc figée (graisse 600, taille optique 144) avant usage.
+- **Mesurer en rendant coûte 200 ms par appel.** Les largeurs sont donc lues
+  dans les tables de la police (`scripts/metriques-police.ts`), et
+  `metriques-police.test.ts` vérifie que ce calcul colle bien au tracé. C'est ce
+  test qui a démasqué les deux points précédents.
+
+L'étape `fonts-dejavu-core` du workflow de déploiement reste nécessaire : les
+mentions du bas de carte sont dans la linéale du système, pas dans Fraunces.
+
 ### Avant la première mise en ligne
+
+**Signez le site.** `src/lib/nuls/editeur.ts` vaut encore `null`. Tant qu'il
+l'est, trois pages ne sont pas fabriquées — « qui écrit ces pages », les
+mentions légales, la page de confidentialité — et aucun auteur n'apparaît dans
+les données structurées.
+
+Ce n'est pas une formalité : ces pages parlent de plomb chez des enfants, de
+monoxyde de carbone et de décisions à plusieurs dizaines de milliers d'euros.
+Sur ce terrain, un moteur de recherche regarde *qui écrit* avant de regarder ce
+qui est écrit. C'est le manque le plus coûteux du site, et `npm run seo` le
+répète à chaque passage.
+
+Rien n'y est deviné à votre place : des mentions légales inventées engageraient
+quelqu'un.
 
 **Réglez l'adresse du site.** `SITE`, en tête de `src/lib/nuls/rendu.ts`, sert
 aux liens canoniques, aux données structurées et au sitemap. Sa valeur par
@@ -104,6 +143,31 @@ CMD_SITE=https://mon-domaine.fr npm run build
 
 Un canonique qui pointe vers un domaine qui n'est pas le vôtre est pire que pas
 de canonique.
+
+### La boucle de référencement, automatique
+
+Le cadre est écrit dans
+[ORDRE-DE-MISSION-REFERENCEMENT.md](ORDRE-DE-MISSION-REFERENCEMENT.md). Il ne se
+pilote pas à la main :
+
+```bash
+npm run seo
+```
+
+L'audit compare le corpus au **registre des intentions**
+(`src/lib/nuls/intentions.ts`) — ce que les gens tapent réellement dans un
+moteur de recherche — et imprime la couverture, les questions à écrire triées
+par poids, les pages sans schéma, sans « piège » ou sans retour au rapport du
+lecteur, et celles dont le contenu réglementaire n'a pas été revérifié depuis
+plus de six mois.
+
+Ce registre **doit rester plus large que le corpus** : ce sont ses lignes sans
+réponse qui indiquent le travail suivant. Une couverture à 100 % est le signal
+qu'il faut l'élargir, pas qu'on a fini.
+
+L'audit tourne à chaque déploiement (informatif), et une tâche programmée
+hebdomadaire exécute la boucle complète — analyser, écrire deux à quatre
+questions manquantes, revérifier les règles datées, contrôler, rendre compte.
 
 ### Ajouter une question
 

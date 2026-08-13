@@ -160,6 +160,31 @@ export const AMIANTE: Theme = {
       aussi: ['c-est-quoi-les-listes-a-b-c', 'quels-diagnostics-pour-louer', 'ou-trouve-t-on-de-l-amiante'],
       sources: [{ titre: 'Code de la santé publique, articles R. 1334-29-4 et suivants', url: LEGI }],
       verifie: V
+    },
+
+    {
+      id: 'comment-savoir-si-c-est-de-l-amiante',
+      question: 'Comment savoir si un matériau contient de l’amiante ?',
+      variantes: [
+        'reconnaître l’amiante',
+        'analyse amiante laboratoire',
+        'dalle de sol amiante comment savoir'
+      ],
+      court:
+        'À l’œil, on ne peut pas en être sûr — jamais. On peut soupçonner d’après la date et le type de matériau, mais seule une analyse en laboratoire accrédité répond. Un prélèvement se fait par un professionnel, pas au couteau un dimanche.',
+      dessin: 'amiante-etat',
+      points: [
+        'Les indices sérieux : un bâtiment d’avant juillet 1997, des plaques ondulées grises, des dalles de sol de 30 × 30 cm, une colle noire, un conduit gris fibreux.',
+        'Beaucoup de matériaux ressemblants n’en contiennent pas : des plaques de fibres-ciment récentes, par exemple, en sont exemptes.',
+        'Le prélèvement se fait humidifié, avec protection, et part dans un laboratoire accrédité. Le résultat est écrit, daté, opposable.',
+        'Gratter, casser ou poncer pour « voir » est précisément le geste qui libère les fibres.',
+        'Si le doute porte sur un chantier à venir, c’est le repérage avant travaux qui répond, et il est obligatoire.'
+      ],
+      piege:
+        'Les moteurs de recherche regorgent de photos censées permettre de reconnaître l’amiante. Aucune ne vaut analyse : deux plaques identiques peuvent différer, selon l’année et l’usine.',
+      aussi: ['amiante-et-travaux', 'ou-trouve-t-on-de-l-amiante', 'j-ai-de-l-amiante-que-faire'],
+      savoir: ['fibrociment'],
+      verifie: V
     }
   ]
 };

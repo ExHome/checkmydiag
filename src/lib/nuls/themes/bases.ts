@@ -318,6 +318,117 @@ export const BASES: Theme = {
         'Un dossier entièrement vert rassure à tort. Il signifie « rien à signaler sur les points contrôlés », ce qui est très différent de « rien à signaler ».',
       aussi: ['le-diagnostiqueur-regarde-quoi', 'que-risque-t-on-sans-diagnostic'],
       verifie: V
+    },
+
+    {
+      id: 'comment-se-passe-un-diagnostic',
+      question: 'Comment se passe la visite du diagnostiqueur ?',
+      variantes: [
+        'déroulement diagnostic immobilier',
+        'combien de temps dure un diagnostic immobilier',
+        'que fait le diagnostiqueur pendant la visite'
+      ],
+      court:
+        'Il parcourt toutes les pièces, mesure, photographie, ouvre le tableau électrique, monte aux combles et descend à la cave si c’est accessible. Comptez une à trois heures selon la taille du logement et le nombre de diagnostics.',
+      dessin: 'visible-ferme',
+      points: [
+        'Il a besoin d’accéder à tout : compteurs, chaufferie, combles, vide sanitaire, placards techniques, salle d’eau.',
+        'Chaque diagnostic a son geste — mesure au fluorescence X pour le plomb, sondage du bois pour les termites, essais au tableau pour l’électricité.',
+        'Il relève aussi les caractéristiques du bâti pour le DPE : épaisseurs, vitrages, isolation, équipements.',
+        'Il ne démonte rien et ne perce rien : tout ce qui est fermé restera écrit comme non contrôlé.',
+        'Préparez les justificatifs avant sa venue : factures d’isolation, de menuiseries, de chaudière, attestation d’électricité.'
+      ],
+      piege:
+        'Une visite expédiée en vingt minutes pour une maison entière ne permet pas de faire le travail. Le temps passé sur place est le meilleur indicateur de la qualité du rapport que vous recevrez.',
+      aussi: ['faut-il-etre-present-pendant-la-visite', 'le-diagnostiqueur-regarde-quoi', 'comment-choisir-son-diagnostiqueur'],
+      verifie: V
+    },
+
+    {
+      id: 'faut-il-etre-present-pendant-la-visite',
+      question: 'Dois-je être présent pendant la visite du diagnostiqueur ?',
+      variantes: [
+        'présence obligatoire diagnostic immobilier',
+        'diagnostic en l’absence du propriétaire',
+        'le locataire doit-il être présent pour le diagnostic'
+      ],
+      court:
+        'Non, à condition que quelqu’un ouvre — l’agence, un proche, le locataire. Mais votre présence sert : c’est vous qui savez où sont les combles, ce qui a été isolé, et quels justificatifs existent.',
+      points: [
+        'Le logement doit être accessible en entier : un accès fermé le jour de la visite devient une réserve dans le rapport.',
+        'Si le logement est loué, le locataire doit être prévenu à l’avance et laisser entrer.',
+        'Rangez, dégagez les trappes, les placards techniques et le tableau électrique avant la venue.',
+        'Sortez vos factures de travaux : sans preuve, le calcul du DPE retient des valeurs par défaut défavorables.'
+      ],
+      chezMoi:
+        'Si votre rapport comporte beaucoup de mentions « non visité », c’est souvent que l’accès manquait ce jour-là — cela se rattrape par une seconde visite.',
+      aussi: ['comment-se-passe-un-diagnostic', 'que-veut-dire-non-visite', 'le-dpe-est-il-fiable'],
+      verifie: V
+    },
+
+    {
+      id: 'en-combien-de-temps-recoit-on-les-rapports',
+      question: 'En combien de temps reçoit-on les rapports ?',
+      variantes: [
+        'délai diagnostic immobilier',
+        'quand reçoit-on le DPE',
+        'diagnostic immobilier urgent délai'
+      ],
+      court:
+        'Le plus souvent sous un à trois jours ouvrés. Aucun délai n’est fixé par la loi : c’est une affaire d’organisation du cabinet, et cela se négocie au moment du devis.',
+      dessin: 'validite-depart',
+      points: [
+        'Le DPE demande un temps de saisie : chaque paroi et chaque équipement relevé doit être entré dans le moteur de calcul.',
+        'Le contrôle d’assainissement fait exception : il dépend du SPANC de la commune, avec des délais qui se comptent parfois en semaines.',
+        'Anticipez : la classe énergétique doit figurer dans l’annonce, donc le DPE doit être prêt avant la mise en vente.',
+        'La validité, elle, ne court pas de la réception mais du jour de la visite.'
+      ],
+      aussi: ['combien-de-temps-un-diagnostic-est-valable', 'quand-faire-les-diagnostics-pour-vendre', 'c-est-quoi-le-diagnostic-assainissement'],
+      verifie: V
+    },
+
+    {
+      id: 'j-ai-perdu-mes-diagnostics',
+      question: 'J’ai perdu mes diagnostics : comment les récupérer ?',
+      variantes: [
+        'retrouver ses diagnostics immobiliers',
+        'demander une copie du DPE',
+        'diagnostic perdu vente'
+      ],
+      court:
+        'Demandez-les au diagnostiqueur qui les a faits : il conserve ses rapports plusieurs années et vous en renverra une copie. À défaut, votre notaire détient le dossier annexé à l’acte de vente.',
+      points: [
+        'Le notaire est souvent la voie la plus rapide : le dossier de diagnostic technique est annexé à l’acte, qu’il archive.',
+        'Votre agence immobilière, si elle a suivi la vente, en garde généralement une copie.',
+        'Le DPE possède un numéro à treize caractères qui permet de le retrouver dans la base publique de l’ADEME.',
+        'Une copie n’est pas une nouvelle validité : un rapport périmé le reste, même retrouvé.'
+      ],
+      chezMoi:
+        'Une fois le PDF récupéré, déposez-le : vous saurez en quelques secondes lesquels de ces rapports sont encore valables.',
+      aussi: ['combien-de-temps-garder-ses-rapports', 'combien-de-temps-un-diagnostic-est-valable', 'mon-pdf-est-un-scan'],
+      verifie: V
+    },
+
+    {
+      id: 'diagnostics-pour-une-succession-ou-une-donation',
+      question: 'Faut-il des diagnostics pour une succession ou une donation ?',
+      variantes: [
+        'diagnostic immobilier succession',
+        'donation maison diagnostic obligatoire',
+        'partage héritage DPE'
+      ],
+      court:
+        'La loi vise la vente et la location : une succession n’y est pas soumise. Pour une donation ou un partage, l’obligation dépend du montage — votre notaire tranchera, et il les demandera souvent quand même.',
+      points: [
+        'Un héritier qui reçoit un bien ne reçoit pas de dossier de diagnostic technique : personne n’est tenu de le lui fournir.',
+        'Mais s’il revend ensuite, c’est lui qui devra le faire établir, à ses frais.',
+        'Certaines obligations tiennent à la détention du bien, pas à sa vente : c’est le cas du repérage amiante dans un immeuble d’avant 1997.',
+        'Faire établir les diagnostics au moment de la succession a un mérite pratique : on connaît l’état du bien avant de décider de le garder ou de le vendre.'
+      ],
+      piege:
+        'Un bien hérité est souvent ancien, longtemps habité par une personne âgée, et jamais rénové : c’est le profil qui cumule plomb, amiante et installation électrique hors d’âge.',
+      aussi: ['quels-diagnostics-pour-vendre', 'vendre-un-bien-ancien', 'que-risque-t-on-sans-diagnostic'],
+      verifie: V
     }
   ]
 };

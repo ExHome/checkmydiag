@@ -704,6 +704,18 @@ main {
   margin: 0;
 }
 
+/* La signature de l'auteur. Sur un sujet qui touche à la santé et à l'argent,
+   c'est la ligne qui dit au lecteur — et aux moteurs — qui répond. */
+.signature {
+  border-top: 1px solid var(--trait-fin);
+  padding-top: 14px;
+  margin-top: 14px;
+}
+
+.signature strong {
+  color: var(--vert-700);
+}
+
 /* =========================================================================
    Les dessins.
 

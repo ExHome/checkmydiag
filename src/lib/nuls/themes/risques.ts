@@ -134,6 +134,29 @@ export const RISQUES: Theme = {
       aussi: ['c-est-quoi-l-etat-des-risques', 'verifier-les-risques-de-mon-adresse', 'c-est-quoi-le-retrait-gonflement-des-argiles'],
       sources: [{ titre: 'Géorisques — inondations', url: GEO }],
       verifie: V
+    },
+
+    {
+      id: 'c-est-quoi-le-diagnostic-bruit',
+      question: 'C’est quoi le diagnostic bruit, près d’un aéroport ?',
+      variantes: [
+        'état des nuisances sonores aériennes',
+        'diagnostic bruit aéroport obligatoire',
+        'plan d’exposition au bruit vente'
+      ],
+      court:
+        'Une information due depuis 2020 quand le bien se trouve dans une zone d’exposition au bruit d’un aérodrome. Ce n’est pas une mesure faite chez vous : c’est la reprise d’un zonage officiel, comme l’état des risques.',
+      dessin: 'erp-couches',
+      points: [
+        'Le plan d’exposition au bruit découpe les abords des aérodromes en zones, de la plus exposée à la plus éloignée.',
+        'Ce zonage encadre aussi la constructibilité : dans les zones les plus exposées, on ne bâtit pas de logement neuf.',
+        'L’information est due à la vente comme à la location, et se joint au dossier.',
+        'Elle porte sur le trafic aérien uniquement : ni la route, ni le rail, ni le voisinage n’y figurent.'
+      ],
+      piege:
+        'Aucun diagnostic obligatoire ne traite du bruit de la route, des voisins ou d’un chantier. Sur ces sujets, seule une visite à des heures différentes vous renseignera.',
+      aussi: ['c-est-quoi-l-etat-des-risques', 'quels-diagnostics-pour-vendre', 'un-diagnostic-garantit-il-le-logement'],
+      verifie: V
     }
   ]
 };

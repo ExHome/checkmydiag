@@ -108,6 +108,29 @@ export const TERMITES: Theme = {
       aussi: ['c-est-quoi-le-diagnostic-termites', 'un-diagnostic-garantit-il-le-logement', 'c-est-quoi-l-etat-des-risques'],
       sources: [{ titre: 'Code de la construction et de l’habitation, article L. 126-9', url: LEGI }],
       verifie: V
+    },
+
+    {
+      id: 'ma-commune-est-elle-en-zone-termites',
+      question: 'Comment savoir si ma commune est en zone termites ?',
+      variantes: [
+        'carte des zones termites France',
+        'arrêté préfectoral termites commune',
+        'diagnostic termites obligatoire où'
+      ],
+      court:
+        'C’est le préfet de votre département qui délimite les zones, commune par commune, par arrêté. La liste se consulte en mairie et en préfecture — et tout diagnostiqueur de votre secteur la connaît par cœur.',
+      points: [
+        'Les zones concernées se concentrent sur la façade atlantique, le Sud-Ouest, le pourtour méditerranéen et la vallée de la Garonne, mais la liste évolue.',
+        'Un arrêté peut ajouter une commune : une adresse hors zone il y a cinq ans peut y être aujourd’hui.',
+        'L’arrêté ne dit pas qu’il y a des termites chez vous : il dit que le département en a constaté sur son territoire.',
+        'Hors zone délimitée, le diagnostic n’est pas obligatoire — rien n’empêche de le demander si un doute existe.'
+      ],
+      chezMoi:
+        'Si votre dossier de vente contient un rapport termites, c’est que votre commune est classée : l’information est là, sans avoir à chercher.',
+      aussi: ['c-est-quoi-le-diagnostic-termites', 'comment-reconnaitre-des-termites', 'quels-diagnostics-pour-vendre'],
+      sources: [{ titre: 'Code de la construction et de l’habitation, article L. 126-4', url: LEGI }],
+      verifie: V
     }
   ]
 };

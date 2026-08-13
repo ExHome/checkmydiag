@@ -11,19 +11,27 @@
  * dessin en SVG, son fil d'Ariane, ses données structurées et ses liens.
  */
 import { DESSINS, dessin } from './dessins';
+import { carteQuestion, carteRubrique, carteTheme, type Mesure } from './og';
+import { EDITEUR, signature } from './editeur';
 import { FICHES, liees, THEMES, type Fiche } from './index';
 import { html, type Question, type Source, type Theme } from './socle';
 
 /**
  * L'adresse publique du site. Elle sert aux liens canoniques, aux données
- * structurées et au sitemap — tous exigent une URL absolue.
+ * structurées, au sitemap et aux cartes de partage — tous exigent une URL
+ * absolue.
  *
- * ⚠️ À régler avant la première mise en ligne : `CMD_SITE=https://…` à
- * l'environnement de build, ou cette valeur par défaut. Un canonique qui pointe
- * vers un domaine qui n'est pas le vôtre est pire que pas de canonique.
+ * Le site est en ligne depuis le 13/08/2026 à cette adresse. La valeur est
+ * écrite ici plutôt que laissée à l'environnement : le workflow de déploiement
+ * la fournit déjà, mais un build lancé à la main produisait sinon des liens
+ * canoniques vers un domaine qui n'est pas le nôtre — ce qui est pire que pas
+ * de canonique du tout.
+ *
+ * `CMD_SITE=https://…` reste prioritaire, pour le jour d'un domaine propre.
  */
 export const SITE = (
-  (typeof process !== 'undefined' ? process.env?.CMD_SITE : undefined) ?? 'https://www.checkmydiag.fr'
+  (typeof process !== 'undefined' ? process.env?.CMD_SITE : undefined) ??
+  'https://exhome.github.io/checkmydiag'
 ).replace(/\/$/, '');
 
 /** Le nom de la rubrique, et son dossier. */
@@ -182,7 +190,15 @@ interface Page {
   corps: string;
   /** Les blocs JSON-LD, réunis dans un seul graphe. */
   donnees: object[];
+  /** La carte de partage, relative à la racine du site. */
+  carte: string;
 }
+
+/** L'adresse de la carte de partage d'une page — voir `og.ts`. */
+export const cheminCarte = (de?: Theme | Fiche): string => {
+  if (!de) return 'og/accueil.png';
+  return 'question' in de ? `og/${de.theme.id}/${de.question.id}.png` : `og/${de.id}.png`;
+};
 
 function gabarit(page: Page): string {
   const racine = versRacine(page.chemin);
@@ -204,7 +220,12 @@ function gabarit(page: Page): string {
     <meta property="og:title" content="${html(page.titre)}" />
     <meta property="og:description" content="${html(page.description)}" />
     <meta property="og:url" content="${html(url)}" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content="${SITE}/${page.carte}" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Check My Diag — les diags pour les nuls" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="${SITE}/${page.carte}" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>" />
     <link rel="stylesheet" href="${racine}pour-les-nuls.css" />
     <script type="application/ld+json">
@@ -230,9 +251,22 @@ ${page.corps}
           pédagogiques : elles n’ont aucune valeur réglementaire, et ne remplacent ni un
           rapport signé, ni l’avis de votre notaire.
         </p>
+        ${
+          signature()
+            ? `<p class="signature">Écrit par <strong>${html(signature() as string)}</strong>.
+          <a href="${racine}qui-ecrit/">Comment ces pages sont faites</a></p>`
+            : ''
+        }
         <p class="pied-liens">
           <a href="${racine}">Lire mon rapport</a>
           <a href="${racine}${RUBRIQUE}/">${NOM}</a>
+          ${
+            EDITEUR
+              ? `<a href="${racine}qui-ecrit/">Qui écrit</a>
+          <a href="${racine}confidentialite/">Vos données</a>
+          <a href="${racine}mentions-legales/">Mentions légales</a>`
+              : ''
+          }
         </p>
       </div>
     </footer>
@@ -329,6 +363,7 @@ ${pont(chemin)}
     titre: `${q.question} — ${NOM} | ${MARQUE}`,
     description: description(q.court),
     corps,
+    carte: cheminCarte(f),
     donnees: [
       filBalise([
         { nom: 'Accueil', url: `${SITE}/` },
@@ -356,6 +391,19 @@ ${pont(chemin)}
         inLanguage: 'fr-FR',
         isPartOf: { '@type': 'WebSite', name: MARQUE, url: `${SITE}/` },
         publisher: { '@type': 'Organization', name: MARQUE, url: `${SITE}/` },
+        // La signature est ce qui distingue une explication écrite par un
+        // professionnel d'un texte compilé. Elle n'apparaît que si elle est
+        // vraie : pas d'auteur déclaré tant que `editeur.ts` est vide.
+        ...(EDITEUR
+          ? {
+              author: {
+                '@type': 'Person',
+                name: EDITEUR.auteur,
+                jobTitle: EDITEUR.metier,
+                ...(EDITEUR.siteProfessionnel ? { url: EDITEUR.siteProfessionnel } : {})
+              }
+            }
+          : {}),
         ...(q.verifie ? { dateModified: q.verifie } : {})
       }
     ]
@@ -413,6 +461,7 @@ ${pont(chemin)}
     titre: `${t.h1} — ${NOM} | ${MARQUE}`,
     description: description(t.resume),
     corps,
+    carte: cheminCarte(t),
     donnees: [
       filBalise([
         { nom: 'Accueil', url: `${SITE}/` },
@@ -499,6 +548,7 @@ ${pont(chemin, 'Vous avez le rapport sous la main ? Ne le lisez pas : déposez-l
     description:
       'DPE, amiante, plomb, électricité, gaz, termites, surfaces : toutes les questions qu’on se pose sur les diagnostics immobiliers, expliquées simplement, avec un schéma. Sans jargon et sans baratin.',
     corps,
+    carte: cheminCarte(),
     donnees: [
       filBalise([
         { nom: 'Accueil', url: `${SITE}/` },
@@ -519,6 +569,187 @@ ${pont(chemin, 'Vous avez le rapport sous la main ? Ne le lisez pas : déposez-l
   };
 }
 
+/* -------------------------------------------------------------------------- */
+/*  Les pages de confiance                                                     */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Qui écrit, sous quelle responsabilité, et ce qu'on fait de vos données.
+ *
+ * Ces trois pages ne sont fabriquées que si l'identité de l'éditeur est
+ * renseignée (`editeur.ts`). Une page de confiance à moitié remplie inspire
+ * moins confiance que pas de page du tout — et des mentions légales inventées
+ * engageraient quelqu'un.
+ */
+function pagesDeConfiance(): Page[] {
+  if (!EDITEUR) return [];
+
+  const lien = (chemin: string): string => versRacine(chemin);
+  const certifs = EDITEUR.certifications?.length
+    ? `<p>Certifications détenues : ${EDITEUR.certifications.map(html).join(' · ')}.</p>`
+    : '';
+
+  const qui: Page = {
+    chemin: 'qui-ecrit/',
+    titre: `Qui écrit ces pages — ${MARQUE}`,
+    description: `Ces explications sont écrites par ${EDITEUR.auteur}, ${EDITEUR.metier}. Comment elles sont faites, ce qu’elles valent, et ce que nous ne faisons pas.`,
+    carte: cheminCarte(),
+    corps: `
+${fil([{ nom: 'Accueil', lien: lien('qui-ecrit/') }, { nom: 'Qui écrit ces pages' }])}
+
+      <article class="question">
+        <h1>Qui écrit ces pages</h1>
+
+        <p class="reponse-courte">
+          ${html(`${EDITEUR.auteur}, ${EDITEUR.metier}${EDITEUR.depuis ? ` depuis ${EDITEUR.depuis}` : ''}.`)}
+          Ces explications sont écrites par quelqu’un dont c’est le métier, pas par une
+          rédaction qui compile ce qu’elle trouve ailleurs.
+        </p>
+        ${certifs}
+
+        <h2>Comment ces pages sont faites</h2>
+        <ul class="points">
+          <li>Une question par page, telle qu’on se la pose vraiment, avec sa réponse en tête.</li>
+          <li>Chaque affirmation réglementaire porte sa source et sa date de vérification.</li>
+          <li>Quand un point dépend du cas ou reste discuté, c’est écrit — jamais tranché à la place du lecteur.</li>
+          <li>Un schéma dès qu’il explique mieux qu’un paragraphe, dessiné pour ce site.</li>
+          <li>Le vrai vocabulaire du métier est conservé, puis expliqué. On simplifie l’accès au savoir, jamais le savoir.</li>
+        </ul>
+
+        <h2>Ce que nous ne faisons pas</h2>
+        <ul class="points">
+          <li>Aucun devis, aucune mise en relation commerciale, aucune publicité.</li>
+          <li>Aucun compte à créer, aucun formulaire avant d’accéder à une réponse.</li>
+          <li>Aucun chiffre inventé : quand une valeur n’est pas lisible dans un rapport, nous l’écrivons.</li>
+        </ul>
+
+        <aside class="piege">
+          <h2>La limite, dite franchement</h2>
+          <p>
+            Ce site explique, il ne certifie pas. Il n’a aucune valeur réglementaire, et ne
+            remplace ni un rapport signé, ni l’avis de votre notaire. Pour toute décision
+            engageante, c’est le document original qui fait foi.
+          </p>
+        </aside>
+      </article>
+
+${pont('qui-ecrit/')}`,
+    donnees: [
+      filBalise([
+        { nom: 'Accueil', url: `${SITE}/` },
+        { nom: 'Qui écrit ces pages', url: `${SITE}/qui-ecrit/` }
+      ]),
+      {
+        '@type': 'AboutPage',
+        name: 'Qui écrit ces pages',
+        inLanguage: 'fr-FR',
+        mainEntity: {
+          '@type': 'Person',
+          name: EDITEUR.auteur,
+          jobTitle: EDITEUR.metier,
+          ...(EDITEUR.siteProfessionnel ? { url: EDITEUR.siteProfessionnel } : {}),
+          ...(EDITEUR.certifications?.length
+            ? {
+                hasCredential: EDITEUR.certifications.map((c) => ({
+                  '@type': 'EducationalOccupationalCredential',
+                  name: c
+                }))
+              }
+            : {})
+        }
+      }
+    ]
+  };
+
+  const legales: Page = {
+    chemin: 'mentions-legales/',
+    titre: `Mentions légales — ${MARQUE}`,
+    description: 'Éditeur, responsable de la publication, hébergeur.',
+    carte: cheminCarte(),
+    corps: `
+${fil([{ nom: 'Accueil', lien: lien('mentions-legales/') }, { nom: 'Mentions légales' }])}
+
+      <article class="question">
+        <h1>Mentions légales</h1>
+
+        <h2>Éditeur</h2>
+        <p>
+          ${html(EDITEUR.societe ?? EDITEUR.auteur)}<br />
+          ${EDITEUR.siret ? `SIRET ${html(EDITEUR.siret)}<br />` : ''}
+          ${EDITEUR.adresse ? `${html(EDITEUR.adresse)}<br />` : ''}
+          ${EDITEUR.courriel ? `${html(EDITEUR.courriel)}` : ''}
+        </p>
+
+        <h2>Responsable de la publication</h2>
+        <p>${html(EDITEUR.responsablePublication ?? EDITEUR.auteur)}</p>
+
+        <h2>Hébergement</h2>
+        <p>${html(EDITEUR.hebergeur ?? '')}</p>
+
+        <h2>Nature du site</h2>
+        <p>
+          ${MARQUE} est un outil pédagogique. Il n’a aucune valeur réglementaire et ne
+          remplace ni un rapport de diagnostic signé, ni l’avis d’un professionnel. Les
+          contenus sont fournis à titre d’information ; la réglementation évolue, et chaque
+          page porte sa date de vérification.
+        </p>
+      </article>`,
+    donnees: [
+      filBalise([
+        { nom: 'Accueil', url: `${SITE}/` },
+        { nom: 'Mentions légales', url: `${SITE}/mentions-legales/` }
+      ])
+    ]
+  };
+
+  const vieP: Page = {
+    chemin: 'confidentialite/',
+    titre: `Vos données — ${MARQUE}`,
+    description:
+      'Votre rapport de diagnostic est lu par votre navigateur. Il ne part sur aucun serveur, il ne quitte pas votre appareil.',
+    carte: cheminCarte(),
+    corps: `
+${fil([{ nom: 'Accueil', lien: lien('confidentialite/') }, { nom: 'Vos données' }])}
+
+      <article class="question">
+        <h1>Vos données</h1>
+
+        <p class="reponse-courte">
+          Votre rapport de diagnostic est lu par votre navigateur, sur votre appareil. Il ne
+          part sur aucun serveur, il n’est envoyé nulle part, et personne ici ne peut le lire —
+          nous compris.
+        </p>
+
+        <h2>Concrètement</h2>
+        <ul class="points">
+          <li>Le PDF que vous déposez est ouvert et analysé localement. Aucun téléversement n’a lieu.</li>
+          <li>Les rapports que vous choisissez de garder restent dans la mémoire de votre navigateur, sur votre appareil. Vous pouvez les oublier d’un clic.</li>
+          <li>La page fonctionne connexion coupée : c’est la démonstration la plus simple qu’il n’y a pas d’envoi.</li>
+          <li>Aucun compte, aucun formulaire, aucune inscription.</li>
+          <li>Aucun traqueur publicitaire, aucun bandeau de consentement — parce qu’il n’y a rien à consentir.</li>
+        </ul>
+
+        <div class="chez-moi">
+          <h2>Vérifiez-le vous-même</h2>
+          <p>
+            Coupez votre connexion, puis déposez un rapport : tout continue de fonctionner.
+            C’est la seule preuve qui vaille, et elle ne demande de croire personne.
+          </p>
+        </div>
+      </article>
+
+${pont('confidentialite/')}`,
+    donnees: [
+      filBalise([
+        { nom: 'Accueil', url: `${SITE}/` },
+        { nom: 'Vos données', url: `${SITE}/confidentialite/` }
+      ])
+    ]
+  };
+
+  return [qui, legales, vieP];
+}
+
 /**
  * La planche de contrôle des dessins — servie en développement seulement, à
  * l'adresse `/pour-les-nuls/planche/`.
@@ -535,6 +766,7 @@ export function planche(): string {
     titre: `Planche de contrôle — ${entrees.length} dessins`,
     description: 'Outil de développement.',
     donnees: [],
+    carte: cheminCarte(),
     corps: `
       <article class="rubrique">
         <h1>Planche de contrôle</h1>
@@ -566,9 +798,43 @@ export interface Fichier {
   contenu: string;
 }
 
+/**
+ * Les cartes de partage à rasteriser : une par page. Le SVG est produit ici, le
+ * PNG par le plugin de build — seul endroit du projet où un rastériseur est
+ * nécessaire.
+ */
+export function cartes(mesure: Mesure): { chemin: string; svg: string }[] {
+  return [
+    { chemin: cheminCarte(), svg: carteRubrique(FICHES.length, THEMES.length, mesure) },
+    ...THEMES.map((t) => ({ chemin: cheminCarte(t), svg: carteTheme(t, mesure) })),
+    ...FICHES.map((f) => ({
+      chemin: cheminCarte(f),
+      svg: carteQuestion(f.question.question, f.theme.titre, mesure)
+    }))
+  ];
+}
+
+/**
+ * Tout ce qui sera dessiné sur une carte. La police est réduite à ces
+ * caractères-là : ce qui n'y figure pas ne serait pas tracé.
+ */
+export function textesDesCartes(): string[] {
+  return [
+    MARQUE,
+    'Les diagnostics immobiliers, en clair',
+    ...THEMES.map((t) => `${t.titre}${t.titre.toUpperCase()}`),
+    ...FICHES.map((f) => f.question.question)
+  ];
+}
+
 /** Toutes les pages de la rubrique, prêtes à écrire. */
 export function pages(): Fichier[] {
-  const toutes: Page[] = [pageRubrique(), ...THEMES.map(pageTheme), ...FICHES.map(pageQuestion)];
+  const toutes: Page[] = [
+    pageRubrique(),
+    ...THEMES.map(pageTheme),
+    ...FICHES.map(pageQuestion),
+    ...pagesDeConfiance()
+  ];
   return toutes.map((p) => ({ chemin: `${p.chemin}index.html`, contenu: gabarit(p) }));
 }
 
@@ -578,7 +844,8 @@ export function sitemap(): string {
     { loc: `${SITE}/`, priorite: '1.0' },
     { loc: `${SITE}/${cheminRubrique()}`, priorite: '0.9' },
     ...THEMES.map((t) => ({ loc: `${SITE}/${cheminTheme(t)}`, priorite: '0.8' })),
-    ...FICHES.map((f) => ({ loc: `${SITE}/${cheminQuestion(f)}`, priorite: '0.7' }))
+    ...FICHES.map((f) => ({ loc: `${SITE}/${cheminQuestion(f)}`, priorite: '0.7' })),
+    ...pagesDeConfiance().map((p) => ({ loc: `${SITE}/${p.chemin}`, priorite: '0.5' }))
   ];
 
   return `<?xml version="1.0" encoding="UTF-8"?>

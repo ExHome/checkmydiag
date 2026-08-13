@@ -114,6 +114,31 @@ export const SURFACES: Theme = {
       ],
       aussi: ['c-est-quoi-la-surface-habitable', 'c-est-quoi-la-loi-carrez', 'pourquoi-ma-surface-carrez-est-plus-petite'],
       verifie: V
+    },
+
+    {
+      id: 'calculer-sa-surface-carrez-soi-meme',
+      question: 'Puis-je mesurer ma surface Carrez moi-même ?',
+      variantes: [
+        'calcul surface loi Carrez',
+        'mesurer sa surface Carrez',
+        'faut-il un professionnel pour le mesurage Carrez'
+      ],
+      court:
+        'Oui, la loi ne l’interdit pas. Mais c’est vous qui répondrez de l’erreur — et une erreur de plus de 5 % ouvre à l’acheteur un droit à réduction du prix pendant un an.',
+      dessin: 'carrez-hauteur',
+      points: [
+        'La méthode : mesurer au sol chaque pièce close et couverte, en ne comptant que ce qui a plus de 1,80 mètre sous plafond.',
+        'On retire l’emprise des murs et cloisons, les marches et cages d’escalier, les gaines, les embrasures de portes et fenêtres.',
+        'On exclut les caves, garages, emplacements de stationnement, balcons et terrasses, ainsi que tout lot de moins de 8 m².',
+        'Les pièges classiques : un placard sous rampant, une mezzanine basse, une véranda selon qu’elle est close ou non.',
+        'Un mesurage professionnel coûte peu au regard du risque : c’est l’assurance du diagnostiqueur qui répond en cas d’erreur, pas la vôtre.'
+      ],
+      piege:
+        'Mesurer soi-même, c’est aussi s’exposer seul. Le mesurage professionnel transfère la responsabilité — c’est bien pour cela qu’on le paie.',
+      aussi: ['c-est-quoi-la-loi-carrez', 'erreur-de-surface-que-puis-je-reclamer', 'pourquoi-ma-surface-carrez-est-plus-petite'],
+      savoir: ['rampant'],
+      verifie: V
     }
   ]
 };

@@ -28,6 +28,10 @@ jobs:
       # dans le dépôt.
       - run: npm test
       - run: npm run check
+      # L'état du référencement, imprimé à chaque passage : couverture des
+      # intentions, pages à revérifier, trous à combler. Informatif — il ne fait
+      # pas échouer la construction, il donne à lire.
+      - run: npm run seo
 
   deploiement:
     needs: controle

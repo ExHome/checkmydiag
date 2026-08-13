@@ -19,6 +19,7 @@ import { TERMITES } from './themes/termites';
 import { RISQUES } from './themes/risques';
 import { SURFACES } from './themes/surfaces';
 import { ASSAINISSEMENT } from './themes/assainissement';
+import { COPROPRIETE } from './themes/copropriete';
 import { MON_RAPPORT } from './themes/mon-rapport';
 
 /**
@@ -39,6 +40,7 @@ export const THEMES: Theme[] = [
   RISQUES,
   SURFACES,
   ASSAINISSEMENT,
+  COPROPRIETE,
   MON_RAPPORT
 ];
 
