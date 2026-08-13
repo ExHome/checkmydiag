@@ -7,3 +7,10 @@ dist/
 # l'adresse de vraies personnes. Les tests lisent un dossier hors dépôt.
 *.pdf
 rapports/
+
+# Ce dépôt est PUBLIC — GitHub Pages l'exige en offre gratuite. Le brief de
+# cadrage, lui, contient la grille tarifaire, les marges, la stratégie
+# d'amorçage et des points juridiques à instruire : rien de tout cela ne doit
+# être lisible par un concurrent. Le fichier reste sur le poste, à portée de
+# main, et ne part jamais.
+docs/BRIEF.md
