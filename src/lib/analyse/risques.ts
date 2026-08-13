@@ -161,8 +161,10 @@ export function analyserCarrez(lignes: string[], plage: [number, number]): Diagn
     analogie:
       '1,80 m, c’est la hauteur sous laquelle vous ne tenez pas debout. La loi considère que cette surface-là ne compte pas. Voilà pourquoi votre logement paraît plus petit sur le papier que dans la réalité.',
     explication: [
-      'La loi Carrez sert à vendre un logement en copropriété. On mesure le sol des pièces, mais seulement là où le plafond est à plus de 1,80 m. On enlève les murs, les cloisons et les gaines techniques.',
-      'Ce chiffre n’est pas le même que la surface écrite dans un bail (la loi Boutin), ni que celle du DPE. Trois chiffres différents pour le même logement, c’est normal : ils ne servent pas à la même chose.',
+      // « loi Carrez » et « loi Boutin » s'ouvrent au clic : la règle de
+      // mesure et la comparaison n'ont plus à tenir dans la phrase.
+      'La loi Carrez sert à vendre un logement en copropriété.',
+      'Ce chiffre diffère de la loi Boutin et de celui du DPE. Trois mesures pour un même logement, c’est normal : elles ne servent pas à la même chose.',
       'Les caves, les garages, les balcons et les terrasses ne comptent pas.'
     ],
     aFaire: [

@@ -75,7 +75,7 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
 
   let gravite: Gravite = 'neutre';
   let verdict =
-    'Un diagnostic électrique figure au dossier. Sa conclusion est cochée à la main sur le rapport : elle n’est pas lisible par un programme, reportez-vous à la page « Conclusion ».';
+    'La conclusion est cochée à la main : un programme ne peut pas la lire. Elle est sur la page « Conclusion » du rapport.';
   if (etat === 'aucune') {
     gravite = 'bon';
     verdict = 'L’installation électrique ne présente aucune anomalie.';
@@ -149,7 +149,7 @@ export function analyserGaz(lignes: string[], plage: [number, number]): Diagnost
 
   let gravite: Gravite = 'neutre';
   let verdict =
-    'Un diagnostic gaz figure au dossier. Sa conclusion est cochée à la main sur le rapport : elle n’est pas lisible par un programme, reportez-vous à la page « Conclusion ».';
+    'La conclusion est cochée à la main : un programme ne peut pas la lire. Elle est sur la page « Conclusion » du rapport.';
   if (dgi) {
     gravite = 'alerte';
     verdict = 'Danger grave et immédiat (DGI) : une partie de l’installation gaz doit être mise hors service.';

@@ -129,9 +129,11 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
   if (date?.[1]) faits.push({ libelle: 'Date du constat', valeur: date[1] });
 
   const explication = [
-    'Le CREP — le constat plomb — ne regarde pas les canalisations : il mesure le plomb des peintures, mur par mur, avec un appareil qu’on pose sur la surface. Chaque élément mesuré (un mur, une porte, une plinthe) est appelé « unité de diagnostic » dans le rapport.',
-    'Les classes vont de 0 à 3 : pas de plomb, du plomb sous une peinture intacte, une peinture usée ou éraflée, et enfin une peinture dégradée qui s’écaille. Seule la dernière pose vraiment problème.',
-    'Le danger vient des poussières et des écailles avalées, surtout par les jeunes enfants et les femmes enceintes — c’est ce qu’on appelle le saturnisme. Un mur au plomb en bon état, qu’on laisse tranquille, n’est pas dangereux.'
+    // « unité de diagnostic », « classe 3 » et « saturnisme » s'ouvrent au
+    // clic : ces trois phrases n'ont plus à les définir en passant.
+    'Le CREP — le constat plomb — ne regarde pas les canalisations. Il mesure le plomb des peintures, unité de diagnostic par unité de diagnostic : un mur, une porte, une plinthe.',
+    'Les classes vont de 0 à 3, du revêtement sain à la peinture qui s’écaille. Seule la classe 3 pose vraiment problème.',
+    'Le danger vient des poussières avalées — le saturnisme —, surtout chez les jeunes enfants et les femmes enceintes. Un mur au plomb en bon état, qu’on laisse tranquille, n’est pas dangereux.'
   ];
 
   const aFaire =

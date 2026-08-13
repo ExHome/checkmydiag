@@ -151,6 +151,24 @@ export const LEXIQUE: Mot[] = [
       'La règle qui décide de la lettre : on note la consommation, on note le CO₂, et on retient la plus mauvaise des deux notes.'
   },
   {
+    nom: 'Saturnisme',
+    motif: /saturnismes?/i,
+    definition:
+      'L’empoisonnement au plomb. Il touche surtout les jeunes enfants, qui portent à la bouche des mains couvertes de poussière, et peut freiner leur développement.'
+  },
+  {
+    nom: 'Loi Carrez',
+    motif: /lois? Carrez/i,
+    definition:
+      'La règle de mesure d’un logement en copropriété : on compte le sol des pièces, seulement là où le plafond dépasse 1,80 m, sans les murs ni les cloisons.'
+  },
+  {
+    nom: 'Classe 3',
+    motif: /classes? 3\b/i,
+    definition:
+      'Le plus haut niveau de plomb : une peinture dégradée, qui s’écaille. C’est le seul qui oblige à agir — les classes 0 à 2 décrivent un revêtement encore intact.'
+  },
+  {
     nom: 'Loi Boutin',
     motif: /lois? Boutin/i,
     definition:

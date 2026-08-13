@@ -71,8 +71,9 @@ export function analyserTermites(lignes: string[], plage: [number, number]): Dia
     analogie:
       'Les termites mangent le bois de l’intérieur et laissent la surface intacte. C’est la pomme véreuse : de l’extérieur, elle est parfaite.',
     explication: [
-      'Le diagnostiqueur cherche des traces de termites : des galeries dans le bois, des petits cordons de terre le long des murs, du bois qui sonne creux. Il regarde ce qui est visible et accessible, sans rien démonter.',
-      'Il ne peut donc pas garantir qu’il n’y a aucun termite dans le logement. Un mur fermé, une cave inaccessible, une charpente qu’on ne peut pas atteindre : tout cela reste invisible.',
+      // « sans démontage » est au lexique : la réserve tient en deux mots.
+      'Le diagnostiqueur cherche des traces : galeries dans le bois, cordons de terre le long des murs, bois qui sonne creux. Il regarde ce qui est visible, sans démontage.',
+      'Il ne peut donc pas garantir qu’il n’y a aucun termite. Un mur fermé, une cave inaccessible, une charpente hors d’atteinte : tout cela reste invisible.',
       'Ce diagnostic n’est demandé que dans les communes où le préfet a signalé la présence de termites. Il ne vaut que six mois.'
     ],
     aFaire: infeste
