@@ -42,11 +42,18 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      # Les cartes de partage sont rendues avec les polices du système. Sans
-      # serif installé, leur titre tomberait sur une police de secours — ou ne
-      # serait pas dessiné du tout.
+      # Le titre des cartes de partage vient de la police du dépôt, mais leurs
+      # mentions sont dans la linéale du système. Sans police installée, elles
+      # ne seraient pas dessinées du tout.
       - run: sudo apt-get install -y --no-install-recommends fonts-dejavu-core
+      # L'adresse du site sert aux liens canoniques, aux données structurées et
+      # au sitemap. Sans elle, le build retombe sur le domaine d'exemple écrit
+      # dans rendu.ts, et chaque page publiée déclarerait que la « vraie »
+      # version se trouve ailleurs — pire que pas de canonique du tout.
+      # Le jour où un domaine propre sera branché, c'est ici qu'on le change.
       - run: npm run build
+        env:
+          CMD_SITE: https://exhome.github.io/checkmydiag
       # enablement : le workflow allume GitHub Pages lui-même au premier
       # passage. Sans ça, il faut d'abord cocher « Source : GitHub Actions »
       # dans les réglages — un geste de plus, à faire sous le compte
