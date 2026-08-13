@@ -58,12 +58,36 @@ Elles ne se négocient pas. Une fonctionnalité qui en casse une ne se fait pas.
 état des risques, assainissement, superficie Carrez. Un dossier technique qui les
 réunit est découpé automatiquement.
 
+## La mise en relation professionnelle
+
+**Arbitrage rendu le 13/08/2026.** Une version précédente de ce document
+interdisait « toute mise en relation commerciale ». Ce n'est plus vrai : elle
+est décidée, et elle est le modèle économique du projet — un professionnel
+exclusif par métier et par code postal, au forfait. Voir
+[docs/BRIEF.md](docs/BRIEF.md) pour le détail.
+
+Elle arrive avec ses garde-fous, et **ceux-là ne se négocient pas** : ce sont
+eux qui font qu'elle ne détruit pas la confiance qui fait le produit.
+
+1. **Déclenchée par un constat du rapport**, jamais affichée par défaut.
+2. **Jamais avant que le constat ne soit compris** : rien dans les deux
+   premiers niveaux de lecture.
+3. **Un seul professionnel par constat**, trois encarts par dossier au maximum,
+   même si dix constats les justifieraient.
+4. **Visuellement séparée de l'explicatif.** Aucune confusion possible entre un
+   constat du diagnostiqueur et une suggestion de prestataire.
+5. **Le caractère payant est annoncé**, en clair, là où l'encart apparaît.
+6. **Aucune commission sur les travaux**, aucune rémunération à la performance.
+7. **Ton neutre** : « Un électricien est référencé sur votre secteur », jamais
+   « faites appel à notre partenaire ».
+8. **Aucun encart si la zone n'a pas de professionnel validé.** Pas de repli
+   silencieux sur une zone voisine.
+
 ## Ce que l'application ne fait pas
 
-- Aucun devis, aucune offre, aucune mise en relation commerciale.
-- Aucun compte, aucune adresse e-mail, aucune publicité.
 - Aucun conseil qui engage : on explique ce que dit le rapport, on ne se
   substitue pas au diagnostiqueur.
+- Aucune publicité — un encart déclenché par un constat n'est pas une bannière.
 - Aucune donnée client dans le dépôt. Les tests lisent des rapports réels depuis
   un dossier hors dépôt (`CMD_PDF_DIR`, `CMD_CALIB_DIR`).
 
