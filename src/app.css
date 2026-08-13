@@ -277,8 +277,11 @@ button {
   font-feature-settings: 'tnum';
 }
 
+/* Deux pixels, pas un : c'est l'épaisseur minimale à partir de laquelle un
+   contour de focus reste perceptible sur un écran ordinaire. Celui qui navigue
+   au clavier doit voir où il est sans le chercher. */
 :focus-visible {
-  outline: 1px solid var(--or);
+  outline: 2px solid var(--or);
   outline-offset: 3px;
   border-radius: 2px;
 }
@@ -288,7 +291,7 @@ button {
 }
 
 .petit {
-  font-size: 0.9rem;
+  font-size: var(--t-petit);
 }
 
 /* La ligne des clips sous une explication : les mots du métier qu'on peut aller
