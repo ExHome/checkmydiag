@@ -88,7 +88,10 @@ export const FICHES: Record<TypeDiag, Fiche> = {
     risque: 'Percer, poncer, casser → fibres libérées → cancers, des dizaines d’années plus tard.',
     quoiFaire: 'Bon état → laisser tranquille et surveiller. Travaux → entreprise certifiée.',
     vente:
-      'Obligatoire avant juillet 1997. Sans amiante : valable à vie. Avec amiante : à réévaluer tous les 3 ans. Ne bloque pas la vente, mais s’annonce à l’acheteur.'
+      // « Valable à vie » était trop absolu : l'arrêté du 12 décembre 2012 a
+      // élargi la liste des matériaux à contrôler, si bien qu'un constat
+      // négatif établi avant 2013 doit être refait pour vendre.
+      'Obligatoire avant juillet 1997. Sans amiante : valable à vie — sauf s’il date d’avant 2013, à refaire. Avec amiante : à réévaluer tous les 3 ans. Ne bloque pas la vente, mais s’annonce à l’acheteur.'
   },
 
   electricite: {
@@ -124,7 +127,11 @@ export const FICHES: Record<TypeDiag, Fiche> = {
     risque: 'Argile → gonfle et se rétracte → la maison suit → murs fissurés.',
     quoiFaire: 'Vérifier la couverture de l’assurance. Document valable 6 mois.',
     vente:
-      'Obligatoire partout. Valable 6 mois. Ne se négocie pas — mais un sinistre indemnisé passé doit être déclaré à l’acheteur, sous peine d’annulation.'
+      // « Obligatoire partout » était faux : l'ERP n'est dû que si la commune
+      // est couverte par un plan de prévention des risques, une zone de
+      // sismicité 2 ou plus, un potentiel radon 3, ou un secteur d'information
+      // sur les sols. C'est le cas de la très grande majorité — pas de toutes.
+      'Obligatoire dès que la commune est couverte par un plan de prévention des risques, une zone sismique ou un secteur radon : c’est le cas de la plupart. Valable 6 mois. Un sinistre indemnisé passé doit être déclaré à l’acheteur, sous peine d’annulation.'
   },
 
   carrez: {

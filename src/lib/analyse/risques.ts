@@ -163,7 +163,11 @@ export function analyserCarrez(lignes: string[], plage: [number, number]): Diagn
     explication: [
       // « loi Carrez » et « loi Boutin » s'ouvrent au clic : la règle de
       // mesure et la comparaison n'ont plus à tenir dans la phrase.
-      'La loi Carrez sert à vendre un logement en copropriété.',
+      // Attention au raccourci : la loi Carrez ne vise pas « les logements »
+      // mais tout lot de copropriété, quel que soit son usage — un bureau, un
+      // local commercial y sont soumis. Ce que la loi écarte, ce sont les
+      // caves, garages, parkings et les lots de moins de 8 m².
+      'La loi Carrez s’applique à la vente d’un lot en copropriété, quel qu’en soit l’usage : logement, bureau ou local commercial.',
       'Ce chiffre diffère de la loi Boutin et de celui du DPE. Trois mesures pour un même logement, c’est normal : elles ne servent pas à la même chose.',
       'Les caves, les garages, les balcons et les terrasses ne comptent pas.'
     ],

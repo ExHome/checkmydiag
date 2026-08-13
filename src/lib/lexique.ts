@@ -160,7 +160,7 @@ export const LEXIQUE: Mot[] = [
     nom: 'Loi Carrez',
     motif: /lois? Carrez/i,
     definition:
-      'La règle de mesure d’un logement en copropriété : on compte le sol des pièces, seulement là où le plafond dépasse 1,80 m, sans les murs ni les cloisons.'
+      'La règle de mesure d’un lot en copropriété — logement, bureau ou local commercial. On compte le sol des pièces, seulement là où le plafond dépasse 1,80 m, sans les murs ni les cloisons. Caves, garages, parkings et lots de moins de 8 m² en sont exclus.'
   },
   {
     nom: 'Classe 3',
