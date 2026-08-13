@@ -17,8 +17,14 @@
   import { libelleCourt } from '../lib/libelle';
   import { enPratique, FICHES } from '../lib/analyse/fiches';
   import { echeance } from '../lib/echeance';
+  import { etiquetteDe } from '../lib/analyse/confiance';
 
   const { analyse }: { analyse: Analyse } = $props();
+
+  /** « page 12 » ou « pages 12 à 18 » — le lecteur y va, il ne devine pas. */
+  function pageDite([debut, fin]: [number, number]): string {
+    return debut === fin ? `page ${debut}` : `pages ${debut} à ${fin}`;
+  }
 
   /**
    * Le sommaire.
@@ -143,6 +149,18 @@
         <h3>{libelleCourt(d)}</h3>
         <p class="jusqua-fiche" class:perimee={quand.perimee}>{quand.texte}</p>
         <p class="verdict">{d.verdict}</p>
+
+        <!-- D'où sort cette phrase. Discret, en bas de l'en-tête : c'est le
+             niveau expert, celui qu'on ne cherche que si on doute. Mais il ne
+             se cache pas derrière un clic — une preuve qu'il faut aller
+             chercher ne prouve rien. -->
+        <p class="provenance">
+          <span class="marque" aria-hidden="true"></span>
+          <span>{etiquetteDe(d.origine ?? 'rapport')}</span>
+          {#if d.pages}
+            <span class="page">{pageDite(d.pages)}</span>
+          {/if}
+        </p>
       </header>
 
       <div class="corps">
@@ -325,6 +343,38 @@
     font-size: var(--t-base);
     line-height: 1.5;
     color: var(--sur-fond);
+  }
+
+  /* La provenance se lit après le verdict, jamais avant : elle répond à une
+     question qu'on ne se pose qu'ensuite. D'où le retrait et la teinte
+     assourdie — présente, mais qui ne dispute rien à la phrase du dessus. */
+  .provenance {
+    margin: var(--e2) 0 0;
+    font-size: var(--t-petit);
+    color: var(--sur-fond-doux);
+    display: flex;
+    align-items: baseline;
+    gap: var(--e2);
+  }
+
+  .provenance .marque {
+    width: 14px;
+    height: 1px;
+    background: var(--trait-or);
+    flex: none;
+    transform: translateY(-0.3em);
+  }
+
+  /* La page se détache : c'est la seule information du lot sur laquelle le
+     lecteur peut agir — ouvrir son rapport et vérifier. */
+  .provenance .page {
+    color: var(--or-clair);
+    white-space: nowrap;
+  }
+
+  .provenance .page::before {
+    content: '· ';
+    color: var(--sur-fond-doux);
   }
 
   /* Le dessin d'un côté, ce qu'on en dit de l'autre. */
