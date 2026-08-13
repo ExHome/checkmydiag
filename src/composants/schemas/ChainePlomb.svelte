@@ -4,11 +4,13 @@
    * poussière est avalée. On touche une étape, elle s'explique.
    */
   import ClipDessin from '../savoir/ClipDessin.svelte';
+  import Verdict, { type Ton } from './Verdict.svelte';
 
   interface Etape {
     id: string;
     titre: string;
     mot: string;
+    ton: Ton;
     danger: boolean;
     points: string[];
   }
@@ -18,6 +20,7 @@
       id: 'intacte',
       titre: 'Peinture intacte',
       mot: 'Aucun danger',
+      ton: 'bon',
       danger: false,
       points: [
         'Le plomb est enfermé sous la peinture',
@@ -29,6 +32,7 @@
       id: 'ecaille',
       titre: 'Peinture qui s’écaille',
       mot: 'Poussière',
+      ton: 'attention',
       danger: true,
       points: [
         'Frottements, humidité, chocs',
@@ -41,6 +45,7 @@
       id: 'enfant',
       titre: 'Un enfant l’avale',
       mot: 'Saturnisme',
+      ton: 'alerte',
       danger: true,
       points: [
         'Main au sol, puis à la bouche',
@@ -106,10 +111,7 @@
           {/if}
         </g>
 
-        <g transform="translate({78 + dx} 172)">
-          <rect x="-64" y="-15" width="128" height="30" rx="15" class="verdict" class:mauvais={etape.danger} />
-          <text x="0" y="5" class="mot">{etape.mot}</text>
-        </g>
+        <Verdict x={78 + dx} y={172} texte={etape.mot} ton={etape.ton} largeur={128} />
       </g>
 
       {#if i < ETAPES.length - 1}
@@ -189,13 +191,13 @@
   }
 
   .mur {
-    fill: #e7efe9;
-    stroke: #9db0a6;
+    fill: var(--vert-100);
+    stroke: var(--gris);
     stroke-width: 2;
   }
 
   .lignes {
-    stroke: #c3d0c8;
+    stroke: var(--trait);
     stroke-width: 2.4;
   }
 
@@ -232,23 +234,8 @@
     opacity: 0.6;
   }
 
-  .verdict {
-    fill: rgb(46 233 139 / 16%);
-    stroke: var(--ok);
-    stroke-width: 1.5;
-  }
 
-  .verdict.mauvais {
-    fill: rgb(255 95 109 / 16%);
-    stroke: var(--alerte);
-  }
 
-  .mot {
-    font-size: 12.5px;
-    font-weight: 800;
-    fill: var(--encre);
-    text-anchor: middle;
-  }
 
   .reponse {
     margin-top: 12px;

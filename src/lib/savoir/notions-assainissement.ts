@@ -35,7 +35,7 @@ export const NOTIONS_ASSAINISSEMENT: Notion[] = [
             texte:
               'Si l’installation est déclarée non conforme, l’acheteur a un an après la signature pour la mettre aux normes.'
           },
-          { texte: 'Le coût d’une réfection complète se compte en milliers d’euros : cela se négocie.' }
+          { texte: 'Le coût d’une réfection complète se compte en milliers d’euros : cela se négocie.', clips: ['prix-des-travaux'] }
         ]
       },
       {

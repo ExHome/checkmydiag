@@ -7,6 +7,7 @@
    */
   import Clip from '../savoir/Clip.svelte';
   import ClipDessin from '../savoir/ClipDessin.svelte';
+  import Verdict from './Verdict.svelte';
 
   interface Saison {
     id: string;
@@ -107,10 +108,9 @@
           {/if}
         </g>
 
-        <g transform="translate({112 + dx} 206)">
-          <rect x="-76" y="-16" width="152" height="32" rx="16" class="verdict" class:chaud={saison.chaud} />
-          <text x="0" y="5" class="mot">{saison.mot}</text>
-        </g>
+        <!-- Les deux saisons font travailler la maison autant l'une que l'autre :
+             le chaud et le froid ne sont pas un code de gravité. -->
+        <Verdict x={112 + dx} y={206} texte={saison.mot} ton="attention" largeur={152} />
       </g>
     {/each}
 
@@ -188,32 +188,32 @@
   }
 
   .sol {
-    fill: #2f5a49;
+    fill: var(--encre-doux);
   }
 
   .sol.sec {
-    fill: #6b4f22;
+    fill: var(--or-fonce);
   }
 
   .craquelures {
-    stroke: #c08a3a;
+    stroke: var(--or);
     stroke-width: 2.4;
     stroke-linecap: round;
   }
 
   .gonfle {
-    stroke: #4fd1ff;
+    stroke: var(--vert-300);
     stroke-width: 3;
     stroke-linecap: round;
   }
 
   .mur {
-    fill: #e7efe9;
+    fill: var(--vert-100);
   }
 
   .toit {
-    fill: #17513a;
-    stroke: #0d3b29;
+    fill: var(--vert-500);
+    stroke: var(--vert-700);
     stroke-width: 2;
     stroke-linejoin: round;
   }
@@ -235,29 +235,14 @@
     stroke-linejoin: round;
   }
 
-  .verdict {
-    fill: rgb(79 209 255 / 16%);
-    stroke: #4fd1ff;
-    stroke-width: 1.5;
-  }
 
-  .verdict.chaud {
-    fill: rgb(255 165 58 / 16%);
-    stroke: var(--attention);
-  }
 
-  .mot {
-    font-size: 13px;
-    font-weight: 800;
-    fill: var(--encre);
-    text-anchor: middle;
-  }
 
   .reponse {
     margin-top: 12px;
     padding: 16px 20px;
     background: rgb(79 209 255 / 10%);
-    border-left: 4px solid #4fd1ff;
+    border-left: 4px solid var(--vert-300);
     border-radius: var(--rayon-petit);
   }
 
@@ -272,7 +257,7 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     font-size: 0.9rem;
-    color: #4fd1ff;
+    color: var(--vert-300);
   }
 
   .reponse.chaud .titre {

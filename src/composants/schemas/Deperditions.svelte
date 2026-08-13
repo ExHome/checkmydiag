@@ -193,7 +193,7 @@
           x="0"
           y="7"
           class="classe"
-          fill={lettre === 'C' || lettre === 'D' || lettre === 'E' ? '#16241e' : '#fff'}
+          fill={lettre === 'C' || lettre === 'D' || lettre === 'E' ? 'var(--encre)' : '#fff'}
         >
           {lettre}
         </text>
@@ -415,7 +415,7 @@
     font-size: 1rem;
     font-weight: 650;
     line-height: 1.45;
-    color: #2f3d36;
+    color: var(--encre-doux);
   }
 
   /* Sur le document remis, les points ne clignent plus et ne se laissent pas

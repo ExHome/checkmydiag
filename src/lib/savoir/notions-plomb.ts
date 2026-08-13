@@ -47,7 +47,7 @@ export const NOTIONS_PLOMB: Notion[] = [
         rang: 6,
         bribes: [
           { texte: 'Ne jamais poncer ni gratter à sec une peinture ancienne.' },
-          { texte: 'Recouvrir, encapsuler ou déposer — selon l’état, par une entreprise formée.' },
+          { texte: 'Recouvrir, encapsuler ou déposer — selon l’état, par une entreprise formée.', clips: ['prix-des-travaux'] },
           { texte: 'En attendant : nettoyage humide, et surveiller les écailles au sol.' }
         ]
       },

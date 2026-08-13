@@ -39,7 +39,7 @@ export const NOTIONS_AMIANTE: Notion[] = [
         rang: 6,
         bribes: [
           { texte: 'Ne jamais percer, poncer ni découper soi-même un matériau signalé.' },
-          { texte: 'Selon l’état : surveiller tous les trois ans, encapsuler, ou faire retirer par une entreprise certifiée.' }
+          { texte: 'Selon l’état : surveiller tous les trois ans, encapsuler, ou faire retirer par une entreprise certifiée.', clips: ['prix-des-travaux'] }
         ]
       },
       {

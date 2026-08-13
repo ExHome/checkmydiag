@@ -7,11 +7,13 @@
    */
   import Clip from '../savoir/Clip.svelte';
   import ClipDessin from '../savoir/ClipDessin.svelte';
+  import Verdict, { type Ton } from './Verdict.svelte';
 
   interface Cas {
     id: string;
     titre: string;
     mot: string;
+    ton: Ton;
     danger: boolean;
     points: string[];
     /** Les mots du métier que ce cas permet d'aller creuser. */
@@ -23,6 +25,7 @@
       id: 'ok',
       titre: 'Grille dégagée',
       mot: 'La flamme brûle bien',
+      ton: 'bon',
       danger: false,
       points: [
         'L’air entre par la grille du bas',
@@ -34,6 +37,7 @@
       id: 'bouche',
       titre: 'Grille bouchée',
       mot: 'Monoxyde de carbone',
+      ton: 'alerte',
       danger: true,
       points: [
         'La flamme manque d’air',
@@ -111,10 +115,7 @@
           {/if}
         </g>
 
-        <g transform="translate({112 + dx} 210)">
-          <rect x="-84" y="-16" width="168" height="32" rx="16" class="verdict" class:mauvais={cas.danger} />
-          <text x="0" y="5" class="mot">{cas.mot}</text>
-        </g>
+        <Verdict x={112 + dx} y={210} texte={cas.mot} ton={cas.ton} largeur={168} />
       </g>
     {/each}
 
@@ -195,18 +196,18 @@
   }
 
   .chaudiere {
-    fill: #cfd8d2;
-    stroke: #7d8a83;
+    fill: var(--vert-100);
+    stroke: var(--gris);
     stroke-width: 2;
   }
 
   .foyer {
-    fill: #2a3a33;
+    fill: var(--encre);
   }
 
   .flamme {
     fill: none;
-    stroke: #4fd1ff;
+    stroke: var(--vert-300);
     stroke-width: 3.4;
     stroke-linecap: round;
   }
@@ -217,7 +218,7 @@
 
   .conduit {
     fill: none;
-    stroke: #7d8a83;
+    stroke: var(--gris);
     stroke-width: 3.4;
     stroke-dasharray: 7 5;
     stroke-linecap: round;
@@ -244,7 +245,7 @@
   }
 
   .obstacle {
-    fill: #8a6224;
+    fill: var(--or-fonce);
     opacity: 0.9;
   }
 
@@ -260,23 +261,8 @@
     opacity: 0.75;
   }
 
-  .verdict {
-    fill: rgb(46 233 139 / 16%);
-    stroke: var(--ok);
-    stroke-width: 1.5;
-  }
 
-  .verdict.mauvais {
-    fill: rgb(255 95 109 / 16%);
-    stroke: var(--alerte);
-  }
 
-  .mot {
-    font-size: 13px;
-    font-weight: 800;
-    fill: var(--encre);
-    text-anchor: middle;
-  }
 
   .reponse {
     margin-top: 12px;

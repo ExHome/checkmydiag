@@ -4,6 +4,7 @@
    * en dessous non.
    */
   import ClipDessin from '../savoir/ClipDessin.svelte';
+  import Verdict from './Verdict.svelte';
 
   interface Partie {
     id: string;
@@ -83,16 +84,10 @@
       >
         {#if partie.compte}
           <path d="M126 132 L230 62 L334 132 Z" class="zone" />
-          <g transform="translate(230 100)">
-            <rect x="-58" y="-15" width="116" height="30" rx="15" class="verdict oui" />
-            <text x="0" y="5" class="mot">{partie.mot}</text>
-          </g>
+          <Verdict x={230} y={100} texte={partie.mot} ton="neutre" largeur={116} />
         {:else}
           <path d="M40 186 L126 132 L126 186 Z M334 132 L420 186 L334 186 Z" class="zone" />
-          <g transform="translate(230 214)">
-            <rect x="-70" y="-15" width="140" height="30" rx="15" class="verdict non" />
-            <text x="0" y="5" class="mot">{partie.mot}</text>
-          </g>
+          <Verdict x={230} y={214} texte={partie.mot} ton="neutre-evide" largeur={140} />
         {/if}
       </g>
     {/each}
@@ -190,23 +185,8 @@
     stroke: var(--vert-500);
   }
 
-  .verdict {
-    fill: rgb(46 233 139 / 18%);
-    stroke: var(--ok);
-    stroke-width: 1.5;
-  }
 
-  .verdict.non {
-    fill: rgb(255 255 255 / 8%);
-    stroke: var(--encre-doux);
-  }
 
-  .mot {
-    font-size: 13px;
-    font-weight: 800;
-    fill: var(--encre);
-    text-anchor: middle;
-  }
 
   .reponse {
     margin-top: 12px;

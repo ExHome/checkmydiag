@@ -99,7 +99,7 @@ export const NOTIONS_ELECTRICITE: Notion[] = [
       {
         rang: 6,
         bribes: [
-          { texte: 'La refaire suppose souvent de reprendre le tableau et une partie des circuits.' },
+          { texte: 'La refaire suppose souvent de reprendre le tableau et une partie des circuits.', clips: ['prix-des-travaux'] },
           {
             texte:
               'Tant qu’elle manque, un différentiel 30 mA reste la protection la plus efficace à ajouter.',

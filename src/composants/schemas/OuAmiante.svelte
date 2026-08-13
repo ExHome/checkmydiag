@@ -7,11 +7,13 @@
    */
   import Clip from '../savoir/Clip.svelte';
   import ClipDessin from '../savoir/ClipDessin.svelte';
+  import Verdict, { type Ton } from './Verdict.svelte';
 
   interface Cas {
     id: string;
     titre: string;
     mot: string;
+    ton: Ton;
     texte: string;
     danger: boolean;
   }
@@ -21,6 +23,7 @@
       id: 'intact',
       titre: 'Matériau intact',
       mot: 'Aucun danger',
+      ton: 'bon',
       danger: false,
       texte:
         'Les fibres sont prises dans le ciment ou la colle, comme des grains de sable dans du béton. Tant que le bloc tient, rien ne s’échappe. On peut vivre des années à côté sans risque.'
@@ -29,6 +32,7 @@
       id: 'abime',
       titre: 'Matériau percé ou cassé',
       mot: 'Des fibres s’envolent',
+      ton: 'alerte',
       danger: true,
       texte:
         'Une perceuse, une ponceuse, une scie — ou simplement un matériau qui se dégrade — libèrent des fibres invisibles. Respirées, elles restent dans les poumons et provoquent des cancers, parfois trente ans plus tard.'
@@ -59,12 +63,12 @@
   <svg viewBox="0 0 460 264" role="group" aria-label="À gauche, un matériau amianté intact ne libère rien. À droite, percé, il libère des fibres.">
     <defs>
       <linearGradient id="plaqueSaine" x1="0" y1="0" x2="0.3" y2="1">
-        <stop offset="0%" stop-color="#cfd8d2" />
-        <stop offset="100%" stop-color="#a8b5ad" />
+        <stop offset="0%" stop-color="var(--vert-100)" />
+        <stop offset="100%" stop-color="var(--gris)" />
       </linearGradient>
       <linearGradient id="plaqueCassee" x1="0" y1="0" x2="0.3" y2="1">
-        <stop offset="0%" stop-color="#d6cec4" />
-        <stop offset="100%" stop-color="#b0a396" />
+        <stop offset="0%" stop-color="var(--or-pale)" />
+        <stop offset="100%" stop-color="var(--or)" />
       </linearGradient>
     </defs>
 
@@ -96,11 +100,11 @@
           <path
             d="M44 152 L112 118 L180 152 L112 186 Z"
             fill={cas.danger ? 'url(#plaqueCassee)' : 'url(#plaqueSaine)'}
-            stroke="#7d8a83"
+            stroke="var(--gris)"
             stroke-width="2"
             stroke-linejoin="round"
           />
-          <path d="M62 152 L112 127 M84 164 L134 139 M106 176 L156 151" stroke="#8f9c95" stroke-width="2" opacity="0.8" />
+          <path d="M62 152 L112 127 M84 164 L134 139 M106 176 L156 151" stroke="var(--gris)" stroke-width="2" opacity="0.8" />
 
           {#if cas.danger}
             <!-- La perceuse et la fissure -->
@@ -120,10 +124,7 @@
         {/if}
 
         <!-- Le verdict, en gros -->
-        <g transform="translate({112 + dx} 206)">
-          <rect x="-80" y="-16" width="160" height="32" rx="16" class="verdict" class:mauvais={cas.danger} />
-          <text x="0" y="5" class="mot">{cas.mot}</text>
-        </g>
+        <Verdict x={112 + dx} y={206} texte={cas.mot} ton={cas.ton} largeur={160} />
       </g>
     {/each}
 
@@ -227,23 +228,8 @@
     opacity: 0.85;
   }
 
-  .verdict {
-    fill: rgb(46 233 139 / 16%);
-    stroke: var(--ok);
-    stroke-width: 1.5;
-  }
 
-  .verdict.mauvais {
-    fill: rgb(255 95 109 / 16%);
-    stroke: var(--alerte);
-  }
 
-  .mot {
-    font-size: 13px;
-    font-weight: 800;
-    fill: var(--encre);
-    text-anchor: middle;
-  }
 
   .reponse {
     margin-top: 12px;

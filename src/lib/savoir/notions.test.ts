@@ -44,6 +44,25 @@ describe('la cartographie du savoir', () => {
     }
   });
 
+  /**
+   * La deuxième promesse du produit vaut aussi pour l'argent. Tant qu'aucune
+   * source sérieuse n'est branchée, aucune notion n'avance de montant — on
+   * explique ce qui fait le prix, on ne le devine pas.
+   */
+  it('n’avance aucun prix', () => {
+    const MONTANT = /\d[\d\s  ]*(?:€|euros?)|(?:€|euros?)\s*\d/i;
+    const fautifs: string[] = [];
+
+    for (const n of NOTIONS) {
+      const textes = [n.definition, ...n.niveaux.flatMap((niv) => niv.bribes.map((b) => b.texte))];
+      for (const texte of textes) {
+        if (MONTANT.test(texte)) fautifs.push(`${n.id} : ${texte.slice(0, 70)}`);
+      }
+    }
+
+    expect(fautifs).toEqual([]);
+  });
+
   it('donne un registre à chaque niveau', () => {
     for (const n of NOTIONS) {
       for (const niveau of n.niveaux) {

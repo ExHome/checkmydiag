@@ -107,9 +107,13 @@ export const NOTIONS_DPE: Notion[] = [
       {
         rang: 6,
         bribes: [
-          { texte: 'Combles perdus : isolant soufflé ou déroulé, sans toucher à la charpente.' },
+          { texte: 'Combles perdus : isolant soufflé ou déroulé, sans toucher à la charpente.', clips: ['technique'] },
           { texte: 'Combles aménagés : isolation sous rampants, ou par l’extérieur si la couverture est refaite.', clips: ['rampant'] },
-          { texte: 'Toujours vérifier la ventilation après coup : un comble isolé et étanche condense.', clips: ['ventilation'] }
+          { texte: 'Toujours vérifier la ventilation après coup : un comble isolé et étanche condense.', clips: ['ventilation'] },
+          {
+            texte: 'Ce que coûtera le chantier dépend surtout de l’accessibilité des combles.',
+            clips: ['accessibilite', 'prix-des-travaux']
+          }
         ]
       },
       {
@@ -239,7 +243,8 @@ export const NOTIONS_DPE: Notion[] = [
               'Par l’extérieur : plus efficace, traite les ponts thermiques, mais change la façade et coûte cher.',
             clips: ['pont-thermique']
           },
-          { texte: 'Par l’intérieur : moins cher, mais mange de la surface habitable et laisse les jonctions.', clips: ['isolation'] }
+          { texte: 'Par l’intérieur : moins cher, mais mange de la surface habitable et laisse les jonctions.', clips: ['isolation'] },
+          { texte: 'C’est le poste où deux devis s’écartent le plus.', clips: ['prix-des-travaux'] }
         ]
       }
     ],
@@ -403,7 +408,7 @@ export const NOTIONS_DPE: Notion[] = [
         rang: 6,
         bribes: [
           { texte: 'Changer d’abord ce qui fuit, ensuite ce qui chauffe : un bon appareil dans une passoire reste cher.', clips: ['isolation'] },
-          { texte: 'Pompe à chaleur, chaudière à condensation, réseau de chaleur — selon l’énergie disponible.' }
+          { texte: 'Pompe à chaleur, chaudière à condensation, réseau de chaleur — selon l’énergie disponible.', clips: ['prix-des-travaux'] }
         ]
       },
       {
