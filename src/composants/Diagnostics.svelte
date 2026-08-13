@@ -42,14 +42,31 @@
    * le verdict de chaque rapport et jusqu'à quand il vaut. Dit une fois, à
    * l'endroit où se trouve le détail qu'il annonce.
    */
-  const sommaire = $derived(
-    analyse.diagnostics.map((d) => ({
-      type: d.type,
-      titre: d.titre,
-      gravite: d.gravite,
-      conclusion: libelleCourt(d),
-      ...echeance(d)
-    }))
+  /**
+   * Les familles du dossier.
+   *
+   * Sept diagnostics à la suite, c'est une liste ; répartis en familles, c'est
+   * un dossier. Le lecteur ne connaît pas les noms des rapports, mais il sait
+   * ce qu'est le chauffage, la sécurité ou la santé — on classe donc par ce
+   * qui l'inquiète, pas par l'ordre réglementaire.
+   *
+   * L'ordre compte : ce qui touche aux personnes vient avant ce qui touche à
+   * l'argent.
+   */
+  const FAMILLES = [
+    { cle: 'securite', nom: 'Sécurité', quoi: 'Ce qui peut blesser', types: ['electricite', 'gaz'] },
+    { cle: 'sante', nom: 'Santé', quoi: 'Ce qu’on respire ou touche', types: ['amiante', 'plomb'] },
+    { cle: 'energie', nom: 'Énergie', quoi: 'Ce que le logement consomme', types: ['dpe'] },
+    { cle: 'bati', nom: 'Bâti et environnement', quoi: 'Le terrain et la structure', types: ['termites', 'erp', 'assainissement'] },
+    { cle: 'surfaces', nom: 'Surfaces', quoi: 'Ce qui sera écrit dans l’acte', types: ['carrez'] }
+  ] as const;
+
+  /** Les familles réellement présentes, dans l'ordre, sans les vides. */
+  const parFamille = $derived(
+    FAMILLES.map((f) => ({
+      ...f,
+      diags: analyse.diagnostics.filter((d) => (f.types as readonly string[]).includes(d.type))
+    })).filter((f) => f.diags.length > 0)
   );
 
   const BLOCS = [
@@ -137,13 +154,26 @@
   <p class="eyebrow">Le dossier, diagnostic par diagnostic</p>
 
   <!-- Ce qu'il y a dans le dossier, et où c'est. Une ligne mène à sa fiche. -->
+  <!-- Le dossier par familles : ce qui peut blesser, ce qu'on respire, ce que
+       le logement consomme. Le lecteur ne connaît pas les noms des rapports,
+       mais il sait ce qui l'inquiète. -->
   <nav class="sommaire" aria-label="Les diagnostics du dossier">
-    {#each sommaire as s (s.type)}
-      <a class="entree {s.gravite}" href="#diag-{s.type}">
-        <span class="nom">{s.titre}</span>
-        <span class="verdict-court">{s.conclusion}</span>
-        <span class="jusqua" class:perimee={s.perimee}>{s.texte}</span>
-      </a>
+    {#each parFamille as f (f.cle)}
+      <section class="famille">
+        <h3 class="titre-famille">
+          {f.nom}<span class="quoi-famille">{f.quoi}</span>
+        </h3>
+        <div class="entrees">
+          {#each f.diags as d (d.type)}
+            {@const q = echeance(d)}
+            <a class="entree {d.gravite}" href="#diag-{d.type}">
+              <span class="nom">{d.titre}</span>
+              <span class="verdict-court">{libelleCourt(d)}</span>
+              <span class="jusqua" class:perimee={q.perimee}>{q.texte}</span>
+            </a>
+          {/each}
+        </div>
+      </section>
     {/each}
   </nav>
 
@@ -242,11 +272,41 @@
 
   /* Le sommaire : une ligne par rapport, cliquable, avec ce qu'il conclut et
      jusqu'à quand il vaut. C'est tout ce qu'on veut savoir avant de descendre. */
+  /* Les familles s'empilent, séparées par de l'espace plutôt que par des
+     cadres. C'est le blanc qui groupe, pas la boîte. */
   .sommaire {
+    display: grid;
+    gap: var(--e5);
+    margin-bottom: var(--e6);
+  }
+
+  .titre-famille {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--e3);
+    margin: 0 0 var(--e3);
+    padding-bottom: var(--e2);
+    border-bottom: 1px solid var(--trait-or);
+    font-family: var(--police-titre);
+    font-size: var(--t-lead);
+    font-weight: 500;
+    color: var(--or-clair);
+  }
+
+  /* Ce que la famille recouvre, dit en mots de tous les jours : « ce qui peut
+     blesser » se comprend sans connaître le mot « sécurité ». */
+  .quoi-famille {
+    font-family: var(--police);
+    font-size: var(--t-petit);
+    font-weight: 400;
+    color: var(--sur-fond-doux);
+  }
+
+  .entrees {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: var(--e1);
-    margin-bottom: var(--e6);
   }
 
   .entree {
