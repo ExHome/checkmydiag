@@ -122,7 +122,7 @@ function cadre(contenu: string, thème: string): string {
 ${contenu}
 
   <path d="M${MARGE} 540 H${LARGEUR - MARGE}" stroke="${CREME}" stroke-opacity="0.16" stroke-width="1" />
-  <text x="${MARGE}" y="583" font-family="${LINEALE}" font-size="22" font-weight="600" letter-spacing="3.4" fill="${OR_CLAIR}">LES DIAGS POUR LES NULS</text>
+  <text x="${MARGE}" y="583" font-family="${LINEALE}" font-size="22" font-weight="600" letter-spacing="3.4" fill="${OR_CLAIR}">EN CLAIR</text>
   <text x="${LARGEUR - MARGE}" y="583" text-anchor="end" font-family="${LINEALE}" font-size="20" fill="#8ba496">Votre rapport ne quitte jamais votre appareil.</text>
 </svg>`;
 }

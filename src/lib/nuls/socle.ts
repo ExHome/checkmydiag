@@ -1,5 +1,5 @@
 /**
- * « Les diags pour les nuls » — la grammaire de la rubrique.
+ * « En clair » — la grammaire de la rubrique.
  *
  * Ce fichier ne contient aucune question : seulement les formes qu'elles
  * partagent. Les questions vivent par thématique (`themes/*.ts`) et sont

@@ -104,6 +104,52 @@ if (manquantes.length) {
   console.log('C’est le signal qu’il faut élargir le registre, pas s’arrêter.');
 }
 
+/* ------------------------------------------------- perfectionner d'abord */
+
+/**
+ * Le croisement qui décide de l'ordre de travail : une page incomplète qui
+ * répond à une intention forte coûte bien plus qu'une page parfaite sur une
+ * requête que personne ne tape.
+ *
+ * C'est la traduction de la consigne du 13/08/2026 — *on perfectionne avant
+ * d'élargir* : tant que ces pages-là ont des trous, écrire une question de plus
+ * rapporte moins que de les combler.
+ */
+const poidsDe = new Map<string, string>();
+for (const i of INTENTIONS) {
+  if (!i.reponse) continue;
+  // La plus forte intention l'emporte quand plusieurs pointent vers la page.
+  const rang = { fort: 0, moyen: 1, niche: 2 };
+  const connu = poidsDe.get(i.reponse);
+  if (!connu || rang[i.poids] < rang[connu as 'fort' | 'moyen' | 'niche']) {
+    poidsDe.set(i.reponse, i.poids);
+  }
+}
+
+const aPerfectionner = FICHES.map((f) => {
+  const trous: string[] = [];
+  if (!f.question.dessin && !f.question.tableau) trous.push('visuel');
+  if (!f.question.piege) trous.push('piège');
+  if (!f.question.chezMoi) trous.push('chez-moi');
+  return { f, trous, poids: poidsDe.get(f.question.id) };
+})
+  .filter((p) => p.trous.length && p.poids)
+  .sort((a, b) => {
+    const rang = { fort: 0, moyen: 1, niche: 2 };
+    const parPoids =
+      rang[a.poids as 'fort' | 'moyen' | 'niche'] - rang[b.poids as 'fort' | 'moyen' | 'niche'];
+    return parPoids !== 0 ? parPoids : b.trous.length - a.trous.length;
+  });
+
+if (aPerfectionner.length) {
+  titre(`À PERFECTIONNER EN PRIORITÉ (${aPerfectionner.length})`);
+  console.log('  Pages incomplètes qui répondent à une intention suivie, les plus fortes d’abord.');
+  for (const { f, trous, poids } of aPerfectionner.slice(0, 25)) {
+    console.log(`  [${(poids as string).padEnd(5)}] ${f.theme.id}/${f.question.id} — manque : ${trous.join(', ')}`);
+  }
+  if (aPerfectionner.length > 25) console.log(`  … et ${aPerfectionner.length - 25} autres.`);
+}
+
 /* ---------------------------------------------------- la qualité des pages */
 
 const sansDessin = FICHES.filter((f) => !f.question.dessin && !f.question.tableau);

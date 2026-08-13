@@ -71,9 +71,9 @@ Ils expliquent la forme du code, autant les connaître avant d'y toucher.
   réellement pas de diagnostic électricité. Le moteur ne le rate pas, il est
   absent — d'où le contrôle qui le réclame désormais.
 
-## « Les diags pour les nuls »
+## « En clair »
 
-Une rubrique publique de questions-réponses, à `/pour-les-nuls/` : un thème par
+Une rubrique publique de questions-réponses, à `/en-clair/` : un thème par
 famille de sujets, une page par question, un dessin quand il explique mieux
 qu'un paragraphe.
 
@@ -91,7 +91,7 @@ n'existe ni pour un moteur de recherche, ni pour un téléphone en bord de rése
 | `src/lib/nuls/rendu.ts` | la fabrique des pages, du sitemap et du robots.txt |
 | `src/lib/nuls/og.ts` | les cartes de partage (1200 × 630) |
 | `scripts/plugin-nuls.ts` | le plugin Vite : sert en dev, écrit au build |
-| `public/pour-les-nuls.css` | la feuille de la rubrique, autonome |
+| `public/en-clair.css` | la feuille de la rubrique, autonome |
 
 ### Les cartes de partage
 
@@ -180,7 +180,7 @@ pas, si deux questions partagent une adresse, si un dessin est appelé sans
 exister, ou si une réponse réglementaire n'est pas datée. Le build s'arrête sur
 les mêmes renvois morts.
 
-En développement, `/pour-les-nuls/planche/` affiche les dessins côte à côte.
+En développement, `/en-clair/planche/` affiche les dessins côte à côte.
 Cette page n'est jamais publiée : elle sert à repérer d'un coup celui qui déborde
 de son cadre.
 

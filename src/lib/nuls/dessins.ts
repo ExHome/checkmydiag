@@ -4,7 +4,7 @@
  * Ce sont des chaînes SVG, pas des composants : la rubrique est prérendue en
  * HTML pur, et un dessin qui a besoin de JavaScript pour apparaître n'existe ni
  * pour un moteur de recherche, ni pour un téléphone en 3G, ni pour un lecteur
- * d'écran. Les classes sont celles de `pour-les-nuls.css` — aucun style en dur,
+ * d'écran. Les classes sont celles de `en-clair.css` — aucun style en dur,
  * sauf les sept couleurs de l'arrêté DPE (voir plus bas).
  *
  * Les règles de ORDRE-DE-MISSION-SCHEMAS.md s'appliquent telles quelles :

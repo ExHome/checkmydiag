@@ -1,5 +1,5 @@
 /**
- * Le plugin qui fabrique « Les diags pour les nuls ».
+ * Le plugin qui fabrique « En clair ».
  *
  * La rubrique n'est pas une route de l'application : ce sont de vraies pages
  * HTML, écrites dans `dist/` au moment du build. Le lecteur qui arrive d'un
@@ -55,7 +55,7 @@ export function nuls(): Plugin {
   let racine = '.';
 
   return {
-    name: 'check-my-diag:pour-les-nuls',
+    name: 'check-my-diag:en-clair',
 
     configResolved(config) {
       racine = config.root;
@@ -75,7 +75,7 @@ export function nuls(): Plugin {
           await servir(serveur, requete.url ?? '/', reponse, suite);
         } catch (erreur) {
           serveur.config.logger.error(
-            `[pour-les-nuls] ${requete.url} : ${erreur instanceof Error ? erreur.stack : erreur}`
+            `[en-clair] ${requete.url} : ${erreur instanceof Error ? erreur.stack : erreur}`
           );
           reponse.statusCode = 500;
           reponse.end('La rubrique n’a pas pu être fabriquée. Voir le terminal.');
@@ -110,10 +110,10 @@ export function nuls(): Plugin {
           return;
         }
 
-        // Le test porte sur le segment entier : sans lui, `/pour-les-nuls.css`
+        // Le test porte sur le segment entier : sans lui, `/en-clair.css`
         // — la feuille de la rubrique, servie depuis `public/` — serait pris
         // pour une page et redirigé.
-        if (chemin !== '/pour-les-nuls' && !chemin.startsWith('/pour-les-nuls/')) return suite();
+        if (chemin !== '/en-clair' && !chemin.startsWith('/en-clair/')) return suite();
 
         // Sans barre finale, les chemins relatifs de la page se résoudraient un
         // cran trop haut : on redirige plutôt que de servir une page cassée.
@@ -131,7 +131,7 @@ export function nuls(): Plugin {
 
         // La planche de contrôle : tous les dessins côte à côte. Elle n'existe
         // qu'ici, jamais dans `dist/`.
-        if (chemin === '/pour-les-nuls/planche/') {
+        if (chemin === '/en-clair/planche/') {
           reponse.setHeader('Content-Type', 'text/html; charset=utf-8');
           reponse.end(await serveur.transformIndexHtml(chemin, rendu.planche()));
           return;

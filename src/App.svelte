@@ -268,7 +268,7 @@
     <!-- La seule sortie de l'écran de dépôt : les explications générales, pour
          qui n'a pas encore son rapport sous la main. Ce sont de vraies pages
          HTML, fabriquées hors de l'application (scripts/plugin-nuls.ts). -->
-    <a class="rubrique" href="./pour-les-nuls/">Les diags pour les nuls</a>
+    <a class="rubrique" href="./en-clair/">En clair</a>
   </div>
 </header>
 

@@ -116,7 +116,10 @@ describe('la forme des réponses', () => {
 });
 
 describe('les pages produites', () => {
-  const produites = pages();
+  // Les renvois depuis l'ancienne adresse de la rubrique ne sont pas des pages
+  // de contenu : ils n'ont ni description, ni données structurées, ni carte.
+  const produites = pages().filter((p) => !p.renvoi);
+  const renvois = pages().filter((p) => p.renvoi);
 
   it('fabrique une page par question, par thème, plus l’accueil', () => {
     expect(produites.length).toBe(FICHES.length + THEMES.length + 1);
@@ -166,6 +169,20 @@ describe('les pages produites', () => {
     for (const page of produites) {
       const adresse = page.chemin.replace(/index\.html$/, '');
       expect(plan, adresse).toContain(`/${adresse}<`);
+    }
+  });
+
+  it('renvoie chaque ancienne adresse vers la nouvelle, sans la concurrencer', () => {
+    // Une page par ancienne adresse : accueil, thèmes, questions.
+    expect(renvois.length).toBe(FICHES.length + THEMES.length + 1);
+
+    const plan = sitemap();
+    for (const renvoi of renvois) {
+      expect(renvoi.contenu, renvoi.chemin).toContain('name="robots" content="noindex');
+      expect(renvoi.contenu, renvoi.chemin).toContain('rel="canonical"');
+      expect(renvoi.contenu, renvoi.chemin).toContain('http-equiv="refresh"');
+      // Jamais au plan du site : une adresse morte n'a rien à y faire.
+      expect(plan).not.toContain(`/${renvoi.chemin.replace(/index\.html$/, '')}<`);
     }
   });
 });

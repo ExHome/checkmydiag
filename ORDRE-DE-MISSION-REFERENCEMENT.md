@@ -103,6 +103,28 @@ Tant que la fiabilité n'est pas en place, **écrire une page de plus rapporte
 moins que signer celles qui existent**. `npm run seo` le rappelle à chaque
 passage.
 
+## Phase en cours (13/08/2026) : on perfectionne
+
+Décision d'Aude : **on ne déclenche rien tant que le site n'est pas au point et
+que les statuts ne sont pas faits.** Ni soumission à la Search Console, ni
+signature de l'éditeur — ces deux actions attendent, et c'est assumé.
+
+D'ici là, la priorité n'est pas d'élargir mais **d'approfondir ce qui existe** :
+
+1. **le retour au rapport du lecteur** (`chezMoi`) — c'est la règle 7, et c'est
+   ce qui distingue une explication d'un article de blog ;
+2. **le piège** — le bloc que personne d'autre n'écrit, et celui qu'on retient ;
+3. **le visuel** — schéma ou tableau : une page qui n'en a aucun explique moins
+   bien qu'elle ne le pourrait.
+
+`npm run seo` imprime pour cela une section **À PERFECTIONNER EN PRIORITÉ**, qui
+croise les manques d'une page avec le poids de l'intention à laquelle elle
+répond : une page incomplète très cherchée coûte bien plus qu'une page parfaite
+sur une requête que personne ne tape.
+
+**La règle de la phase** : tant qu'il reste des pages `[fort]` incomplètes, on
+les comble avant d'en écrire de nouvelles.
+
 ## La boucle, sans qu'on la demande
 
 **ANALYSER** ce que les gens cherchent réellement → **ÉCRIRE** la meilleure

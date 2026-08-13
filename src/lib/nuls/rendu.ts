@@ -35,8 +35,8 @@ export const SITE = (
 ).replace(/\/$/, '');
 
 /** Le nom de la rubrique, et son dossier. */
-export const RUBRIQUE = 'pour-les-nuls';
-const NOM = 'Les diags pour les nuls';
+export const RUBRIQUE = 'en-clair';
+const NOM = 'En clair';
 const MARQUE = 'Check My Diag';
 
 /* -------------------------------------------------------------------------- */
@@ -223,11 +223,11 @@ function gabarit(page: Page): string {
     <meta property="og:image" content="${SITE}/${page.carte}" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Check My Diag — les diags pour les nuls" />
+    <meta property="og:image:alt" content="Check My Diag — en clair" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content="${SITE}/${page.carte}" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>" />
-    <link rel="stylesheet" href="${racine}pour-les-nuls.css" />
+    <link rel="stylesheet" href="${racine}en-clair.css" />
     <script type="application/ld+json">
 ${JSON.stringify({ '@context': 'https://schema.org', '@graph': page.donnees }, null, 2)}
     </script>
@@ -490,7 +490,9 @@ export function pageRubrique(): Page {
 ${fil([{ nom: 'Accueil', lien: racine }, { nom: NOM }])}
 
       <article class="rubrique">
-        <h1>Les diags pour les nuls</h1>
+        <!-- Le nom de la rubrique est « En clair » ; son titre de page dit de
+             quoi elle parle. Un h1 de deux mots ne rencontre personne. -->
+        <h1>Les diagnostics immobiliers, en clair</h1>
         <p class="chapeau">
           Vous avez reçu soixante pages de PDF technique et vous n’avez qu’une question :
           est-ce que c’est grave ? Ici, chaque question qu’on se pose vraiment sur les
@@ -544,7 +546,7 @@ ${pont(chemin, 'Vous avez le rapport sous la main ? Ne le lisez pas : déposez-l
 
   return {
     chemin,
-    titre: `${NOM} — comprendre son diagnostic immobilier sans jargon | ${MARQUE}`,
+    titre: `Les diagnostics immobiliers en clair — ${MARQUE}`,
     description:
       'DPE, amiante, plomb, électricité, gaz, termites, surfaces : toutes les questions qu’on se pose sur les diagnostics immobiliers, expliquées simplement, avec un schéma. Sans jargon et sans baratin.',
     corps,
@@ -752,7 +754,7 @@ ${pont('confidentialite/')}`,
 
 /**
  * La planche de contrôle des dessins — servie en développement seulement, à
- * l'adresse `/pour-les-nuls/planche/`.
+ * l'adresse `/en-clair/planche/`.
  *
  * Elle n'est jamais écrite dans `dist/` : ce n'est pas une page du site, c'est
  * l'outil qui permet de voir les vingt-cinq dessins côte à côte et de repérer
@@ -796,6 +798,12 @@ export interface Fichier {
   /** Chemin relatif à la racine du site, avec son nom de fichier. */
   chemin: string;
   contenu: string;
+  /**
+   * Une page qui ne fait que renvoyer vers une autre. Elle n'a ni description,
+   * ni données structurées, ni carte de partage — et les contrôles de qualité
+   * ne doivent pas la juger comme une page de contenu.
+   */
+  renvoi?: boolean;
 }
 
 /**
@@ -827,6 +835,52 @@ export function textesDesCartes(): string[] {
   ];
 }
 
+/**
+ * Les renvois depuis l'ancienne adresse de la rubrique.
+ *
+ * Elle s'est appelée « Les diags pour les nuls » et vivait sous
+ * `/pour-les-nuls/`. Le nom a changé le 13/08/2026, quelques heures après la
+ * mise en ligne — assez tôt pour qu'aucun moteur n'ait indexé, assez tard pour
+ * qu'un lien ait pu être partagé.
+ *
+ * GitHub Pages ne sait pas rediriger côté serveur : on pose donc une page qui
+ * renvoie, avec son `canonical` vers la nouvelle adresse et un `noindex` pour
+ * qu'elle ne concurrence jamais l'originale. Ces pages n'entrent pas au plan du
+ * site. Elles pourront disparaître dans quelques mois.
+ */
+function renvois(): Fichier[] {
+  const anciennes = [
+    { de: 'pour-les-nuls/', vers: cheminRubrique() },
+    ...THEMES.map((t) => ({ de: `pour-les-nuls/${t.id}/`, vers: cheminTheme(t) })),
+    ...FICHES.map((f) => ({
+      de: `pour-les-nuls/${f.theme.id}/${f.question.id}/`,
+      vers: cheminQuestion(f)
+    }))
+  ];
+
+  return anciennes.map(({ de, vers }) => ({
+    chemin: `${de}index.html`,
+    renvoi: true,
+    contenu: `<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="noindex, follow" />
+    <link rel="canonical" href="${SITE}/${vers}" />
+    <meta http-equiv="refresh" content="0; url=${versRacine(de)}${vers}" />
+    <title>Cette page a déménagé — ${MARQUE}</title>
+  </head>
+  <body>
+    <p>
+      « Les diags pour les nuls » s’appelle désormais « ${NOM} ».
+      <a href="${versRacine(de)}${vers}">Poursuivre vers la nouvelle adresse</a>.
+    </p>
+  </body>
+</html>
+`
+  }));
+}
+
 /** Toutes les pages de la rubrique, prêtes à écrire. */
 export function pages(): Fichier[] {
   const toutes: Page[] = [
@@ -835,7 +889,10 @@ export function pages(): Fichier[] {
     ...FICHES.map(pageQuestion),
     ...pagesDeConfiance()
   ];
-  return toutes.map((p) => ({ chemin: `${p.chemin}index.html`, contenu: gabarit(p) }));
+  return [
+    ...toutes.map((p) => ({ chemin: `${p.chemin}index.html`, contenu: gabarit(p) })),
+    ...renvois()
+  ];
 }
 
 /** Le plan du site : la rubrique, et l'application elle-même. */

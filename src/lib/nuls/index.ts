@@ -1,5 +1,5 @@
 /**
- * « Les diags pour les nuls » — l'assemblage.
+ * « En clair » — l'assemblage.
  *
  * Un thème par fichier, réunis ici. C'est le seul point d'entrée : le générateur
  * de pages et l'application ne connaissent que ce module.

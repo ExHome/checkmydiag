@@ -1175,6 +1175,32 @@ main {
   stroke-linecap: round;
 }
 
+/* Le coût d'un diagnostic : une barre, pas un chiffre. Les prix sont libres,
+   on montre le mécanisme — le déplacement se partage — jamais un montant. */
+.barre-cout {
+  fill: var(--or-fonce);
+  opacity: 0.75;
+}
+
+/* Le sol argileux, dans ses deux états. */
+.sol-gonfle {
+  fill: rgb(87 166 132 / 22%);
+  stroke: var(--vert-500);
+  stroke-width: 1.2;
+}
+
+.sol-retracte {
+  fill: rgb(138 92 14 / 18%);
+  stroke: var(--attention);
+  stroke-width: 1.2;
+}
+
+.fente {
+  stroke: var(--attention);
+  stroke-width: 1.2;
+  opacity: 0.8;
+}
+
 .triangle-attention {
   fill: rgb(138 92 14 / 25%);
   stroke: var(--attention);
