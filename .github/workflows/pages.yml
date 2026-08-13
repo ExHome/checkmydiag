@@ -42,8 +42,18 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # Les cartes de partage sont rendues avec les polices du système. Sans
+      # serif installé, leur titre tomberait sur une police de secours — ou ne
+      # serait pas dessiné du tout.
+      - run: sudo apt-get install -y --no-install-recommends fonts-dejavu-core
       - run: npm run build
+      # enablement : le workflow allume GitHub Pages lui-même au premier
+      # passage. Sans ça, il faut d'abord cocher « Source : GitHub Actions »
+      # dans les réglages — un geste de plus, à faire sous le compte
+      # propriétaire, et qui retarde la première mise en ligne.
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
