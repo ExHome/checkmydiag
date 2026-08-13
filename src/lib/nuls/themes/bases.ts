@@ -94,6 +94,8 @@ export const BASES: Theme = {
       ],
       piege:
         'Le vendeur paie, mais il ne choisit pas le résultat. Un diagnostiqueur qui adoucirait un rapport pour plaire à son client engagerait sa responsabilité et sa certification.',
+      chezMoi:
+        'Le rapport que vous avez sous les yeux nomme son commanditaire en page de garde. Si vous êtes acheteur ou locataire, vous n’avez rien à payer pour l’obtenir : il vous est dû.',
       aussi: ['combien-ca-coute', 'comment-choisir-son-diagnostiqueur', 'contester-un-diagnostic'],
       verifie: V
     },
@@ -108,6 +110,9 @@ export const BASES: Theme = {
       ],
       court:
         'Les prix sont libres : aucun tarif n’est fixé par la loi. Le montant dépend du nombre de diagnostics à faire, de la surface, de l’ancienneté du bien et de la région — d’où des écarts importants d’un devis à l’autre.',
+      dessin: 'prix',
+      chezMoi:
+        'La page de garde de chaque rapport indique le cabinet qui l’a établi. Si vous comparez deux devis, comparez d’abord la liste des diagnostics couverts : c’est là que se cache l’écart, bien plus que dans le tarif horaire.',
       points: [
         'On achète presque toujours un ensemble, pas un diagnostic isolé : le déplacement et la visite sont mutualisés.',
         'Ce qui fait monter la facture : la surface, le nombre de pièces, un bien ancien qui déclenche plomb et amiante, un audit énergétique en plus du DPE.',

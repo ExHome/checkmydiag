@@ -85,6 +85,8 @@ export const ELEC_GAZ: Theme = {
       ],
       piege:
         'Le rapport ne hiérarchise pas pour vous. Toutes les anomalies s’écrivent avec le même ton réglementaire, qu’il s’agisse d’un risque mortel ou d’une prise mal placée.',
+      chezMoi:
+        'Check My Diag regroupe vos anomalies par point de contrôle : vous voyez d’un coup si vous avez six problèmes distincts, ou le même répété trente fois — ce qui ne se chiffre pas pareil chez un électricien.',
       aussi: ['c-est-quoi-un-differentiel', 'dois-je-mettre-mon-installation-aux-normes', 'une-anomalie-empeche-t-elle-de-vendre'],
       verifie: V
     },
@@ -99,6 +101,11 @@ export const ELEC_GAZ: Theme = {
       ],
       court:
         'Non. La norme s’applique aux installations neuves et aux rénovations complètes, pas à l’existant. Ce que la loi exige d’une installation ancienne, c’est qu’elle soit sûre — pas qu’elle soit conforme aux règles d’aujourd’hui.',
+      dessin: 'sur-ou-aux-normes',
+      piege:
+        'On confond « anomalie relevée » et « obligation de travaux ». Le diagnostic mesure la sécurité, pas la conformité au neuf : une installation ancienne peut aligner des anomalies sans être dangereuse, et une installation récente peut l’être.',
+      chezMoi:
+        'Reprenez votre rapport et isolez deux points : le dispositif différentiel et la mise à la terre. S’ils sont là et fonctionnels, le reste relève de l’amélioration, pas de la mise en sécurité.',
       points: [
         'Aucun texte n’impose de rénover une installation ancienne au motif qu’elle est ancienne.',
         'La sécurité, elle, s’impose : un bailleur doit fournir un logement décent, donc des installations en bon état d’usage.',
@@ -178,6 +185,8 @@ export const ELEC_GAZ: Theme = {
       ],
       piege:
         'Un détecteur de fumée ne détecte pas le monoxyde. Ce sont deux appareils différents, et le second n’est pas obligatoire — il coûte pourtant le prix d’un repas.',
+      chezMoi:
+        'Dans votre rapport gaz, cherchez ce qui touche à la ventilation et à l’évacuation des fumées. C’est la partie qui parle de monoxyde, même quand le mot n’y figure pas.',
       aussi: ['c-est-quoi-le-diagnostic-gaz', 'c-est-quoi-un-dgi-gaz'],
       savoir: ['monoxyde-de-carbone', 'ventilation'],
       verifie: V

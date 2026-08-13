@@ -30,6 +30,8 @@ export const SURFACES: Theme = {
         'Elle reste valable tant que rien ne change : c’est le seul « diagnostic » sans date de péremption.',
         'Le mesurage peut être fait par le vendeur lui-même — mais c’est lui qui répond de l’erreur.'
       ],
+      piege:
+        'La loi Carrez ne concerne que la copropriété. Pour une maison individuelle sur son terrain, elle n’existe pas — et un vendeur qui vous annonce une « surface Carrez » pour une maison vous cite en réalité autre chose.',
       chezMoi:
         'Sur votre rapport, cherchez le tableau pièce par pièce : c’est là qu’on voit ce qui a été compté, et ce qui a été écarté.',
       aussi: ['pourquoi-ma-surface-carrez-est-plus-petite', 'erreur-de-surface-que-puis-je-reclamer', 'c-est-quoi-la-surface-habitable'],
@@ -112,6 +114,10 @@ export const SURFACES: Theme = {
         'Dans une annonce, la surface citée est en général la surface Carrez pour un appartement, la surface habitable pour une maison.',
         'Le rapport de mesurage indique toujours laquelle a été calculée : c’est la première chose à lire.'
       ],
+      piege:
+        'Comparer deux annonces revient souvent à comparer deux surfaces qui ne se calculent pas pareil. Avant de conclure qu’un bien est plus grand qu’un autre, vérifiez laquelle des trois est citée.',
+      chezMoi:
+        'Votre attestation de mesurage précise en tête laquelle a été mesurée. Si votre bail annonce une surface et l’acte de vente une autre, ce n’est donc pas forcément une contradiction.',
       aussi: ['c-est-quoi-la-surface-habitable', 'c-est-quoi-la-loi-carrez', 'pourquoi-ma-surface-carrez-est-plus-petite'],
       verifie: V
     },
@@ -136,6 +142,8 @@ export const SURFACES: Theme = {
       ],
       piege:
         'Mesurer soi-même, c’est aussi s’exposer seul. Le mesurage professionnel transfère la responsabilité — c’est bien pour cela qu’on le paie.',
+      chezMoi:
+        'Si vous détenez déjà une attestation de mesurage, son tableau pièce par pièce vous dit exactement ce qui a été compté. Refaire le calcul vous-même à partir de là prend dix minutes, et repère les écarts.',
       aussi: ['c-est-quoi-la-loi-carrez', 'erreur-de-surface-que-puis-je-reclamer', 'pourquoi-ma-surface-carrez-est-plus-petite'],
       savoir: ['rampant'],
       verifie: V

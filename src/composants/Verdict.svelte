@@ -15,6 +15,7 @@
    */
   import type { Analyse, Diagnostic, PointDeControle } from '../lib/modele';
   import { FICHES } from '../lib/analyse/fiches';
+  import MotsExpliques from './MotsExpliques.svelte';
 
   const { analyse }: { analyse: Analyse } = $props();
 
@@ -228,9 +229,13 @@
           </button>
 
           {#if ouverte === ligne.cle}
+            <!-- C'est ici que le lecteur rencontre les mots du métier pour la
+                 première fois — A1, DGI, opposable, saturnisme. Chacun s'ouvre
+                 sur place : c'est ce qui permet de ne pas les expliquer dans
+                 la phrase, et donc de la garder courte. -->
             <div class="detail apparait">
-              <p>{ligne.explication}</p>
-              <p class="faire">{ligne.quoiFaire}</p>
+              <p><MotsExpliques texte={ligne.explication} /></p>
+              <p class="faire"><MotsExpliques texte={ligne.quoiFaire} /></p>
             </div>
           {/if}
         </li>

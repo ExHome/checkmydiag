@@ -79,6 +79,82 @@ export const LEXIQUE: Mot[] = [
     motif: /anomalies?/i,
     definition:
       'Un point de l’installation qui ne respecte pas la norme de sécurité contrôlée. Ce n’est pas une panne : l’installation fonctionne, mais elle expose à un risque.'
+  },
+
+  /* Les sigles et les mots que le rapport emploie sans jamais les traduire.
+     Chacun d'eux évitait jusqu'ici une phrase d'explication à l'écran : c'est
+     tout l'intérêt de les ranger ici. */
+  {
+    nom: 'A1',
+    motif: /\bA1\b/,
+    definition:
+      'Le défaut gaz le moins grave. À faire réparer un jour, sans urgence : rien ne vous oblige à agir tout de suite.'
+  },
+  {
+    nom: 'A2',
+    motif: /\bA2\b/,
+    definition:
+      'Un défaut gaz à faire réparer vite. L’installation reste en service, mais le risque est réel : prenez rendez-vous avec un professionnel.'
+  },
+  {
+    nom: 'ADEME',
+    motif: /\bADEME\b/,
+    definition:
+      'L’agence publique de la transition écologique. Tous les DPE lui sont envoyés : chacun reçoit un numéro, et c’est ce numéro qui prouve qu’il existe officiellement.'
+  },
+  {
+    nom: 'CO₂',
+    motif: /CO₂|gaz [àa] effet de serre/i,
+    definition:
+      'Le gaz rejeté quand on se chauffe. Le DPE en donne une deuxième note, à côté de celle de la consommation : c’est la moins bonne des deux qui devient l’étiquette du logement.'
+  },
+  {
+    nom: 'Radon',
+    motif: /\bradons?\b/i,
+    definition:
+      'Un gaz naturel qui sort du sol, invisible et sans odeur, présent surtout en zone granitique. Il s’accumule dans les pièces mal ventilées ; aérer suffit le plus souvent.'
+  },
+  {
+    nom: 'Superficie privative',
+    motif: /superficies? privatives?/i,
+    definition:
+      'La surface au sol des pièces, comptée seulement là où le plafond dépasse 1,80 m. C’est le chiffre qui sera écrit dans l’acte de vente.'
+  },
+  {
+    nom: 'Énergie finale',
+    motif: /[ée]nergie finale/i,
+    definition:
+      'Ce que vous payez : l’énergie qui arrive chez vous. L’énergie primaire, elle, compte en plus ce qu’il a fallu dépenser pour la produire et l’acheminer.'
+  },
+  {
+    nom: 'Unité de diagnostic',
+    motif: /unit[ée]s? de diagnostic/i,
+    definition:
+      'Un élément contrôlé séparément : un mur, une porte, une plinthe. Un même logement en compte des dizaines — c’est pourquoi les rapports parlent en nombre d’unités.'
+  },
+  {
+    nom: 'Mérule',
+    motif: /m[ée]rules?/i,
+    definition:
+      'Un champignon qui dévore le bois humide, dans le noir. Il se propage vite et peut atteindre la charpente : c’est le plus redouté des parasites du bâtiment.'
+  },
+  {
+    nom: 'Liaison équipotentielle',
+    motif: /liaisons? [ée]quipotentielles?/i,
+    definition:
+      'Un fil qui relie entre eux les métaux d’une salle d’eau — tuyaux, baignoire, radiateur — pour qu’aucun ne puisse devenir électrique. Sans lui, l’eau et le courant se rencontrent.'
+  },
+  {
+    nom: 'Double seuil',
+    motif: /doubles? seuils?/i,
+    definition:
+      'La règle qui décide de la lettre : on note la consommation, on note le CO₂, et on retient la plus mauvaise des deux notes.'
+  },
+  {
+    nom: 'Loi Boutin',
+    motif: /lois? Boutin/i,
+    definition:
+      'La surface habitable écrite dans un bail de location. Elle ne compte ni les caves, ni les balcons : elle est donc plus petite que la surface totale du logement.'
   }
 ];
 

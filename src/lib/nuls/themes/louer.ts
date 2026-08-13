@@ -44,6 +44,8 @@ export const LOUER: Theme = {
         'Le coût est à la charge du bailleur, et ne peut pas être refacturé au locataire.',
         'Ils sont à renouveler au fil du temps, pas à chaque nouveau locataire : c’est la date de visite qui commande.'
       ],
+      piege:
+        'La liste de la location n’est pas celle de la vente en plus court : elle est différente. La surface habitable s’ajoute, les termites et la loi Carrez disparaissent, et les durées de validité sont plus longues. Un dossier de vente recyclé pour un bail est donc à la fois trop et pas assez.',
       chezMoi:
         'Locataire ? Déposez le dossier reçu avec votre bail : vous verrez ce qu’il contient réellement, et ce qui manque.',
       aussi: [

@@ -102,7 +102,7 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
       'Le différentiel, c’est un vigile à l’entrée : il compte le courant qui entre et celui qui ressort. S’il en manque — parce qu’il est passé par vous — il coupe tout, en une fraction de seconde.',
     explication: [
       'Ce diagnostic ne dit pas si l’installation est aux normes d’aujourd’hui. Il contrôle six points de sécurité, sur les installations qui ont plus de quinze ans.',
-      'Une anomalie ne veut pas dire que le logement est inhabitable. Elle veut dire qu’il existe un risque : prendre une décharge, ou déclencher un incendie. Les deux plus fréquentes sont l’absence de différentiel et une mise à la terre qui ne fonctionne pas.',
+      'Une anomalie ne rend pas le logement inhabitable : elle signale un risque, décharge ou incendie. Les deux plus fréquentes : pas de différentiel, mise à la terre inefficace.',
       'Le diagnostiqueur ne démonte rien. Il ne peut donc rien dire de l’état des fils à l’intérieur des murs.'
     ],
     aFaire:
@@ -179,8 +179,10 @@ export function analyserGaz(lignes: string[], plage: [number, number]): Diagnost
     analogie:
       'Une flamme, ça mange de l’air. Si la grille de ventilation est bouchée, elle continue de brûler mais mal : elle fabrique du monoxyde de carbone. Un gaz qu’on ne voit pas, qu’on ne sent pas, et qui endort.',
     explication: [
-      'Le diagnostiqueur vérifie les tuyaux, les appareils branchés au gaz, la ventilation de la pièce et le conduit qui évacue les fumées. Il cherche deux dangers : une fuite de gaz, et une intoxication au monoxyde de carbone.',
-      'Les défauts sont classés en trois niveaux. A1 : à réparer un jour, sans urgence. A2 : à réparer vite. DGI, pour « danger grave et immédiat » : le diagnostiqueur coupe le gaz sur place, le jour même, et prévient le fournisseur.',
+      'Le diagnostiqueur vérifie les tuyaux, les appareils au gaz, la ventilation et le conduit de fumées. Il cherche deux dangers : une fuite, et une intoxication au monoxyde de carbone.',
+      // Les trois niveaux sont désormais cliquables dans le texte (lexique.ts) :
+      // les détailler ici les expliquerait deux fois.
+      'Les défauts sont classés en trois niveaux : A1, A2 et DGI, du moins grave au plus urgent.',
       'Le monoxyde de carbone ne se voit pas et ne sent rien. C’est pour ça qu’une grille de ventilation bouchée est prise aussi au sérieux qu’une fuite.'
     ],
     aFaire: dgi

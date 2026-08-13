@@ -134,6 +134,8 @@ export const MON_RAPPORT: Theme = {
       ],
       piege:
         'Le temps joue contre vous. Les délais pour agir sont courts et se comptent à partir de la découverte : un dossier monté six mois trop tard est un dossier perdu, même quand on a raison.',
+      chezMoi:
+        'Commencez par relire ce que disait le dossier sur le point en cause, mot pour mot. Une mention « non visité » ou « sous réserve » à cet endroit change complètement la nature du recours — et c’est la première chose que vérifiera un avocat.',
       aussi: ['contester-un-diagnostic', 'vendre-en-l-etat-vice-cache', 'un-diagnostic-garantit-il-le-logement'],
       sources: [{ titre: 'Code civil, articles 1641 et suivants (garantie des vices cachés)', url: LEGI }],
       verifie: V

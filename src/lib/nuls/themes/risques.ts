@@ -60,6 +60,10 @@ export const RISQUES: Theme = {
         'La mairie détient les plans de prévention des risques applicables, avec leurs prescriptions de construction.',
         'Ce que vous consultez vous-même n’a pas valeur d’ERP : le document annexé à l’acte doit être établi en bonne et due forme.'
       ],
+      piege:
+        'Ce que vous consultez vous-même est une information, pas un document opposable. À l’inverse, un état des risques signé ne vous dispense pas de regarder la carte : elle en dit plus, et elle est gratuite.',
+      chezMoi:
+        'Comparez ce que vous lisez sur Géorisques avec les cases cochées de votre état des risques. Un écart n’est pas forcément une erreur — les cartes évoluent — mais c’est un point à faire préciser.',
       aussi: ['c-est-quoi-l-etat-des-risques', 'mon-bien-est-en-zone-inondable'],
       sources: [{ titre: 'Géorisques — connaître les risques près de chez soi', url: GEO }],
       verifie: V
@@ -75,6 +79,7 @@ export const RISQUES: Theme = {
       ],
       court:
         'Certains sols argileux gonflent quand il pleut et se rétractent quand il fait sec. La maison posée dessus bouge avec eux — et se fissure. C’est aujourd’hui la première cause de sinistre indemnisé sur les maisons individuelles en France.',
+      dessin: 'argiles',
       points: [
         'Les fissures typiques partent en escalier depuis les angles des ouvertures, et s’ouvrent l’été.',
         'Les zones sont classées en exposition faible, moyenne ou forte : votre état des risques indique la vôtre.',

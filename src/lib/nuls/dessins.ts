@@ -408,7 +408,7 @@ export const DESSINS: Record<string, Dessin> = {
         <path d="M150 62 q22 22 40 26" class="fuite" />
         <circle cx="234" cy="52" r="12" class="silhouette" />
         <path d="M234 64v22M222 100l12-14 12 14" class="silhouette" />
-        <text x="234" y="116" class="mot-non">il manque du courant → ça coupe</text>
+        <text x="180" y="116" class="mot-non">il manque du courant → ça coupe</text>
       </svg>`
   },
 
@@ -673,6 +673,123 @@ export const DESSINS: Record<string, Dessin> = {
         </g>
 
         <text x="160" y="116" class="mot-petit">sauf danger immédiat sur le gaz : coupure le jour même</text>
+      </svg>`
+  },
+
+  /* ------------------------------------------------------------------ prix */
+
+  prix: {
+    legende:
+      'Un diagnostic commandé seul porte tout le déplacement. Groupés dans une même visite, ils le partagent — c’est ce qui fait l’écart entre deux devis.',
+    svg: `
+      <svg viewBox="0 0 320 138" role="img">
+        <g>
+          <path d="M18 62 L48 38 L78 62" class="toit-mini" />
+          <rect x="26" y="62" width="44" height="34" class="maison-mini" />
+          <rect x="88" y="52" width="26" height="34" rx="2" class="feuille" />
+          <path d="M94 62h14M94 70h14M94 78h8" class="ligne-texte" />
+          <path d="M48 104 v14" class="fleche" />
+          <rect x="12" y="118" width="72" height="3" class="barre-cout" />
+          <text x="66" y="132" class="mot-non-petit">un seul rapport</text>
+        </g>
+
+        <path d="M140 74 H166" class="fleche" />
+
+        <g>
+          <path d="M186 62 L216 38 L246 62" class="toit-mini" />
+          <rect x="194" y="62" width="44" height="34" class="maison-mini" />
+          ${[0, 1, 2, 3, 4, 5]
+            .map(
+              (i) =>
+                `<rect x="${256 + (i % 3) * 20}" y="${44 + Math.floor(i / 3) * 26}" width="16" height="22" rx="2" class="feuille" />`
+            )
+            .join('')}
+          <path d="M216 104 v14" class="fleche" />
+          <rect x="180" y="118" width="72" height="3" class="barre-cout" />
+          <text x="240" y="132" class="mot-oui-petit">six rapports, une visite</text>
+        </g>
+      </svg>`
+  },
+
+  /* ------------------------------------------------------- aux normes ou sûr */
+
+  'sur-ou-aux-normes': {
+    legende:
+      'La loi exige une installation sûre, pas une installation conforme aux règles d’aujourd’hui. Ce qui est aux normes est sûr ; l’inverse n’est pas vrai.',
+    svg: `
+      <svg viewBox="0 0 320 138" role="img">
+        <ellipse cx="160" cy="66" rx="146" ry="56" class="bloc-oui" />
+        <text x="160" y="26" class="mot-oui">SÛR — ce que la loi demande</text>
+
+        <ellipse cx="160" cy="78" rx="76" ry="34" class="bloc" />
+        <text x="160" y="74" class="mot-fort-petit">AUX NORMES</text>
+        <text x="160" y="90" class="mot-petit">les règles du neuf</text>
+
+        <text x="62" y="112" class="mot-petit">ancien mais sûr</text>
+        <text x="258" y="112" class="mot-petit">ancien mais sûr</text>
+        <text x="160" y="134" class="mot">le diagnostic mesure le grand cercle, pas le petit</text>
+      </svg>`
+  },
+
+  /* --------------------------------------------------------------- l'audit */
+
+  'audit-parcours': {
+    legende:
+      'Le DPE constate l’état du logement. L’audit, lui, chiffre un parcours de travaux en étapes — et l’ordre des étapes compte autant que la liste.',
+    svg: `
+      <svg viewBox="0 0 320 140" role="img">
+        <g>
+          <rect x="10" y="70" width="82" height="46" rx="4" class="bloc" />
+          <text x="51" y="90" class="mot-fort-petit">le DPE</text>
+          <text x="51" y="106" class="mot-petit">il constate</text>
+          <text x="51" y="132" class="mot-petit">où vous en êtes</text>
+        </g>
+
+        <path d="M100 92 h20 m-7 -6 l7 6 -7 6" class="fleche" />
+
+        <g>
+          <rect x="128" y="86" width="80" height="30" rx="4" class="bloc-oui" />
+          <text x="168" y="106" class="mot-oui-petit">étape 1</text>
+          <rect x="216" y="46" width="80" height="30" rx="4" class="bloc-oui" />
+          <text x="256" y="66" class="mot-oui-petit">étape 2</text>
+          <path d="M208 92 h4 v-30 h4 m-6 -6 l6 6 -6 6" class="fleche" />
+          <text x="168" y="132" class="mot-petit">l’audit chiffre le chemin</text>
+          <text x="256" y="34" class="mot-petit">et son ordre</text>
+        </g>
+      </svg>`
+  },
+
+  /* --------------------------------------------------------------- argiles */
+
+  argiles: {
+    legende:
+      'Un sol argileux gonfle quand il pleut et se rétracte quand il fait sec. La maison posée dessus bouge avec lui, et se fissure en escalier depuis les angles des ouvertures.',
+    svg: `
+      <svg viewBox="0 0 320 142" role="img">
+        <g>
+          <path d="M18 92 L58 62 L98 92" class="toit-mini" />
+          <rect x="28" y="92" width="60" height="34" class="maison-mini" />
+          <rect x="16" y="126" width="84" height="14" class="sol-gonfle" />
+          <path d="M24 132 q10 -6 20 0 q10 6 20 0 q10 -6 20 0" class="niveau-eau" />
+          <text x="58" y="46" class="mot-oui-petit">il pleut</text>
+          <text x="58" y="34" class="mot-petit">le sol gonfle</text>
+        </g>
+
+        <path d="M118 100 h24 m-8 -6 l8 6 -8 6" class="fleche" />
+        <path d="M202 100 h24 m-8 -6 l8 6 -8 6" class="fleche" />
+        <text x="172" y="120" class="mot-petit">au fil des saisons</text>
+
+        <g>
+          <path d="M238 92 L278 62 L318 92" class="toit-mini" />
+          <rect x="248" y="92" width="60" height="34" class="maison-mini" />
+          <path d="M268 92 l6 8 -6 8 6 8 -6 8" class="fissure" />
+          <rect x="236" y="126" width="84" height="9" class="sol-retracte" />
+          ${[0, 1, 2, 3, 4]
+            .map((i) => `<path d="M${246 + i * 17} 126 v9" class="fente" />`)
+            .join('')}
+          <text x="278" y="46" class="mot-non-petit">il fait sec</text>
+          <text x="278" y="34" class="mot-petit">le sol se rétracte</text>
+        </g>
       </svg>`
   },
 

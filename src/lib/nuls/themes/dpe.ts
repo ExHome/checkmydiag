@@ -186,6 +186,8 @@ export const DPE: Theme = {
       ],
       piege:
         'Ce calendrier a été discuté, amendé et repoussé plusieurs fois depuis 2021, et il continue de l’être. Avant d’acheter pour louer, ou de renoncer à des travaux, faites confirmer la date qui vous concerne — c’est une décision à plusieurs dizaines de milliers d’euros.',
+      chezMoi:
+        'Regardez la classe retenue sur votre DPE — la moins bonne des deux réglettes — et sa date de visite. Ces deux informations suffisent à savoir si vous êtes concerné, et à partir de quand.',
       aussi: ['c-est-quoi-une-passoire-thermique', 'quels-travaux-pour-gagner-une-classe', 'quels-diagnostics-pour-louer'],
       sources: [
         { titre: 'Loi Climat et Résilience du 22 août 2021, article 160', url: LEGI },
@@ -204,6 +206,7 @@ export const DPE: Theme = {
       ],
       court:
         'Le DPE constate, l’audit propose. L’audit énergétique décrit deux scénarios de travaux chiffrés pour faire remonter le logement de classe, et il est obligatoire pour vendre une maison individuelle ou un immeuble détenu par un seul propriétaire quand le DPE est mauvais.',
+      dessin: 'audit-parcours',
       points: [
         'Il s’impose à la vente des maisons et immeubles en monopropriété classés F ou G depuis avril 2023, et classés E depuis janvier 2025.',
         'Il présente au moins deux scénarios : une première étape utile, puis un parcours complet visant au minimum la classe B ou C selon les cas.',
@@ -372,6 +375,9 @@ export const DPE: Theme = {
       variantes: ['prix DPE maison', 'tarif diagnostic performance énergétique', 'prix DPE appartement'],
       court:
         'Les prix sont libres : aucun tarif n’est fixé par la loi. Ce qui les fait varier : la surface, le nombre de niveaux, la complexité du chauffage, la région — et le fait de le commander seul ou avec les autres diagnostics.',
+      dessin: 'prix',
+      chezMoi:
+        'Votre DPE porte un numéro à treize caractères, en page de garde : c’est sa trace dans la base publique de l’ADEME. Un DPE sans ce numéro n’a pas été déposé, et cela seul justifie de rappeler le cabinet.',
       points: [
         'Commandé seul, un DPE porte tout le coût du déplacement : c’est le cas le plus cher au mètre carré.',
         'Groupé avec les autres diagnostics d’une vente, il revient bien moins cher — une seule visite pour tout.',

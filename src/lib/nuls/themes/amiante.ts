@@ -57,6 +57,8 @@ export const AMIANTE: Theme = {
         'Les flocages et calorifugeages — les plus dangereux — se rencontrent surtout dans les immeubles et les locaux techniques.',
         'Les enduits, mastics de fenêtre et joints d’étanchéité en contiennent parfois : c’est ce qui rend le repérage avant travaux indispensable.'
       ],
+      piege:
+        'On cherche l’amiante dans les murs, alors qu’elle est le plus souvent sous les pieds et sur le toit. Les dalles de sol et les plaques de couverture sont, de loin, les deux cas les plus fréquents en maison.',
       chezMoi:
         'Votre rapport liste les matériaux repérés avec leur localisation précise. Cherchez la colonne « état de conservation » : c’est elle qui commande la suite.',
       aussi: ['c-est-quoi-l-amiante', 'c-est-quoi-les-listes-a-b-c', 'j-ai-de-l-amiante-que-faire'],
@@ -182,6 +184,8 @@ export const AMIANTE: Theme = {
       ],
       piege:
         'Les moteurs de recherche regorgent de photos censées permettre de reconnaître l’amiante. Aucune ne vaut analyse : deux plaques identiques peuvent différer, selon l’année et l’usine.',
+      chezMoi:
+        'Si votre rapport mentionne un matériau « susceptible de contenir de l’amiante » sans conclusion ferme, c’est qu’aucun prélèvement n’a été fait. Le doute reste entier — et il se lève par une analyse, pas par une photo.',
       aussi: ['amiante-et-travaux', 'ou-trouve-t-on-de-l-amiante', 'j-ai-de-l-amiante-que-faire'],
       savoir: ['fibrociment'],
       verifie: V
