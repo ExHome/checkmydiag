@@ -375,6 +375,9 @@
     letter-spacing: -0.022em;
     text-decoration: none;
     color: var(--sur-fond);
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
   }
 
   .marque span {
@@ -391,12 +394,19 @@
 
   /* Le lien vers la rubrique : il attend, il n'appelle pas. Celui qui a son
      rapport dépose son fichier ; celui qui n'en a pas trouve la sortie. */
+  /* Le lien tenait sur 19 pixels de haut : impossible à viser au pouce. Le
+     texte garde sa taille, c'est la zone touchable qui grandit — 44 px, le
+     minimum admis pour une cible tactile. */
   .rubrique {
     font-size: var(--t-micro);
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--or-clair);
     text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: var(--e1);
   }
 
   .rubrique:hover {
