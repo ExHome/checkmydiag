@@ -80,7 +80,7 @@
     place-items: center;
     width: 34px;
     height: 34px;
-    border-radius: 10px;
+    border-radius: var(--rayon);
     background: rgb(46 233 139 / 12%);
     color: var(--vert-500);
   }

@@ -173,7 +173,7 @@
     padding: var(--e3) var(--e3);
     background: var(--papier-doux);
     border-left: 4px solid var(--vert-500);
-    border-radius: 8px;
+    border-radius: var(--rayon);
     font-size: var(--t-base);
   }
 </style>

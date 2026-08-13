@@ -159,7 +159,7 @@
     background: var(--papier);
     color: var(--encre);
     border-top: 3px solid var(--or);
-    border-radius: 14px 14px 0 0;
+    border-radius: var(--rayon) var(--rayon) 0 0;
     padding: var(--e4) var(--e4) var(--e5);
     box-shadow: var(--ombre-forte);
   }

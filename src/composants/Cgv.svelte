@@ -89,9 +89,9 @@
 
 <style>
   .cgv {
-    background: var(--papier, #f5efe2);
-    color: var(--encre, #08402f);
-    border-radius: var(--rayon-petit, 12px);
+    background: var(--papier);
+    color: var(--encre);
+    border-radius: var(--rayon);
     padding: clamp(20px, 5vw, 32px);
     max-width: 62ch;
     margin: 0 auto;
@@ -112,7 +112,7 @@
   .brouillon {
     background: rgb(252 112 96 / 12%);
     border: 1px solid rgb(252 112 96 / 55%);
-    border-radius: 8px;
+    border-radius: var(--rayon);
     padding: var(--e2) var(--e3);
     margin-bottom: var(--e4);
     font-size: var(--t-base);
@@ -139,7 +139,7 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: var(--vert-500, #0c6b4f);
+    background: var(--vert-500);
   }
 
   .deplier {
@@ -185,7 +185,7 @@
   }
 
   .accepter {
-    background: var(--vert-700, #08402f);
+    background: var(--vert-700);
     color: #fff;
     border: none;
     border-radius: 999px;
@@ -196,7 +196,7 @@
   }
 
   .accepter:hover {
-    background: var(--vert-500, #0c6b4f);
+    background: var(--vert-500);
   }
 
   .refuser {

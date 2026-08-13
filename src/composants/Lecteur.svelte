@@ -740,7 +740,7 @@
     position: absolute;
     border: 2px solid var(--teinte);
     background: color-mix(in srgb, var(--teinte) 20%, transparent);
-    border-radius: 4px;
+    border-radius: var(--rayon-petit);
     padding: 0;
     cursor: pointer;
     z-index: 2;
@@ -817,7 +817,7 @@
     background: color-mix(in srgb, var(--teinte) 15%, #fff);
     border: none;
     border-left: 4px solid var(--teinte);
-    border-radius: 4px;
+    border-radius: var(--rayon-petit);
     padding: var(--e1) var(--e2);
     margin: var(--e1) 0;
     cursor: pointer;
@@ -993,7 +993,7 @@
     padding: var(--e3) var(--e3);
     background: rgb(255 255 255 / 8%);
     border-left: 2px solid color-mix(in srgb, var(--teinte) 70%, transparent);
-    border-radius: 4px;
+    border-radius: var(--rayon-petit);
     font-size: var(--t-petit);
     color: var(--sur-fond-doux);
     line-height: 1.5;
