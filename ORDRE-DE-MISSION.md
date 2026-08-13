@@ -28,8 +28,21 @@ Il n'ira pas chercher la réponse à la page 47.
 Elles ne se négocient pas. Une fonctionnalité qui en casse une ne se fait pas.
 
 1. **Le document ne quitte pas l'appareil.** Lecture par pdf.js dans le
-   navigateur. Aucun serveur, aucun compte, aucune trace. Les dossiers gardés
-   restent dans le stockage local, effaçables d'un bouton.
+   navigateur. Le PDF n'est jamais téléversé : il reste dans le stockage local,
+   effaçable d'un bouton.
+
+   *Précisé le 13/08/2026.* Cette promesse disait aussi « aucun serveur, aucune
+   trace ». Ce n'est plus le cadre : les **données lues** seront conservées —
+   classes, anomalies, dates, commune — pour mesurer l'audience par zone et
+   produire des statistiques. **Jamais le document, jamais le nom, jamais
+   l'adresse exacte.** Ce qui part est défini une fois pour toutes dans
+   [docs/DONNEES-COLLECTEES.md](docs/DONNEES-COLLECTEES.md), et un test refuse
+   tout champ qui n'y figure pas.
+
+   Deux règles en découlent, non négociables : le visiteur est **informé avant
+   de déposer**, pas après ; et tant que rien n'est envoyé, l'interface
+   continue de dire que rien n'est envoyé — on n'annonce pas une collecte qui
+   n'existe pas encore.
 2. **Aucun chiffre inventé.** Quand une valeur n'est pas lisible, on l'écrit et
    on dit pourquoi. Un verdict faux sur un document légal coûte plus cher qu'un
    verdict manquant.

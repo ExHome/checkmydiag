@@ -1,5 +1,7 @@
 <script lang="ts">
   import Depot from './composants/Depot.svelte';
+  import Cgv from './composants/Cgv.svelte';
+  import { acceptationEnCours, accepter } from './lib/cgv';
   import Lecteur from './composants/Lecteur.svelte';
   import PanneauSavoir from './composants/savoir/PanneauSavoir.svelte';
   import { exploration } from './lib/savoir/pile.svelte';
@@ -17,7 +19,13 @@
     type DossierGarde
   } from './lib/coffre';
 
-  let etat = $state<'accueil' | 'lecture' | 'resultat'>('accueil');
+  let etat = $state<'accueil' | 'conditions' | 'lecture' | 'resultat'>('accueil');
+  /**
+   * Le rapport choisi, mis en attente le temps que les conditions soient
+   * acceptées. Il n'est pas encore ouvert : c'est tout l'intérêt de demander
+   * maintenant plutôt qu'après.
+   */
+  let enAttente = $state<File | null>(null);
   let progression = $state<{ fait: number; total: number } | null>(null);
   let analyse = $state<Analyse | null>(null);
   let erreur = $state<string | null>(null);
@@ -69,9 +77,15 @@
     etat = 'resultat';
   }
 
-  async function traiter(fichier: File): Promise<void> {
+  /**
+   * Le rapport vient d'être choisi. Rien n'est encore ouvert : si les
+   * conditions n'ont pas été acceptées, on les présente d'abord.
+   *
+   * L'ordre compte. Ce qui y est annoncé — ce que le site conserve — doit
+   * l'être *avant* la collecte : annoncé après, cela ne se régularise pas.
+   */
+  function choisir(fichier: File): void {
     erreur = null;
-
     nomFichier = fichier.name;
 
     if (!/\.pdf$/i.test(fichier.name) && fichier.type !== 'application/pdf') {
@@ -79,6 +93,32 @@
       return;
     }
 
+    if (acceptationEnCours()) {
+      void traiter(fichier);
+      return;
+    }
+
+    enAttente = fichier;
+    etat = 'conditions';
+  }
+
+  function accepterEtAnalyser(): void {
+    accepter();
+    const fichier = enAttente;
+    enAttente = null;
+    if (fichier) void traiter(fichier);
+    else etat = 'accueil';
+  }
+
+  function renoncer(): void {
+    enAttente = null;
+    nomFichier = '';
+    etat = 'accueil';
+  }
+
+  async function traiter(fichier: File): Promise<void> {
+    erreur = null;
+    nomFichier = fichier.name;
     etat = 'lecture';
     progression = { fait: 0, total: 1 };
 
@@ -127,7 +167,10 @@
       async (url: string) => {
         const reponse = await fetch(url);
         const blob = await reponse.blob();
-        await traiter(new File([blob], url.split('/').pop() ?? 'essai.pdf', { type: 'application/pdf' }));
+        // Par `choisir`, pas par `traiter` : l'aide doit emprunter le parcours
+        // réel, conditions comprises, sinon elle valide un chemin que personne
+        // ne prend.
+        choisir(new File([blob], url.split('/').pop() ?? 'essai.pdf', { type: 'application/pdf' }));
       };
   }
 
@@ -237,13 +280,19 @@
   profils — a été retiré : c'était du remplissage entre le geste et la réponse.
 -->
 <main class="enveloppe">
-  {#if etat !== 'resultat'}
+  {#if etat === 'conditions'}
+    <!-- Le rapport est choisi mais pas encore ouvert : c'est le seul moment où
+         annoncer ce que le site conserve ait une valeur. -->
+    <section class="seuil">
+      <Cgv nomFichier={nomFichier} surAccepter={accepterEtAnalyser} surRefuser={renoncer} />
+    </section>
+  {:else if etat !== 'resultat'}
     <section class="seuil">
       {#if erreur}
         <p class="erreur" role="alert">{erreur}</p>
       {/if}
 
-      <Depot surFichier={traiter} occupe={etat === 'lecture'} {progression} />
+      <Depot surFichier={choisir} occupe={etat === 'lecture'} {progression} />
 
       {#if etat !== 'lecture'}
         <p class="essai">
