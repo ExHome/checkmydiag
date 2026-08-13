@@ -20,6 +20,7 @@
   import Curieux from './Curieux.svelte';
   import Notaire from './Notaire.svelte';
   import Diagnostics from './Diagnostics.svelte';
+  import Verdict from './Verdict.svelte';
   import { FICHES } from '../lib/analyse/fiches';
 
   interface Props {
@@ -170,6 +171,37 @@
   /** Rang du passage ouvert dans la lecture, ou -1 si rien n'est ouvert. */
   const rang = $derived(actifId?.startsWith('r') ? Number(actifId.slice(1)) : -1);
 
+  /**
+   * Les passages qui portent une conclusion.
+   *
+   * Sur ce dossier, le rapport donne 74 passages repérés : 44 données, 21 mots
+   * du métier, et 9 conclusions. Proposer les 74 « dans l'ordre », c'était
+   * demander au lecteur de traverser le numéro de dossier et la définition de
+   * « sans démontage » pour atteindre ce qu'il est venu chercher. La lecture
+   * guidée ne suit donc que les conclusions ; le reste reste cliquable dans le
+   * document, à sa place.
+   */
+  const parcours = $derived(
+    reperes
+      .map((r, i) => ({ r, i }))
+      .filter(({ r }) => r.repere.famille === 'constat' || (r.repere.ton && r.repere.ton !== 'info'))
+      .map(({ i }) => i)
+  );
+
+  /** Rang du passage ouvert parmi les conclusions, ou -1 s'il n'en est pas une. */
+  const etape = $derived(parcours.indexOf(rang));
+
+  /** La conclusion qui suit celle qu'on lit — ou celle qui suit l'endroit où on est. */
+  const suivante = $derived(
+    etape >= 0 ? (parcours[etape + 1] ?? -1) : (parcours.find((i) => i > rang) ?? -1)
+  );
+
+  const precedente = $derived(
+    etape >= 0
+      ? (parcours[etape - 1] ?? -1)
+      : ([...parcours].reverse().find((i) => i < rang) ?? -1)
+  );
+
   function allerAu(i: number): void {
     if (i < 0 || i >= nbReperes) return;
     epingle = `r${i}`;
@@ -191,6 +223,11 @@
     };
   }
 </script>
+
+<!-- Ce qu'il faut retenir, avant le dossier lui-même. C'est la seule chose de
+     l'écran qui doit être comprise sans rien ouvrir : il est donc au-dessus des
+     vues, et il s'affiche même si aucun passage n'a pu être repéré. -->
+<Verdict {analyse} />
 
 {#if reperes.length}
   <section class="lecteur">
@@ -391,20 +428,24 @@
                   <button
                     type="button"
                     class="fleche"
-                    disabled={rang <= 0}
-                    onclick={() => allerAu(rang - 1)}
-                    aria-label="Passage précédent"
+                    disabled={precedente < 0}
+                    onclick={() => allerAu(precedente)}
+                    aria-label="Conclusion précédente"
                   >
                     ←
                   </button>
-                  <span class="compteur">{rang + 1} / {nbReperes}</span>
+                  <span class="compteur">
+                    {etape >= 0
+                      ? `Conclusion ${etape + 1} sur ${parcours.length}`
+                      : 'Une donnée du rapport'}
+                  </span>
                   <button
                     type="button"
                     class="suivant"
-                    disabled={rang < 0 || rang >= nbReperes - 1}
-                    onclick={() => allerAu(rang + 1)}
+                    disabled={suivante < 0}
+                    onclick={() => allerAu(suivante)}
                   >
-                    Suivant →
+                    {etape >= 0 ? 'Suivante →' : 'Conclusion suivante →'}
                   </button>
                 </div>
 
@@ -469,10 +510,12 @@
 
     <!-- Au repos, le seul texte de l'écran : la porte d'entrée de la lecture
          guidée. Tout le reste attend un clic. -->
-    {#if vue === 'rapport' && !actif && nbReperes}
-      <button type="button" class="commencer" onclick={() => allerAu(0)}>
-        Lire le rapport avec moi
-        <em>{nbReperes} passages, dans l’ordre</em>
+    {#if vue === 'rapport' && !actif && parcours.length}
+      <button type="button" class="commencer" onclick={() => allerAu(parcours[0] ?? 0)}>
+        Lire les conclusions du rapport
+        <em>
+          {parcours.length} conclusions surlignées, sur {nbReperes} passages repérés
+        </em>
       </button>
     {/if}
   </section>
@@ -946,7 +989,7 @@
   .creuser {
     background: none;
     border: 1px solid rgb(230 200 148 / 40%);
-    border-radius: 999px;
+    border-radius: 0;
     padding: 8px 17px;
     font-size: 0.86rem;
     font-weight: 700;
@@ -1244,7 +1287,7 @@
     background: none;
     border: 1px solid rgb(230 200 148 / 45%);
     color: var(--or-clair);
-    border-radius: 999px;
+    border-radius: 0;
     padding: 8px 16px;
     font-size: 0.86rem;
     font-weight: 700;

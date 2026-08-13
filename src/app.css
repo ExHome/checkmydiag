@@ -189,7 +189,10 @@ h2 {
   font-weight: 500;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--gris);
+  /* Le sur-titre se lit sur le vert : --gris n'y tenait que 3,33 de contraste,
+     pour un texte de 12 px. Sous le seuil, et c'est l'étiquette qui annonce de
+     quoi parle la section. */
+  color: var(--sur-fond-doux);
 }
 
 .eyebrow::after {
@@ -280,6 +283,16 @@ button {
 }
 
 .petit {
+  font-size: 0.9rem;
+}
+
+/* La ligne des clips sous une explication : les mots du métier qu'on peut aller
+   creuser sans quitter le schéma. Elle ne s'annonce pas — les points suffisent. */
+.creuser {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 12px 0 0;
   font-size: 0.9rem;
 }
 
@@ -401,6 +414,28 @@ button {
   dt,
   .source {
     color: #093f30 !important;
+  }
+
+  /* Le sommaire des diagnostics sert de table des matières sur le papier : il
+     reste, mais sans son fond ni sa couleur d'écran. */
+  .sommaire .entree {
+    background: none !important;
+    border-left-color: #999 !important;
+  }
+
+  .sommaire .nom,
+  .jusqua,
+  .jusqua-fiche {
+    color: #41544c !important;
+  }
+
+  .sommaire .verdict-court {
+    color: #093f30 !important;
+  }
+
+  .jusqua.perimee,
+  .jusqua-fiche.perimee {
+    color: #b03422 !important;
   }
 
   .feuille,

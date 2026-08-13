@@ -51,7 +51,7 @@
     color: var(--vert-300);
     background: rgb(46 233 139 / 8%);
     border: 1px solid var(--trait);
-    border-radius: 999px;
+    border-radius: 0;
     padding: 8px 16px 8px 10px;
     transition: background 0.15s ease, border-color 0.15s ease;
   }

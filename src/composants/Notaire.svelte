@@ -10,15 +10,13 @@
    * Le devoir de conseil est ici une contrainte d'écriture : on ne se contente
    * pas de rapporter, on dit ce qui engage, ce qui coûte et ce qui se négocie.
    */
-  import type { Analyse, Diagnostic, TypeDiag } from '../lib/modele';
-  import { enDate, VALIDITE_MOIS } from '../lib/analyse/coherence';
+  import type { Analyse } from '../lib/modele';
   import Positionnement from './Positionnement.svelte';
   import Deperditions from './schemas/Deperditions.svelte';
   import MotsExpliques from './MotsExpliques.svelte';
   import RubanDpe from './RubanDpe.svelte';
   import { motsEmployes } from '../lib/lexique';
   import { libelleCourt } from '../lib/libelle';
-  import { enPratique, FICHES } from '../lib/analyse/fiches';
 
   const { analyse }: { analyse: Analyse } = $props();
 
@@ -204,68 +202,20 @@
   });
 
   /**
-   * La synthèse : une ligne par diagnostic.
-   *
-   * Quatre colonnes, parce que ce sont les quatre questions qu'on pose devant
-   * un dossier — de quoi s'agit-il, qu'est-ce qu'il dit, jusqu'à quand il vaut,
-   * et qu'est-ce qu'il ne couvre pas. La dernière colonne compte autant que la
-   * deuxième : une conclusion rassurante sans sa réserve se lit comme une
-   * garantie.
+   * La synthèse diagnostic par diagnostic vivait ici, en huit encarts
+   * dépliables — et une seconde fois dans la vue « Les diagnostics », avec le
+   * dessin en plus. Le lecteur lisait donc deux fois les mêmes huit verdicts,
+   * dans deux vues qui prétendaient dire autre chose. Elle est partie là-bas,
+   * en sommaire ancré : c'est sa place, puisque c'est là que se trouve le
+   * détail qu'elle annonce. Cette vue-ci parle du bien et du conseil.
    */
-  const RESERVE_COURTE: Partial<Record<TypeDiag, string>> = {
-    dpe: 'Un calcul, pas votre facture. Les parois non vues sont estimées.',
-    amiante: 'Les seuls matériaux de la liste, contrôlés à l’œil.',
-    plomb: 'Les revêtements accessibles. Une unité non mesurée reste inconnue.',
-    electricite: 'Six points de sécurité. Rien de démonté, rien d’encastré.',
-    gaz: 'Les parties visibles. Les tuyauteries encastrées ne sont pas vues.',
-    termites: 'Là où c’était accessible. Ni mur fermé, ni vide sanitaire.',
-    erp: 'Une recopie des zonages. Personne n’est venu sonder le terrain.',
-    carrez: 'Les parties privatives sous 1,80 m. Ni cave, ni garage, ni balcon.',
-    assainissement: 'Ce qui était accessible. Rien n’est mis au jour.'
-  };
-
-  /** L'échéance d'un diagnostic, calculée depuis sa date de visite. */
-  function echeance(d: Diagnostic): { texte: string; perimee: boolean } {
-    const duree = VALIDITE_MOIS[d.type];
-    if (duree === undefined) return { texte: 'Sans limite', perimee: false };
-
-    const depart = enDate(d.date);
-    if (!depart) return { texte: `${duree >= 12 ? duree / 12 + ' ans' : duree + ' mois'}`, perimee: false };
-
-    const fin = new Date(depart);
-    fin.setMonth(fin.getMonth() + duree);
-    const perimee = fin.getTime() < Date.now();
-    return {
-      texte: `${perimee ? 'Périmé depuis le ' : 'Jusqu’au '}${fin.toLocaleDateString('fr-FR')}`,
-      perimee
-    };
-  }
-
-  const synthese = $derived(
-    analyse.diagnostics.map((d) => {
-      const e = echeance(d);
-      return {
-        type: d.type,
-        titre: d.titre,
-        gravite: d.gravite,
-        conclusion: libelleCourt(d),
-        validite: e.texte,
-        perimee: e.perimee,
-        reserve: RESERVE_COURTE[d.type] ?? 'Ce qui était visible le jour de la visite.',
-        // Ce qui s'ouvre au clic : la phrase du rapport, le conseil, l'enjeu
-        // à la vente. Trois colonnes, pas un pavé.
-        verdict: d.verdict,
-        conseil: enPratique(d.type, d.gravite) ?? FICHES[d.type].quoiFaire,
-        vente: FICHES[d.type].vente
-      };
-    })
-  );
-
-  /** La ligne dépliée. Une seule à la fois. */
-  let ouvert = $state<TypeDiag | null>(null);
 
   const perimes = $derived(analyse.controles.filter((c) => c.genre === 'perime'));
   const manquants = $derived(analyse.controles.filter((c) => c.genre === 'manque'));
+  /** Deux chiffres du dossier qui ne concordent pas : ça se règle avant l'acte. */
+  const incoherences = $derived(analyse.controles.filter((c) => c.genre === 'incoherence'));
+  /** Ce qui ne bloque rien mais mérite d'être su. */
+  const remarques = $derived(analyse.controles.filter((c) => c.genre === 'attention'));
   const anomalies = $derived(
     analyse.diagnostics.filter(
       (d) => (d.type === 'electricite' || d.type === 'gaz') && d.gravite !== 'bon'
@@ -291,9 +241,16 @@
   const conseils = $derived.by<{ titre: string; points: string[] }[]>(() => {
     const liste: { titre: string; points: string[] }[] = [];
 
-    if (perimes.length || manquants.length) {
+    // Les incohérences comptaient parmi les quatre contrôles produits par le
+    // moteur, et elles étaient les seules à n'être affichées nulle part — alors
+    // que « deux surfaces différentes dans le même dossier » est exactement ce
+    // que le site promet de trouver. Elles se règlent au même moment que les
+    // rapports périmés : avant le rendez-vous.
+    if (perimes.length || manquants.length || incoherences.length) {
       const points: string[] = [];
-      for (const c of [...perimes, ...manquants]) points.push(`${c.titre} — ${c.quoiFaire}`);
+      for (const c of [...perimes, ...manquants, ...incoherences]) {
+        points.push(`${c.titre} — ${c.quoiFaire}`);
+      }
       points.push('Un dossier incomplet le jour du rendez-vous fait repousser la signature.');
       liste.push({ titre: 'À régulariser avant la signature', points });
     }
@@ -333,6 +290,7 @@
     }
 
     const aVerifier: string[] = [];
+    for (const c of remarques) aVerifier.push(`${c.titre} — ${c.quoiFaire}`);
     if (muets.length) {
       aVerifier.push(
         `${muets.length} conclusion${muets.length > 1 ? 's' : ''} n’${muets.length > 1 ? 'ont' : 'a'} pas pu être lue${muets.length > 1 ? 's' : ''} automatiquement : à relire sur le rapport signé.`
@@ -351,6 +309,27 @@
     motsEmployes([pourquoi, ...conseils.flatMap((c) => c.points), ...etat])
   );
 
+  /**
+   * La numérotation des sections, calculée et non écrite à la main.
+   *
+   * Les chiffres romains étaient posés en dur de I à VII. Comme quatre sections
+   * sur sept sont conditionnelles, un dossier sans DPE affichait I, II, puis V :
+   * un document dont les articles sautent se lit comme un document amputé.
+   */
+  const ROMAINS = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
+
+  const numeros = $derived.by<Record<string, string>>(() => {
+    const presentes = [
+      caracteristiques.length ? 'descriptif' : null,
+      dpe?.schema?.genre === 'dpe' ? 'chaleur' : null,
+      lettre ? 'echelle' : null,
+      chiffres.length ? 'classe' : null,
+      'conseil',
+      lexique.length ? 'mots' : null
+    ].filter((c): c is string => c !== null);
+
+    return Object.fromEntries(presentes.map((cle, i) => [cle, ROMAINS[i] ?? String(i + 1)]));
+  });
 </script>
 
 <section class="notaire">
@@ -388,54 +367,10 @@
   </header>
 
   <div class="feuille">
-    <!-- La synthèse : les huit diagnostics d'un coup d'œil, avec ce qu'ils
-         concluent, jusqu'à quand ils valent, et ce qu'ils ne couvrent pas. -->
-    <h2><span class="num">I</span>La synthèse du dossier</h2>
-    <!-- Un encart par rapport. Un tableau se lit ligne à ligne ; un dossier de
-         présentation se parcourt du regard, et chaque pièce y a sa place. -->
-    <div class="encarts">
-      {#each synthese as l (l.type)}
-        <article class="encart {l.gravite}" class:ouvert={ouvert === l.type}>
-          <button
-            type="button"
-            class="tete-encart"
-            aria-expanded={ouvert === l.type}
-            onclick={() => (ouvert = ouvert === l.type ? null : l.type)}
-          >
-            <p class="quoi-encart">{l.titre}</p>
-            <p class="conclusion">{l.conclusion}</p>
-            <p class="validite" class:perimee={l.perimee}>{l.validite}</p>
-          </button>
-
-          <p class="reserve-courte">
-            <span>Ne couvre pas</span>
-            {l.reserve}
-          </p>
-
-          {#if ouvert === l.type}
-            <div class="deplie apparait">
-              <div>
-                <p class="titre-deplie">Ce que dit le rapport</p>
-                <p><MotsExpliques texte={l.verdict} /></p>
-              </div>
-              <div>
-                <p class="titre-deplie">Ce qu’il faut faire</p>
-                <p><MotsExpliques texte={l.conseil} /></p>
-              </div>
-              <div>
-                <p class="titre-deplie">Pour vendre</p>
-                <p><MotsExpliques texte={l.vente} /></p>
-              </div>
-            </div>
-          {/if}
-        </article>
-      {/each}
-    </div>
-
     {#if caracteristiques.length}
       <!-- L'état descriptif, relevé ligne à ligne. Le descriptif en toutes
            lettres est déjà en page de garde : on ne le répète pas. -->
-      <h2 class="apres"><span class="num">II</span>L’état descriptif</h2>
+      <h2><span class="num">{numeros.descriptif}</span>L’état descriptif</h2>
       <dl class="caracteristiques">
         {#each caracteristiques as c (c.libelle)}
           <div>
@@ -451,15 +386,15 @@
     <div class="planches">
       {#if dpe?.schema?.genre === 'dpe'}
         <div class="planche">
-          <h2 class="apres"><span class="num">III</span>Par où la chaleur s’en va</h2>
-          <Deperditions isolation={dpe.schema.isolation} {lettre} />
+          <h2 class="apres"><span class="num">{numeros.chaleur}</span>Par où la chaleur s’en va</h2>
+          <Deperditions isolation={dpe.schema.isolation} {lettre} papier />
           <p class="pourquoi"><MotsExpliques texte={pourquoi} /></p>
         </div>
       {/if}
 
       {#if lettre}
         <div class="planche">
-          <h2 class="apres"><span class="num">IV</span>Où se situe ce logement</h2>
+          <h2 class="apres"><span class="num">{numeros.echelle}</span>Où se situe ce logement</h2>
           <Positionnement {lettre} />
         </div>
       {/if}
@@ -469,7 +404,7 @@
       <!-- Les chiffres du logement, à leur place : juste après ce qui les
            produit. Ils étaient plus bas dans un relevé séparé, qui répétait
            déjà la moitié du conseil. -->
-      <h2 class="apres"><span class="num">V</span>D’où sort cette classe</h2>
+      <h2 class="apres"><span class="num">{numeros.classe}</span>D’où sort cette classe</h2>
       <ul class="chiffres">
         {#each chiffres as c (c.quoi)}
           <li>
@@ -484,7 +419,7 @@
       </ul>
     {/if}
 
-    <h2 class="apres"><span class="num">VI</span>Ce que je vous conseille</h2>
+    <h2 class="apres"><span class="num">{numeros.conseil}</span>Ce que je vous conseille</h2>
     <div class="conseils">
       {#each conseils as bloc (bloc.titre)}
         <div class="conseil">
@@ -501,7 +436,7 @@
     {#if lexique.length}
       <!-- L'annexe : tous les termes employés, définis. Le document part chez
            des gens qui n'en connaissent aucun. -->
-      <h2 class="apres"><span class="num">VII</span>Les mots employés</h2>
+      <h2 class="apres"><span class="num">{numeros.mots}</span>Les mots employés</h2>
       <dl class="lexique">
         {#each lexique as mot (mot.nom)}
           <div>
@@ -549,7 +484,9 @@
     font-weight: 600;
     font-style: normal;
     letter-spacing: var(--suivi);
-    color: var(--or);
+    /* --or ne tient que 4,15 de contraste sur le vert : le numéro d'article
+       passe en or clair, comme les autres petits textes de la charte. */
+    color: var(--or-clair);
     /* Aligné sur la ligne de base du titre, pas sur son haut. */
     align-self: baseline;
   }
@@ -602,21 +539,37 @@
     min-width: 0;
   }
 
-  /* Le conseil se lit en colonnes : chaque bloc est un sujet, pas une suite. */
-  .conseils {
-    columns: 2;
-    column-gap: 44px;
-  }
+  /* Le conseil se lit bloc par bloc, chacun un sujet.
 
-  @media (max-width: 820px) {
-    .conseils {
-      columns: 1;
-    }
+     C'était un `columns: 2`, qui coule le contenu du bas de la première colonne
+     vers le haut de la seconde : « à régulariser avant la signature » pouvait
+     donc se retrouver sous une remarque de fin. Une grille garde l'ordre de
+     lecture qu'on a écrit — et le premier bloc, celui qui empêche de signer,
+     prend toute la largeur. */
+  .conseils {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--e5) 44px;
   }
 
   .conseil {
     break-inside: avoid;
-    margin-bottom: 26px;
+  }
+
+  .conseil:first-child {
+    grid-column: 1 / -1;
+    padding-left: var(--e4);
+    border-left: 3px solid var(--or);
+  }
+
+  @media print {
+    .conseils {
+      display: block;
+    }
+
+    .conseil {
+      margin-bottom: 26px;
+    }
   }
 
   .titre-conseil {
@@ -629,156 +582,8 @@
   }
 
 
-  /* Les encarts : un par rapport, comme les pièces d'un dossier de
-     présentation. La grille se remplit d'elle-même selon la largeur, et
-     l'encart ouvert prend toute la ligne pour laisser entrer son détail. */
-  .encarts {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
-    gap: var(--e3);
-    margin-bottom: var(--e2);
-  }
-
-  .encart {
-    display: flex;
-    flex-direction: column;
-    border: 1px solid rgb(255 255 255 / 11%);
-    border-top: 2px solid var(--gravite, var(--gris));
-    border-radius: var(--rayon-petit);
-    background: rgb(255 255 255 / 4%);
-    padding: var(--e4);
-    transition: background 0.2s ease, border-color 0.2s ease;
-  }
-
-  .encart:hover {
-    background: rgb(255 255 255 / 8%);
-    border-color: rgb(230 200 148 / 32%);
-    border-top-color: var(--gravite, var(--gris));
-  }
-
-  /* L'encart ouvert grandit sur place. Le faire passer pleine largeur
-     déplaçait toute la grille sous les yeux du lecteur : on perd le fil pour
-     gagner une colonne. */
-  .encart.ouvert {
-    background: rgb(255 255 255 / 9%);
-    border-color: rgb(230 200 148 / 40%);
-    border-top-color: var(--gravite, var(--gris));
-  }
-
-  .encart.bon {
-    --gravite: #4c9c72;
-  }
-  .encart.attention {
-    --gravite: #c98a2e;
-  }
-  .encart.alerte {
-    --gravite: #c0503c;
-  }
-  .encart.neutre {
-    --gravite: var(--gris);
-  }
-
-  /* La tête de l'encart est le bouton : la cible fait toute la carte. */
-  .tete-encart {
-    display: block;
-    width: 100%;
-    text-align: left;
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    color: inherit;
-  }
-
-  .quoi-encart {
-    display: flex;
-    align-items: center;
-    gap: var(--e2);
-    margin: 0 0 var(--e2);
-    font-size: var(--t-micro);
-    letter-spacing: var(--suivi);
-    text-transform: uppercase;
-    color: var(--gris);
-  }
-
-  .quoi-encart::before {
-    content: '';
-    flex: none;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--gravite, var(--gris));
-  }
-
-  .conclusion {
-    margin: 0 0 var(--e2);
-    font-family: var(--police-titre);
-    font-size: var(--t-lead);
-    font-weight: 500;
-    letter-spacing: -0.022em;
-    line-height: 1.2;
-    color: var(--sur-fond);
-  }
-
-  .validite {
-    margin: 0;
-    font-family: var(--mono);
-    font-size: var(--t-petit);
-    color: var(--sur-fond-doux);
-  }
-
-  .validite.perimee {
-    color: #fc7060;
-    font-weight: 700;
-  }
-
-  /* La réserve ferme l'encart : une conclusion sans sa limite se lit comme une
-     garantie. */
-  .reserve-courte {
-    margin: var(--e3) 0 0;
-    padding-top: var(--e3);
-    border-top: 1px solid rgb(255 255 255 / 10%);
-    font-size: var(--t-petit);
-    line-height: 1.45;
-    color: var(--sur-fond-doux);
-    opacity: 0.82;
-  }
-
-  .reserve-courte span {
-    display: block;
-    margin-bottom: 2px;
-    font-size: var(--t-micro);
-    letter-spacing: var(--suivi);
-    text-transform: uppercase;
-    color: var(--gris);
-    opacity: 0.9;
-  }
-
-  /* Trois temps empilés dans l'encart : ce que dit le rapport, quoi faire,
-     l'enjeu à la vente. */
-  .deplie {
-    display: grid;
-    gap: var(--e3);
-    margin-top: var(--e4);
-    padding-top: var(--e4);
-    border-top: 1px solid var(--trait-or);
-  }
-
-  .deplie p {
-    margin: 0;
-    font-size: var(--t-base);
-    line-height: 1.5;
-    color: var(--sur-fond-doux);
-  }
-
-  .titre-deplie {
-    font-size: var(--t-micro) !important;
-    font-weight: 700;
-    letter-spacing: var(--suivi);
-    text-transform: uppercase;
-    color: var(--or) !important;
-    margin-bottom: var(--e1) !important;
-  }
+  /* Les styles des encarts de synthèse sont partis avec eux, dans la vue
+     « Les diagnostics » où le sommaire a repris leur rôle. */
 
   /* L'état descriptif : un relevé au filet, comme une notice d'architecte. */
   .caracteristiques {
@@ -801,7 +606,7 @@
     font-size: 0.72rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--gris);
+    color: var(--sur-fond-doux);
   }
 
   .caracteristiques dd {
@@ -894,7 +699,7 @@
     font-size: 0.66rem;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--gris);
+    color: var(--sur-fond-doux);
   }
 
   .references dd {
@@ -906,6 +711,8 @@
 
   .editer {
     flex: none;
+    /* Il faisait 43 px de haut : un pixel sous la cible tactile confortable. */
+    min-height: 46px;
     background: none;
     border: 1px solid var(--trait-or);
     border-radius: 0;

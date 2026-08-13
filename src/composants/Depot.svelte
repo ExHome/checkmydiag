@@ -71,11 +71,20 @@
       />
     </svg>
 
-    <p class="titre">Check my diag</p>
-    <p class="muet">DPE · électricité · gaz · amiante · plomb · termites · ERP</p>
+    <!-- L'écran d'accueil répétait le nom du site. Un visiteur qui arrive ne
+         sait pas ce qu'est Check My Diag : il faut lui dire ce qui va se
+         passer, pas comment ça s'appelle. -->
+    <p class="titre">Déposez votre rapport de diagnostic</p>
+    <p class="promesse">
+      Il devient lisible : ce que chaque ligne veut dire, si c’est grave, et ce
+      qui manque dans le dossier.
+    </p>
 
     <span class="faux-bouton">Choisir mon PDF</span>
 
+    <p class="muet petit types">
+      DPE · électricité · gaz · amiante · plomb · termites · ERP · Carrez
+    </p>
     <p class="muet petit confidentialite">🔒 Rien n’est envoyé. Tout reste sur votre appareil.</p>
   {/if}
 </button>
@@ -121,9 +130,30 @@
   }
 
   .titre {
-    font-size: 1.15rem;
-    font-weight: 600;
-    margin-bottom: 4px;
+    font-family: var(--police-titre);
+    font-size: clamp(1.3rem, 3.4vw, 1.7rem);
+    font-weight: 500;
+    letter-spacing: -0.022em;
+    line-height: 1.1;
+    margin-bottom: var(--e2);
+    color: var(--vert-700);
+  }
+
+  /* La phrase qui dit ce que fait le site. Elle passe avant la liste des
+     sigles : « DPE · plomb · termites » ne veut rien dire à qui n'en a jamais
+     ouvert un. */
+  .promesse {
+    margin: 0 auto;
+    max-width: 46ch;
+    font-size: var(--t-lead);
+    line-height: 1.45;
+    color: var(--encre-doux);
+  }
+
+  .types {
+    margin: var(--e4) auto 0;
+    max-width: 44ch;
+    letter-spacing: 0.02em;
   }
 
   .faux-bouton {
@@ -131,7 +161,7 @@
     margin-top: 18px;
     background: var(--vert-700);
     color: #fff;
-    border-radius: 999px;
+    border-radius: 0;
     padding: 12px 24px;
     font-weight: 600;
   }

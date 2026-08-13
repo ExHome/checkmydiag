@@ -16,8 +16,28 @@
   import MotsExpliques from './MotsExpliques.svelte';
   import { libelleCourt } from '../lib/libelle';
   import { enPratique, FICHES } from '../lib/analyse/fiches';
+  import { echeance } from '../lib/echeance';
 
   const { analyse }: { analyse: Analyse } = $props();
+
+  /**
+   * Le sommaire.
+   *
+   * Cette vue fait neuf écrans : sans lui, atteindre le gaz demandait deux mille
+   * pixels de défilement à l'aveugle, sans savoir combien il en restait. Il
+   * reprend au passage ce que « Le point » disait une seconde fois de son côté —
+   * le verdict de chaque rapport et jusqu'à quand il vaut. Dit une fois, à
+   * l'endroit où se trouve le détail qu'il annonce.
+   */
+  const sommaire = $derived(
+    analyse.diagnostics.map((d) => ({
+      type: d.type,
+      titre: d.titre,
+      gravite: d.gravite,
+      conclusion: libelleCourt(d),
+      ...echeance(d)
+    }))
+  );
 
   const BLOCS = [
     { cle: 'pourquoi', mot: 'Pourquoi ce diagnostic existe' },
@@ -103,12 +123,25 @@
 <section class="diagnostics">
   <p class="eyebrow">Le dossier, diagnostic par diagnostic</p>
 
+  <!-- Ce qu'il y a dans le dossier, et où c'est. Une ligne mène à sa fiche. -->
+  <nav class="sommaire" aria-label="Les diagnostics du dossier">
+    {#each sommaire as s (s.type)}
+      <a class="entree {s.gravite}" href="#diag-{s.type}">
+        <span class="nom">{s.titre}</span>
+        <span class="verdict-court">{s.conclusion}</span>
+        <span class="jusqua" class:perimee={s.perimee}>{s.texte}</span>
+      </a>
+    {/each}
+  </nav>
+
   {#each analyse.diagnostics as d (d.type)}
     {@const pratique = enPratique(d.type, d.gravite)}
-    <article class="fiche-diag {d.gravite}">
+    {@const quand = echeance(d)}
+    <article class="fiche-diag {d.gravite}" id="diag-{d.type}">
       <header>
         <p class="quoi">{d.titre}</p>
         <h3>{libelleCourt(d)}</h3>
+        <p class="jusqua-fiche" class:perimee={quand.perimee}>{quand.texte}</p>
         <p class="verdict">{d.verdict}</p>
       </header>
 
@@ -166,14 +199,93 @@
     margin-bottom: 36px;
   }
 
+  /* Le sommaire : une ligne par rapport, cliquable, avec ce qu'il conclut et
+     jusqu'à quand il vaut. C'est tout ce qu'on veut savoir avant de descendre. */
+  .sommaire {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2px;
+    margin-bottom: var(--e6);
+  }
+
+  .entree {
+    display: grid;
+    gap: 2px;
+    align-content: start;
+    min-height: 52px;
+    padding: var(--e3) var(--e4);
+    background: rgb(255 255 255 / 5%);
+    border-left: 3px solid var(--gravite, var(--sur-fond-doux));
+    text-decoration: none;
+    color: var(--sur-fond);
+    transition: background 0.18s ease;
+  }
+
+  .entree:hover {
+    background: rgb(255 255 255 / 11%);
+  }
+
+  .entree.bon {
+    --gravite: #5fb489;
+  }
+  .entree.attention {
+    --gravite: #d9a03f;
+  }
+  .entree.alerte {
+    --gravite: #d4604a;
+  }
+  .entree.neutre {
+    --gravite: var(--sur-fond-doux);
+  }
+
+  .nom {
+    font-size: var(--t-micro);
+    font-weight: 600;
+    letter-spacing: var(--suivi-serre);
+    text-transform: uppercase;
+    /* Le nom du diagnostic était en 10,9 px sur un gris à 2,96 de contraste :
+       l'étiquette de la ligne était le texte le moins lisible de l'écran. */
+    color: var(--sur-fond-doux);
+  }
+
+  .verdict-court {
+    font-family: var(--police-titre);
+    font-size: 1.14rem;
+    font-weight: 500;
+    letter-spacing: -0.022em;
+    color: var(--or-clair);
+  }
+
+  .jusqua {
+    font-size: var(--t-petit);
+    color: var(--sur-fond-doux);
+  }
+
+  /* Un rapport périmé fait repousser une signature : il se voit. */
+  .jusqua.perimee,
+  .jusqua-fiche.perimee {
+    /* Mesuré sur le fond réel de la ligne : #f0907c n'y tenait que 4,39. */
+    color: #f8ab9c;
+    font-weight: 650;
+  }
+
   .fiche-diag {
     padding: 26px 0;
     border-top: 1px solid rgb(255 255 255 / 12%);
     break-inside: avoid;
+    /* La barre des vues est collante : sans cette marge, une ancre déposait le
+       titre de la fiche juste derrière elle. */
+    scroll-margin-top: 110px;
+  }
+
+  .jusqua-fiche {
+    margin: 0 0 6px;
+    font-size: var(--t-petit);
+    color: var(--sur-fond-doux);
   }
 
   header {
-    border-left: 3px solid var(--gravite, var(--gris));
+    border-left: 3px solid var(--gravite, var(--sur-fond-doux));
     padding-left: 16px;
     margin-bottom: 20px;
   }
@@ -188,7 +300,7 @@
     --gravite: #c0503c;
   }
   .fiche-diag.neutre {
-    --gravite: var(--gris);
+    --gravite: var(--sur-fond-doux);
   }
 
   .quoi {
@@ -196,7 +308,7 @@
     font-size: 0.72rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--gris);
+    color: var(--sur-fond-doux);
   }
 
   h3 {
@@ -260,7 +372,7 @@
     font-size: 0.68rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--gris);
+    color: var(--sur-fond-doux);
   }
 
   .chiffres dd {
@@ -318,7 +430,7 @@
     font-weight: 700;
     letter-spacing: 0.13em;
     text-transform: uppercase;
-    color: var(--gris);
+    color: var(--sur-fond-doux);
   }
 
   .reserves ul {
@@ -335,13 +447,12 @@
     font-size: 0.9rem;
     line-height: 1.45;
     color: var(--sur-fond-doux);
-    opacity: 0.85;
   }
 
   .reserves li::before {
     content: '—';
     position: absolute;
     left: 0;
-    color: var(--gris);
+    color: var(--sur-fond-doux);
   }
 </style>

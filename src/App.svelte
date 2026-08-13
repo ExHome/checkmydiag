@@ -1,7 +1,10 @@
 <script lang="ts">
   import Depot from './composants/Depot.svelte';
   import Lecteur from './composants/Lecteur.svelte';
+  import PanneauSavoir from './composants/savoir/PanneauSavoir.svelte';
+  import { exploration } from './lib/savoir/pile.svelte';
   import { ouvrirPdf, type PageRendue } from './lib/pdf';
+  import { echecDeLecture } from './lib/echec';
   import { analyser } from './lib/analyse';
   import { pagesExemple } from './lib/exemple';
   import type { Analyse } from './lib/modele';
@@ -105,7 +108,10 @@
 
       void dessinerPages(document, resultat);
     } catch (e) {
-      erreur = `Impossible de lire ce PDF (${e instanceof Error ? e.message : 'erreur inconnue'}).`;
+      // Le message de pdf.js est en anglais et parle de structure de fichier :
+      // il est traduit en une phrase qui dit quoi faire.
+      erreur = echecDeLecture(e).message;
+      if (import.meta.env.DEV) console.error('lecture du PDF', e);
       etat = 'accueil';
     } finally {
       progression = null;
@@ -193,6 +199,15 @@
     if (!import.meta.env.DEV) await document.fermer();
   }
 
+  /**
+   * Le mode bascule tout seul (§ 12 de l'ordre de mission des schémas) : tant
+   * qu'aucun rapport n'est là, les explications restent générales ; dès qu'un
+   * dossier est lu, chaque notion peut répondre « et chez moi ? ».
+   */
+  $effect(() => {
+    exploration.dossier = analyse?.diagnostics ?? [];
+  });
+
   function recommencer(): void {
     analyse = null;
     erreur = null;
@@ -203,10 +218,14 @@
 </script>
 
 <header class="entete">
-  <div class="enveloppe">
+  <div class="enveloppe entete-ligne">
     <a class="marque" href="./" onclick={(e) => { e.preventDefault(); recommencer(); }}>
       Check<span>My</span>Diag
     </a>
+    <!-- La seule sortie de l'écran de dépôt : les explications générales, pour
+         qui n'a pas encore son rapport sous la main. Ce sont de vraies pages
+         HTML, fabriquées hors de l'application (scripts/plugin-nuls.ts). -->
+    <a class="rubrique" href="./pour-les-nuls/">Les diags pour les nuls</a>
   </div>
 </header>
 
@@ -279,15 +298,23 @@
   {/if}
 </main>
 
+<!-- La couche d'exploration : elle se pose par-dessus, elle ne remplace jamais
+     l'écran du lecteur (§ 14). -->
+<PanneauSavoir />
+
 <style>
-  /* Le bandeau du site : vert profond, un filet or en dessous. */
+  /* Le bandeau du site : vert profond, un filet or en dessous.
+
+     Il ne colle pas au haut de l'écran. Il l'a fait, et il recouvrait la barre
+     des trois vues — collante elle aussi, au même `top: 0`, mais en dessous
+     dans l'ordre d'empilement : 75 px de barre masqués sur 87, mesurés. Sur une
+     page de six écrans, la navigation disparaissait dès le premier défilement.
+     Entre une marque toujours visible et une navigation toujours visible, c'est
+     la navigation qui reste. */
   .entete {
     padding: 20px 0;
     border-bottom: 1px solid var(--trait-or);
     background: var(--fond-clair);
-    position: sticky;
-    top: 0;
-    z-index: 10;
   }
 
   /* La marque en Fraunces, comme les titres du site. « My » prend l'or : une
@@ -303,6 +330,30 @@
 
   .marque span {
     color: var(--or-clair);
+  }
+
+  .entete-ligne {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  /* Le lien vers la rubrique : il attend, il n'appelle pas. Celui qui a son
+     rapport dépose son fichier ; celui qui n'en a pas trouve la sortie. */
+  .rubrique {
+    font-size: 0.74rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--or-clair);
+    text-decoration: none;
+  }
+
+  .rubrique:hover {
+    color: var(--sur-fond);
+    text-decoration: underline;
+    text-underline-offset: 4px;
   }
 
   main {

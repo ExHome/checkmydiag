@@ -79,12 +79,19 @@
 {/if}
 
 <style>
-  /* Le mot reste dans la phrase : on ne le sort pas, on le souligne. */
+  /* Le mot reste dans la phrase : on ne le sort pas, on le souligne.
+
+     Le rembourrage vertical, compensé par une marge négative, agrandit la zone
+     touchable sans toucher à l'interligne : sur un téléphone, ces mots faisaient
+     23 px de haut, soit la moitié de ce qu'un pouce vise. La ligne du texte ne
+     bouge pas d'un pixel — un rembourrage vertical sur une boîte en ligne ne
+     compte pas dans la hauteur de ligne. */
   .terme {
     display: inline;
     background: none;
     border: none;
-    padding: 0;
+    padding: 11px 0;
+    margin: -11px 0;
     font: inherit;
     color: inherit;
     cursor: help;
