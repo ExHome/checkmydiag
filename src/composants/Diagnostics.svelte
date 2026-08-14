@@ -11,7 +11,7 @@
    * C'est ce qui permet de tout comprendre sur un seul document imprimé, sans
    * rien avoir à cliquer.
    */
-  import type { Analyse, Diagnostic } from '../lib/modele';
+  import type { Analyse, Diagnostic, TypeDiag } from '../lib/modele';
   import Explicatif from './schemas/Explicatif.svelte';
   import MotsExpliques from './MotsExpliques.svelte';
   import Releves from './Releves.svelte';
@@ -19,37 +19,123 @@
   import { enPratique, FICHES } from '../lib/analyse/fiches';
   import { echeance } from '../lib/echeance';
   import { etiquetteDe } from '../lib/analyse/confiance';
-  import { FAMILLES } from '../lib/familles';
 
   interface Props {
     analyse: Analyse;
     /** Ouvre le rapport à l'endroit exact d'où sort ce verdict. */
     surVoirDansLeRapport?: (type: Diagnostic['type']) => void;
+    /** Le diagnostic demandé de l'extérieur : le carrousel vient dessus. */
+    ouvrir?: TypeDiag | null;
   }
 
-  const { analyse, surVoirDansLeRapport }: Props = $props();
+  const { analyse, surVoirDansLeRapport, ouvrir = null }: Props = $props();
 
   /** « page 12 » ou « pages 12 à 18 » — le lecteur y va, il ne devine pas. */
   function pageDite([debut, fin]: [number, number]): string {
     return debut === fin ? `page ${debut}` : `pages ${debut} à ${fin}`;
   }
 
-  /**
-   * Le sommaire.
+  /* ---- Le carrousel -------------------------------------------------------
+     Neuf fiches empilées faisaient neuf écrans : on descendait à l'aveugle sans
+     savoir ce qui restait. Elles défilent maintenant une par une — on glisse
+     vers la gauche pour la suivante, vers la droite pour la précédente, comme
+     on feuillette. Le bandeau au-dessus dit toujours où l'on est.
+
+     Tout reste dans le document : à l'impression, les neuf fiches se déplient. */
+
+  const diags = $derived(analyse.diagnostics);
+  let index = $state(0);
+  /** D'où arrive le volet : −1 s'il vient de la gauche, 1 de la droite. */
+  let sens = $state(1);
+
+  /** Le volet courant, borné : le dossier peut changer sous nos pieds. */
+  const courant = $derived(Math.min(index, Math.max(0, diags.length - 1)));
+
+  // Une demande venue de l'état descriptif amène le carrousel sur ce diagnostic.
+  $effect(() => {
+    if (!ouvrir) return;
+    const i = diags.findIndex((d) => d.type === ouvrir);
+    if (i >= 0) versLe(i);
+  });
+
+  function versLe(i: number): void {
+    if (i < 0 || i >= diags.length || i === index) return;
+    sens = i > index ? 1 : -1;
+    index = i;
+  }
+
+  /* Le geste.
+
+     On ne prend la main que si le mouvement est franchement horizontal : sinon
+     on volerait le défilement vertical de la page, qui est le geste que le
+     lecteur fait le plus souvent. `touch-action: pan-y` dit la même chose au
+     navigateur, pour que le défilement reste fluide même pendant qu'on décide. */
+  let depart: { x: number; y: number } | null = null;
+  /** Le décalage du doigt, en pixels, tant que le geste dure. */
+  let glisse = 0;
+  /** Vrai dès que le geste s'est déclaré horizontal. */
+  let horizontal = false;
+
+  function debut(e: PointerEvent): void {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    depart = { x: e.clientX, y: e.clientY };
+    horizontal = false;
+  }
+
+  function pendant(e: PointerEvent): void {
+    if (!depart) return;
+    const dx = e.clientX - depart.x;
+    const dy = e.clientY - depart.y;
+
+    if (!horizontal) {
+      if (Math.abs(dx) < 12 && Math.abs(dy) < 12) return;
+      // Le premier mouvement décide : horizontal, c'est pour nous ; vertical,
+      // c'est la page qui défile et on ne s'en mêle plus.
+      if (Math.abs(dx) <= Math.abs(dy)) {
+        depart = null;
+        return;
+      }
+      horizontal = true;
+    }
+
+    glisse = dx;
+  }
+
+  function fin(): void {
+    if (horizontal) {
+      // Un quart de l'écran, ou 90 px : au-delà, le geste était une intention.
+      const seuil = Math.min(90, window.innerWidth / 4);
+      if (glisse <= -seuil) versLe(courant + 1);
+      else if (glisse >= seuil) versLe(courant - 1);
+    }
+    depart = null;
+    horizontal = false;
+    glisse = 0;
+  }
+
+  function auClavier(e: KeyboardEvent): void {
+    if (e.key === 'ArrowRight') {
+      versLe(courant + 1);
+      e.preventDefault();
+    } else if (e.key === 'ArrowLeft') {
+      versLe(courant - 1);
+      e.preventDefault();
+    }
+  }
+
+  /*
+   * Les volets sont empilés au même endroit, et non alignés côte à côte.
    *
-   * Cette vue fait neuf écrans : sans lui, atteindre le gaz demandait deux mille
-   * pixels de défilement à l'aveugle, sans savoir combien il en restait. Il
-   * reprend au passage ce que « L'analyse » disait une seconde fois de son côté —
-   * le verdict de chaque rapport et jusqu'à quand il vaut. Dit une fois, à
-   * l'endroit où se trouve le détail qu'il annonce.
+   * La première version les mettait sur une piste horizontale qu'on translatait
+   * — la scène prenait alors la hauteur de la plus longue fiche, et il fallait
+   * mesurer le volet ouvert pour l'y ajuster. Cette mesure s'est retournée
+   * contre nous : passer de trois mille cinq cents pixels à quinze cents fait
+   * disparaître la barre de défilement du navigateur, ce qui élargit la page,
+   * ce qui retaille les fiches, ce qui relance la mesure. La page se figeait.
+   *
+   * Empilés, les volets endormis ne mesurent rien et la scène prend d'elle-même
+   * la hauteur du volet ouvert. Plus rien à mesurer, donc plus de boucle.
    */
-  /** Les familles réellement présentes, dans l'ordre, sans les vides. */
-  const parFamille = $derived(
-    FAMILLES.map((f) => ({
-      ...f,
-      diags: analyse.diagnostics.filter((d) => f.types.includes(d.type))
-    })).filter((f) => f.diags.length > 0)
-  );
 
   const BLOCS = [
     { cle: 'pourquoi', mot: 'Pourquoi ce diagnostic existe' },
@@ -133,118 +219,161 @@
 </script>
 
 <section class="diagnostics">
-  <p class="eyebrow">Le dossier, diagnostic par diagnostic</p>
-
-  <!-- Ce qu'il y a dans le dossier, et où c'est. Une ligne mène à sa fiche. -->
-  <!-- Le dossier par familles : ce qui peut blesser, ce qu'on respire, ce que
-       le logement consomme. Le lecteur ne connaît pas les noms des rapports,
-       mais il sait ce qui l'inquiète. -->
-  <nav class="sommaire" aria-label="Les diagnostics du dossier">
-    {#each parFamille as f (f.cle)}
-      <section class="famille">
-        <h3 class="titre-famille">
-          {f.nom}<span class="quoi-famille">{f.quoi}</span>
-        </h3>
-        <div class="entrees">
-          {#each f.diags as d (d.type)}
-            {@const q = echeance(d)}
-            <a class="entree {d.gravite}" href="#diag-{d.type}">
-              <span class="nom">{d.titre}</span>
-              <span class="verdict-court">{libelleCourt(d)}</span>
-              <span class="jusqua" class:perimee={q.perimee}>{q.texte}</span>
-            </a>
-          {/each}
-        </div>
-      </section>
+  <!--
+    Le bandeau des diagnostics : un onglet par rapport, celui qu'on lit en
+    relief. C'est la carte du dossier — on sait toujours où l'on est et ce qui
+    reste, sans avoir à deviner.
+  -->
+  <nav class="bandeau-diags" aria-label="Les diagnostics du dossier">
+    {#each diags as d, i (d.type)}
+      <button
+        type="button"
+        class="onglet-diag {d.gravite}"
+        class:courant={i === courant}
+        aria-current={i === courant ? 'true' : undefined}
+        onclick={() => versLe(i)}
+        onkeydown={auClavier}
+      >
+        <span class="pastille" aria-hidden="true"></span>
+        <span class="nom-onglet">{d.titre}</span>
+      </button>
     {/each}
   </nav>
 
-  {#each analyse.diagnostics as d (d.type)}
-    {@const pratique = enPratique(d.type, d.gravite)}
-    {@const quand = echeance(d)}
-    <article class="fiche-diag {d.gravite}" id="diag-{d.type}">
-      <header>
-        <p class="quoi">{d.titre}</p>
-        <h3>{libelleCourt(d)}</h3>
-        <p class="jusqua-fiche" class:perimee={quand.perimee}>{quand.texte}</p>
-        <p class="verdict">{d.verdict}</p>
+  <!--
+    La scène : un volet à la fois, et les autres qui attendent de part et
+    d'autre. On glisse pour changer de diagnostic, exactement comme on
+    feuillette. La hauteur suit le volet ouvert, sinon les fiches courtes
+    laisseraient un grand vide sous elles.
+  -->
+  <!-- Le geste est un confort, jamais le seul chemin : le bandeau au-dessus et
+       les flèches en dessous font la même chose au clavier comme à la souris.
+       D'où le simple rôle de groupe — il n'y a rien à activer ici. -->
+  <div
+    class="scene"
+    role="group"
+    aria-label="Les diagnostics du dossier, un par un"
+    aria-roledescription="carrousel"
+    onpointerdown={debut}
+    onpointermove={pendant}
+    onpointerup={fin}
+    onpointercancel={fin}
+  >
+    <div class="piste" style:--sens={sens}>
+      {#each diags as d, i (d.type)}
+        {@const pratique = enPratique(d.type, d.gravite)}
+        {@const quand = echeance(d)}
+        <article
+          class="fiche-diag {d.gravite}"
+          class:ouvert={i === courant}
+          id="diag-{d.type}"
+          aria-hidden={i !== courant ? 'true' : undefined}
+        >
+          <header>
+            <p class="quoi">{d.titre}</p>
+            <h3>{libelleCourt(d)}</h3>
+            <p class="jusqua-fiche" class:perimee={quand.perimee}>{quand.texte}</p>
+            <p class="verdict">{d.verdict}</p>
 
-        <!-- D'où sort cette phrase. Discret, en bas de l'en-tête : c'est le
-             niveau expert, celui qu'on ne cherche que si on doute. Mais il ne
-             se cache pas derrière un clic — une preuve qu'il faut aller
-             chercher ne prouve rien. -->
-        <p class="provenance">
-          <span class="marque" aria-hidden="true"></span>
-          <span>{etiquetteDe(d.origine ?? 'rapport')}</span>
-          {#if d.pages}
-            {#if surVoirDansLeRapport}
-              <!-- La page n'est plus une mention, c'est un chemin : un clic
-                   ouvre le rapport au passage exact. Une preuve qu'on ne peut
-                   pas atteindre ne prouve rien. -->
-              <button type="button" class="page" onclick={() => surVoirDansLeRapport(d.type)}>
-                {pageDite(d.pages)} — voir dans mon rapport
-              </button>
-            {:else}
-              <span class="page">{pageDite(d.pages)}</span>
-            {/if}
-          {/if}
-        </p>
-      </header>
+            <!-- D'où sort cette phrase. Discret, en bas de l'en-tête : c'est le
+                 niveau expert, celui qu'on ne cherche que si on doute. Mais il
+                 ne se cache pas derrière un clic — une preuve qu'il faut aller
+                 chercher ne prouve rien. -->
+            <p class="provenance">
+              <span class="marque" aria-hidden="true"></span>
+              <span>{etiquetteDe(d.origine ?? 'rapport')}</span>
+              {#if d.pages}
+                {#if surVoirDansLeRapport}
+                  <!-- La page n'est plus une mention, c'est un chemin : un clic
+                       ouvre le rapport au passage exact. Une preuve qu'on ne
+                       peut pas atteindre ne prouve rien. -->
+                  <button type="button" class="page" onclick={() => surVoirDansLeRapport(d.type)}>
+                    {pageDite(d.pages)} — voir dans mon rapport
+                  </button>
+                {:else}
+                  <span class="page">{pageDite(d.pages)}</span>
+                {/if}
+              {/if}
+            </p>
+          </header>
 
-      <div class="corps">
-        <div class="dessin">
-          <Explicatif type={d.type} isolation={isolationDe(d)} lettre={lettreDe(d)} />
-        </div>
+          <div class="corps">
+            <div class="dessin">
+              <Explicatif type={d.type} isolation={isolationDe(d)} lettre={lettreDe(d)} />
+            </div>
 
-        <div class="dit">
-          {#if pratique}
-            <p class="pratique"><MotsExpliques texte={pratique} /></p>
-          {/if}
+            <div class="dit">
+              {#if pratique}
+                <p class="pratique"><MotsExpliques texte={pratique} /></p>
+              {/if}
 
-          {#if d.faits.length}
-            <dl class="chiffres">
-              {#each d.faits.slice(0, 4) as fait (fait.libelle)}
-                <div>
-                  <dt>{fait.libelle}</dt>
-                  <dd>
-                    {fait.valeur}
-                    {#if fait.precision}<span class="precision">{fait.precision}</span>{/if}
-                  </dd>
-                </div>
-              {/each}
-            </dl>
-          {/if}
+              {#if d.faits.length}
+                <dl class="chiffres">
+                  {#each d.faits.slice(0, 4) as fait (fait.libelle)}
+                    <div>
+                      <dt>{fait.libelle}</dt>
+                      <dd>
+                        {fait.valeur}
+                        {#if fait.precision}<span class="precision">{fait.precision}</span>{/if}
+                      </dd>
+                    </div>
+                  {/each}
+                </dl>
+              {/if}
 
-          <!-- Tout ce que le rapport énumère, sans en retirer un seul. Placé
-               après les chiffres et avant l'explication générale : c'est le
-               constat, il précède la pédagogie. -->
-          {#if d.releves?.length}
-            <Releves releves={d.releves} page={d.pages[0]} />
-          {/if}
+              <!-- Tout ce que le rapport énumère, sans en retirer un seul. Placé
+                   après les chiffres et avant l'explication générale : c'est le
+                   constat, il précède la pédagogie. -->
+              {#if d.releves?.length}
+                <Releves releves={d.releves} page={d.pages[0]} type={d.type} />
+              {/if}
 
-          <dl class="canevas">
-            {#each BLOCS as bloc (bloc.cle)}
-              <div>
-                <dt>{bloc.mot}</dt>
-                <dd><MotsExpliques texte={FICHES[d.type][bloc.cle]} /></dd>
+              <dl class="canevas">
+                {#each BLOCS as bloc (bloc.cle)}
+                  <div>
+                    <dt>{bloc.mot}</dt>
+                    <dd><MotsExpliques texte={FICHES[d.type][bloc.cle]} /></dd>
+                  </div>
+                {/each}
+              </dl>
+
+              <!-- Les réserves : ce que ce diagnostic-là ne couvre pas. Sans
+                   elles, une conclusion rassurante se lit comme une garantie. -->
+              <div class="reserves">
+                <p class="titre-reserves">Ce que ce diagnostic ne garantit pas</p>
+                <ul>
+                  {#each reservesDe(d) as reserve}
+                    <li>{reserve}</li>
+                  {/each}
+                </ul>
               </div>
-            {/each}
-          </dl>
-
-          <!-- Les réserves : ce que ce diagnostic-là ne couvre pas. Sans elles,
-               une conclusion rassurante se lit comme une garantie. -->
-          <div class="reserves">
-            <p class="titre-reserves">Ce que ce diagnostic ne garantit pas</p>
-            <ul>
-              {#each reservesDe(d) as reserve}
-                <li>{reserve}</li>
-              {/each}
-            </ul>
+            </div>
           </div>
-        </div>
-      </div>
-    </article>
-  {/each}
+        </article>
+      {/each}
+    </div>
+  </div>
+
+  <!-- Où l'on en est, et par où continuer. Les flèches restent : tout le monde
+       ne glisse pas, et personne ne devine un geste qu'on ne lui montre pas. -->
+  <nav class="pas-a-pas" aria-label="Naviguer entre les diagnostics">
+    <button type="button" onclick={() => versLe(courant - 1)} disabled={courant === 0}>
+      <span aria-hidden="true">←</span> Précédent
+    </button>
+
+    <p class="ou-on-est">
+      <strong>{courant + 1}</strong> sur {diags.length}
+      <span class="glisser">Glissez pour changer de diagnostic</span>
+    </p>
+
+    <button
+      type="button"
+      onclick={() => versLe(courant + 1)}
+      disabled={courant === diags.length - 1}
+    >
+      Suivant <span aria-hidden="true">→</span>
+    </button>
+  </nav>
 </section>
 
 <style>
@@ -252,116 +381,200 @@
     margin-bottom: var(--e6);
   }
 
-  /* Le sommaire : une ligne par rapport, cliquable, avec ce qu'il conclut et
-     jusqu'à quand il vaut. C'est tout ce qu'on veut savoir avant de descendre. */
-  /* Les familles s'empilent, séparées par de l'espace plutôt que par des
-     cadres. C'est le blanc qui groupe, pas la boîte. */
-  .sommaire {
-    display: grid;
-    gap: var(--e5);
-    margin-bottom: var(--e6);
-  }
-
-  .titre-famille {
+  /* ---- Le bandeau des diagnostics ---------------------------------------
+     Un onglet par rapport, sur une seule ligne qui défile si le dossier est
+     long. L'onglet ouvert est en relief : il avance vers le lecteur pendant
+     que les autres restent en retrait. */
+  .bandeau-diags {
     display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: var(--e3);
-    margin: 0 0 var(--e3);
-    padding-bottom: var(--e2);
-    border-bottom: 1px solid var(--trait-or);
-    font-family: var(--police-titre);
-    font-size: var(--t-lead);
-    font-weight: 500;
-    color: var(--or-clair);
-  }
-
-  /* Ce que la famille recouvre, dit en mots de tous les jours : « ce qui peut
-     blesser » se comprend sans connaître le mot « sécurité ». */
-  .quoi-famille {
-    font-family: var(--police);
-    font-size: var(--t-petit);
-    font-weight: 400;
-    color: var(--sur-fond-doux);
-  }
-
-  /* Les tuiles respirent : collées, elles redevenaient un tableau. */
-  .entrees {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: var(--e3);
-  }
-
-  /* De vraies tuiles, et non des lignes empilées : chaque diagnostic est un
-     sujet distinct, et doit se voir comme tel. Le liseré de gravité reste à
-     gauche — c'est lui qui trie l'œil avant la lecture. */
-  .entree {
-    display: grid;
     gap: var(--e2);
-    align-content: start;
-    min-height: 104px;
-    padding: var(--e4);
-    background: rgb(255 255 255 / 6%);
-    border: 1px solid rgb(255 255 255 / 8%);
-    border-left: 3px solid var(--gravite, var(--sur-fond-doux));
-    border-radius: var(--rayon);
-    text-decoration: none;
+    overflow-x: auto;
+    /* Pas de barre de défilement sous les onglets : elle traversait la page
+       d'un trait blanc plus voyant que les onglets eux-mêmes. Ce qui dit qu'il
+       y en a d'autres, c'est l'effacement au bord — et le fait qu'ils bougent
+       quand on les pousse. */
+    scrollbar-width: none;
+    padding: var(--e1) var(--e1) var(--e2);
+    margin-bottom: var(--e4);
+    /* Les onglets qui débordent s'effacent au bord plutôt que d'être tranchés
+       net : on comprend qu'il y en a d'autres. */
+    mask-image: linear-gradient(90deg, transparent, #000 14px, #000 calc(100% - 14px), transparent);
+  }
+
+  .bandeau-diags::-webkit-scrollbar {
+    display: none;
+  }
+
+  .onglet-diag {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--e2);
+    padding: var(--e2) var(--e4);
+    background: rgb(255 255 255 / 5%);
+    border: 1px solid rgb(255 255 255 / 10%);
+    border-radius: 999px;
+    color: var(--sur-fond-doux);
+    font-size: var(--t-petit);
+    font-weight: 600;
+    letter-spacing: var(--suivi-serre);
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background 0.18s ease,
+      color 0.18s ease,
+      border-color 0.18s ease,
+      box-shadow 0.18s ease;
+  }
+
+  .onglet-diag:hover {
+    background: rgb(255 255 255 / 10%);
     color: var(--sur-fond);
-    transition: background 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
   }
 
-  /* Le survol soulève à peine : le mouvement dit « c'est cliquable », il ne
-     fait pas le spectacle. */
-  .entree:hover {
-    background: rgb(255 255 255 / 11%);
-    border-color: rgb(255 255 255 / 16%);
-    transform: translateY(-2px);
+  /* L'onglet ouvert : un fond franc, la teinte de sa gravité en bordure, et
+     une ombre portée qui le décolle de la ligne. */
+  .onglet-diag.courant {
+    background: linear-gradient(180deg, rgb(255 255 255 / 16%), rgb(255 255 255 / 9%));
+    border-color: var(--gravite, var(--or));
+    color: var(--sur-fond);
+    box-shadow: 0 8px 18px -12px rgb(0 20 14 / 100%);
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .entree:hover {
+  .pastille {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--gravite, var(--sur-fond-doux));
+    flex: none;
+  }
+
+  .onglet-diag.bon {
+    --gravite: #5fb489;
+  }
+  .onglet-diag.attention {
+    --gravite: #d9a03f;
+  }
+  .onglet-diag.alerte {
+    --gravite: #d4604a;
+  }
+  .onglet-diag.neutre {
+    --gravite: var(--sur-fond-doux);
+  }
+
+  /* ---- La scène ---------------------------------------------------------
+     Le geste horizontal nous appartient, le vertical reste à la page : c'est
+     ce que dit `pan-y`, et c'est ce qui garde le défilement fluide au pouce. */
+  .scene {
+    touch-action: pan-y;
+  }
+
+  /* Les volets occupent tous la même case : la pile prend d'elle-même la
+     hauteur de celui qui est ouvert, les autres ne mesurant rien. */
+  .piste {
+    display: grid;
+  }
+
+  .fiche-diag {
+    grid-area: 1 / 1;
+    min-width: 0;
+    /* Endormi : plus rien à lire, plus rien à tabuler, plus rien à mesurer.
+       Le volet reste dans le document — c'est ce qui permet d'imprimer le
+       dossier entier. */
+    visibility: hidden;
+    height: 0;
+    overflow: hidden;
+  }
+
+  .fiche-diag.ouvert {
+    visibility: visible;
+    height: auto;
+    overflow: visible;
+    /* Le volet arrive du côté d'où on l'a appelé : c'est ce décalage qui donne
+       le sentiment que les fiches tournent, et non qu'elles se remplacent. */
+    animation: entre 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes entre {
+    from {
+      opacity: 0;
+      transform: translateX(calc(var(--sens, 1) * 44px));
+    }
+    to {
+      opacity: 1;
       transform: none;
     }
   }
 
-  .entree.bon {
-    --gravite: #5fb489;
-  }
-  .entree.attention {
-    --gravite: #d9a03f;
-  }
-  .entree.alerte {
-    --gravite: #d4604a;
-  }
-  .entree.neutre {
-    --gravite: var(--sur-fond-doux);
+  @media (prefers-reduced-motion: reduce) {
+    .fiche-diag.ouvert {
+      animation: none;
+    }
   }
 
-  .nom {
-    font-size: var(--t-micro);
+  /* ---- Où l'on en est ---------------------------------------------------- */
+  .pas-a-pas {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--e4);
+    margin-top: var(--e4);
+    padding-top: var(--e4);
+    border-top: 1px solid var(--trait-or);
+  }
+
+  .pas-a-pas button {
+    background: none;
+    border: 1px solid var(--trait-or);
+    border-radius: 999px;
+    padding: var(--e2) var(--e4);
+    color: var(--sur-fond);
+    font-size: var(--t-petit);
     font-weight: 600;
-    letter-spacing: var(--suivi-serre);
-    text-transform: uppercase;
-    /* Le nom du diagnostic était en 10,9 px sur un gris à 2,96 de contraste :
-       l'étiquette de la ligne était le texte le moins lisible de l'écran. */
-    color: var(--sur-fond-doux);
+    cursor: pointer;
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
   }
 
-  .verdict-court {
-    font-family: var(--police-titre);
-    font-size: var(--t-lead);
-    font-weight: 500;
-    letter-spacing: -0.022em;
-    color: var(--or-clair);
+  .pas-a-pas button:hover:not(:disabled) {
+    background: var(--or);
+    border-color: var(--or);
+    color: var(--vert-900);
   }
 
-  .jusqua {
+  .pas-a-pas button:disabled {
+    opacity: 0.32;
+    cursor: default;
+  }
+
+  .ou-on-est {
+    margin: 0;
+    text-align: center;
     font-size: var(--t-petit);
     color: var(--sur-fond-doux);
   }
 
+  .ou-on-est strong {
+    font-family: var(--police-titre);
+    font-size: var(--t-lead);
+    font-weight: 500;
+    color: var(--sur-fond);
+  }
+
+  /* Le geste ne se devine pas : on le dit, une fois, sous le compteur. */
+  .glisser {
+    display: block;
+    font-size: var(--t-micro);
+    color: var(--sur-fond-doux);
+    opacity: 0.75;
+  }
+
+  @media (max-width: 560px) {
+    .glisser {
+      display: none;
+    }
+  }
+
   /* Un rapport périmé fait repousser une signature : il se voit. */
-  .jusqua.perimee,
   .jusqua-fiche.perimee {
     /* Mesuré sur le fond réel de la ligne : #f0907c n'y tenait que 4,39. */
     color: #f8ab9c;
@@ -373,11 +586,21 @@
      très long : on ne savait plus où l'on était. */
   .fiche-diag {
     padding: var(--e5);
-    margin-bottom: var(--e5);
-    background: rgb(255 255 255 / 4%);
-    border: 1px solid rgb(255 255 255 / 8%);
+    /* La teinte de la gravité irrigue tout le volet, du haut vers le fond : le
+       diagnostic se reconnaît avant d'être lu. Elle reste un voile — huit pour
+       cent d'une couleur, pas un aplat. */
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--gravite-fiche) 12%, transparent),
+        transparent 220px
+      ),
+      rgb(255 255 255 / 5%);
+    border: 1px solid rgb(255 255 255 / 9%);
+    border-top-color: rgb(255 255 255 / 16%);
     border-left: 4px solid var(--gravite-fiche, var(--sur-fond-doux));
     border-radius: var(--rayon);
+    box-shadow: 0 1px 0 rgb(255 255 255 / 6%) inset, 0 24px 48px -32px rgb(0 20 14 / 100%);
     break-inside: avoid;
     /* La barre des vues est collante : sans cette marge, une ancre déposait le
        titre de la fiche juste derrière elle. */
@@ -627,5 +850,28 @@
     position: absolute;
     left: 0;
     color: var(--sur-fond-doux);
+  }
+
+  /* Le carrousel est un confort d'écran. Sur le document remis, les neuf
+     fiches se déplient et s'empilent : on n'imprime pas un geste. */
+  @media print {
+    .bandeau-diags,
+    .pas-a-pas {
+      display: none !important;
+    }
+
+    .piste {
+      display: block !important;
+    }
+
+    .fiche-diag {
+      visibility: visible !important;
+      height: auto !important;
+      overflow: visible !important;
+      animation: none !important;
+      margin-bottom: 10mm;
+      box-shadow: none !important;
+      background: none !important;
+    }
   }
 </style>

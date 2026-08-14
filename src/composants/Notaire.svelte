@@ -386,7 +386,11 @@
         Le papier, lui, n'a pas ce bandeau : l'annexe y reste.
       -->
       <div class="au-papier">
-        <h2><span class="num">{numeros.descriptif}</span>L’état descriptif</h2>
+        <!-- « Les caractéristiques du bien », et non plus « l'état
+             descriptif » : ce nom désigne désormais, en tête de page, ce que
+             chaque diagnostic conclut. Deux sections du même document ne
+             peuvent pas porter le même titre en disant deux choses. -->
+        <h2><span class="num">{numeros.descriptif}</span>Les caractéristiques du bien</h2>
         <dl class="caracteristiques">
           {#each caracteristiques as c (c.libelle)}
             <div>

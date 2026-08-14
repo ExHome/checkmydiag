@@ -424,20 +424,25 @@ button {
     color: #093f30 !important;
   }
 
-  /* Le sommaire des diagnostics sert de table des matières sur le papier : il
-     reste, mais sans son fond ni sa couleur d'écran. */
-  .sommaire .entree {
+  /* L'état descriptif sert de table des matières sur le papier : ce que chaque
+     rapport conclut, d'un coup d'œil. Il reste, mais sans son fond ni son
+     relief d'écran. */
+  .tuile {
     background: none !important;
+    border-color: #ccc !important;
     border-left-color: #999 !important;
+    box-shadow: none !important;
+    min-height: 0 !important;
   }
 
-  .sommaire .nom,
+  .nom-diag,
   .jusqua,
   .jusqua-fiche {
     color: #41544c !important;
   }
 
-  .sommaire .verdict-court {
+  .conclusion,
+  .titre-famille {
     color: #093f30 !important;
   }
 

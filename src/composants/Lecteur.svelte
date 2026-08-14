@@ -146,11 +146,31 @@
    * la coupe donc en trois temps, dans l'ordre où on lit un dossier.
    */
   const VUES = [
-    { cle: 'point', nom: 'L’analyse', quoi: 'Le bien, puis chaque diagnostic' },
-    { cle: 'rapport', nom: 'Le rapport', quoi: 'Toutes les pages, expliquées' }
+    { cle: 'point', nom: 'L’analyse', quoi: 'Chaque diagnostic, un par un' },
+    { cle: 'rapport', nom: 'Le rapport', quoi: 'Toutes les pages, expliquées' },
+    { cle: 'conseil', nom: 'Le conseil', quoi: 'Ce qu’il faut en faire' }
   ];
 
   let vue = $state('point');
+
+  /**
+   * Le diagnostic demandé depuis l'état descriptif.
+   *
+   * Cliquer une tuile ouvre l'analyse sur ce rapport-là : c'est la promesse de
+   * la tuile, sinon elle n'est qu'une étiquette. Le compteur force le
+   * changement même si l'on redemande deux fois le même diagnostic.
+   */
+  let diagOuvert = $state<TypeDiag | null>(null);
+
+  function ouvrirDansLAnalyse(type: TypeDiag): void {
+    vue = 'point';
+    diagOuvert = type;
+    // Le carrousel est plus bas que le bandeau du bien : sans ce saut, le clic
+    // changeait un écran qu'on ne voyait pas.
+    requestAnimationFrame(() => {
+      document.getElementById('analyse-diags')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
 
   /** Ouvert au clic, et seulement au clic. Reclic : ça se referme. */
   let epingle = $state<string | null>(null);
@@ -280,7 +300,7 @@
 <!-- Ce qu'il faut retenir, avant le dossier lui-même. C'est la seule chose de
      l'écran qui doit être comprise sans rien ouvrir : il est donc au-dessus des
      vues, et il s'affiche même si aucun passage n'a pu être repéré. -->
-<Verdict {analyse} {photo} />
+<Verdict {analyse} {photo} surOuvrirDiagnostic={ouvrirDansLAnalyse} />
 
 {#if reperes.length}
   <section class="lecteur">
@@ -301,15 +321,11 @@
       {/each}
     </nav>
 
-    <div class="vue" class:cachee={vue !== 'point'}>
-      <!-- Le point qu'on ferait à l'étude : de quel bien il s'agit, où il se
-           situe, et ce qu'il faut faire. -->
-      <Notaire {analyse} />
-
-      <!-- Le dossier diagnostic par diagnostic, dans la continuité du point sur
-           le bien : on descend du général au détail sans changer d'onglet.
-           La fiche donne le verdict, le rapport en donne la preuve. -->
-      <Diagnostics {analyse} surVoirDansLeRapport={allerAuDiagnostic} />
+    <div class="vue" class:cachee={vue !== 'point'} id="analyse-diags">
+      <!-- Le dossier diagnostic par diagnostic. On les feuillette : un volet à
+           la fois, le bandeau dit lequel. La fiche donne le verdict, le rapport
+           en donne la preuve. -->
+      <Diagnostics {analyse} surVoirDansLeRapport={allerAuDiagnostic} ouvrir={diagOuvert} />
     </div>
 
     <div class="vue" class:cachee={vue !== 'rapport'} class:deux-colonnes={true} class:seul={!actif}>
@@ -560,6 +576,13 @@
       </aside>
     </div>
 
+    <!-- Le conseil : ce qu'on dirait au client à l'étude, avant de signer. Il
+         a son onglet parce que ce n'est ni une lecture du dossier ni une
+         lecture du document — c'est ce qu'il faut en faire. -->
+    <div class="vue" class:cachee={vue !== 'conseil'}>
+      <Notaire {analyse} />
+    </div>
+
     <!-- Au repos, le seul texte de l'écran : la porte d'entrée de la lecture
          guidée. Tout le reste attend un clic. -->
     {#if vue === 'rapport' && !actif && parcours.length}
@@ -658,7 +681,10 @@
 
 
 
-  /* La barre des vues : collante, elle dit en permanence où l'on est. */
+  /* La barre des vues : collante, elle dit en permanence où l'on est.
+     Trois pavés côte à côte, et celui qu'on lit est en relief — un fond plus
+     clair, un liseré d'or au sommet, une ombre sous lui. On voit où l'on est
+     avant d'avoir lu le mot. */
   .vues {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -667,28 +693,40 @@
     top: 0;
     z-index: 8;
     margin-bottom: var(--e6);
-    background: var(--fond);
-    border-bottom: 1px solid rgb(255 255 255 / 12%);
+    padding: var(--e2) 0;
+    /* Le fond est opaque : la barre passe au-dessus du document quand on
+       défile, elle ne doit rien laisser transparaître. */
+    background: linear-gradient(180deg, var(--fond) 78%, rgb(9 63 48 / 92%));
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--trait-or);
   }
 
   .vues button {
     text-align: left;
-    background: none;
-    border: none;
-    border-bottom: 2px solid transparent;
-    padding: var(--e4) var(--e1) var(--e3);
+    background: rgb(255 255 255 / 3%);
+    border: 1px solid transparent;
+    border-radius: var(--rayon);
+    padding: var(--e3) var(--e4);
     cursor: pointer;
     color: var(--sur-fond-doux);
-    transition: color 0.2s ease, border-color 0.2s ease;
+    transition:
+      background 0.2s ease,
+      color 0.2s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
   }
 
   .vues button:hover {
+    background: rgb(255 255 255 / 8%);
     color: var(--sur-fond);
   }
 
   .vues button.courante {
     color: var(--sur-fond);
-    border-bottom-color: var(--or);
+    background: linear-gradient(180deg, rgb(255 255 255 / 15%), rgb(255 255 255 / 7%));
+    border-color: rgb(255 255 255 / 12%);
+    border-top-color: var(--or);
+    box-shadow: 0 1px 0 rgb(255 255 255 / 8%) inset, 0 14px 26px -18px rgb(0 20 14 / 100%);
   }
 
   .nom-vue {
@@ -709,6 +747,16 @@
     font-size: var(--t-micro);
     letter-spacing: 0.06em;
     opacity: 0.7;
+  }
+
+  @media (max-width: 760px) {
+    .vues button {
+      padding: var(--e3) var(--e3);
+    }
+
+    .nom-vue {
+      font-size: var(--t-base);
+    }
   }
 
   @media (max-width: 620px) {

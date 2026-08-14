@@ -10,12 +10,21 @@
    * Ce qui hiérarchise, c'est l'ordre et le filtre, jamais l'omission : le
    * filtre « tout » existe toujours et reste sélectionné par défaut.
    */
-  import type { Diagnostic } from '../lib/modele';
+  import type { Diagnostic, TypeDiag } from '../lib/modele';
   import MotsExpliques from './MotsExpliques.svelte';
+  import SchemaAnomalie from './schemas/SchemaAnomalie.svelte';
+  import { mecanismeDe } from '../lib/analyse/mecanisme';
 
   type Releve = NonNullable<Diagnostic['releves']>[number];
 
-  const { releves, page }: { releves: Releve[]; page?: number } = $props();
+  interface Props {
+    releves: Releve[];
+    page?: number;
+    /** Le diagnostic d'où sortent ces relevés : il oriente le schéma. */
+    type?: TypeDiag;
+  }
+
+  const { releves, page, type }: Props = $props();
 
   /** Les familles présentes, dans l'ordre où elles engagent le lecteur. */
   const ORDRE: { genre: Releve['genre']; nom: string }[] = [
@@ -69,6 +78,16 @@
           <p class="libelle"><MotsExpliques texte={r.libelle} /></p>
           {#if r.code}<p class="code">{r.code}</p>{/if}
         </div>
+
+        <!-- Chaque anomalie a son dessin : la phrase de la norme dit ce qui est
+             constaté, le schéma montre ce qui se passe. Deux anomalies du même
+             mécanisme portent le même dessin — on lit une ligne sans avoir à
+             chercher ailleurs, et la répétition vaut mieux que le renvoi. -->
+        {#if type && r.genre === 'anomalie'}
+          <div class="mecanisme">
+            <SchemaAnomalie mecanisme={mecanismeDe(type, r.libelle, r.code)} />
+          </div>
+        {/if}
       </li>
     {/each}
   </ol>
@@ -153,12 +172,32 @@
     padding: 0;
   }
 
+  /* Le numéro, ce qui est constaté, et le dessin de ce qui se passe. Le schéma
+     tient dans une colonne fixe : il accompagne la ligne, il ne la remplace
+     pas. */
   .liste li {
     display: grid;
-    grid-template-columns: 2.4rem 1fr;
+    grid-template-columns: 2.4rem minmax(0, 1fr);
     gap: var(--e3);
     padding: var(--e3) 0;
     border-top: 1px solid var(--trait-fin);
+  }
+
+  .liste li.anomalie {
+    grid-template-columns: 2.4rem minmax(0, 1fr) 220px;
+    align-items: start;
+  }
+
+  /* Sous 760 px, la colonne du dessin passerait à moins de la moitié d'une
+     vignette lisible : le schéma repasse sous le texte, pleine largeur. */
+  @media (max-width: 760px) {
+    .liste li.anomalie {
+      grid-template-columns: 2.4rem minmax(0, 1fr);
+    }
+
+    .mecanisme {
+      grid-column: 2;
+    }
   }
 
   .liste li:first-child {

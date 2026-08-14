@@ -13,13 +13,23 @@
    * quand ça se chiffre, rond coché quand c'est propre. La forme suffit ; la
    * couleur ne fait que confirmer.
    */
-  import type { Analyse, Diagnostic, PointDeControle } from '../lib/modele';
+  import type { Analyse, Diagnostic, PointDeControle, TypeDiag } from '../lib/modele';
   import { FICHES } from '../lib/analyse/fiches';
-  import { familleDe } from '../lib/familles';
+  import { FAMILLES, familleDe } from '../lib/familles';
   import { descriptifDe } from '../lib/descriptif';
+  import { libelleCourt } from '../lib/libelle';
+  import { echeance } from '../lib/echeance';
   import MotsExpliques from './MotsExpliques.svelte';
 
-  const { analyse, photo = null }: { analyse: Analyse; photo?: string | null } = $props();
+  interface Props {
+    analyse: Analyse;
+    /** La photo du bien, tirée de la page de garde. */
+    photo?: string | null;
+    /** Ouvre l'analyse sur le diagnostic choisi dans l'état descriptif. */
+    surOuvrirDiagnostic?: (type: TypeDiag) => void;
+  }
+
+  const { analyse, photo = null, surOuvrirDiagnostic }: Props = $props();
 
   type Ton = 'mauvais' | 'moyen' | 'bon';
 
@@ -42,6 +52,37 @@
    */
   /** Ce qu'est le bien, relevé ligne à ligne — avant qu'on en juge le dossier. */
   const descriptif = $derived(descriptifDe(analyse));
+
+  /**
+   * L'état descriptif : ce que chaque diagnostic conclut, en une ligne.
+   *
+   * C'est l'état du bien tel que le dossier l'établit — pas le détail, pas la
+   * pédagogie : la conclusion générale de chaque rapport, et jusqu'à quand elle
+   * vaut. On le lit en dix secondes, avant d'ouvrir quoi que ce soit.
+   *
+   * Les caractéristiques techniques ont quitté cette place : elles décrivent le
+   * logement, et le logement est déjà décrit deux centimètres plus haut, en
+   * vitrine. Ici, on veut savoir ce que le dossier dit de lui.
+   *
+   * Groupé par familles, parce que le lecteur ne connaît pas les noms des
+   * rapports mais sait ce qui l'inquiète.
+   */
+  const etatDescriptif = $derived(
+    FAMILLES.map((f) => ({
+      ...f,
+      diags: analyse.diagnostics.filter((d) => f.types.includes(d.type))
+    })).filter((f) => f.diags.length > 0)
+  );
+
+  /**
+   * Ce qui décrit le logement, moins ce que la vitrine annonce déjà en grand.
+   *
+   * Le type et la surface sont dans le titre : les redire juste dessous les
+   * donnait deux fois à trois centimètres d'écart.
+   */
+  const traits = $derived(
+    descriptif.filter((c) => !/type de bien|surface de r[ée]f[ée]rence|superficie privative|surface habitable/i.test(c.libelle))
+  );
 
   /**
    * Le titre de la vitrine : ce qu'une agence écrit en gros sur son affiche.
@@ -294,6 +335,17 @@
         {#if analyse.bien.adresse}<p class="adresse">{analyse.bien.adresse}</p>{/if}
         {#if analyse.bien.commune}<p class="commune">{analyse.bien.commune}</p>{/if}
 
+        <!-- Les caractéristiques du logement, en une ligne : l'âge, l'étage,
+             l'enveloppe. Ce sont les mentions d'une annonce, elles se lisent
+             d'un trait et non en tableau. -->
+        {#if traits.length}
+          <p class="traits">
+            {#each traits as c, i (c.libelle)}<span
+                ><span class="quoi-trait">{c.libelle}</span> {c.valeur}</span
+              >{#if i < traits.length - 1}<span class="sep" aria-hidden="true">·</span>{/if}{/each}
+          </p>
+        {/if}
+
         {#if lettreDpe}
           <!-- L'étiquette énergie, obligatoire dans toute annonce depuis 2011 :
                en vitrine, c'est ce qu'on regarde juste après la photo. La
@@ -306,27 +358,42 @@
         {/if}
       </div>
     </div>
+  {/if}
 
-    <!--
-      L'état descriptif, avant l'analyse.
+  <!--
+    L'état descriptif : ce que le dossier établit, rapport par rapport.
 
-      C'est l'ordre d'un dossier : on présente le bien, on le décrit, puis on le
-      juge. Le mettre après le verdict revenait à conclure sur un logement qu'on
-      n'avait pas encore montré.
+    C'est l'ordre d'un dossier — on présente le bien, on dit dans quel état il
+    est, puis on analyse ce qui coince. Une tuile par diagnostic : son nom, ce
+    qu'il conclut, jusqu'à quand ça vaut. Rien de plus ; le détail est dans
+    l'analyse, à un clic.
+  -->
+  {#if etatDescriptif.length}
+    <div class="etat-descriptif">
+      <p class="eyebrow">L’état descriptif</p>
 
-      Sobre à dessein — des libellés fins, des valeurs qui ressortent, aucun
-      cadre. Ce n'est pas ce qu'on vient lire, c'est ce qu'il faut savoir avant.
-    -->
-    {#if descriptif.length}
-      <dl class="descriptif">
-        {#each descriptif as c (c.libelle)}
-          <div>
-            <dt>{c.libelle}</dt>
-            <dd>{c.valeur}</dd>
+      {#each etatDescriptif as f (f.cle)}
+        <section class="famille">
+          <h3 class="titre-famille">
+            {f.nom}<span class="quoi-famille">{f.quoi}</span>
+          </h3>
+          <div class="tuiles">
+            {#each f.diags as d (d.type)}
+              {@const q = echeance(d)}
+              <button
+                type="button"
+                class="tuile {d.gravite}"
+                onclick={() => surOuvrirDiagnostic?.(d.type)}
+              >
+                <span class="nom-diag">{d.titre}</span>
+                <span class="conclusion">{libelleCourt(d)}</span>
+                <span class="jusqua" class:perimee={q.perimee}>{q.texte}</span>
+              </button>
+            {/each}
           </div>
-        {/each}
-      </dl>
-    {/if}
+        </section>
+      {/each}
+    </div>
   {/if}
 
   <div class="tete">
@@ -589,10 +656,38 @@
     margin-top: 2px !important;
   }
 
+  /* Les mentions d'une annonce : à la file, séparées par des points médians.
+     Le libellé s'efface, la valeur porte — on parcourt, on ne lit pas. */
   .traits {
-    margin-top: var(--e2) !important;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--e1) var(--e3);
+    margin-top: var(--e3) !important;
     font-size: var(--t-petit);
+    color: var(--sur-fond);
+  }
+
+  .quoi-trait {
     color: var(--sur-fond-doux);
+  }
+
+  .traits .sep {
+    color: var(--or);
+    opacity: 0.55;
+  }
+
+  /* À l'étroit, chaque mention prend sa ligne et les points médians n'ont plus
+     rien à séparer : ils restaient pendus en fin de ligne. */
+  @media (max-width: 620px) {
+    .traits {
+      display: grid;
+      justify-items: start;
+    }
+
+    .traits .sep {
+      display: none;
+    }
   }
 
   @media (max-width: 620px) {
@@ -607,32 +702,138 @@
     }
   }
 
-  /* L'état descriptif : des colonnes, pas des cartes. Le libellé s'efface, la
-     valeur porte — on parcourt ces lignes, on ne les lit pas. */
-  .descriptif {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: var(--e3) var(--e5);
-    margin: 0 0 var(--e5);
-    padding-bottom: var(--e4);
+  /* ---- L'état descriptif ------------------------------------------------
+     Ce que le dossier établit, rapport par rapport. Des tuiles, pas des
+     lignes : chaque diagnostic est un sujet à part, et doit se voir comme tel.
+     Le liseré de gravité trie l'œil avant même qu'on lise. */
+  .etat-descriptif {
+    margin: 0 0 var(--e6);
+    padding-bottom: var(--e5);
     border-bottom: 1px solid var(--trait-or);
   }
 
-  .descriptif div {
-    min-width: 0;
+  .etat-descriptif .famille + .famille {
+    margin-top: var(--e5);
   }
 
-  .descriptif dt {
+  .titre-famille {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--e3);
+    margin: 0 0 var(--e3);
+    font-family: var(--police-titre);
+    font-size: var(--t-lead);
+    font-weight: 500;
+    color: var(--sur-fond);
+  }
+
+  .quoi-famille {
+    font-family: var(--police);
+    font-size: var(--t-petit);
+    font-weight: 400;
+    color: var(--sur-fond-doux);
+  }
+
+  /* Les tuiles gardent une taille de tuile.
+     Étirées à `1fr`, une famille qui ne contient qu'un rapport donnait un pavé
+     de treize cents pixels de large pour y écrire trois mots — l'inverse d'une
+     tuile. Elles s'arrêtent donc de grandir et s'alignent à gauche : même
+     format d'une famille à l'autre, quelle qu'en soit la taille. */
+  .tuiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 340px));
+    justify-content: start;
+    gap: var(--e3);
+  }
+
+  @media (max-width: 560px) {
+    .tuiles {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Le relief se fait à la lumière, pas au cadre : la tuile est un peu plus
+     claire que le fond, sa tranche haute capte une lueur, et son ombre la
+     détache du vert. Elle se soulève au survol — juste assez pour dire
+     qu'elle se clique. */
+  .tuile {
+    display: grid;
+    gap: var(--e1);
+    align-content: start;
+    justify-items: start;
+    text-align: left;
+    min-height: 108px;
+    padding: var(--e4);
+    background: linear-gradient(180deg, rgb(255 255 255 / 10%), rgb(255 255 255 / 5%));
+    border: 1px solid rgb(255 255 255 / 10%);
+    border-top-color: rgb(255 255 255 / 18%);
+    border-left: 3px solid var(--gravite, var(--sur-fond-doux));
+    border-radius: var(--rayon);
+    box-shadow: 0 1px 0 rgb(255 255 255 / 6%) inset, 0 10px 22px -18px rgb(0 20 14 / 90%);
+    color: var(--sur-fond);
+    cursor: pointer;
+    transition:
+      background 0.18s ease,
+      transform 0.18s ease,
+      box-shadow 0.18s ease,
+      border-color 0.18s ease;
+  }
+
+  .tuile:hover {
+    background: linear-gradient(180deg, rgb(255 255 255 / 15%), rgb(255 255 255 / 8%));
+    border-color: rgb(255 255 255 / 20%);
+    border-left-color: var(--gravite, var(--sur-fond-doux));
+    transform: translateY(-2px);
+    box-shadow: 0 1px 0 rgb(255 255 255 / 8%) inset, 0 16px 28px -20px rgb(0 20 14 / 100%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tuile:hover {
+      transform: none;
+    }
+  }
+
+  .tuile.bon {
+    --gravite: #5fb489;
+  }
+  .tuile.attention {
+    --gravite: #d9a03f;
+  }
+  .tuile.alerte {
+    --gravite: #d4604a;
+  }
+  .tuile.neutre {
+    --gravite: var(--sur-fond-doux);
+  }
+
+  .nom-diag {
+    font-size: var(--t-micro);
+    font-weight: 600;
+    letter-spacing: var(--suivi-serre);
+    text-transform: uppercase;
+    color: var(--sur-fond-doux);
+  }
+
+  /* La conclusion porte la tuile : c'est la seule chose qu'on lit vraiment. */
+  .conclusion {
+    font-family: var(--police-titre);
+    font-size: var(--t-lead);
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.022em;
+    color: var(--or-clair);
+  }
+
+  .jusqua {
     font-size: var(--t-petit);
     color: var(--sur-fond-doux);
-    margin-bottom: 2px;
   }
 
-  .descriptif dd {
-    margin: 0;
-    font-size: var(--t-base);
-    font-weight: 600;
-    color: var(--sur-fond);
+  /* Un rapport périmé fait repousser une signature : il se voit. */
+  .jusqua.perimee {
+    color: #f8ab9c;
+    font-weight: 650;
   }
 
   /* Le tableau de bord : rien qu'un filet au-dessus, de l'espace, et des
@@ -677,27 +878,40 @@
     }
   }
 
+  /* Chaque niveau prend sa teinte : un voile de sa couleur, un liseré franc à
+     gauche, et le chiffre dans cette même couleur. Trois blocs qui se
+     distinguent avant qu'on ait lu un mot. */
   .repartition div {
     display: grid;
     grid-template-columns: auto 1fr;
     align-items: baseline;
-    gap: var(--e2);
-    padding-left: var(--e3);
-    border-left: 2px solid var(--trait);
+    gap: var(--e3);
+    padding: var(--e3) var(--e4);
+    background: linear-gradient(
+      100deg,
+      color-mix(in srgb, var(--teinte-niveau) 20%, transparent),
+      transparent 78%
+    );
+    border-left: 3px solid var(--teinte-niveau);
+    border-radius: 0 var(--rayon) var(--rayon) 0;
   }
 
   /* La couleur porte le niveau, mais elle n'est pas seule à le faire : le mot
      le dit aussi. Personne ne dépend de la couleur pour comprendre. */
   .repartition .mauvais {
-    border-left-color: #d4604a;
+    --teinte-niveau: #d4604a;
   }
 
   .repartition .moyen {
-    border-left-color: var(--or);
+    --teinte-niveau: #d9a03f;
   }
 
   .repartition .bon {
-    border-left-color: var(--vert-300);
+    --teinte-niveau: #5fb489;
+  }
+
+  .repartition div dt {
+    color: var(--teinte-niveau);
   }
 
   .repartition dt {
