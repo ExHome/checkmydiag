@@ -12,6 +12,30 @@
  */
 import type { Bien, Diagnostic, PointDeControle, TypeDiag } from '../modele';
 
+/**
+ * La péremption anticipée des DPE.
+ *
+ * Un DPE vaut dix ans, mais ceux établis avant la réforme ont été rattrapés :
+ * le décret n° 2020-1610 du 17 décembre 2020 a fixé la fin de validité de tous
+ * les diagnostics antérieurs au 1ᵉʳ juillet 2021. Ceux de 2013 à 2017 ont cessé
+ * de valoir le 31 décembre 2022, ceux de 2018 au 30 juin 2021 le 31 décembre
+ * 2024.
+ *
+ * La date imprimée sur le rapport est donc trompeuse : un DPE de 2020 y annonce
+ * 2030, et il ne vaut plus rien. C'est la faute de calendrier la plus coûteuse
+ * du produit — quelqu'un peut se présenter chez le notaire avec un document
+ * périmé en croyant l'inverse.
+ */
+const REFORME_DPE = new Date(2021, 6, 1); // 1ᵉʳ juillet 2021
+
+export function finDeValiditeDpe(etabli: Date): Date | null {
+  if (etabli >= REFORME_DPE) return null; // régime normal : dix ans
+  if (etabli >= new Date(2018, 0, 1)) return new Date(2024, 11, 31);
+  if (etabli >= new Date(2013, 0, 1)) return new Date(2022, 11, 31);
+  // Avant 2013, les dix ans sont de toute façon écoulés.
+  return new Date(2022, 11, 31);
+}
+
 /** Durée de validité, en mois, pour une vente. */
 export const VALIDITE_MOIS: Partial<Record<TypeDiag, number>> = {
   dpe: 120,
@@ -89,6 +113,22 @@ function perimes(diagnostics: Diagnostic[], aujourdhui: Date): PointDeControle[]
     const duree = VALIDITE_MOIS[diag.type];
     const date = enDate(diag.date);
     if (!duree || !date) continue;
+
+    // Un DPE d'avant la réforme est périmé à sa date propre, quelle que soit son
+    // ancienneté : c'est la loi qui l'a arrêté, pas le temps qui passe.
+    const anticipee = diag.type === 'dpe' ? finDeValiditeDpe(date) : null;
+    if (anticipee) {
+      if (anticipee.getTime() >= aujourdhui.getTime()) continue;
+      points.push({
+        genre: 'perime',
+        type: diag.type,
+        titre: 'Le DPE n’est plus valable, malgré la date imprimée dessus',
+        explication: `Il a été établi le ${diag.date}, avant la réforme du 1ᵉʳ juillet 2021. Le décret du 17 décembre 2020 a mis fin à la validité de tous ces diagnostics : celui-ci a cessé de valoir le ${anticipee.toLocaleDateString('fr-FR')}, même si le rapport annonce une date plus lointaine.`,
+        quoiFaire:
+          'Un nouveau DPE est nécessaire pour vendre ou pour louer. Demandez-le au vendeur avant de signer : la classe pourrait ne pas être la même, la méthode de calcul ayant changé.'
+      });
+      continue;
+    }
 
     const age = moisEcoules(date, aujourdhui);
     if (age <= duree) continue;

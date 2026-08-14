@@ -6,7 +6,7 @@
  * fiche du diagnostic et le voyant du dossier doivent dire la même chose, au
  * jour près.
  */
-import { enDate, VALIDITE_MOIS } from './analyse/coherence';
+import { enDate, finDeValiditeDpe, VALIDITE_MOIS } from './analyse/coherence';
 import type { Diagnostic } from './modele';
 
 export interface Echeance {
@@ -14,11 +14,42 @@ export interface Echeance {
   perimee: boolean;
 }
 
+/**
+ * Les types dont on sait qu'aucune durée ne s'applique.
+ *
+ * La distinction compte : « Sans limite » est une affirmation, et elle ne doit
+ * jamais résulter d'un simple trou dans la table. Un feu vert par oubli est le
+ * pire cas possible — c'est une autorisation de signer donnée par inadvertance.
+ */
+const SANS_LIMITE = new Set<Diagnostic['type']>(['amiante', 'plomb', 'carrez']);
+
 export function echeance(d: Diagnostic, aujourdhui: Date = new Date()): Echeance {
   const duree = VALIDITE_MOIS[d.type];
-  if (duree === undefined) return { texte: 'Sans limite', perimee: false };
+  if (duree === undefined) {
+    return SANS_LIMITE.has(d.type)
+      ? { texte: 'Sans limite', perimee: false }
+      : { texte: 'Durée non renseignée', perimee: false };
+  }
 
   const depart = enDate(d.date);
+
+  /*
+   * Le DPE d'avant la réforme est périmé à sa date propre.
+   *
+   * Sans ce détour, la fiche continuait d'annoncer la date imprimée sur le
+   * rapport — « valable jusqu'au 05/08/2030 » pour un document qui a cessé de
+   * valoir le 31 décembre 2024.
+   */
+  if (d.type === 'dpe' && depart) {
+    const anticipee = finDeValiditeDpe(depart);
+    if (anticipee) {
+      const perimee = anticipee.getTime() < aujourdhui.getTime();
+      return {
+        texte: `${perimee ? 'Périmé depuis le ' : 'Valable jusqu’au '}${anticipee.toLocaleDateString('fr-FR')}`,
+        perimee
+      };
+    }
+  }
   // Sans date de visite, on ne peut annoncer qu'une durée, pas une échéance :
   // inventer un point de départ reviendrait à inventer une date de péremption.
   if (!depart) {

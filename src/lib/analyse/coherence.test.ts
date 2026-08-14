@@ -32,14 +32,41 @@ describe('contrôle des dates de validité', () => {
     expect(controler({}, [diag('termites', '01/07/2026')], AUJOURDHUI)).toHaveLength(0);
   });
 
-  it('accepte un DPE de moins de dix ans', () => {
-    expect(controler({}, [diag('dpe', '05/08/2020')], AUJOURDHUI)).toHaveLength(0);
+  /*
+   * Ce test gelait une faute. Un DPE du 05/08/2020 a moins de dix ans, mais il a
+   * été établi avant le 1ᵉʳ juillet 2021 : le décret n° 2020-1610 du 17 décembre
+   * 2020 a mis fin à sa validité au 31 décembre 2024. Le produit affichait
+   * « Valable jusqu'au 05/08/2030 » sur un document qui ne vaut plus rien.
+   */
+  it('signale un DPE d’avant juillet 2021, même s’il a moins de dix ans', () => {
+    const points = controler({}, [diag('dpe', '05/08/2020')], AUJOURDHUI);
+    expect(points).toHaveLength(1);
+    expect(points[0]?.genre).toBe('perime');
+    expect(points[0]?.explication).toMatch(/31\/12\/2024/);
   });
 
-  it('signale un DPE de plus de dix ans', () => {
+  it('signale un DPE de 2015 à son échéance propre, le 31 décembre 2022', () => {
+    const points = controler({}, [diag('dpe', '14/02/2015')], AUJOURDHUI);
+    expect(points[0]?.genre).toBe('perime');
+    expect(points[0]?.explication).toMatch(/31\/12\/2022/);
+  });
+
+  it('accepte un DPE établi après le 1ᵉʳ juillet 2021 et de moins de dix ans', () => {
+    expect(controler({}, [diag('dpe', '05/08/2022')], AUJOURDHUI)).toHaveLength(0);
+  });
+
+  it('explique qu’un vieux DPE est arrêté par la loi, pas par son âge', () => {
+    /*
+     * Ce test attendait « 11 ans » : le diagnostic était signalé comme trop
+     * vieux. Il l'est, mais ce n'est pas la raison qui compte — un DPE de 2015 a
+     * cessé de valoir le 31 décembre 2022 par l'effet du décret, et un DPE de
+     * 2020, qui a moins de dix ans, ne vaut pas davantage. Dire l'âge laissait
+     * croire qu'un document plus récent serait bon.
+     */
     const points = controler({}, [diag('dpe', '05/08/2015')], AUJOURDHUI);
     expect(points[0]?.genre).toBe('perime');
-    expect(points[0]?.explication).toMatch(/11 ans/);
+    expect(points[0]?.titre).toMatch(/malgr[ée] la date imprim[ée]e/i);
+    expect(points[0]?.explication).toMatch(/17 d[ée]cembre 2020|r[ée]forme du 1/i);
   });
 
   it('compte en mois jusqu’à deux ans, pour ne pas vieillir un rapport', () => {
