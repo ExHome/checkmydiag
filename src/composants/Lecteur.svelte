@@ -138,7 +138,7 @@
    * la coupe donc en trois temps, dans l'ordre où on lit un dossier.
    */
   const VUES = [
-    { cle: 'point', nom: 'Le point', quoi: 'Le bien, sa classe, le conseil' },
+    { cle: 'point', nom: 'L’analyse', quoi: 'Le bien, sa classe, le conseil' },
     { cle: 'diags', nom: 'Les diagnostics', quoi: 'Un par un, expliqués' },
     { cle: 'rapport', nom: 'Le rapport', quoi: 'Le document d’origine, annoté' }
   ];

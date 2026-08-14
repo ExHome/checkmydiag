@@ -225,7 +225,7 @@
     caractéristiques confirment, et tout ce qui suit parle de ce bien-là.
 
     Discret à dessein : une ligne, pas un titre. Le grand titre appartient au
-    verdict, et l'état descriptif complet vit dans « Le point ».
+    verdict, et l'état descriptif complet vit dans « L'analyse ».
   -->
   {#if identite.length || photo}
     <div class="bandeau-bien" class:avec-photo={Boolean(photo)}>

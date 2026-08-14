@@ -39,7 +39,7 @@
    *
    * Cette vue fait neuf écrans : sans lui, atteindre le gaz demandait deux mille
    * pixels de défilement à l'aveugle, sans savoir combien il en restait. Il
-   * reprend au passage ce que « Le point » disait une seconde fois de son côté —
+   * reprend au passage ce que « L'analyse » disait une seconde fois de son côté —
    * le verdict de chaque rapport et jusqu'à quand il vaut. Dit une fois, à
    * l'endroit où se trouve le détail qu'il annonce.
    */
