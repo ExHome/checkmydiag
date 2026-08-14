@@ -15,6 +15,7 @@
   import Deperditions from './schemas/Deperditions.svelte';
   import MotsExpliques from './MotsExpliques.svelte';
   import RubanDpe from './RubanDpe.svelte';
+  import DoubleSeuil from './schemas/DoubleSeuil.svelte';
   import { motsEmployes } from '../lib/lexique';
   import { libelleCourt } from '../lib/libelle';
 
@@ -168,6 +169,20 @@
    * Le reste — les parois nues, les postes — explique pourquoi la consommation
    * est là où elle est.
    */
+  /**
+   * Les tranches de l'étiquette énergie — pour les logements de plus de 40 m².
+   *
+   * Elles ne valent pas partout. L'arrêté du 25 mars 2024, en vigueur depuis le
+   * 1er juillet 2024, donne aux logements dont la surface de référence est
+   * inférieure ou égale à 40 m² des seuils qui leur sont propres, établis
+   * surface par surface entre 8 et 40 m² et interpolés entre deux valeurs. Un
+   * studio de vingt-cinq mètres carrés ne se lit donc pas sur cette échelle-ci.
+   *
+   * On ne recopie pas ce tableau-là : il fait trente-trois lignes et deux
+   * colonnes, et une valeur mal relevée vaudrait moins que rien. Sous 40 m², on
+   * dit donc la lettre et la consommation — que le rapport donne — sans
+   * prétendre situer le logement dans une tranche qu'on n'affichera pas.
+   */
   const TRANCHE: Record<string, string> = {
     A: 'moins de 70',
     B: 'de 70 à 110',
@@ -178,6 +193,18 @@
     G: 'plus de 420'
   };
 
+  /** La surface de référence, quand le rapport la donne — en m². */
+  const surfaceReference = $derived.by<number | null>(() => {
+    const brut = analyse.diagnostics
+      .flatMap((d) => d.faits)
+      .find((f) => /surface de r[ée]f[ée]rence|surface habitable/i.test(f.libelle))?.valeur;
+    const n = Number.parseFloat((brut ?? '').replace(',', '.').replace(/[^\d.]/g, ''));
+    return Number.isFinite(n) && n > 0 ? n : null;
+  });
+
+  /** Sous 40 m², les seuils de l'échelle ne sont plus ceux-là. */
+  const petiteSurface = $derived(surfaceReference !== null && surfaceReference <= 40);
+
   const chiffres = $derived.by<{ quoi: string; donc: string[] }[]>(() => {
     if (dpe?.schema?.genre !== 'dpe' || !lettre) return [];
 
@@ -187,10 +214,16 @@
     const climat = dpe.schema.climat;
 
     if (conso) {
-      const t = TRANCHE[conso.lettre];
+      // La tranche n'est citée que là où elle s'applique : au-dessus de 40 m².
+      const t = petiteSurface ? undefined : TRANCHE[conso.lettre];
       donc.push(
         `${conso.valeur} ${conso.unite}${surface ? ` — la consommation calculée divisée par ${surface}` : ''}. Ça tombe dans la tranche ${conso.lettre}${t ? ` (${t})` : ''}.`
       );
+      if (petiteSurface) {
+        donc.push(
+          'Ce logement fait 40 m² ou moins : depuis le 1ᵉʳ juillet 2024, les seuils des étiquettes sont adaptés à sa surface, et ne sont pas ceux des logements plus grands.'
+        );
+      }
     }
     if (climat && conso && climat.lettre > conso.lettre) {
       donc.push(`Le CO₂ note ${climat.lettre} : c’est lui qui tire la lettre vers le bas.`);
@@ -426,6 +459,20 @@
            produit. Ils étaient plus bas dans un relevé séparé, qui répétait
            déjà la moitié du conseil. -->
       <h2 class="apres"><span class="num">{numeros.classe}</span>D’où sort cette classe</h2>
+
+      <!-- Les deux étiquettes avant les chiffres : c'est le mécanisme qui
+           explique la lettre, et il se voit mieux qu'il ne se raconte. « Je
+           consomme peu et je suis F » n'a de réponse qu'ici. -->
+      {#if dpe?.schema?.genre === 'dpe'}
+        <div class="planche-seuil">
+          <DoubleSeuil
+            energie={dpe.schema.energie}
+            climat={dpe.schema.climat}
+            finale={dpe.schema.finale}
+          />
+        </div>
+      {/if}
+
       <ul class="chiffres">
         {#each chiffres as c (c.quoi)}
           <li>
@@ -570,6 +617,18 @@
 
   .planche {
     min-width: 0;
+  }
+
+  /* Les deux étiquettes gardent la taille d'une planche : étalées sur toute la
+     largeur de l'écran, des barres de couleur de plus d'un mètre de long ne se
+     lisent plus — elles décorent. C'est un document technique, il a un format. */
+  .planche-seuil {
+    max-width: 420px;
+    margin: 0 0 var(--e5);
+    padding: var(--e4);
+    background: var(--papier);
+    border-radius: var(--rayon);
+    color: var(--encre);
   }
 
   /* Le conseil se lit bloc par bloc, chacun un sujet.
