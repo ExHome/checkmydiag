@@ -43,6 +43,38 @@
   /** Ce qu'est le bien, relevé ligne à ligne — avant qu'on en juge le dossier. */
   const descriptif = $derived(descriptifDe(analyse));
 
+  /**
+   * Le titre de la vitrine : ce qu'une agence écrit en gros sur son affiche.
+   *
+   * « Appartement 48,5 m² », pas « dossier de diagnostic technique ». C'est le
+   * bien qu'on annonce, et on l'annonce comme il se dit.
+   */
+  const titreVitrine = $derived.by(() => {
+    const nature = analyse.bien.typeBien ?? 'Logement';
+    const surface =
+      analyse.bien.surface !== undefined
+        ? `${analyse.bien.surface.toLocaleString('fr-FR')} m²`
+        : null;
+    return surface ? `${nature} · ${surface}` : nature;
+  });
+
+  /** La lettre du DPE : en vitrine, c'est elle qu'on regarde après la photo. */
+  const lettreDpe = $derived.by(() => {
+    const d = analyse.diagnostics.find((x) => x.type === 'dpe');
+    return d?.schema?.genre === 'dpe' ? d.schema.finale : null;
+  });
+
+  /** Les couleurs réglementaires : elles ne se réinventent pas. */
+  const TEINTE_DPE: Record<string, string> = {
+    A: '#319834',
+    B: '#33cc31',
+    C: '#cbfc34',
+    D: '#fbfe06',
+    E: '#fbcc05',
+    F: '#fc9935',
+    G: '#fc0205'
+  };
+
   const identite = $derived(
     [
       analyse.bien.typeBien,
@@ -240,9 +272,22 @@
         <img class="photo" src={photo} alt="" />
       {/if}
       <div class="dit-bien">
+        <!-- Le titre d'une annonce : ce qu'est le bien, et sa taille. C'est
+             ainsi qu'une agence l'écrit sur son affiche. -->
+        <p class="titre-vitrine">{titreVitrine}</p>
         {#if analyse.bien.adresse}<p class="adresse">{analyse.bien.adresse}</p>{/if}
         {#if analyse.bien.commune}<p class="commune">{analyse.bien.commune}</p>{/if}
-        {#if identite.length}<p class="traits">{identite.join(' · ')}</p>{/if}
+
+        {#if lettreDpe}
+          <!-- L'étiquette énergie, obligatoire dans toute annonce depuis 2011 :
+               en vitrine, c'est ce qu'on regarde juste après la photo. La
+               couleur est celle de l'arrêté, elle ne se réinvente pas — et la
+               lettre est écrite, pour qui ne distingue pas les teintes. -->
+          <p class="etiquette" style:--teinte={TEINTE_DPE[lettreDpe]}>
+            <span class="lettre">{lettreDpe}</span>
+            <span class="quoi-etiquette">Classe énergie</span>
+          </p>
+        {/if}
       </div>
     </div>
 
@@ -452,8 +497,46 @@
     border-bottom: 1px solid var(--trait-or);
   }
 
+  /* La photo prend de l'ampleur : en vitrine, c'est elle qui arrête le
+     passant. */
   .bandeau-bien.avec-photo {
-    grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+    align-items: stretch;
+  }
+
+  .titre-vitrine {
+    font-size: var(--t-petit);
+    letter-spacing: var(--suivi);
+    text-transform: uppercase;
+    color: var(--or-clair);
+    margin-bottom: var(--e2) !important;
+  }
+
+  /* L'étiquette énergie : la pastille colorée d'une annonce immobilière. */
+  .etiquette {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--e2);
+    margin-top: var(--e4) !important;
+  }
+
+  .lettre {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--rayon);
+    background: var(--teinte);
+    color: #08281f;
+    font-family: var(--police-titre);
+    font-size: var(--t-titre);
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .quoi-etiquette {
+    font-size: var(--t-petit);
+    color: var(--sur-fond-doux);
   }
 
   /* La photo garde ses proportions et se coupe au besoin : une façade tordue
