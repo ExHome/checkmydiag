@@ -214,9 +214,9 @@
     width: 100%;
     font: inherit;
     color: inherit;
-    border: 3px solid var(--teal);
+    border: 3px solid var(--petrole);
     border-radius: 8px;
-    background: rgb(61 175 168 / 4%);
+    background: rgb(26 77 92 / 4%);
     padding: var(--e7) var(--e6);
     text-align: center;
     cursor: pointer;
@@ -227,11 +227,11 @@
 
   .depot:hover:not(:disabled) {
     border-color: var(--coral);
-    background: rgb(245 107 93 / 3%);
+    background: rgb(255 107 93 / 3%);
   }
 
   .depot.survol {
-    border-color: var(--amber);
+    border-color: var(--attention);
     background: rgb(245 166 35 / 5%);
   }
 
@@ -305,8 +305,8 @@
      soulèvement au survol qui passe au corail. */
   .badges li {
     padding: var(--e4) var(--e3);
-    background: rgb(61 175 168 / 8%);
-    border: 2px solid var(--teal);
+    background: rgb(26 77 92 / 8%);
+    border: 2px solid var(--petrole);
     border-radius: var(--rayon-badge);
     font-size: var(--t-petit);
     font-weight: 600;
@@ -319,7 +319,7 @@
 
   .badges li:hover {
     border-color: var(--coral);
-    background: rgb(245 107 93 / 8%);
+    background: rgb(255 107 93 / 8%);
     transform: translateY(-2px);
   }
 
@@ -440,13 +440,13 @@
     padding: 14px 40px;
     font-size: 0.9375rem;
     font-weight: 600;
-    box-shadow: 0 4px 12px rgb(245 107 93 / 15%);
+    box-shadow: 0 4px 12px rgb(255 107 93 / 15%);
     transition: background var(--duree) ease, box-shadow var(--duree) ease;
   }
 
   .depot:hover:not(:disabled) .faux-bouton {
-    background: #f18577;
-    box-shadow: 0 6px 16px rgb(245 107 93 / 20%);
+    background: #f05844;
+    box-shadow: 0 6px 16px rgb(255 107 93 / 20%);
   }
 
   .barre {

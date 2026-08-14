@@ -210,6 +210,30 @@
     );
   }
 
+  /* ---- Deux profondeurs de lecture ----------------------------------------
+     La fiche disait tout à tout le monde : le verdict, les chiffres relevés, le
+     relevé complet et les cinq blocs de fond, d'un seul tenant. Celui qui veut
+     seulement savoir si c'est grave devait traverser l'ensemble.
+
+     Elle a donc deux niveaux. Le succinct répond à la question qu'on se pose en
+     arrivant : qu'est-ce que ce rapport conclut, et qu'est-ce que ça change pour
+     moi. Le détaillé ajoute les chiffres, le relevé et le fond.
+
+     Deux choses ne se replient jamais, quel que soit le niveau : le verdict, et
+     ce que le diagnostic ne garantit pas. Une conclusion rassurante sans ses
+     réserves se lit comme une garantie — c'est exactement l'erreur qu'on passe
+     son temps à corriger ailleurs, on ne va pas la réintroduire par un bouton.
+
+     À l'impression, la question ne se pose pas : tout se déplie. */
+  type Mode = 'succinct' | 'detaille';
+  let modes = $state<Record<string, Mode>>({});
+
+  const modeDe = (type: TypeDiag): Mode => modes[type] ?? 'succinct';
+
+  function choisirMode(type: TypeDiag, mode: Mode): void {
+    modes = { ...modes, [type]: mode };
+  }
+
   function isolationDe(d: Diagnostic) {
     return d.schema?.genre === 'dpe' ? d.schema.isolation : null;
   }
@@ -296,6 +320,28 @@
                 {/if}
               {/if}
             </p>
+
+            <!-- Le niveau de lecture. Deux boutons, jamais un interrupteur : on
+                 doit voir d'un coup d'œil où l'on est, sans avoir à interpréter
+                 la position d'un curseur. -->
+            <div class="modes" role="group" aria-label="Niveau de détail">
+              <button
+                type="button"
+                class:actif={modeDe(d.type) === 'succinct'}
+                aria-pressed={modeDe(d.type) === 'succinct'}
+                onclick={() => choisirMode(d.type, 'succinct')}
+              >
+                L’essentiel
+              </button>
+              <button
+                type="button"
+                class:actif={modeDe(d.type) === 'detaille'}
+                aria-pressed={modeDe(d.type) === 'detaille'}
+                onclick={() => choisirMode(d.type, 'detaille')}
+              >
+                Tout le détail
+              </button>
+            </div>
           </header>
 
           <div class="corps">
@@ -308,6 +354,10 @@
                 <p class="pratique"><MotsExpliques texte={pratique} /></p>
               {/if}
 
+              <!-- Replié par le style, pas retiré du document : ce qui n'est
+                   pas dans la page ne s'imprime pas, et le dossier remis doit
+                   être complet quel que soit le bouton laissé enfoncé. -->
+              <div class="detail" class:replie={modeDe(d.type) === 'succinct'}>
               {#if d.faits.length}
                 <dl class="chiffres">
                   {#each d.faits.slice(0, 4) as fait (fait.libelle)}
@@ -344,6 +394,7 @@
               {#if d.type === 'dpe'}
                 <AVerifier dpe={d} />
               {/if}
+              </div>
 
               <!-- Les réserves : ce que ce diagnostic-là ne couvre pas. Sans
                    elles, une conclusion rassurante se lit comme une garantie. -->
@@ -458,10 +509,10 @@
   }
 
   .onglet-diag.bon {
-    --gravite: var(--sage);
+    --gravite: var(--petrole);
   }
   .onglet-diag.attention {
-    --gravite: var(--amber);
+    --gravite: var(--attention);
   }
   .onglet-diag.alerte {
     --gravite: var(--coral);
@@ -621,10 +672,10 @@
   }
 
   .fiche-diag.bon {
-    --gravite-fiche: var(--sage);
+    --gravite-fiche: var(--petrole);
   }
   .fiche-diag.attention {
-    --gravite-fiche: var(--amber);
+    --gravite-fiche: var(--attention);
   }
   .fiche-diag.alerte {
     --gravite-fiche: var(--coral);
@@ -652,10 +703,10 @@
   }
 
   .fiche-diag.bon {
-    --gravite: var(--sage);
+    --gravite: var(--petrole);
   }
   .fiche-diag.attention {
-    --gravite: var(--amber);
+    --gravite: var(--attention);
   }
   .fiche-diag.alerte {
     --gravite: var(--coral);
@@ -685,6 +736,82 @@
     font-size: var(--t-base);
     line-height: 1.5;
     color: var(--sur-fond);
+  }
+
+  /* ---- Le niveau de lecture ----------------------------------------------
+     Deux boutons de même largeur, séparés du reste par un filet : c'est une
+     commande, pas un paragraphe. L'actif prend le corail plein — la seule
+     couleur d'action du produit. */
+  .modes {
+    display: flex;
+    gap: var(--e2);
+    margin-top: var(--e4);
+    padding-top: var(--e3);
+    border-top: 1px solid var(--trait);
+  }
+
+  .modes button {
+    flex: 1;
+    min-height: 40px;
+    background: transparent;
+    border: 1px solid var(--trait);
+    border-radius: var(--rayon-badge);
+    color: var(--sur-fond-doux);
+    font-size: var(--t-petit);
+    font-weight: 700;
+    cursor: pointer;
+    transition: background var(--duree) var(--courbe), color var(--duree) var(--courbe),
+      border-color var(--duree) var(--courbe);
+  }
+
+  .modes button:hover {
+    border-color: var(--coral-fonce);
+    color: var(--coral-texte);
+  }
+
+  .modes button.actif {
+    background: var(--coral-fonce);
+    border-color: var(--coral-fonce);
+    color: #fff;
+  }
+
+  /* Le détail arrive par le haut, sans fondu.
+     Une opacité animée fige la première image dès que l'animation ne progresse
+     pas — c'est déjà arrivé sur cet écran, et un contenu invisible est pire
+     qu'un contenu sans effet. */
+  .detail {
+    animation: deplie 0.2s var(--courbe);
+  }
+
+  .detail.replie {
+    display: none;
+  }
+
+  @keyframes deplie {
+    from {
+      transform: translateY(-6px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .detail {
+      animation: none;
+    }
+
+    .modes button {
+      transition: none;
+    }
+  }
+
+  /* Le document imprimé n'a pas de boutons : il a tout. */
+  @media print {
+    .modes {
+      display: none;
+    }
+
+    .detail.replie {
+      display: block;
+    }
   }
 
   /* La provenance se lit après le verdict, jamais avant : elle répond à une

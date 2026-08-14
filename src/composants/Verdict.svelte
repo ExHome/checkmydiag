@@ -603,10 +603,10 @@
     --ton: var(--coral);
   }
   .verdict.moyen {
-    --ton: var(--amber);
+    --ton: var(--attention);
   }
   .verdict.bon {
-    --ton: var(--sage);
+    --ton: var(--petrole);
   }
 
   .tete {
@@ -885,10 +885,10 @@
   }
 
   .tuile.bon {
-    --gravite: var(--sage);
+    --gravite: var(--petrole);
   }
   .tuile.attention {
-    --gravite: var(--amber);
+    --gravite: var(--attention);
   }
   .tuile.alerte {
     --gravite: var(--coral);
@@ -994,11 +994,11 @@
   }
 
   .repartition .moyen {
-    --teinte-niveau: var(--amber);
+    --teinte-niveau: var(--attention);
   }
 
   .repartition .bon {
-    --teinte-niveau: var(--sage);
+    --teinte-niveau: var(--petrole);
   }
 
   .repartition div dt {
@@ -1081,15 +1081,15 @@
      se surveille, sage pour ce qui va. Chacun pose son filet et son voile. */
   li.mauvais .entree {
     --marque: var(--coral);
-    --voile: rgb(245 107 93 / 8%);
+    --voile: rgb(255 107 93 / 8%);
   }
   li.moyen .entree {
-    --marque: var(--amber);
+    --marque: var(--attention);
     --voile: rgb(245 166 35 / 10%);
   }
   li.bon .entree {
-    --marque: var(--sage);
-    --voile: rgb(123 168 153 / 10%);
+    --marque: var(--petrole);
+    --voile: rgb(26 77 92 / 10%);
   }
 
   /* La pastille reprend la silhouette du voyant en miniature : carré pour ce

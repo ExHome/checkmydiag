@@ -49,40 +49,57 @@
    * c'est elle qui tranche.
    */
 
-  /* La marque */
-  --navy: #2a2e4e;
-  --coral: #f56b5d;
-  --teal: #3dafa8;
-  --sage: #7ba899;
-  --amber: #f5a623;
+  /* La marque : bleu pétrole, sable, corail. */
+  --petrole: #1a4d5c;
+  --petrole-fonce: #0f3a47;
+  --sable: #f4e8d8;
+  --sable-clair: #f5f1e8;
+  --coral: #ff6b5d;
 
-  /* Les mêmes teintes, assombries pour porter du texte sur fond clair. */
-  --teal-texte: #24807a;
-  --sage-texte: #4d7365;
-  --coral-texte: #c2402f;
+  /*
+   * Le corail des boutons pleins, mesuré plutôt que choisi.
+   *
+   * La charte donne #F05844 : avec du texte blanc, il tient 3,4 — sous les 4,5
+   * exigés, et le libellé d'un bouton est précisément ce qu'on doit pouvoir
+   * lire. #D0402C est le corail le plus vif qui passe la mesure (4,71). Le
+   * corail vif, lui, garde tous les aplats qui ne portent pas de texte : le
+   * sceau du cartouche, les dégradés, les filets.
+   */
+  --coral-fonce: #d0402c;
 
-  /* Les noms historiques, remappés. L'ossature du produit n'a pas bougé. */
-  --vert-900: #1b1e35;
-  --vert-800: #232741;
-  --vert-700: #2a2e4e;
-  --vert-500: #3dafa8;
-  --vert-300: #7ba899;
-  --vert-100: #edf6f5;
+  /*
+   * Le corail porte l'action, jamais le texte courant.
+   *
+   * Sur le sable, #FF6B5D ne tient que 2,7 de contraste : parfait pour un
+   * bouton dont le fond est plein et le texte blanc, insuffisant pour lire une
+   * phrase. Sa version foncée existe pour les rares cas où il doit s'écrire.
+   */
+  --coral-texte: #a33220;
 
-  --or: #f56b5d;
-  --or-fonce: #c2402f;
-  --or-clair: #24807a;
-  --or-pale: #ffe3df;
+  /* Les noms historiques, remappés une dernière fois. L'ossature du produit
+     n'a pas bougé depuis le vert nuit : ce sont toujours les mêmes variables
+     qui portent la couleur, et les composants n'en savent rien. */
+  --vert-900: #0f3a47;
+  --vert-800: #14434f;
+  --vert-700: #1a4d5c;
+  --vert-500: #1a4d5c;
+  --vert-300: #7fa3ad;
+  --vert-100: #e8f0f2;
 
-  --encre: #2a2e4e;
-  --encre-doux: #545a75;
-  --gris: #6b7280;
+  --or: #ff6b5d;
+  --or-fonce: #a33220;
+  --or-clair: #1a4d5c;
+  --or-pale: #ffe6e2;
+
+  --encre: #1a4d5c;
+  --encre-doux: #555555;
+  --gris: #888888;
   --papier: #ffffff;
-  --papier-doux: #f2f4f6;
-  --fond: #fafbfc;
+  --papier-doux: #f5f1e8;
+  --fond: #f4e8d8;
   --fond-clair: #ffffff;
-  --sur-fond: #2a2e4e;
-  --sur-fond-doux: #545a75;
+  --sur-fond: #1a4d5c;
+  --sur-fond-doux: #555555;
 
   /*
    * Les surfaces posées sur le fond.
@@ -92,21 +109,32 @@
    * faut au contraire poser une encre très diluée. Cinquante-huit déclarations
    * passent par ces deux variables plutôt que par une couleur en dur.
    */
-  --surface: rgb(42 46 78 / 3%);
-  --surface-forte: rgb(42 46 78 / 6%);
-  --surface-bord: rgb(42 46 78 / 10%);
+  /* Les surfaces posées sur le sable : un voile de bleu pétrole très dilué. */
+  --surface: rgb(26 77 92 / 3%);
+  --surface-forte: rgb(26 77 92 / 6%);
+  --surface-bord: rgb(26 77 92 / 10%);
 
-  /* Des filets, pas des bordures : la charte se tient sur des traits fins. */
-  --trait: rgb(42 46 78 / 14%);
-  --trait-fin: rgb(42 46 78 / 8%);
-  --trait-or: rgb(61 175 168 / 28%);
+  /* Les filets de la charte : un bord chaud sur les cartes, plus clair pour
+     les séparations internes. */
+  --trait: #e8dcc8;
+  --trait-fin: #f0eae0;
+  --trait-or: #e8dcc8;
 
-  --alerte: #c2402f;
-  --alerte-fond: #fdefed;
+  /*
+   * Les trois états.
+   *
+   * Le corail sert l'alerte, comme la charte le demande — mais en version
+   * foncée dès qu'il s'agit d'écrire, sinon rien ne se lit. L'attention garde
+   * un ambre assombri, et le bon prend le bleu pétrole plutôt qu'un vert de
+   * plus : la palette n'en compte pas, et en inventer un serait revenir sur ce
+   * qui vient d'être décidé.
+   */
+  --alerte: #a33220;
+  --alerte-fond: #ffeeeb;
   --attention: #8a5a05;
-  --attention-fond: #fef4e3;
-  --ok: #3d7a68;
-  --ok-fond: #edf6f3;
+  --attention-fond: #fdf3e0;
+  --ok: #1a4d5c;
+  --ok-fond: #e8f0f2;
 
   /* Étiquettes réglementaires A→G : couleurs officielles de l'arrêté DPE. */
   --etq-a: #319834;
@@ -162,20 +190,22 @@
   --suivi: 0.04em;
   --suivi-serre: 0.01em;
 
-  /* « Friendly geometric » : ni angle vif, ni pilule. Quatre pixels pour les
-     boutons et les cartes, six pour les pastilles. */
-  --rayon: 4px;
+  /* Les rayons de la charte, du plus serré au plus large : boutons et
+     étiquettes, cartes, puis les grands blocs. */
   --rayon-petit: 4px;
-  --rayon-badge: 6px;
+  --rayon-badge: 8px;
+  --rayon: 12px;
+  --rayon-large: 20px;
 
-  /* Des ombres douces, jamais dures — et la même partout, au repos comme au
-     survol, à ceci près qu'elle s'ouvre en soulevant. */
-  --ombre: 0 2px 8px rgb(42 46 78 / 8%);
-  --ombre-forte: 0 6px 16px rgb(42 46 78 / 12%);
+  /* Trois profondeurs, toutes teintées de bleu pétrole : une ombre grise sur du
+     sable vire au sale. */
+  --ombre: 0 2px 8px rgb(26 77 92 / 6%);
+  --ombre-forte: 0 4px 16px rgb(26 77 92 / 10%);
+  --ombre-lourde: 0 8px 32px rgb(26 77 92 / 12%);
 
-  /* La durée des transitions de la charte : assez lente pour se voir, assez
-     courte pour ne pas se faire attendre. */
-  --duree: 0.3s;
+  /* La courbe de la charte : un départ franc, une arrivée douce. */
+  --duree: 0.2s;
+  --courbe: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
   /* Les deux polices du site : Fraunces pour les titres, la linéale du système
      pour le corps. */
@@ -345,7 +375,7 @@ button {
   font-size: 0.9375rem;
   letter-spacing: 0;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgb(245 107 93 / 15%);
+  box-shadow: 0 4px 12px rgb(255 107 93 / 15%);
   transition:
     background var(--duree) ease,
     transform var(--duree) ease,
@@ -353,9 +383,9 @@ button {
 }
 
 .bouton:hover {
-  background: #f18577;
+  background: #f05844;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgb(245 107 93 / 20%);
+  box-shadow: 0 6px 16px rgb(255 107 93 / 20%);
 }
 
 .bouton:active {
@@ -366,16 +396,16 @@ button {
    le principal sans lui disputer l'attention. */
 .bouton--fantome {
   background: none;
-  color: var(--teal-texte);
-  border: 2px solid var(--teal);
+  color: var(--petrole);
+  border: 2px solid var(--petrole);
   padding: 12px 36px;
   box-shadow: none;
 }
 
 .bouton--fantome:hover {
-  background: rgb(61 175 168 / 6%);
-  border-color: var(--sage);
-  color: var(--teal-texte);
+  background: rgb(26 77 92 / 6%);
+  border-color: var(--petrole);
+  color: var(--petrole);
   box-shadow: none;
 }
 

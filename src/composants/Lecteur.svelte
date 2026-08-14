@@ -23,6 +23,7 @@
   import Notaire from './Notaire.svelte';
   import Diagnostics from './Diagnostics.svelte';
   import Verdict from './Verdict.svelte';
+  import Bureau from './Bureau.svelte';
   import { FICHES } from '../lib/analyse/fiches';
 
   interface Props {
@@ -162,6 +163,18 @@
    * changement même si l'on redemande deux fois le même diagnostic.
    */
   let diagOuvert = $state<TypeDiag | null>(null);
+
+  /**
+   * Le dock de l'écran d'accueil : il change de vue, puis amène l'œil dessus.
+   * Sans le défilement, on cliquerait « Le rapport » et rien ne bougerait —
+   * l'écran d'accueil occupe déjà toute la hauteur visible.
+   */
+  function allerALaVue(cle: string): void {
+    vue = cle;
+    requestAnimationFrame(() => {
+      document.getElementById('les-vues')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
 
   function ouvrirDansLAnalyse(type: TypeDiag): void {
     vue = 'point';
@@ -349,6 +362,11 @@
   }
 </script>
 
+<!-- L'écran d'accueil du dossier : le cartouche, puis une tuile par diagnostic.
+     C'est la porte d'entrée — on y voit l'état du dossier avant d'avoir lu une
+     ligne, et chaque tuile ouvre la fiche correspondante. -->
+<Bureau {analyse} surOuvrirDiagnostic={ouvrirDansLAnalyse} surVue={allerALaVue} />
+
 <!-- Ce qu'il faut retenir, avant le dossier lui-même. C'est la seule chose de
      l'écran qui doit être comprise sans rien ouvrir : il est donc au-dessus des
      vues, et il s'affiche même si aucun passage n'a pu être repéré. -->
@@ -359,7 +377,7 @@
     <!-- Trois vues, pas vingt-trois écrans à la file. Le lecteur sait toujours
          où il est et ce qui reste. À l'impression, tout se déplie : le document
          remis n'a pas d'onglets. -->
-    <nav class="vues" aria-label="Les parties du dossier">
+    <nav class="vues" id="les-vues" aria-label="Les parties du dossier">
       {#each VUES as v (v.cle)}
         <button
           type="button"
@@ -1499,10 +1517,10 @@
   }
 
   .etiquette.bon {
-    --teinte-legende: var(--sage);
+    --teinte-legende: var(--petrole);
   }
   .etiquette.moyen {
-    --teinte-legende: var(--amber);
+    --teinte-legende: var(--attention);
   }
   .etiquette.mauvais {
     --teinte-legende: var(--coral);
@@ -1521,10 +1539,10 @@
   }
 
   .reponse.bon {
-    --teinte-legende: var(--sage);
+    --teinte-legende: var(--petrole);
   }
   .reponse.moyen {
-    --teinte-legende: var(--amber);
+    --teinte-legende: var(--attention);
   }
   .reponse.mauvais {
     --teinte-legende: var(--coral);
