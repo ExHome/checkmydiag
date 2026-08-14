@@ -73,7 +73,11 @@ describe('le référentiel réglementaire', () => {
     const s = sourcesDe('electricite');
     expect(s.length).toBeGreaterThan(0);
     expect(new Set(s.map((x) => x.reference + x.url)).size).toBe(s.length);
-    expect(sourcesDe('plomb')).toEqual([]); // pas encore vérifié : on n'invente pas
+    // Un diagnostic non encore lu ne rend aucune source : on n'invente pas.
+    // Cette ligne a déjà changé de cible une fois — elle visait le plomb, qui a
+    // depuis été lu à la source. C'est le seul test du dépôt qu'on est content
+    // de voir échouer.
+    expect(sourcesDe('assainissement')).toEqual([]);
   });
 
   it('avoue ce qu’il n’a pas encore lu', () => {
@@ -83,9 +87,9 @@ describe('le référentiel réglementaire', () => {
     const vides = casesVides();
     for (const t of vides) expect(REGLEMENT[t]).toBeUndefined();
     // Ce qui est rempli n'y figure pas : la liste ne ment pas dans l'autre sens.
-    expect(vides).not.toContain('dpe');
-    expect(vides).not.toContain('electricite');
-    expect(vides).not.toContain('carrez');
+    for (const lu of ['dpe', 'electricite', 'carrez', 'amiante', 'plomb', 'termites', 'gaz'] as const) {
+      expect(vides, `${lu} a été lu à la source`).not.toContain(lu);
+    }
   });
 
   it('dit ce que le moteur affirme sur l’électricité, sans le raccourci', () => {

@@ -147,6 +147,134 @@ export const REGLEMENT: Partial<Record<TypeDiag, Reglement>> = {
     ]
   },
 
+  amiante: {
+    nom: 'État d’amiante',
+    fondement: {
+      enonce:
+        'À la vente d’une maison individuelle, l’état d’amiante est constitué du rapport de repérage des matériaux et produits des listes A et B ; pour un lot d’immeuble collectif d’habitation, des repérages des parties privatives vendues et de la fiche récapitulative du dossier technique amiante pour les parties communes ; pour les autres immeubles, de cette seule fiche récapitulative.',
+      source: {
+        reference: 'article R. 1334-29-7 du code de la santé publique',
+        url: 'https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000024117155',
+        luLe: '2026-08-14'
+      },
+      reserve:
+        'Le texte ne vise que les listes A et B. La liste C relève du repérage avant démolition, qui est un autre document.'
+    },
+    /*
+     * Pas de durée : l'article D. 271-5 du code de la construction fixe celles
+     * du plomb, des termites, du gaz et de l'électricité — l'état d'amiante n'y
+     * figure pas. C'est de là que vient le raccourci « amiante valable à vie »,
+     * qui fut écrit ici et qui est faux : l'absence de durée dans ce texte ne
+     * vaut pas validité perpétuelle d'un rapport ancien.
+     */
+    validiteMois: null,
+    regles: [
+      {
+        enonce:
+          'L’article D. 271-5 du code de la construction et de l’habitation, qui fixe les durées de validité des pièces du dossier de diagnostic technique, ne mentionne pas l’état d’amiante : aucune durée n’y est attachée.',
+        source: {
+          reference: 'article D. 271-5 du code de la construction et de l’habitation',
+          url: 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006074096/LEGISCTA000019965764/',
+          luLe: '2026-08-14'
+        },
+        reserve:
+          'À vérifier à la source avant d’en conclure quoi que ce soit pour un rapport ancien : le régime a changé en 2013, et les rapports établis sous l’empire du texte précédent ne sont pas assimilables à ceux d’aujourd’hui. Ce point n’a pas encore été lu au texte.'
+      }
+    ]
+  },
+
+  plomb: {
+    nom: 'Constat de risque d’exposition au plomb',
+    fondement: {
+      enonce:
+        'Un constat de risque d’exposition au plomb est produit lors de la vente de tout ou partie d’un immeuble à usage d’habitation construit avant le 1ᵉʳ janvier 1949.',
+      source: {
+        reference: 'article L. 1334-6 du code de la santé publique',
+        url: 'https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006686762',
+        luLe: '2026-08-14'
+      },
+      reserve:
+        'La date de construction commande l’obligation : un immeuble de 1949 ou postérieur n’y est pas soumis. L’article renvoie aux articles L. 271-4 à L. 271-6 du code de la construction pour les conditions.'
+    },
+    /*
+     * Volontairement `null`, alors qu'une durée existe.
+     *
+     * Le constat doit dater de moins d'un an pour une vente, mais l'article
+     * D. 271-5 réserve le troisième alinéa de L. 271-5, et l'article R. 1334-11
+     * écarte toute limite de temps lorsque le constat conclut à l'absence de
+     * plomb ou à des concentrations inférieures aux seuils. Or c'est le cas le
+     * plus fréquent. Inscrire « douze mois » en dur ferait donc déclarer périmés
+     * des constats qui ne le sont pas — le moteur ne saurait pas faire la
+     * différence. Tant qu'il ne sait pas lire le résultat du constat, on note la
+     * règle sans l'appliquer.
+     */
+    validiteMois: null,
+    regles: [
+      {
+        enonce:
+          'Pour une vente, le constat de risque d’exposition au plomb doit avoir été établi depuis moins d’un an à la date de la promesse ou de l’acte authentique.',
+        source: {
+          reference: 'article D. 271-5 du code de la construction et de l’habitation',
+          url: 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006074096/LEGISCTA000019965764/',
+          luLe: '2026-08-14'
+        },
+        reserve: 'Sous réserve du troisième alinéa de l’article L. 271-5.'
+      },
+      {
+        enonce:
+          'Pour une location, le constat doit avoir été établi depuis moins de six ans ; sa validité n’est en revanche pas limitée dans le temps lorsqu’il conclut à l’absence de plomb ou à des concentrations inférieures aux seuils réglementaires.',
+        source: {
+          reference: 'article R. 1334-11 du code de la santé publique',
+          url: 'https://www.legifrance.gouv.fr/codes/id/LEGISCTA000006197020',
+          luLe: '2026-08-14'
+        }
+      },
+      {
+        enonce:
+          'Le constat identifie les revêtements contenant du plomb et leur concentration, décrit leur état de conservation et énumère les facteurs de dégradation du bâti relevés.',
+        source: {
+          reference: 'article R. 1334-10 du code de la santé publique',
+          url: 'https://www.legifrance.gouv.fr/codes/id/LEGISCTA000006197020',
+          luLe: '2026-08-14'
+        }
+      }
+    ]
+  },
+
+  termites: {
+    nom: 'État relatif à la présence de termites',
+    fondement: {
+      enonce:
+        'L’état relatif à la présence de termites doit avoir été établi depuis moins de six mois à la date de la promesse de vente ou de l’acte authentique.',
+      source: {
+        reference: 'article D. 271-5 du code de la construction et de l’habitation',
+        url: 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006074096/LEGISCTA000019965764/',
+        luLe: '2026-08-14'
+      },
+      reserve:
+        'Seule la durée a été lue au texte. L’article qui institue l’obligation et délimite les zones concernées — toutes les communes ne le sont pas — reste à vérifier.'
+    },
+    validiteMois: 6,
+    regles: []
+  },
+
+  gaz: {
+    nom: 'État de l’installation intérieure de gaz',
+    fondement: {
+      enonce:
+        'L’état de l’installation intérieure de gaz doit avoir été établi depuis moins de trois ans à la date de la promesse de vente ou de l’acte authentique.',
+      source: {
+        reference: 'article D. 271-5 du code de la construction et de l’habitation',
+        url: 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006074096/LEGISCTA000019965764/',
+        luLe: '2026-08-14'
+      },
+      reserve:
+        'Seule la durée a été lue au texte. Le modèle du rapport et la classification des anomalies — A1, A2, danger grave et immédiat — relèvent de l’arrêté du 6 avril 2007, qui n’a pas encore été lu.'
+    },
+    validiteMois: 36,
+    regles: []
+  },
+
   carrez: {
     nom: 'Mesurage de la surface',
     fondement: {
