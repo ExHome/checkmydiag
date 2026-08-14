@@ -6,7 +6,7 @@
   import PanneauSavoir from './composants/savoir/PanneauSavoir.svelte';
   import { exploration } from './lib/savoir/pile.svelte';
   import { ouvrirPdf, type PageRendue, type Photo } from './lib/pdf';
-  import { echecDeLecture } from './lib/echec';
+  import { echecDeLecture, echecScanne, refusAvantLecture } from './lib/echec';
   import { analyser } from './lib/analyse';
   import { pagesExemple } from './lib/exemple';
   import type { Analyse } from './lib/modele';
@@ -98,8 +98,15 @@
     erreur = null;
     nomFichier = fichier.name;
 
-    if (!/\.pdf$/i.test(fichier.name) && fichier.type !== 'application/pdf') {
-      erreur = 'Ce fichier n’est pas un PDF. Déposez le rapport tel que votre diagnostiqueur vous l’a envoyé.';
+    /*
+     * Ce qu'on peut refuser sans rien ouvrir : le type — que le glisser-déposer
+     * ne filtre pas —, le fichier vide, le fichier hors de portée du navigateur.
+     * Trois secondes d'attente évitées, et un message qui dit quoi faire plutôt
+     * qu'un échec après coup.
+     */
+    const refus = refusAvantLecture(fichier);
+    if (refus) {
+      erreur = refus.message;
       return;
     }
 
@@ -361,11 +368,9 @@
     </section>
   {:else if analyse}
     {#if analyse.illisible}
-      <p class="erreur" role="alert">
-        Ce PDF ne contient presque pas de texte : il a probablement été scanné. Les rapports
-        scannés ne peuvent pas être analysés automatiquement — demandez à votre diagnostiqueur le
-        fichier d’origine.
-      </p>
+      <!-- Le même message qu'au dépôt : la phrase du scan vit dans `echec.ts`,
+           pour qu'elle ne se mette pas à diverger d'un écran à l'autre. -->
+      <p class="erreur" role="alert">{echecScanne().message}</p>
     {:else if analyse.diagnostics.length === 0}
       <p class="erreur" role="alert">
         Aucun diagnostic reconnu dans ce document. Il s’agit peut-être d’un autre type de rapport,
