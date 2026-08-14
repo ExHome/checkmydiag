@@ -216,11 +216,27 @@
     document: Awaited<ReturnType<typeof ouvrirPdf>>,
     resultat: Analyse
   ): Promise<void> {
-    const aFaire = new Set<number>();
+    /*
+     * Toutes les pages du rapport, et non les seules pages à conclusion.
+     *
+     * On n'en dessinait qu'une par diagnostic : le lecteur voyait six pages
+     * d'un dossier qui en compte cinquante-trois, sans savoir que le reste
+     * existait. C'est son document — il doit pouvoir le parcourir en entier.
+     *
+     * L'ordre, en revanche, n'est pas celui du document : on commence par les
+     * pages qui portent un constat, puisque ce sont celles vers lesquelles un
+     * clic peut renvoyer tout de suite. Le reste se remplit derrière, sans que
+     * personne n'attende.
+     */
+    const prioritaires: number[] = [];
     for (const diag of resultat.diagnostics) {
-      const numero = diag.reperes?.[0]?.page;
-      if (numero !== undefined) aFaire.add(numero);
+      for (const repere of diag.reperes ?? []) {
+        if (!prioritaires.includes(repere.page)) prioritaires.push(repere.page);
+      }
     }
+
+    const aFaire = new Set<number>(prioritaires);
+    for (let n = 1; n <= resultat.nbPages; n++) aFaire.add(n);
 
     const mesures: { page: number; ms: number; ok: boolean }[] = [];
     if (import.meta.env.DEV) {

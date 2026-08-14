@@ -100,12 +100,17 @@ export async function ouvrirPdf(
      * Les rapports posent une photo de façade en tête, et c'est elle qui fait
      * reconnaître son logement d'un coup d'œil. Le piège est le logo du
      * diagnostiqueur, qui vit sur la même page : on les sépare par la taille.
-     * Mesuré sur de vrais dossiers, l'écart ne laisse pas de doute — la photo
-     * occupe la moitié de la largeur, les logos et puces deux pour cent.
+     * Mesuré sur de vrais dossiers, l'écart ne laisse aucun doute — la photo
+     * occupe la moitié de la largeur, les logos et les puces deux pour cent.
      *
-     * Deux garde-fous en plus de la taille : un format d'image (ni un bandeau,
-     * ni une colonne), et rien au-delà des deux premières pages — plus loin,
-     * ce sont les photos d'anomalies, qui ne représentent pas le bien.
+     * On ne demande pas l'image à pdf.js : ses données ne sont décodées qu'au
+     * moment du rendu, et les réclamer avant lève une erreur. On dessine donc
+     * la page, puis on y découpe le rectangle de la photo — dont la matrice de
+     * transformation donne la position et la taille exactes.
+     *
+     * Deux garde-fous en plus de la taille : un format d'image (ni bandeau ni
+     * colonne), et rien au-delà des deux premières pages — plus loin, ce sont
+     * les photos d'anomalies, qui ne montrent pas le bien.
      *
      * Le fichier ne bouge pas d'ici : tout se fait dans le navigateur.
      */
@@ -115,83 +120,84 @@ export async function ouvrirPdf(
 
         for (let n = 1; n <= Math.min(2, doc.numPages); n++) {
           const page = await doc.getPage(n);
-          const largeurPage = page.getViewport({ scale: 1 }).width;
+          const base = page.getViewport({ scale: 1 });
           const ops = await page.getOperatorList();
 
-          let meilleure: { nom: string; largeur: number } | null = null;
+          /** La plus grande image de la page, avec son rectangle en points PDF. */
+          let cible: { x: number; y: number; largeur: number; hauteur: number } | null = null;
 
           for (let i = 0; i < ops.fnArray.length; i++) {
-            const fn = ops.fnArray[i];
-            if (fn !== pdfjs.OPS.paintImageXObject) continue;
+            if (ops.fnArray[i] !== pdfjs.OPS.paintImageXObject) continue;
 
-            const nom = ops.argsArray[i]?.[0];
-            if (typeof nom !== 'string') continue;
-
-            // La transformation qui précède le tracé donne la taille à l'écran.
-            let largeur = 0;
-            let hauteur = 0;
             for (let j = i - 1; j >= 0 && j > i - 12; j--) {
-              if (ops.fnArray[j] === pdfjs.OPS.transform) {
-                const [a, , , d] = ops.argsArray[j] as number[];
-                largeur = Math.abs(a ?? 0);
-                hauteur = Math.abs(d ?? 0);
-                break;
+              if (ops.fnArray[j] !== pdfjs.OPS.transform) continue;
+
+              const [a, , , d, e, f] = ops.argsArray[j] as number[];
+              const largeur = Math.abs(a ?? 0);
+              const hauteur = Math.abs(d ?? 0);
+
+              if (largeur < base.width * 0.25) break; // logo, puce, filet
+              const forme = hauteur > 0 ? largeur / hauteur : 0;
+              if (forme < 0.6 || forme > 2.2) break; // bandeau ou colonne
+              if (!cible || largeur > cible.largeur) {
+                // Le coin de l'image est en bas à gauche dans le repère PDF ;
+                // une hauteur négative signifie qu'elle est posée vers le haut.
+                cible = {
+                  x: e ?? 0,
+                  y: (d ?? 0) < 0 ? (f ?? 0) - hauteur : (f ?? 0),
+                  largeur,
+                  hauteur
+                };
               }
-            }
-
-            if (largeur < largeurPage * 0.25) continue; // logo, puce, filet
-            const forme = hauteur > 0 ? largeur / hauteur : 0;
-            if (forme < 0.6 || forme > 2.2) continue; // bandeau ou colonne
-            if (!meilleure || largeur > meilleure.largeur) meilleure = { nom, largeur };
-          }
-
-          if (!meilleure) continue;
-
-          const image = await new Promise<{
-            width: number;
-            height: number;
-            kind?: number;
-            data?: Uint8ClampedArray;
-          } | null>((pret) => {
-            try {
-              page.objs.get(meilleure.nom, pret as never);
-            } catch {
-              pret(null);
-            }
-          });
-          if (!image?.data) continue;
-
-          const canvas = document.createElement('canvas');
-          canvas.width = image.width;
-          canvas.height = image.height;
-          const ctx = canvas.getContext('2d');
-          if (!ctx) continue;
-
-          // pdf.js livre du RGB, du RGBA ou du gris selon le PDF : on ramène
-          // tout en RGBA, seul format qu'accepte un canevas.
-          const rgba = new Uint8ClampedArray(image.width * image.height * 4);
-          const src = image.data;
-          for (let p = 0; p < image.width * image.height; p++) {
-            const o = p * 4;
-            if (image.kind === 3) {
-              rgba[o] = src[p * 4] ?? 0;
-              rgba[o + 1] = src[p * 4 + 1] ?? 0;
-              rgba[o + 2] = src[p * 4 + 2] ?? 0;
-              rgba[o + 3] = src[p * 4 + 3] ?? 255;
-            } else if (image.kind === 2) {
-              rgba[o] = src[p * 3] ?? 0;
-              rgba[o + 1] = src[p * 3 + 1] ?? 0;
-              rgba[o + 2] = src[p * 3 + 2] ?? 0;
-              rgba[o + 3] = 255;
-            } else {
-              const g = src[p] ?? 0;
-              rgba[o] = rgba[o + 1] = rgba[o + 2] = g;
-              rgba[o + 3] = 255;
+              break;
             }
           }
 
-          ctx.putImageData(new ImageData(rgba, image.width, image.height), 0, 0);
-          return canvas.toDataURL('image/jpeg', 0.78);
+          if (!cible) continue;
+
+          // On dessine la page à une échelle qui donne une photo nette sans
+          // fabriquer une image de plusieurs mégaoctets.
+          const echelle = Math.min(3, Math.max(1.4, 640 / cible.largeur));
+          const viewport = page.getViewport({ scale: echelle });
+
+          const feuille = document.createElement('canvas');
+          feuille.width = Math.floor(viewport.width);
+          feuille.height = Math.floor(viewport.height);
+          feuille.style.cssText = 'position:fixed;left:-10000px;top:0;';
+          document.body.append(feuille);
+
+          try {
+            const ctx = feuille.getContext('2d');
+            if (!ctx) continue;
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, feuille.width, feuille.height);
+            await page.render({ canvasContext: ctx, viewport }).promise;
+
+            // Du repère PDF à celui du canevas : l'axe vertical s'inverse.
+            const hautGauche = viewport.convertToViewportPoint(cible.x, cible.y + cible.hauteur);
+            const decoupe = document.createElement('canvas');
+            decoupe.width = Math.round(cible.largeur * echelle);
+            decoupe.height = Math.round(cible.hauteur * echelle);
+            const ctx2 = decoupe.getContext('2d');
+            if (!ctx2) continue;
+
+            ctx2.drawImage(
+              feuille,
+              Math.round(hautGauche[0] ?? 0),
+              Math.round(hautGauche[1] ?? 0),
+              decoupe.width,
+              decoupe.height,
+              0,
+              0,
+              decoupe.width,
+              decoupe.height
+            );
+
+            return decoupe.toDataURL('image/jpeg', 0.78);
+          } finally {
+            feuille.remove();
+            page.cleanup();
+          }
         }
 
         return null;

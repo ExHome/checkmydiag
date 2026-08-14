@@ -50,11 +50,23 @@
    * bien qu'on annonce, et on l'annonce comme il se dit.
    */
   const titreVitrine = $derived.by(() => {
-    const nature = analyse.bien.typeBien ?? 'Logement';
+    /*
+     * On puise dans l'état descriptif avant de se rabattre sur `bien`.
+     *
+     * Sur un vrai rapport, l'en-tête donnait l'adresse mais ni le type ni la
+     * surface : la vitrine annonçait « Logement » pendant que la ligne juste
+     * dessous disait « Appartement, 86,82 m² ». L'information était là, deux
+     * centimètres plus bas — elle était simplement cherchée au mauvais endroit.
+     */
+    const dans = (motif: RegExp): string | undefined =>
+      descriptif.find((c) => motif.test(c.libelle))?.valeur;
+
+    const nature = analyse.bien.typeBien ?? dans(/type de bien/i) ?? 'Logement';
     const surface =
       analyse.bien.surface !== undefined
         ? `${analyse.bien.surface.toLocaleString('fr-FR')} m²`
-        : null;
+        : dans(/surface de r[ée]f[ée]rence|superficie privative|surface habitable/i);
+
     return surface ? `${nature} · ${surface}` : nature;
   });
 
@@ -263,7 +275,11 @@
     Discret à dessein : une ligne, pas un titre. Le grand titre appartient au
     verdict, et l'état descriptif complet vit dans « L'analyse ».
   -->
-  {#if identite.length || photo}
+  <!-- La vitrine s'affiche dès qu'on sait quelque chose du bien. Une première
+       version ne regardait que le type et la surface : sur un rapport qui
+       donnait l'adresse sans eux, la vitrine disparaissait entièrement alors
+       qu'il y avait tout ce qu'il faut pour la remplir. -->
+  {#if identite.length || photo || analyse.bien.adresse || analyse.bien.commune}
     <div class="bandeau-bien" class:avec-photo={Boolean(photo)}>
       {#if photo}
         <!-- La photo de façade tirée du rapport. C'est elle qui fait dire « oui,

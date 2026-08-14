@@ -58,11 +58,19 @@
       .sort((a, b) => a.repere.page - b.repere.page)
   );
 
-  /** Les pages dessinées qui portent au moins un repère. */
+  /**
+   * Toutes les pages du rapport, dans l'ordre.
+   *
+   * On n'en montrait que celles qui portaient un passage repéré — le lecteur
+   * voyait donc six pages d'un dossier qui en compte cinquante-trois, sans
+   * savoir que le reste existait. C'est son document : il doit pouvoir le
+   * parcourir en entier, y compris les pages que le moteur n'a rien trouvé à
+   * commenter.
+   *
+   * Les pages s'affichent au fur et à mesure qu'elles sont dessinées.
+   */
   const pages = $derived(
-    [...new Set(reperes.map((r) => r.repere.page))]
-      .filter((n) => rendus.has(n))
-      .sort((a, b) => a - b)
+    Array.from({ length: analyse.nbPages }, (_, i) => i + 1).filter((n) => rendus.has(n))
   );
 
   function reperesDe(numero: number): { repere: Repere; type: TypeDiag; rang: number }[] {
@@ -138,9 +146,8 @@
    * la coupe donc en trois temps, dans l'ordre où on lit un dossier.
    */
   const VUES = [
-    { cle: 'point', nom: 'L’analyse', quoi: 'Le bien, sa classe, le conseil' },
-    { cle: 'diags', nom: 'Les diagnostics', quoi: 'Un par un, expliqués' },
-    { cle: 'rapport', nom: 'Le rapport', quoi: 'Le document d’origine, annoté' }
+    { cle: 'point', nom: 'L’analyse', quoi: 'Le bien, puis chaque diagnostic' },
+    { cle: 'rapport', nom: 'Le rapport', quoi: 'Toutes les pages, expliquées' }
   ];
 
   let vue = $state('point');
@@ -298,14 +305,10 @@
       <!-- Le point qu'on ferait à l'étude : de quel bien il s'agit, où il se
            situe, et ce qu'il faut faire. -->
       <Notaire {analyse} />
-    </div>
 
-    <div class="vue" class:cachee={vue !== 'diags'}>
-      <!-- Le dossier diagnostic par diagnostic : conclusion, dessin, chiffres,
-           canevas, réserves. -->
-      <!-- La fiche donne le verdict, le rapport en donne la preuve. Le passage
-           entre les deux existait pour le sommaire ; il manquait là où le doute
-           naît vraiment : sous la phrase elle-même. -->
+      <!-- Le dossier diagnostic par diagnostic, dans la continuité du point sur
+           le bien : on descend du général au détail sans changer d'onglet.
+           La fiche donne le verdict, le rapport en donne la preuve. -->
       <Diagnostics {analyse} surVoirDansLeRapport={allerAuDiagnostic} />
     </div>
 
