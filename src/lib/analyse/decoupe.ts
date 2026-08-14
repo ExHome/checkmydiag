@@ -71,7 +71,26 @@ const MARQUEURS: Marqueur[] = [
   },
   {
     type: 'carrez',
-    entetes: ['mesurageloicarrez', 'attestationdesuperficie', 'certificatdesuperficie', 'loicarrez']
+    /*
+     * Le mesurage porte deux noms, et le plus fréquent manquait.
+     *
+     * Relevé sur quarante dossiers : « attestation de surface habitable »
+     * ouvre vingt-neuf d'entre eux, quand « attestation de superficie » — la
+     * seule forme qu'on cherchait — n'en ouvre aucun. La section n'était donc
+     * pas trouvée, et la page de garde du DPE, voisine, débordait dessus : le
+     * mesurage héritait d'un numéro ADEME en guise de conclusion.
+     */
+    entetes: [
+      'mesurageloicarrez',
+      'attestationdesuperficie',
+      'attestationdesurfacehabitable',
+      'attestationdesurface',
+      'certificatdesuperficie',
+      'certificatdesurfacehabitable',
+      'loicarrez',
+      'loiboutin',
+      'mesurageloiboutin'
+    ]
   },
   {
     type: 'assainissement',

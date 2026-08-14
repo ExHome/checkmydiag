@@ -128,11 +128,42 @@ export function analyserErp(lignes: string[], plage: [number, number]): Diagnost
   };
 }
 
+/**
+ * De quel mesurage il s'agit — et ce ne sont pas les mêmes règles.
+ *
+ * La loi Carrez donne la superficie privative d'un lot de copropriété, et elle
+ * est due à la **vente**. La loi Boutin donne la surface habitable, et elle est
+ * due à la **location**. Les deux ne comptent pas la même chose : les combles
+ * non aménagés, greniers et vérandas de plus d'1,80 m entrent dans la Carrez et
+ * pas dans la Boutin, si bien que le premier chiffre dépasse souvent le second.
+ *
+ * L'extracteur les confondait : il cherchait « superficie privative » ou
+ * « surface habitable » indifféremment et titrait toujours « loi Carrez ». Sur
+ * les vingt-neuf dossiers du corpus qui portent une attestation de surface
+ * habitable, on annonçait donc au lecteur la pièce exigée pour vendre alors
+ * qu'il tenait celle exigée pour louer.
+ */
+function loiDuMesurage(lignes: string[]): 'carrez' | 'boutin' | null {
+  const texte = lignes.join(' ');
+  if (/loi\s*carrez|superficie\s+privative|article\s*46\s+de\s+la\s+loi/i.test(texte)) {
+    return 'carrez';
+  }
+  if (/loi\s*boutin|surface\s+habitable/i.test(texte)) return 'boutin';
+  return null;
+}
+
 export function analyserCarrez(lignes: string[], plage: [number, number]): Diagnostic {
+  const loi = loiDuMesurage(lignes);
+
   const m =
     trouver(lignes, /superficie\s+(?:loi\s+)?carrez\s+totale\s*:?[\s.]*([\d\s.,]+)\s*m/i) ??
     trouver(lignes, /surface\s+(?:loi\s+)?carrez\s+totale\s*:?[\s.]*([\d\s.,]+)\s*m/i) ??
-    trouver(lignes, /superficie\s+(?:privative\s+)?(?:totale|habitable|carrez)\s*:?[\s.]*([\d\s.,]+)\s*m/i) ??
+    trouver(lignes, /superficie\s+privative\s*(?:totale)?\s*:?[\s.]*([\d\s.,]+)\s*m/i) ??
+    // « Surface habitable totale : 86,82 m² », la forme la plus fréquente du
+    // corpus, que les motifs précédents laissaient passer.
+    trouver(lignes, /surface\s+habitable\s+(?:totale|du logement)\s*:?[\s.]*([\d\s.,]+)\s*m/i) ??
+    trouver(lignes, /superficie\s+(?:totale|habitable)\s*:?[\s.]*([\d\s.,]+)\s*m/i) ??
+    trouver(lignes, /surface\s+habitable\s*:?[\s.]*([\d\s.,]+)\s*m/i) ??
     trouver(lignes, /surface\s+(?:loi\s+)?carrez\s*:?[\s.]*([\d\s.,]+)\s*m/i);
   const surface = nombre(m?.[1]);
 
@@ -140,8 +171,12 @@ export function analyserCarrez(lignes: string[], plage: [number, number]): Diagn
 
   const fr = (n: number) => n.toLocaleString('fr-FR', { maximumFractionDigits: 2 });
 
+  /* Chaque loi a son vocabulaire : on emploie celui du document qu'on lit. */
+  const boutin = loi === 'boutin';
+  const nomSurface = boutin ? 'Surface habitable' : 'Superficie privative';
+
   const faits: Fait[] = [];
-  if (surface !== null) faits.push({ libelle: 'Superficie privative', valeur: `${fr(surface)} m²` });
+  if (surface !== null) faits.push({ libelle: nomSurface, valeur: `${fr(surface)} m²` });
   if (auSol !== null)
     faits.push({
       libelle: 'Surface au sol',
@@ -151,30 +186,41 @@ export function analyserCarrez(lignes: string[], plage: [number, number]): Diagn
 
   return {
     type: 'carrez',
-    titre: 'Superficie (loi Carrez)',
+    titre: boutin ? 'Surface habitable (loi Boutin)' : 'Superficie (loi Carrez)',
     verdict:
       surface !== null
-        ? `Superficie privative mesurée : ${fr(surface)} m²${auSol !== null ? ` (${fr(auSol)} m² au sol)` : ''}.`
+        ? `${nomSurface} mesurée : ${fr(surface)} m²${auSol !== null ? ` (${fr(auSol)} m² au sol)` : ''}.`
         : 'Un mesurage est présent dans le dossier, mais la surface n’a pas pu être lue.',
     gravite: surface !== null ? 'bon' : 'neutre',
     faits,
     analogie:
       '1,80 m, c’est la hauteur sous laquelle vous ne tenez pas debout. La loi considère que cette surface-là ne compte pas. Voilà pourquoi votre logement paraît plus petit sur le papier que dans la réalité.',
-    explication: [
-      // « loi Carrez » et « loi Boutin » s'ouvrent au clic : la règle de
-      // mesure et la comparaison n'ont plus à tenir dans la phrase.
-      // Attention au raccourci : la loi Carrez ne vise pas « les logements »
-      // mais tout lot de copropriété, quel que soit son usage — un bureau, un
-      // local commercial y sont soumis. Ce que la loi écarte, ce sont les
-      // caves, garages, parkings et les lots de moins de 8 m².
-      'La loi Carrez s’applique à la vente d’un lot en copropriété, quel qu’en soit l’usage : logement, bureau ou local commercial.',
-      'Ce chiffre diffère de la loi Boutin et de celui du DPE. Trois mesures pour un même logement, c’est normal : elles ne servent pas à la même chose.',
-      'Les caves, les garages, les balcons et les terrasses ne comptent pas.'
-    ],
-    aFaire: [
-      'Si la superficie réelle est inférieure de plus de 5 % à celle annoncée à l’acte, l’acquéreur peut demander une réduction du prix au prorata, dans l’année qui suit la vente.',
-      'Le mesurage n’a pas de durée de validité tant que le logement n’est pas modifié.'
-    ],
+    explication: boutin
+      ? [
+          // Le document lu est une attestation de surface habitable : on parle
+          // de location, et on prévient que ce n'est pas la pièce d'une vente.
+          'La loi Boutin donne la surface habitable, et elle est due au locataire : elle s’écrit dans le bail.',
+          'Pour vendre un lot en copropriété, c’est un autre mesurage qui est exigé — la superficie privative, dite loi Carrez. Elle est en général plus grande : elle compte les combles non aménagés, les greniers et les vérandas de plus d’1,80 m, que la surface habitable écarte.',
+          'Ce chiffre diffère aussi de celui du DPE. Plusieurs mesures pour un même logement, c’est normal : elles ne servent pas à la même chose.'
+        ]
+      : [
+          // Attention au raccourci : la loi Carrez ne vise pas « les logements »
+          // mais tout lot de copropriété, quel que soit son usage — un bureau, un
+          // local commercial y sont soumis. Ce que la loi écarte, ce sont les
+          // caves, garages, parkings et les lots de moins de 8 m².
+          'La loi Carrez s’applique à la vente d’un lot en copropriété, quel qu’en soit l’usage : logement, bureau ou local commercial.',
+          'Ce chiffre diffère de la loi Boutin et de celui du DPE. Trois mesures pour un même logement, c’est normal : elles ne servent pas à la même chose.',
+          'Les caves, les garages, les balcons et les terrasses ne comptent pas.'
+        ],
+    aFaire: boutin
+      ? [
+          'Une surface habitable inférieure de plus d’un vingtième à celle du bail permet au locataire de demander une diminution du loyer.',
+          'Si vous vendez, ce document ne suffit pas : demandez un mesurage loi Carrez.'
+        ]
+      : [
+          'Si la superficie réelle est inférieure de plus de 5 % à celle annoncée à l’acte, l’acquéreur peut demander une réduction du prix au prorata, dans l’année qui suit la vente.',
+          'Le mesurage n’a pas de durée de validité tant que le logement n’est pas modifié.'
+        ],
     schema: null,
     pages: plage
   };

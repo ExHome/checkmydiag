@@ -112,17 +112,33 @@ const TYPES: TypeDiag[] = [
   'assainissement'
 ];
 
-/** Ce qu'un rapport contient vraiment, d'après ses intitulés officiels. */
+/**
+ * Ce qu'un rapport contient vraiment.
+ *
+ * Attention au piège, qui a faussé la première campagne de mesure : l'en-tête
+ * commercial du diagnostiqueur liste toutes ses prestations — « plomb »,
+ * « CREP », « amiante », « avant démolition » — sur chaque page de chaque
+ * dossier. Chercher un intitulé dans le texte donnait donc cent pour cent de
+ * présences, et un « plomb reconnu à 0 % » qui ne voulait rien dire.
+ *
+ * On cherche donc des phrases qui n'existent que dans le corps du rapport :
+ * une formule de conclusion réglementaire, une rubrique du modèle imposé. Une
+ * liste de prestations ne les contient jamais.
+ */
 const PRESENCE: Record<TypeDiag, RegExp> = {
-  dpe: /diagnostic de performance [ée]nerg[ée]tique/i,
-  amiante: /[ée]tat.{0,40}amiante|rep[ée]rage.{0,30}amiante|constat.{0,20}amiante/i,
-  plomb: /constat de risque d.exposition au plomb|CREP\b/i,
-  electricite: /[ée]tat de l.installation int[ée]rieure d.[ée]lectricit/i,
-  gaz: /[ée]tat de l.installation int[ée]rieure de gaz/i,
-  termites: /[ée]tat relatif [àa] la pr[ée]sence de termites|[ée]tat parasitaire/i,
-  erp: /[ée]tat des risques|ERP\b|ERRIAL/i,
-  carrez: /superficie.{0,20}(carrez|privative)|loi carrez/i,
-  assainissement: /assainissement non collectif|contr[ôo]le.{0,20}assainissement/i
+  dpe: /consommations? (?:[ée]nerg[ée]tiques?|conventionnelles?)|[ée]tiquette [ée]nerg|N°\s?ADEME|num[ée]ro d.enregistrement ADEME/i,
+  // Le titre de la mission, qui n'appartient qu'au rapport lui-même : la liste
+  // commerciale, elle, écrit « diag amiante avant démolition ».
+  amiante: /rep[ée]rage des mat[ée]riaux et produits contenant de l.amiante/i,
+  plomb: /unit[ée]s? de diagnostic|concentration en plomb|classement des unit[ée]s|mg\/cm²/i,
+  electricite: /anomalies av[ée]r[ée]es selon les domaines|l.installation int[ée]rieure d.[ée]lectricit[ée] (?:ne )?comporte/i,
+  gaz: /l.installation int[ée]rieure de gaz (?:ne )?comporte|anomalie de type A2|danger grave et imm[ée]diat/i,
+  // « Indice d'infestation » est le vocabulaire de la conclusion termites ; le
+  // titre, lui, figure dans la liste des prestations de l'en-tête.
+  termites: /indices? d.infestation|termites? (?:ont|n.ont pas) [ée]t[ée] (?:rep[ée]r|constat)/i,
+  erp: /[ée]tat des risques et pollutions.{0,60}(?:[ée]tabli|en application)|plan de pr[ée]vention des risques|zonage (?:r[ée]glementaire|sismique)/i,
+  carrez: /superficie privative.{0,30}\d|surface habitable (?:totale|du logement).{0,30}\d|surface au sol totale.{0,20}\d/i,
+  assainissement: /installation d.assainissement non collectif|contr[ôo]le (?:de bon fonctionnement|p[ée]riodique).{0,40}assainissement/i
 };
 
 interface Mesure {
