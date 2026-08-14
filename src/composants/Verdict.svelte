@@ -559,7 +559,6 @@
     font-size: var(--t-micro);
     font-weight: 700;
     letter-spacing: var(--suivi);
-    text-transform: uppercase;
     color: var(--or-clair);
   }
 
@@ -678,7 +677,6 @@
   .titre-vitrine {
     font-size: var(--t-petit);
     letter-spacing: var(--suivi);
-    text-transform: uppercase;
     color: var(--or-clair);
     margin-bottom: var(--e2) !important;
   }
@@ -903,7 +901,6 @@
     font-size: var(--t-micro);
     font-weight: 600;
     letter-spacing: var(--suivi-serre);
-    text-transform: uppercase;
     color: var(--sur-fond-doux);
   }
 

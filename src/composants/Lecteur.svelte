@@ -970,7 +970,6 @@
     font-size: var(--t-micro);
     font-weight: 800;
     letter-spacing: 0.12em;
-    text-transform: uppercase;
     border-block: 1px solid #e6ded0;
   }
 
@@ -1106,7 +1105,6 @@
     margin: 0 0 var(--e1);
     font-size: var(--t-micro);
     letter-spacing: var(--suivi);
-    text-transform: uppercase;
     color: var(--sur-fond-doux);
   }
 
@@ -1162,7 +1160,6 @@
     font-size: var(--t-micro);
     font-weight: 700;
     letter-spacing: var(--suivi);
-    text-transform: uppercase;
     color: var(--or-fonce);
   }
 
@@ -1234,7 +1231,6 @@
     font-size: var(--t-base);
     font-weight: 500;
     letter-spacing: 0.16em;
-    text-transform: uppercase;
     transition: background 0.22s ease, border-color 0.22s ease, color 0.22s ease;
   }
 
@@ -1293,7 +1289,6 @@
     font-weight: 500;
     font-size: var(--t-petit);
     letter-spacing: 0.14em;
-    text-transform: uppercase;
     cursor: pointer;
     transition: background 0.22s ease, color 0.22s ease, border-color 0.22s ease;
   }
@@ -1447,7 +1442,6 @@
     font-size: var(--t-petit);
     font-weight: 500;
     letter-spacing: 0.12em;
-    text-transform: uppercase;
     color: var(--encre-doux);
     cursor: pointer;
   }

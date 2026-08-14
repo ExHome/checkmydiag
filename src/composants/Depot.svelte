@@ -275,7 +275,6 @@
     font-size: var(--t-micro);
     font-weight: 700;
     letter-spacing: var(--suivi);
-    text-transform: uppercase;
     color: var(--gris);
   }
 
@@ -365,7 +364,6 @@
     font-size: var(--t-micro);
     font-weight: 700;
     letter-spacing: var(--suivi);
-    text-transform: uppercase;
     color: var(--gris);
   }
 

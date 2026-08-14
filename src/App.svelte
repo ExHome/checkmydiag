@@ -440,7 +440,6 @@
   .rubrique {
     font-size: var(--t-micro);
     letter-spacing: 0.16em;
-    text-transform: uppercase;
     color: var(--or-clair);
     text-decoration: none;
     display: inline-flex;

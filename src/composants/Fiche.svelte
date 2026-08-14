@@ -114,7 +114,6 @@
     font-size: var(--t-micro);
     font-weight: 800;
     letter-spacing: 0.1em;
-    text-transform: uppercase;
     color: var(--encre-doux);
   }
 

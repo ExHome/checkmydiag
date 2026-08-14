@@ -669,7 +669,6 @@
     font-weight: 700;
     font-size: var(--t-petit);
     letter-spacing: 0.14em;
-    text-transform: uppercase;
     color: var(--or-fonce);
   }
 
@@ -743,7 +742,6 @@
     font-size: var(--t-micro);
     font-weight: 500;
     letter-spacing: 0.2em;
-    text-transform: uppercase;
     color: var(--or-fonce);
   }
 
@@ -822,7 +820,6 @@
     font-size: var(--t-petit);
     font-weight: 500;
     letter-spacing: 0.14em;
-    text-transform: uppercase;
     color: var(--or-clair);
     cursor: pointer;
     transition: background 0.22s ease, color 0.22s ease, border-color 0.22s ease;

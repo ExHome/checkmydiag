@@ -186,7 +186,6 @@
   .etiquette {
     font-size: var(--t-micro);
     letter-spacing: var(--suivi);
-    text-transform: uppercase;
     font-weight: 700;
     color: var(--or-fonce);
     margin: 0 0 var(--e2);

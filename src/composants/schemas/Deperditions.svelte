@@ -273,7 +273,6 @@
     margin: 0 0 var(--e2);
     font-size: var(--t-micro);
     letter-spacing: 0.14em;
-    text-transform: uppercase;
     font-weight: 600;
     color: var(--or-fonce);
   }
@@ -311,7 +310,6 @@
   .cotation {
     font-size: var(--t-micro);
     letter-spacing: 0.12em;
-    text-transform: uppercase;
     fill: var(--or-fonce);
     text-anchor: middle;
     opacity: 0.85;
@@ -423,7 +421,6 @@
     font-size: var(--t-micro);
     font-weight: 600;
     letter-spacing: 0.12em;
-    text-transform: uppercase;
     color: var(--gris);
     border-bottom-color: var(--trait);
   }

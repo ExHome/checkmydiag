@@ -120,14 +120,16 @@
   /* Une échelle d'espacement, pas des valeurs au jugé. Tout ce qui respire
      dans la page prend une de ces huit valeurs — c'est ce qui donne à un
      document son rythme, et à une interface sa tenue. */
+  /* L'échelle de la charte : 4, 8, 12, 16, 24, 32, 40, 60. Plus d'air qu'avant
+     — « friendly version = more whitespace », dit le document. */
   --e1: 4px;
   --e2: 8px;
   --e3: 12px;
-  --e4: 18px;
-  --e5: 26px;
-  --e6: 38px;
-  --e7: 56px;
-  --e8: 80px;
+  --e4: 16px;
+  --e5: 24px;
+  --e6: 32px;
+  --e7: 40px;
+  --e8: 60px;
 
   /* L'échelle typographique, en quinte : chaque cran se distingue du suivant
      sans qu'on ait à les comparer. */
@@ -136,24 +138,44 @@
      employées 132 fois sur l'écran de résultat. Un texte qu'on plisse les yeux
      pour lire n'est pas premium, il est raté. Le corps revient à 16 px, le
      plancher à 12 ; les proportions entre crans sont conservées. */
+  /* L'échelle de la charte : 14 · 16 · 24 · 32 · 48. Les crans intermédiaires
+     restent fluides pour que rien ne casse entre deux tailles d'écran, mais
+     leurs maxima sont désormais ceux du document. */
   --t-micro: 0.75rem;
   --t-petit: 0.875rem;
   --t-base: 1rem;
-  --t-lead: 1.1875rem;
-  --t-titre: clamp(1.3rem, 2.6vw, 1.65rem);
-  --t-section: clamp(1.6rem, 3.4vw, 2.1rem);
-  --t-affiche: clamp(2rem, 5vw, 3.2rem);
+  --t-lead: 1.125rem;
+  --t-titre: clamp(1.25rem, 2.6vw, 1.5rem);
+  --t-section: clamp(1.5rem, 3.4vw, 2rem);
+  --t-affiche: clamp(2rem, 5vw, 3rem);
 
-  /* Les interlettrages des capitales : trois valeurs, jamais une de plus. */
-  --suivi-large: 0.2em;
-  --suivi: 0.14em;
-  --suivi-serre: 0.08em;
+  /*
+   * Les interlettrages ne servent plus à espacer des capitales.
+   *
+   * La charte demande des petits textes en casse normale plutôt qu'en
+   * capitales : « Title Case, not all caps — more friendly ». Les capitales
+   * espacées étaient la signature de l'ancienne charte ; elles disparaissent
+   * des trente-sept endroits qui les employaient. Les valeurs restent, très
+   * réduites, pour les rares mentions qui gardent une allure d'étiquette.
+   */
+  --suivi-large: 0.06em;
+  --suivi: 0.04em;
+  --suivi-serre: 0.01em;
 
-  /* La charte ne roule pas les angles : des rayons discrets, presque droits. */
-  --rayon: 6px;
+  /* « Friendly geometric » : ni angle vif, ni pilule. Quatre pixels pour les
+     boutons et les cartes, six pour les pastilles. */
+  --rayon: 4px;
   --rayon-petit: 4px;
-  --ombre: 0 1px 1px rgb(0 20 14 / 4%), 0 14px 32px -24px rgb(0 20 14 / 40%);
-  --ombre-forte: 0 2px 3px rgb(0 20 14 / 6%), 0 28px 56px -28px rgb(0 20 14 / 50%);
+  --rayon-badge: 6px;
+
+  /* Des ombres douces, jamais dures — et la même partout, au repos comme au
+     survol, à ceci près qu'elle s'ouvre en soulevant. */
+  --ombre: 0 2px 8px rgb(42 46 78 / 8%);
+  --ombre-forte: 0 6px 16px rgb(42 46 78 / 12%);
+
+  /* La durée des transitions de la charte : assez lente pour se voir, assez
+     courte pour ne pas se faire attendre. */
+  --duree: 0.3s;
 
   /* Les deux polices du site : Fraunces pour les titres, la linéale du système
      pour le corps. */
@@ -242,7 +264,6 @@ h2 {
   font-size: 0.78rem;
   font-weight: 500;
   letter-spacing: 0.18em;
-  text-transform: uppercase;
   /* Le sur-titre se lit sur le vert : --gris n'y tenait que 3,33 de contraste,
      pour un texte de 12 px. Sous le seuil, et c'est l'étiquette qui annonce de
      quoi parle la section. */
@@ -274,50 +295,95 @@ button {
   padding-inline: clamp(16px, 4vw, 32px);
 }
 
+/* La carte de la charte : filet de teal dilué, ombre douce, et un soulèvement
+   de quatre pixels au survol. Le mouvement dit « on peut ouvrir », il ne fait
+   pas le spectacle. */
 .carte {
   background: var(--papier);
-  border: 1px solid var(--trait-fin);
+  border: 2px solid var(--trait-or);
   border-radius: var(--rayon);
   box-shadow: var(--ombre);
-  padding: clamp(18px, 4vw, 32px);
+  padding: clamp(20px, 4vw, 36px);
+  transition:
+    border-color var(--duree) ease,
+    transform var(--duree) ease,
+    box-shadow var(--duree) ease;
+}
+
+.carte:hover {
+  border-color: var(--coral);
+  transform: translateY(-4px);
+  box-shadow: var(--ombre-forte);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carte:hover {
+    transform: none;
+  }
 }
 
 /* Le bouton du site : un cadre fin, des capitales espacées, pas de fond. Il ne
    crie pas — il attend. C'est ce qui fait la tenue de la marque. */
+/*
+ * Le bouton principal de la charte.
+ *
+ * Il n'attend plus, il invite : fond corail plein, casse normale, et une ombre
+ * de sa propre couleur. Au survol il se soulève de deux pixels ; à l'appui il
+ * se tasse légèrement — c'est ce petit retour qui rend un clic satisfaisant.
+ */
 .bouton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: none;
-  color: var(--sur-fond);
-  border: 1px solid var(--trait-or);
-  border-radius: 0;
-  padding: 17px 30px;
-  font-weight: 500;
-  font-size: 0.9rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  background: var(--coral);
+  color: #fff;
+  border: none;
+  border-radius: var(--rayon);
+  padding: 14px 40px;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  letter-spacing: 0;
   cursor: pointer;
-  transition: background 0.22s ease, border-color 0.22s ease, color 0.22s ease;
+  box-shadow: 0 4px 12px rgb(245 107 93 / 15%);
+  transition:
+    background var(--duree) ease,
+    transform var(--duree) ease,
+    box-shadow var(--duree) ease;
 }
 
 .bouton:hover {
-  background: var(--or);
-  border-color: var(--or);
-  color: var(--vert-900);
+  background: #f18577;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgb(245 107 93 / 20%);
 }
 
-/* Sur crème, le même bouton passe en encre. */
+.bouton:active {
+  transform: scale(0.98);
+}
+
+/* Le bouton secondaire : un contour de teal, rien à l'intérieur. Il accompagne
+   le principal sans lui disputer l'attention. */
 .bouton--fantome {
-  color: var(--vert-700);
-  border-color: var(--trait);
+  background: none;
+  color: var(--teal-texte);
+  border: 2px solid var(--teal);
+  padding: 12px 36px;
+  box-shadow: none;
 }
 
 .bouton--fantome:hover {
-  background: var(--vert-700);
-  border-color: var(--vert-700);
-  color: var(--papier);
+  background: rgb(61 175 168 / 6%);
+  border-color: var(--sage);
+  color: var(--teal-texte);
+  box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bouton:hover,
+  .bouton:active {
+    transform: none;
+  }
 }
 
 /* Le numéro, la date, le compteur : en mono, comme le bandeau du site. */

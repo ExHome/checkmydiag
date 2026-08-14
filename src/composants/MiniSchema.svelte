@@ -643,7 +643,6 @@
     font-size: var(--t-micro);
     font-weight: 600;
     letter-spacing: 0.14em;
-    text-transform: uppercase;
     color: var(--or-fonce);
   }
 

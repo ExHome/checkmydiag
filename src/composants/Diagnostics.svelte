@@ -668,7 +668,6 @@
     margin: 0 0 var(--e1);
     font-size: var(--t-micro);
     letter-spacing: 0.14em;
-    text-transform: uppercase;
     color: var(--sur-fond-doux);
   }
 
@@ -838,7 +837,6 @@
     font-size: var(--t-micro);
     font-weight: 700;
     letter-spacing: 0.13em;
-    text-transform: uppercase;
     color: var(--sur-fond-doux);
   }
 

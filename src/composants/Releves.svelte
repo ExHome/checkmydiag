@@ -221,7 +221,6 @@
   .ou {
     font-size: var(--t-petit);
     letter-spacing: var(--suivi-serre);
-    text-transform: uppercase;
     color: var(--or-clair);
     margin: 0 0 2px;
   }

@@ -247,7 +247,6 @@
   .reponse .titre {
     margin: 0 0 var(--e2);
     font-weight: 800;
-    text-transform: uppercase;
     letter-spacing: 0.05em;
     font-size: var(--t-base);
     color: var(--vert-300);
