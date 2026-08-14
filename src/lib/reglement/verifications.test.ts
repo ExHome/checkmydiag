@@ -25,10 +25,16 @@ describe('les vérifications officielles du DPE', () => {
     expect(v[4]?.point).toMatch(/[ée]quipements/i);
   });
 
-  it('renvoie à l’Observatoire de l’ADEME pour le numéro', () => {
+  it('renvoie à l’Observatoire de l’ADEME, à son adresse actuelle', () => {
     const v = verificationsDpe(dpeNu());
     expect(v[0]?.lien?.url).toBe(OBSERVATOIRE);
-    expect(OBSERVATOIRE).toMatch(/^https:\/\/observatoire-dpe\.ademe\.fr\//);
+    /*
+     * L'adresse a changé, et le document officiel du ministère imprime encore
+     * l'ancienne : `observatoire-dpe.ademe.fr` ne résout plus, le service ayant
+     * été réuni avec celui des audits. Ce test fige la bonne — recopier une
+     * source officielle ne dispense pas de vérifier qu'elle est à jour.
+     */
+    expect(OBSERVATOIRE).toMatch(/^https:\/\/observatoire-dpe-audit\.ademe\.fr\//);
   });
 
   it('montre ce que le rapport dit quand il le dit', () => {

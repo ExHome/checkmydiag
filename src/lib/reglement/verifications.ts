@@ -35,8 +35,18 @@ export interface Verification {
   lien?: { texte: string; url: string };
 }
 
-/** L'adresse de l'Observatoire, citée par le document du ministère. */
-export const OBSERVATOIRE = 'https://observatoire-dpe.ademe.fr/accueil';
+/**
+ * L'adresse de l'Observatoire.
+ *
+ * Attention : ce n'est plus celle qu'imprime « Comprendre mon DPE ». Le document
+ * du ministère renvoie à `observatoire-dpe.ademe.fr`, qui ne résout plus ; le
+ * service a été réuni avec celui des audits sous `observatoire-dpe-audit`.
+ * Vérifié le 14 août 2026 : l'ancienne adresse ne répond pas, la nouvelle si.
+ *
+ * La leçon vaut d'être écrite : recopier fidèlement un document officiel ne
+ * suffit pas, car un document officiel vieillit aussi. Une adresse se teste.
+ */
+export const OBSERVATOIRE = 'https://observatoire-dpe-audit.ademe.fr/accueil';
 
 /** Le fait `libelle` du diagnostic, ou `null`. */
 function fait(dpe: Diagnostic, libelle: string): string | null {

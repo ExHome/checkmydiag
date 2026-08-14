@@ -11,6 +11,7 @@
    * métropolitaine.
    */
   import type { Lettre } from '../lib/modele';
+  import { situationDans } from '../lib/reglement/parc';
 
   const { lettre }: { lettre: Lettre } = $props();
 
@@ -120,6 +121,15 @@
           <li>{ligne}</li>
         {/each}
       </ul>
+
+      <!-- Où cette classe range le logement parmi les autres. Une lettre situe
+           par rapport à un barème ; ce chiffre situe par rapport aux voisins,
+           ce qui est la question qu'on se pose vraiment. -->
+      <p class="dans-le-parc">{situationDans(detail.l)}</p>
+      <p class="source-parc">
+        Résidences principales au 1ᵉʳ janvier 2025 — estimation du service
+        statistique du ministère.
+      </p>
     </div>
   {/if}
 </figure>
@@ -248,5 +258,24 @@
     height: 6px;
     border-radius: 2px;
     background: var(--or);
+  }
+
+  /* La position dans le parc ferme le panneau : elle répond à la question qui
+     vient après la lettre — « et par rapport aux autres ? » */
+  .dans-le-parc {
+    margin: var(--e3) 0 0;
+    padding-top: var(--e3);
+    border-top: 1px solid var(--trait-fin);
+    font-size: var(--t-base);
+    line-height: 1.45;
+    color: var(--vert-700);
+    font-weight: 600;
+  }
+
+  .source-parc {
+    margin: var(--e1) 0 0;
+    font-size: var(--t-micro);
+    line-height: 1.4;
+    color: var(--gris);
   }
 </style>
