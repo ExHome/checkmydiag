@@ -29,6 +29,8 @@
 
   let survol = $state(false);
   let champ: HTMLInputElement | undefined = $state();
+  /** La démonstration « rien ne part » — repliée, mais à portée de clic. */
+  let preuveOuverte = $state(false);
 
   function prendre(fichiers: FileList | null | undefined): void {
     const fichier = fichiers?.[0];
@@ -151,8 +153,44 @@
       <span>
         <strong>Votre document ne quitte pas votre appareil.</strong>
         Il est lu par votre navigateur, il n’est envoyé sur aucun serveur.
+        <button
+          type="button"
+          class="verifier"
+          aria-expanded={preuveOuverte}
+          onclick={() => (preuveOuverte = !preuveOuverte)}
+        >
+          {preuveOuverte ? 'Fermer' : 'Comment le vérifier ?'}
+        </button>
       </span>
     </p>
+
+    {#if preuveOuverte}
+      <!--
+        La preuve, pas la promesse.
+
+        Un professionnel n'a aucune raison de nous croire sur parole, et il a
+        raison. La démonstration tient en quatre gestes et ne demande rien
+        d'autre que son navigateur : il n'y a pas de meilleure réponse à
+        « qu'est-ce que vous faites de mon fichier ? » que « regardez
+        vous-même ».
+      -->
+      <div class="preuve">
+        <p class="titre-preuve">Vérifiez-le vous-même, en quatre gestes</p>
+        <ol>
+          <li>Ouvrez les outils de développement de votre navigateur — touche <kbd>F12</kbd>.</li>
+          <li>Allez dans l’onglet <strong>Réseau</strong>, et videz la liste.</li>
+          <li>Déposez votre rapport ici.</li>
+          <li>
+            Regardez la liste : aucune requête ne part avec votre fichier. Vous pouvez même couper
+            votre connexion internet avant de déposer — tout continue de fonctionner.
+          </li>
+        </ol>
+        <p class="apres-preuve">
+          Le rapport est gardé sur votre appareil pour que vous puissiez le rouvrir sans le
+          redéposer. Vous pouvez le retirer à tout moment depuis la liste de vos dossiers.
+        </p>
+      </div>
+    {/if}
   </div>
 {/if}
 
@@ -293,6 +331,73 @@
 
   .promesse-locale strong {
     display: block;
+  }
+
+  /* Le lien de vérification vit dans la phrase : c'est là que le doute naît. */
+  .verifier {
+    display: inline;
+    margin-left: var(--e1);
+    padding: 0;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--vert-500);
+    font: inherit;
+    font-weight: 600;
+    color: var(--vert-500);
+    cursor: pointer;
+  }
+
+  .verifier:hover {
+    color: var(--vert-700);
+    border-bottom-color: var(--vert-700);
+  }
+
+  .preuve {
+    margin-top: var(--e3);
+    padding: var(--e4);
+    background: var(--papier);
+    border: 1px solid var(--trait-fin);
+    border-radius: var(--rayon);
+  }
+
+  .titre-preuve {
+    margin: 0 0 var(--e3);
+    font-size: var(--t-micro);
+    font-weight: 700;
+    letter-spacing: var(--suivi);
+    text-transform: uppercase;
+    color: var(--gris);
+  }
+
+  .preuve ol {
+    margin: 0;
+    padding-left: var(--e5);
+    display: grid;
+    gap: var(--e2);
+  }
+
+  .preuve li {
+    font-size: var(--t-petit);
+    line-height: 1.5;
+    color: var(--encre-doux);
+  }
+
+  .preuve kbd {
+    font-family: var(--mono);
+    font-size: 0.9em;
+    padding: 1px 5px;
+    background: var(--papier-doux);
+    border: 1px solid var(--trait-fin);
+    border-radius: 3px;
+  }
+
+  .apres-preuve {
+    margin: var(--e3) 0 0;
+    padding-top: var(--e3);
+    border-top: 1px solid var(--trait-fin);
+    font-size: var(--t-petit);
+    line-height: 1.5;
+    color: var(--encre-doux);
   }
 
   .faux-bouton {
