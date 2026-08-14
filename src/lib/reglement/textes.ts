@@ -275,6 +275,89 @@ export const REGLEMENT: Partial<Record<TypeDiag, Reglement>> = {
     regles: []
   },
 
+  erp: {
+    nom: 'État des risques',
+    fondement: {
+      enonce:
+        'L’acquéreur ou le locataire d’un bien situé dans le périmètre d’un plan de prévention des risques technologiques, miniers ou naturels, dans une zone de sismicité ou à potentiel radon, dans une zone susceptible d’être atteinte par le recul du trait de côte ou soumise à une obligation de débroussaillement, en est informé par le vendeur ou le bailleur.',
+      source: {
+        reference: 'article L. 125-5 du code de l’environnement',
+        url: 'https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043978268',
+        luLe: '2026-08-14'
+      },
+      reserve:
+        'L’obligation naît du zonage, pas du bien : un logement hors de tout périmètre n’y est pas soumis. C’est ce qui rend faux le raccourci « état des risques obligatoire partout ».'
+    },
+    validiteMois: 6,
+    validite: {
+      enonce:
+        'L’état des risques remis lors de la première visite de l’immeuble au potentiel acquéreur ou au potentiel locataire est établi depuis moins de six mois.',
+      source: {
+        reference: 'article R. 125-25 du code de l’environnement',
+        url: 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006074220/LEGISCTA000046364184/',
+        luLe: '2026-08-14'
+      }
+    },
+    regles: [
+      {
+        enonce:
+          'L’état des risques est remis dès la première visite de l’immeuble, avant toute signature ; il est ensuite intégré au dossier de diagnostic technique ou annexé à la promesse et à l’acte de vente.',
+        source: {
+          reference: 'article L. 125-5 du code de l’environnement',
+          url: 'https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043978268',
+          luLe: '2026-08-14'
+        },
+        reserve:
+          'La remise « dès la première visite » est peu connue et souvent négligée : elle précède la promesse, elle ne l’accompagne pas.'
+      },
+      {
+        enonce:
+          'À défaut, l’acquéreur ou le locataire peut poursuivre la résolution du contrat ou demander au juge une diminution du prix ; les délais de rétractation ne courent qu’à compter du lendemain de la communication du document.',
+        source: {
+          reference: 'article L. 125-5 du code de l’environnement',
+          url: 'https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043978268',
+          luLe: '2026-08-14'
+        }
+      }
+    ]
+  },
+
+  assainissement: {
+    nom: 'Contrôle de l’installation d’assainissement non collectif',
+    fondement: {
+      enonce:
+        'Lors de la vente de tout ou partie d’un immeuble à usage d’habitation non raccordé au réseau public de collecte des eaux usées, le document établi à l’issue du contrôle de l’installation d’assainissement non collectif est joint au dossier de diagnostic technique.',
+      source: {
+        reference: 'article L. 1331-11-1 du code de la santé publique',
+        url: 'https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043975559',
+        luLe: '2026-08-14'
+      },
+      reserve:
+        'L’obligation ne vise que les immeubles non raccordés : un logement relié au tout-à-l’égout n’est pas concerné.'
+    },
+    validiteMois: 36,
+    validite: {
+      enonce:
+        'Le document doit être daté de moins de trois ans au moment de la signature de l’acte de vente ; s’il date de plus de trois ans ou n’existe pas, sa réalisation est à la charge du vendeur.',
+      source: {
+        reference: 'article L. 1331-11-1 du code de la santé publique',
+        url: 'https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043975559',
+        luLe: '2026-08-14'
+      }
+    },
+    regles: [
+      {
+        enonce:
+          'Dans le mois qui suit la vente, le notaire informe le service public d’assainissement compétent, en lui transmettant l’identification du bien et celle de l’acquéreur.',
+        source: {
+          reference: 'article L. 1331-11-1 du code de la santé publique',
+          url: 'https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043975559',
+          luLe: '2026-08-14'
+        }
+      }
+    ]
+  },
+
   carrez: {
     nom: 'Mesurage de la surface',
     fondement: {

@@ -15,6 +15,9 @@ describe('le référentiel réglementaire', () => {
   for (const [cle, r] of Object.entries(REGLEMENT)) {
     if (!r) continue;
     toutes.push([cle, r.fondement], ...r.regles.map((x): [string, Regle] => [cle, x]));
+    // La règle qui porte la durée de validité compte comme les autres : elle a
+    // une source et une date, et elle vieillit pareil.
+    if (r.validite) toutes.push([cle, r.validite]);
   }
   for (const [cle, r] of Object.entries(REGLEMENT_COPRO)) {
     toutes.push([cle, r.fondement]);
@@ -73,23 +76,29 @@ describe('le référentiel réglementaire', () => {
     const s = sourcesDe('electricite');
     expect(s.length).toBeGreaterThan(0);
     expect(new Set(s.map((x) => x.reference + x.url)).size).toBe(s.length);
-    // Un diagnostic non encore lu ne rend aucune source : on n'invente pas.
-    // Cette ligne a déjà changé de cible une fois — elle visait le plomb, qui a
-    // depuis été lu à la source. C'est le seul test du dépôt qu'on est content
-    // de voir échouer.
-    expect(sourcesDe('assainissement')).toEqual([]);
+    // Chaque diagnostic rend au moins une source, et aucune n'est répétée.
+    // Cette ligne a changé deux fois de nature : elle vérifiait d'abord qu'on
+    // ne rendait rien pour le plomb, puis rien pour l'assainissement. Les deux
+    // ont fini par être lus. Il n'y a plus de case vide à surveiller.
+    for (const t of ['dpe', 'amiante', 'plomb', 'termites', 'gaz', 'erp', 'assainissement'] as const) {
+      expect(sourcesDe(t).length, `${t} sans source`).toBeGreaterThan(0);
+    }
   });
 
   it('avoue ce qu’il n’a pas encore lu', () => {
     // La liste de travail de la veille. Elle doit rétrécir avec le temps ; le
     // jour où elle est vide, ce test le dira en échouant, et ce sera une bonne
     // nouvelle à traiter.
-    const vides = casesVides();
-    for (const t of vides) expect(REGLEMENT[t]).toBeUndefined();
-    // Ce qui est rempli n'y figure pas : la liste ne ment pas dans l'autre sens.
-    for (const lu of ['dpe', 'electricite', 'carrez', 'amiante', 'plomb', 'termites', 'gaz'] as const) {
-      expect(vides, `${lu} a été lu à la source`).not.toContain(lu);
-    }
+    /*
+     * La liste est vide : les neuf diagnostics du dossier ont leur texte
+     * fondateur, lu sur Légifrance.
+     *
+     * Le test garde maintenant la porte fermée. Si un diagnostic était ajouté
+     * au modèle sans que son texte ait été lu, il apparaîtrait ici et le test
+     * tomberait — c'est exactement le but : rien n'entre dans l'application
+     * sans qu'on sache de quel texte il relève.
+     */
+    expect(casesVides()).toEqual([]);
   });
 
   it('dit ce que le moteur affirme sur l’électricité, sans le raccourci', () => {
