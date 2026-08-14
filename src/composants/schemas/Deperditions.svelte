@@ -312,7 +312,7 @@
     font-size: var(--t-micro);
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    fill: var(--or);
+    fill: var(--or-fonce);
     text-anchor: middle;
     opacity: 0.85;
   }
@@ -325,13 +325,13 @@
 
 
   .poignee {
-    fill: var(--or);
+    fill: var(--or-fonce);
   }
 
   /* Les équipements : même trait que la maison, en plus discret. Ils sont là
      pour être désignés, pas pour être admirés. */
   .equipement rect {
-    fill: rgb(255 255 255 / 7%);
+    fill: var(--surface-forte);
     stroke: currentColor;
     stroke-width: 1.4;
     opacity: 0.85;

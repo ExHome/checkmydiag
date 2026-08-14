@@ -133,7 +133,7 @@
   }
 
   .volume {
-    fill: rgb(255 255 255 / 5%);
+    fill: var(--surface-forte);
     stroke: var(--trait);
     stroke-width: 2;
     stroke-linejoin: round;
@@ -181,7 +181,7 @@
   .cible:hover .zone,
   .cible:focus-visible .zone,
   .cible.actif .zone {
-    fill: rgb(255 255 255 / 10%);
+    fill: var(--surface-bord);
     stroke: var(--vert-500);
   }
 
@@ -197,7 +197,7 @@
   }
 
   .reponse.non {
-    background: rgb(255 255 255 / 5%);
+    background: var(--surface-forte);
     border-left-color: var(--encre-doux);
   }
 

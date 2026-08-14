@@ -69,7 +69,7 @@
     grid-template-columns: 40px 1fr;
     gap: var(--e3);
     align-items: start;
-    background: rgb(255 255 255 / 3%);
+    background: var(--surface);
     border: 1px solid var(--trait);
     border-radius: var(--rayon-petit);
     padding: var(--e3) var(--e3);
@@ -97,7 +97,7 @@
 
   li.action .icone {
     background: rgb(255 200 87 / 16%);
-    color: var(--or);
+    color: var(--or-fonce);
   }
 
   li.vente .icone {
@@ -123,7 +123,7 @@
   }
 
   li.action .mot {
-    color: var(--or);
+    color: var(--or-fonce);
   }
 
   li.vente .mot {

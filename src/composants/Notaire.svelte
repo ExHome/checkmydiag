@@ -576,7 +576,7 @@
   h2.apres {
     margin-top: var(--e7);
     padding-top: var(--e5);
-    border-top: 1px solid rgb(255 255 255 / 10%);
+    border-top: 1px solid var(--surface-bord);
     box-shadow: 0 -3px 0 -2px var(--trait-or);
   }
 
@@ -670,7 +670,7 @@
     font-size: var(--t-petit);
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--or);
+    color: var(--or-fonce);
   }
 
 
@@ -691,7 +691,7 @@
     justify-content: space-between;
     gap: var(--e3);
     padding: var(--e2) 0;
-    border-bottom: 1px solid rgb(255 255 255 / 10%);
+    border-bottom: 1px solid var(--surface-bord);
   }
 
   .caracteristiques dt {
@@ -725,7 +725,7 @@
      C'est la signature d'un document imprimé. */
   .garde {
     border-top: 2px solid var(--or);
-    box-shadow: 0 3px 0 -2px rgb(255 255 255 / 22%);
+    box-shadow: 0 3px 0 -2px var(--surface-bord);
     padding-top: var(--e5);
     margin-bottom: var(--e7);
   }
@@ -744,7 +744,7 @@
     font-weight: 500;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--or);
+    color: var(--or-fonce);
   }
 
   .adresse {
@@ -790,7 +790,7 @@
     gap: var(--e2) 44px;
     margin: var(--e5) 0 var(--e4);
     padding-top: var(--e4);
-    border-top: 1px solid rgb(255 255 255 / 12%);
+    border-top: 1px solid var(--surface-bord);
   }
 
   .references div {
@@ -856,7 +856,7 @@
     font-size: var(--t-micro);
     font-weight: 700;
     letter-spacing: 0.12em;
-    color: var(--or);
+    color: var(--or-fonce);
     margin-bottom: var(--e1);
   }
 
@@ -870,7 +870,7 @@
   .reserve {
     margin: var(--e5) 0 0;
     padding-top: var(--e4);
-    border-top: 1px solid rgb(255 255 255 / 12%);
+    border-top: 1px solid var(--surface-bord);
     font-size: var(--t-petit);
     line-height: 1.5;
     color: var(--sur-fond-doux);

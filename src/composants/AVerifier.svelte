@@ -101,7 +101,7 @@
     font-weight: 700;
     letter-spacing: var(--suivi);
     text-transform: uppercase;
-    color: var(--or);
+    color: var(--or-fonce);
   }
 
   .chapeau-officiel {
@@ -133,7 +133,7 @@
   .rang {
     font-family: var(--mono);
     font-size: var(--t-petit);
-    color: var(--or);
+    color: var(--or-fonce);
     font-variant-numeric: tabular-nums;
   }
 

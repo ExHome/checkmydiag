@@ -408,7 +408,7 @@
   }
 
   .flamme {
-    fill: var(--or);
+    fill: var(--or-fonce);
     stroke: none;
   }
 

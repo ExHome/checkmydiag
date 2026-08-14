@@ -92,7 +92,7 @@
 
   /* La terre : un aplat très léger, pour qu'on lise « coupe » sans y penser. */
   .terre {
-    fill: var(--or);
+    fill: var(--or-fonce);
     opacity: 0.07;
   }
 
@@ -154,7 +154,7 @@
   }
 
   .graisses {
-    fill: var(--or);
+    fill: var(--or-fonce);
     opacity: 0.5;
   }
 

@@ -123,7 +123,7 @@
   }
 
   .facade {
-    fill: rgb(255 255 255 / 5%);
+    fill: var(--surface-forte);
     stroke: currentColor;
     stroke-width: 1.5;
   }

@@ -209,7 +209,7 @@
   .rang {
     font-family: var(--mono);
     font-size: var(--t-petit);
-    color: var(--or);
+    color: var(--or-fonce);
     padding-top: 0.15em;
     font-variant-numeric: tabular-nums;
   }

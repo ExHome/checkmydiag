@@ -811,7 +811,7 @@
 
   .vues button {
     text-align: left;
-    background: rgb(255 255 255 / 3%);
+    background: var(--surface);
     border: 1px solid transparent;
     border-radius: var(--rayon);
     padding: var(--e3) var(--e4);
@@ -825,16 +825,16 @@
   }
 
   .vues button:hover {
-    background: rgb(255 255 255 / 8%);
+    background: var(--surface-forte);
     color: var(--sur-fond);
   }
 
   .vues button.courante {
     color: var(--sur-fond);
-    background: linear-gradient(180deg, rgb(255 255 255 / 15%), rgb(255 255 255 / 7%));
-    border-color: rgb(255 255 255 / 12%);
+    background: linear-gradient(180deg, var(--surface-bord), var(--surface-forte));
+    border-color: var(--surface-bord);
     border-top-color: var(--or);
-    box-shadow: 0 1px 0 rgb(255 255 255 / 8%) inset, 0 14px 26px -18px rgb(0 20 14 / 100%);
+    box-shadow: 0 1px 0 var(--surface-forte) inset, 0 14px 26px -18px rgb(0 20 14 / 100%);
   }
 
   .nom-vue {
@@ -1055,7 +1055,7 @@
     width: min(100%, 880px);
     max-height: 100%;
     background: var(--fond);
-    border: 1px solid rgb(255 255 255 / 12%);
+    border: 1px solid var(--surface-bord);
     border-top: 3px solid var(--teinte);
     border-radius: var(--rayon);
     box-shadow: 0 40px 90px -30px rgb(0 20 14 / 100%);
@@ -1129,7 +1129,7 @@
        premier quand on veut revenir au document. */
     min-height: 44px;
     padding: var(--e2) var(--e4);
-    background: rgb(255 255 255 / 6%);
+    background: var(--surface-forte);
     border: 1px solid var(--trait-or);
     border-radius: 999px;
     color: var(--sur-fond);
@@ -1163,7 +1163,7 @@
     font-weight: 700;
     letter-spacing: var(--suivi);
     text-transform: uppercase;
-    color: var(--or);
+    color: var(--or-fonce);
   }
 
   .bloc.deux {
@@ -1374,7 +1374,7 @@
 
   .creuser:hover,
   .creuser.ouvert {
-    background: rgb(255 255 255 / 10%);
+    background: var(--surface-bord);
     border-color: var(--or);
   }
 
@@ -1600,7 +1600,7 @@
 
   .suite {
     text-align: left;
-    border: 1px solid rgb(255 255 255 / 12%);
+    border: 1px solid var(--surface-bord);
     border-left-width: 3px;
     border-radius: var(--rayon-petit);
     padding: var(--e2) var(--e3);
@@ -1608,7 +1608,7 @@
     font-size: var(--t-base);
     font-weight: 650;
     color: var(--sur-fond);
-    background: rgb(255 255 255 / 6%);
+    background: var(--surface-forte);
     transition: background 0.18s ease, border-color 0.18s ease;
   }
 
@@ -1632,7 +1632,7 @@
   .reponse-suite {
     margin: 0 0 var(--e1);
     padding-left: var(--e3);
-    border-left: 2px solid rgb(255 255 255 / 18%);
+    border-left: 2px solid var(--surface-bord);
   }
 
   .reponse-suite.bon {

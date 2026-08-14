@@ -551,7 +551,7 @@
 
   .nature.doute {
     border-left-color: var(--sur-fond-doux);
-    background: rgb(255 255 255 / 5%);
+    background: var(--surface-forte);
   }
 
   .quoi-nature {
@@ -765,7 +765,7 @@
   }
 
   .traits .sep {
-    color: var(--or);
+    color: var(--or-fonce);
     opacity: 0.55;
   }
 
@@ -857,12 +857,12 @@
     text-align: left;
     min-height: 108px;
     padding: var(--e4);
-    background: linear-gradient(180deg, rgb(255 255 255 / 10%), rgb(255 255 255 / 5%));
-    border: 1px solid rgb(255 255 255 / 10%);
-    border-top-color: rgb(255 255 255 / 18%);
+    background: linear-gradient(180deg, var(--surface-bord), var(--surface-forte));
+    border: 1px solid var(--surface-bord);
+    border-top-color: var(--surface-bord);
     border-left: 3px solid var(--gravite, var(--sur-fond-doux));
     border-radius: var(--rayon);
-    box-shadow: 0 1px 0 rgb(255 255 255 / 6%) inset, 0 10px 22px -18px rgb(0 20 14 / 90%);
+    box-shadow: 0 1px 0 var(--surface-forte) inset, 0 10px 22px -18px rgb(0 20 14 / 90%);
     color: var(--sur-fond);
     cursor: pointer;
     transition:
@@ -873,11 +873,11 @@
   }
 
   .tuile:hover {
-    background: linear-gradient(180deg, rgb(255 255 255 / 15%), rgb(255 255 255 / 8%));
-    border-color: rgb(255 255 255 / 20%);
+    background: linear-gradient(180deg, var(--surface-bord), var(--surface-forte));
+    border-color: var(--surface-bord);
     border-left-color: var(--gravite, var(--sur-fond-doux));
     transform: translateY(-2px);
-    box-shadow: 0 1px 0 rgb(255 255 255 / 8%) inset, 0 16px 28px -20px rgb(0 20 14 / 100%);
+    box-shadow: 0 1px 0 var(--surface-forte) inset, 0 16px 28px -20px rgb(0 20 14 / 100%);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -924,7 +924,9 @@
 
   /* Un rapport périmé fait repousser une signature : il se voit. */
   .jusqua.perimee {
-    color: #f8ab9c;
+    /* Ce rouge clair était lisible sur le vert nuit ; sur fond clair il tombe à
+       1,79. La péremption d'un rapport est justement ce qu'il ne faut pas rater. */
+    color: var(--alerte);
     font-weight: 650;
   }
 
@@ -1045,7 +1047,7 @@
     /* Une cible confortable au pouce : la ligne fait toute la largeur. */
     min-height: 52px;
     text-align: left;
-    background: rgb(255 255 255 / 5%);
+    background: var(--surface-forte);
     border: none;
     border-left: 3px solid var(--marque);
     border-radius: 0;
@@ -1059,7 +1061,7 @@
   }
 
   .entree:hover {
-    background: rgb(255 255 255 / 10%);
+    background: var(--surface-bord);
   }
 
   li.mauvais .entree {
@@ -1099,7 +1101,7 @@
 
   .detail {
     padding: var(--e3) var(--e4) var(--e4) calc(var(--e4) + 22px);
-    background: rgb(255 255 255 / 3%);
+    background: var(--surface);
   }
 
   .detail p {

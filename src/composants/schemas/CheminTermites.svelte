@@ -104,7 +104,7 @@
   /* La coupe reprend la palette de la maison : or pour la terre et le bois,
      encre pour le bâti. Plus de couleurs propres à ce dessin. */
   .terre {
-    fill: var(--or);
+    fill: var(--or-fonce);
     opacity: 0.14;
   }
 
@@ -116,7 +116,7 @@
   }
 
   .mur {
-    fill: rgb(255 255 255 / 6%);
+    fill: var(--surface-forte);
     stroke: currentColor;
     stroke-width: 1.4;
   }
@@ -156,7 +156,7 @@
   }
 
   .termite .tete {
-    fill: var(--or);
+    fill: var(--or-fonce);
   }
 
   .termite .antennes,

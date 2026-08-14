@@ -419,8 +419,8 @@
     align-items: center;
     gap: var(--e2);
     padding: var(--e2) var(--e4);
-    background: rgb(255 255 255 / 5%);
-    border: 1px solid rgb(255 255 255 / 10%);
+    background: var(--surface-forte);
+    border: 1px solid var(--surface-bord);
     border-radius: 999px;
     color: var(--sur-fond-doux);
     font-size: var(--t-petit);
@@ -436,14 +436,14 @@
   }
 
   .onglet-diag:hover {
-    background: rgb(255 255 255 / 10%);
+    background: var(--surface-bord);
     color: var(--sur-fond);
   }
 
   /* L'onglet ouvert : un fond franc, la teinte de sa gravité en bordure, et
      une ombre portée qui le décolle de la ligne. */
   .onglet-diag.courant {
-    background: linear-gradient(180deg, rgb(255 255 255 / 16%), rgb(255 255 255 / 9%));
+    background: linear-gradient(180deg, var(--surface-bord), var(--surface-forte));
     border-color: var(--gravite, var(--or));
     color: var(--sur-fond);
     box-shadow: 0 8px 18px -12px rgb(0 20 14 / 100%);
@@ -588,7 +588,9 @@
   /* Un rapport périmé fait repousser une signature : il se voit. */
   .jusqua-fiche.perimee {
     /* Mesuré sur le fond réel de la ligne : #f0907c n'y tenait que 4,39. */
-    color: #f8ab9c;
+    /* Ce rouge clair était lisible sur le vert nuit ; sur fond clair il tombe à
+       1,79. La péremption d'un rapport est justement ce qu'il ne faut pas rater. */
+    color: var(--alerte);
     font-weight: 650;
   }
 
@@ -606,12 +608,12 @@
         color-mix(in srgb, var(--gravite-fiche) 12%, transparent),
         transparent 220px
       ),
-      rgb(255 255 255 / 5%);
-    border: 1px solid rgb(255 255 255 / 9%);
-    border-top-color: rgb(255 255 255 / 16%);
+      var(--surface-forte);
+    border: 1px solid var(--surface-forte);
+    border-top-color: var(--surface-bord);
     border-left: 4px solid var(--gravite-fiche, var(--sur-fond-doux));
     border-radius: var(--rayon);
-    box-shadow: 0 1px 0 rgb(255 255 255 / 6%) inset, 0 24px 48px -32px rgb(0 20 14 / 100%);
+    box-shadow: 0 1px 0 var(--surface-forte) inset, 0 24px 48px -32px rgb(0 20 14 / 100%);
     break-inside: avoid;
     /* La barre des vues est collante : sans cette marge, une ancre déposait le
        titre de la fiche juste derrière elle. */
@@ -774,7 +776,7 @@
 
   .chiffres div {
     padding: var(--e2) 0;
-    border-bottom: 1px solid rgb(255 255 255 / 10%);
+    border-bottom: 1px solid var(--surface-bord);
   }
 
   .chiffres dt {
@@ -812,7 +814,7 @@
     font-size: var(--t-micro);
     font-weight: 700;
     letter-spacing: 0.13em;
-    color: var(--or);
+    color: var(--or-fonce);
     margin-bottom: var(--e1);
   }
 
@@ -827,7 +829,7 @@
   .reserves {
     margin-top: var(--e4);
     padding-top: var(--e3);
-    border-top: 1px solid rgb(255 255 255 / 12%);
+    border-top: 1px solid var(--surface-bord);
     break-inside: avoid;
   }
 

@@ -169,7 +169,7 @@
   }
 
   .zone {
-    fill: rgb(255 255 255 / 3%);
+    fill: var(--surface);
     stroke: var(--trait);
     stroke-width: 1.5;
     transition: fill 0.2s ease, stroke 0.2s ease;
@@ -178,7 +178,7 @@
   .cible:hover .zone,
   .cible:focus-visible .zone,
   .cible.actif .zone {
-    fill: rgb(255 255 255 / 7%);
+    fill: var(--surface-forte);
     stroke: var(--vert-500);
   }
 

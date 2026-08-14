@@ -520,8 +520,8 @@
     justify-content: space-between;
     gap: var(--e3);
     text-align: left;
-    background: rgb(255 255 255 / 6%);
-    border: 1px solid rgb(255 255 255 / 10%);
+    background: var(--surface-forte);
+    border: 1px solid var(--surface-bord);
     border-radius: 12px;
     padding: var(--e3) var(--e4);
     cursor: pointer;
@@ -531,7 +531,7 @@
 
   .dossier:hover {
     border-color: rgb(230 200 148 / 45%);
-    background: rgb(255 255 255 / 11%);
+    background: var(--surface-bord);
   }
 
   .quand {
@@ -542,7 +542,7 @@
 
   .oublier {
     background: none;
-    border: 1px solid rgb(255 255 255 / 10%);
+    border: 1px solid var(--surface-bord);
     border-radius: 12px;
     color: var(--sur-fond-doux);
     width: 42px;
@@ -567,7 +567,7 @@
   .avertissement {
     margin-top: var(--e6);
     padding-top: var(--e4);
-    border-top: 1px solid rgb(255 255 255 / 10%);
+    border-top: 1px solid var(--surface-bord);
     font-size: var(--t-petit);
     color: var(--sur-fond-doux);
   }

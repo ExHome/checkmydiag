@@ -59,6 +59,8 @@
     {
       l: 'F',
       couleur: '#fc9935',
+      // Orange clair : l'encre sombre, comme pour C, D et E.
+      sombre: true,
       statut: [
         'Passoire énergétique',
         'Loyer gelé depuis août 2022',

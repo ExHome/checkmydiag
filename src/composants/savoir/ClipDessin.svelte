@@ -107,14 +107,14 @@
   }
 
   .point {
-    fill: var(--or);
+    fill: var(--or-fonce);
     transition: fill 0.18s ease;
   }
 
   /* Le halo respire tant que la notion n'a pas été ouverte : l'invitation
      s'éteint d'elle-même une fois qu'on a compris le geste. */
   .halo {
-    fill: var(--or);
+    fill: var(--or-fonce);
     opacity: 0;
     transform-origin: center;
     transform-box: fill-box;

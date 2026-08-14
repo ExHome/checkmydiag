@@ -45,8 +45,14 @@
 
   const LETTRES: Lettre[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 
-  /** Les lettres claires demandent une encre sombre pour rester lisibles. */
-  const claire = (l: string): boolean => l === 'C' || l === 'D' || l === 'E';
+  /**
+   * Les lettres claires demandent une encre sombre pour rester lisibles.
+   *
+   * Le F (#fc9935) en faisait partie sans qu'on l'ait vu : du blanc dessus ne
+   * donne que 2,15 de contraste. Les couleurs A→G sont celles de l'arrêté et ne
+   * bougent pas — c'est l'encre posée dessus qui s'adapte.
+   */
+  const claire = (l: string): boolean => l === 'C' || l === 'D' || l === 'E' || l === 'F';
 
   const rang = (l: Lettre | null): number => (l ? LETTRES.indexOf(l) : -1);
 

@@ -31,41 +31,82 @@
 :root {
   color-scheme: light;
 
-  /* Les variables de dglmexpertises.fr, reprises telles quelles. Aucune n'est
-     réinventée : c'est la même maison, ce doit être la même couleur. */
-  --vert-900: #002924;
-  --vert-800: #063527;
-  --vert-700: #093f30;
-  --vert-500: #1c7a56;
-  --vert-300: #57a684;
-  --vert-100: #e4efe7;
+  /*
+   * La charte « géométrique et cordiale ».
+   *
+   * Le produit passe d'un fond vert nuit à un fond clair : c'est une inversion,
+   * pas une retouche. Les noms de variables sont conservés — ils sont employés
+   * cent soixante-neuf fois — et ce sont leurs valeurs qui changent. Un
+   * composant qui demande « la couleur du texte sur le fond » obtient la bonne
+   * sans savoir que le fond a changé de camp.
+   *
+   * Deux écarts assumés au document de charte, tous deux pour la lisibilité.
+   * Le sage (#7BA899) et le teal (#3DAFA8) y servent de couleurs de texte : sur
+   * un fond à #FAFBFC ils tombent sous 3:1, ce qui est inutilisable pour lire.
+   * Ils restent donc les couleurs de la marque, en aplats et en filets, et le
+   * texte reprend des versions assombries de la même teinte. La dernière ligne
+   * de la liste de contrôle du document demande une accessibilité excellente :
+   * c'est elle qui tranche.
+   */
 
-  --or: #c09048;
-  --or-fonce: #8a6224;
-  --or-clair: #d9b778;
-  --or-pale: #ebd9b8;
+  /* La marque */
+  --navy: #2a2e4e;
+  --coral: #f56b5d;
+  --teal: #3dafa8;
+  --sage: #7ba899;
+  --amber: #f5a623;
 
-  --encre: #1e2e28;
-  --encre-doux: #41544c;
-  --gris: #7c8b84;
-  --papier: #faf8f3;
-  --papier-doux: #f4f1e9;
-  --fond: #093f30;
-  --fond-clair: #002924;
-  --sur-fond: #faf8f3;
-  --sur-fond-doux: #a8bdb2;
+  /* Les mêmes teintes, assombries pour porter du texte sur fond clair. */
+  --teal-texte: #24807a;
+  --sage-texte: #4d7365;
+  --coral-texte: #c2402f;
+
+  /* Les noms historiques, remappés. L'ossature du produit n'a pas bougé. */
+  --vert-900: #1b1e35;
+  --vert-800: #232741;
+  --vert-700: #2a2e4e;
+  --vert-500: #3dafa8;
+  --vert-300: #7ba899;
+  --vert-100: #edf6f5;
+
+  --or: #f56b5d;
+  --or-fonce: #c2402f;
+  --or-clair: #24807a;
+  --or-pale: #ffe3df;
+
+  --encre: #2a2e4e;
+  --encre-doux: #545a75;
+  --gris: #6b7280;
+  --papier: #ffffff;
+  --papier-doux: #f2f4f6;
+  --fond: #fafbfc;
+  --fond-clair: #ffffff;
+  --sur-fond: #2a2e4e;
+  --sur-fond-doux: #545a75;
+
+  /*
+   * Les surfaces posées sur le fond.
+   *
+   * Elles étaient écrites en blanc translucide — « var(--surface-forte) » —
+   * ce qui n'éclaircit une surface que sur un fond sombre. Sur fond clair, il
+   * faut au contraire poser une encre très diluée. Cinquante-huit déclarations
+   * passent par ces deux variables plutôt que par une couleur en dur.
+   */
+  --surface: rgb(42 46 78 / 3%);
+  --surface-forte: rgb(42 46 78 / 6%);
+  --surface-bord: rgb(42 46 78 / 10%);
 
   /* Des filets, pas des bordures : la charte se tient sur des traits fins. */
-  --trait: rgb(9 63 48 / 16%);
-  --trait-fin: rgb(9 63 48 / 9%);
-  --trait-or: rgb(192 144 72 / 40%);
+  --trait: rgb(42 46 78 / 14%);
+  --trait-fin: rgb(42 46 78 / 8%);
+  --trait-or: rgb(61 175 168 / 28%);
 
-  --alerte: #b03422;
-  --alerte-fond: #fbeee9;
-  --attention: #a06a12;
-  --attention-fond: #fcf3e2;
-  --ok: #1c7a56;
-  --ok-fond: #e4efe7;
+  --alerte: #c2402f;
+  --alerte-fond: #fdefed;
+  --attention: #8a5a05;
+  --attention-fond: #fef4e3;
+  --ok: #3d7a68;
+  --ok-fond: #edf6f3;
 
   /* Étiquettes réglementaires A→G : couleurs officielles de l'arrêté DPE. */
   --etq-a: #319834;
@@ -116,8 +157,17 @@
 
   /* Les deux polices du site : Fraunces pour les titres, la linéale du système
      pour le corps. */
-  --police: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --police-titre: 'Fraunces', Georgia, 'Times New Roman', serif;
+  /*
+   * Une seule famille, titres compris.
+   *
+   * La charte demande des titres en linéale grasse, pas en serif : Fraunces
+   * quitte donc les titres. Elle reste déclarée plus haut — le fichier est
+   * servi en local et ne coûte rien — au cas où l'on y reviendrait. IBM Plex
+   * Sans et Rubik ouvrent la pile ; à défaut d'être installées, la police du
+   * système prend le relais, ce que la charte prévoit.
+   */
+  --police: 'IBM Plex Sans', 'Rubik', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --police-titre: 'IBM Plex Sans', 'Rubik', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
 
   --mesure: 42rem;
@@ -141,10 +191,9 @@ body {
    qui donne au fond la profondeur d'un papier teinté plutôt que d'un aplat
    d'imprimerie. On le devine, on ne le voit pas. */
 body {
-  background:
-    radial-gradient(120% 60% at 50% -10%, rgb(255 255 255 / 4%), transparent 70%),
-    var(--fond);
-  background-attachment: fixed;
+  /* Le halo qui donnait sa profondeur au vert nuit n'a plus lieu d'être sur un
+     fond clair : il ne se verrait pas, ou il salirait. Un aplat franc. */
+  background: var(--fond);
   color: var(--sur-fond);
   font-family: var(--police);
   font-size: 17px;
