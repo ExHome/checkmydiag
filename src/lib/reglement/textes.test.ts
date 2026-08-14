@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { VALIDITE_MOIS } from '../analyse/coherence';
-import { REGLEMENT, REGLEMENT_COPRO, aVerifier, sourcesDe, type Regle } from './textes';
+import { REGLEMENT, REGLEMENT_COPRO, aVerifier, casesVides, sourcesDe, type Regle } from './textes';
 
 /**
  * Le référentiel se tient tout seul, ou il ne sert à rien.
@@ -74,6 +74,18 @@ describe('le référentiel réglementaire', () => {
     expect(s.length).toBeGreaterThan(0);
     expect(new Set(s.map((x) => x.reference + x.url)).size).toBe(s.length);
     expect(sourcesDe('plomb')).toEqual([]); // pas encore vérifié : on n'invente pas
+  });
+
+  it('avoue ce qu’il n’a pas encore lu', () => {
+    // La liste de travail de la veille. Elle doit rétrécir avec le temps ; le
+    // jour où elle est vide, ce test le dira en échouant, et ce sera une bonne
+    // nouvelle à traiter.
+    const vides = casesVides();
+    for (const t of vides) expect(REGLEMENT[t]).toBeUndefined();
+    // Ce qui est rempli n'y figure pas : la liste ne ment pas dans l'autre sens.
+    expect(vides).not.toContain('dpe');
+    expect(vides).not.toContain('electricite');
+    expect(vides).not.toContain('carrez');
   });
 
   it('dit ce que le moteur affirme sur l’électricité, sans le raccourci', () => {

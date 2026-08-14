@@ -294,6 +294,31 @@ export function aVerifier(aujourdhui: Date = new Date()): Peremption[] {
   return vieux.sort((a, b) => b.moisDepuis - a.moisDepuis);
 }
 
+/**
+ * Les diagnostics dont le texte fondateur n'a pas encore été lu.
+ *
+ * C'est la liste de travail de la veille : tant qu'un diagnostic figure ici,
+ * l'application ne doit rien affirmer de réglementaire à son sujet — elle peut
+ * restituer ce que le rapport écrit, jamais dire ce que la loi exige.
+ *
+ * Elle est volontairement visible dans le code plutôt que rangée dans un carnet
+ * : une case vide qu'on croise en travaillant finit par se remplir.
+ */
+export function casesVides(): TypeDiag[] {
+  const TOUS: TypeDiag[] = [
+    'dpe',
+    'amiante',
+    'plomb',
+    'electricite',
+    'gaz',
+    'termites',
+    'erp',
+    'carrez',
+    'assainissement'
+  ];
+  return TOUS.filter((t) => !REGLEMENT[t]);
+}
+
 /** Les sources d'un diagnostic, pour les citer à l'écran. */
 export function sourcesDe(type: TypeDiag): Source[] {
   const r = REGLEMENT[type];
