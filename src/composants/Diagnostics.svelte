@@ -15,6 +15,7 @@
   import Explicatif from './schemas/Explicatif.svelte';
   import MotsExpliques from './MotsExpliques.svelte';
   import Releves from './Releves.svelte';
+  import AVerifier from './AVerifier.svelte';
   import { libelleCourt } from '../lib/libelle';
   import { enPratique, FICHES } from '../lib/analyse/fiches';
   import { echeance } from '../lib/echeance';
@@ -336,6 +337,13 @@
                   </div>
                 {/each}
               </dl>
+
+              <!-- La liste officielle de ce qu'il faut contrôler soi-même. Le
+                   ministère la publie, personne ne la lit : elle a sa place ici,
+                   à côté du rapport qu'elle concerne. -->
+              {#if d.type === 'dpe'}
+                <AVerifier dpe={d} />
+              {/if}
 
               <!-- Les réserves : ce que ce diagnostic-là ne couvre pas. Sans
                    elles, une conclusion rassurante se lit comme une garantie. -->
