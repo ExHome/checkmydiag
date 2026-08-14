@@ -19,6 +19,7 @@
   import { enPratique, FICHES } from '../lib/analyse/fiches';
   import { echeance } from '../lib/echeance';
   import { etiquetteDe } from '../lib/analyse/confiance';
+  import { FAMILLES } from '../lib/familles';
 
   interface Props {
     analyse: Analyse;
@@ -42,30 +43,11 @@
    * le verdict de chaque rapport et jusqu'à quand il vaut. Dit une fois, à
    * l'endroit où se trouve le détail qu'il annonce.
    */
-  /**
-   * Les familles du dossier.
-   *
-   * Sept diagnostics à la suite, c'est une liste ; répartis en familles, c'est
-   * un dossier. Le lecteur ne connaît pas les noms des rapports, mais il sait
-   * ce qu'est le chauffage, la sécurité ou la santé — on classe donc par ce
-   * qui l'inquiète, pas par l'ordre réglementaire.
-   *
-   * L'ordre compte : ce qui touche aux personnes vient avant ce qui touche à
-   * l'argent.
-   */
-  const FAMILLES = [
-    { cle: 'securite', nom: 'Sécurité', quoi: 'Ce qui peut blesser', types: ['electricite', 'gaz'] },
-    { cle: 'sante', nom: 'Santé', quoi: 'Ce qu’on respire ou touche', types: ['amiante', 'plomb'] },
-    { cle: 'energie', nom: 'Énergie', quoi: 'Ce que le logement consomme', types: ['dpe'] },
-    { cle: 'bati', nom: 'Bâti et environnement', quoi: 'Le terrain et la structure', types: ['termites', 'erp', 'assainissement'] },
-    { cle: 'surfaces', nom: 'Surfaces', quoi: 'Ce qui sera écrit dans l’acte', types: ['carrez'] }
-  ] as const;
-
   /** Les familles réellement présentes, dans l'ordre, sans les vides. */
   const parFamille = $derived(
     FAMILLES.map((f) => ({
       ...f,
-      diags: analyse.diagnostics.filter((d) => (f.types as readonly string[]).includes(d.type))
+      diags: analyse.diagnostics.filter((d) => f.types.includes(d.type))
     })).filter((f) => f.diags.length > 0)
   );
 

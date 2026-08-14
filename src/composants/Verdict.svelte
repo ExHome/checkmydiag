@@ -15,6 +15,7 @@
    */
   import type { Analyse, Diagnostic, PointDeControle } from '../lib/modele';
   import { FICHES } from '../lib/analyse/fiches';
+  import { familleDe } from '../lib/familles';
   import MotsExpliques from './MotsExpliques.svelte';
 
   const { analyse }: { analyse: Analyse } = $props();
@@ -27,7 +28,24 @@
     titre: string;
     explication: string;
     quoiFaire: string;
+    /** Le domaine auquel ce point se rattache, quand on peut le savoir. */
+    famille?: string;
   }
+
+  /**
+   * Ce qui décrit le bien en trois traits.
+   *
+   * Rien n'est inventé ni deviné : un champ que le rapport ne donne pas ne
+   * s'affiche pas, et la ligne disparaît si l'on ne sait rien. Mieux vaut ne
+   * rien dire du logement que de le décrire de travers.
+   */
+  const identite = $derived(
+    [
+      analyse.bien.typeBien,
+      analyse.bien.surface !== undefined ? `${analyse.bien.surface.toLocaleString('fr-FR')} m²` : null,
+      analyse.bien.anneeConstruction
+    ].filter((v): v is string => Boolean(v))
+  );
 
   /**
    * Les trois niveaux du tableau de bord, dans l'ordre où ils engagent.
@@ -91,22 +109,26 @@
     const liste: Ligne[] = [];
 
     for (const [i, c] of bloquants.entries()) {
+      const fam = familleDe(c.type)?.nom;
       liste.push({
         cle: `b${i}`,
         ton: 'mauvais',
         titre: c.titre,
         explication: c.explication,
-        quoiFaire: c.quoiFaire
+        quoiFaire: c.quoiFaire,
+        ...(fam ? { famille: fam } : {})
       });
     }
 
     for (const d of dangers) {
+      const fam = familleDe(d.type)?.nom;
       liste.push({
         cle: `d-${d.type}`,
         ton: 'mauvais',
         titre: `${d.titre} : le rapport a trouvé quelque chose`,
         explication: d.verdict,
-        quoiFaire: FICHES[d.type].quoiFaire
+        quoiFaire: FICHES[d.type].quoiFaire,
+        ...(fam ? { famille: fam } : {})
       });
     }
 
@@ -118,7 +140,8 @@
         explication:
           'Une anomalie n’est pas une panne : l’installation fonctionne, mais elle ne respecte pas un point de la norme de sécurité. Aucun texte n’oblige le vendeur à la réparer pour vendre.',
         quoiFaire:
-          'Faites chiffrer les réparations par un artisan avant de faire une offre : ce devis est votre marge de discussion.'
+          'Faites chiffrer les réparations par un artisan avant de faire une offre : ce devis est votre marge de discussion.',
+        famille: 'Sécurité'
       });
     }
 
@@ -133,17 +156,20 @@
         explication:
           'La loi interdit peu à peu la location des logements les plus consommateurs. Le loyer est déjà gelé : aucune révision, aucune réévaluation entre deux locataires.',
         quoiFaire:
-          'Ce point pèse sur le prix, et il se discute. Faites chiffrer les travaux qui feraient remonter la classe.'
+          'Ce point pèse sur le prix, et il se discute. Faites chiffrer les travaux qui feraient remonter la classe.',
+        famille: 'Énergie'
       });
     }
 
     for (const [i, c] of remarques.entries()) {
+      const fam = familleDe(c.type)?.nom;
       liste.push({
         cle: `a${i}`,
         ton: 'moyen',
         titre: c.titre,
         explication: c.explication,
-        quoiFaire: c.quoiFaire
+        quoiFaire: c.quoiFaire,
+        ...(fam ? { famille: fam } : {})
       });
     }
 
@@ -190,6 +216,25 @@
 </script>
 
 <section class="verdict {ton}" aria-label="Ce qu’il faut retenir du dossier">
+  <!--
+    Le bien avant le dossier.
+
+    On ouvrait sur « le dossier n'est pas complet » : une phrase sur des
+    papiers. Or ce qu'on tient entre les mains, c'est un logement — et le
+    lecteur veut d'abord reconnaître le sien. L'adresse situe, les
+    caractéristiques confirment, et tout ce qui suit parle de ce bien-là.
+
+    Discret à dessein : une ligne, pas un titre. Le grand titre appartient au
+    verdict, et l'état descriptif complet vit dans « Le point ».
+  -->
+  {#if identite.length}
+    <p class="bien">
+      {#if analyse.bien.adresse}<span class="adresse">{analyse.bien.adresse}</span>{/if}
+      {#if analyse.bien.commune}<span class="commune">{analyse.bien.commune}</span>{/if}
+      <span class="traits">{identite.join(' · ')}</span>
+    </p>
+  {/if}
+
   <div class="tete">
     <span class="picto" aria-hidden="true">
       {#if ton === 'mauvais'}
@@ -272,7 +317,12 @@
             onclick={() => (ouverte = ouverte === ligne.cle ? null : ligne.cle)}
           >
             <span class="marque" aria-hidden="true"></span>
-            <span class="mot">{ligne.titre}</span>
+            <span class="mot">
+              {ligne.titre}
+              <!-- Le domaine, en second : il relie ce point au dossier plus bas,
+                   sans disputer la vedette au constat lui-même. -->
+              {#if ligne.famille}<span class="domaine">{ligne.famille}</span>{/if}
+            </span>
             <span class="signe" aria-hidden="true">{ouverte === ligne.cle ? '−' : '+'}</span>
           </button>
 
@@ -345,6 +395,45 @@
   }
 
   /* Une ligne par chose à faire, dans l'ordre où on s'en occupe. */
+  /* Le domaine : un mot, en retrait, qui dit de quelle partie du dossier ce
+     point relève. Ni pastille ni cadre — une nuance de gris suffit. */
+  .domaine {
+    display: inline-block;
+    margin-left: var(--e2);
+    font-size: var(--t-micro);
+    font-weight: 400;
+    letter-spacing: var(--suivi-serre);
+    color: var(--sur-fond-doux);
+    opacity: 0.8;
+  }
+
+  /* L'identité du bien : la première ligne de la page, et la plus discrète.
+     Elle situe sans se mettre en avant — c'est le verdict qu'on vient lire. */
+  .bien {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--e1) var(--e3);
+    margin: 0 0 var(--e4);
+    font-size: var(--t-petit);
+    color: var(--sur-fond-doux);
+  }
+
+  .bien .adresse {
+    color: var(--sur-fond);
+    font-weight: 600;
+  }
+
+  .bien .commune {
+    letter-spacing: var(--suivi-serre);
+  }
+
+  .bien .traits::before {
+    content: '—';
+    margin-right: var(--e2);
+    opacity: 0.5;
+  }
+
   /* Le tableau de bord : rien qu'un filet au-dessus, de l'espace, et des
      chiffres. Une carte ici ajouterait un cadre à ce qui n'en demande pas. */
   .bilan {

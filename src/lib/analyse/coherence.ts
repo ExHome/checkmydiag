@@ -196,6 +196,9 @@ function surfaces(bien: Bien, diagnostics: Diagnostic[]): PointDeControle[] {
   return [
     {
       genre: 'incoherence',
+      // Ce contrôle porte sur le mesurage : le dire permet de le rattacher à
+      // sa famille dans le tableau de bord, plutôt que de l'y laisser orphelin.
+      type: 'carrez',
       titre: 'Deux surfaces différentes dans le même dossier',
       explication: `Le DPE parle de ${nombreFr(valeurDpe)} m², le mesurage de ${nombreFr(valeurCarrez)} m². Ces deux calculs ne comptent pas exactement la même chose, donc un petit écart est normal — mais ici la différence est de ${Math.round(proportion * 100)} %.`,
       quoiFaire: 'Demandez au diagnostiqueur laquelle des deux surfaces fait foi pour la vente. C’est le chiffre du mesurage qui sera écrit dans l’acte.'
