@@ -178,7 +178,18 @@ export const REGLEMENT: Partial<Record<TypeDiag, Reglement>> = {
           luLe: '2026-08-14'
         },
         reserve:
-          'À vérifier à la source avant d’en conclure quoi que ce soit pour un rapport ancien : le régime a changé en 2013, et les rapports établis sous l’empire du texte précédent ne sont pas assimilables à ceux d’aujourd’hui. Ce point n’a pas encore été lu au texte.'
+          'Une durée non fixée par ce texte ne vaut pas validité perpétuelle : voir la règle suivante, qui oblige à compléter un repérage ancien avant de vendre.'
+      },
+      {
+        enonce:
+          'Les matériaux de la liste B qui n’avaient pas fait l’objet d’un repérage avant l’entrée en vigueur du décret doivent faire l’objet d’un repérage complémentaire, lequel intervient lors de la prochaine vente du bien pour la réalisation de l’état d’amiante.',
+        source: {
+          reference: 'article 4 du décret n° 2011-629 du 3 juin 2011',
+          url: 'https://www.legifrance.gouv.fr/jorf/article_jo/JORFARTI000024114453',
+          luLe: '2026-08-14'
+        },
+        reserve:
+          'C’est ici que se dissipe le raccourci « amiante valable à vie ». Un rapport ancien limité à la liste A ne suffit pas pour vendre : il faut le compléter sur la liste B. Une conclusion rassurante d’avant 2013 ne dispense donc de rien.'
       }
     ]
   },
@@ -245,17 +256,38 @@ export const REGLEMENT: Partial<Record<TypeDiag, Reglement>> = {
     nom: 'État relatif à la présence de termites',
     fondement: {
       enonce:
+        'En cas de vente de tout ou partie d’un immeuble bâti situé dans une zone délimitée en application du premier alinéa de l’article L. 131-3, un état relatif à la présence de termites est produit.',
+      source: {
+        reference: 'article L. 126-24 du code de la construction et de l’habitation',
+        url: 'https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043977465',
+        luLe: '2026-08-14'
+      },
+      reserve:
+        'L’obligation naît du zonage, arrêté par le préfet : hors de ces zones, aucun état termites n’est dû. Un dossier qui n’en contient pas n’est donc pas nécessairement incomplet.'
+    },
+    validiteMois: 6,
+    validite: {
+      enonce:
         'L’état relatif à la présence de termites doit avoir été établi depuis moins de six mois à la date de la promesse de vente ou de l’acte authentique.',
       source: {
         reference: 'article D. 271-5 du code de la construction et de l’habitation',
         url: 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006074096/LEGISCTA000019965764/',
         luLe: '2026-08-14'
-      },
-      reserve:
-        'Seule la durée a été lue au texte. L’article qui institue l’obligation et délimite les zones concernées — toutes les communes ne le sont pas — reste à vérifier.'
+      }
     },
-    validiteMois: 6,
-    regles: []
+    regles: [
+      {
+        enonce:
+          'Un second risque relève du même mécanisme de zonage : en cas de vente d’un immeuble bâti situé dans une zone délimitée en application du second alinéa de l’article L. 131-3, une information sur la présence d’un risque de mérule est produite.',
+        source: {
+          reference: 'article L. 126-25 du code de la construction et de l’habitation',
+          url: 'https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043977462',
+          luLe: '2026-08-14'
+        },
+        reserve:
+          'La mérule est une information distincte de l’état termites, et l’application ne sait pas encore la lire. Un champignon n’est pas un insecte : les deux ne se repèrent ni ne se traitent de la même façon.'
+      }
+    ]
   },
 
   gaz: {

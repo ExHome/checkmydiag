@@ -181,7 +181,16 @@ function manquants(
 /** Contrôle 3 — les surfaces annoncées par deux diagnostics concordent-elles ? */
 function surfaces(bien: Bien, diagnostics: Diagnostic[]): PointDeControle[] {
   const carrez = diagnostics.find((d) => d.type === 'carrez');
-  const surfaceCarrez = carrez?.faits.find((f) => f.libelle === 'Superficie privative')?.valeur;
+  /*
+   * Le mesurage porte son chiffre sous deux libellés selon la loi appliquée :
+   * « Superficie privative » pour la loi Carrez, « Surface habitable » pour la
+   * loi Boutin. Ne chercher que le premier laissait passer sans contrôle les
+   * vingt-neuf dossiers sur quarante qui portent une attestation de surface
+   * habitable — c'est-à-dire la majorité.
+   */
+  const surfaceCarrez = carrez?.faits.find(
+    (f) => f.libelle === 'Superficie privative' || f.libelle === 'Surface habitable'
+  )?.valeur;
   const valeurCarrez = surfaceCarrez ? Number.parseFloat(surfaceCarrez.replace(',', '.')) : NaN;
   const valeurDpe = bien.surface;
 
