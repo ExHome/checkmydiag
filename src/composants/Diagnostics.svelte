@@ -491,18 +491,21 @@
     height: auto;
     overflow: visible;
     /* Le volet arrive du côté d'où on l'a appelé : c'est ce décalage qui donne
-       le sentiment que les fiches tournent, et non qu'elles se remplacent. */
-    animation: entre 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+       le sentiment que les fiches tournent, et non qu'elles se remplacent.
+
+       Pas de `fill-mode` : avec `both`, un volet dont l'animation ne démarre
+       pas resterait figé sur son image de départ, à opacité nulle — on
+       cliquerait un diagnostic et la fiche serait vide. Sans lui, l'état
+       naturel est l'état visible, et le mouvement n'est qu'un agrément. */
+    animation: entre 0.38s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
+  /* Le déplacement seul, sans fondu : une animation qui ne progresse pas
+     laisserait sinon la fiche à opacité nulle, et le diagnostic qu'on vient de
+     demander resterait vide. Décalée, elle se lit quand même. */
   @keyframes entre {
     from {
-      opacity: 0;
       transform: translateX(calc(var(--sens, 1) * 44px));
-    }
-    to {
-      opacity: 1;
-      transform: none;
     }
   }
 

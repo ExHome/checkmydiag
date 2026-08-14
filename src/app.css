@@ -304,20 +304,29 @@ button {
   font-size: 0.9rem;
 }
 
-/* Apparition douce des cartes : la page se déroule au lieu de tomber d'un bloc. */
+/* Apparition douce des cartes : la page se déroule au lieu de tomber d'un bloc.
+ *
+ * Sans `fill-mode`, et c'est important. L'animation portait `both`, qui fige
+ * l'élément sur son image de départ — opacité nulle — tant qu'elle n'a pas
+ * commencé. Il suffit alors qu'un navigateur ne fasse pas tourner ses
+ * animations, le temps d'un onglet en arrière-plan ou d'une fenêtre qui ne
+ * compose pas, pour que le contenu ne s'affiche jamais. C'est ce qui rendait
+ * la fenêtre du rapport invisible : on cliquait, le fond s'assombrissait, et
+ * il ne se passait « rien ».
+ *
+ * L'état final de cette animation est l'état naturel de l'élément : il n'y a
+ * donc rien à retenir après, ni avant. Une animation doit rester un agrément —
+ * jamais la condition pour que quelque chose s'affiche.
+ */
 @keyframes apparait {
   from {
     opacity: 0;
     transform: translateY(14px);
   }
-  to {
-    opacity: 1;
-    transform: none;
-  }
 }
 
 .apparait {
-  animation: apparait 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: apparait 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* ---------------------------------------------------------------------------

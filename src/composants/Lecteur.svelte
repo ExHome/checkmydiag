@@ -467,7 +467,7 @@
           <!-- svelte-ignore a11y_click_events_have_key_events -->
           <!-- svelte-ignore a11y_no_static_element_interactions -->
           <div
-            class="fenetre apparait"
+            class="fenetre"
             role="dialog"
             aria-modal="true"
             aria-labelledby="titre-fenetre"
@@ -1034,7 +1034,22 @@
     backdrop-filter: blur(6px);
   }
 
+  /*
+   * L'animation d'entrée ne décide pas de la visibilité.
+   *
+   * La fenêtre portait la classe `.apparait`, dont l'animation commence à
+   * `opacity: 0` avec `fill-mode: both`. Tant que l'animation ne tourne pas —
+   * onglet que le navigateur ne compose pas, moteur qui met les animations en
+   * attente — l'élément reste figé sur son image de départ : le voile
+   * s'assombrissait, et il n'y avait rien dessus. On cliquait sur le rapport,
+   * il ne se passait « rien ».
+   *
+   * Donc pas de `fill-mode` ici : sans animation, l'élément est à son état
+   * naturel, c'est-à-dire visible. Le mouvement est un agrément, jamais la
+   * condition d'affichage.
+   */
   .fenetre {
+    animation: entre-fenetre 0.3s cubic-bezier(0.22, 1, 0.36, 1);
     display: flex;
     flex-direction: column;
     width: min(100%, 880px);
@@ -1046,6 +1061,24 @@
     box-shadow: 0 40px 90px -30px rgb(0 20 14 / 100%);
     color: var(--sur-fond);
     overflow: hidden;
+  }
+
+  /* L'animation ne touche pas à l'opacité, et c'est délibéré.
+     Retirer `fill-mode` ne suffisait pas : une animation *en cours* mais qui ne
+     progresse pas — un navigateur qui ne compose pas ses images — maintient
+     l'élément sur sa première image, opacité comprise. En n'animant que le
+     déplacement, le pire qui puisse arriver est une fenêtre douze pixels trop
+     bas. Elle reste lisible, et c'est tout ce qui compte. */
+  @keyframes entre-fenetre {
+    from {
+      transform: translateY(12px) scale(0.99);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fenetre {
+      animation: none;
+    }
   }
 
   .fenetre :global(.ruban) {
