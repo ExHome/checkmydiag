@@ -5,6 +5,9 @@
  * technique immobilier » : un seul PDF qui contient plusieurs diagnostics à la
  * suite. On produit donc une liste de `Diagnostic`, pas un objet unique.
  */
+import type { Nature } from './analyse/nature';
+
+export type { Nature };
 
 export type TypeDiag =
   | 'dpe'
@@ -186,6 +189,14 @@ export interface PointDeControle {
 
 export interface Analyse {
   bien: Bien;
+  /**
+   * De quel document il s'agit — dossier de vente, DTG, PPPT, DTA, repérage
+   * avant travaux. C'est la première question d'un professionnel, et elle
+   * commande tout le reste : un repérage avant travaux relève du code du
+   * travail et ne vaut pas pour une vente, même s'il porte le même intitulé de
+   * mission qu'un repérage de vente.
+   */
+  nature: Nature;
   diagnostics: Diagnostic[];
   /**
    * Texte des pages qui portent des repères, indexé par numéro de page. Sert à

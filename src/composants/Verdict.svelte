@@ -307,6 +307,28 @@
 
 <section class="verdict {ton}" aria-label="Ce qu’il faut retenir du dossier">
   <!--
+    De quel document il s'agit, avant tout le reste.
+
+    Un repérage avant travaux, un dossier technique amiante et un repérage de
+    vente portent le même intitulé de mission : seule leur finalité les sépare.
+    Le lecteur qui croit tenir son diagnostic de vente alors qu'il tient un
+    repérage de chantier signera en pensant avoir un document qu'il n'a pas.
+    On le nomme donc, et on dit ce qu'il ne fait pas.
+
+    Le dossier de vente, lui, ne s'annonce pas : c'est le cas attendu, et
+    l'annoncer ajouterait un bandeau à chaque lecture pour ne rien apprendre.
+  -->
+  {#if analyse.nature.genre !== 'venteLocation'}
+    <aside class="nature" class:doute={analyse.nature.genre === 'inconnu'}>
+      <p class="quoi-nature">Ce document</p>
+      <p class="nom-nature">{analyse.nature.nom}</p>
+      <p class="dit-nature">{analyse.nature.quoi}</p>
+      {#if analyse.nature.reserve}
+        <p class="reserve-nature">{analyse.nature.reserve}</p>
+      {/if}
+    </aside>
+  {/if}
+  <!--
     Le bien avant le dossier.
 
     On ouvrait sur « le dossier n'est pas complet » : une phrase sur des
@@ -514,6 +536,62 @@
 </section>
 
 <style>
+  /* ---- La nature du document --------------------------------------------
+     Un encart en or, franc, avant tout le reste : ce n'est pas un détail de
+     lecture, c'est ce qui décide si le document répond à la question qu'on se
+     pose. Il ne paraît que lorsqu'il y a un malentendu possible. */
+  .nature {
+    margin: 0 0 var(--e5);
+    padding: var(--e4) var(--e5);
+    background: linear-gradient(180deg, rgb(192 144 72 / 16%), rgb(192 144 72 / 6%));
+    border: 1px solid var(--trait-or);
+    border-left: 4px solid var(--or);
+    border-radius: var(--rayon);
+  }
+
+  .nature.doute {
+    border-left-color: var(--sur-fond-doux);
+    background: rgb(255 255 255 / 5%);
+  }
+
+  .quoi-nature {
+    margin: 0 0 var(--e1);
+    font-size: var(--t-micro);
+    font-weight: 700;
+    letter-spacing: var(--suivi);
+    text-transform: uppercase;
+    color: var(--or-clair);
+  }
+
+  .nom-nature {
+    margin: 0 0 var(--e2);
+    font-family: var(--police-titre);
+    font-size: var(--t-titre);
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.022em;
+    color: var(--sur-fond);
+  }
+
+  .dit-nature {
+    margin: 0;
+    font-size: var(--t-base);
+    line-height: 1.5;
+    color: var(--sur-fond-doux);
+    max-width: var(--mesure);
+  }
+
+  /* La réserve est la raison d'être de l'encart : elle ne se met pas en petit. */
+  .reserve-nature {
+    margin: var(--e3) 0 0 !important;
+    padding-top: var(--e3);
+    border-top: 1px solid var(--trait-or);
+    font-size: var(--t-base);
+    line-height: 1.5;
+    color: var(--or-clair);
+    max-width: var(--mesure);
+  }
+
   /* Le voyant se pose à même le vert, comme le reste : ce qui le distingue,
      c'est le filet de gauche à la couleur de son ton, et rien d'autre. */
   .verdict {

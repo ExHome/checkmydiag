@@ -20,12 +20,20 @@ import { analyser } from '../src/lib/analyse/index';
 import { lignesDePage, lignesPositionnees, type Fragment } from '../src/lib/lignes';
 import type { PageTexte, TypeDiag } from '../src/lib/modele';
 
-const [, , racineArg, combienArg] = process.argv;
+const [, , racineArg, combienArg, motifArg] = process.argv;
 const racine = racineArg ?? '.';
 const combien = combienArg ? Number(combienArg) : 60;
 
-/** Les dossiers de diagnostic technique complets, pas les factures. */
-const INTERESSANT = /^(DDT|RAPPORT|DPE|CREP|ERP|DAPP)[-_ ]/i;
+/**
+ * Quels fichiers mesurer, d'après leur nom.
+ *
+ * Sans troisième argument, les dossiers de vente complets — pas les factures.
+ * Avec, on vise une famille : « RAAT », « DTG », « DTA »… C'est ainsi qu'on
+ * mesure ce que le moteur fait d'un document qu'il n'a jamais vu.
+ */
+const INTERESSANT = motifArg
+  ? new RegExp(motifArg, 'i')
+  : /^(DDT|RAPPORT|DPE|CREP|ERP|DAPP)[-_ ]/i;
 
 async function trouver(dossier: string, sortie: string[], plafond: number): Promise<void> {
   if (sortie.length >= plafond) return;
@@ -158,6 +166,8 @@ async function main(): Promise<void> {
 
   /** Les formulations de conclusion qu'on n'a pas su interpréter. */
   const rates = new Map<string, number>();
+  /** Ce que le moteur croit avoir entre les mains. */
+  const genres = new Map<string, number>();
 
   for (const chemin of fichiers) {
     const pages = await lire(chemin);
@@ -176,6 +186,7 @@ async function main(): Promise<void> {
 
     const analyse = analyser(pages);
     if (!analyse.diagnostics.length) m.muets++;
+    genres.set(analyse.nature.genre, (genres.get(analyse.nature.genre) ?? 0) + 1);
 
     for (const d of analyse.diagnostics) {
       m.reconnus[d.type] = (m.reconnus[d.type] ?? 0) + 1;
@@ -205,7 +216,12 @@ async function main(): Promise<void> {
   console.log(`${m.muets} dossiers dont le moteur ne tire rien.`);
   console.log(`${m.releves} relevés et ${m.reperes} passages repérés au total.\n`);
 
-  console.log('## Par diagnostic');
+  console.log('## Nature reconnue');
+  for (const [g, n] of [...genres.entries()].sort((a, b) => b[1] - a[1])) {
+    console.log(`- ${g} : ${n}`);
+  }
+
+  console.log('\n## Par diagnostic');
   console.log('| diagnostic | dans le PDF | reconnu | avec verdict | sans verdict |');
   console.log('|---|---|---|---|---|');
   for (const t of TYPES) {

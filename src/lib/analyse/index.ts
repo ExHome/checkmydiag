@@ -4,6 +4,7 @@
 import type { PageTexte } from '../lignes';
 import type { Analyse, Bien, Diagnostic, TypeDiag } from '../modele';
 import { decouper } from './decoupe';
+import { natureDe } from './nature';
 import { analyserDpe } from './dpe';
 import { analyserPlomb } from './plomb';
 import { analyserAmiante, analyserTermites } from './reperages';
@@ -189,6 +190,8 @@ export function analyser(brutes: PageTexte[]): Analyse {
 
   return {
     bien,
+    // De quel document il s'agit, avant tout jugement sur son contenu.
+    nature: natureDe(pages.flatMap((p) => p.lignes)),
     diagnostics,
     textePages,
     controles: controler(bien, diagnostics, new Date(), plageSynthese !== null),

@@ -17,12 +17,21 @@ import { join } from 'node:path';
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
 import { compact } from '../src/lib/analyse/texte';
 
-const [, , racineArg, combienArg, seuilArg] = process.argv;
+const [, , racineArg, combienArg, seuilArg, motifArg] = process.argv;
 const racine = racineArg ?? '.';
 const combien = combienArg ? Number(combienArg) : 40;
 const seuil = seuilArg ? Number(seuilArg) : 3;
 
-const INTERESSANT = /^(DDT|RAPPORT|DPE|CREP|ERP|DAPP)[-_ ]/i;
+/**
+ * Quels fichiers regarder, d'après leur nom.
+ *
+ * Le quatrième argument permet de viser une famille de documents — les DTG, les
+ * dossiers techniques amiante, les repérages avant travaux. Sans lui, on s'en
+ * tient aux dossiers de vente, qui portent des noms normalisés.
+ */
+const INTERESSANT = motifArg
+  ? new RegExp(motifArg, 'i')
+  : /^(DDT|RAPPORT|DPE|CREP|ERP|DAPP)[-_ ]/i;
 
 async function trouver(dossier: string, sortie: string[], plafond: number): Promise<void> {
   if (sortie.length >= plafond) return;
