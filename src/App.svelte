@@ -325,9 +325,14 @@
       <Depot surFichier={choisir} occupe={etat === 'lecture'} {progression} />
 
       {#if etat !== 'lecture'}
+        <!-- Deux sorties pour qui n'a rien à déposer : voir ce que ça donne, ou
+             lire sans fichier. La seconde manquait — le lexique n'était atteignable
+             que par l'en-tête, où l'on ne va pas quand on hésite encore. -->
         <p class="essai">
           Pas de rapport sous la main ?
           <button type="button" class="lien" onclick={montrerExemple}>Voir un exemple</button>
+          <span class="ou">ou</span>
+          <a class="lien" href="./en-clair/">lire les réponses en clair</a>
         </p>
       {/if}
 
@@ -445,8 +450,15 @@
     text-underline-offset: 4px;
   }
 
+  /*
+   * Le `0` horizontal de ce raccourci écrasait le `padding-inline` que
+   * `.enveloppe` pose pour tout le site : sur cet écran, le contenu touchait le
+   * bord de la fenêtre. Ça ne se voyait pas tant que tout y était centré ; les
+   * pastilles des diagnostics, alignées à gauche, l'ont révélé. On ne règle donc
+   * plus que le vertical, et la marge latérale reste celle de la maison.
+   */
   main {
-    padding: clamp(28px, 6vw, 56px) 0 80px;
+    padding-block: clamp(28px, 6vw, 56px) 80px;
   }
 
   /* Le seuil : une seule chose à faire, au milieu de l'écran. */
@@ -461,6 +473,13 @@
     margin-top: var(--e4);
     color: var(--sur-fond-doux);
     font-size: var(--t-base);
+  }
+
+  /* Le « ou » sépare deux sorties de même rang : il s'efface pour qu'on lise
+     les deux propositions, pas la conjonction. */
+  .ou {
+    margin: 0 var(--e1);
+    opacity: 0.7;
   }
 
   .lien {

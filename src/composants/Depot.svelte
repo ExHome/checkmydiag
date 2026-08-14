@@ -7,6 +7,26 @@
 
   const { surFichier, occupe, progression }: Props = $props();
 
+  /**
+   * Les diagnostics que le moteur sait réellement lire.
+   *
+   * Cette liste n'annonce que ce qui existe. Une maquette proposait d'y ajouter
+   * le radon et un sigle de plus : le radon n'est pas un diagnostic mais l'un
+   * des risques de l'état des risques, et le second n'est lu nulle part. Une
+   * promesse d'accueil qu'on ne tient pas se paie au premier dépôt.
+   */
+  const LISIBLES = [
+    'DPE',
+    'Électricité',
+    'Gaz',
+    'Amiante',
+    'Plomb',
+    'Termites',
+    'État des risques',
+    'Surface',
+    'Assainissement'
+  ];
+
   let survol = $state(false);
   let champ: HTMLInputElement | undefined = $state();
 
@@ -82,12 +102,59 @@
 
     <span class="faux-bouton">Choisir mon PDF</span>
 
-    <p class="muet petit types">
-      DPE · électricité · gaz · amiante · plomb · termites · ERP · Carrez
+    <!-- Le format, dit une fois et sans détour. Un visiteur qui arrive avec une
+         photo de son rapport doit comprendre tout de suite pourquoi ça ne
+         marchera pas, et quoi faire — plutôt que de l'apprendre par un message
+         d'erreur après avoir attendu. -->
+    <p class="muet petit format">
+      Un fichier PDF. Une photo ou un scan en image ne peut pas être lu : demandez
+      le PDF d’origine à votre diagnostiqueur.
     </p>
-    <p class="muet petit confidentialite">🔒 Rien n’est envoyé. Tout reste sur votre appareil.</p>
   {/if}
 </button>
+
+{#if !occupe}
+  <!--
+    Ce que l'application sait lire, et la promesse — sortis de la zone de dépôt.
+
+    Ils y étaient en une ligne de sigles, sous le bouton : « DPE · électricité ·
+    gaz… ». Trois problèmes. On ne distingue pas les mots dans une ligne de
+    points médians, la promesse de confidentialité se lisait comme une mention
+    légale de plus, et tout cela alourdissait la cible sur laquelle il faut
+    cliquer. Chacun a maintenant son bloc.
+  -->
+  <div class="sous-depot">
+    <section class="lisibles">
+      <p class="quoi-lisibles">Ce que nous savons lire</p>
+      <ul class="badges">
+        {#each LISIBLES as d (d)}
+          <li>{d}</li>
+        {/each}
+      </ul>
+      <p class="muet petit reserve-lisibles">
+        Le radon et les autres risques du terrain font partie de l’état des risques.
+      </p>
+    </section>
+
+    <!-- La promesse du produit. Elle a droit à un bandeau : c'est la première
+         question qu'on se pose en déposant un document qui porte son adresse. -->
+    <p class="promesse-locale">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linejoin="round"
+        />
+      </svg>
+      <span>
+        <strong>Votre document ne quitte pas votre appareil.</strong>
+        Il est lu par votre navigateur, il n’est envoyé sur aucun serveur.
+      </span>
+    </p>
+  </div>
+{/if}
 
 <input
   bind:this={champ}
@@ -150,10 +217,82 @@
     color: var(--encre-doux);
   }
 
-  .types {
+  .format {
     margin: var(--e4) auto 0;
-    max-width: 44ch;
-    letter-spacing: 0.02em;
+    max-width: 46ch;
+    line-height: 1.5;
+  }
+
+  /* ---- Sous la zone de dépôt -------------------------------------------
+     Deux blocs distincts, hors de la cible cliquable : ce qu'on sait lire, et
+     ce qu'on fait du fichier. */
+  .sous-depot {
+    display: grid;
+    gap: var(--e4);
+    margin-top: var(--e5);
+  }
+
+  .quoi-lisibles {
+    margin: 0 0 var(--e3);
+    font-size: var(--t-micro);
+    font-weight: 700;
+    letter-spacing: var(--suivi);
+    text-transform: uppercase;
+    color: var(--gris);
+  }
+
+  /* Des pastilles plutôt qu'une ligne de sigles séparés par des points : on
+     distingue les mots, et la liste se parcourt au lieu de se lire. */
+  .badges {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e2);
+  }
+
+  .badges li {
+    padding: var(--e2) var(--e3);
+    background: var(--papier);
+    border: 1px solid var(--trait-fin);
+    border-radius: var(--rayon);
+    font-size: var(--t-petit);
+    font-weight: 600;
+    color: var(--vert-700);
+  }
+
+  .reserve-lisibles {
+    margin: var(--e3) 0 0;
+    max-width: 52ch;
+  }
+
+  /* Le bandeau de la promesse : la seule surface teintée de l'écran d'accueil,
+     parce que c'est la question qu'on se pose avant de déposer quoi que ce
+     soit. */
+  .promesse-locale {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--e3);
+    margin: 0;
+    padding: var(--e4);
+    background: var(--vert-100);
+    border-left: 3px solid var(--vert-500);
+    border-radius: var(--rayon);
+    font-size: var(--t-petit);
+    line-height: 1.5;
+    color: var(--vert-700);
+  }
+
+  .promesse-locale svg {
+    flex: none;
+    width: 22px;
+    height: 22px;
+    color: var(--vert-500);
+  }
+
+  .promesse-locale strong {
+    display: block;
   }
 
   .faux-bouton {
@@ -168,11 +307,6 @@
 
   .depot:hover:not(:disabled) .faux-bouton {
     background: var(--vert-500);
-  }
-
-  .confidentialite {
-    margin: var(--e4) auto 0;
-    max-width: 42ch;
   }
 
   .barre {
