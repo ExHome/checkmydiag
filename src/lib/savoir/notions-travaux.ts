@@ -14,7 +14,7 @@
  * Le jour où une source sérieuse sera branchée, elle se posera ici, au rang 7,
  * sans rien changer au reste.
  */
-import type { Notion } from './socle';
+import { trouve, type Notion } from './socle';
 
 /** Les six facteurs du § 16, chacun sa notion. */
 const FACTEURS = ['surface-a-traiter', 'materiau', 'accessibilite', 'technique', 'region', 'finition'];
@@ -87,17 +87,32 @@ export const NOTIONS_TRAVAUX: Notion[] = [
               'Check My Diag ne donne pas de prix : nous n’avons pas de source assez sérieuse pour en avancer un, et un chiffre inventé serait pire que rien.'
           },
           {
+            /*
+             * La phrase disait le contraire du texte. L'article R. 126-16 du
+             * code de la construction impose au DPE des recommandations
+             * accompagnées d'une évaluation de leur coût, et le modèle de
+             * l'arrêté du 31 mars 2021 la présente en fourchette, bouquet par
+             * bouquet. Le DPE chiffre donc bien ce qu'il recommande.
+             */
             texte:
-              'Un DPE ne chiffre pas les travaux. Seul un audit énergétique propose des scénarios chiffrés — et ce sont des estimations, pas des devis.'
+              'Un DPE chiffre ses recommandations : sa page « recommandations » donne une fourchette de coût pour chaque bouquet de travaux proposé. L’audit énergétique va plus loin — étapes, gains attendus, aides — et en copropriété le diagnostic technique global chiffre les travaux des dix ans à venir. Dans tous les cas, ce sont des estimations, jamais des devis.'
           }
         ]
       }
     ],
-    chezMoi: () => ({
-      etat: 'muet',
-      phrase:
-        'Aucun rapport de diagnostic ne contient de prix de travaux. Le seul chiffre qui vous engagera est celui d’un devis signé.'
-    })
+    /*
+     * Cette fonction ignorait son paramètre : au seul endroit du produit qui
+     * promet de parler du document déposé, elle ne l'ouvrait pas. Elle regarde
+     * désormais si un DPE est là, et dit où en trouver les montants.
+     */
+    chezMoi: (diagnostics) => {
+      if (!trouve(diagnostics, 'dpe')) return { etat: 'absent' };
+      return {
+        etat: 'muet',
+        phrase:
+          'Nous ne relisons pas les montants de votre rapport. Mais votre DPE en porte : sa page « recommandations » chiffre en fourchette le ou les bouquets de travaux qu’il propose — une estimation calculée sur des moyennes, faite sans avoir vu votre chantier. Le seul chiffre qui vous engagera est celui d’un devis signé.'
+      };
+    }
   },
 
   {

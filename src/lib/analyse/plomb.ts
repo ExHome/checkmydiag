@@ -108,10 +108,21 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
 
   const faits: Fait[] = [];
   if (chiffres) {
+    /*
+     * Le total comprend les unités non mesurées — le contrôle de cohérence de
+     * ce fichier le prouve : total = non mesurées + classes 0 à 3. Annoncer ce
+     * total comme « éléments contrôlés » revenait à compter comme vérifié ce
+     * que personne n'avait mesuré, et c'était la première tuile de la carte.
+     * Une unité non mesurée reste inconnue ; elle n'est pas réputée saine.
+     */
+    const mesurees = chiffres.total - chiffres.nonMesurees;
     faits.push({
-      libelle: 'Éléments contrôlés',
-      valeur: String(chiffres.total),
-      precision: 'murs, portes, plinthes, fenêtres…'
+      libelle: 'Unités mesurées',
+      valeur: String(mesurees),
+      precision:
+        chiffres.nonMesurees > 0
+          ? `sur ${chiffres.total} au total — ${chiffres.nonMesurees} non mesurées`
+          : 'murs, portes, plinthes, fenêtres…'
     });
     faits.push({
       libelle: 'En mauvais état',

@@ -46,6 +46,16 @@ export function analyserTermites(lignes: string[], plage: [number, number]): Dia
     /(?:il a [ée]t[ée] rep[ée]r[ée]|pr[ée]sence)[^.]*(?:indice|infestation)[^.]*termites?/i
   );
 
+  /*
+   * A-t-on seulement lu quelque chose ?
+   *
+   * Sans cette question, un rapport dont rien n'est reconnu — page scannée,
+   * modèle inhabituel — tombait dans la branche « pas d'infestation » : le
+   * produit affirmait en vert l'absence d'indices qu'il n'avait jamais lus.
+   * Un silence n'est pas une absence, et cette phrase-là part chez le notaire.
+   */
+  const conclusionLue =
+    !!phraseAbsence || !!phrasePresence || infestees.length > 0 || zones.length > 0;
   const infeste = infestees.length > 0 || (!!phrasePresence && !phraseAbsence);
 
   const faits: Fait[] = [];
@@ -63,10 +73,12 @@ export function analyserTermites(lignes: string[], plage: [number, number]): Dia
   return {
     type: 'termites',
     titre: 'Termites',
-    verdict: infeste
-      ? `Des indices d’infestation de termites ont été relevés${infestees.length ? ` dans ${infestees.length} zone${infestees.length > 1 ? 's' : ''}` : ''}.`
-      : 'Aucun indice d’infestation de termites n’a été relevé dans les parties visitées.',
-    gravite: infeste ? 'alerte' : 'bon',
+    verdict: !conclusionLue
+      ? 'Un état termites figure au dossier ; sa conclusion n’a pas pu être lue automatiquement.'
+      : infeste
+        ? `Des indices d’infestation de termites ont été relevés${infestees.length ? ` dans ${infestees.length} zone${infestees.length > 1 ? 's' : ''}` : ''}.`
+        : 'Aucun indice d’infestation de termites n’a été relevé dans les parties visitées.',
+    gravite: !conclusionLue ? 'neutre' : infeste ? 'alerte' : 'bon',
     faits,
     analogie:
       'Les termites mangent le bois de l’intérieur et laissent la surface intacte. C’est la pomme véreuse : de l’extérieur, elle est parfaite.',

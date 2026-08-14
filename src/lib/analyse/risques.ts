@@ -27,7 +27,10 @@ const DETECTEURS: Detecteur[] = [
   },
   {
     nom: 'Sismicité',
-    positif: /risque sismique \(niveau (\d)[^)]*\)/i,
+    /* Deux formulations courantes : « risque sismique (niveau 3) » dans les
+       modèles anciens, « zone de sismicité de niveau 3 » dans les récents. La
+       seconde n'était pas reconnue, et le risque disparaissait du verdict. */
+    positif: /risque sismique \(niveau (\d)[^)]*\)|zone de sismicit[ée](?:[^.]{0,20}niveau)?\s*(\d)/i,
     niveau: 'attention'
   },
   {
@@ -72,8 +75,16 @@ export function analyserErp(lignes: string[], plage: [number, number]): Diagnost
   // Le formulaire ERP énumère tous les risques existants pour que le
   // diagnostiqueur coche les bons — et les cases sont des images. On ne lit donc
   // que les phrases rédigées, celles qui affirment quelque chose sur ce bien.
+  /*
+   * Le filtre ne connaissait que « le bien se situe / ne se situe pas ».
+   *
+   * Les rapports écrivent aussi « l'immeuble », « la parcelle », « le terrain »,
+   * et énoncent la sismicité ou le potentiel radon sans nommer le bien du tout.
+   * Ces lignes-là étaient écartées, et le diagnostic ressortait « aucun risque »
+   * alors que le document en portait.
+   */
   const affirmations = lignes.filter((l) =>
-    /le bien (?:se situe|ne se situe|est )|est ainsi concern[ée]|^\s*-\s*le risque|^le risque|la commune dans laquelle/i.test(
+    /(?:le bien|l['’]immeuble|la parcelle|le terrain|le logement) (?:se situe|ne se situe|est |n['’]est )|est ainsi concern[ée]|^\s*-\s*le risque|^le risque|la commune dans laquelle|zone de sismicit[ée]|potentiel radon|zone [àa] potentiel/i.test(
       l
     )
   );
@@ -105,10 +116,27 @@ export function analyserErp(lignes: string[], plage: [number, number]): Diagnost
   return {
     type: 'erp',
     titre: 'Risques et pollutions (ERP)',
-    verdict: concernes.length
-      ? `Le bien est concerné par : ${concernes.map((r) => r.nom.toLowerCase() + (r.detail ? ` (${r.detail})` : '')).join(', ')}.`
-      : 'Aucun risque majeur recensé pour ce bien dans les documents consultés.',
-    gravite: alertes.length ? 'alerte' : concernes.length ? 'attention' : 'bon',
+    /*
+     * Rien de reconnu ne veut pas dire aucun risque.
+     *
+     * Les cases du formulaire sont des images : le moteur ne lit que les
+     * phrases rédigées. Quand aucune n'est reconnue, il n'a rien lu — et
+     * répondre « aucun risque majeur recensé » revenait à rassurer sur un
+     * document qu'on n'avait pas ouvert. On renvoie donc au tableau du rapport
+     * et à Géorisques, la base officielle dont l'état des risques est tiré.
+     */
+    verdict: risques.length
+      ? concernes.length
+        ? `Le bien est concerné par : ${concernes.map((r) => r.nom.toLowerCase() + (r.detail ? ` (${r.detail})` : '')).join(', ')}.`
+        : 'Aucun risque majeur recensé pour ce bien dans les documents consultés.'
+      : 'Nous n’avons pas réussi à lire la liste des risques de ce document. Cela ne veut pas dire qu’il n’y en a pas : reportez-vous au tableau de votre état des risques, et vérifiez votre adresse sur Géorisques.',
+    gravite: !risques.length
+      ? 'neutre'
+      : alertes.length
+        ? 'alerte'
+        : concernes.length
+          ? 'attention'
+          : 'bon',
     faits,
     analogie:
       'L’argile, c’est une éponge. Quand il pleut, elle gonfle. Quand il fait sec, elle rétrécit. Et votre maison est posée dessus : elle suit le mouvement, et les murs finissent par se fissurer.',
@@ -235,7 +263,27 @@ export function analyserAssainissement(lignes: string[], plage: [number, number]
   const collectif = /eaux us[ée]es se d[ée]versent dans le r[ée]seau d'assainissement collectif/i.test(texte);
   const autonome = /assainissement non collectif|\bSPANC\b|fosse (?:septique|toutes eaux)|[ée]pandage/i.test(texte);
   const pluvialesMelees = /eaux pluviales[^.]{0,120}identique aux eaux us[ée]es/i.test(texte);
-  const nonConforme = /non[- ]conform/i.test(texte);
+  /*
+   * Le rappel légal n'est pas un constat.
+   *
+   * Presque tous les rapports du SPANC — y compris ceux qui concluent à la
+   * conformité — recopient l'article L. 1331-11-1 : « en cas de non-conformité,
+   * les travaux sont réalisés dans un délai d'un an après l'acte de vente ». La
+   * recherche brute de « non conform » attrapait ce rappel et mettait en alerte
+   * une installation validée. On écarte donc d'abord les tournures
+   * conditionnelles, puis on n'accepte qu'une conclusion portant sur
+   * l'installation elle-même.
+   */
+  const sansRappelLegal = texte.replace(
+    /(?:en cas de|lorsqu[e’']|si)\s+(?:l[e’']\s*)?(?:installation|dispositif)?[^.]{0,120}non[- ]conform[^.]*\./gi,
+    ' '
+  );
+  const nonConforme = /(?:avis|conclusion|installation|dispositif)[^.]{0,80}non[- ]conform/i.test(
+    sansRappelLegal
+  );
+  const conforme =
+    /(?:avis|conclusion|installation|dispositif)[^.]{0,80}\bconforme\b/i.test(sansRappelLegal) &&
+    !nonConforme;
 
   const faits: Fait[] = [];
   if (collectif) faits.push({ libelle: 'Raccordement', valeur: 'réseau collectif' });
@@ -251,6 +299,11 @@ export function analyserAssainissement(lignes: string[], plage: [number, number]
   if (nonConforme) {
     verdict = 'L’installation d’assainissement a été jugée non conforme.';
     gravite = 'attention';
+  } else if (conforme) {
+    // Cette branche n'existait pas : un avis de conformité explicite tombait
+    // dans le cas général et se lisait comme une absence de conclusion.
+    verdict = 'L’installation d’assainissement a été jugée conforme.';
+    gravite = 'bon';
   } else if (collectif) {
     verdict = 'Le logement est raccordé au réseau d’assainissement collectif de la commune.';
     gravite = 'bon';

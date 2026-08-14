@@ -48,7 +48,19 @@ export const NOTIONS_ERP: Notion[] = [
         const cites = erp.schema.risques.filter((r) => r.niveau !== 'bon').map((r) => r.nom);
         if (cites.length)
           return { etat: 'dit', phrase: `Votre adresse est exposée à : ${cites.join(', ')}.` };
-        return { etat: 'dit', phrase: 'Aucun risque n’est coché à votre adresse dans ce document.' };
+        /*
+         * Deux fautes tenaient dans cette phrase. Le mot « coché » décrivait une
+         * lecture que le moteur ne fait pas — les cases du formulaire sont des
+         * images, seules les phrases rédigées sont lues. Et un seul détecteur
+         * négatif suffisait à la déclencher, alors que la sismicité, le radon,
+         * les argiles, la pollution des sols, les PPRT et l'inondation n'avaient
+         * pas été regardés.
+         */
+        return {
+          etat: 'dit',
+          phrase:
+            'Parmi les risques que nous savons lire, aucun n’est signalé ici — et nous n’en lisons qu’une partie. La liste complète est dans le tableau de votre état des risques : vérifiez-la, et comparez avec Géorisques.'
+        };
       }
       return { etat: 'dit', phrase: erp.verdict };
     }
