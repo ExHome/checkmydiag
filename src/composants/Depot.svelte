@@ -203,24 +203,36 @@
 />
 
 <style>
+  /*
+   * La zone de dépôt, au format de la charte : trois pixels de teal, un voile
+   * de la même teinte, huit de rayon. Trois états, trois couleurs — au repos le
+   * teal, au survol le corail, et l'ambre au moment précis où le fichier est
+   * au-dessus. C'est cette troisième couleur qui dit « lâchez ».
+   */
   .depot {
     display: block;
     width: 100%;
     font: inherit;
     color: inherit;
-    border: 2px dashed var(--vert-300);
-    border-radius: 20px;
-    background: linear-gradient(180deg, var(--papier), var(--papier-doux));
-    padding: clamp(28px, 7vw, 56px) 24px;
+    border: 3px solid var(--teal);
+    border-radius: 8px;
+    background: rgb(61 175 168 / 4%);
+    padding: var(--e7) var(--e6);
     text-align: center;
     cursor: pointer;
-    transition: border-color 0.15s ease, background 0.15s ease;
+    transition:
+      border-color var(--duree) ease,
+      background var(--duree) ease;
   }
 
-  .depot:hover:not(:disabled),
+  .depot:hover:not(:disabled) {
+    border-color: var(--coral);
+    background: rgb(245 107 93 / 3%);
+  }
+
   .depot.survol {
-    border-color: var(--vert-500);
-    background: var(--vert-100);
+    border-color: var(--amber);
+    background: rgb(245 166 35 / 5%);
   }
 
   .depot:disabled {
@@ -289,14 +301,32 @@
     gap: var(--e2);
   }
 
+  /* La pastille de la charte : filet de teal, voile de la même teinte, et un
+     soulèvement au survol qui passe au corail. */
   .badges li {
-    padding: var(--e2) var(--e3);
-    background: var(--papier);
-    border: 1px solid var(--trait-fin);
-    border-radius: var(--rayon);
+    padding: var(--e4) var(--e3);
+    background: rgb(61 175 168 / 8%);
+    border: 2px solid var(--teal);
+    border-radius: var(--rayon-badge);
     font-size: var(--t-petit);
     font-weight: 600;
-    color: var(--vert-700);
+    color: var(--sur-fond);
+    transition:
+      border-color var(--duree) ease,
+      background var(--duree) ease,
+      transform var(--duree) ease;
+  }
+
+  .badges li:hover {
+    border-color: var(--coral);
+    background: rgb(245 107 93 / 8%);
+    transform: translateY(-2px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .badges li:hover {
+      transform: none;
+    }
   }
 
   .reserve-lisibles {
@@ -398,18 +428,25 @@
     color: var(--encre-doux);
   }
 
+  /* L'appel principal de l'écran : le bouton de la charte, corail plein, avec
+     son ombre de la même couleur. Il était en navy à angles vifs — il attendait
+     au lieu d'inviter. */
   .faux-bouton {
     display: inline-block;
-    margin-top: var(--e4);
-    background: var(--vert-700);
+    margin-top: var(--e5);
+    background: var(--coral);
     color: #fff;
-    border-radius: 0;
-    padding: var(--e3) var(--e5);
+    border-radius: var(--rayon);
+    padding: 14px 40px;
+    font-size: 0.9375rem;
     font-weight: 600;
+    box-shadow: 0 4px 12px rgb(245 107 93 / 15%);
+    transition: background var(--duree) ease, box-shadow var(--duree) ease;
   }
 
   .depot:hover:not(:disabled) .faux-bouton {
-    background: var(--vert-500);
+    background: #f18577;
+    box-shadow: 0 6px 16px rgb(245 107 93 / 20%);
   }
 
   .barre {

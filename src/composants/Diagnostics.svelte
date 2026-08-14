@@ -458,13 +458,13 @@
   }
 
   .onglet-diag.bon {
-    --gravite: #5fb489;
+    --gravite: var(--sage);
   }
   .onglet-diag.attention {
-    --gravite: #d9a03f;
+    --gravite: var(--amber);
   }
   .onglet-diag.alerte {
-    --gravite: #d4604a;
+    --gravite: var(--coral);
   }
   .onglet-diag.neutre {
     --gravite: var(--sur-fond-doux);
@@ -621,13 +621,13 @@
   }
 
   .fiche-diag.bon {
-    --gravite-fiche: #5fb489;
+    --gravite-fiche: var(--sage);
   }
   .fiche-diag.attention {
-    --gravite-fiche: #d9a03f;
+    --gravite-fiche: var(--amber);
   }
   .fiche-diag.alerte {
-    --gravite-fiche: #d4604a;
+    --gravite-fiche: var(--coral);
   }
   .fiche-diag.neutre {
     --gravite-fiche: var(--sur-fond-doux);
@@ -652,13 +652,13 @@
   }
 
   .fiche-diag.bon {
-    --gravite: #4c9c72;
+    --gravite: var(--sage);
   }
   .fiche-diag.attention {
-    --gravite: #c98a2e;
+    --gravite: var(--amber);
   }
   .fiche-diag.alerte {
-    --gravite: #c0503c;
+    --gravite: var(--coral);
   }
   .fiche-diag.neutre {
     --gravite: var(--sur-fond-doux);

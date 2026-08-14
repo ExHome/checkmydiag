@@ -600,13 +600,13 @@
   }
 
   .verdict.mauvais {
-    --ton: #d4604a;
+    --ton: var(--coral);
   }
   .verdict.moyen {
-    --ton: #d9a03f;
+    --ton: var(--amber);
   }
   .verdict.bon {
-    --ton: #5fb489;
+    --ton: var(--sage);
   }
 
   .tete {
@@ -885,13 +885,13 @@
   }
 
   .tuile.bon {
-    --gravite: #5fb489;
+    --gravite: var(--sage);
   }
   .tuile.attention {
-    --gravite: #d9a03f;
+    --gravite: var(--amber);
   }
   .tuile.alerte {
-    --gravite: #d4604a;
+    --gravite: var(--coral);
   }
   .tuile.neutre {
     --gravite: var(--sur-fond-doux);
@@ -990,15 +990,15 @@
   /* La couleur porte le niveau, mais elle n'est pas seule à le faire : le mot
      le dit aussi. Personne ne dépend de la couleur pour comprendre. */
   .repartition .mauvais {
-    --teinte-niveau: #d4604a;
+    --teinte-niveau: var(--coral);
   }
 
   .repartition .moyen {
-    --teinte-niveau: #d9a03f;
+    --teinte-niveau: var(--amber);
   }
 
   .repartition .bon {
-    --teinte-niveau: #5fb489;
+    --teinte-niveau: var(--sage);
   }
 
   .repartition div dt {
@@ -1036,6 +1036,11 @@
     gap: var(--e1);
   }
 
+  /*
+   * La ligne de résultat de la charte : fond blanc, filet de quatre pixels à
+   * gauche à la couleur du ton, et un voile de cette même couleur. Elle se
+   * soulève de deux pixels au survol — assez pour dire qu'elle s'ouvre.
+   */
   .entree {
     display: flex;
     align-items: center;
@@ -1044,31 +1049,47 @@
     /* Une cible confortable au pouce : la ligne fait toute la largeur. */
     min-height: 52px;
     text-align: left;
-    background: var(--surface-forte);
+    background: var(--voile, var(--papier));
     border: none;
-    border-left: 3px solid var(--marque);
-    border-radius: 0;
-    padding: var(--e3) var(--e4);
+    border-left: 4px solid var(--marque);
+    border-radius: var(--rayon);
+    padding: var(--e4);
     color: var(--sur-fond);
     font-size: var(--t-base);
     font-weight: 600;
     line-height: 1.4;
     cursor: pointer;
-    transition: background 0.18s ease;
+    box-shadow: var(--ombre);
+    transition:
+      transform var(--duree) ease,
+      box-shadow var(--duree) ease,
+      border-color var(--duree) ease;
   }
 
   .entree:hover {
-    background: var(--surface-bord);
+    transform: translateY(-2px);
+    box-shadow: var(--ombre-forte);
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    .entree:hover {
+      transform: none;
+    }
+  }
+
+  /* Les trois états de la charte : corail pour ce qui bloque, ambre pour ce qui
+     se surveille, sage pour ce qui va. Chacun pose son filet et son voile. */
   li.mauvais .entree {
-    --marque: #d4604a;
+    --marque: var(--coral);
+    --voile: rgb(245 107 93 / 8%);
   }
   li.moyen .entree {
-    --marque: #d9a03f;
+    --marque: var(--amber);
+    --voile: rgb(245 166 35 / 10%);
   }
   li.bon .entree {
-    --marque: #5fb489;
+    --marque: var(--sage);
+    --voile: rgb(123 168 153 / 10%);
   }
 
   /* La pastille reprend la silhouette du voyant en miniature : carré pour ce

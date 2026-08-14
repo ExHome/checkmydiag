@@ -1499,13 +1499,13 @@
   }
 
   .etiquette.bon {
-    --teinte-legende: #4c9c72;
+    --teinte-legende: var(--sage);
   }
   .etiquette.moyen {
-    --teinte-legende: #c98a2e;
+    --teinte-legende: var(--amber);
   }
   .etiquette.mauvais {
-    --teinte-legende: #c0503c;
+    --teinte-legende: var(--coral);
   }
 
   .etiquette:hover,
@@ -1521,13 +1521,13 @@
   }
 
   .reponse.bon {
-    --teinte-legende: #4c9c72;
+    --teinte-legende: var(--sage);
   }
   .reponse.moyen {
-    --teinte-legende: #c98a2e;
+    --teinte-legende: var(--amber);
   }
   .reponse.mauvais {
-    --teinte-legende: #c0503c;
+    --teinte-legende: var(--coral);
   }
 
   .reponse li {
