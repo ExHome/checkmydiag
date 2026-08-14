@@ -11,6 +11,34 @@
  */
 import type { Diagnostic } from './modele';
 
+/**
+ * D'où part l'ouverture : le carré occupé par l'icône au moment du clic.
+ *
+ * L'écran du diagnostic naît de là et y retourne en se refermant. Sans ce
+ * repère, une fenêtre apparaîtrait au milieu de l'écran sans qu'on sache d'où —
+ * c'est la différence entre ouvrir une application et afficher une boîte.
+ */
+export interface Origine {
+  x: number;
+  y: number;
+  largeur: number;
+  hauteur: number;
+}
+
+/**
+ * Le carré d'où part l'ouverture, mesuré sur l'élément cliqué.
+ *
+ * Rien n'est deviné : si l'élément n'a pas de dimensions — page en cours de
+ * mise en page, impression —, on ne renvoie rien et l'écran s'ouvre depuis le
+ * centre, ce qui reste juste.
+ */
+export function origineDe(element: Element | null | undefined): Origine | null {
+  if (!element) return null;
+  const r = element.getBoundingClientRect();
+  if (r.width <= 0 || r.height <= 0) return null;
+  return { x: r.left, y: r.top, largeur: r.width, hauteur: r.height };
+}
+
 export interface CompteDuDossier {
   /** Ce qui appelle une action avant la signature. */
   aRegler: number;

@@ -20,6 +20,9 @@
   import { enPratique, FICHES } from '../lib/analyse/fiches';
   import { echeance } from '../lib/echeance';
   import { etiquetteDe } from '../lib/analyse/confiance';
+  import type { Origine } from '../lib/bureau';
+  import { cubicOut } from 'svelte/easing';
+  import { tick, untrack } from 'svelte';
 
   interface Props {
     analyse: Analyse;
@@ -27,9 +30,25 @@
     surVoirDansLeRapport?: (type: Diagnostic['type']) => void;
     /** Le diagnostic demandé de l'extérieur : le carrousel vient dessus. */
     ouvrir?: TypeDiag | null;
+    /**
+     * Le carré de l'icône cliquée. S'il est là, le diagnostic s'ouvre en plein
+     * écran depuis ce point ; sinon le carrousel se contente de se positionner.
+     */
+    origine?: Origine | null;
+    /**
+     * Le numéro de la demande. Sans lui, redemander deux fois le même
+     * diagnostic ne déclencherait rien : la valeur n'aurait pas changé.
+     */
+    demande?: number;
   }
 
-  const { analyse, surVoirDansLeRapport, ouvrir = null }: Props = $props();
+  const {
+    analyse,
+    surVoirDansLeRapport,
+    ouvrir = null,
+    origine = null,
+    demande = 0
+  }: Props = $props();
 
   /** « page 12 » ou « pages 12 à 18 » — le lecteur y va, il ne devine pas. */
   function pageDite([debut, fin]: [number, number]): string {
@@ -52,12 +71,138 @@
   /** Le volet courant, borné : le dossier peut changer sous nos pieds. */
   const courant = $derived(Math.min(index, Math.max(0, diags.length - 1)));
 
-  // Une demande venue de l'état descriptif amène le carrousel sur ce diagnostic.
+  /* ---- Entrer dans l'application -------------------------------------------
+     Cliquer une icône ne fait pas défiler la page : ça ouvre l'écran du
+     diagnostic, en grand, depuis l'icône elle-même. On en ressort par la flèche
+     ou par Échap, et l'écran se replie là d'où il est venu.
+
+     Le contenu ne change pas d'un pouce entre les deux états — c'est le même
+     dossier, rendu au même endroit du code. Seul son cadre change. */
+  let pleinEcran = $state(false);
+  /** Le carré d'où l'écran s'ouvre, figé au moment du clic. */
+  let depuis = $state<Origine | null>(null);
+
+  // Une demande venue de l'accueil ou de l'état descriptif : on se positionne,
+  // et si l'on sait d'où part le geste, on ouvre en grand.
   $effect(() => {
-    if (!ouvrir) return;
-    const i = diags.findIndex((d) => d.type === ouvrir);
-    if (i >= 0) versLe(i);
+    // Lue en premier : c'est elle qui fait rejouer l'effet à chaque demande,
+    // même quand on redemande le diagnostic déjà affiché.
+    demande;
+    const type = ouvrir;
+    if (!type) return;
+
+    /*
+     * Hors du suivi des dépendances, et c'est tout l'enjeu.
+     *
+     * `versLe` lit le volet courant pour savoir s'il doit bouger. Lu ici, cet
+     * état devenait une dépendance de l'effet : changer de diagnostic dans
+     * l'écran relançait l'effet, qui ramenait aussitôt sur le diagnostic
+     * d'ouverture. On ne pouvait plus feuilleter — le carrousel revenait
+     * toujours à sa première fiche.
+     */
+    untrack(() => {
+      const i = diags.findIndex((d) => d.type === type);
+      if (i < 0) return;
+      versLe(i);
+      if (origine) {
+        depuis = origine;
+        pleinEcran = true;
+      }
+    });
   });
+
+  /** L'élément d'où l'on est parti : le clavier doit y revenir en ressortant. */
+  let revenirVers: HTMLElement | null = null;
+
+  function fermerLApp(): void {
+    pleinEcran = false;
+    revenirVers?.focus();
+    revenirVers = null;
+  }
+
+  /**
+   * Le clavier entre avec l'écran et en ressort avec lui.
+   *
+   * Sans cela, la personne qui tabule reste sur l'icône qu'elle vient
+   * d'activer, derrière un écran qui couvre tout : elle parcourt une page
+   * qu'elle ne voit plus.
+   */
+  $effect(() => {
+    if (!pleinEcran) return;
+    const actif = document.activeElement;
+    revenirVers = actif instanceof HTMLElement ? actif : null;
+    // Après le rendu : l'effet tourne avant que la barre de l'écran existe.
+    void tick().then(() => document.querySelector<HTMLElement>('.retour')?.focus());
+  });
+
+  /*
+   * Pendant qu'une application est ouverte, la page ne défile pas dessous.
+   * Sans ce verrou, le doigt qui parcourt la fiche fait glisser l'accueil
+   * derrière, et l'on ressort ailleurs qu'où l'on est entré.
+   */
+  $effect(() => {
+    if (!pleinEcran) return;
+    const avant = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = avant;
+    };
+  });
+
+  /**
+   * L'ouverture : l'écran naît du carré de l'icône et s'étend.
+   *
+   * Svelte joue la même fonction à l'envers pour la fermeture — l'écran se
+   * replie exactement là d'où il est parti, ce qu'aucune paire d'animations
+   * écrites séparément ne garantit.
+   */
+  function commeUneApp(_: Element, { carre }: { carre: Origine | null }) {
+    /*
+     * Qui a demandé moins d'animation n'en reçoit pas.
+     *
+     * Svelte n'applique pas ce réglage tout seul aux transitions écrites à la
+     * main : sans cette ligne, l'écran s'agrandirait quand même sous les yeux
+     * d'une personne qui a réglé son système pour l'éviter. Durée nulle, l'écran
+     * est simplement là.
+     */
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return { duration: 0 };
+    }
+
+    /*
+     * Une page qu'on ne regarde pas ne s'anime pas.
+     *
+     * Dans un onglet passé en arrière-plan, le navigateur suspend l'horloge des
+     * animations : celle-ci resterait figée sur sa première image — un écran
+     * réduit au format d'une icône — jusqu'au retour du lecteur. Sans
+     * animation, l'écran est simplement là, ce qui est le bon résultat.
+     */
+    if (document.visibilityState !== 'visible') {
+      return { duration: 0 };
+    }
+
+    const largeur = window.innerWidth;
+    const hauteur = window.innerHeight;
+    const o = carre ?? {
+      x: largeur / 2 - 38,
+      y: hauteur / 2 - 38,
+      largeur: 76,
+      hauteur: 76
+    };
+
+    const echelle = Math.max(o.largeur / largeur, 0.05);
+    const versX = o.x + o.largeur / 2 - largeur / 2;
+    const versY = o.y + o.hauteur / 2 - hauteur / 2;
+
+    return {
+      duration: 360,
+      easing: cubicOut,
+      css: (t: number, u: number) =>
+        `transform: translate(${versX * u}px, ${versY * u}px) scale(${1 - u * (1 - echelle)});
+         border-radius: ${u * 64}px;
+         opacity: ${Math.min(1, t * 2.5)};`
+    };
+  }
 
   function versLe(i: number): void {
     if (i < 0 || i >= diags.length || i === index) return;
@@ -243,7 +388,20 @@
   }
 </script>
 
-<section class="diagnostics">
+<svelte:window
+  onkeydown={(e) => {
+    if (e.key === 'Escape' && pleinEcran) fermerLApp();
+  }}
+/>
+
+<!--
+  Le dossier, écrit une seule fois.
+
+  Il s'affiche dans la page, ou en grand par-dessus quand on entre depuis une
+  icône. Deux rendus du même contenu : ce qu'on lit ne dépend pas de la façon
+  dont on y est arrivé.
+-->
+{#snippet dossier()}
   <!--
     Le bandeau des diagnostics : un onglet par rapport, celui qu'on lit en
     relief. C'est la carte du dossier — on sait toujours où l'on est et ce qui
@@ -433,11 +591,131 @@
       Suivant <span aria-hidden="true">→</span>
     </button>
   </nav>
-</section>
+{/snippet}
+
+{#if pleinEcran}
+  <!-- L'application ouverte. Elle couvre l'écran : plus de page derrière, plus
+       de bandeau du site, rien d'autre que le diagnostic qu'on a demandé. -->
+  <div
+    class="app"
+    role="dialog"
+    aria-modal="true"
+    aria-label={diags[courant]?.titre ?? 'Diagnostic'}
+    transition:commeUneApp={{ carre: depuis }}
+  >
+    <header class="barre-app">
+      <button type="button" class="retour" onclick={fermerLApp}>
+        <span aria-hidden="true">←</span> Retour
+      </button>
+      <p class="nom-app">{diags[courant]?.titre ?? ''}</p>
+    </header>
+
+    <div class="dedans">
+      <section class="diagnostics">
+        {@render dossier()}
+      </section>
+    </div>
+  </div>
+{:else}
+  <section class="diagnostics">
+    {@render dossier()}
+  </section>
+{/if}
 
 <style>
   .diagnostics {
     margin-bottom: var(--e6);
+  }
+
+  /* ---- L'application ouverte ----------------------------------------------
+     Elle couvre l'écran, fond compris : c'est ce qui fait la différence entre
+     entrer quelque part et regarder une fenêtre posée sur une page. Le carré
+     d'où elle vient est donné par la transition, pas par ce style. */
+  .app {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: var(--fond);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    will-change: transform;
+  }
+
+  /* La barre du haut : la sortie à gauche, le nom du diagnostic à côté. Elle ne
+     défile pas — on doit pouvoir ressortir depuis n'importe quel endroit de la
+     fiche, sans remonter. */
+  .barre-app {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: var(--e3);
+    padding: var(--e2) var(--e3);
+    background: rgb(255 255 255 / 82%);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--trait);
+  }
+
+  .retour {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 44px;
+    padding: 0 var(--e3);
+    background: transparent;
+    border: none;
+    border-radius: var(--rayon-badge);
+    color: var(--coral-texte);
+    font-size: var(--t-base);
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .retour:hover {
+    background: var(--or-pale);
+  }
+
+  .nom-app {
+    margin: 0;
+    min-width: 0;
+    font-size: var(--t-petit);
+    font-weight: 700;
+    color: var(--sur-fond);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Le contenu défile seul, sous la barre. */
+  .dedans {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: var(--e4) var(--e4) var(--e7);
+  }
+
+  .dedans .diagnostics {
+    max-width: 900px;
+    margin-inline: auto;
+    margin-bottom: 0;
+  }
+
+  /* Une application ne s'imprime pas : c'est le dossier qu'on imprime. */
+  @media print {
+    .app {
+      position: static;
+      background: none;
+    }
+
+    .barre-app {
+      display: none;
+    }
+
+    .dedans {
+      overflow: visible;
+      padding: 0;
+    }
   }
 
   /* ---- Le bandeau des diagnostics ---------------------------------------

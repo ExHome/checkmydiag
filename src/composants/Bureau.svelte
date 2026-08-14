@@ -14,12 +14,15 @@
    */
   import type { Analyse, Diagnostic, TypeDiag } from '../lib/modele';
   import { libelleCourt } from '../lib/libelle';
-  import { compterLeDossier, phraseDuDossier } from '../lib/bureau';
+  import { compterLeDossier, origineDe, phraseDuDossier, type Origine } from '../lib/bureau';
 
   interface Props {
     analyse: Analyse;
-    /** Ouvre l'analyse sur ce diagnostic — c'est la promesse de la tuile. */
-    surOuvrirDiagnostic?: (type: TypeDiag) => void;
+    /**
+     * Ouvre le diagnostic. Le carré transmis est celui de l'icône : l'écran
+     * s'ouvre depuis elle, comme une application depuis son icône.
+     */
+    surOuvrirDiagnostic?: (type: TypeDiag, origine?: Origine | null) => void;
     /** Va à l'une des trois parties du dossier. */
     surVue?: (cle: string) => void;
   }
@@ -100,6 +103,18 @@
    */
   const phrase = $derived(phraseDuDossier(compte));
 
+  /**
+   * Le geste d'ouverture.
+   *
+   * On mesure l'icône au moment du clic, jamais avant : entre le premier rendu
+   * et le clic, la page a pu défiler, et l'écran partirait alors d'un endroit
+   * où l'icône n'est plus.
+   */
+  function ouvrir(evenement: MouseEvent, type: TypeDiag): void {
+    const bouton = evenement.currentTarget as HTMLElement;
+    surOuvrirDiagnostic?.(type, origineDe(bouton.querySelector('.icone')));
+  }
+
   /** La pastille d'état posée sur la tuile : une forme, puis une couleur. */
   function pastille(d: Diagnostic): { signe: string; classe: string } | null {
     if (d.gravite === 'alerte') return { signe: '▲', classe: 'alerte' };
@@ -167,7 +182,7 @@
       {@const t = TUILES[d.type]}
       {@const p = pastille(d)}
       <li>
-        <button type="button" class="tuile" onclick={() => surOuvrirDiagnostic?.(d.type)}>
+        <button type="button" class="tuile" onclick={(e) => ouvrir(e, d.type)}>
           <span class="icone" style="background: {t.degrade}">
             <span class="signe" aria-hidden="true">{t.signe}</span>
             {#if p}

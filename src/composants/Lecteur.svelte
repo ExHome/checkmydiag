@@ -14,6 +14,7 @@
    */
   import { tick } from 'svelte';
   import type { Analyse, Diagnostic, TypeDiag } from '../lib/modele';
+  import type { Origine } from '../lib/bureau';
   import type { PageRendue, Photo } from '../lib/pdf';
   import Explicatif from './schemas/Explicatif.svelte';
   import MiniSchema from './MiniSchema.svelte';
@@ -176,11 +177,21 @@
     });
   }
 
-  function ouvrirDansLAnalyse(type: TypeDiag): void {
+  /** Le carré de l'icône cliquée : l'écran du diagnostic s'ouvrira de là. */
+  let origineIcone = $state<Origine | null>(null);
+  /** Le numéro de la demande : redemander le même diagnostic doit le rouvrir. */
+  let demandeNo = $state(0);
+
+  function ouvrirDansLAnalyse(type: TypeDiag, origine: Origine | null = null): void {
     vue = 'point';
     diagOuvert = type;
-    // Le carrousel est plus bas que le bandeau du bien : sans ce saut, le clic
-    // changeait un écran qu'on ne voyait pas.
+    origineIcone = origine;
+    demandeNo += 1;
+
+    // Quand on sait d'où part le geste, l'écran s'ouvre par-dessus : rien à
+    // faire défiler. Sinon, le carrousel est plus bas que le bandeau du bien,
+    // et sans ce saut le clic changerait un écran qu'on ne voit pas.
+    if (origine) return;
     requestAnimationFrame(() => {
       document.getElementById('analyse-diags')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
@@ -395,7 +406,13 @@
       <!-- Le dossier diagnostic par diagnostic. On les feuillette : un volet à
            la fois, le bandeau dit lequel. La fiche donne le verdict, le rapport
            en donne la preuve. -->
-      <Diagnostics {analyse} surVoirDansLeRapport={allerAuDiagnostic} ouvrir={diagOuvert} />
+      <Diagnostics
+        {analyse}
+        surVoirDansLeRapport={allerAuDiagnostic}
+        ouvrir={diagOuvert}
+        origine={origineIcone}
+        demande={demandeNo}
+      />
     </div>
 
     <div class="vue" class:cachee={vue !== 'rapport'} class:deux-colonnes={true} class:seul={!actif}>

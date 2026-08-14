@@ -21,13 +21,18 @@
   import { libelleCourt } from '../lib/libelle';
   import { echeance } from '../lib/echeance';
   import MotsExpliques from './MotsExpliques.svelte';
+  import { origineDe, type Origine } from '../lib/bureau';
 
   interface Props {
     analyse: Analyse;
     /** La photo du bien, tirée de la page de garde. */
     photo?: Photo | null;
-    /** Ouvre l'analyse sur le diagnostic choisi dans l'état descriptif. */
-    surOuvrirDiagnostic?: (type: TypeDiag) => void;
+    /**
+     * Ouvre le diagnostic choisi dans l'état descriptif. La tuile transmet son
+     * carré : l'écran s'ouvre depuis elle, comme depuis une icône de l'accueil.
+     * Le même geste doit donner le même résultat où qu'on le fasse.
+     */
+    surOuvrirDiagnostic?: (type: TypeDiag, origine?: Origine | null) => void;
   }
 
   const { analyse, photo = null, surOuvrirDiagnostic }: Props = $props();
@@ -415,7 +420,8 @@
               <button
                 type="button"
                 class="tuile {d.gravite}"
-                onclick={() => surOuvrirDiagnostic?.(d.type)}
+                onclick={(e) =>
+                  surOuvrirDiagnostic?.(d.type, origineDe(e.currentTarget as HTMLElement))}
               >
                 <span class="nom-diag">{d.titre}</span>
                 <span class="conclusion">{libelleCourt(d)}</span>
