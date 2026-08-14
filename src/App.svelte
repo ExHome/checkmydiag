@@ -5,7 +5,7 @@
   import Lecteur from './composants/Lecteur.svelte';
   import PanneauSavoir from './composants/savoir/PanneauSavoir.svelte';
   import { exploration } from './lib/savoir/pile.svelte';
-  import { ouvrirPdf, type PageRendue } from './lib/pdf';
+  import { ouvrirPdf, type PageRendue, type Photo } from './lib/pdf';
   import { echecDeLecture } from './lib/echec';
   import { analyser } from './lib/analyse';
   import { pagesExemple } from './lib/exemple';
@@ -39,7 +39,7 @@
    * coup d'œil. Comme le reste, elle est extraite dans le navigateur et n'en
    * sort pas.
    */
-  let photo = $state<string | null>(null);
+  let photo = $state<Photo | null>(null);
   /** Dossiers déjà analysés, gardés sur l'appareil — PDF compris. */
   let dossiers = $state<DossierGarde[]>([]);
   listerDossiers().then((liste) => (dossiers = liste));

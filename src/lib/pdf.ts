@@ -30,10 +30,32 @@ export interface Document {
   prechauffer: () => Promise<void>;
   /**
    * La photo du bien, si le rapport en porte une sur sa page de garde.
-   * Renvoie une image utilisable dans un `<img>`, ou `null`.
+   * Renvoie l'image et ses proportions, ou `null`.
    */
-  photoDuBien: () => Promise<string | null>;
+  photoDuBien: () => Promise<Photo | null>;
   fermer: () => Promise<void>;
+}
+
+export interface Photo {
+  image: string;
+  /** Dimensions de la photo découpée, en pixels — elles donnent son format. */
+  largeur: number;
+  hauteur: number;
+}
+
+/** Une matrice PDF : [a, b, c, d, e, f]. */
+type Matrice = [number, number, number, number, number, number];
+
+/** Le produit de deux matrices, dans l'ordre où le PDF les empile. */
+function multiplier(m: Matrice, n: Matrice): Matrice {
+  return [
+    m[0] * n[0] + m[2] * n[1],
+    m[1] * n[0] + m[3] * n[1],
+    m[0] * n[2] + m[2] * n[3],
+    m[1] * n[2] + m[3] * n[3],
+    m[0] * n[4] + m[2] * n[5] + m[4],
+    m[1] * n[4] + m[3] * n[5] + m[5]
+  ];
 }
 
 export interface PageRendue {
@@ -126,30 +148,56 @@ export async function ouvrirPdf(
           /** La plus grande image de la page, avec son rectangle en points PDF. */
           let cible: { x: number; y: number; largeur: number; hauteur: number } | null = null;
 
+          /*
+           * On rejoue la pile graphique du PDF.
+           *
+           * La première version prenait la dernière matrice `transform` posée
+           * avant l'image. C'était faux, et c'est ce qui décadrait la photo :
+           * un PDF empile ses transformations — `save`, plusieurs `transform`
+           * successifs, `restore` — et la position réelle de l'image est le
+           * produit de toute la pile, pas de sa dernière ligne. Selon la façon
+           * dont le générateur du rapport emboîte ses groupes, on tombait à
+           * côté, parfois de plusieurs centimètres.
+           *
+           * On tient donc la matrice courante comme le ferait le moteur de
+           * rendu, et l'image occupe le carré unité transformé par elle.
+           */
+          let ctm: Matrice = [1, 0, 0, 1, 0, 0];
+          const pile: Matrice[] = [];
+
           for (let i = 0; i < ops.fnArray.length; i++) {
-            if (ops.fnArray[i] !== pdfjs.OPS.paintImageXObject) continue;
+            const op = ops.fnArray[i];
 
-            for (let j = i - 1; j >= 0 && j > i - 12; j--) {
-              if (ops.fnArray[j] !== pdfjs.OPS.transform) continue;
+            if (op === pdfjs.OPS.save) {
+              pile.push([...ctm] as Matrice);
+              continue;
+            }
+            if (op === pdfjs.OPS.restore) {
+              ctm = pile.pop() ?? [1, 0, 0, 1, 0, 0];
+              continue;
+            }
+            if (op === pdfjs.OPS.transform) {
+              ctm = multiplier(ctm, ops.argsArray[i] as Matrice);
+              continue;
+            }
+            if (op !== pdfjs.OPS.paintImageXObject) continue;
 
-              const [a, , , d, e, f] = ops.argsArray[j] as number[];
-              const largeur = Math.abs(a ?? 0);
-              const hauteur = Math.abs(d ?? 0);
+            // Une image occupe le carré unité. Ses quatre coins transformés
+            // donnent le rectangle qu'elle couvre réellement sur la page —
+            // rotation et retournement compris.
+            const [a, b, c, d, e, f] = ctm;
+            const xs = [e, a + e, c + e, a + c + e];
+            const ys = [f, b + f, d + f, b + d + f];
+            const x = Math.min(...xs);
+            const y = Math.min(...ys);
+            const largeur = Math.max(...xs) - x;
+            const hauteur = Math.max(...ys) - y;
 
-              if (largeur < base.width * 0.25) break; // logo, puce, filet
-              const forme = hauteur > 0 ? largeur / hauteur : 0;
-              if (forme < 0.6 || forme > 2.2) break; // bandeau ou colonne
-              if (!cible || largeur > cible.largeur) {
-                // Le coin de l'image est en bas à gauche dans le repère PDF ;
-                // une hauteur négative signifie qu'elle est posée vers le haut.
-                cible = {
-                  x: e ?? 0,
-                  y: (d ?? 0) < 0 ? (f ?? 0) - hauteur : (f ?? 0),
-                  largeur,
-                  hauteur
-                };
-              }
-              break;
+            if (largeur < base.width * 0.25) continue; // logo, puce, filet
+            const forme = hauteur > 0 ? largeur / hauteur : 0;
+            if (forme < 0.5 || forme > 2.4) continue; // bandeau ou colonne
+            if (!cible || largeur * hauteur > cible.largeur * cible.hauteur) {
+              cible = { x, y, largeur, hauteur };
             }
           }
 
@@ -173,27 +221,47 @@ export async function ouvrirPdf(
             ctx.fillRect(0, 0, feuille.width, feuille.height);
             await page.render({ canvasContext: ctx, viewport }).promise;
 
-            // Du repère PDF à celui du canevas : l'axe vertical s'inverse.
-            const hautGauche = viewport.convertToViewportPoint(cible.x, cible.y + cible.hauteur);
+            /*
+             * Du repère PDF à celui du canevas.
+             *
+             * On convertit les deux coins opposés et on reprend le rectangle
+             * entre eux, au lieu de convertir un seul coin en supposant le sens
+             * des axes : une page tournée à quatre-vingt-dix degrés — il y en a
+             * dans les rapports, pour les tableaux en largeur — inverse ce sens
+             * et donnait un découpage à côté de la photo.
+             */
+            const c1 = viewport.convertToViewportPoint(cible.x, cible.y);
+            const c2 = viewport.convertToViewportPoint(
+              cible.x + cible.largeur,
+              cible.y + cible.hauteur
+            );
+            const gauche = Math.round(Math.min(c1[0] ?? 0, c2[0] ?? 0));
+            const haut = Math.round(Math.min(c1[1] ?? 0, c2[1] ?? 0));
+            const large = Math.round(Math.abs((c2[0] ?? 0) - (c1[0] ?? 0)));
+            const haute = Math.round(Math.abs((c2[1] ?? 0) - (c1[1] ?? 0)));
+
+            // Le rectangle doit tenir dans la page dessinée : une photo qui
+            // déborderait donnerait une bande vide sur un bord.
+            if (
+              large < 40 ||
+              haute < 40 ||
+              gauche < -2 ||
+              haut < -2 ||
+              gauche + large > feuille.width + 2 ||
+              haut + haute > feuille.height + 2
+            ) {
+              continue;
+            }
+
             const decoupe = document.createElement('canvas');
-            decoupe.width = Math.round(cible.largeur * echelle);
-            decoupe.height = Math.round(cible.hauteur * echelle);
+            decoupe.width = large;
+            decoupe.height = haute;
             const ctx2 = decoupe.getContext('2d');
             if (!ctx2) continue;
 
-            ctx2.drawImage(
-              feuille,
-              Math.round(hautGauche[0] ?? 0),
-              Math.round(hautGauche[1] ?? 0),
-              decoupe.width,
-              decoupe.height,
-              0,
-              0,
-              decoupe.width,
-              decoupe.height
-            );
+            ctx2.drawImage(feuille, gauche, haut, large, haute, 0, 0, large, haute);
 
-            return decoupe.toDataURL('image/jpeg', 0.78);
+            return { image: decoupe.toDataURL('image/jpeg', 0.82), largeur: large, hauteur: haute };
           } finally {
             feuille.remove();
             page.cleanup();

@@ -14,11 +14,12 @@
    */
   import { tick } from 'svelte';
   import type { Analyse, Diagnostic, TypeDiag } from '../lib/modele';
-  import type { PageRendue } from '../lib/pdf';
+  import type { PageRendue, Photo } from '../lib/pdf';
   import Explicatif from './schemas/Explicatif.svelte';
   import MiniSchema from './MiniSchema.svelte';
   import Fiche from './Fiche.svelte';
   import Curieux from './Curieux.svelte';
+  import MotsExpliques from './MotsExpliques.svelte';
   import Notaire from './Notaire.svelte';
   import Diagnostics from './Diagnostics.svelte';
   import Verdict from './Verdict.svelte';
@@ -30,7 +31,7 @@
     /** Diagnostic demandé de l'extérieur : on descend jusqu'à sa première page. */
     demande?: string | null;
     /** La photo du bien, tirée de la page de garde. */
-    photo?: string | null;
+    photo?: Photo | null;
   }
 
   const { analyse, rendus, demande = null, photo = null }: Props = $props();
@@ -183,8 +184,9 @@
     actif ? (analyse.diagnostics.find((d) => d.type === actif.type) ?? null) : null
   );
 
-  /** Le détail et le schéma, sous la synthèse. Le lecteur décide s'il y va. */
-  let detailOuvert = $state(false);
+  /* Le « tout le détail » a disparu : dans une fenêtre pleine page, les points
+     s'affichent tous. Un bouton pour les révéler laissait croire que le reste
+     du constat était accessoire. */
   let suiteOuverte = $state<string | null>(null);
   /** Le schéma déplié sur tout l'écran. */
   let plein = $state(false);
@@ -220,7 +222,6 @@
   // d'exploration du passage précédent.
   $effect(() => {
     void actifId;
-    detailOuvert = false;
     suiteOuverte = null;
     plein = false;
   });
@@ -233,6 +234,57 @@
 
   function epingler(id: string): void {
     epingle = epingle === id ? null : id;
+  }
+
+  /* ---- La fenêtre d'explication ------------------------------------------
+     L'explication vivait dans une colonne à droite du rapport : sur un
+     téléphone elle passait sous le document, et sur un écran large elle
+     rétrécissait la page qu'on était en train de lire. Elle occupe maintenant
+     l'écran entier — c'est le moment où l'on explique, il mérite toute la
+     place. On ferme, le rapport revient exactement où on l'avait laissé. */
+
+  let fermerFenetreBouton: HTMLButtonElement | undefined = $state();
+
+  async function fermerFenetre(): Promise<void> {
+    const id = actifId;
+    epingle = null;
+
+    /*
+     * Le focus retourne au passage d'où l'on vient : au clavier, on ne repart
+     * pas du haut du document à chaque fermeture.
+     *
+     * Il faut attendre que la fenêtre ait vraiment quitté l'écran. Sans ce
+     * temps d'arrêt, on posait le focus pendant que le bouton « Fermer »
+     * existait encore ; sa disparition, juste après, le renvoyait au corps de
+     * la page — et le lecteur au clavier se retrouvait en haut du document.
+     */
+    if (!id) return;
+    await tick();
+    document.getElementById(`repere-${id}`)?.focus();
+  }
+
+  // À l'ouverture, le focus entre dans la fenêtre : sinon on tabulerait dans le
+  // rapport, derrière un écran qu'on ne voit plus.
+  $effect(() => {
+    if (actif) fermerFenetreBouton?.focus();
+  });
+
+  // Le document ne défile pas derrière la fenêtre : on lisait l'explication et
+  // le rapport partait tout seul sous elle.
+  $effect(() => {
+    if (!actif) return;
+    const avant = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = avant;
+    };
+  });
+
+  function auClavierFenetre(e: KeyboardEvent): void {
+    if (e.key === 'Escape') {
+      if (plein) fermerPlein();
+      else if (actif) fermerFenetre();
+    }
   }
 
   /* ---- La lecture guidée -------------------------------------------------
@@ -391,58 +443,139 @@
         {/if}
       </div>
 
-      <aside class="panneau" class:absent={!actif}>
-        {#if actif}
-          {#key actif.id}
-            <div class="encart apparait" style:--teinte={actif.teinte}>
-              <button type="button" class="retour" onclick={() => (epingle = null)}>
-                ← Retour
+    </div>
+
+    <!--
+      La fenêtre d'explication : elle couvre l'écran.
+
+      C'est ici qu'on devient pédagogue. Le rapport dit une phrase de norme ;
+      cette fenêtre prend le temps de la traduire — ce que le rapport écrit, ce
+      que ça veut dire, le dessin qui le montre, ce qu'on risque, ce qu'il faut
+      faire. Tout est déplié : on n'a pas ouvert une fenêtre pleine page pour y
+      remettre des boutons « voir plus ».
+
+      On ferme, et le rapport reprend exactement là où on l'avait laissé.
+    -->
+    {#if actif}
+      <!-- Le voile ferme au clic : c'est le geste que tout le monde essaie en
+           premier. Il double le bouton et la touche Échap, il ne les remplace
+           pas — d'où l'absence de rôle interactif ici. -->
+      <!-- svelte-ignore a11y_click_events_have_key_events -->
+      <!-- svelte-ignore a11y_no_static_element_interactions -->
+      <div class="voile" onclick={fermerFenetre}>
+        {#key actif.id}
+          <!-- svelte-ignore a11y_click_events_have_key_events -->
+          <!-- svelte-ignore a11y_no_static_element_interactions -->
+          <div
+            class="fenetre apparait"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="titre-fenetre"
+            tabindex="-1"
+            style:--teinte={actif.teinte}
+            onclick={(e) => e.stopPropagation()}
+          >
+            <header class="tete-fenetre">
+              <div class="dit-fenetre">
+                <p class="ou-dans-rapport">
+                  {#if actif.repere}Page {actif.repere.page} de votre rapport{:else}Votre rapport{/if}
+                </p>
+                <h3 id="titre-fenetre">{actif.mot}</h3>
+              </div>
+
+              <button
+                type="button"
+                class="fermer-fenetre"
+                bind:this={fermerFenetreBouton}
+                onclick={fermerFenetre}
+              >
+                <span aria-hidden="true">✕</span>
+                <span class="mot-fermer">Fermer</span>
               </button>
+            </header>
 
-              <h3>{actif.mot}</h3>
-
+            <div class="dedans">
               {#if actif.repere}
-                <!-- Ce que dit son dossier. Le reste vient après, s'il le veut. -->
-                <p class="extrait">« {actif.repere.extrait} »</p>
+                <!-- 1. Ce que dit le document. On cite avant d'interpréter :
+                     le lecteur doit pouvoir retrouver la phrase sur sa page. -->
+                <section class="bloc">
+                  <p class="quoi-bloc">Ce que dit votre rapport</p>
+                  <blockquote class="extrait">{actif.repere.extrait}</blockquote>
+                </section>
 
-                <p class="synthese">{actif.repere.points[0]}</p>
-
-                <!-- Le dessin, tout de suite et en grand. C'est lui qui fait
-                     comprendre : le cacher derrière un bouton, c'était le
-                     traiter comme une note de bas de page.
-
-                     Un repère qui a son propre croquis le montre ; un constat
-                     de diagnostic montre le schéma de sa famille. -->
-                <!-- Tout tient sur la feuille du schéma : le dessin, le risque,
-                     et les questions posées comme sa légende. Le lecteur n'a
-                     qu'un objet devant lui, pas un dessin suivi d'une liste. -->
-                <div class="feuille">
-                  <button
-                    type="button"
-                    class="agrandir"
-                    onclick={ouvrirPlein}
-                    aria-label="Voir le schéma en pleine page"
-                  >
-                    ⤢
-                  </button>
-
-                  {#if actif.repere.schema}
-                    <MiniSchema id={actif.repere.schema} />
-                  {:else if diagnostic}
-                    <Explicatif
-                      type={diagnostic.type}
-                      isolation={diagnostic.schema?.genre === 'dpe'
-                        ? diagnostic.schema.isolation
-                        : null}
-                      lettre={diagnostic.schema?.genre === 'dpe' ? diagnostic.schema.finale : null}
-                    />
+                <!-- 2. La traduction. Tous les points, dépliés : la fenêtre est
+                     assez grande pour les porter, et un « tout le détail »
+                     laissait croire que le reste était accessoire. -->
+                <section class="bloc">
+                  <p class="quoi-bloc">Ce que ça veut dire</p>
+                  <p class="synthese"><MotsExpliques texte={actif.repere.points[0] ?? ''} /></p>
+                  {#if actif.repere.points.length > 1}
+                    <ul class="points">
+                      {#each actif.repere.points.slice(1) as point}
+                        <li><MotsExpliques texte={point} /></li>
+                      {/each}
+                    </ul>
                   {/if}
+                </section>
 
-                  {#if diagnostic}
-                    <p class="risque">{FICHES[diagnostic.type].risque}</p>
-                  {/if}
+                <!-- 3. Le dessin, en grand. C'est lui qui fait comprendre. -->
+                <section class="bloc">
+                  <p class="quoi-bloc">Ce qui se passe</p>
+                  <div class="feuille">
+                    <button
+                      type="button"
+                      class="agrandir"
+                      onclick={ouvrirPlein}
+                      aria-label="Voir le schéma en pleine page"
+                    >
+                      ⤢
+                    </button>
 
-                  {#if actif.repere.suites?.length}
+                    {#if actif.repere.schema}
+                      <MiniSchema id={actif.repere.schema} />
+                    {:else if diagnostic}
+                      <Explicatif
+                        type={diagnostic.type}
+                        isolation={diagnostic.schema?.genre === 'dpe'
+                          ? diagnostic.schema.isolation
+                          : null}
+                        lettre={diagnostic.schema?.genre === 'dpe'
+                          ? diagnostic.schema.finale
+                          : null}
+                      />
+                    {/if}
+                  </div>
+                </section>
+
+                <!-- 4. L'enjeu et le geste, côte à côte : ce qu'on risque n'a de
+                     sens qu'avec ce qu'on peut y faire. -->
+                {#if diagnostic}
+                  <section class="bloc deux">
+                    <div>
+                      <p class="quoi-bloc">Ce qu’on risque</p>
+                      <p class="risque"><MotsExpliques texte={FICHES[diagnostic.type].risque} /></p>
+                    </div>
+                    <div>
+                      <p class="quoi-bloc">Ce qu’il faut faire</p>
+                      <p class="faire">
+                        <MotsExpliques texte={FICHES[diagnostic.type].quoiFaire} />
+                      </p>
+                    </div>
+                  </section>
+                {/if}
+
+                <!-- 5. Ce que ça change chez vous : la phrase qui ramène au
+                     logement. Elle ne saute jamais. -->
+                <section class="bloc">
+                  <p class="quoi-bloc">Chez vous</p>
+                  <p class="pratique"><MotsExpliques texte={actif.repere.pratique ?? ''} /></p>
+                </section>
+
+                <!-- 6. Les questions qu'on se pose ensuite. Repliées, celles-là :
+                     ce sont des embranchements, pas la lecture principale. -->
+                {#if actif.repere.suites?.length}
+                  <section class="bloc">
+                    <p class="quoi-bloc">Les questions qu’on se pose</p>
                     <div class="legende">
                       {#each actif.repere.suites as suite (suite.question)}
                         <button
@@ -461,120 +594,99 @@
                     {#each actif.repere.suites.filter((s) => s.question === suiteOuverte) as suite (suite.question)}
                       <ul class="points reponse apparait {suite.ton ?? 'moyen'}">
                         {#each suite.points as point}
-                          <li>{point}</li>
+                          <li><MotsExpliques texte={point} /></li>
                         {/each}
                       </ul>
                     {/each}
-                  {/if}
+                  </section>
+                {/if}
 
-                  {#if actif.repere.points.length > 1}
-                    <button
-                      type="button"
-                      class="creuser"
-                      class:ouvert={detailOuvert}
-                      onclick={() => (detailOuvert = !detailOuvert)}
-                    >
-                      {detailOuvert ? 'Fermer' : 'Tout le détail'}
-                    </button>
-
-                    {#if detailOuvert}
-                      <ul class="points detail apparait">
-                        {#each actif.repere.points.slice(1) as point}
-                          <li>{point}</li>
-                        {/each}
-                      </ul>
-                    {/if}
-                  {/if}
-                </div>
-
-                <!-- La phrase qui ramène au logement. Elle ne saute jamais. -->
-                <p class="pratique">{actif.repere.pratique}</p>
-
-                <!-- La lecture avance toute seule : passage suivant, dans
-                     l'ordre du rapport, avec le document qui suit. -->
-                <div class="pas-a-pas">
-                  <button
-                    type="button"
-                    class="fleche"
-                    disabled={precedente < 0}
-                    onclick={() => allerAu(precedente)}
-                    aria-label="Conclusion précédente"
-                  >
-                    ←
-                  </button>
-                  <span class="compteur">
-                    {etape >= 0
-                      ? `Conclusion ${etape + 1} sur ${parcours.length}`
-                      : 'Une donnée du rapport'}
-                  </span>
-                  <button
-                    type="button"
-                    class="suivant"
-                    disabled={suivante < 0}
-                    onclick={() => allerAu(suivante)}
-                  >
-                    {etape >= 0 ? 'Suivante →' : 'Conclusion suivante →'}
-                  </button>
-                </div>
-
-                <!-- Le fond du sujet, rattaché au diagnostic de ce passage. -->
+                <!-- 7. Pour aller plus loin, rattaché au diagnostic du passage. -->
                 {#if diagnostic}
-                  <div class="passerelles">
-                    <!-- Inutile de proposer le schéma du diagnostic quand il est
-                         déjà dessiné plus haut. -->
-                    {#if actif.repere.famille !== 'constat'}
+                  <section class="bloc">
+                    <p class="quoi-bloc">Pour aller plus loin</p>
+                    <div class="passerelles">
+                      {#if actif.repere.famille !== 'constat'}
+                        <button
+                          type="button"
+                          class:ouverte={rubrique === 'schema'}
+                          onclick={() => (rubrique = rubrique === 'schema' ? null : 'schema')}
+                        >
+                          Le schéma du diagnostic
+                        </button>
+                      {/if}
                       <button
                         type="button"
-                        class:ouverte={rubrique === 'schema'}
-                        onclick={() => (rubrique = rubrique === 'schema' ? null : 'schema')}
+                        class:ouverte={rubrique === 'fiche'}
+                        onclick={() => (rubrique = rubrique === 'fiche' ? null : 'fiche')}
                       >
-                        Le schéma
+                        La fiche complète
                       </button>
-                    {/if}
-                    <button
-                      type="button"
-                      class:ouverte={rubrique === 'fiche'}
-                      onclick={() => (rubrique = rubrique === 'fiche' ? null : 'fiche')}
-                    >
-                      Quoi faire ?
-                    </button>
-                    <button
-                      type="button"
-                      class:ouverte={rubrique === 'curieux'}
-                      onclick={() => (rubrique = rubrique === 'curieux' ? null : 'curieux')}
-                    >
-                      Le saviez-vous ?
-                    </button>
-                  </div>
+                      <button
+                        type="button"
+                        class:ouverte={rubrique === 'curieux'}
+                        onclick={() => (rubrique = rubrique === 'curieux' ? null : 'curieux')}
+                      >
+                        Le saviez-vous ?
+                      </button>
+                    </div>
 
-                  {#if rubrique === 'schema'}
-                    <div class="feuille apparait">
-                      <Explicatif
-                        type={diagnostic.type}
-                        isolation={diagnostic.schema?.genre === 'dpe'
-                          ? diagnostic.schema.isolation
-                          : null}
-                        lettre={diagnostic.schema?.genre === 'dpe'
-                          ? diagnostic.schema.finale
-                          : null}
-                      />
-                    </div>
-                  {:else if rubrique === 'fiche'}
-                    <div class="feuille apparait">
-                      <Fiche type={diagnostic.type} />
-                    </div>
-                  {:else if rubrique === 'curieux'}
-                    <div class="feuille apparait">
-                      <Curieux type={diagnostic.type} />
-                    </div>
-                  {/if}
+                    {#if rubrique === 'schema'}
+                      <div class="feuille apparait">
+                        <Explicatif
+                          type={diagnostic.type}
+                          isolation={diagnostic.schema?.genre === 'dpe'
+                            ? diagnostic.schema.isolation
+                            : null}
+                          lettre={diagnostic.schema?.genre === 'dpe'
+                            ? diagnostic.schema.finale
+                            : null}
+                        />
+                      </div>
+                    {:else if rubrique === 'fiche'}
+                      <div class="feuille apparait">
+                        <Fiche type={diagnostic.type} />
+                      </div>
+                    {:else if rubrique === 'curieux'}
+                      <div class="feuille apparait">
+                        <Curieux type={diagnostic.type} />
+                      </div>
+                    {/if}
+                  </section>
                 {/if}
               {/if}
             </div>
-          {/key}
-        {/if}
-      </aside>
-    </div>
+
+            <!-- La lecture avance sans refermer : passage suivant, dans l'ordre
+                 du rapport, et le document suit derrière. -->
+            <footer class="pas-a-pas">
+              <button
+                type="button"
+                class="fleche"
+                disabled={precedente < 0}
+                onclick={() => allerAu(precedente)}
+                aria-label="Conclusion précédente"
+              >
+                ←
+              </button>
+              <span class="compteur">
+                {etape >= 0
+                  ? `Conclusion ${etape + 1} sur ${parcours.length}`
+                  : 'Une donnée du rapport'}
+              </span>
+              <button
+                type="button"
+                class="suivant"
+                disabled={suivante < 0}
+                onclick={() => allerAu(suivante)}
+              >
+                {etape >= 0 ? 'Suivante →' : 'Conclusion suivante →'}
+              </button>
+            </footer>
+          </div>
+        {/key}
+      </div>
+    {/if}
 
     <!-- Le conseil : ce qu'on dirait au client à l'étude, avant de signer. Il
          a son onglet parce que ce n'est ni une lecture du dossier ni une
@@ -664,11 +776,7 @@
   {/if}
 {/if}
 
-<svelte:window
-  onkeydown={(e) => {
-    if (e.key === 'Escape' && plein) fermerPlein();
-  }}
-/>
+<svelte:window onkeydown={auClavierFenetre} />
 
 <style>
   /* Pas de caisson autour du lecteur : le rapport se pose directement sur le
@@ -769,23 +877,14 @@
     display: none;
   }
 
-  /* Tant que rien n'est ouvert, le rapport est seul et centré. Dès qu'on
-     clique, il se décale pour laisser entrer l'explication. */
+  /* Le rapport est seul et centré, toujours.
+     Il partageait l'écran avec une colonne d'explication : dès qu'on cliquait,
+     le document rétrécissait sous les yeux du lecteur, en pleine lecture.
+     L'explication a maintenant sa fenêtre, et la page ne bouge plus. */
   .deux-colonnes {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 430px;
-    gap: var(--e5);
-    align-items: start;
-    transition: grid-template-columns 0.3s ease;
-  }
-
-  .deux-colonnes.seul {
     grid-template-columns: minmax(0, 860px);
     justify-content: center;
-  }
-
-  .panneau.absent {
-    display: none;
   }
 
   /* Les pages du rapport, l'une sous l'autre. */
@@ -920,19 +1019,169 @@
     vertical-align: text-bottom;
   }
 
-  /* L'explication se pose à même le vert, sans caisson. Une feuille de papier
-     d'un côté, la parole de l'autre : c'est la mise en page de la plaquette. */
-  .panneau {
-    position: sticky;
-    top: 16px;
-    padding: var(--e1) 0 0 var(--e1);
-    max-height: calc(100vh - 32px);
+  /* ---- La fenêtre d'explication -----------------------------------------
+     Elle couvre l'écran : c'est le moment où l'on explique, et il ne se
+     partage pas avec le document. Le voile assombrit le rapport sans le faire
+     disparaître — on sait d'où l'on vient et où l'on retourne. */
+  .voile {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    display: grid;
+    place-items: center;
+    padding: clamp(0px, 3vw, 32px);
+    background: rgb(0 20 14 / 62%);
+    backdrop-filter: blur(6px);
+  }
+
+  .fenetre {
+    display: flex;
+    flex-direction: column;
+    width: min(100%, 880px);
+    max-height: 100%;
+    background: var(--fond);
+    border: 1px solid rgb(255 255 255 / 12%);
+    border-top: 3px solid var(--teinte);
+    border-radius: var(--rayon);
+    box-shadow: 0 40px 90px -30px rgb(0 20 14 / 100%);
+    color: var(--sur-fond);
+    overflow: hidden;
+  }
+
+  .fenetre :global(.ruban) {
+    margin: var(--e4) 0 var(--e3);
+  }
+
+  /* L'en-tête ne défile pas : on garde sous les yeux de quoi on parle, et de
+     quoi fermer. */
+  .tete-fenetre {
+    flex: none;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--e4);
+    padding: var(--e4) var(--e5);
+    border-bottom: 1px solid var(--trait-or);
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--teinte) 14%, transparent),
+      transparent
+    );
+  }
+
+  .ou-dans-rapport {
+    margin: 0 0 var(--e1);
+    font-size: var(--t-micro);
+    letter-spacing: var(--suivi);
+    text-transform: uppercase;
+    color: var(--sur-fond-doux);
+  }
+
+  .tete-fenetre h3 {
+    font-family: var(--police-titre);
+    font-size: var(--t-titre);
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.022em;
+    margin: 0;
+    color: var(--or-clair);
+  }
+
+  .fermer-fenetre {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--e2);
+    /* Une cible confortable au pouce : c'est le bouton qu'on cherche en
+       premier quand on veut revenir au document. */
+    min-height: 44px;
+    padding: var(--e2) var(--e4);
+    background: rgb(255 255 255 / 6%);
+    border: 1px solid var(--trait-or);
+    border-radius: 999px;
+    color: var(--sur-fond);
+    font-size: var(--t-petit);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+  }
+
+  .fermer-fenetre:hover {
+    background: var(--or);
+    border-color: var(--or);
+    color: var(--vert-900);
+  }
+
+  .dedans {
+    flex: 1;
+    min-height: 0;
     overflow-y: auto;
+    padding: var(--e5);
+    display: grid;
+    gap: var(--e5);
+  }
+
+  /* Chaque temps de l'explication est annoncé : ce que dit le rapport, ce que
+     ça veut dire, ce qui se passe, ce qu'on risque. Le lecteur sait toujours
+     à quelle étape il est. */
+  .quoi-bloc {
+    margin: 0 0 var(--e2);
+    font-size: var(--t-micro);
+    font-weight: 700;
+    letter-spacing: var(--suivi);
+    text-transform: uppercase;
+    color: var(--or);
+  }
+
+  .bloc.deux {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--e5);
+  }
+
+  .bloc .synthese {
+    margin: 0;
+    font-size: var(--t-lead);
+    line-height: 1.5;
+    color: var(--sur-fond);
+    max-width: var(--mesure);
+  }
+
+  .bloc .risque,
+  .bloc .faire,
+  .bloc .pratique {
+    margin: 0;
+    font-size: var(--t-base);
+    line-height: 1.55;
+    color: var(--sur-fond-doux);
+    max-width: var(--mesure);
+  }
+
+  .bloc .faire {
+    color: var(--or-clair);
+  }
+
+  .bloc .pratique {
+    padding-left: var(--e4);
+    border-left: 2px solid var(--trait-or);
     color: var(--sur-fond);
   }
 
-  .panneau :global(.ruban) {
-    margin: var(--e4) 0 var(--e3);
+  @media (max-width: 620px) {
+    .tete-fenetre,
+    .dedans {
+      padding: var(--e4);
+    }
+
+    /* Au téléphone, le mot « Fermer » cède la place à la croix seule : la
+       cible reste de quarante-quatre pixels. */
+    .mot-fermer {
+      display: none;
+    }
+
+    .fermer-fenetre {
+      padding: var(--e2) var(--e3);
+    }
   }
 
 
@@ -1030,47 +1279,27 @@
 
 
 
-  /* L'encart : une seule chose à la fois. */
-  .encart {
-    border-left: 3px solid var(--teinte);
-    padding-left: var(--e4);
-  }
-
-  .encart h3 {
-    font-family: var(--police-titre);
-    font-style: italic;
-    font-size: var(--t-titre);
-    font-weight: 700;
-    margin: var(--e2) 0 var(--e3);
-    color: var(--or-clair);
-  }
-
-  .retour {
-    background: none;
-    border: none;
-    padding: 0;
-    color: var(--sur-fond-doux);
-    font-weight: 700;
-    cursor: pointer;
-    font-size: var(--t-petit);
-    letter-spacing: 0.02em;
-  }
-
-  .retour:hover {
-    color: var(--or-clair);
-  }
-
-  /* La ligne du rapport, citée telle quelle, avant toute explication. */
+  /* La ligne du rapport, citée telle quelle, avant toute explication.
+     Sur fond d'or, comme le surlignage qui l'a désignée sur la page : c'est la
+     même phrase, du même jaune, retrouvée à deux endroits. */
   .extrait {
-    margin: 0 0 var(--e3);
-    padding: var(--e3) var(--e3);
-    background: rgb(255 255 255 / 8%);
-    border-left: 2px solid color-mix(in srgb, var(--teinte) 70%, transparent);
+    margin: 0;
+    padding: var(--e3) var(--e4);
+    background: var(--or);
+    border-left: 3px solid var(--or-fonce);
     border-radius: var(--rayon-petit);
-    font-size: var(--t-petit);
-    color: var(--sur-fond-doux);
+    font-size: var(--t-base);
     line-height: 1.5;
-    font-style: italic;
+    color: #17301f;
+    quotes: '«\00a0' '\00a0»';
+  }
+
+  .extrait::before {
+    content: open-quote;
+  }
+
+  .extrait::after {
+    content: close-quote;
   }
 
   /* Ce qui se passe, en une ligne. Le reste est facultatif. */

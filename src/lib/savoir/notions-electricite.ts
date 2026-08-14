@@ -1,8 +1,16 @@
 /**
  * Les notions du diagnostic électrique.
  *
- * Six points sont contrôlés, mais deux seulement protègent les personnes : le
- * dispositif différentiel et la mise à la terre. Les autres protègent les fils.
+ * Le rapport conclut sur six domaines d'anomalies (arrêté du 28 septembre 2017,
+ * annexe III), auxquels s'ajoutent les installations particulières — piscine,
+ * appareils alimentés depuis les parties communes.
+ *
+ * Une version antérieure de ce fichier disait « six points contrôlés, dont deux
+ * seulement protègent les personnes ». C'était doublement faux. Ce sont des
+ * domaines, chacun regroupant plusieurs points de contrôle de l'annexe I ; et
+ * l'article 1er de l'arrêté assigne à l'ensemble de l'état l'évaluation des
+ * « risques pouvant porter atteinte à la sécurité des personnes ». Les contacts
+ * directs et la salle d'eau protègent les personnes autant que le différentiel.
  */
 import { trouve, type Notion } from './socle';
 
@@ -29,7 +37,7 @@ export const NOTIONS_ELECTRICITE: Notion[] = [
         bribes: [
           {
             texte:
-              'C’est le point le plus important des six que contrôle le diagnostic électrique : les autres évitent l’incendie, celui-ci évite l’électrocution.'
+              'C’est celui qui agit le plus vite quand le courant passe par une personne : il coupe avant que le cœur soit touché.'
           },
           { texte: 'Un disjoncteur ordinaire ne protège pas les personnes : il protège les fils.' }
         ]

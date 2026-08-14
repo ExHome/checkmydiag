@@ -365,17 +365,25 @@ export const DESSINS: Record<string, Dessin> = {
   /* ---------------------------------------------------------- électricité */
 
   'six-points': {
+    /*
+     * Les six domaines de l'arrêté du 28 septembre 2017, dans son ordre.
+     *
+     * Le dessin précédent en omettait un — les matériels présentant un risque
+     * de contact direct — et donnait le différentiel et la terre comme deux
+     * domaines, alors que l'arrêté les réunit. Le compte tombait juste par
+     * compensation, ce qui est la pire façon d'avoir tort.
+     */
     legende:
-      'Le diagnostic électrique contrôle six points : la coupure, le différentiel, la terre, les protections, les matériels dangereux et la salle d’eau.',
+      'Le diagnostic électrique conclut sur six domaines : la coupure, le différentiel et la terre, les protections par circuit, la salle d’eau, les pièces sous tension accessibles et le matériel vétuste.',
     svg: `
       <svg viewBox="0 0 320 190" role="img">
         ${[
           { t: 'appareil de coupure', d: 'couper toute l’installation' },
-          { t: 'différentiel', d: 'il protège les personnes' },
-          { t: 'mise à la terre', d: 'où part le courant qui fuit' },
+          { t: 'différentiel et terre', d: 'ils protègent les personnes' },
           { t: 'protection par circuit', d: 'les fils ne chauffent pas' },
-          { t: 'matériels vétustes', d: 'fils nus, prises cassées' },
-          { t: 'salle de bains', d: 'l’eau et le courant' }
+          { t: 'salle d’eau', d: 'l’eau et le courant' },
+          { t: 'pièces accessibles', d: 'rien de nu sous tension' },
+          { t: 'matériel vétuste', d: 'prises cassées, fils abîmés' }
         ]
           .map((p, i) => {
             const x = 6 + (i % 2) * 156;

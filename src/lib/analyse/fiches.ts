@@ -96,7 +96,12 @@ export const FICHES: Record<TypeDiag, Fiche> = {
 
   electricite: {
     pourquoi: 'Installations de plus de 15 ans : première cause d’incendie électrique.',
-    comment: 'Six points contrôlés à l’œil : coupure, différentiel, terre, disjoncteurs, salle de bains, matériel abîmé.',
+    /* Les six domaines de l'arrêté du 28 septembre 2017, dans son ordre.
+       La liste précédente en omettait un — les matériels à risque de contact
+       direct — et comptait le différentiel et la terre pour deux, alors que
+       l'arrêté les réunit dans un seul domaine. */
+    comment:
+      'Six domaines contrôlés à l’œil : coupure d’urgence, différentiel et terre, disjoncteurs, salle d’eau, pièces sous tension accessibles, matériel vétuste.',
     risque: 'Sans différentiel → le courant qui fuit passe par vous.',
     quoiFaire: 'Rien d’obligatoire pour vendre. Priorité : différentiel et mise à la terre.',
     vente:

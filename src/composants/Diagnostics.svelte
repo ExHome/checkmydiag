@@ -171,7 +171,7 @@
     ],
     electricite: [
       'Contrôle visuel, sans démontage du tableau ni des prises.',
-      'Six points de sécurité seulement : ce n’est pas un état complet de l’installation.',
+      'Six domaines seulement, plus les installations particulières : ce n’est pas un état complet de l’installation.',
       'Les circuits encastrés et les appareils branchés ne sont pas contrôlés.'
     ],
     gaz: [

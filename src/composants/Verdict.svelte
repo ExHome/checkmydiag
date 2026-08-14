@@ -14,6 +14,7 @@
    * couleur ne fait que confirmer.
    */
   import type { Analyse, Diagnostic, PointDeControle, TypeDiag } from '../lib/modele';
+  import type { Photo } from '../lib/pdf';
   import { FICHES } from '../lib/analyse/fiches';
   import { FAMILLES, familleDe } from '../lib/familles';
   import { descriptifDe } from '../lib/descriptif';
@@ -24,7 +25,7 @@
   interface Props {
     analyse: Analyse;
     /** La photo du bien, tirée de la page de garde. */
-    photo?: string | null;
+    photo?: Photo | null;
     /** Ouvre l'analyse sur le diagnostic choisi dans l'état descriptif. */
     surOuvrirDiagnostic?: (type: TypeDiag) => void;
   }
@@ -325,8 +326,17 @@
       {#if photo}
         <!-- La photo de façade tirée du rapport. C'est elle qui fait dire « oui,
              c'est chez moi » avant même de lire quoi que ce soit. Décorative au
-             sens strict : le texte à côté dit tout. -->
-        <img class="photo" src={photo} alt="" />
+             sens strict : le texte à côté dit tout.
+
+             Ses proportions sont celles du rapport, et on n'y touche pas : la
+             recadrer en 4/3 coupait les façades hautes et les vues larges. -->
+        <img
+          class="photo"
+          src={photo.image}
+          width={photo.largeur}
+          height={photo.hauteur}
+          alt=""
+        />
       {/if}
       <div class="dit-bien">
         <!-- Le titre d'une annonce : ce qu'est le bien, et sa taille. C'est
@@ -584,7 +594,7 @@
      passant. */
   .bandeau-bien.avec-photo {
     grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
-    align-items: stretch;
+    align-items: center;
   }
 
   .titre-vitrine {
@@ -622,12 +632,16 @@
     color: var(--sur-fond-doux);
   }
 
-  /* La photo garde ses proportions et se coupe au besoin : une façade tordue
-     pour tenir dans un cadre ferait plus de mal que pas de photo du tout. */
+  /* La photo garde les proportions du rapport, sans recadrage.
+     Elle était forcée en 4/3 et rognée au centre : sur une façade haute, on
+     perdait le toit et le rez-de-chaussée ; sur une vue large, les côtés. Le
+     rapport a cadré cette photo, c'est son cadrage qu'on montre. */
   .photo {
     width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
+    height: auto;
+    max-height: 260px;
+    object-fit: contain;
+    object-position: left center;
     border-radius: var(--rayon);
     display: block;
   }
@@ -695,10 +709,10 @@
       grid-template-columns: 1fr;
     }
 
-    /* Au téléphone, la photo passe en bandeau large et court : elle situe sans
-       manger l'écran avant le verdict. */
+    /* Au téléphone, la photo se contente de la moitié haute d'un écran : elle
+       situe sans repousser le verdict hors de vue. */
     .photo {
-      aspect-ratio: 16 / 7;
+      max-height: 200px;
     }
   }
 
