@@ -378,17 +378,24 @@
 
   <div class="feuille">
     {#if caracteristiques.length}
-      <!-- L'état descriptif, relevé ligne à ligne. Le descriptif en toutes
-           lettres est déjà en page de garde : on ne le répète pas. -->
-      <h2><span class="num">{numeros.descriptif}</span>L’état descriptif</h2>
-      <dl class="caracteristiques">
-        {#each caracteristiques as c (c.libelle)}
-          <div>
-            <dt>{c.libelle}</dt>
-            <dd>{c.valeur}</dd>
-          </div>
-        {/each}
-      </dl>
+      <!--
+        L'état descriptif a quitté cet endroit : il ouvre désormais la page,
+        au-dessus du verdict. C'est l'ordre d'un dossier — on présente le bien,
+        on le décrit, puis on l'analyse. Le garder ici le donnait deux fois.
+
+        Le papier, lui, n'a pas ce bandeau : l'annexe y reste.
+      -->
+      <div class="au-papier">
+        <h2><span class="num">{numeros.descriptif}</span>L’état descriptif</h2>
+        <dl class="caracteristiques">
+          {#each caracteristiques as c (c.libelle)}
+            <div>
+              <dt>{c.libelle}</dt>
+              <dd>{c.valeur}</dd>
+            </div>
+          {/each}
+        </dl>
+      </div>
     {/if}
 
     <!-- Les deux planches côte à côte : la maison et l'échelle se répondent,
@@ -444,17 +451,29 @@
     </div>
 
     {#if lexique.length}
-      <!-- L'annexe : tous les termes employés, définis. Le document part chez
-           des gens qui n'en connaissent aucun. -->
-      <h2 class="apres"><span class="num">{numeros.mots}</span>Les mots employés</h2>
-      <dl class="lexique">
-        {#each lexique as mot (mot.nom)}
-          <div>
-            <dt>{mot.nom}</dt>
-            <dd>{mot.definition}</dd>
-          </div>
-        {/each}
-      </dl>
+      <!--
+        L'annexe des termes, réservée au papier.
+
+        À l'écran, chaque mot du métier est souligné là où il se lit et sa
+        définition s'ouvre au clic : la reprendre en fin de page la donnait une
+        seconde fois, et obligeait à descendre chercher ce qui était déjà sous
+        le doigt.
+
+        Sur le papier, on ne clique pas. Le document part chez des gens qui ne
+        connaissent aucun de ces mots : l'annexe reste, et elle est
+        indispensable.
+      -->
+      <div class="au-papier">
+        <h2 class="apres"><span class="num">{numeros.mots}</span>Les mots employés</h2>
+        <dl class="lexique">
+          {#each lexique as mot (mot.nom)}
+            <div>
+              <dt>{mot.nom}</dt>
+              <dd>{mot.definition}</dd>
+            </div>
+          {/each}
+        </dl>
+      </div>
     {/if}
 
     <p class="reserve">

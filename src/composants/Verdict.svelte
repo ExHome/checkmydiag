@@ -16,6 +16,7 @@
   import type { Analyse, Diagnostic, PointDeControle } from '../lib/modele';
   import { FICHES } from '../lib/analyse/fiches';
   import { familleDe } from '../lib/familles';
+  import { descriptifDe } from '../lib/descriptif';
   import MotsExpliques from './MotsExpliques.svelte';
 
   const { analyse, photo = null }: { analyse: Analyse; photo?: string | null } = $props();
@@ -39,6 +40,9 @@
    * s'affiche pas, et la ligne disparaît si l'on ne sait rien. Mieux vaut ne
    * rien dire du logement que de le décrire de travers.
    */
+  /** Ce qu'est le bien, relevé ligne à ligne — avant qu'on en juge le dossier. */
+  const descriptif = $derived(descriptifDe(analyse));
+
   const identite = $derived(
     [
       analyse.bien.typeBien,
@@ -241,6 +245,27 @@
         {#if identite.length}<p class="traits">{identite.join(' · ')}</p>{/if}
       </div>
     </div>
+
+    <!--
+      L'état descriptif, avant l'analyse.
+
+      C'est l'ordre d'un dossier : on présente le bien, on le décrit, puis on le
+      juge. Le mettre après le verdict revenait à conclure sur un logement qu'on
+      n'avait pas encore montré.
+
+      Sobre à dessein — des libellés fins, des valeurs qui ressortent, aucun
+      cadre. Ce n'est pas ce qu'on vient lire, c'est ce qu'il faut savoir avant.
+    -->
+    {#if descriptif.length}
+      <dl class="descriptif">
+        {#each descriptif as c (c.libelle)}
+          <div>
+            <dt>{c.libelle}</dt>
+            <dd>{c.valeur}</dd>
+          </div>
+        {/each}
+      </dl>
+    {/if}
   {/if}
 
   <div class="tete">
@@ -481,6 +506,34 @@
     .photo {
       aspect-ratio: 16 / 7;
     }
+  }
+
+  /* L'état descriptif : des colonnes, pas des cartes. Le libellé s'efface, la
+     valeur porte — on parcourt ces lignes, on ne les lit pas. */
+  .descriptif {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--e3) var(--e5);
+    margin: 0 0 var(--e5);
+    padding-bottom: var(--e4);
+    border-bottom: 1px solid var(--trait-or);
+  }
+
+  .descriptif div {
+    min-width: 0;
+  }
+
+  .descriptif dt {
+    font-size: var(--t-petit);
+    color: var(--sur-fond-doux);
+    margin-bottom: 2px;
+  }
+
+  .descriptif dd {
+    margin: 0;
+    font-size: var(--t-base);
+    font-weight: 600;
+    color: var(--sur-fond);
   }
 
   /* Le tableau de bord : rien qu'un filet au-dessus, de l'espace, et des
