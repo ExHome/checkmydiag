@@ -43,9 +43,20 @@ const ORDRE: TypeDiag[] = [
 ];
 
 function identifierBien(pages: PageTexte[], horsSection: string[]): Bien {
-  // Les caractéristiques du bien figurent en tête de dossier ; on élargit aux
-  // premières pages si la page de garde est muette.
-  const source = [...horsSection, ...pages.slice(0, 6).flatMap((p) => p.lignes)];
+  /*
+   * On cherche dans tout le dossier, et non plus dans ses six premières pages.
+   *
+   * Mesuré sur quarante dossiers réels : le type de bien, l'année et la surface
+   * n'étaient retrouvés que dans un dossier sur quarante. Ils sont pourtant
+   * écrits noir sur blanc — mais dans la fiche technique du logement et dans
+   * l'attestation de surface habitable, c'est-à-dire vers la neuvième page et
+   * au-delà. On lisait six pages d'un dossier qui en compte cinquante : la
+   * vitrine restait vide alors que le rapport disait tout.
+   *
+   * Les pages de garde restent prioritaires : elles sont en tête de la source,
+   * et `trouver` s'arrête à la première ligne qui répond.
+   */
+  const source = [...horsSection, ...pages.flatMap((p) => p.lignes)];
   const bien: Bien = {};
 
   const adresse = trouver(source, /^Adresse\s*:?[\s.]*(.{5,80}?)\s*(?:Adresse|$)/im);
@@ -57,11 +68,30 @@ function identifierBien(pages: PageTexte[], horsSection: string[]): Bien {
   const dossier = trouver(source, /Num[ée]ro de dossier\s*:?\s*([\w\/.-]{4,25})/i);
   if (dossier?.[1]) bien.numeroDossier = dossier[1].trim();
 
-  const type = trouver(source, /[Tt]ype de bien\s*:?[\s.]*([A-Za-zÀ-ÿ' -]{3,30})/);
-  if (type?.[1]) bien.typeBien = type[1].trim();
+  /*
+   * « Type de bien », mais aussi « Type d'immeuble » : c'est ainsi que
+   * l'appellent les rapports de repérage, et ils sont dix-sept sur trente à le
+   * faire. Les points de conduite qui remplissent la ligne — « Type
+   * d'immeuble : ......... Appartement » — sont sautés comme le reste des
+   * séparateurs.
+   */
+  const type = trouver(
+    source,
+    /[Tt]ype (?:de bien|d[’']immeuble)\s*:?[\s.]*([A-Za-zÀ-ÿ' -]{3,30})/
+  );
+  if (type?.[1]) bien.typeBien = type[1].replace(/[\s.]+$/, '').trim();
 
-  const annee = trouver(source, /[Aa]nnée de construction\s*:?[\s.]*([A-Za-zÀ-ÿ0-9 ]{3,20})/);
-  if (annee?.[1]) bien.anneeConstruction = annee[1].trim();
+  /*
+   * L'année s'écrit « 1974 », « 1949 - 1974 », « < 1948 » ou « > 2012 » selon
+   * le rapport et selon qu'elle est connue ou estimée. Le motif accepte donc
+   * les tirets et les comparateurs : sans eux, une tranche de construction —
+   * la forme la plus fréquente du corpus — ne ressortait pas.
+   */
+  const annee = trouver(
+    source,
+    /[Aa]nnée de construction\s*:?[\s.]*([<>]?\s*[A-Za-zÀ-ÿ0-9][A-Za-zÀ-ÿ0-9 -]{2,20})/
+  );
+  if (annee?.[1]) bien.anneeConstruction = annee[1].replace(/\s+/g, ' ').trim();
 
   const surface = nombre(
     trouver(source, /surface\s+(?:de référence|habitable|utile)\s*:?[\s.]*([\d\s.,]+)\s*m/i)?.[1]
