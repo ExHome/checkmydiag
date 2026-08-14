@@ -1331,3 +1331,209 @@ main {
     animation-duration: 0.01ms !important;
   }
 }
+
+/* ===========================================================================
+   La présentation en fiches
+
+   Ces pages se lisent au téléphone, dans une salle d'attente ou devant une
+   agence — pas à un bureau. On adopte donc la grammaire que tout le monde
+   connaît de son écran : un fond légèrement teinté, et des fiches blanches
+   posées dessus, chacune portant une idée et une seule.
+
+   Le parti pris précédent était celui d'un document : tout à même le papier,
+   séparé par des filets. Il tenait sur un grand écran ; sur un téléphone, la
+   page devenait un ruban de texte sans arêtes, où l'on ne savait plus ce qui
+   allait avec quoi. Les fiches donnent au pouce ce que les filets donnaient à
+   l'œil : des bords, donc des groupes.
+
+   Ce qui ne change pas : la couleur, la typographie, les contrastes. C'est la
+   même maison, avec des angles.
+   ========================================================================= */
+
+:root {
+  /* Le rayon des fiches. Franc — un arrondi timide se lit comme un défaut. */
+  --rayon-fiche: 16px;
+  --fiche: #fff;
+  --fond-page: #eeece4;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fiche: #0b3a2d;
+    --fond-page: #06251d;
+  }
+}
+
+body {
+  background: var(--fond-page);
+}
+
+/* La colonne de lecture : une seule, jamais large. Au-delà, l'œil perd la
+   ligne — et ces pages n'ont rien à mettre à côté. */
+main > .enveloppe,
+main.enveloppe {
+  width: min(100%, 720px);
+}
+
+/* C'est la colonne qui tient la largeur de lecture, plus l'article.
+   Tant qu'il la portait de son côté, les fiches placées à l'intérieur — la
+   réponse, les points, le piège — s'arrêtaient seize pixels avant celles
+   placées après lui, et les bords ne s'alignaient pas d'un bout à l'autre de
+   la page. */
+.question,
+.theme,
+.rubrique,
+.suite,
+.autres,
+.index-complet {
+  max-width: 100%;
+}
+
+/* Chaque bloc devient une fiche. Elles se suivent à distance égale : c'est
+   l'espace entre elles qui dit qu'elles sont distinctes, pas un trait. */
+.reponse-courte,
+.dessin-cadre,
+.piege,
+.chez-moi,
+.sources,
+.pont,
+.tableau-cadre,
+.bases {
+  background: var(--fiche);
+  border: 1px solid var(--trait-fin);
+  border-radius: var(--rayon-fiche);
+  padding: clamp(18px, 3.6vw, 26px);
+  margin-bottom: clamp(14px, 2.6vw, 20px);
+  max-width: 100%;
+}
+
+/* La réponse en dix secondes garde son filet d'or, mais à l'intérieur de sa
+   fiche : c'est la première chose qu'on lit, elle reste la plus marquée. */
+.reponse-courte {
+  border-left: 4px solid var(--or);
+}
+
+/* Le piège et « sur votre rapport » gardent leur teinte : ce sont les deux
+   seuls blocs qui alertent ou qui parlent du document du lecteur. */
+.piege {
+  background: var(--attention-fond);
+}
+
+.chez-moi {
+  background: var(--ok-fond);
+}
+
+/* Les sources reprennent une fiche comme les autres : sans bord, elles
+   flottaient sous la page. */
+.sources {
+  border-top: 1px solid var(--trait-fin);
+  border-radius: var(--rayon-fiche);
+  padding-inline: clamp(18px, 3.6vw, 26px);
+  padding-bottom: clamp(18px, 3.6vw, 26px);
+}
+
+/* Les listes de questions : une fiche unique, et les séparateurs à l'intérieur
+   ne touchent pas le bord gauche — c'est ce décalage qui fait lire une liste
+   comme une suite d'éléments plutôt qu'un tableau. */
+.sommaire,
+.suite ul,
+.autres ul,
+.index-complet ul {
+  background: var(--fiche);
+  border: 1px solid var(--trait-fin);
+  border-radius: var(--rayon-fiche);
+  overflow: hidden;
+}
+
+.sommaire a,
+.suite a {
+  padding: 16px clamp(16px, 3vw, 22px);
+  border-top: 0;
+  border-bottom: 1px solid var(--trait-fin);
+  margin-left: clamp(16px, 3vw, 22px);
+  padding-left: 0;
+}
+
+.sommaire li:last-child a,
+.suite li:last-child a {
+  border-bottom: 0;
+}
+
+.sommaire a:hover,
+.suite a:hover {
+  background: var(--fond-page);
+  padding-left: 0;
+}
+
+/* Le titre de groupe, au-dessus de sa fiche : la petite ligne grise en
+   capitales qu'on lit sans la lire. */
+.suite h2,
+.autres h2,
+.index-complet h2 {
+  margin: 0 0 10px clamp(4px, 1.4vw, 8px);
+}
+
+/* Les listes à puces respirent dans leur fiche plutôt que de courir sur le
+   fond de page. */
+.points {
+  background: var(--fiche);
+  border: 1px solid var(--trait-fin);
+  border-radius: var(--rayon-fiche);
+  padding: clamp(18px, 3.6vw, 26px) clamp(18px, 3.6vw, 26px) clamp(18px, 3.6vw, 26px)
+    clamp(34px, 6vw, 46px);
+  margin-bottom: clamp(14px, 2.6vw, 20px);
+}
+
+/* Le titre de section précède sa fiche, décalé comme les autres. */
+.question h2,
+.theme h2 {
+  margin-left: clamp(4px, 1.4vw, 8px);
+}
+
+/* Le dessin est déjà une planche blanche : il lui suffit du rayon des fiches. */
+.dessin {
+  max-width: 100%;
+}
+
+/* L'appel à ouvrir son rapport ferme la page : la seule fiche qui porte la
+   couleur de la marque, parce que c'est la seule qui demande une action. */
+.pont {
+  background: var(--vert-700);
+  border-color: var(--vert-700);
+  color: var(--papier);
+}
+
+.pont h2 {
+  color: var(--or-clair);
+}
+
+.pont p {
+  color: var(--papier);
+}
+
+.pont .promesse {
+  color: var(--or-clair);
+}
+
+/* Sur le papier, les fiches redeviennent un document : on n'imprime pas des
+   coins arrondis. */
+@media print {
+  body {
+    background: #fff;
+  }
+
+  .reponse-courte,
+  .dessin-cadre,
+  .piege,
+  .chez-moi,
+  .sources,
+  .tableau-cadre,
+  .points,
+  .bases,
+  .sommaire,
+  .suite ul {
+    background: #fff !important;
+    border-radius: 0 !important;
+    border-color: #ccc !important;
+  }
+}
