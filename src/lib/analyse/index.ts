@@ -5,6 +5,7 @@ import type { PageTexte } from '../lignes';
 import type { Analyse, Bien, Diagnostic, TypeDiag } from '../modele';
 import { decouper } from './decoupe';
 import { natureDe } from './nature';
+import { controlerCopropriete } from './copropriete';
 import { analyserDpe } from './dpe';
 import { analyserPlomb } from './plomb';
 import { analyserAmiante, analyserTermites } from './reperages';
@@ -188,13 +189,36 @@ export function analyser(brutes: PageTexte[]): Analyse {
     }
   }
 
+  // De quel document il s'agit, avant tout jugement sur son contenu.
+  const toutesLesLignes = pages.flatMap((p) => p.lignes);
+  const nature = natureDe(toutesLesLignes);
+
   return {
     bien,
-    // De quel document il s'agit, avant tout jugement sur son contenu.
-    nature: natureDe(pages.flatMap((p) => p.lignes)),
+    nature,
     diagnostics,
     textePages,
-    controles: controler(bien, diagnostics, new Date(), plageSynthese !== null),
+    controles: [
+      /*
+       * Les contrôles du dossier de vente ne valent que pour un dossier de
+       * vente.
+       *
+       * Mesuré sur le corpus : un diagnostic technique global se voyait
+       * reprocher l'absence d'un constat plomb et d'un diagnostic électricité.
+       * Ces pièces sont dues par un vendeur pour son logement ; les réclamer à
+       * un rapport de copropriété est un contresens, et c'est le genre de
+       * reproche qui décrédibilise tout le reste. On ne garde donc, hors
+       * dossier de vente, que ce qui vaut pour n'importe quel document : un
+       * rapport périmé le reste, deux chiffres qui se contredisent aussi.
+       */
+      ...controler(bien, diagnostics, new Date(), plageSynthese !== null).filter(
+        (c) => nature.genre === 'venteLocation' || c.genre !== 'manque'
+      ),
+      // Un document de copropriété se contrôle sur son propre cadre légal : ce
+      // qui lui manque est un défaut du dossier, au même titre qu'un rapport
+      // périmé, et se lit au même endroit.
+      ...controlerCopropriete(nature.genre, toutesLesLignes)
+    ],
     nonExploites: [],
     illisible,
     nbPages: pages.length,

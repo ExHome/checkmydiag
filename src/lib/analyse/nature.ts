@@ -37,6 +37,8 @@ export type GenreDocument =
   | 'raat'
   /** DPE à l'échelle de l'immeuble. */
   | 'dpeCollectif'
+  /** Une offre de prix, pas un rapport : rien à y analyser. */
+  | 'devis'
   /** On ne reconnaît pas : on le dit plutôt que de supposer. */
   | 'inconnu';
 
@@ -97,6 +99,25 @@ interface Signe {
  * n'importe où ne suffisent jamais seules.
  */
 const SIGNES: Signe[] = [
+  /*
+   * Le devis passe avant tout le reste, et pour cause : il parle du document
+   * qu'on propose de faire, avec ses mots. Mesuré sur le corpus, cinq offres
+   * commerciales de plan pluriannuel étaient contrôlées comme si elles étaient
+   * le plan lui-même — on leur reprochait de ne pas chiffrer des travaux
+   * qu'elles se contentaient de proposer d'étudier.
+   */
+  {
+    genre: 'devis',
+    seuil: 4,
+    marques: [
+      { motif: /validitedeloffre|offrevalablejusqu/, poids: 3 },
+      { motif: /bonpouraccord|adecoupersuivantlespointilles/, poids: 3 },
+      { motif: /conditionsgeneralesdevente/, poids: 2 },
+      { motif: /devisn|propositioncommerciale|offredeprix/, poids: 2 },
+      { motif: /montanttotalht|totalht|tvaa?20/, poids: 1 },
+      { motif: /notremethodologie|pourquoitravailleravec/, poids: 1 }
+    ]
+  },
   {
     genre: 'raat',
     seuil: 3,
@@ -211,6 +232,14 @@ const FICHE: Record<GenreDocument, Omit<Nature, 'genre'>> = {
     quoi: 'La performance énergétique de l’immeuble entier, établie à l’échelle de la copropriété.',
     reserve:
       'Un logement peut recevoir une classe différente de celle de son immeuble : pour vendre, c’est le DPE du lot qui est demandé.',
+    portee: 'immeuble',
+    pourLaVente: false
+  },
+  devis: {
+    nom: 'Devis',
+    quoi: 'Une offre de prix pour une prestation à venir — ce que coûterait le document, pas le document.',
+    reserve:
+      'Il n’y a rien à analyser dans un devis : aucun constat n’y a encore été fait. Le rapport viendra après la mission.',
     portee: 'immeuble',
     pourLaVente: false
   },

@@ -71,6 +71,23 @@ describe('la nature d’un document', () => {
     expect(n.portee).toBe('logement');
   });
 
+  it('reconnaît un devis, et ne le prend pas pour le rapport qu’il propose', () => {
+    // Cinq offres commerciales de plan pluriannuel étaient contrôlées comme des
+    // plans livrés : on leur reprochait de ne pas chiffrer des travaux qu'elles
+    // proposaient seulement d'étudier.
+    const devis = [
+      'Projet de plan pluriannuel de travaux optimum PPPT-O',
+      'Pourquoi travailler avec nous pour réaliser votre PPPT',
+      'Notre méthodologie',
+      'Validité de l’offre : trois mois',
+      'Conditions générales de vente',
+      'Montant total HT'
+    ];
+    const n = natureDe(devis);
+    expect(n.genre).toBe('devis');
+    expect(n.reserve).toMatch(/rien [àa] analyser/i);
+  });
+
   it('ne conclut pas sur un document qu’il ne reconnaît pas', () => {
     const n = natureDe(['Facture n° 2026-118', 'Règlement à trente jours', 'Merci de votre confiance']);
     expect(n.genre).toBe('inconnu');
