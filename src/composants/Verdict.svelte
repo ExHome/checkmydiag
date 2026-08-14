@@ -18,7 +18,7 @@
   import { familleDe } from '../lib/familles';
   import MotsExpliques from './MotsExpliques.svelte';
 
-  const { analyse }: { analyse: Analyse } = $props();
+  const { analyse, photo = null }: { analyse: Analyse; photo?: string | null } = $props();
 
   type Ton = 'mauvais' | 'moyen' | 'bon';
 
@@ -227,12 +227,20 @@
     Discret à dessein : une ligne, pas un titre. Le grand titre appartient au
     verdict, et l'état descriptif complet vit dans « Le point ».
   -->
-  {#if identite.length}
-    <p class="bien">
-      {#if analyse.bien.adresse}<span class="adresse">{analyse.bien.adresse}</span>{/if}
-      {#if analyse.bien.commune}<span class="commune">{analyse.bien.commune}</span>{/if}
-      <span class="traits">{identite.join(' · ')}</span>
-    </p>
+  {#if identite.length || photo}
+    <div class="bandeau-bien" class:avec-photo={Boolean(photo)}>
+      {#if photo}
+        <!-- La photo de façade tirée du rapport. C'est elle qui fait dire « oui,
+             c'est chez moi » avant même de lire quoi que ce soit. Décorative au
+             sens strict : le texte à côté dit tout. -->
+        <img class="photo" src={photo} alt="" />
+      {/if}
+      <div class="dit-bien">
+        {#if analyse.bien.adresse}<p class="adresse">{analyse.bien.adresse}</p>{/if}
+        {#if analyse.bien.commune}<p class="commune">{analyse.bien.commune}</p>{/if}
+        {#if identite.length}<p class="traits">{identite.join(' · ')}</p>{/if}
+      </div>
+    </div>
   {/if}
 
   <div class="tete">
@@ -407,31 +415,72 @@
     opacity: 0.8;
   }
 
-  /* L'identité du bien : la première ligne de la page, et la plus discrète.
-     Elle situe sans se mettre en avant — c'est le verdict qu'on vient lire. */
-  .bien {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: var(--e1) var(--e3);
-    margin: 0 0 var(--e4);
+  /* Le bandeau d'ouverture : la photo du bien à gauche, son identité à droite.
+     Un vrai bandeau, pas une ligne — on doit reconnaître son logement avant de
+     lire quoi que ce soit. */
+  .bandeau-bien {
+    display: grid;
+    gap: var(--e4);
+    align-items: center;
+    margin-bottom: var(--e5);
+    padding-bottom: var(--e4);
+    border-bottom: 1px solid var(--trait-or);
+  }
+
+  .bandeau-bien.avec-photo {
+    grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
+  }
+
+  /* La photo garde ses proportions et se coupe au besoin : une façade tordue
+     pour tenir dans un cadre ferait plus de mal que pas de photo du tout. */
+  .photo {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--rayon);
+    display: block;
+  }
+
+  .dit-bien {
+    min-width: 0;
+  }
+
+  .dit-bien p {
+    margin: 0;
+  }
+
+  .adresse {
+    font-family: var(--police-titre);
+    font-size: var(--t-titre);
+    font-weight: 500;
+    line-height: 1.15;
+    color: var(--sur-fond);
+    letter-spacing: -0.02em;
+  }
+
+  .commune {
+    font-size: var(--t-base);
+    letter-spacing: var(--suivi-serre);
+    color: var(--or-clair);
+    margin-top: 2px !important;
+  }
+
+  .traits {
+    margin-top: var(--e2) !important;
     font-size: var(--t-petit);
     color: var(--sur-fond-doux);
   }
 
-  .bien .adresse {
-    color: var(--sur-fond);
-    font-weight: 600;
-  }
+  @media (max-width: 620px) {
+    .bandeau-bien.avec-photo {
+      grid-template-columns: 1fr;
+    }
 
-  .bien .commune {
-    letter-spacing: var(--suivi-serre);
-  }
-
-  .bien .traits::before {
-    content: '—';
-    margin-right: var(--e2);
-    opacity: 0.5;
+    /* Au téléphone, la photo passe en bandeau large et court : elle situe sans
+       manger l'écran avant le verdict. */
+    .photo {
+      aspect-ratio: 16 / 7;
+    }
   }
 
   /* Le tableau de bord : rien qu'un filet au-dessus, de l'espace, et des

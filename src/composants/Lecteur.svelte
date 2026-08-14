@@ -29,9 +29,11 @@
     rendus: Map<number, PageRendue>;
     /** Diagnostic demandé de l'extérieur : on descend jusqu'à sa première page. */
     demande?: string | null;
+    /** La photo du bien, tirée de la page de garde. */
+    photo?: string | null;
   }
 
-  const { analyse, rendus, demande = null }: Props = $props();
+  const { analyse, rendus, demande = null, photo = null }: Props = $props();
 
   type Repere = NonNullable<Diagnostic['reperes']>[number];
 
@@ -271,7 +273,7 @@
 <!-- Ce qu'il faut retenir, avant le dossier lui-même. C'est la seule chose de
      l'écran qui doit être comprise sans rien ouvrir : il est donc au-dessus des
      vues, et il s'affiche même si aucun passage n'a pu être repéré. -->
-<Verdict {analyse} />
+<Verdict {analyse} {photo} />
 
 {#if reperes.length}
   <section class="lecteur">

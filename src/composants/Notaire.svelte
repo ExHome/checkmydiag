@@ -44,11 +44,12 @@
     const nature = cherche(/type de bien/i) ?? 'Logement';
     const annee = cherche(/ann[ée]e de construction/i);
     const surface = cherche(/superficie privative|surface de r[ée]f[ée]rence|surface habitable/i);
-    const lieu = [analyse.bien.adresse, analyse.bien.commune].filter(Boolean).join(', ');
 
     const bouts = [nature];
     if (surface) bouts.push(`de ${surface}`);
-    if (lieu) bouts.push(`situé ${lieu}`);
+    // L'adresse n'entre plus dans la phrase : elle ouvre la page dans le
+    // bandeau du bien, et l'en-tête d'impression la porte de son côté. La
+    // redire ici la donnait une troisième fois.
     // Les rapports écrivent tantôt « 1974 », tantôt « Avant 1948 » : la
     // préposition ne se colle donc pas les yeux fermés.
     if (annee) bouts.push(/^\s*(avant|après)/i.test(annee) ? `construit ${annee.toLowerCase()}` : `construit en ${annee}`);
@@ -345,9 +346,18 @@
       </button>
     </div>
 
-    <h1 class="adresse">{analyse.bien.adresse || 'Le bien'}</h1>
+    <!--
+      L'adresse en grand a quitté l'écran : elle ouvre désormais la page, dans
+      le bandeau du bien, au-dessus du verdict. La répéter ici la donnait deux
+      fois à quelques centimètres d'écart.
+
+      À l'impression, en revanche, cette page redevient la première feuille
+      d'un document qu'on pose sur une table : elle doit porter son adresse.
+      D'où ce titre, réservé au papier.
+    -->
+    <h1 class="adresse au-papier">{analyse.bien.adresse || 'Le bien'}</h1>
     {#if analyse.bien.commune}
-      <p class="commune">{analyse.bien.commune}</p>
+      <p class="commune au-papier">{analyse.bien.commune}</p>
     {/if}
 
     <p class="sous-titre">{descriptif}</p>
@@ -660,6 +670,18 @@
     line-height: 1.05;
     margin: 0;
     color: var(--sur-fond);
+  }
+
+  /* Vu à l'écran juste au-dessus, dans le bandeau du bien : inutile de le
+     répéter ici. Le papier, lui, n'a pas ce bandeau et garde son en-tête. */
+  .au-papier {
+    display: none;
+  }
+
+  @media print {
+    .au-papier {
+      display: block;
+    }
   }
 
   .commune {

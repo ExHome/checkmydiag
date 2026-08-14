@@ -285,27 +285,43 @@
     color: var(--sur-fond-doux);
   }
 
+  /* Les tuiles respirent : collées, elles redevenaient un tableau. */
   .entrees {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: var(--e1);
+    gap: var(--e3);
   }
 
+  /* De vraies tuiles, et non des lignes empilées : chaque diagnostic est un
+     sujet distinct, et doit se voir comme tel. Le liseré de gravité reste à
+     gauche — c'est lui qui trie l'œil avant la lecture. */
   .entree {
     display: grid;
-    gap: var(--e1);
+    gap: var(--e2);
     align-content: start;
-    min-height: 52px;
-    padding: var(--e3) var(--e4);
-    background: rgb(255 255 255 / 5%);
+    min-height: 104px;
+    padding: var(--e4);
+    background: rgb(255 255 255 / 6%);
+    border: 1px solid rgb(255 255 255 / 8%);
     border-left: 3px solid var(--gravite, var(--sur-fond-doux));
+    border-radius: var(--rayon);
     text-decoration: none;
     color: var(--sur-fond);
-    transition: background 0.18s ease;
+    transition: background 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
   }
 
+  /* Le survol soulève à peine : le mouvement dit « c'est cliquable », il ne
+     fait pas le spectacle. */
   .entree:hover {
     background: rgb(255 255 255 / 11%);
+    border-color: rgb(255 255 255 / 16%);
+    transform: translateY(-2px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .entree:hover {
+      transform: none;
+    }
   }
 
   .entree.bon {
@@ -352,13 +368,39 @@
     font-weight: 650;
   }
 
+  /* Chaque diagnostic occupe son propre bandeau, avec son fond et son liseré.
+     Empilés sans séparation, sept dossiers se lisaient comme un seul texte
+     très long : on ne savait plus où l'on était. */
   .fiche-diag {
-    padding: var(--e5) 0;
-    border-top: 1px solid rgb(255 255 255 / 12%);
+    padding: var(--e5);
+    margin-bottom: var(--e5);
+    background: rgb(255 255 255 / 4%);
+    border: 1px solid rgb(255 255 255 / 8%);
+    border-left: 4px solid var(--gravite-fiche, var(--sur-fond-doux));
+    border-radius: var(--rayon);
     break-inside: avoid;
     /* La barre des vues est collante : sans cette marge, une ancre déposait le
        titre de la fiche juste derrière elle. */
     scroll-margin-top: 110px;
+  }
+
+  .fiche-diag.bon {
+    --gravite-fiche: #5fb489;
+  }
+  .fiche-diag.attention {
+    --gravite-fiche: #d9a03f;
+  }
+  .fiche-diag.alerte {
+    --gravite-fiche: #d4604a;
+  }
+  .fiche-diag.neutre {
+    --gravite-fiche: var(--sur-fond-doux);
+  }
+
+  @media (max-width: 620px) {
+    .fiche-diag {
+      padding: var(--e4);
+    }
   }
 
   .jusqua-fiche {

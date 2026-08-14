@@ -28,6 +28,11 @@ export interface Document {
    * première page la faisait échouer alors que le dessin, lui, va vite.
    */
   prechauffer: () => Promise<void>;
+  /**
+   * La photo du bien, si le rapport en porte une sur sa page de garde.
+   * Renvoie une image utilisable dans un `<img>`, ou `null`.
+   */
+  photoDuBien: () => Promise<string | null>;
   fermer: () => Promise<void>;
 }
 
@@ -87,6 +92,113 @@ export async function ouvrirPdf(
 
     async prechauffer() {
       await documentDeDessin();
+    },
+
+    /**
+     * La photo du bien, cherchée sur la page de garde.
+     *
+     * Les rapports posent une photo de façade en tête, et c'est elle qui fait
+     * reconnaître son logement d'un coup d'œil. Le piège est le logo du
+     * diagnostiqueur, qui vit sur la même page : on les sépare par la taille.
+     * Mesuré sur de vrais dossiers, l'écart ne laisse pas de doute — la photo
+     * occupe la moitié de la largeur, les logos et puces deux pour cent.
+     *
+     * Deux garde-fous en plus de la taille : un format d'image (ni un bandeau,
+     * ni une colonne), et rien au-delà des deux premières pages — plus loin,
+     * ce sont les photos d'anomalies, qui ne représentent pas le bien.
+     *
+     * Le fichier ne bouge pas d'ici : tout se fait dans le navigateur.
+     */
+    async photoDuBien() {
+      try {
+        const doc = await documentDeDessin();
+
+        for (let n = 1; n <= Math.min(2, doc.numPages); n++) {
+          const page = await doc.getPage(n);
+          const largeurPage = page.getViewport({ scale: 1 }).width;
+          const ops = await page.getOperatorList();
+
+          let meilleure: { nom: string; largeur: number } | null = null;
+
+          for (let i = 0; i < ops.fnArray.length; i++) {
+            const fn = ops.fnArray[i];
+            if (fn !== pdfjs.OPS.paintImageXObject) continue;
+
+            const nom = ops.argsArray[i]?.[0];
+            if (typeof nom !== 'string') continue;
+
+            // La transformation qui précède le tracé donne la taille à l'écran.
+            let largeur = 0;
+            let hauteur = 0;
+            for (let j = i - 1; j >= 0 && j > i - 12; j--) {
+              if (ops.fnArray[j] === pdfjs.OPS.transform) {
+                const [a, , , d] = ops.argsArray[j] as number[];
+                largeur = Math.abs(a ?? 0);
+                hauteur = Math.abs(d ?? 0);
+                break;
+              }
+            }
+
+            if (largeur < largeurPage * 0.25) continue; // logo, puce, filet
+            const forme = hauteur > 0 ? largeur / hauteur : 0;
+            if (forme < 0.6 || forme > 2.2) continue; // bandeau ou colonne
+            if (!meilleure || largeur > meilleure.largeur) meilleure = { nom, largeur };
+          }
+
+          if (!meilleure) continue;
+
+          const image = await new Promise<{
+            width: number;
+            height: number;
+            kind?: number;
+            data?: Uint8ClampedArray;
+          } | null>((pret) => {
+            try {
+              page.objs.get(meilleure.nom, pret as never);
+            } catch {
+              pret(null);
+            }
+          });
+          if (!image?.data) continue;
+
+          const canvas = document.createElement('canvas');
+          canvas.width = image.width;
+          canvas.height = image.height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) continue;
+
+          // pdf.js livre du RGB, du RGBA ou du gris selon le PDF : on ramène
+          // tout en RGBA, seul format qu'accepte un canevas.
+          const rgba = new Uint8ClampedArray(image.width * image.height * 4);
+          const src = image.data;
+          for (let p = 0; p < image.width * image.height; p++) {
+            const o = p * 4;
+            if (image.kind === 3) {
+              rgba[o] = src[p * 4] ?? 0;
+              rgba[o + 1] = src[p * 4 + 1] ?? 0;
+              rgba[o + 2] = src[p * 4 + 2] ?? 0;
+              rgba[o + 3] = src[p * 4 + 3] ?? 255;
+            } else if (image.kind === 2) {
+              rgba[o] = src[p * 3] ?? 0;
+              rgba[o + 1] = src[p * 3 + 1] ?? 0;
+              rgba[o + 2] = src[p * 3 + 2] ?? 0;
+              rgba[o + 3] = 255;
+            } else {
+              const g = src[p] ?? 0;
+              rgba[o] = rgba[o + 1] = rgba[o + 2] = g;
+              rgba[o + 3] = 255;
+            }
+          }
+
+          ctx.putImageData(new ImageData(rgba, image.width, image.height), 0, 0);
+          return canvas.toDataURL('image/jpeg', 0.78);
+        }
+
+        return null;
+      } catch {
+        // Une photo manquante n'empêche pas de lire un dossier.
+        return null;
+      }
     },
 
     async rendre(numero, largeurCible = 900) {

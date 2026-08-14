@@ -32,6 +32,14 @@
   let nomFichier = $state('');
   /** Pages du rapport dessinées, pour les montrer annotées. */
   let rendus = $state<Map<number, PageRendue>>(new Map());
+  /**
+   * La photo du bien, tirée de la page de garde du rapport.
+   *
+   * Elle ne change rien à l'analyse : elle sert à reconnaître son logement d'un
+   * coup d'œil. Comme le reste, elle est extraite dans le navigateur et n'en
+   * sort pas.
+   */
+  let photo = $state<string | null>(null);
   /** Dossiers déjà analysés, gardés sur l'appareil — PDF compris. */
   let dossiers = $state<DossierGarde[]>([]);
   listerDossiers().then((liste) => (dossiers = liste));
@@ -46,6 +54,7 @@
 
     nomFichier = garde.nomFichier;
     rendus = new Map();
+    photo = null;
     analyse = garde.analyse;
     etat = 'resultat';
 
@@ -73,6 +82,7 @@
 
     nomFichier = 'dossier de démonstration';
     rendus = new Map(); // pas de vrai PDF : pas de page à montrer
+    photo = null;
     analyse = analyser(pagesExemple());
     etat = 'resultat';
   }
@@ -130,6 +140,7 @@
       // plusieurs secondes sur un gros dossier, et le lecteur n'a aucune raison
       // d'attendre pour savoir si c'est grave.
       rendus = new Map();
+      photo = null;
       analyse = resultat;
       etat = 'resultat';
       // Le rapport lui-même est gardé, pas seulement son analyse : c'est ce qui
@@ -145,6 +156,9 @@
       if (import.meta.env.DEV) {
         (window as unknown as { docCourant?: unknown }).docCourant = document;
       }
+
+      // La photo arrive quand elle peut : le verdict n'attend pas une image.
+      void document.photoDuBien().then((p) => (photo = p));
 
       void dessinerPages(document, resultat);
     } catch (e) {
@@ -338,7 +352,7 @@
       </p>
     {/if}
 
-    <Lecteur {analyse} {rendus} {demande} />
+    <Lecteur {analyse} {rendus} {demande} {photo} />
 
     <p class="avertissement">
       {nomFichier} — outil de lecture, sans valeur réglementaire. La référence reste le rapport
