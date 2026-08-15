@@ -1,0 +1,148 @@
+import { describe, expect, it } from 'vitest';
+import { UNIVERS, estSombre, styleUnivers } from './univers';
+import type { TypeDiag } from './modele';
+
+/**
+ * La lisibilité des univers, tenue par le test plutôt que par la vigilance.
+ *
+ * Sept mondes visuels, chacun avec ses couleurs, et une règle qui ne se négocie
+ * pas : aucun texte sous 4,5:1 sur le fond où il est réellement posé. Une
+ * mesure faite une fois à la main ne protège de rien — la teinte suivante
+ * qu'on ajustera « juste un peu » passera sans que personne ne recalcule.
+ *
+ * Le calcul suit WCAG 2.1, et les couples testés sont ceux que la mise en page
+ * produit vraiment : le texte est sur les cartes autant que sur le fond, et
+ * l'accent devient un aplat plein sous les boutons.
+ */
+
+/** Luminance relative d'une couleur, WCAG 2.1 § définitions. */
+function luminance(hex: string): number {
+  const n = hex.replace('#', '');
+  const canaux = [n.slice(0, 2), n.slice(2, 4), n.slice(4, 6)].map((paire) => {
+    const c = parseInt(paire, 16) / 255;
+    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * (canaux[0] ?? 0) + 0.7152 * (canaux[1] ?? 0) + 0.0722 * (canaux[2] ?? 0);
+}
+
+/** Rapport de contraste entre deux couleurs opaques. */
+export function contraste(a: string, b: string): number {
+  const [clair, sombre] = [luminance(a), luminance(b)].sort((x, y) => y - x) as [number, number];
+  return (clair + 0.05) / (sombre + 0.05);
+}
+
+describe('la mesure elle-même', () => {
+  /*
+   * Un test de contraste qui se trompe de calcul valide tout et ne protège de
+   * rien. Ces trois repères sont vérifiables de tête : le noir sur blanc vaut
+   * 21, une couleur sur elle-même vaut 1.
+   */
+  it('donne les valeurs connues', () => {
+    expect(contraste('#000000', '#ffffff')).toBeCloseTo(21, 1);
+    expect(contraste('#ffffff', '#ffffff')).toBeCloseTo(1, 5);
+    // Le corail de la marque sur blanc : c'est parce qu'il ne tient que 2,8
+    // qu'il ne porte jamais de texte, et que le corail foncé existe.
+    expect(contraste('#ff6b5d', '#ffffff')).toBeLessThan(3);
+  });
+
+  it('ne dépend pas de l’ordre des deux couleurs', () => {
+    expect(contraste('#1a4d5c', '#f4e8d8')).toBeCloseTo(contraste('#f4e8d8', '#1a4d5c'), 10);
+  });
+});
+
+const TEXTE_COURANT = 4.5;
+/** Filets, bords et aplats non textuels : WCAG 1.4.11. */
+const NON_TEXTUEL = 3;
+
+describe('chaque univers reste lisible', () => {
+  const types = Object.keys(UNIVERS) as TypeDiag[];
+
+  it('en couvre plusieurs', () => {
+    expect(types.length).toBeGreaterThanOrEqual(7);
+  });
+
+  for (const type of types) {
+    const u = UNIVERS[type];
+    if (!u) continue;
+
+    describe(type, () => {
+      /* Le texte courant, sur les deux fonds qu'il rencontre : la zone de
+         contenu, et les cartes posées dessus. */
+      it('pose son texte lisiblement sur le fond et sur les cartes', () => {
+        expect(contraste(u.texte, u.fond)).toBeGreaterThanOrEqual(TEXTE_COURANT);
+        expect(contraste(u.texte, u.surface)).toBeGreaterThanOrEqual(TEXTE_COURANT);
+      });
+
+      /* Le texte secondaire porte les précisions et les mentions de validité :
+         c'est du texte, il tient le même seuil. « Secondaire » ne veut pas dire
+         « facultatif à lire ». */
+      it('garde son texte secondaire au-dessus du seuil du texte courant', () => {
+        expect(contraste(u.texteDoux, u.fond)).toBeGreaterThanOrEqual(TEXTE_COURANT);
+        expect(contraste(u.texteDoux, u.surface)).toBeGreaterThanOrEqual(TEXTE_COURANT);
+      });
+
+      /* L'accent devient un bouton plein — « Voir votre nouvelle note » entre
+         autres. L'encre qu'on y pose doit tenir. */
+      it('supporte une encre lisible quand l’accent devient un aplat', () => {
+        expect(contraste(u.surAccent, u.accent)).toBeGreaterThanOrEqual(TEXTE_COURANT);
+      });
+
+      /* L'accent sert aussi de texte : liens, libellés d'action, bords actifs. */
+      it('laisse écrire avec l’accent sur les cartes', () => {
+        expect(contraste(u.accent, u.surface)).toBeGreaterThanOrEqual(TEXTE_COURANT);
+      });
+
+      /* Un filet qui ne se voit pas ne sépare rien. */
+      it('trace des filets visibles', () => {
+        expect(contraste(u.trait, u.surface)).toBeGreaterThanOrEqual(1.2);
+      });
+
+      /*
+       * Le garde-fou qui compte vraiment.
+       *
+       * On est dans une vente immobilière : une anomalie grave doit sauter aux
+       * yeux dans les sept écrans, pas seulement dans six. Les trois couleurs
+       * d'état sont réglées pour du fond clair ; un univers sombre doit donc se
+       * déclarer comme tel, sinon l'alerte s'éteint sans que rien ne le signale.
+       */
+      it('déclare la clarté de son fond, faute de quoi les alertes s’éteignent', () => {
+        const fondClair = luminance(u.fond) > 0.18;
+        expect(estSombre(type)).toBe(!fondClair);
+      });
+
+      it('laisse l’alerte du produit se détacher de son fond', () => {
+        // #a33220 sur fond clair, #ff9084 sur fond sombre — les deux valeurs
+        // déjà en service dans le produit.
+        const alerte = estSombre(type) ? '#ff9084' : '#a33220';
+        expect(contraste(alerte, u.fond)).toBeGreaterThanOrEqual(NON_TEXTUEL);
+        expect(contraste(alerte, u.surface)).toBeGreaterThanOrEqual(NON_TEXTUEL);
+      });
+    });
+  }
+});
+
+describe('les jetons livrés au CSS', () => {
+  it('donne les sept variables d’un univers connu', () => {
+    const style = styleUnivers('plomb');
+    for (const jeton of [
+      '--u-fond',
+      '--u-surface',
+      '--u-texte',
+      '--u-texte-doux',
+      '--u-accent',
+      '--u-sur-accent',
+      '--u-trait'
+    ]) {
+      expect(style).toContain(jeton);
+    }
+  });
+
+  /*
+   * Les diagnostics sans univers ne doivent pas se retrouver sans couleurs :
+   * une chaîne vide laisse jouer les replis de la charte, écrits dans le CSS.
+   * Renvoyer des jetons à moitié remplis les casserait à la place.
+   */
+  it('se tait pour un diagnostic sans univers, et laisse la charte reprendre', () => {
+    expect(styleUnivers('carrez')).toBe('');
+  });
+});

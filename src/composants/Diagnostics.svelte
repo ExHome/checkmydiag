@@ -23,6 +23,7 @@
   import { etiquetteDe } from '../lib/analyse/confiance';
   import type { Origine } from '../lib/bureau';
   import { APPS } from '../lib/apps';
+  import { estSombre, styleUnivers } from '../lib/univers';
   import { cubicOut } from 'svelte/easing';
   import { tick, untrack } from 'svelte';
 
@@ -664,7 +665,14 @@
       <p class="nom-app">{diags[courant]?.titre ?? ''}</p>
     </header>
 
-    <div class="dedans">
+    <!-- L'univers du diagnostic commence ici, et pas plus haut : la barre au-
+         dessus reste à la charte, c'est elle qui dit qu'on est toujours dans le
+         même produit. -->
+    <div
+      class="dedans"
+      class:sombre={estSombre(diags[courant]?.type ?? 'dpe')}
+      style={styleUnivers(diags[courant]?.type ?? 'dpe')}
+    >
       <section class="diagnostics">
         {@render dossier()}
       </section>
@@ -759,12 +767,74 @@
     white-space: nowrap;
   }
 
-  /* Le contenu défile seul, sous la barre. */
+  /*
+   * Le contenu défile seul, sous la barre — et c'est ici que l'univers commence.
+   *
+   * Les jetons `--u-*` arrivent en style inline, posés par `styleUnivers()`.
+   * Cette règle les traduit dans le vocabulaire du design system : les
+   * composants du dossier ne connaissent que `--papier`, `--sur-fond`,
+   * `--trait`… et changent de monde sans qu'une ligne de leur CSS bouge. C'est
+   * la même mécanique que l'inversion de l'écran de démarrage.
+   *
+   * Chaque repli est une valeur littérale de la charte, jamais `var(--x)` — un
+   * jeton qui se redéfinit à partir de lui-même forme un cycle, et le navigateur
+   * abandonne la déclaration en silence.
+   *
+   * CE QUI NE CHANGE PAS, quel que soit l'univers :
+   *   `--coral` et les trois couleurs d'état. Elles disent la gravité. Les
+   *   teinter selon l'écran reviendrait à rendre une alerte moins visible ici
+   *   que là — c'est la seule chose que ce chantier n'a pas le droit de faire.
+   */
   .dedans {
     flex: 1;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     padding: var(--e4) var(--e4) var(--e7);
+
+    background: var(--u-fond, #f4e8d8);
+    color: var(--u-texte, #1a4d5c);
+
+    --fond: var(--u-fond, #f4e8d8);
+    --fond-clair: var(--u-surface, #ffffff);
+    --papier: var(--u-surface, #ffffff);
+    --papier-doux: color-mix(in srgb, var(--u-texte, #1a4d5c) 4%, var(--u-surface, #ffffff));
+    --sur-fond: var(--u-texte, #1a4d5c);
+    --sur-fond-doux: var(--u-texte-doux, #555555);
+    --encre: var(--u-texte, #1a4d5c);
+    --encre-doux: var(--u-texte-doux, #555555);
+    --gris: var(--u-texte-doux, #888888);
+    --trait: var(--u-trait, #e8dcc8);
+    --trait-fin: color-mix(in srgb, var(--u-trait, #f0eae0) 55%, transparent);
+    --trait-or: var(--u-trait, #e8dcc8);
+    --surface: color-mix(in srgb, var(--u-texte, #1a4d5c) 4%, transparent);
+    --surface-forte: color-mix(in srgb, var(--u-texte, #1a4d5c) 7%, transparent);
+    --surface-bord: color-mix(in srgb, var(--u-texte, #1a4d5c) 14%, transparent);
+
+    /* L'accent de l'univers prend la place du corail dans les rôles
+       décoratifs — filets, bords actifs, boutons. Pas dans les rôles de
+       gravité. */
+    --coral-fonce: var(--u-accent, #d0402c);
+    --coral-texte: var(--u-accent, #a33220);
+    --sur-accent: var(--u-sur-accent, #ffffff);
+  }
+
+  /*
+   * Un univers sombre rappelle les couleurs d'état claires.
+   *
+   * Alerte, attention et bon sont réglées pour du fond clair — l'alerte #a33220
+   * ne tient que 2,1 sur le #0d1720 du tableau électrique, et une anomalie grave
+   * s'y effacerait. Ce sont exactement les valeurs déjà écrites pour l'écran de
+   * démarrage, réutilisées telles quelles : deux séries divergeraient tôt ou
+   * tard, et c'est sur la gravité qu'elles divergeraient.
+   */
+  .dedans.sombre {
+    --alerte: #ff9084;
+    --alerte-fond: rgb(255 107 93 / 14%);
+    --attention: #ffd54a;
+    --attention-fond: rgb(255 213 74 / 14%);
+    --ok: #cfe3ea;
+    --ok-fond: rgb(207 227 234 / 10%);
+    --coral: #ff9084;
   }
 
   .dedans .diagnostics {
@@ -1116,13 +1186,16 @@
 
   .modes button:hover {
     border-color: var(--coral-fonce);
-    color: var(--coral-texte);
+    color: var(--coral-fonce);
   }
 
+  /* L'encre du bouton actif suit l'accent : blanche sur un accent foncé, sombre
+     sur le jaune de l'électricité. Écrire `#fff` en dur donnait un bouton
+     illisible dans les univers clairs d'accent. */
   .modes button.actif {
     background: var(--coral-fonce);
     border-color: var(--coral-fonce);
-    color: #fff;
+    color: var(--sur-accent, #fff);
   }
 
   /* Le détail arrive par le haut, sans fondu.
@@ -1306,8 +1379,9 @@
     color: var(--sur-fond-doux) !important;
   }
 
-  /* La démarche : un bouton plein, corail. C'est la seule action de la fiche
-     qui emmène ailleurs, et elle rend une étiquette à qui y a droit. */
+  /* La démarche : un bouton plein, à l'accent de l'univers. C'est la seule
+     action de la fiche qui emmène ailleurs, et elle rend une étiquette à qui y
+     a droit. */
   .demarche {
     justify-self: start;
     display: inline-flex;
@@ -1316,7 +1390,7 @@
     min-height: 44px;
     padding: 0 var(--e4);
     background: var(--coral-fonce);
-    color: #fff;
+    color: var(--sur-accent, #fff);
     border-radius: var(--rayon-badge);
     font-size: var(--t-petit);
     font-weight: 700;
@@ -1324,8 +1398,13 @@
     transition: background var(--duree) var(--courbe), transform var(--duree) var(--courbe);
   }
 
+  /* Le survol se lit par un fondu vers l'encre de l'écran, pas par une seconde
+     couleur : dans un univers, l'accent et le corail-texte sont la même valeur,
+     et le bouton ne réagissait plus. Le fondu marche dans les deux sens — il
+     assombrit un accent posé sur fond clair, éclaircit celui de l'écran sombre —
+     donc il préserve le contraste avec l'encre du bouton. */
   .demarche:hover {
-    background: var(--coral-texte);
+    background: color-mix(in srgb, var(--coral-fonce) 82%, var(--sur-fond));
     transform: translateY(-2px);
   }
 
