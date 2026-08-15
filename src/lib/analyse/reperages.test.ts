@@ -57,3 +57,50 @@ describe('le plan de l’amiante', () => {
     expect(zonesDe(sansListe)).toEqual([]);
   });
 });
+
+/**
+ * La forme dominante des rapports réels, mesurée sur quarante dossiers : la
+ * liste est citée en intitulé de tableau, sans conclusion attachée. Elle
+ * n'était pas reconnue du tout — un dossier sur quarante contre dix-huit.
+ */
+describe('les listes citées sans conclusion', () => {
+  const CITATION = [
+    'RAPPORT DE REPÉRAGE AMIANTE',
+    'Matériaux et produits de la liste A',
+    'Localisation Matériau Présence',
+    'Matériaux de la liste B'
+  ];
+
+  it('reconnaît la liste citée en intitulé de tableau', () => {
+    const zones = zonesDe(analyserAmiante(CITATION, [4, 9]));
+    expect(zones.map((z) => z.nom).sort()).toEqual(['Liste A', 'Liste B']);
+  });
+
+  /*
+   * Le garde-fou, et c'est le seul qui compte ici.
+   *
+   * Une liste citée dit où l'on a regardé, pas ce qu'on y a trouvé. Lui coller
+   * la conclusion générale du rapport serait une déduction — et déduire une
+   * absence d'amiante n'est pas une chose qu'on se permet.
+   */
+  it('ne transforme pas une catégorie contrôlée en constat d’absence', () => {
+    const zones = zonesDe(analyserAmiante(CITATION, [4, 9]));
+    for (const z of zones) {
+      expect(z.etat).toBe('neutre');
+      expect(z.dit).toMatch(/ne lui attache pas de conclusion propre/);
+      expect(z.dit).not.toMatch(/ne relève aucun matériau|aucune trace|absence/i);
+    }
+  });
+
+  it('la conclusion propre l’emporte sur la simple citation', () => {
+    const zones = zonesDe(
+      analyserAmiante(
+        [...CITATION, "Liste A : il n'a pas été repéré de matériaux contenant de l'amiante."],
+        [4, 9]
+      )
+    );
+    const a = zones.filter((z) => z.nom === 'Liste A');
+    expect(a).toHaveLength(1);
+    expect(a[0]?.etat).toBe('bon');
+  });
+});

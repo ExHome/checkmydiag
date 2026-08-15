@@ -134,6 +134,31 @@ export function analyserAmiante(lignes: string[], plage: [number, number]): Diag
     }
   }
 
+  /*
+   * Les listes simplement citées, sans conclusion attachée.
+   *
+   * Mesuré sur quarante dossiers : la forme « Liste A : il n'a pas été
+   * repéré… », seule reconnue jusqu'ici, n'apparaît que dans un dossier. La
+   * forme dominante est tout autre — « matériaux (et produits) de la liste A »,
+   * 175 fois, dans dix-huit dossiers sur quarante. C'est un intitulé de
+   * tableau, pas une phrase : rien ne le suit qui dise présence ou absence
+   * (mesuré : 159 fois sur 175, aucune conclusion dans les 400 caractères
+   * suivants).
+   *
+   * On note donc ce que cette mention établit réellement, et rien de plus :
+   * cette catégorie de matériaux fait partie de ce que le repérage a couvert.
+   * Lui attribuer la conclusion générale du rapport serait une déduction — et
+   * une déduction sur une absence d'amiante n'est pas une chose qu'on se
+   * permet.
+   */
+  const citees = new Set<string>();
+  for (const ligne of lignes) {
+    for (const m of ligne.matchAll(/mat[ée]riaux(?: et produits)? de la liste\s*([ABC])\b/gi)) {
+      const l = m[1]?.toUpperCase();
+      if (l && !listes.some((x) => x.liste === l)) citees.add(l);
+    }
+  }
+
   const listesAvecAmiante = listes.filter((l) => l.presence).map((l) => l.liste);
   const amianteTrouvee = !phraseAbsence && (!!phrasePresence || listesAvecAmiante.length > 0);
   const conclusionLue = !!phraseAbsence || listes.length > 0 || !!phrasePresence;
@@ -158,15 +183,24 @@ export function analyserAmiante(lignes: string[], plage: [number, number]): Diag
     C: 'liste du repérage avant démolition, qui n’est pas le repérage de vente'
   };
 
-  const zonesAmiante = listes.map((l) => ({
-    nom: `Liste ${l.liste}`,
-    etat: (l.presence ? 'attention' : 'bon') as Gravite,
-    detail: `${
-      l.presence
-        ? 'Le rapport signale des matériaux de cette liste dans le bien.'
-        : 'Le rapport ne relève aucun matériau de cette liste dans les parties accessibles.'
-    } La liste ${l.liste} couvre les ${COUVRE[l.liste] ?? 'matériaux qu’elle désigne'}.`
-  }));
+  const zonesAmiante = [
+    ...listes.map((l) => ({
+      nom: `Liste ${l.liste}`,
+      etat: (l.presence ? 'attention' : 'bon') as Gravite,
+      detail: `${
+        l.presence
+          ? 'Le rapport signale des matériaux de cette liste dans le bien.'
+          : 'Le rapport ne relève aucun matériau de cette liste dans les parties accessibles.'
+      } La liste ${l.liste} couvre les ${COUVRE[l.liste] ?? 'matériaux qu’elle désigne'}.`
+    })),
+    ...[...citees].sort().map((l) => ({
+      nom: `Liste ${l}`,
+      /* Neutre, et pas « bon » : le rapport dit qu'il a regardé là, il ne dit
+         pas ici ce qu'il y a trouvé. Sa conclusion d'ensemble est ailleurs. */
+      etat: 'neutre' as Gravite,
+      detail: `Cette catégorie fait partie de ce que le repérage a couvert. Le rapport ne lui attache pas de conclusion propre : la sienne est donnée pour l’ensemble du repérage. La liste ${l} couvre les ${COUVRE[l] ?? 'matériaux qu’elle désigne'}.`
+    }))
+  ];
 
   const faits: Fait[] = [];
   const date = trouver(lignes, /Date du rep[ée]rage\s*:?[\s.]*(\d{2}\/\d{2}\/\d{4})/i);
