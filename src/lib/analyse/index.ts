@@ -11,6 +11,7 @@ import { analyserPlomb } from './plomb';
 import { analyserAmiante, analyserTermites } from './reperages';
 import { analyserElectricite, analyserGaz } from './securite';
 import { analyserAssainissement, analyserCarrez, analyserErp } from './risques';
+import { nonVisites } from './anomalies';
 import { controler } from './coherence';
 import { confianceDuDossier, origineDe } from './confiance';
 import { reperer } from './reperes';
@@ -147,7 +148,34 @@ export function analyser(brutes: PageTexte[]): Analyse {
     const diag = extracteur([...section.lignes, ...synthese], section.plage);
     const reperes = reperer(section.type, section.pages);
     const feuillets = section.pages.map((p) => p.numero);
-    diagnostics.push({ ...diag, feuillets, ...(reperes.length ? { reperes } : {}) });
+
+    /*
+     * Le périmètre de la mission, pour tous les diagnostics.
+     *
+     * Ce que le diagnostiqueur n'a pas pu voir borne la portée de sa
+     * conclusion : « rien trouvé » et « rien trouvé, mais les combles étaient
+     * fermés » ne veulent pas dire la même chose. Seuls l'électricité et le gaz
+     * le lisaient — les sept autres rendaient une conclusion sans jamais dire
+     * ce qu'elle ne couvrait pas.
+     *
+     * Mesuré sur quarante dossiers : trente-huit rapports ouvrent une rubrique
+     * de périmètre, trente-trois la nomment « pièces non visitées ».
+     *
+     * On ne remplace rien : les relevés déjà produits par l'extracteur passent
+     * devant, et l'on ajoute ce qu'il n'avait pas vu.
+     */
+    const dejaVus = new Set((diag.releves ?? []).map((r) => `${r.genre}|${r.ou ?? ''}|${r.libelle}`));
+    const perimetre = nonVisites(section.lignes).filter(
+      (r) => !dejaVus.has(`${r.genre}|${r.ou ?? ''}|${r.libelle}`)
+    );
+    const releves = [...(diag.releves ?? []), ...perimetre];
+
+    diagnostics.push({
+      ...diag,
+      feuillets,
+      ...(releves.length ? { releves } : {}),
+      ...(reperes.length ? { reperes } : {})
+    });
   }
 
   // Un diagnostic peut figurer au dossier sans que son rapport détaillé ait été

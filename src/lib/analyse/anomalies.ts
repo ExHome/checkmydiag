@@ -128,11 +128,23 @@ export function libellesPrecis(lignes: string[]): Releve[] {
  * rapport. « Rien trouvé » et « rien trouvé, mais les combles étaient fermés »
  * ne veulent pas dire la même chose.
  */
+/*
+ * Les intitulés sous lesquels les rapports ouvrent cette rubrique.
+ *
+ * Mesuré sur quarante dossiers : la seule forme reconnue jusqu'ici — « parties
+ * n'ayant pu être visitées » — en couvre vingt-trois. « Pièces non visitées »,
+ * qu'on ne cherchait pas, en couvre trente-trois. Et trente-huit rapports
+ * ouvrent une rubrique de périmètre sous un titre ou un autre.
+ *
+ * C'est la rubrique la plus importante d'un diagnostic et la moins lue : elle
+ * dit ce que la conclusion ne couvre pas.
+ */
+const OUVRE_PERIMETRE =
+  /n['’]ayant pu [êe]tre visit[ée]es|non visit[ée]es? et justification|pi[eè]ces? non visit[ée]es?|parties? non visit[ée]es?|locaux non visit[ée]s|zones? non contr[ôo]l[ée]es?|[ée]l[ée]ments? non contr[ôo]l[ée]s?/i;
+
 export function nonVisites(lignes: string[]): Releve[] {
   const releves: Releve[] = [];
-  const debut = lignes.findIndex((l) =>
-    /n['’]ayant pu [êe]tre visit[ée]es|non visit[ée]es et justification/i.test(l)
-  );
+  const debut = lignes.findIndex((l) => OUVRE_PERIMETRE.test(l));
   if (debut === -1) return releves;
 
   for (const ligne of lignes.slice(debut + 1, debut + 8)) {
@@ -144,6 +156,23 @@ export function nonVisites(lignes: string[]): Releve[] {
     const m = l.match(/^(.{3,60}?)\s*\((.{3,80})\)\s*$/);
     const ou = m?.[1]?.trim();
     const raison = m?.[2]?.trim();
+
+    /*
+     * Un empêchement, ou rien.
+     *
+     * L'élargissement des intitulés a fait remonter cent quatre-vingt-dix-huit
+     * relevés, dont cent cinquante-huit sans le moindre motif d'empêchement —
+     * des lignes de tableau d'une attestation de surface, prises pour des
+     * parties non visitées. Afficher « le diagnostiqueur n'a pas pu voir ceci »
+     * sur une ligne qui ne le dit pas, c'est fabriquer l'angle mort qu'on
+     * prétend signaler.
+     *
+     * Une ligne n'est donc retenue que si elle porte un motif — trappe
+     * condamnée, local encombré, meublé, fermé, inaccessible — ou la forme
+     * « endroit (raison) » que les rapports d'électricité emploient.
+     */
+    if (!(ou && raison) && !EMPECHEMENT.test(l)) continue;
+
     releves.push(
       ou && raison
         ? { libelle: raison, ou, genre: 'nonVisite' }
@@ -153,6 +182,10 @@ export function nonVisites(lignes: string[]): Releve[] {
 
   return releves;
 }
+
+/** Ce qui fait d'une ligne un empêchement, et non une ligne de tableau. */
+const EMPECHEMENT =
+  /trappe|encombr|meubl|occup[ée]|ferm[ée]|condamn|inaccessible|non accessible|hauteur|absence d|pas d['’]acc[eè]s|verrouill|scell|sans acc[eè]s|non visit/i;
 
 /**
  * Tout ce que le rapport signale, sans arbitrage.
