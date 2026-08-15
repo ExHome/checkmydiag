@@ -170,12 +170,38 @@
    * Sans le défilement, on cliquerait « Le rapport » et rien ne bougerait —
    * l'écran d'accueil occupe déjà toute la hauteur visible.
    */
+  /**
+   * Les trois parties du dossier sont des applications, pas des sections.
+   *
+   * Le dock les amenait en faisant défiler la page : on descendait dans un long
+   * document, et l'écran d'accueil restait derrière, à moitié visible. On entre
+   * maintenant dedans — plein écran, une sortie en haut, comme n'importe quelle
+   * application de la grille. C'est la même règle partout : on clique, on entre.
+   */
+  let vueOuverte = $state(false);
+
   function allerALaVue(cle: string): void {
     vue = cle;
-    requestAnimationFrame(() => {
-      document.getElementById('les-vues')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
+    vueOuverte = true;
   }
+
+  function fermerLaVue(): void {
+    vueOuverte = false;
+  }
+
+  /*
+   * La page ne défile pas sous l'application ouverte, et le clavier trouve la
+   * sortie en entrant. Les deux mêmes règles que pour les écrans de diagnostic.
+   */
+  $effect(() => {
+    if (!vueOuverte) return;
+    const avant = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    void tick().then(() => document.querySelector<HTMLElement>('.sortie-vue')?.focus());
+    return () => {
+      document.body.style.overflow = avant;
+    };
+  });
 
   /** Le carré de l'icône cliquée : l'écran du diagnostic s'ouvrira de là. */
   let origineIcone = $state<Origine | null>(null);
@@ -304,11 +330,19 @@
     };
   });
 
+  /*
+   * Échap referme la couche la plus haute, une à la fois.
+   *
+   * L'ordre compte : le schéma en pleine page couvre la fenêtre d'explication,
+   * qui elle-même s'ouvre dans une des trois applications. Fermer tout d'un
+   * coup ferait ressortir le lecteur trois niveaux plus bas que là où il
+   * regardait.
+   */
   function auClavierFenetre(e: KeyboardEvent): void {
-    if (e.key === 'Escape') {
-      if (plein) fermerPlein();
-      else if (actif) fermerFenetre();
-    }
+    if (e.key !== 'Escape') return;
+    if (plein) fermerPlein();
+    else if (actif) fermerFenetre();
+    else if (vueOuverte) fermerLaVue();
   }
 
   /* ---- La lecture guidée -------------------------------------------------
@@ -384,7 +418,18 @@
 <Verdict {analyse} {photo} surOuvrirDiagnostic={ouvrirDansLAnalyse} />
 
 {#if reperes.length}
-  <section class="lecteur">
+  <section class="lecteur" class:plein={vueOuverte}>
+    {#if vueOuverte}
+      <!-- La barre de l'application : la sortie, puis le nom de ce qu'on lit. -->
+      <header class="barre-vue">
+        <button type="button" class="sortie-vue" onclick={fermerLaVue}>
+          <span aria-hidden="true">←</span> Retour
+        </button>
+        <p class="titre-vue">{VUES.find((v) => v.cle === vue)?.nom ?? ''}</p>
+      </header>
+    {/if}
+
+    <div class="dedans-vue">
     <!-- Trois vues, pas vingt-trois écrans à la file. Le lecteur sait toujours
          où il est et ce qui reste. À l'impression, tout se déplie : le document
          remis n'a pas d'onglets. -->
@@ -740,6 +785,7 @@
         </em>
       </button>
     {/if}
+    </div>
   </section>
 
   <!-- Le schéma en pleine page. Dans le bandeau de droite, un dessin reste une
@@ -828,6 +874,70 @@
      Trois pavés côte à côte, et celui qu'on lit est en relief — un fond plus
      clair, un liseré d'or au sommet, une ombre sous lui. On voit où l'on est
      avant d'avoir lu le mot. */
+  /* ---- L'application ouverte -------------------------------------------
+     Les trois parties du dossier ne se parcourent plus en descendant : on entre
+     dedans. Même mécanique que les écrans de diagnostic, un cran en dessous
+     dans l'empilement — une fiche ouverte depuis la grille passe par-dessus. */
+  .lecteur.plein {
+    position: fixed;
+    inset: 0;
+    z-index: 45;
+    background: var(--fond);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin: 0;
+  }
+
+  .barre-vue {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: var(--e2);
+    padding: var(--e2) var(--e3);
+    background: rgb(255 255 255 / 82%);
+    backdrop-filter: blur(20px);
+    border-bottom: 2px solid var(--petrole);
+  }
+
+  .sortie-vue {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 44px;
+    padding: 0 var(--e2);
+    background: transparent;
+    border: none;
+    border-radius: var(--rayon-badge);
+    color: var(--coral-texte);
+    font-size: var(--t-base);
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .sortie-vue:hover {
+    background: var(--surface);
+  }
+
+  .titre-vue {
+    margin: 0;
+    font-size: var(--t-petit);
+    font-weight: 700;
+    color: var(--sur-fond);
+  }
+
+  .lecteur.plein .dedans-vue {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 var(--e4) var(--e7);
+  }
+
+  /* ---- La barre des trois parties ---------------------------------------
+     Une pilule, pas trois pavés. Le fond sable, l'onglet actif en bleu pétrole
+     plein, un liseré corail dessous : les trois couleurs de la charte, et rien
+     d'autre. L'ancienne version empilait un dégradé, un filet or et une ombre
+     verte — trois reliquats d'une charte abandonnée. */
   .vues {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -835,41 +945,42 @@
     position: sticky;
     top: 0;
     z-index: 8;
-    margin-bottom: var(--e6);
-    padding: var(--e2) 0;
-    /* Le fond est opaque : la barre passe au-dessus du document quand on
-       défile, elle ne doit rien laisser transparaître. */
-    background: linear-gradient(180deg, var(--fond) 78%, rgb(9 63 48 / 92%));
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--trait-or);
+    margin-bottom: var(--e5);
+    padding: var(--e1);
+    background: var(--sable);
+    border: 1px solid var(--trait);
+    border-radius: 999px;
+    box-shadow: var(--ombre);
   }
 
   .vues button {
-    text-align: left;
-    background: var(--surface);
-    border: 1px solid transparent;
-    border-radius: var(--rayon);
-    padding: var(--e3) var(--e4);
+    text-align: center;
+    background: transparent;
+    border: none;
+    border-radius: 999px;
+    padding: var(--e2) var(--e3);
     cursor: pointer;
     color: var(--sur-fond-doux);
     transition:
-      background 0.2s ease,
-      color 0.2s ease,
-      border-color 0.2s ease,
-      box-shadow 0.2s ease;
+      background var(--duree) var(--courbe),
+      color var(--duree) var(--courbe);
   }
 
-  .vues button:hover {
-    background: var(--surface-forte);
+  .vues button:hover:not(.courante) {
+    background: var(--surface);
     color: var(--sur-fond);
   }
 
   .vues button.courante {
-    color: var(--sur-fond);
-    background: linear-gradient(180deg, var(--surface-bord), var(--surface-forte));
-    border-color: var(--surface-bord);
-    border-top-color: var(--or);
-    box-shadow: 0 1px 0 var(--surface-forte) inset, 0 14px 26px -18px rgb(15 58 71 / 100%);
+    color: #fff;
+    background: var(--petrole);
+    box-shadow: 0 2px 0 var(--coral) inset;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vues button {
+      transition: none;
+    }
   }
 
   .nom-vue {
@@ -881,7 +992,7 @@
   }
 
   .vues button.courante .nom-vue {
-    color: var(--or-clair);
+    color: #fff;
   }
 
   .quoi-vue {
