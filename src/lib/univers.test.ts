@@ -54,6 +54,30 @@ const TEXTE_COURANT = 4.5;
 /** Filets, bords et aplats non textuels : WCAG 1.4.11. */
 const NON_TEXTUEL = 3;
 
+/**
+ * L'aplat le plus dense de l'écran — le vrai pire cas.
+ *
+ * Le fond nu ne prouve rien. Les fiches, les encarts et les blocs « ce que ça
+ * change pour vendre » posent par-dessus lui un voile de l'encre de l'univers,
+ * jusqu'à 14 % (`--surface-bord`). C'est SUR CE VOILE que la plupart des textes
+ * sont écrits, et il est plus sombre que le fond.
+ *
+ * L'oubli s'est payé cash : le texte secondaire du DPE, mesuré et validé à 4,77
+ * sur son fond, échouait 35 fois à l'écran — à 3,75 sur le voile. Plomb,
+ * termites et risques avaient le même défaut, invisible ici et flagrant dans le
+ * navigateur.
+ */
+function surLAplat(fond: string, encre: string, part = 0.14): string {
+  const lire = (h: string) => {
+    const n = h.replace('#', '');
+    return [0, 2, 4].map((i) => parseInt(n.slice(i, i + 2), 16));
+  };
+  const f = lire(fond);
+  const e = lire(encre);
+  const melange = f.map((c, i) => Math.round(c * (1 - part) + (e[i] ?? 0) * part));
+  return '#' + melange.map((c) => c.toString(16).padStart(2, '0')).join('');
+}
+
 describe('chaque univers reste lisible', () => {
   const types = Object.keys(UNIVERS) as Ecran[];
 
@@ -99,6 +123,21 @@ describe('chaque univers reste lisible', () => {
       it('laisse écrire avec l’accent, sur les cartes comme sur le fond', () => {
         expect(contraste(u.accent, u.surface)).toBeGreaterThanOrEqual(TEXTE_COURANT);
         expect(contraste(u.accent, u.fond)).toBeGreaterThanOrEqual(TEXTE_COURANT);
+      });
+
+      /*
+       * Le pire cas, celui qui manquait.
+       *
+       * Les trois couleurs qui portent du texte doivent tenir sur l'aplat le
+       * plus dense de l'écran, pas seulement sur le fond nu. C'est ce test qui
+       * aurait dû attraper les 35 échecs du DPE, les 21 des termites et les 26
+       * des risques — tous invisibles quand on ne mesurait que le fond.
+       */
+      it('tient aussi sur l’aplat le plus dense, où la plupart des textes sont écrits', () => {
+        const voile = surLAplat(u.fond, u.texte);
+        expect(contraste(u.texte, voile)).toBeGreaterThanOrEqual(TEXTE_COURANT);
+        expect(contraste(u.texteDoux, voile)).toBeGreaterThanOrEqual(TEXTE_COURANT);
+        expect(contraste(u.accent, voile)).toBeGreaterThanOrEqual(TEXTE_COURANT);
       });
 
       /* Un filet qui ne se voit pas ne sépare rien. */

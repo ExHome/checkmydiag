@@ -529,7 +529,7 @@
   .principal {
     background: var(--coral-fonce);
     border: 1px solid var(--coral-fonce);
-    color: #fff;
+    color: var(--sur-coral);
   }
 
   .principal:hover {

@@ -97,9 +97,17 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
     fond: '#fff4f2',
     surface: '#ffffff',
     texte: '#7a2e24',
-    /* #9C6459 de la maquette tombe à 4,45 : assombri du strict nécessaire pour
-       passer 4,77, sans quitter la teinte. */
-    texteDoux: '#96604f',
+    /*
+     * Le #9C6459 de la maquette tombe à 4,45 sur le fond nu. Assombri une
+     * première fois à #96604F, il passait la mesure — et échouait quand même à
+     * l'écran, 35 fois : les cartes et les encarts posent des aplats
+     * translucides teintés par-dessus le rose, et sur le plus sombre d'entre
+     * eux il retombait à 3,75.
+     *
+     * Le fond nu n'est donc pas le pire cas, et une mesure faite sur lui seul
+     * ne prouve rien. #875349 tient 4,55 sur l'aplat le plus dense.
+     */
+    texteDoux: '#875349',
     accentVif: '#ff6b5d',
     accent: '#a33220',
     surAccent: '#ffffff',
@@ -127,9 +135,9 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
     /* #7B68EE ne tient que 3,6 sur blanc : assombri pour le texte, la teinte
        d'origine reste sur les aplats et les filets. */
     texte: '#3b2f7a',
-    texteDoux: '#5a5580',
+    texteDoux: '#59547f',
     accentVif: '#8b7bf0',
-    accent: '#5a4bc4',
+    accent: '#5647ba',
     surAccent: '#ffffff',
     trait: '#ddd6f3'
   },
@@ -139,9 +147,9 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
     fond: '#f2f8f2',
     surface: '#f7faf7',
     texte: '#1b5e20',
-    texteDoux: '#4a6b4d',
+    texteDoux: '#496a4c',
     accentVif: '#43a047',
-    accent: '#2e7d32',
+    accent: '#276b2a',
     surAccent: '#ffffff',
     trait: '#cfe0d1'
   },
@@ -155,7 +163,7 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
     /* #FF8C42 tombe à 2,7 sur blanc : l'orange foncé prend le relais dès qu'il
        s'agit d'écrire ou de porter du blanc. */
     accentVif: '#f4701f',
-    accent: '#a8480c',
+    accent: '#a6470c',
     surAccent: '#ffffff',
     trait: '#f2e4d6'
   },
@@ -165,7 +173,7 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
     fond: '#f4e8d8',
     surface: '#fffdfa',
     texte: '#5d3a1a',
-    texteDoux: '#7a5a40',
+    texteDoux: '#6f5239',
     accentVif: '#a0522d',
     accent: '#8b4513',
     surAccent: '#ffffff',
@@ -198,7 +206,7 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
     fond: '#fbf7ef',
     surface: '#f1eadc',
     texte: '#1e2230',
-    texteDoux: '#5a6070',
+    texteDoux: '#595f6f',
     accentVif: '#5c6b8a',
     accent: '#4a5878',
     surAccent: '#ffffff',
@@ -210,9 +218,9 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
     fond: '#f2fafa',
     surface: '#ffffff',
     texte: '#00695c',
-    texteDoux: '#4a6f6b',
+    texteDoux: '#476b67',
     accentVif: '#00897b',
-    accent: '#00796b',
+    accent: '#007164',
     surAccent: '#ffffff',
     trait: '#d5efee'
   }

@@ -76,15 +76,24 @@
   --coral: #ff6b5d;
 
   /*
-   * Le corail des boutons pleins, mesuré plutôt que choisi.
+   * Le corail des boutons pleins — et l'encre qui va dessus.
    *
-   * La charte donne #F05844 : avec du texte blanc, il tient 3,4 — sous les 4,5
-   * exigés, et le libellé d'un bouton est précisément ce qu'on doit pouvoir
-   * lire. #D0402C est le corail le plus vif qui passe la mesure (4,71). Le
-   * corail vif, lui, garde tous les aplats qui ne portent pas de texte : le
-   * sceau du cartouche, les dégradés, les filets.
+   * Première tentative : garder le blanc et assombrir le corail jusqu'à ce
+   * qu'il porte le libellé. #D0402C passait la mesure (4,71) mais la cliente a
+   * tranché en trois mots, et elle a raison : « on dirait rouge ». C'était
+   * devenu une brique, pas un corail.
+   *
+   * La bonne réponse était de l'autre côté : garder le corail EXACT de la
+   * marque et changer l'encre. Le pétrole très foncé y tient 5,07 — mieux que
+   * le blanc ne tenait sur la version assombrie.
+   *
+   * Le produit faisait déjà ce raisonnement ailleurs sans le nommer : sur les
+   * étiquettes A→G, dont les couleurs sont réglementaires, c'est l'encre qui
+   * s'adapte parce que la couleur ne peut pas bouger. Une couleur de marque
+   * mérite le même égard.
    */
-  --coral-fonce: #d0402c;
+  --coral-fonce: #ff6b5d;
+  --sur-coral: #0c2f3a;
 
   /*
    * Le corail porte l'action, jamais le texte courant.

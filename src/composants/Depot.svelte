@@ -531,7 +531,7 @@
     display: inline-block;
     margin-top: var(--e5);
     background: var(--coral-fonce);
-    color: #fff;
+    color: var(--sur-coral);
     border-radius: var(--rayon);
     padding: 14px 40px;
     font-size: 0.9375rem;

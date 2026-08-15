@@ -1225,9 +1225,12 @@
       border-color var(--duree) var(--courbe);
   }
 
+  /* Le bord prend la couleur vive, le libellé prend celle qui s'écrit : depuis
+     que `--coral-fonce` est redevenu le corail exact, il ne tient plus que 2,8
+     en texte. */
   .modes button:hover {
     border-color: var(--coral-fonce);
-    color: var(--coral-fonce);
+    color: var(--coral-texte);
   }
 
   /* L'encre du bouton actif suit l'accent : blanche sur un accent foncé, sombre
