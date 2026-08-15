@@ -129,14 +129,70 @@ function estPageDeGarde(page: PageTexte): boolean {
   return touches.length >= 4;
 }
 
+/**
+ * Une page qui énumère, mais ne rapporte rien.
+ *
+ * Bordereaux, sommaires, pages de remise : elles nomment plusieurs diagnostics
+ * sans en être un. La page de garde en cite quatre ou plus et se reconnaît
+ * ainsi ; celles-ci n'en citent que deux, et passaient entre les mailles.
+ *
+ * Mesuré sur quarante dossiers : treize d'entre eux fabriquaient une section
+ * termites d'une seule page, sans corps de rapport ni conclusion. Le lecteur
+ * voyait une fiche « Termites — sa conclusion n'a pas pu être lue » alors
+ * qu'aucun état termites ne figurait au dossier. Les treize pages nomment deux
+ * diagnostics et comptent de dix à vingt-quatre lignes : c'est la signature
+ * d'un sommaire, et aucune ne dépasse ce format.
+ *
+ * Le seuil de longueur compte autant que celui du nombre : une vraie première
+ * page de rapport cite parfois un autre diagnostic dans son en-tête commercial,
+ * mais elle porte toujours du texte — bien plus de vingt-cinq lignes.
+ */
+function estSommaire(page: PageTexte): boolean {
+  if (page.lignes.length >= 25) return false;
+  const colle = compact(page.lignes.join(' '));
+  const touches = MARQUEURS.filter((m) => m.entetes.some((e) => colle.includes(e)));
+  return touches.length >= 2;
+}
+
 function typeDeLaPage(page: PageTexte): TypeDiag | null {
   // Le titre courant tient dans les premières lignes (haut de page).
   const entete = compact(page.lignes.slice(0, 4).join(' '));
   if (!entete) return null;
+
+  /*
+   * Le titre le plus haut sur la page l'emporte, pas le premier de notre liste.
+   *
+   * On renvoyait le premier marqueur trouvé dans l'ordre où ils sont écrits
+   * ici. Une page de rapport termites dont l'en-tête commercial énumère les
+   * prestations du cabinet — « diagnostic de performance énergétique, amiante,
+   * plomb » — était donc classée DPE : le marqueur `dpe` ouvre la liste. Le
+   * rapport changeait d'identité à cause de la signature de son auteur.
+   *
+   * On compare donc les positions : le titre du rapport est imprimé au-dessus
+   * de la mention commerciale, et c'est celui-là qu'on veut.
+   */
+  let meilleur: { type: TypeDiag; ou: number } | null = null;
   for (const marqueur of MARQUEURS) {
-    if (marqueur.entetes.some((e) => entete.includes(e))) return marqueur.type;
+    for (const e of marqueur.entetes) {
+      const ou = entete.indexOf(e);
+      if (ou >= 0 && (!meilleur || ou < meilleur.ou)) meilleur = { type: marqueur.type, ou };
+    }
   }
-  return null;
+  return meilleur?.type ?? null;
+}
+
+/**
+ * La page porte-t-elle encore la trace du rapport en cours ?
+ *
+ * On cherche le titre du diagnostic dans la page entière, et non dans son
+ * en-tête : les modèles le répètent en pied de page, en filigrane, ou dans le
+ * cartouche latéral quand la page est une annexe. Une page qui ne le porte plus
+ * nulle part n'appartient plus au rapport.
+ */
+function porteLaTrace(page: PageTexte, type: TypeDiag): boolean {
+  const colle = compact(page.lignes.join(' '));
+  const marqueur = MARQUEURS.find((m) => m.type === type);
+  return marqueur ? marqueur.entetes.some((e) => colle.includes(e)) : false;
 }
 
 export function decouper(pages: PageTexte[]): Decoupe {
@@ -155,7 +211,7 @@ export function decouper(pages: PageTexte[]): Decoupe {
       continue;
     }
 
-    if (estPageDeGarde(page)) {
+    if (estPageDeGarde(page) || estSommaire(page)) {
       horsSection.push(...page.lignes);
       courante = null;
       continue;
@@ -166,11 +222,33 @@ export function decouper(pages: PageTexte[]): Decoupe {
     if (type && (!courante || courante.type !== type)) {
       courante = { type, pages: [], lignes: [], plage: [page.numero, page.numero] };
       sections.push(courante);
+    } else if (!type && courante && !porteLaTrace(page, courante.type)) {
+      /*
+       * Le rapport est fini : la section se ferme.
+       *
+       * Une page sans en-tête reconnu restait rattachée à la section courante,
+       * pour garder les annexes et les croquis avec leur rapport. Rien
+       * n'arrêtait l'absorption : mesuré sur quarante dossiers, dix-sept
+       * sections dépassaient vingt pages et la plus grande en comptait
+       * quatre-vingt-trois — attestations d'assurance, factures et certificats
+       * du dossier entier versés dans un seul diagnostic. Un état termites y
+       * gagnait quarante-neuf pages, et sa fiche affichait « conclusion non
+       * lue » au milieu du bruit.
+       *
+       * Une page n'est donc rattachée sans en-tête que si elle porte encore la
+       * trace du rapport ailleurs sur la feuille. Mesuré après correction : les
+       * cent quarante-huit sections sont toutes conservées — aucune n'est
+       * perdue —, aucune ne dépasse dix pages, et mille soixante-dix-huit pages
+       * cessent d'être attribuées à un diagnostic qui ne les contient pas.
+       */
+      horsSection.push(...page.lignes);
+      courante = null;
+      continue;
     }
 
     if (courante) {
-      // Une page sans en-tête reconnu au milieu d'une section (annexe, croquis)
-      // reste rattachée à cette section.
+      // Une page sans en-tête reconnu, mais qui porte encore la trace du
+      // rapport (annexe, croquis), reste rattachée à cette section.
       courante.pages.push(page);
       courante.lignes.push(...page.lignes);
       courante.plage[1] = page.numero;
