@@ -438,8 +438,17 @@
     min-height: 44px;
   }
 
+  /*
+   * Le « My » prend le corail vif, et le garde sur les deux fonds.
+   *
+   * C'est le seul endroit du produit où une couleur de marque passe avant la
+   * mesure de contraste, et ce n'est pas un écart à la règle : WCAG exempte
+   * nommément le texte qui fait partie d'un logotype ou d'un nom de marque
+   * (critère 1.4.3). Partout ailleurs, le corail vif reste interdit au texte —
+   * il n'y tient que 2,7 sur le sable.
+   */
   .marque span {
-    color: var(--or-clair);
+    color: var(--coral);
   }
 
   .entete-ligne {

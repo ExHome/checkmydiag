@@ -33,9 +33,52 @@ function zonesTermites(lignes: string[]): { nom: string; etat: Gravite; detail?:
   return zones;
 }
 
+/**
+ * Les autres volets de l'état parasitaire.
+ *
+ * Le rapport s'appelle « état relatif à la présence de termites », et c'est ce
+ * que le moteur lisait — rien d'autre. Or le même document porte souvent trois
+ * volets : les termites, les insectes à larves xylophages, les champignons
+ * lignivores dont la mérule, plus une rubrique « constatations diverses ».
+ *
+ * Mesuré sur quarante dossiers : dix parlent de mérule, dix de xylophages, neuf
+ * portent des constatations diverses, huit un volet « autres agents de
+ * dégradation ». Conclure « aucun indice d'infestation de termites » sans dire
+ * un mot de ces volets, c'est rassurer par omission — la phrase est vraie, et
+ * le lecteur en tire une conclusion fausse.
+ *
+ * On se garde d'interpréter leur conclusion : les formulations n'ont pas été
+ * mesurées, et une absence déduite au jugé sur la mérule serait exactement le
+ * genre d'erreur qu'on passe son temps à corriger. On signale que le volet
+ * existe, et on renvoie au rapport.
+ */
+const VOLETS: { cle: string; nom: string; motif: RegExp }[] = [
+  {
+    cle: 'xylophages',
+    nom: 'Insectes du bois (xylophages)',
+    motif: /xylophages?|capricornes?|vrillettes?|lyctus|hesperophane|sirex/i
+  },
+  {
+    cle: 'merule',
+    nom: 'Mérule et champignons du bois',
+    motif: /m[ée]rule|champignons? lignivores?|coniophore|pourriture (?:cubique|fibreuse|molle)/i
+  },
+  {
+    cle: 'divers',
+    nom: 'Constatations diverses',
+    motif: /constatations? diverses?|autres? agents? (?:de )?d[ée]gradation/i
+  }
+];
+
+function voletsPresents(lignes: string[]): { cle: string; nom: string }[] {
+  const texte = lignes.join(' ');
+  return VOLETS.filter((v) => v.motif.test(texte)).map(({ cle, nom }) => ({ cle, nom }));
+}
+
 export function analyserTermites(lignes: string[], plage: [number, number]): Diagnostic {
   const zones = zonesTermites(lignes);
   const infestees = zones.filter((z) => z.etat === 'alerte');
+  const volets = voletsPresents(lignes);
 
   const phraseAbsence = trouver(
     lignes,
@@ -70,14 +113,44 @@ export function analyserTermites(lignes: string[], plage: [number, number]): Dia
   const date = trouver(lignes, /Date du rep[ée]rage\s*:?[\s.]*(\d{2}\/\d{2}\/\d{4})/i);
   if (date?.[1]) faits.push({ libelle: 'Date du repérage', valeur: date[1] });
 
+  /*
+   * La phrase qui empêche de se rassurer sur ce qui n'a pas été dit.
+   *
+   * Le verdict porte sur les termites, et sur eux seuls. Quand le rapport
+   * couvre d'autres agents, on l'annonce et on renvoie à sa conclusion — sans
+   * la lire à sa place.
+   */
+  const noms = volets.map((v) => v.nom.toLowerCase());
+  const mentionVolets =
+    noms.length === 0
+      ? ''
+      : ` Ce rapport traite aussi ${
+          noms.length === 1
+            ? noms[0]
+            : `${noms.slice(0, -1).join(', ')} et ${noms[noms.length - 1]}`
+        } : ces volets ont leur propre conclusion dans le rapport.`;
+
+  if (volets.length) {
+    faits.push({
+      libelle: 'Autres volets du rapport',
+      valeur: String(volets.length),
+      precision: volets.map((v) => v.nom).join(' · ')
+    });
+  }
+
   return {
     type: 'termites',
-    titre: 'Termites',
-    verdict: !conclusionLue
-      ? 'Un état termites figure au dossier ; sa conclusion n’a pas pu être lue automatiquement.'
-      : infeste
-        ? `Des indices d’infestation de termites ont été relevés${infestees.length ? ` dans ${infestees.length} zone${infestees.length > 1 ? 's' : ''}` : ''}.`
-        : 'Aucun indice d’infestation de termites n’a été relevé dans les parties visitées.',
+    /* Le titre suit ce que le rapport couvre : « Termites » sur un état qui
+       parle aussi de mérule et de xylophages annoncerait moins que son
+       contenu. */
+    titre: volets.length ? 'État parasitaire' : 'Termites',
+    verdict:
+      (!conclusionLue
+        ? 'Un état termites figure au dossier ; sa conclusion n’a pas pu être lue automatiquement.'
+        : infeste
+          ? `Des indices d’infestation de termites ont été relevés${infestees.length ? ` dans ${infestees.length} zone${infestees.length > 1 ? 's' : ''}` : ''}.`
+          : 'Aucun indice d’infestation de termites n’a été relevé dans les parties visitées.') +
+      mentionVolets,
     gravite: !conclusionLue ? 'neutre' : infeste ? 'alerte' : 'bon',
     faits,
     analogie:
@@ -86,7 +159,22 @@ export function analyserTermites(lignes: string[], plage: [number, number]): Dia
       // « sans démontage » est au lexique : la réserve tient en deux mots.
       'Le diagnostiqueur cherche des traces : galeries dans le bois, cordons de terre le long des murs, bois qui sonne creux. Il regarde ce qui est visible, sans démontage.',
       'Il ne peut donc pas garantir qu’il n’y a aucun termite. Un mur fermé, une cave inaccessible, une charpente hors d’atteinte : tout cela reste invisible.',
-      'Ce diagnostic n’est demandé que dans les communes où le préfet a signalé la présence de termites. Il ne vaut que six mois.'
+      'Ce diagnostic n’est demandé que dans les communes où le préfet a signalé la présence de termites. Il ne vaut que six mois.',
+      ...(volets.length
+        ? [
+            /*
+             * Ce que couvrent les volets supplémentaires, quand ils sont là.
+             *
+             * Le fondement de la mérule est au référentiel : article L. 126-25
+             * du code de la construction et de l'habitation, lu le 14/08/2026.
+             * Comme les termites, l'obligation naît d'un zonage arrêté par le
+             * préfet — c'est une information due, pas un diagnostic dû.
+             */
+            'Les termites ne sont pas les seuls à manger le bois. Les insectes du bois — capricornes, vrillettes, lyctus — creusent la charpente et les menuiseries ; la mérule, elle, est un champignon qui se nourrit du bois humide et se propage derrière les murs, dans le noir, sans qu’on la voie.',
+            'Ces volets ne suivent pas la même règle que les termites. Une information sur le risque de mérule n’est due que dans les zones délimitées par arrêté préfectoral, et le contrôle des insectes du bois relève le plus souvent d’une prestation que le vendeur commande en plus — il n’est obligatoire nulle part.',
+            'Chacun de ces volets a sa propre conclusion dans le rapport : lisez-les séparément. Un état qui ne relève aucun termite peut signaler autre chose deux pages plus loin.'
+          ]
+        : [])
     ],
     aFaire: infeste
       ? [

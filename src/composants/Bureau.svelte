@@ -106,6 +106,40 @@
     surOuvrirDiagnostic?.(type, origineDe(bouton.querySelector('.icone')));
   }
 
+  /**
+   * Les neuf applications, présentes ou non.
+   *
+   * On n'affichait que les diagnostics lus : le dossier paraissait complet quel
+   * qu'il soit, puisqu'on ne montrait jamais ce qui n'y était pas. Les neuf
+   * tuiles sont là désormais, et celles qui manquent sont éteintes — comme une
+   * application qu'un téléphone n'a pas encore chargée.
+   *
+   * Trois états, et la nuance compte : présent, absent, ou absent alors qu'il
+   * est obligatoire. Le troisième est un point bloquant à la vente, pas une
+   * case vide — le moteur le détecte déjà (logement d'avant 1997 sans repérage
+   * amiante, d'avant 1949 sans constat plomb), on ne fait que le montrer où le
+   * lecteur regarde.
+   */
+  const tuiles = $derived.by(() => {
+    const presents = new Set(analyse.diagnostics.map((d) => d.type));
+    const manques = new Map(
+      analyse.controles.filter((c) => c.genre === 'manque' && c.type).map((c) => [c.type!, c])
+    );
+
+    const absents = (Object.keys(APPS) as TypeDiag[])
+      .filter((t) => !presents.has(t))
+      .map((type) => ({
+        type,
+        diagnostic: null,
+        manque: manques.get(type) ?? null
+      }));
+
+    return [
+      ...analyse.diagnostics.map((d) => ({ type: d.type, diagnostic: d, manque: null })),
+      ...absents
+    ];
+  });
+
   /** La pastille d'état posée sur la tuile : une forme, puis une couleur. */
   function pastille(d: Diagnostic): { signe: string; classe: string } | null {
     if (d.gravite === 'alerte') return { signe: '▲', classe: 'alerte' };
@@ -169,19 +203,33 @@
   <h3 class="intitule">Vos diagnostics</h3>
 
   <ul class="grille">
-    {#each analyse.diagnostics as d (d.type)}
-      {@const t = TUILES[d.type]}
-      {@const p = pastille(d)}
+    {#each tuiles as tuile (tuile.type)}
+      {@const t = TUILES[tuile.type]}
+      {@const d = tuile.diagnostic}
+      {@const p = d ? pastille(d) : null}
       <li>
-        <button type="button" class="tuile" onclick={(e) => ouvrir(e, d.type)}>
+        <button
+          type="button"
+          class="tuile"
+          class:eteinte={!d}
+          disabled={!d}
+          title={d ? undefined : (tuile.manque?.titre ?? 'Ce diagnostic ne figure pas dans le dossier déposé.')}
+          onclick={(e) => d && ouvrir(e, tuile.type)}
+        >
           <span class="icone" style="background: {t.degrade}">
             <span class="signe" aria-hidden="true">{t.signe}</span>
             {#if p}
               <span class="pastille {p.classe}" aria-hidden="true">{p.signe}</span>
+            {:else if tuile.manque}
+              <!-- Absent alors qu'il est obligatoire : ce n'est pas une case
+                   vide, c'est un point à régler avant de signer. -->
+              <span class="pastille alerte" aria-hidden="true">▲</span>
             {/if}
           </span>
           <span class="nom">{t.nom}</span>
-          <span class="dit">{libelleCourt(d)}</span>
+          <span class="dit">
+            {#if d}{libelleCourt(d)}{:else if tuile.manque}Manquant{:else}Pas au dossier{/if}
+          </span>
         </button>
       </li>
     {/each}
@@ -433,8 +481,39 @@
     pointer-events: none;
   }
 
-  .tuile:hover .icone,
-  .tuile:focus-visible .icone {
+  /*
+   * L'application que le dossier ne contient pas : éteinte.
+   *
+   * L'icône garde sa forme et sa couleur, mais elle est délavée et sans relief
+   * — l'aspect d'une application qu'un téléphone n'a pas fini de charger. On la
+   * reconnaît, on voit qu'elle n'est pas là, et on ne peut pas l'ouvrir.
+   *
+   * Un point reste vif quand il le faut : la pastille d'alerte du diagnostic
+   * obligatoire absent. C'est l'information la plus importante de la grille, et
+   * elle ne doit pas s'éteindre avec le reste.
+   */
+  .tuile.eteinte {
+    cursor: default;
+  }
+
+  .tuile.eteinte .icone {
+    filter: grayscale(0.75);
+    opacity: 0.4;
+    box-shadow: inset 0 0 0 1px rgb(15 58 71 / 14%);
+  }
+
+  .tuile.eteinte .nom,
+  .tuile.eteinte .dit {
+    opacity: 0.55;
+  }
+
+  .tuile.eteinte .pastille {
+    filter: none;
+    opacity: 1;
+  }
+
+  .tuile:not(.eteinte):hover .icone,
+  .tuile:not(.eteinte):focus-visible .icone {
     transform: scale(1.05);
     box-shadow:
       inset 0 0 0 1px rgb(15 58 71 / 30%),

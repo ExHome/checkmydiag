@@ -1,6 +1,76 @@
 import { describe, expect, it } from 'vitest';
-import { analyserAmiante } from './reperages';
+import { analyserAmiante, analyserTermites } from './reperages';
 import { zonesDe } from './plan';
+
+/**
+ * L'état parasitaire ne parle pas que des termites.
+ *
+ * Mesuré sur quarante dossiers : dix mentionnent la mérule, dix les
+ * xylophages, neuf portent des constatations diverses. Conclure « aucun indice
+ * d'infestation de termites » sans dire un mot de ces volets, c'est rassurer
+ * par omission — la phrase est vraie, et le lecteur en tire le contraire.
+ */
+describe('les volets de l’état parasitaire', () => {
+  const SANS_TERMITE = [
+    'ÉTAT PARASITAIRE',
+    "Il n'a pas été repéré d'indice d'infestation de termites."
+  ];
+
+  it('ne mentionne rien quand le rapport ne traite que des termites', () => {
+    const d = analyserTermites(SANS_TERMITE, [3, 6]);
+    expect(d.titre).toBe('Termites');
+    expect(d.verdict).not.toMatch(/traite aussi/);
+  });
+
+  it('annonce la mérule quand le rapport la couvre', () => {
+    const d = analyserTermites(
+      [...SANS_TERMITE, 'Recherche de mérule et autres champignons lignivores : néant'],
+      [3, 6]
+    );
+
+    expect(d.titre).toBe('État parasitaire');
+    expect(d.verdict).toMatch(/traite aussi mérule et champignons du bois/i);
+    expect(d.verdict).toMatch(/leur propre conclusion/);
+  });
+
+  it('reconnaît les insectes du bois sous leurs noms d’espèces', () => {
+    for (const mot of ['capricornes', 'vrillettes', 'lyctus', 'insectes xylophages']) {
+      const d = analyserTermites([...SANS_TERMITE, `Recherche de ${mot} : néant`], [3, 6]);
+      expect(d.verdict, mot).toMatch(/insectes du bois/i);
+    }
+  });
+
+  it('reconnaît la rubrique des constatations diverses', () => {
+    const d = analyserTermites([...SANS_TERMITE, 'CONSTATATIONS DIVERSES : néant'], [3, 6]);
+    expect(d.verdict).toMatch(/constatations diverses/i);
+  });
+
+  /*
+   * Le garde-fou. On signale que le volet existe ; on ne lit pas sa conclusion
+   * à sa place. Les formulations n'ont pas été mesurées, et une absence déduite
+   * au jugé sur la mérule serait exactement l'erreur qu'on corrige partout.
+   */
+  it('n’invente aucune conclusion pour ces volets', () => {
+    const d = analyserTermites(
+      [...SANS_TERMITE, 'Mérule : présence constatée en cave', 'Constatations diverses : néant'],
+      [3, 6]
+    );
+
+    expect(d.verdict).not.toMatch(/aucune mérule|pas de mérule|mérule absente/i);
+    expect(d.verdict).toMatch(/leur propre conclusion dans le rapport/);
+  });
+
+  it('compte les volets dans les chiffres du rapport', () => {
+    const d = analyserTermites(
+      [...SANS_TERMITE, 'Mérule : néant', 'Capricornes : néant', 'Constatations diverses : néant'],
+      [3, 6]
+    );
+
+    const fait = d.faits.find((f) => f.libelle === 'Autres volets du rapport');
+    expect(fait?.valeur).toBe('3');
+    expect(fait?.precision).toMatch(/Insectes du bois/);
+  });
+});
 
 /**
  * Les listes de l'amiante, telles qu'un rapport les écrit : une ligne par
