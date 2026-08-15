@@ -381,8 +381,14 @@
   }
 
   /* ---- Le cartouche ------------------------------------------------------
-     Blanc sur le pétrole, largement arrondi, une ombre douce : il flotte
-     au-dessus du fond sans l'écraser.
+     Blanc sur le pétrole, cerné de corail.
+
+     Le corail est au POURTOUR, pas au fond : l'encart reste une surface de
+     lecture — trois chiffres, une phrase, deux boutons — et le filet suffit à
+     le désigner comme le bloc de la marque. Un aplat corail aurait obligé à
+     réécrire toute son encre en pétrole foncé, seule couleur qui s'y lit
+     (4,38 ; le blanc y tombe à 2,80), pour un gain d'attention qui n'était pas
+     demandé.
 
      Il remet les jetons à l'endroit pour lui-même : sa surface est claire, et
      le texte sable de l'écran y tomberait à 1,07. */
@@ -401,7 +407,7 @@
     color: var(--petrole);
 
     background: var(--papier);
-    border: 1px solid var(--surface-bord);
+    border: 2px solid var(--coral);
     border-radius: var(--rayon-large);
     padding: var(--e4);
     box-shadow: var(--ombre-forte);
@@ -518,6 +524,8 @@
     transition: transform var(--duree) var(--courbe), background var(--duree) var(--courbe);
   }
 
+  /* Le bouton reste corail, sur le blanc de l'encart : c'est l'action de la
+     marque, et le corail foncé y porte du blanc à 4,72. */
   .principal {
     background: var(--coral-fonce);
     border: 1px solid var(--coral-fonce);
