@@ -558,8 +558,25 @@ export const REGLEMENT_COPRO = {
 /*  L'entretien du référentiel                                                */
 /* -------------------------------------------------------------------------- */
 
-/** Au-delà de ce délai, une lecture n'est plus une source mais un souvenir. */
-export const FRAICHEUR_MOIS = 12;
+/**
+ * Au-delà de ce délai, une lecture n'est plus une source mais un souvenir.
+ *
+ * Ramené de douze à six mois le 15/08/2026, et l'occasion mérite d'être notée :
+ * le facteur de conversion de l'électricité est resté faux dans le produit
+ * pendant sept mois et demi. Douze mois laissaient donc passer une erreur
+ * entière avant même de la signaler.
+ *
+ * Ce garde-fou a une limite qu'il faut connaître : il mesure la date de
+ * LECTURE, pas celle du TEXTE. Une relecture qui se contente de rouvrir les
+ * articles déjà connus rafraîchit les dates sans rien apprendre — c'est
+ * exactement ce qui s'est produit. Toutes les entrées avaient été relues la
+ * veille, et aucune ne connaissait l'arrêté d'août 2025 : la fraîcheur affichée
+ * certifiait une lacune.
+ *
+ * Relire, ici, veut donc dire deux choses : rouvrir l'article, ET chercher ce
+ * qui l'a modifié depuis.
+ */
+export const FRAICHEUR_MOIS = 6;
 
 export interface Peremption {
   quoi: string;
