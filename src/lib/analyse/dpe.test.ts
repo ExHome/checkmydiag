@@ -37,31 +37,85 @@ describe('classement réglementaire', () => {
   });
 });
 
+/**
+ * Le même rapport, sur un logement au-dessus de 40 m².
+ *
+ * L'échelle générale ne vaut que là : 8 105 kWh pour 62,4 m² font
+ * 130 kWh/m²/an, soit la classe C.
+ */
+const DPE_GRAND = DPE_TYPE.map((l) => l.replace('22.4 m²', '62.4 m²'));
+
 describe('analyse d’un DPE', () => {
-  const diag = analyserDpe(DPE_TYPE, [4, 15]);
+  const diag = analyserDpe(DPE_GRAND, [4, 15]);
 
   it('recalcule l’étiquette énergie à partir de la consommation et de la surface', () => {
     expect(diag.schema).not.toBeNull();
     if (diag.schema?.genre !== 'dpe') throw new Error('schéma DPE attendu');
-    // 8 105 kWh / 22,4 m² = 362 kWh/m²/an → classe F
-    expect(diag.schema.energie?.valeur).toBe(362);
-    expect(diag.schema.energie?.lettre).toBe('F');
-    // 261 kg / 22,4 m² = 11,7 kg CO₂/m²/an → classe C
-    expect(diag.schema.climat?.lettre).toBe('C');
-    expect(diag.schema.finale).toBe('F');
+    // 8 105 kWh / 62,4 m² = 130 kWh/m²/an → classe C
+    expect(diag.schema.energie?.valeur).toBe(130);
+    expect(diag.schema.energie?.lettre).toBe('C');
+    // 261 kg / 62,4 m² = 4,2 kg CO₂/m²/an → classe A
+    expect(diag.schema.climat?.lettre).toBe('A');
+    expect(diag.schema.finale).toBe('C');
+  });
+});
+
+/**
+ * Les logements de 40 m² ou moins.
+ *
+ * Depuis le 1ᵉʳ juillet 2024, ils relèvent de seuils propres, établis mètre
+ * carré par mètre carré (arrêté du 25 mars 2024, au référentiel). L'échelle
+ * générale y est plus sévère que celle qui leur est due.
+ *
+ * Le produit l'appliquait quand même. Le cas de référence de ces tests — vingt-
+ * deux mètres carrés — figeait précisément l'erreur : il attendait la classe F
+ * et la mention « passoire thermique » pour un logement dont personne ne sait
+ * ici s'il en est une. C'est un audit notarial qui l'a trouvé.
+ */
+describe('un logement de 40 m² ou moins', () => {
+  const diag = analyserDpe(DPE_TYPE, [4, 15]);
+
+  it('ne recalcule aucune lettre avec l’échelle générale', () => {
+    if (diag.schema?.genre !== 'dpe') throw new Error('schéma DPE attendu');
+    expect(diag.schema.energie).toBeNull();
+    expect(diag.schema.climat).toBeNull();
+    expect(diag.schema.finale).toBeNull();
   });
 
-  it('signale une passoire thermique', () => {
-    expect(diag.gravite).toBe('alerte');
-    expect(diag.verdict).toMatch(/passoire/i);
+  /*
+   * Le garde-fou qui compte. Sous 40 m², l'échelle générale ne peut que
+   * sur-classer : elle produit de la fausse alarme, jamais de la fausse
+   * réassurance. Annoncer « passoire thermique » déclenche derrière toute une
+   * chaîne — plus louable, loyer gelé, audit énergétique à fournir — pour un
+   * logement qui n'est peut-être concerné par aucune.
+   */
+  it('n’annonce pas une passoire thermique', () => {
+    expect(diag.verdict).not.toMatch(/passoire/i);
+    expect(diag.gravite).not.toBe('alerte');
   });
+
+  it('dit pourquoi il s’abstient, et où trouver la vraie lettre', () => {
+    const texte = diag.explication.join(' ');
+    expect(texte).toMatch(/40 m² ou moins/);
+    expect(texte).toMatch(/seuils propres/);
+    expect(texte).toMatch(/étiquette du rapport|étiquette imprimée/);
+  });
+
+  it('garde les chiffres du rapport, qui restent vrais', () => {
+    const libelles = diag.faits.map((f) => f.libelle);
+    expect(libelles).toContain('N° ADEME');
+  });
+});
+
+describe('ce qu’un DPE donne, quelle que soit la surface', () => {
+  const diag = analyserDpe(DPE_GRAND, [4, 15]);
 
   it('extrait les repères administratifs', () => {
     const libelles = diag.faits.map((f) => f.libelle);
     expect(libelles).toContain('N° ADEME');
     expect(libelles).toContain('Valable jusqu’au');
     // Les nombres s'écrivent à la française, virgule comprise.
-    expect(diag.faits.find((f) => f.libelle === 'Surface de référence')?.valeur).toBe('22,4 m²');
+    expect(diag.faits.find((f) => f.libelle === 'Surface de référence')?.valeur).toBe('62,4 m²');
   });
 
   it('répartit les postes de consommation', () => {

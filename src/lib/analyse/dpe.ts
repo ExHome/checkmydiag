@@ -268,11 +268,48 @@ function aFaire(finale: Lettre | null): string[] {
   }
 }
 
+/**
+ * Le seuil de surface au-delà duquel l'échelle générale s'applique.
+ *
+ * Les logements dont la surface de référence est inférieure ou égale à 40 m²
+ * relèvent de seuils propres depuis le 1ᵉʳ juillet 2024 (arrêté du 25 mars
+ * 2024, au référentiel). Ces seuils sont établis surface par surface entre 8 et
+ * 40 m², et interpolés entre deux valeurs.
+ */
+const SURFACE_PETITE = 40;
+
+/**
+ * Recalcule-t-on la lettre, ou s'abstient-on ?
+ *
+ * On appliquait l'échelle générale — 70, 110, 180, 250, 330, 420 — sans regarder
+ * la surface. Sur un studio, cette échelle est plus sévère que celle qui lui est
+ * due : un logement de trente mètres carrés pouvait être annoncé « passoire
+ * thermique, plus louable », avec le gel des loyers et l'audit énergétique qui
+ * suivent, alors qu'il n'était rien de tout cela.
+ *
+ * Le produit connaissait pourtant la règle et s'en protégeait partout ailleurs —
+ * le référentiel l'énonce, le schéma du double seuil refuse d'écrire les seuils
+ * pour cette raison exacte, l'écran du notaire masque la tranche sous 40 m².
+ * Seul le calcul, qui décide de tout, l'ignorait.
+ *
+ * On ne code pas la table des petites surfaces : elle s'établit mètre carré par
+ * mètre carré et doit être relevée au texte officiel, pas déduite d'une lecture
+ * de seconde main. En attendant, on s'abstient — dire la consommation sans
+ * conclure sur la lettre est vrai ; conclure faux ne l'est pas.
+ *
+ * L'étiquette lue directement dans le rapport n'est pas concernée : elle vient
+ * du diagnostiqueur, qui a appliqué les bons seuils.
+ */
+function echellePetiteSurface(surface: number | null): boolean {
+  return surface !== null && surface <= SURFACE_PETITE;
+}
+
 export function analyserDpe(lignes: string[], plage: [number, number]): Diagnostic {
   const m = mesurer(lignes);
+  const petiteSurface = echellePetiteSurface(m.surface);
 
   const energie: Etiquette | null =
-    m.consoParM2 !== null
+    m.consoParM2 !== null && !petiteSurface
       ? {
           lettre: classePour(m.consoParM2, SEUILS_ENERGIE),
           valeur: Math.round(m.consoParM2),
@@ -282,7 +319,7 @@ export function analyserDpe(lignes: string[], plage: [number, number]): Diagnost
       : null;
 
   const climat: Etiquette | null =
-    m.gesParM2 !== null
+    m.gesParM2 !== null && !petiteSurface
       ? {
           lettre: classePour(m.gesParM2, SEUILS_CLIMAT),
           valeur: m.gesParM2,
@@ -292,7 +329,23 @@ export function analyserDpe(lignes: string[], plage: [number, number]): Diagnost
       : null;
 
   const finale = classeFinale(energie?.lettre ?? null, climat?.lettre ?? null);
-  const { verdict, gravite } = phraseVerdict(finale);
+  const chiffresLus = m.consoParM2 !== null || m.gesParM2 !== null;
+
+  /*
+   * Le verdict quand on s'abstient.
+   *
+   * Sans cette phrase, le lecteur recevait « ses chiffres n'ont pas pu être
+   * lus » — ce qui est faux : ils l'ont été, c'est la lettre qu'on refuse de
+   * recalculer. Un message qui se trompe de raison est presque aussi
+   * trompeur qu'un mauvais résultat.
+   */
+  const { verdict, gravite } =
+    petiteSurface && chiffresLus
+      ? {
+          verdict: `Ce logement fait ${m.surface} m². Les logements de 40 m² ou moins ont leurs propres seuils depuis juillet 2024 : nous ne recalculons pas la lettre, elle serait plus mauvaise que la vraie. Lisez celle imprimée sur l’étiquette du rapport.`,
+          gravite: 'neutre' as const
+        }
+      : phraseVerdict(finale);
 
   // Un audit énergétique reprend le DPE, puis déroule des scénarios de travaux.
   // Ses tableaux ne se lisent pas comme ceux d'un DPE isolé : autant le dire.
@@ -343,6 +396,23 @@ export function analyserDpe(lignes: string[], plage: [number, number]): Diagnost
   if (energie?.recalculee) {
     explication.push(
       "Précision de méthode : sur ce type de rapport, l'étiquette colorée est une image, illisible par un programme. La lettre ci-dessus a été recalculée à partir des chiffres écrits dans le rapport, avec les seuils officiels. Vérifiez qu'elle correspond bien à l'étiquette imprimée."
+    );
+  }
+
+  /*
+   * Ce qu'on dit quand on s'abstient.
+   *
+   * Le silence seul serait pire que l'erreur : le lecteur croirait que le
+   * rapport ne dit rien. On explique donc pourquoi la lettre n'est pas
+   * recalculée ici, et où la trouver — sur l'étiquette imprimée, établie par le
+   * diagnostiqueur avec les seuils qui conviennent à cette surface.
+   */
+  if (petiteSurface && (m.consoParM2 !== null || m.gesParM2 !== null)) {
+    explication.push(
+      `Ce logement fait ${m.surface} m². Depuis le 1ᵉʳ juillet 2024, les logements de 40 m² ou moins relèvent de seuils propres, établis mètre carré par mètre carré : l'échelle habituelle — moins de 70, de 70 à 110… — ne s'y applique pas. Elle est plus sévère qu'elle ne devrait pour une petite surface.`
+    );
+    explication.push(
+      "Nous ne recalculons donc pas la lettre ici : elle serait fausse, et plus mauvaise que la vraie. La lettre qui fait foi est celle imprimée sur l'étiquette du rapport, établie par le diagnostiqueur avec les seuils de cette surface. Les chiffres ci-dessus, eux, sont ceux du rapport."
     );
   }
   if (energie && !climat) {
