@@ -105,6 +105,20 @@ export interface Diagnostic {
   explication: string[];
   /** Ce que ça implique pour le propriétaire / l'acheteur. */
   aFaire: string[];
+  /**
+   * La démarche qu'on peut faire tout de suite, sur un site officiel.
+   *
+   * Rare, et c'est voulu : il n'y en a qu'une quand une réforme permet de faire
+   * rééditer une étiquette. Noyée dans un paragraphe, cette adresse ne serait
+   * jamais suivie ; en bouton, elle se voit.
+   */
+  demarche?: {
+    /** Le libellé du bouton, à la deuxième personne. */
+    texte: string;
+    url: string;
+    /** Ce qu'il faut avoir sous la main avant de cliquer. */
+    quoiEmporter?: string;
+  };
   schema: Schema | null;
   /** Pages du PDF où se trouve ce diagnostic (1-indexé). */
   pages: [number, number];

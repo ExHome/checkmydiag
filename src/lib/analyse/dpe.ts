@@ -432,11 +432,6 @@ export function analyserDpe(lignes: string[], plage: [number, number]): Diagnost
   for (const reforme of reformes) {
     explication.push(reforme.texte);
   }
-  if (reformes.length) {
-    explication.push(
-      `Où faire rectifier : ${OU_RECTIFIER.texte}, ${OU_RECTIFIER.url}. ${OU_RECTIFIER.comment}`
-    );
-  }
   if (energie && !climat) {
     explication.push(
       "Attention : seules les données de consommation ont pu être lues, pas les émissions de CO₂. La lettre affichée ne tient donc compte que de l'énergie ; si le logement émet beaucoup (fioul, gaz), l'étiquette officielle peut être moins bonne d'une ou deux classes."
@@ -461,6 +456,22 @@ export function analyserDpe(lignes: string[], plage: [number, number]): Diagnost
     gravite,
     faits,
     explication,
+    /*
+     * Le bouton, quand une réforme ouvre droit à une nouvelle étiquette.
+     *
+     * L'adresse de l'Observatoire était donnée en fin de paragraphe : personne
+     * ne suit une adresse écrite au fil du texte. Elle devient une action, avec
+     * ce qu'il faut avoir sous la main avant de cliquer.
+     */
+    ...(reformes.length
+      ? {
+          demarche: {
+            texte: 'Voir votre nouvelle note',
+            url: OU_RECTIFIER.url,
+            quoiEmporter: OU_RECTIFIER.comment
+          }
+        }
+      : {}),
     analogie:
       finale === 'F' || finale === 'G'
         ? 'Un logement, c’est une bouteille thermos. Une bonne thermos garde le café chaud toute la journée. Celle-ci, c’est plutôt une casserole sans couvercle : vous chauffez, et ça part au plafond. Le chauffage, lui, tourne pour rattraper.'

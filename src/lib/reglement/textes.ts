@@ -132,6 +132,30 @@ export const REGLEMENT: Partial<Record<TypeDiag, Reglement>> = {
         },
         reserve:
           'En vigueur depuis le 1ᵉʳ janvier 2026. Un DPE édité avant cette date a donc été calculé avec 2,3 : il reste valable, mais sa lettre a été établie sur l’ancien facteur.'
+      },
+      {
+        /*
+         * La réforme de 2021, et ce qu'elle a fait aux diagnostics d'avant.
+         *
+         * Le moteur applique ces dates depuis le lot précédent, mais le texte
+         * qui les fonde n'était nulle part : le code portait la règle, le
+         * référentiel l'ignorait. Une règle appliquée sans source inscrite est
+         * une règle qu'on ne pourra pas vérifier quand elle changera.
+         *
+         * Conséquence, au 15 août 2026 : tout DPE établi avant le 1ᵉʳ juillet
+         * 2021 est périmé, sans exception. Le plus récent d'entre eux a cessé
+         * de valoir le 31 décembre 2024.
+         */
+        enonce:
+          'La durée de validité du diagnostic de performance énergétique est de dix ans. Par exception, ceux réalisés entre le 1ᵉʳ janvier 2013 et le 31 décembre 2017 sont valides jusqu’au 31 décembre 2022, et ceux réalisés entre le 1ᵉʳ janvier 2018 et le 30 juin 2021 jusqu’au 31 décembre 2024.',
+        source: {
+          reference:
+            'décret n° 2020-1610 du 17 décembre 2020 relatif à la durée de validité des diagnostics de performance énergétique, article 1ᵉʳ',
+          url: 'https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000042695187',
+          luLe: '2026-08-15'
+        },
+        reserve:
+          'Ces durées écourtées visent les diagnostics antérieurs à la réforme du 1ᵉʳ juillet 2021 — celle qui a rendu le DPE opposable et changé sa méthode de calcul. Un rapport d’avant cette date porte donc une date de fin imprimée qui ne vaut plus.'
       }
     ]
   },

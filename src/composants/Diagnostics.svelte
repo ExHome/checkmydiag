@@ -568,6 +568,21 @@
                   {#each d.explication as paragraphe (paragraphe)}
                     <p><MotsExpliques texte={paragraphe} /></p>
                   {/each}
+
+                  <!-- La démarche qu'on peut faire tout de suite. Un bouton, et
+                       ce qu'il faut avoir sous la main avant de cliquer. -->
+                  {#if d.demarche}
+                    <p class="quoi-emporter">{d.demarche.quoiEmporter}</p>
+                    <a
+                      class="demarche"
+                      href={d.demarche.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {d.demarche.texte}
+                      <span aria-hidden="true">→</span>
+                    </a>
+                  {/if}
                 </div>
               {/if}
 
@@ -1282,6 +1297,46 @@
     font-size: var(--t-petit);
     line-height: 1.6;
     color: var(--sur-fond);
+  }
+
+  /* Ce qu'il faut avoir sous la main : juste au-dessus du bouton, en plus
+     petit. On le lit en tendant la main vers le rapport. */
+  .quoi-emporter {
+    font-size: var(--t-micro) !important;
+    color: var(--sur-fond-doux) !important;
+  }
+
+  /* La démarche : un bouton plein, corail. C'est la seule action de la fiche
+     qui emmène ailleurs, et elle rend une étiquette à qui y a droit. */
+  .demarche {
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--e2);
+    min-height: 44px;
+    padding: 0 var(--e4);
+    background: var(--coral-fonce);
+    color: #fff;
+    border-radius: var(--rayon-badge);
+    font-size: var(--t-petit);
+    font-weight: 700;
+    text-decoration: none;
+    transition: background var(--duree) var(--courbe), transform var(--duree) var(--courbe);
+  }
+
+  .demarche:hover {
+    background: var(--coral-texte);
+    transform: translateY(-2px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .demarche {
+      transition: none;
+    }
+
+    .demarche:hover {
+      transform: none;
+    }
   }
 
   /* Le canevas : les cinq mêmes questions pour les neuf diagnostics. */

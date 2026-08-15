@@ -320,10 +320,23 @@
     <a class="marque" href="./" onclick={(e) => { e.preventDefault(); recommencer(); }}>
       Check<span>My</span>Diag
     </a>
-    <!-- La seule sortie de l'écran de dépôt : les explications générales, pour
-         qui n'a pas encore son rapport sous la main. Ce sont de vraies pages
-         HTML, fabriquées hors de l'application (scripts/plugin-nuls.ts). -->
-    <a class="rubrique" href="./en-clair/">En clair</a>
+    <!--
+      « En clair » n'est plus dans le bandeau.
+
+      Il y était comme une sortie de secours, en haut à droite, à côté de la
+      marque : deux liens au même endroit, dont un qui quitte l'application. Il
+      brouillait la lecture de l'écran plutôt que de l'ouvrir.
+
+      Il est devenu une application, dans la rangée « Pour comprendre » de
+      l'accueil, à côté de Dicodiag. On y va quand on cherche une réponse, pas
+      parce qu'on l'a croisé.
+
+      Sur l'écran de dépôt, où il n'y a pas encore de grille, la sortie reste
+      offerte en toutes lettres sous la zone de dépôt.
+    -->
+    {#if etat !== 'resultat'}
+      <a class="rubrique" href="./en-clair/">En clair</a>
+    {/if}
   </div>
 </header>
 

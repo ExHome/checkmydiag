@@ -104,10 +104,28 @@ describe('sur un rapport réel', () => {
   const diag = analyserDpe(RAPPORT, [4, 15]);
   const texte = diag.explication.join(' ');
 
-  it('annonce les deux réformes et le lien de rectification', () => {
+  it('annonce les deux réformes', () => {
     expect(texte).toMatch(/attestation/);
     expect(texte).toMatch(/×1,9/);
-    expect(texte).toMatch(/observatoire-dpe-audit\.ademe\.fr/);
+  });
+
+  /*
+   * L'adresse de l'Observatoire était donnée en fin de paragraphe. Personne ne
+   * suit une adresse écrite au fil du texte : elle est devenue une action, avec
+   * ce qu'il faut avoir sous la main avant de cliquer.
+   */
+  it('offre la démarche en bouton, pas en note de bas de page', () => {
+    expect(diag.demarche?.texte).toBe('Voir votre nouvelle note');
+    expect(diag.demarche?.url).toMatch(/observatoire-dpe-audit\.ademe\.fr/);
+    expect(diag.demarche?.quoiEmporter).toMatch(/numéro ADEME/);
+  });
+
+  it('ne propose aucune démarche quand aucune réforme ne s’applique', () => {
+    const recent = analyserDpe(
+      RAPPORT.map((l) => l.replace('05/08/2023', '05/08/2026')),
+      [4, 15]
+    );
+    expect(recent.demarche).toBeUndefined();
   });
 
   it('n’en profite pas pour recalculer une lettre', () => {
