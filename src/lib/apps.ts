@@ -1,30 +1,23 @@
 /**
- * L'identité de chaque diagnostic : sa couleur, son nom court, son signe.
+ * L'identité de chaque diagnostic : son icône, son nom court, son signe.
  *
  * Source unique. La grille de l'accueil et l'écran ouvert y puisent tous les
  * deux — deux listes finiraient par diverger, et le lecteur verrait une icône
  * d'une couleur ouvrir un écran d'une autre.
  *
- * ── La charte, et rien d'autre ──────────────────────────────────────────────
+ * ── Où la couleur est libre, et où elle ne l'est pas ────────────────────────
  *
- * Trois couleurs : bleu pétrole #1A4D5C, sable #F4E8D8, corail #FF6B5D. Les
- * neuf applications se distinguent par des nuances de ces trois-là, jamais par
- * une teinte importée. Une version précédente donnait à chaque application sa
- * propre couleur — violet, vert, marron, turquoise, jaune : c'était joli et
- * c'était faux. Une marque tient à trois couleurs tenues partout.
+ * **Les icônes sont libres.** Neuf applications, neuf couleurs : c'est ce qui
+ * permet de retrouver la sienne d'un coup d'œil sur la grille, comme sur un
+ * téléphone. Elles ne suivent pas la charte, et c'est voulu.
  *
- * La nuance n'est pas décorative, elle dit la famille du diagnostic :
+ * **Tout le reste suit la charte** : bleu pétrole #1A4D5C, sable #F4E8D8,
+ * corail #FF6B5D. La barre de l'écran, les boutons, les traits, les plans —
+ * rien de tout cela ne prend la couleur de l'application. Une icône violette
+ * ouvre donc un écran à la charte, avec sa propre icône en petit dans la barre.
  *
- *   corail   — ce que le logement coûte, et ce qui peut blesser
- *   pétrole  — ce qu'on respire ou touche, le bâti, ce qui se mesure
- *
- * Le sable, lui, ne sert à aucune icône : c'est le fond de l'écran. Une icône
- * sable posée sur un fond sable ne se voit pas — ce serait respecter la charte
- * à la lettre et la trahir à l'œil.
- *
- * Deux applications d'une même famille partagent donc un air de famille, et
- * l'émoji plus le libellé font le reste. C'est l'inverse d'un arc-en-ciel où
- * chaque couleur ne voudrait rien dire.
+ * La frontière est nette : ce fichier ne donne qu'un dégradé d'icône. Aucune
+ * autre partie de l'interface n'a de raison d'y puiser une couleur.
  *
  * Ce fichier ne porte aucune information de diagnostic : que du décor. Ce que
  * le rapport dit vient du moteur, jamais d'ici.
@@ -34,18 +27,14 @@ import type { TypeDiag } from './modele';
 export interface IdentiteApp {
   /** Le nom sous l'icône. Les intitulés officiels ne tiennent pas en 76 px. */
   nom: string;
-  /** La couleur de l'application, pour les aplats — icône, dégradés. */
-  teinte: string;
-  /**
-   * Sa version foncée : tout ce qui porte du texte, ou trace un trait porteur
-   * de sens. Choisie pour tenir 4,5 de contraste sur le sable comme sur le
-   * blanc — un accent qu'on ne lit pas n'accentue rien.
-   */
-  teinteFoncee: string;
-  /** Le dégradé de l'icône, tiré de la même couleur. */
-  degrade: string;
   /** Le signe de l'icône : il dit la matière qu'on cherche. */
   signe: string;
+  /**
+   * Le dégradé de l'icône. Libre — c'est le seul endroit du produit où une
+   * couleur hors charte est admise, parce que c'est ce qui rend les neuf
+   * applications reconnaissables au premier regard.
+   */
+  degrade: string;
 }
 
 /*
@@ -57,72 +46,51 @@ export interface IdentiteApp {
  * avant même qu'on ait ouvert l'écran.
  */
 export const APPS: Record<TypeDiag, IdentiteApp> = {
-  /* ── Corail : ce que le logement coûte, et ce qui peut blesser ──────────── */
   dpe: {
     nom: 'DPE',
     signe: '📊',
-    teinte: '#ff6b5d',
-    teinteFoncee: '#a33220',
-    degrade: 'linear-gradient(135deg, #ff8578, #f0503c)'
+    degrade: 'linear-gradient(135deg, #ff6b5d, #f05844)'
   },
   electricite: {
     nom: 'Électricité',
     signe: '⚡',
-    teinte: '#ff9084',
-    teinteFoncee: '#a33220',
-    degrade: 'linear-gradient(135deg, #ffa79d, #ff6b5d)'
+    degrade: 'linear-gradient(135deg, #ffd54a, #f5a800)'
   },
-  gaz: {
-    nom: 'Gaz',
-    signe: '🔥',
-    teinte: '#d0402c',
-    teinteFoncee: '#8f2b1b',
-    degrade: 'linear-gradient(135deg, #e05038, #a33220)'
-  },
-
-  /* ── Bleu pétrole : ce qu'on respire, le bâti, ce qui se mesure ─────────── */
   amiante: {
     nom: 'Amiante',
     signe: '🧱',
-    teinte: '#1a4d5c',
-    teinteFoncee: '#0f3a47',
-    degrade: 'linear-gradient(135deg, #26647a, #0f3a47)'
+    degrade: 'linear-gradient(135deg, #7b68ee, #5a4bc4)'
   },
   plomb: {
     nom: 'Plomb',
     signe: '🎨',
-    teinte: '#2a6577',
-    teinteFoncee: '#164452',
-    degrade: 'linear-gradient(135deg, #2a6577, #0f3a47)'
+    degrade: 'linear-gradient(135deg, #4caf50, #38913c)'
+  },
+  gaz: {
+    nom: 'Gaz',
+    signe: '🔥',
+    degrade: 'linear-gradient(135deg, #ff8c42, #ee6a17)'
   },
   termites: {
     nom: 'Termites',
     signe: '🪵',
-    teinte: '#3d8296',
-    teinteFoncee: '#1a4d5c',
-    degrade: 'linear-gradient(135deg, #3d8296, #1a4d5c)'
+    degrade: 'linear-gradient(135deg, #a0522d, #7a3d1f)'
   },
   erp: {
     nom: 'Risques',
     signe: '🌍',
-    teinte: '#4e97ac',
-    teinteFoncee: '#1a4d5c',
-    degrade: 'linear-gradient(135deg, #4e97ac, #2a6577)'
+    degrade: 'linear-gradient(135deg, #20b2aa, #00776f)'
+  },
+  /* Les deux dernières ne figurent pas au brief : elles prolongent la même
+     logique — une couleur franche, distincte des sept autres. */
+  carrez: {
+    nom: 'Surface',
+    signe: '📐',
+    degrade: 'linear-gradient(135deg, #5c6bc0, #3949ab)'
   },
   assainissement: {
     nom: 'Assainissement',
     signe: '💧',
-    teinte: '#2a6577',
-    teinteFoncee: '#0f3a47',
-    /* Le dégradé remonte, là où les autres descendent : c'est ce qui le
-       distingue du plomb, à teinte presque égale. */
-    degrade: 'linear-gradient(135deg, #1a4d5c, #4e97ac)'
-  },
-  carrez: {
-    nom: 'Surface',
-    signe: '📐',
-    teinte: '#5aa8bd',
-    teinteFoncee: '#1a4d5c',
-    degrade: 'linear-gradient(135deg, #5aa8bd, #3d8296)'
+    degrade: 'linear-gradient(135deg, #29b6f6, #0288d1)'
   }
 };

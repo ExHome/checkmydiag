@@ -14,7 +14,6 @@
    */
   import type { Diagnostic } from '../../lib/modele';
   import { planMuet, zonesDe } from '../../lib/analyse/plan';
-  import { APPS } from '../../lib/apps';
   import Plan from './Plan.svelte';
   import PlanDpe from './PlanDpe.svelte';
   import PlanTableau from './PlanTableau.svelte';
@@ -27,7 +26,15 @@
   const { diagnostic }: { diagnostic: Diagnostic } = $props();
 
   const zones = $derived(zonesDe(diagnostic));
-  const teinte = $derived(APPS[diagnostic.type].teinteFoncee);
+
+  /*
+   * Le plan est à la charte, comme le reste de l'interface.
+   *
+   * Il a pris un temps la couleur de l'application : le corail est la couleur
+   * d'action du produit, et c'est elle qui doit désigner la zone qu'on vient
+   * d'ouvrir. La couleur libre s'arrête à l'icône.
+   */
+  const teinte = 'var(--coral-fonce)';
 
   /** Le titre dit ce qu'on regarde, et d'où ça sort. */
   const TITRES: Partial<Record<Diagnostic['type'], string>> = {

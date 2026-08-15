@@ -611,8 +611,6 @@
     role="dialog"
     aria-modal="true"
     aria-label={diags[courant]?.titre ?? 'Diagnostic'}
-    style="--teinte: {identite?.teinteFoncee ?? 'var(--coral-fonce)'}; --teinte-claire: {identite?.teinte ??
-      'var(--coral)'}"
     transition:commeUneApp={{ carre: depuis }}
   >
     <header class="barre-app">
@@ -662,8 +660,14 @@
   /* La barre du haut : la sortie à gauche, le nom du diagnostic à côté. Elle ne
      défile pas — on doit pouvoir ressortir depuis n'importe quel endroit de la
      fiche, sans remonter. */
-  /* La barre porte la couleur de l'application : un filet en bas, et l'icône à
-     côté du nom. On sait dans quelle application on est sans lire le titre. */
+  /*
+   * La barre reste à la charte, seule l'icône y met sa couleur.
+   *
+   * Elle a porté la teinte de l'application sur son filet : neuf barres de neuf
+   * couleurs, et le produit changeait d'identité à chaque écran. La couleur
+   * libre s'arrête à l'icône — c'est elle qui identifie l'application, la barre
+   * dit qu'on est toujours dans le même produit.
+   */
   .barre-app {
     flex: none;
     display: flex;
@@ -672,7 +676,7 @@
     padding: var(--e2) var(--e3);
     background: rgb(255 255 255 / 82%);
     backdrop-filter: blur(20px);
-    border-bottom: 2px solid var(--teinte, var(--trait));
+    border-bottom: 2px solid var(--petrole);
   }
 
   .signe-app {
@@ -695,7 +699,7 @@
     background: transparent;
     border: none;
     border-radius: var(--rayon-badge);
-    color: var(--teinte, var(--coral-texte));
+    color: var(--coral-texte);
     font-size: var(--t-base);
     font-weight: 700;
     cursor: pointer;
