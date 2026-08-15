@@ -133,6 +133,50 @@ export const OU_RECTIFIER = {
     'Munissez-vous du numéro ADEME du diagnostic : il figure en tête du rapport. La démarche est gratuite et ne demande pas de nouvelle visite.'
 };
 
+/**
+ * Où faire refaire un diagnostic, quand il n'y a rien à rectifier.
+ *
+ * L'annuaire officiel du ministère, qui recense les diagnostiqueurs déclarés
+ * par les organismes certificateurs et permet de filtrer par domaine —
+ * électricité, gaz, amiante, plomb. Vérifié en service le 15/08/2026.
+ */
+export const OU_REFAIRE = {
+  texte: 'Trouver un diagnostiqueur certifié',
+  url: 'https://diagnostiqueurs.din.developpement-durable.gouv.fr/',
+  comment:
+    'L’annuaire officiel du ministère : cherchez par commune et par domaine. Vérifiez que la certification couvre bien l’électricité, et qu’elle est en cours de validité.'
+};
+
+/** L'entrée en vigueur de l'arrêté qui a refondu la méthode « électricité ». */
+const METHODE_ELECTRICITE = new Date(2017, 8, 29);
+
+/**
+ * Ce qui a changé pour l'état de l'installation intérieure d'électricité.
+ *
+ * L'arrêté du 28 septembre 2017 abroge celui du 8 juillet 2008 et refond le
+ * modèle comme la méthode : un diagnostic antérieur n'a pas contrôlé les mêmes
+ * points.
+ *
+ * Mais la mécanique du DPE ne s'y transpose pas, et c'est le cœur de l'affaire.
+ * Il n'existe aucun observatoire où faire rééditer un diagnostic électrique :
+ * il ne se rectifie pas, il se refait. Et sa validité est de trois ans pour une
+ * vente — un rapport d'avant septembre 2017 est de toute façon périmé depuis
+ * longtemps. On renvoie donc vers l'annuaire officiel des diagnostiqueurs
+ * certifiés, pas vers un formulaire de correction.
+ */
+export function reformesElectricite(etabliLe: Date | null): Reforme[] {
+  if (!etabliLe || etabliLe >= METHODE_ELECTRICITE) return [];
+
+  return [
+    {
+      titre: 'Méthode de contrôle, réforme de 2017',
+      depuis: METHODE_ELECTRICITE,
+      texte:
+        'Ce diagnostic est antérieur au 29 septembre 2017 : il a été réalisé selon le modèle de 2008, qui ne contrôlait pas les mêmes points. Un rapport établi aujourd’hui vérifierait davantage de choses, et ne conclurait pas forcément pareil. Contrairement au diagnostic de performance énergétique, celui-ci ne se met pas à jour : il se refait — d’autant qu’il ne vaut que trois ans pour une vente et qu’il est donc largement périmé.'
+    }
+  ];
+}
+
 /** Le fait à poser sur la fiche, quand il y a quelque chose à dire. */
 export function faitDesReformes(reformes: Reforme[]): Fait | null {
   if (!reformes.length) return null;

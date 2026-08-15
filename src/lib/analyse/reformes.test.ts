@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { dateFrancaise, faitDesReformes, OU_RECTIFIER, reformesDepuis } from './reformes';
+import {
+  dateFrancaise,
+  faitDesReformes,
+  OU_RECTIFIER,
+  OU_REFAIRE,
+  reformesDepuis,
+  reformesElectricite
+} from './reformes';
 import { analyserDpe } from './dpe';
 
 describe('la date du diagnostic', () => {
@@ -108,6 +115,47 @@ describe('le changement de méthode de 2021', () => {
   it('n’affirme aucun détail de méthode non lu au texte', () => {
     const r = reformesDepuis(dateFrancaise('12/03/2019'), 85).find((x) => /méthode/i.test(x.titre));
     expect(r?.texte).not.toMatch(/sur factures|3CL|consommation réelle/i);
+  });
+});
+
+/**
+ * L'électricité, et pourquoi la mécanique du DPE ne s'y transpose pas.
+ *
+ * L'arrêté du 28 septembre 2017 abroge celui de 2008 et refond le modèle comme
+ * la méthode. Mais il n'existe aucun observatoire où faire rééditer un
+ * diagnostic électrique : il ne se rectifie pas, il se refait.
+ */
+describe('la réforme de 2017 pour l’électricité', () => {
+  it('signale l’ancienne méthode à un diagnostic antérieur', () => {
+    const r = reformesElectricite(dateFrancaise('12/03/2016'));
+    expect(r).toHaveLength(1);
+    expect(r[0]?.texte).toMatch(/modèle de 2008/);
+    expect(r[0]?.texte).toMatch(/ne contrôlait pas les mêmes points/);
+  });
+
+  it('ne le signale pas à un diagnostic postérieur', () => {
+    expect(reformesElectricite(dateFrancaise('12/03/2018'))).toEqual([]);
+    expect(reformesElectricite(null)).toEqual([]);
+  });
+
+  /*
+   * Le garde-fou. Promettre une mise à jour gratuite là où il n'y en a pas
+   * serait pire que de se taire : le lecteur chercherait un formulaire qui
+   * n'existe pas, et croirait son diagnostic récupérable.
+   */
+  it('ne promet aucune rectification, parce qu’il n’y en a pas', () => {
+    const r = reformesElectricite(dateFrancaise('12/03/2016'));
+    expect(r[0]?.texte).not.toMatch(/gratuit|mise à jour|attestation|rééditer/i);
+    expect(r[0]?.texte).toMatch(/il se refait/);
+  });
+
+  it('rappelle que ce diagnostic ne vaut que trois ans', () => {
+    expect(reformesElectricite(dateFrancaise('12/03/2016'))[0]?.texte).toMatch(/trois ans/);
+  });
+
+  it('renvoie vers l’annuaire officiel des diagnostiqueurs', () => {
+    expect(OU_REFAIRE.url).toMatch(/diagnostiqueurs\.din\.developpement-durable\.gouv\.fr/);
+    expect(OU_REFAIRE.comment).toMatch(/certification/);
   });
 });
 

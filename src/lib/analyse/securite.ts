@@ -9,6 +9,7 @@
 import type { Diagnostic, Fait, Gravite } from '../modele';
 import { trouver, trouverToutes } from './texte';
 import { releverTout } from './anomalies';
+import { dateFrancaise, OU_REFAIRE, reformesElectricite } from './reformes';
 
 /** Thèmes de la norme XC 16-600, dans l'ordre où ils apparaissent au rapport. */
 const THEMES_ELEC: { motif: RegExp; nom: string }[] = [
@@ -137,7 +138,9 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
     explication: [
       'Ce diagnostic ne dit pas si l’installation est aux normes d’aujourd’hui. Il contrôle six points de sécurité, sur les installations qui ont plus de quinze ans.',
       'Une anomalie ne rend pas le logement inhabitable : elle signale un risque, décharge ou incendie. Les deux plus fréquentes : pas de différentiel, mise à la terre inefficace.',
-      'Le diagnostiqueur ne démonte rien. Il ne peut donc rien dire de l’état des fils à l’intérieur des murs.'
+      'Le diagnostiqueur ne démonte rien. Il ne peut donc rien dire de l’état des fils à l’intérieur des murs.',
+      /* La réforme de 2017, quand la date du rapport la déclenche. */
+      ...reformesElectricite(dateFrancaise(date?.[1])).map((r) => r.texte)
     ],
     aFaire:
       total && total > 0
@@ -151,6 +154,22 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
             'Validité : trois ans à la vente, six ans à la location.',
             'Aucune anomalie relevée ne veut pas dire installation neuve : le diagnostic ne contrôle que six points de sécurité.'
           ],
+    /*
+     * Le renvoi, quand le diagnostic est antérieur à la refonte de 2017.
+     *
+     * Pas vers une rectification — il n'en existe pas pour l'électricité, un
+     * rapport ancien ne se met pas à jour, il se refait — mais vers l'annuaire
+     * officiel des diagnostiqueurs certifiés.
+     */
+    ...(reformesElectricite(dateFrancaise(date?.[1])).length
+      ? {
+          demarche: {
+            texte: OU_REFAIRE.texte,
+            url: OU_REFAIRE.url,
+            quoiEmporter: OU_REFAIRE.comment
+          }
+        }
+      : {}),
     schema: groupes.length ? { genre: 'anomalies', groupes, total: total ?? 0 } : null,
     pages: plage,
     ...(releves.length ? { releves } : {}),
