@@ -42,7 +42,48 @@
     survol = false;
     prendre(e.dataTransfer?.files);
   }
+
+  /*
+   * Toute la page reçoit le fichier, pas seulement l'encadré.
+   *
+   * Le glisser-déposer ne marchait que sur la zone dessinée. Lâché à trois
+   * centimètres à côté — ce qui arrive tout le temps, la cible est petite sur un
+   * grand écran —, le navigateur prenait la main : il ouvrait le PDF dans
+   * l'onglet, et l'application disparaissait. Le lecteur perdait son travail
+   * sans comprendre ce qu'il avait fait de travers.
+   *
+   * On accepte donc le dépôt partout, et l'encadré s'allume dès qu'un fichier
+   * survole la fenêtre — il montre où ça va atterrir plutôt que d'exiger qu'on
+   * vise juste.
+   */
+  function surVolFenetre(e: DragEvent): void {
+    if (occupe) return;
+    // Sans ce refus, le navigateur ouvre le fichier au lâcher.
+    e.preventDefault();
+    if (e.dataTransfer?.types?.includes('Files')) survol = true;
+  }
+
+  function quitteFenetre(e: DragEvent): void {
+    // `dragleave` part aussi quand on passe d'un élément à l'autre : on ne
+    // rend la main que si le curseur a réellement quitté la fenêtre.
+    if (e.relatedTarget === null) survol = false;
+  }
+
+  function deposerSurFenetre(e: DragEvent): void {
+    if (occupe) return;
+    e.preventDefault();
+    survol = false;
+    prendre(e.dataTransfer?.files);
+  }
 </script>
+
+<!-- La fenêtre entière reçoit le fichier : viser l'encadré n'est plus
+     obligatoire, et lâcher à côté ne fait plus perdre l'application. -->
+<svelte:window
+  ondragover={surVolFenetre}
+  ondragleave={quitteFenetre}
+  ondrop={deposerSurFenetre}
+/>
 
 <!-- La zone entière est un bouton : cliquer ou taper Entrée ouvre le sélecteur,
      ce qui évite un piège clavier classique des zones de glisser-déposer. -->
@@ -96,13 +137,23 @@
     <!-- L'écran d'accueil répétait le nom du site. Un visiteur qui arrive ne
          sait pas ce qu'est Check My Diag : il faut lui dire ce qui va se
          passer, pas comment ça s'appelle. -->
-    <p class="titre">Déposez votre rapport de diagnostic</p>
+    <p class="titre">
+      {survol ? 'Lâchez, on s’occupe du reste' : 'Déposez votre rapport de diagnostic'}
+    </p>
     <p class="promesse">
       Il devient lisible : ce que chaque ligne veut dire, si c’est grave, et ce
       qui manque dans le dossier.
     </p>
 
     <span class="faux-bouton">Choisir mon PDF</span>
+
+    <!--
+      Les deux voies, dites à l'écran.
+      Le glisser-déposer existait sans être annoncé nulle part : seul le bouton
+      se voyait, et personne ne devine un geste qu'on ne lui montre pas. Il
+      fonctionne désormais sur toute la fenêtre — on n'a plus à viser.
+    -->
+    <p class="ou-glisser">ou faites glisser le fichier n’importe où sur la page</p>
 
     <!-- Le format, dit une fois et sans détour. Un visiteur qui arrive avec une
          photo de son rapport doit comprendre tout de suite pourquoi ça ne
@@ -465,6 +516,14 @@
   /* L'appel principal de l'écran : le bouton de la charte, corail plein, avec
      son ombre de la même couleur. Il était en navy à angles vifs — il attendait
      au lieu d'inviter. */
+  /* La seconde voie, en retrait sous le bouton : elle se propose, elle ne se
+     dispute pas la place avec l'action principale. */
+  .ou-glisser {
+    margin-top: var(--e3);
+    font-size: var(--t-petit);
+    color: var(--sur-fond-doux);
+  }
+
   /* Le corail foncé, pas le corail vif : avec du texte blanc, le vif ne tient
      que 2,8 de contraste, et c'est le seul mot de l'écran sur lequel il faut
      cliquer. Mesuré. */

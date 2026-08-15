@@ -88,14 +88,33 @@
 </section>
 
 <style>
+  /*
+   * Une carte blanche remet les couleurs à l'endroit.
+   *
+   * Cet écran s'affiche pendant l'état « démarrage », dont le fond est bleu
+   * pétrole et dont l'inversion passe tous les textes au sable. La carte, elle,
+   * est restée blanche : le texte sable sur blanc tombait à 1,07 de contraste —
+   * quasi invisible. Et c'est l'écran qu'il faut lire avant d'accepter.
+   *
+   * La zone de dépôt fait la même remise à l'endroit pour la même raison. Toute
+   * surface claire posée sur cet écran doit le faire.
+   */
   .cgv {
     background: var(--papier);
-    color: var(--encre);
     border-radius: var(--rayon);
     padding: clamp(20px, 5vw, 32px);
     max-width: 62ch;
     margin: 0 auto;
     text-align: left;
+
+    --sur-fond: var(--petrole);
+    --sur-fond-doux: #555555;
+    --encre: var(--petrole);
+    --encre-doux: #555555;
+    --gris: #888888;
+    --coral-texte: #a33220;
+    --or-clair: var(--petrole);
+    color: var(--petrole);
   }
 
   h2 {
