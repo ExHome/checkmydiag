@@ -75,6 +75,42 @@ describe('le facteur de conversion de l’électricité', () => {
   });
 });
 
+/**
+ * La réforme du 1ᵉʳ juillet 2021 n'a pas réglé un curseur : elle a changé le
+ * calcul, et rendu le DPE opposable. Deux lettres établies de part et d'autre
+ * de cette date ne se comparent pas.
+ */
+describe('le changement de méthode de 2021', () => {
+  it('le signale à un diagnostic antérieur à juillet 2021', () => {
+    const r = reformesDepuis(dateFrancaise('12/03/2019'), 85).find((x) => /méthode/i.test(x.titre));
+    expect(r).toBeDefined();
+    expect(r?.texte).toMatch(/autre méthode de calcul/);
+    expect(r?.texte).toMatch(/ne se compare/);
+  });
+
+  it('rappelle qu’un tel diagnostic est de toute façon périmé', () => {
+    const r = reformesDepuis(dateFrancaise('12/03/2019'), 85).find((x) => /méthode/i.test(x.titre));
+    expect(r?.texte).toMatch(/périmé/);
+    expect(r?.texte).toMatch(/31 décembre 2024/);
+  });
+
+  it('ne le signale pas à un diagnostic postérieur', () => {
+    const r = reformesDepuis(dateFrancaise('12/03/2022'), 85);
+    expect(r.some((x) => /méthode/i.test(x.titre))).toBe(false);
+  });
+
+  /*
+   * Le garde-fou de source. Les formations racontent volontiers le détail de ce
+   * qui a changé dans le calcul — la fin de la méthode « sur factures »
+   * notamment. Le décret, lui, renvoie les méthodes à un arrêté sans le dire.
+   * On n'affirme pas une règle qu'on n'a pas lue à sa source.
+   */
+  it('n’affirme aucun détail de méthode non lu au texte', () => {
+    const r = reformesDepuis(dateFrancaise('12/03/2019'), 85).find((x) => /méthode/i.test(x.titre));
+    expect(r?.texte).not.toMatch(/sur factures|3CL|consommation réelle/i);
+  });
+});
+
 describe('où faire rectifier', () => {
   it('renvoie à l’Observatoire de l’ADEME, et dit quoi emporter', () => {
     expect(OU_RECTIFIER.url).toMatch(/observatoire-dpe-audit\.ademe\.fr/);

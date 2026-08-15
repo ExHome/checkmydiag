@@ -35,6 +35,8 @@ export function dateFrancaise(valeur: string | undefined | null): Date | null {
   return Number.isNaN(d.getTime()) ? null : d;
 }
 
+/** La réforme du 1ᵉʳ juillet 2021 : nouvelle méthode, et DPE opposable. */
+const REFORME_2021 = new Date(2021, 6, 1);
 /** L'entrée en vigueur des seuils propres aux logements de 40 m² ou moins. */
 const PETITES_SURFACES = new Date(2024, 6, 1);
 /** L'entrée en vigueur du facteur 1,9 pour l'électricité. */
@@ -89,6 +91,34 @@ export function reformesDepuis(
       depuis: FACTEUR_ELECTRICITE,
       texte:
         'Depuis le 1ᵉʳ janvier 2026, l’électricité est comptée ×1,9 en énergie primaire au lieu de ×2,3. Ce diagnostic a été établi avant : il a donc été calculé avec l’ancien facteur. Un logement chauffé à l’électricité peut y gagner une classe, parfois deux. Le diagnostic reste valable en l’état, et la mise à jour est gratuite.'
+    });
+  }
+
+  /*
+   * La réforme du 1ᵉʳ juillet 2021 : ce n'est pas un réglage, c'est un autre
+   * calcul.
+   *
+   * Le décret n° 2020-1609 entre en vigueur ce jour-là et renvoie les méthodes
+   * à un arrêté — celui du 31 mars 2021, au référentiel. Un DPE d'avant a donc
+   * été établi selon des règles qui ne sont plus celles d'aujourd'hui, et le
+   * DPE est devenu opposable à cette date.
+   *
+   * On s'en tient à ce qui est vérifié au texte. Le détail de ce qui a changé
+   * dans le calcul — notamment le sort de la méthode dite « sur factures » —
+   * n'est pas affirmé ici : le décret ne le dit pas, il renvoie à l'arrêté, et
+   * on n'écrit pas une règle qu'on n'a pas lue à sa source. Les formations la
+   * racontent volontiers ; elles ne font pas foi.
+   *
+   * Placée en dernier : c'est la plus ancienne, et un diagnostic qui la
+   * déclenche est de toute façon périmé — l'information sert alors à comprendre
+   * pourquoi la lettre du rapport ne se compare pas à celle d'un DPE récent.
+   */
+  if (etabliLe < REFORME_2021) {
+    reformes.push({
+      titre: 'Méthode de calcul, réforme de 2021',
+      depuis: REFORME_2021,
+      texte:
+        'Ce diagnostic est antérieur au 1ᵉʳ juillet 2021 : il a été établi avec une autre méthode de calcul que celle en vigueur aujourd’hui, et à une époque où le DPE n’engageait pas encore son auteur. Sa lettre ne se compare donc pas à celle d’un DPE récent — l’écart peut atteindre plusieurs classes sans qu’un seul mur ait bougé. Il est de toute façon périmé : un DPE d’avant cette date a cessé de valoir au plus tard le 31 décembre 2024.'
     });
   }
 
