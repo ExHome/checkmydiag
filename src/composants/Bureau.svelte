@@ -16,6 +16,7 @@
   import { libelleCourt } from '../lib/libelle';
   import { compterLeDossier, origineDe, phraseDuDossier, type Origine } from '../lib/bureau';
   import { APPS } from '../lib/apps';
+  import Dicodiag from './Dicodiag.svelte';
 
   interface Props {
     analyse: Analyse;
@@ -148,6 +149,31 @@
     return null;
   }
 
+  /**
+   * Les deux outils : ils ne lisent pas votre rapport, ils vous aident à le
+   * lire. Ils ont leur propre rangée — un lexique n'est pas un diagnostic, et
+   * les mêler ferait croire à onze rapports au lieu de neuf.
+   */
+  const OUTILS = [
+    {
+      cle: 'dicodiag',
+      nom: 'Dicodiag',
+      signe: '📖',
+      dit: 'Le lexique',
+      degrade: 'linear-gradient(135deg, #8e9bb5, #5c6b8a)'
+    },
+    {
+      cle: 'en-clair',
+      nom: 'En clair',
+      signe: '❓',
+      dit: 'Les réponses',
+      degrade: 'linear-gradient(135deg, #b58ea9, #8a5c7d)'
+    }
+  ];
+
+  /** Dicodiag s'ouvre par-dessus ; « En clair » est un vrai lien de site. */
+  let dicodiagOuvert = $state(false);
+
   /** Les trois parties du dossier, en bas de l'écran comme sur un téléphone. */
   const DOCK = [
     { cle: 'point', signe: '📋', nom: 'L’analyse' },
@@ -235,6 +261,35 @@
     {/each}
   </ul>
 
+  <!-- Les outils : ils ne lisent pas le rapport, ils aident à le lire. -->
+  <h3 class="intitule">Pour comprendre</h3>
+
+  <ul class="grille outils">
+    {#each OUTILS as o (o.cle)}
+      <li>
+        {#if o.cle === 'en-clair'}
+          <!-- « En clair » est une vraie rubrique du site, en pages HTML : elle
+               s'ouvre comme un lien, pas comme un écran. -->
+          <a class="tuile" href="./en-clair/">
+            <span class="icone" style="background: {o.degrade}">
+              <span class="signe" aria-hidden="true">{o.signe}</span>
+            </span>
+            <span class="nom">{o.nom}</span>
+            <span class="dit">{o.dit}</span>
+          </a>
+        {:else}
+          <button type="button" class="tuile" onclick={() => (dicodiagOuvert = true)}>
+            <span class="icone" style="background: {o.degrade}">
+              <span class="signe" aria-hidden="true">{o.signe}</span>
+            </span>
+            <span class="nom">{o.nom}</span>
+            <span class="dit">{o.dit}</span>
+          </button>
+        {/if}
+      </li>
+    {/each}
+  </ul>
+
   <nav class="dock" aria-label="Les parties du dossier">
     {#each DOCK as d (d.cle)}
       <button type="button" onclick={() => surVue?.(d.cle)}>
@@ -244,6 +299,10 @@
     {/each}
   </nav>
 </section>
+
+{#if dicodiagOuvert}
+  <Dicodiag surFermer={() => (dicodiagOuvert = false)} />
+{/if}
 
 <style>
   .bureau {

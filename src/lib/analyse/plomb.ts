@@ -82,10 +82,57 @@ function emplacements(lignes: string[]): { zone: string; element: string; classe
   return trouves;
 }
 
+/**
+ * Les facteurs de dégradation du bâti, relevés dans le constat.
+ *
+ * Le constat ne fait pas que classer des revêtements : il « dresse un relevé
+ * sommaire des facteurs de dégradation du bâti » (article L. 1334-5 du code de
+ * la santé publique, lu le 15/08/2026), que l'auteur consigne en liste (article
+ * R. 1334-10).
+ *
+ * Ce n'est pas une rubrique de plus. Quand ces facteurs apparaissent, l'auteur
+ * du constat « transmet immédiatement une copie de ce document au directeur
+ * général de l'agence régionale de santé, qui en informe le représentant de
+ * l'État dans le département » (article L. 1334-10, lu le 15/08/2026). Le
+ * logement est signalé — et cela ne dépend pas de la classe des revêtements :
+ * un bien peut partir à l'agence régionale de santé sans qu'aucune unité ne
+ * soit classée 3.
+ *
+ * On cherche donc la mention, on ne devine pas la liste : le code ne l'énumère
+ * pas, il renvoie à un arrêté. Le rapport, lui, la dresse quand il en relève.
+ */
+const DEGRADATION: { cle: string; nom: string; motif: RegExp }[] = [
+  { cle: 'humidite', nom: 'Humidité', motif: /humidit[ée]|infiltration|moisissure|condensation/i },
+  {
+    cle: 'effondrement',
+    nom: 'Effondrement ou affaissement',
+    motif: /effondrement|affaissement|plancher menaçant|plafond menaçant|fissuration/i
+  },
+  {
+    cle: 'revetement',
+    nom: 'Revêtements dégradés',
+    motif: /[ée]caillage|cloquage|coulure|fa[iï]en[çc]age|[ée]clat|pulv[ée]rulen/i
+  }
+];
+
+function facteursDeDegradation(lignes: string[]): { cle: string; nom: string }[] {
+  /*
+   * On ne cherche que dans le voisinage de la rubrique : le mot « humidité »
+   * traîne dans toutes les notices d'information annexées au constat, et le
+   * relever là ferait signaler un facteur de dégradation à chaque rapport.
+   */
+  const texte = lignes.join(' ');
+  const rubrique = texte.match(/facteurs? de d[ée]gradation[\s\S]{0,600}/i);
+  if (!rubrique) return [];
+
+  return DEGRADATION.filter((f) => f.motif.test(rubrique[0])).map(({ cle, nom }) => ({ cle, nom }));
+}
+
 export function analyserPlomb(lignes: string[], plage: [number, number]): Diagnostic {
   const chiffres = compter(lignes);
   const c2 = chiffres?.classes[2] ?? 0;
   const c3 = chiffres?.classes[3] ?? 0;
+  const degradation = facteursDeDegradation(lignes);
 
   let gravite: Gravite = 'neutre';
   let verdict = "Un constat plomb est présent, mais son tableau de conclusion n'a pas pu être lu.";
@@ -136,6 +183,14 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
       precision: 'classe 1'
     });
   }
+  if (degradation.length) {
+    faits.push({
+      libelle: 'Facteurs de dégradation du bâti',
+      valeur: String(degradation.length),
+      precision: degradation.map((f) => f.nom).join(' · ')
+    });
+  }
+
   const date = trouver(lignes, /rédigé par .{0,40}? le\s*(\d{2}\/\d{2}\/\d{4})/i);
   if (date?.[1]) faits.push({ libelle: 'Date du constat', valeur: date[1] });
 
@@ -144,7 +199,16 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
     // clic : ces trois phrases n'ont plus à les définir en passant.
     'Le CREP — le constat plomb — ne regarde pas les canalisations. Il mesure le plomb des peintures, unité de diagnostic par unité de diagnostic : un mur, une porte, une plinthe.',
     'Les classes vont de 0 à 3, du revêtement sain à la peinture qui s’écaille. Seule la classe 3 pose vraiment problème.',
-    'Le danger vient des poussières avalées — le saturnisme —, surtout chez les jeunes enfants et les femmes enceintes. Un mur au plomb en bon état, qu’on laisse tranquille, n’est pas dangereux.'
+    'Le danger vient des poussières avalées — le saturnisme —, surtout chez les jeunes enfants et les femmes enceintes. Un mur au plomb en bon état, qu’on laisse tranquille, n’est pas dangereux.',
+
+    /*
+     * Ce que le constat regarde en plus des peintures, et ce que ça déclenche.
+     * Les deux phrases suivantes s'appuient sur des textes lus à la source le
+     * 15/08/2026 : L. 1334-5 pour le relevé, L. 1334-10 pour la transmission.
+     */
+    'Le constat ne s’arrête pas aux peintures : il dresse aussi un relevé des facteurs de dégradation du bâti — l’humidité qui décolle les revêtements, un plancher ou un plafond qui menace, des peintures qui s’écaillent. C’est ce qui transforme du plomb inerte en poussière respirable.',
+    'Ce relevé a une conséquence que peu de vendeurs connaissent : si le constat fait apparaître ces facteurs, le diagnostiqueur en transmet immédiatement une copie à l’agence régionale de santé, qui informe le préfet. Cela ne dépend pas de la classe des revêtements — un logement peut être signalé sans qu’aucune unité ne soit classée 3.',
+    'Si un enfant de moins de six ans vit dans le logement, ou doit y vivre, ce point cesse d’être une formalité : c’est chez eux que le saturnisme fait ses dégâts, parce qu’ils portent leurs mains à la bouche et que leur organisme absorbe le plomb bien plus que celui d’un adulte.'
   ];
 
   const aFaire =

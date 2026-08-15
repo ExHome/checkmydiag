@@ -248,6 +248,28 @@ export const REGLEMENT: Partial<Record<TypeDiag, Reglement>> = {
           url: 'https://www.legifrance.gouv.fr/codes/id/LEGISCTA000006197020',
           luLe: '2026-08-14'
         }
+      },
+      {
+        enonce:
+          'Un constat de risque d’exposition au plomb présente un repérage des revêtements contenant du plomb et, le cas échéant, dresse un relevé sommaire des facteurs de dégradation du bâti. Est annexée à ce constat une notice d’information.',
+        source: {
+          reference: 'article L. 1334-5 du code de la santé publique',
+          url: 'https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031928095',
+          luLe: '2026-08-15'
+        },
+        reserve:
+          'L’article ne dresse pas la liste de ces facteurs : il renvoie à un arrêté. On ne peut donc pas énumérer soi-même « humidité, effondrement, plancher menaçant » comme si le code les nommait — le rapport, lui, les liste quand il en relève.'
+      },
+      {
+        enonce:
+          'Si le constat de risque d’exposition au plomb fait apparaître la présence de facteurs de dégradation précisés par arrêté, l’auteur du constat transmet immédiatement une copie de ce document au directeur général de l’agence régionale de santé, qui en informe le représentant de l’État dans le département.',
+        source: {
+          reference: 'article L. 1334-10 du code de la santé publique',
+          url: 'https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031928041',
+          luLe: '2026-08-15'
+        },
+        reserve:
+          'C’est la conséquence la plus lourde du constat, et elle ne dépend pas de la classe des revêtements mais des facteurs de dégradation du bâti : un logement peut partir à l’agence régionale de santé sans qu’aucune unité ne soit classée 3.'
       }
     ]
   },
