@@ -25,6 +25,20 @@
  */
 import type { TypeDiag } from './modele';
 
+/**
+ * Les deux outils de la rangée « Pour comprendre ».
+ *
+ * Ils ont une icône sur l'écran d'accueil comme les neuf diagnostics, et
+ * s'ouvrent comme eux — mais ils ne lisent pas votre rapport, ils vous aident à
+ * le lire. Pas de gravité, pas de date de validité, pas de conclusion sur votre
+ * logement : ils méritent leur univers, et cet univers doit dire « outil », pas
+ * « constat ».
+ */
+export type Outil = 'dicodiag' | 'en-clair';
+
+/** Tout ce qui peut porter un univers : les neuf diagnostics et les deux outils. */
+export type Ecran = TypeDiag | Outil;
+
 export interface Univers {
   /** Le fond de la zone de contenu. */
   fond: string;
@@ -50,24 +64,30 @@ export interface Univers {
   sombre?: boolean;
 }
 
-export const UNIVERS: Partial<Record<TypeDiag, Univers>> = {
+export const UNIVERS: Partial<Record<Ecran, Univers>> = {
   /*
-   * DPE — le sable de la marque, tel quel.
+   * DPE — le banc de mesure.
    *
-   * Seul univers qui ne s'écarte pas de la charte, et c'est voulu : l'étiquette
-   * A→G y règne, avec ses sept couleurs d'arrêté. Ajouter une teinte de plus
-   * ferait trois échelles chromatiques concurrentes sur le même écran.
+   * Le seul univers qui ne prend aucune teinte, et c'est ce qui le distingue :
+   * un DPE n'est pas un avis, c'est une mesure. Papier kraft, encre profonde,
+   * chiffres en colonne.
+   *
+   * L'écran rendu à l'encre a une conséquence qui vaut à elle seule le choix :
+   * les seules couleurs qui restent sont les sept de l'arrêté et celle de
+   * l'alerte. Elles redeviennent les seules choses qu'on regarde.
+   *
+   * L'accent est passé du corail foncé à cette encre après mesure : #d0402c ne
+   * tenait que 3,90 sur le kraft, et il porte les intitulés de section
+   * (« Ce qu'on risque », « Ce qu'il faut faire »). L'encre tient 10,71.
    */
   dpe: {
-    fond: '#f4e8d8',
+    fond: '#efe4d2',
     surface: '#ffffff',
     texte: '#1a4d5c',
-    texteDoux: '#555555',
-    /* Le corail vif ne tient que 2,8 sous du blanc : c'est le corail foncé de
-       la charte qui porte les aplats. */
-    accent: '#d0402c',
+    texteDoux: '#3a4a52',
+    accent: '#0b333f',
     surAccent: '#ffffff',
-    trait: '#e8dcc8'
+    trait: '#cdbfa4'
   },
 
   /* Électricité — le tableau technique, le seul écran sombre. */
@@ -131,6 +151,38 @@ export const UNIVERS: Partial<Record<TypeDiag, Univers>> = {
     trait: '#e3d0b8'
   },
 
+  /*
+   * Dicodiag — l'ouvrage de référence.
+   *
+   * Ce n'est pas un diagnostic, et il ne doit pas en avoir l'air : on consulte,
+   * on ne subit pas. Rien de ce qui est écrit ici ne parle de votre bien.
+   *
+   * La rupture n'est pas dans la couleur, elle est dans la matière — et c'est
+   * ce qui la rend impossible à confondre avec un huitième diagnostic. Les
+   * autres univers sont bâtis sur des cartes claires posées sur un fond teinté.
+   * Ici la surface est plus SOMBRE que le fond : le bloc s'enfonce dans la page
+   * au lieu de s'en détacher, comme un encadré dans un livre. Un rapport a
+   * besoin de la carte pour y poser sa pastille de gravité — ce fond lui est
+   * structurellement inutilisable.
+   *
+   * L'encre est presque neutre, quand les sept autres ont un texte teinté :
+   * c'est la signature de l'imprimé. Et l'accent n'est pas une huitième teinte
+   * inventée — c'est le bleu ardoise de l'icône Dicodiag, assombri jusqu'à
+   * passer la mesure (#5c6b8a n'atteignait que 4,47 sur les surfaces).
+   *
+   * Aucune couleur de danger n'apparaît, et surtout pas de rouge : sur cet
+   * écran, il n'y a rien à alerter.
+   */
+  dicodiag: {
+    fond: '#fbf7ef',
+    surface: '#f1eadc',
+    texte: '#1e2230',
+    texteDoux: '#5a6070',
+    accent: '#4a5878',
+    surAccent: '#ffffff',
+    trait: '#d3c9b5'
+  },
+
   /* Risques — la coupe géologique : eaux claires, teal profond. */
   erp: {
     fond: '#f2fafa',
@@ -152,13 +204,13 @@ export const UNIVERS: Partial<Record<TypeDiag, Univers>> = {
  * l'écran de démarrage. Cet indicateur sert à les rappeler, plutôt qu'à en
  * inventer une seconde série qui divergerait de la première.
  */
-export function estSombre(type: TypeDiag): boolean {
-  return UNIVERS[type]?.sombre === true;
+export function estSombre(ecran: Ecran): boolean {
+  return UNIVERS[ecran]?.sombre === true;
 }
 
 /** Les jetons CSS d'un univers, prêts pour un attribut `style`. */
-export function styleUnivers(type: TypeDiag): string {
-  const u = UNIVERS[type];
+export function styleUnivers(ecran: Ecran): string {
+  const u = UNIVERS[ecran];
   if (!u) return '';
   return [
     `--u-fond:${u.fond}`,

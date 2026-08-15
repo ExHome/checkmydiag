@@ -897,7 +897,7 @@
     --gravite: var(--attention);
   }
   .tuile.alerte {
-    --gravite: var(--coral);
+    --gravite: var(--alerte-vive);
   }
   .tuile.neutre {
     --gravite: var(--sur-fond-doux);

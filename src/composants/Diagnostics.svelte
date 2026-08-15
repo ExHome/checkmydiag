@@ -816,6 +816,38 @@
     --coral-fonce: var(--u-accent, #d0402c);
     --coral-texte: var(--u-accent, #a33220);
     --sur-accent: var(--u-sur-accent, #ffffff);
+
+    /*
+     * Les noms historiques, qu'il fallait remapper aussi.
+     *
+     * L'ossature du produit vient du vert nuit et de l'or : `--or-clair`,
+     * `--vert-700`, `--petrole` portent encore une bonne part des couleurs,
+     * dans 35 fichiers. Ils étaient absents de ce bloc, et c'est ce qui
+     * éteignait l'écran sombre — `--or-clair` vaut #1a4d5c, exactement la
+     * couleur relevée à 1,95:1 sous le verdict « 4 anomalies ».
+     *
+     * Les migrer un par un dans les composants aurait laissé passer ceux qu'on
+     * n'aurait pas trouvés. Les rattacher ici les répare tous d'un coup, y
+     * compris ceux qu'on écrira demain sans y penser.
+     */
+    --petrole: var(--u-texte, #1a4d5c);
+    --petrole-fonce: var(--u-texte, #0f3a47);
+    --sable: var(--u-fond, #f4e8d8);
+    --sable-clair: var(--u-surface, #f5f1e8);
+    --vert-900: var(--u-texte, #0f3a47);
+    --vert-800: var(--u-texte, #14434f);
+    --vert-700: var(--u-texte, #1a4d5c);
+    --vert-500: var(--u-texte, #1a4d5c);
+    --vert-300: var(--u-texte-doux, #7fa3ad);
+    --or: var(--u-accent, #ff6b5d);
+    --or-fonce: var(--u-accent, #a33220);
+    --or-clair: var(--u-texte, #1a4d5c);
+
+    /* Les deux fonds de pastille. Ils se composent sur la surface de l'univers
+       plutôt que sur du blanc : sur l'écran sombre, une pastille reste sombre
+       et garde son texte clair, au lieu de devenir un pavé blanc. */
+    --vert-100: color-mix(in srgb, var(--u-texte, #1a4d5c) 8%, var(--u-surface, #ffffff));
+    --or-pale: color-mix(in srgb, var(--u-accent, #ff6b5d) 14%, var(--u-surface, #ffffff));
   }
 
   /*
@@ -835,6 +867,8 @@
     --ok: #cfe3ea;
     --ok-fond: rgb(207 227 234 / 10%);
     --coral: #ff9084;
+    /* Le corail foncé qui signale ailleurs ne tient que 2,1 ici. */
+    --alerte-vive: #ff9084;
   }
 
   .dedans .diagnostics {
@@ -935,7 +969,7 @@
     --gravite: var(--attention);
   }
   .onglet-diag.alerte {
-    --gravite: var(--coral);
+    --gravite: var(--alerte-vive);
   }
   .onglet-diag.neutre {
     --gravite: var(--sur-fond-doux);
@@ -1098,7 +1132,7 @@
     --gravite-fiche: var(--attention);
   }
   .fiche-diag.alerte {
-    --gravite-fiche: var(--coral);
+    --gravite-fiche: var(--alerte-vive);
   }
   .fiche-diag.neutre {
     --gravite-fiche: var(--sur-fond-doux);
@@ -1129,7 +1163,7 @@
     --gravite: var(--attention);
   }
   .fiche-diag.alerte {
-    --gravite: var(--coral);
+    --gravite: var(--alerte-vive);
   }
   .fiche-diag.neutre {
     --gravite: var(--sur-fond-doux);

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { UNIVERS, estSombre, styleUnivers } from './univers';
-import type { TypeDiag } from './modele';
+import type { Ecran } from './univers';
 
 /**
  * La lisibilité des univers, tenue par le test plutôt que par la vigilance.
@@ -55,7 +55,7 @@ const TEXTE_COURANT = 4.5;
 const NON_TEXTUEL = 3;
 
 describe('chaque univers reste lisible', () => {
-  const types = Object.keys(UNIVERS) as TypeDiag[];
+  const types = Object.keys(UNIVERS) as Ecran[];
 
   it('en couvre plusieurs', () => {
     expect(types.length).toBeGreaterThanOrEqual(7);
@@ -87,9 +87,18 @@ describe('chaque univers reste lisible', () => {
         expect(contraste(u.surAccent, u.accent)).toBeGreaterThanOrEqual(TEXTE_COURANT);
       });
 
-      /* L'accent sert aussi de texte : liens, libellés d'action, bords actifs. */
-      it('laisse écrire avec l’accent sur les cartes', () => {
+      /*
+       * L'accent sert aussi de texte : intitulés de section, liens, libellés
+       * d'action. Sur les deux fonds — et le fond nu est le cas oublié.
+       *
+       * Ce test ne mesurait que les cartes. L'accent du DPE y passait à 4,72 et
+       * échouait à 3,90 sur le kraft, où sont posés « Ce qu'on risque » et
+       * « Ce qu'il faut faire ». C'est la mesure dans le navigateur qui l'a vu,
+       * pas la suite — d'où cette seconde assertion.
+       */
+      it('laisse écrire avec l’accent, sur les cartes comme sur le fond', () => {
         expect(contraste(u.accent, u.surface)).toBeGreaterThanOrEqual(TEXTE_COURANT);
+        expect(contraste(u.accent, u.fond)).toBeGreaterThanOrEqual(TEXTE_COURANT);
       });
 
       /* Un filet qui ne se voit pas ne sépare rien. */
