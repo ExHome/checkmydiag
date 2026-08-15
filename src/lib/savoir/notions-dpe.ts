@@ -399,7 +399,7 @@ export const NOTIONS_DPE: Notion[] = [
           { texte: 'C’est presque toujours le premier poste de consommation, loin devant les autres.' },
           {
             texte:
-              'L’énergie compte autant que l’appareil : l’électricité est comptée ×2,3 en énergie primaire.',
+              'L’énergie compte autant que l’appareil : l’électricité est comptée ×1,9 en énergie primaire depuis 2026.',
             clips: ['energie-primaire']
           }
         ]
@@ -485,7 +485,7 @@ export const NOTIONS_DPE: Notion[] = [
       {
         rang: 1,
         bribes: [
-          { texte: 'Électricité : ×2,3, à cause des pertes de production et de transport.' },
+          { texte: 'Électricité : ×1,9 depuis le 1ᵉʳ janvier 2026, à cause des pertes de production et de transport. Avant, c’était ×2,3.' },
           { texte: 'Gaz, fioul, bois : ×1 — ce qui arrive au compteur est ce qui a été produit.' }
         ]
       },

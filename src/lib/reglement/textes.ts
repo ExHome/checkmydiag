@@ -107,6 +107,31 @@ export const REGLEMENT: Partial<Record<TypeDiag, Reglement>> = {
           url: 'https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000049446315',
           luLe: '2026-08-14'
         }
+      },
+      {
+        /*
+         * Le chiffre le plus répété du produit était faux depuis sept mois.
+         *
+         * L'ancienne valeur du coefficient figurait en neuf endroits, dont les
+         * pages publiques. L'arrêté du 13 août 2025 la remplace par 1,9 au
+         * 1ᵉʳ janvier 2026 : article 2, « la valeur précédente est remplacée par
+         * la valeur "1,9" », entrée en vigueur article 5. Lu au texte officiel
+         * le 15/08/2026, pas repris d'une source secondaire.
+         *
+         * Ce n'est pas un détail de vocabulaire : le coefficient multiplie la
+         * consommation avant qu'elle soit notée. Un logement tout électrique
+         * voyait sa consommation majorée d'un cinquième de trop.
+         */
+        enonce:
+          'Le facteur de conversion de l’énergie finale en énergie primaire de l’électricité passe de 2,3 à 1,9.',
+        source: {
+          reference:
+            'arrêté du 13 août 2025 modifiant le facteur de conversion de l’énergie finale en énergie primaire de l’électricité relatif au diagnostic de performance énergétique',
+          url: 'https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000052134589',
+          luLe: '2026-08-15'
+        },
+        reserve:
+          'En vigueur depuis le 1ᵉʳ janvier 2026. Un DPE édité avant cette date a donc été calculé avec 2,3 : il reste valable, mais sa lettre a été établie sur l’ancien facteur.'
       }
     ]
   },

@@ -207,13 +207,13 @@ export const DESSINS: Record<string, Dessin> = {
 
   'primaire-finale': {
     legende:
-      'Le DPE compte l’énergie primaire : pour l’électricité, un kilowattheure au compteur en vaut 2,3 à la source.',
+      'Le DPE compte l’énergie primaire : pour l’électricité, un kilowattheure au compteur en vaut 1,9 à la source depuis 2026.',
     svg: `
       <svg viewBox="0 0 320 112" role="img">
         <g>
           <rect x="10" y="26" width="86" height="48" rx="4" class="bloc-non" />
           <text x="53" y="48" class="mot-non">à la source</text>
-          <text x="53" y="64" class="mot-mesure">2,3</text>
+          <text x="53" y="64" class="mot-mesure">1,9</text>
           <text x="53" y="98" class="mot">centrale, réseau</text>
         </g>
 

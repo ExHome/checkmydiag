@@ -25,7 +25,7 @@ export const GLOSSAIRE: Terme[] = [
       schema: 'energie',
     points: [
       'Ce qu’il a fallu produire, pas ce que vous achetez',
-      'Électricité : ×2,3 (pertes de production et transport)',
+      'Électricité : ×1,9 depuis le 1ᵉʳ janvier 2026 (×2,3 avant)',
       'Gaz, fioul, bois : ×1',
       'D’où un logement tout électrique noté plus sévèrement'
     ]

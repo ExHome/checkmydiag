@@ -93,12 +93,12 @@ export const DPE: Theme = {
       question: 'Pourquoi mon logement tout électrique est-il mal noté ?',
       variantes: [
         'DPE électrique pénalisé',
-        'coefficient 2,3 électricité DPE',
+        'coefficient 1,9 électricité DPE',
         'énergie primaire énergie finale',
         'chauffage électrique mauvaise note DPE'
       ],
       court:
-        'Parce que le DPE ne compte pas l’électricité qui arrive chez vous, mais celle qu’il a fallu produire pour vous l’apporter. Un kilowattheure au compteur en vaut 2,3 à la source : votre consommation est multipliée par 2,3 avant d’être notée.',
+        'Parce que le DPE ne compte pas l’électricité qui arrive chez vous, mais celle qu’il a fallu produire pour vous l’apporter. Un kilowattheure au compteur en vaut 1,9 à la source depuis le 1ᵉʳ janvier 2026 : votre consommation est multipliée par 1,9 avant d’être notée. Les DPE établis avant cette date ont été calculés avec 2,3.',
       dessin: 'primaire-finale',
       points: [
         'On appelle ça l’énergie primaire, par opposition à l’énergie finale — celle du compteur, celle que vous payez.',

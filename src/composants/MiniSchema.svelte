@@ -207,7 +207,7 @@
       {
         cle: 'primaire',
         nom: 'L’énergie primaire',
-        points: ['Ce qu’il a fallu produire à la source', 'Électricité : ×2,3', 'Gaz, fioul, bois : ×1']
+        points: ['Ce qu’il a fallu produire à la source', 'Électricité : ×1,9 (×2,3 avant 2026)', 'Gaz, fioul, bois : ×1']
       },
       {
         cle: 'finale',

@@ -60,7 +60,7 @@ export const CURIOSITES: Partial<Record<TypeDiag, Curiosite>> = {
       'Méthode 3CL : un modèle thermique du bâtiment, pas des relevés',
       'Il simule 12 mois de météo type, pièce par pièce',
       'Énergie finale = ce que vous achetez. Primaire = ce qu’il a fallu produire',
-      'Coefficient de 2,3 pour l’électricité : pertes de production et de transport',
+      'Coefficient de 1,9 pour l’électricité depuis 2026 : pertes de production et de transport',
       'D’où un logement tout électrique noté plus sévèrement qu’il n’y paraît',
       'Les DPE d’avant juillet 2021 utilisaient les factures : ils ne sont plus valables'
     ]
