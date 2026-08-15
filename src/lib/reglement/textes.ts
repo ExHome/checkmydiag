@@ -77,15 +77,30 @@ export const REGLEMENT: Partial<Record<TypeDiag, Reglement>> = {
     validiteMois: 120,
     regles: [
       {
+        /*
+         * Deux arrêtés portent la date du 31 mars 2021, et on citait le mauvais.
+         *
+         * Celui-ci — « pour les bâtiments à usage d'habitation en France
+         * métropolitaine » — porte les valeurs seuils des classes en annexe 5.
+         * L'autre, « relatif aux méthodes et procédures », fixe la méthode et
+         * les logiciels : il reste la source du fondement, ci-dessus, mais on
+         * n'y trouve aucun seuil. Quiconque ouvrait le lien pour contrôler un
+         * chiffre ne pouvait pas l'y voir.
+         *
+         * C'est aussi ce texte-ci que l'arrêté du 25 mars 2024 modifie pour les
+         * petites surfaces : les deux règles pointent enfin vers le même
+         * document. Relu le 15/08/2026.
+         */
         enonce:
           'La classe retenue est la plus mauvaise des deux étiquettes, énergie et climat : c’est la règle du double seuil.',
         source: {
-          reference: 'arrêté du 31 mars 2021',
-          url: 'https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000043353381',
-          luLe: '2026-08-14'
+          reference:
+            'arrêté du 31 mars 2021 relatif au DPE pour les bâtiments à usage d’habitation en France métropolitaine, annexe 5',
+          url: 'https://www.legifrance.gouv.fr/loda/id/JORFTEXT000043353335',
+          luLe: '2026-08-15'
         },
         reserve:
-          'Un logement sobre chauffé au fioul est donc classé sur son CO₂, pas sur sa consommation.'
+          'Un logement sobre chauffé au fioul est donc classé sur son CO₂, pas sur sa consommation. Ce texte a été modifié par les arrêtés du 25 mars 2024, du 16 juin 2025 et du 13 août 2025 : celui du 16 juin 2025 n’a pas encore été dépouillé.'
       },
       {
         enonce:
@@ -156,6 +171,30 @@ export const REGLEMENT: Partial<Record<TypeDiag, Reglement>> = {
         },
         reserve:
           'Ces durées écourtées visent les diagnostics antérieurs à la réforme du 1ᵉʳ juillet 2021 — celle qui a rendu le DPE opposable et changé sa méthode de calcul. Un rapport d’avant cette date porte donc une date de fin imprimée qui ne vaut plus.'
+      },
+      {
+        /*
+         * Le calendrier de la décence, qui n'était nulle part.
+         *
+         * La règle vivait en dur dans des chaînes de caractères, et le moteur en
+         * donnait une version fausse pour la classe E : « le blocage des loyers
+         * touchera cette classe à partir de 2034 ». Ce n'est pas un gel de
+         * loyer, c'est la sortie du logement décent — donc l'interdiction de
+         * louer. Le gel, lui, ne vise que F et G.
+         *
+         * Inscrite ici pour qu'elle cesse de se recopier de mémoire d'un fichier
+         * à l'autre. Lue à la source le 15/08/2026, version en vigueur depuis le
+         * 1ᵉʳ janvier 2025.
+         */
+        enonce:
+          'Le niveau de performance d’un logement décent est compris entre la classe A et la classe F à compter du 1ᵉʳ janvier 2025, entre A et E à compter du 1ᵉʳ janvier 2028, et entre A et D à compter du 1ᵉʳ janvier 2034. Les logements qui ne répondent pas à ces critères aux échéances fixées sont considérés comme non décents.',
+        source: {
+          reference: 'article 6 de la loi n° 89-462 du 6 juillet 1989',
+          url: 'https://www.legifrance.gouv.fr/loda/article_lc/LEGIARTI000037670751/',
+          luLe: '2026-08-15'
+        },
+        reserve:
+          'Un logement non décent ne peut plus être loué : ni nouveau bail, ni renouvellement, ni reconduction tacite. À ne pas confondre avec le gel des loyers, mesure distincte qui ne vise que les classes F et G. Le calendrier diffère outre-mer : A à F en 2028, A à E en 2031.'
       }
     ]
   },

@@ -61,6 +61,52 @@ describe('analyse d’un DPE', () => {
 });
 
 /**
+ * Le calendrier de la décence, classe par classe.
+ *
+ * Article 6 de la loi n° 89-462 du 6 juillet 1989, lu le 15/08/2026 : le
+ * logement décent va de A à F depuis 2025, de A à E en 2028, de A à D en 2034.
+ * Un logement qui sort de cette fourchette n'est plus décent — il ne peut plus
+ * être loué.
+ *
+ * Le produit annonçait à la classe E « le blocage des loyers touchera cette
+ * classe à partir de 2034 ». Faux deux fois, et dans le sens rassurant : le gel
+ * des loyers ne vise que F et G, et ce qui attend la classe E est
+ * l'interdiction de louer, pas une limite d'augmentation. Trouvé par la revue
+ * réglementaire.
+ */
+describe('ce qu’on dit à un logement classé E', () => {
+  const enE = [
+    'Diagnostic de performance',
+    'Etabli le : 12/03/2026',
+    'Surface de référence : 68.0 m²',
+    'Ce logement émet 1 500 kg de CO ₂ par an,',
+    'énergie totale pour les 19 000 kWh entre 1 890 € et 2 560 €'
+  ];
+
+  const diag = analyserDpe(enE, [4, 15]);
+  const texte = diag.aFaire.join(' ');
+
+  it('parle bien d’un logement classé E', () => {
+    if (diag.schema?.genre !== 'dpe') throw new Error('schéma DPE attendu');
+    expect(diag.schema.finale).toBe('E');
+  });
+
+  it('annonce la perte de décence au 1ᵉʳ janvier 2034', () => {
+    expect(texte).toMatch(/2034/);
+    expect(texte).toMatch(/décent/i);
+    expect(texte).toMatch(/ne pourra plus être loué|plus être loué/i);
+  });
+
+  /*
+   * Le garde-fou. Le gel des loyers ne concerne que F et G : l'annoncer à un E
+   * fait croire qu'il restera louable en 2034, à loyer figé. C'est l'inverse.
+   */
+  it('ne parle pas de blocage des loyers, qui ne vise pas cette classe', () => {
+    expect(texte).not.toMatch(/blocage des loyers|loyer est bloqué|gel des loyers/i);
+  });
+});
+
+/**
  * Les logements de 40 m² ou moins.
  *
  * Depuis le 1ᵉʳ juillet 2024, ils relèvent de seuils propres, établis mètre

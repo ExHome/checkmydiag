@@ -261,7 +261,23 @@ function aFaire(finale: Lettre | null): string[] {
     case 'E':
       return [
         'Pour vendre une maison classée E, il faut déjà fournir un audit énergétique.',
-        'Le blocage des loyers touchera cette classe à partir de 2034.',
+        /*
+         * Ce n'est pas un blocage de loyer, c'est la fin de la location.
+         *
+         * On écrivait « le blocage des loyers touchera cette classe à partir de
+         * 2034 ». Faux deux fois. Le gel des loyers ne vise que les classes F
+         * et G, et il court déjà. Et ce qui arrive à la classe E au 1ᵉʳ janvier
+         * 2034 est bien plus lourd : elle sort du logement décent, donc de la
+         * location — article 6 de la loi n° 89-462 du 6 juillet 1989, au
+         * référentiel, lu le 15/08/2026.
+         *
+         * L'erreur allait dans le sens rassurant : un propriétaire lisait qu'il
+         * pourrait encore louer en 2034 sans augmenter son loyer, alors qu'il ne
+         * pourra plus louer du tout. Le produit disait pourtant juste partout
+         * ailleurs — pages publiques, écran de positionnement, écran du notaire.
+         * Seul le chemin qui parle du rapport déposé disait l'inverse.
+         */
+        'Louer : au 1ᵉʳ janvier 2034, un logement classé E ne sera plus considéré comme décent. Il ne pourra plus être loué — ni nouveau bail, ni renouvellement, ni reconduction tacite.',
         ...commun
       ];
     default:
