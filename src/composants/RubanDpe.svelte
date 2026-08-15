@@ -23,7 +23,7 @@
 <div class="ruban" style:--epaisseur="{epaisseur}px" aria-hidden="true">
   {#each ECHELONS as e (e.lettre)}
     <span class="echelon" style:background={e.couleur}>
-      {#if lettres}<b style:color={e.lettre === 'C' || e.lettre === 'D' ? '#16241e' : '#fff'}
+      {#if lettres}<b style:color={e.lettre === 'C' || e.lettre === 'D' ? '#1c1c1c' : '#fff'}
           >{e.lettre}</b
         >{/if}
     </span>

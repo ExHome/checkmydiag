@@ -529,7 +529,7 @@
   }
 
   .dossier:hover {
-    border-color: rgb(230 200 148 / 45%);
+    border-color: rgb(255 107 93 / 45%);
     background: var(--surface-bord);
   }
 
@@ -555,8 +555,8 @@
   }
 
   .erreur {
-    background: rgb(252 112 96 / 12%);
-    border: 1px solid rgb(252 112 96 / 55%);
+    background: rgb(255 107 93 / 12%);
+    border: 1px solid rgb(255 107 93 / 55%);
     color: #ffd9d3;
     border-radius: var(--rayon-petit);
     padding: var(--e3) var(--e4);

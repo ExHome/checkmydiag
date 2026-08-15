@@ -611,8 +611,8 @@
     role="dialog"
     aria-modal="true"
     aria-label={diags[courant]?.titre ?? 'Diagnostic'}
-    style="--teinte: {identite?.teinte ?? 'var(--coral)'}; --teinte-foncee: {identite?.teinteFoncee ??
-      'var(--coral-fonce)'}"
+    style="--teinte: {identite?.teinteFoncee ?? 'var(--coral-fonce)'}; --teinte-claire: {identite?.teinte ??
+      'var(--coral)'}"
     transition:commeUneApp={{ carre: depuis }}
   >
     <header class="barre-app">
@@ -695,7 +695,7 @@
     background: transparent;
     border: none;
     border-radius: var(--rayon-badge);
-    color: var(--teinte-foncee, var(--coral-texte));
+    color: var(--teinte, var(--coral-texte));
     font-size: var(--t-base);
     font-weight: 700;
     cursor: pointer;
@@ -804,7 +804,7 @@
     background: linear-gradient(180deg, var(--surface-bord), var(--surface-forte));
     border-color: var(--gravite, var(--or));
     color: var(--sur-fond);
-    box-shadow: 0 8px 18px -12px rgb(0 20 14 / 100%);
+    box-shadow: 0 8px 18px -12px rgb(15 58 71 / 100%);
   }
 
   .pastille {
@@ -971,7 +971,7 @@
     border-top-color: var(--surface-bord);
     border-left: 4px solid var(--gravite-fiche, var(--sur-fond-doux));
     border-radius: var(--rayon);
-    box-shadow: 0 1px 0 var(--surface-forte) inset, 0 24px 48px -32px rgb(0 20 14 / 100%);
+    box-shadow: 0 1px 0 var(--surface-forte) inset, 0 24px 48px -32px rgb(15 58 71 / 100%);
     break-inside: avoid;
     /* La barre des vues est collante : sans cette marge, une ancre déposait le
        titre de la fiche juste derrière elle. */

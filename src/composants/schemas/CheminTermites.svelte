@@ -122,7 +122,7 @@
   }
 
   .bois {
-    fill: rgb(192 144 72 / 30%);
+    fill: rgb(255 107 93 / 30%);
     stroke: var(--or);
     stroke-width: 1.4;
   }

@@ -1,14 +1,33 @@
 /* ---------------------------------------------------------------------------
    Check My Diag — design system
 
-   Vert DGLM poussé en mode sombre : fond vert-nuit, surfaces en verre, accents
-   néon et or. L'esprit est celui d'un tableau de bord de jeu — on scanne son
-   dossier, on voit les voyants, on ouvre les détails — pas celui d'un formulaire
-   administratif.
+   TROIS COULEURS, ET ELLES SEULES :
 
-   Contrainte qui ne bouge pas : ça doit rester lisible par tout le monde. Les
-   textes gardent un fort contraste sur le fond, les lueurs ne servent qu'aux
-   chiffres et aux bordures.
+     Bleu pétrole  #1A4D5C   la structure, le texte, les traits
+     Sable         #F4E8D8   le fond
+     Corail        #FF6B5D   l'action, l'accent, l'alerte
+
+   Tout le reste en découle : les nuances plus claires ou plus foncées des trois
+   mêmes teintes, le blanc, et les gris neutres du texte. Aucune couleur
+   étrangère n'entre ici — ni vert, ni or, ni violet, ni turquoise.
+
+   Une seule exception, et elle n'est pas décorative : les couleurs A→G de
+   l'étiquette énergétique, fixées par arrêté. Elles ne relèvent pas de la
+   charte et ne se réinventent pas.
+
+   ── Ce qui a précédé ────────────────────────────────────────────────────────
+
+   Le produit est né en vert nuit et or, la charte DGLM. Le fond a basculé sur
+   le sable, mais des restes étaient demeurés : les titres du document imprimé
+   sortaient en vert forêt, les cartes de partage social en vert et or, et
+   toute la feuille des pages publiques était restée à l'ancienne palette.
+   Soixante-trois valeurs, dans quinze fichiers, mesurées puis reprises.
+
+   La leçon tient en une ligne : une charte ne se change pas dans le bloc des
+   variables, elle se change partout où une couleur est écrite en dur.
+
+   Contrainte qui ne bouge pas : ça doit rester lisible par tout le monde. Tout
+   texte tient 4,5 de contraste sur son fond réel — mesuré, pas estimé.
    --------------------------------------------------------------------------- */
 
 /* La police de la maison, telle qu'elle est servie sur dglmexpertises.fr. */
@@ -491,7 +510,7 @@ button {
 
   body {
     background: #fff;
-    color: #1e2e28;
+    color: #0f3a47;
     font-size: 10.5pt;
     line-height: 1.45;
   }
@@ -567,7 +586,7 @@ button {
   .descriptif,
   .quoi,
   .verdict {
-    color: #1e2e28 !important;
+    color: #0f3a47 !important;
   }
 
   h2,
@@ -575,7 +594,7 @@ button {
   .titre-conseil,
   dt,
   .source {
-    color: #093f30 !important;
+    color: #0f3a47 !important;
   }
 
   /* L'état descriptif sert de table des matières sur le papier : ce que chaque
@@ -592,17 +611,17 @@ button {
   .nom-diag,
   .jusqua,
   .jusqua-fiche {
-    color: #41544c !important;
+    color: #555555 !important;
   }
 
   .conclusion,
   .titre-famille {
-    color: #093f30 !important;
+    color: #0f3a47 !important;
   }
 
   .jusqua.perimee,
   .jusqua-fiche.perimee {
-    color: #b03422 !important;
+    color: #a33220 !important;
   }
 
   .feuille,
@@ -628,7 +647,7 @@ button {
   .lexique dd,
   .pourquoi,
   .reserve {
-    color: #41544c !important;
+    color: #555555 !important;
   }
 
   .apparait {

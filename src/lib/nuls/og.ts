@@ -26,11 +26,11 @@ const FAMILLE = 'Fraunces';
 const LINEALE = "'Segoe UI', 'DejaVu Sans', 'Liberation Sans', Arial, sans-serif";
 
 const MARGE = 80;
-const FOND = '#002924';
-const CREME = '#faf8f3';
-const OR = '#c09048';
-const OR_CLAIR = '#d9b778';
-const DOUX = '#a8bdb2';
+const FOND = '#0f3a47';
+const CREME = '#f5f1e8';
+const OR = '#ff6b5d';
+const OR_CLAIR = '#ff9084';
+const DOUX = '#7fa3ad';
 
 /**
  * La maison au trait, reprise du langage des schémas. Elle n'apparaît que sur
@@ -123,7 +123,7 @@ ${contenu}
 
   <path d="M${MARGE} 540 H${LARGEUR - MARGE}" stroke="${CREME}" stroke-opacity="0.16" stroke-width="1" />
   <text x="${MARGE}" y="583" font-family="${LINEALE}" font-size="22" font-weight="600" letter-spacing="3.4" fill="${OR_CLAIR}">EN CLAIR</text>
-  <text x="${LARGEUR - MARGE}" y="583" text-anchor="end" font-family="${LINEALE}" font-size="20" fill="#8ba496">Votre rapport ne quitte jamais votre appareil.</text>
+  <text x="${LARGEUR - MARGE}" y="583" text-anchor="end" font-family="${LINEALE}" font-size="20" fill="#7fa3ad">Votre rapport ne quitte jamais votre appareil.</text>
 </svg>`;
 }
 

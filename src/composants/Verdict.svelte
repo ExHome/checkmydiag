@@ -549,7 +549,7 @@
   .nature {
     margin: 0 0 var(--e5);
     padding: var(--e4) var(--e5);
-    background: linear-gradient(180deg, rgb(192 144 72 / 16%), rgb(192 144 72 / 6%));
+    background: linear-gradient(180deg, rgb(255 107 93 / 16%), rgb(255 107 93 / 6%));
     border: 1px solid var(--trait-or);
     border-left: 4px solid var(--or);
     border-radius: var(--rayon);
@@ -702,7 +702,7 @@
     height: 44px;
     border-radius: var(--rayon);
     background: var(--teinte);
-    color: #08281f;
+    color: #0f3a47;
     font-family: var(--police-titre);
     font-size: var(--t-titre);
     font-weight: 600;
@@ -866,7 +866,7 @@
     border-top-color: var(--surface-bord);
     border-left: 3px solid var(--gravite, var(--sur-fond-doux));
     border-radius: var(--rayon);
-    box-shadow: 0 1px 0 var(--surface-forte) inset, 0 10px 22px -18px rgb(0 20 14 / 90%);
+    box-shadow: 0 1px 0 var(--surface-forte) inset, 0 10px 22px -18px rgb(15 58 71 / 90%);
     color: var(--sur-fond);
     cursor: pointer;
     transition:
@@ -881,7 +881,7 @@
     border-color: var(--surface-bord);
     border-left-color: var(--gravite, var(--sur-fond-doux));
     transform: translateY(-2px);
-    box-shadow: 0 1px 0 var(--surface-forte) inset, 0 16px 28px -20px rgb(0 20 14 / 100%);
+    box-shadow: 0 1px 0 var(--surface-forte) inset, 0 16px 28px -20px rgb(15 58 71 / 100%);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -1091,7 +1091,7 @@
   }
   li.moyen .entree {
     --marque: var(--attention);
-    --voile: rgb(245 166 35 / 10%);
+    --voile: rgb(138 90 5 / 10%);
   }
   li.bon .entree {
     --marque: var(--petrole);
@@ -1158,22 +1158,22 @@
      n'imprime pas des boutons refermés. */
   @media print {
     .verdict {
-      border-left-color: #093f30;
+      border-left-color: #0f3a47;
       margin-bottom: 14mm;
     }
 
     .dit h2,
     .mot {
-      color: #093f30 !important;
+      color: #0f3a47 !important;
     }
 
     .dit p,
     .detail p {
-      color: #41544c !important;
+      color: #555555 !important;
     }
 
     .picto {
-      color: #093f30 !important;
+      color: #0f3a47 !important;
     }
 
     .entree {

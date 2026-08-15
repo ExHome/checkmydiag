@@ -169,7 +169,7 @@
   }
 
   .barreau.sombre {
-    color: #16241e;
+    color: #1c1c1c;
   }
 
   .barreau.efface {
@@ -179,7 +179,7 @@
   /* La classe du logement dépasse des autres : on la trouve sans la chercher. */
   .barreau.ici {
     transform: translateY(-8px);
-    box-shadow: 0 6px 16px -6px rgb(0 20 14 / 45%);
+    box-shadow: 0 6px 16px -6px rgb(15 58 71 / 45%);
     outline: 2px solid var(--vert-700);
     outline-offset: 2px;
   }

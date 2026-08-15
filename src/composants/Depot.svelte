@@ -232,7 +232,7 @@
 
   .depot.survol {
     border-color: var(--attention);
-    background: rgb(245 166 35 / 5%);
+    background: rgb(138 90 5 / 5%);
   }
 
   .depot:disabled {

@@ -409,7 +409,17 @@
     display: grid;
     place-items: center;
     font-size: 32px;
-    box-shadow: 0 4px 12px rgb(26 77 92 / 18%);
+    /*
+     * Un filet, puis l'ombre.
+     *
+     * Mesuré sur le sable : les nuances claires de la palette n'atteignent que
+     * 1,5 à 2,2 de contraste avec le fond — l'icône bavait dans la page. Le
+     * filet intérieur lui rend une limite nette sans toucher à sa couleur.
+     * C'est exactement ce que fait iOS de ses icônes claires.
+     */
+    box-shadow:
+      inset 0 0 0 1px rgb(15 58 71 / 22%),
+      0 4px 12px rgb(26 77 92 / 18%);
     transition: transform var(--duree) var(--courbe), box-shadow var(--duree) var(--courbe);
   }
 
@@ -426,7 +436,9 @@
   .tuile:hover .icone,
   .tuile:focus-visible .icone {
     transform: scale(1.05);
-    box-shadow: 0 6px 18px rgb(26 77 92 / 26%);
+    box-shadow:
+      inset 0 0 0 1px rgb(15 58 71 / 30%),
+      0 6px 18px rgb(26 77 92 / 26%);
   }
 
   /* La pastille d'état : une forme d'abord, une couleur ensuite. Elle relie la

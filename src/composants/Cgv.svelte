@@ -110,8 +110,8 @@
   }
 
   .brouillon {
-    background: rgb(252 112 96 / 12%);
-    border: 1px solid rgb(252 112 96 / 55%);
+    background: rgb(255 107 93 / 12%);
+    border: 1px solid rgb(255 107 93 / 55%);
     border-radius: var(--rayon);
     padding: var(--e2) var(--e3);
     margin-bottom: var(--e4);

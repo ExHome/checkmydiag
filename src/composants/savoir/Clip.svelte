@@ -76,7 +76,7 @@
   .clip:hover .point,
   .clip:focus-visible .point {
     background: var(--or-fonce);
-    box-shadow: 0 0 0 4px rgb(192 144 72 / 22%);
+    box-shadow: 0 0 0 4px rgb(255 107 93 / 22%);
   }
 
   @media (prefers-reduced-motion: reduce) {

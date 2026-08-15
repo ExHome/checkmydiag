@@ -45,7 +45,7 @@
     bon: '#319834',
     moyen: '#fc9935',
     mauvais: '#fc0205',
-    info: '#c09048'
+    info: '#ff6b5d'
   } as const;
 
   /**
@@ -869,7 +869,7 @@
     background: linear-gradient(180deg, var(--surface-bord), var(--surface-forte));
     border-color: var(--surface-bord);
     border-top-color: var(--or);
-    box-shadow: 0 1px 0 var(--surface-forte) inset, 0 14px 26px -18px rgb(0 20 14 / 100%);
+    box-shadow: 0 1px 0 var(--surface-forte) inset, 0 14px 26px -18px rgb(15 58 71 / 100%);
   }
 
   .nom-vue {
@@ -1005,7 +1005,7 @@
     font-size: var(--t-micro);
     font-weight: 800;
     letter-spacing: 0.12em;
-    border-block: 1px solid #e6ded0;
+    border-block: 1px solid #e8dcc8;
   }
 
   .numero-page:first-child {
@@ -1027,7 +1027,7 @@
     padding: var(--e1) var(--e2);
     margin: var(--e1) 0;
     cursor: pointer;
-    color: #2f2416;
+    color: #0f3a47;
     font: inherit;
     font-weight: 650;
     transition: background 0.15s ease, box-shadow 0.15s ease;
@@ -1064,7 +1064,7 @@
     display: grid;
     place-items: center;
     padding: clamp(0px, 3vw, 32px);
-    background: rgb(0 20 14 / 62%);
+    background: rgb(15 58 71 / 62%);
     backdrop-filter: blur(6px);
   }
 
@@ -1092,7 +1092,7 @@
     border: 1px solid var(--surface-bord);
     border-top: 3px solid var(--teinte);
     border-radius: var(--rayon);
-    box-shadow: 0 40px 90px -30px rgb(0 20 14 / 100%);
+    box-shadow: 0 40px 90px -30px rgb(15 58 71 / 100%);
     color: var(--sur-fond);
     overflow: hidden;
   }
@@ -1293,7 +1293,7 @@
     gap: var(--e3);
     margin-top: var(--e4);
     padding-top: var(--e4);
-    border-top: 1px solid rgb(230 200 148 / 24%);
+    border-top: 1px solid rgb(255 107 93 / 24%);
   }
 
   .pas-a-pas .fleche {
@@ -1353,7 +1353,7 @@
     border-radius: var(--rayon-petit);
     font-size: var(--t-base);
     line-height: 1.5;
-    color: #17301f;
+    color: #0f3a47;
     quotes: '«\00a0' '\00a0»';
   }
 
@@ -1392,7 +1392,7 @@
 
   .creuser {
     background: none;
-    border: 1px solid rgb(230 200 148 / 40%);
+    border: 1px solid rgb(255 107 93 / 40%);
     border-radius: 0;
     padding: var(--e2) var(--e4);
     font-size: var(--t-petit);
@@ -1438,7 +1438,7 @@
     position: fixed;
     inset: 0;
     z-index: 40;
-    background: rgb(0 20 14 / 72%);
+    background: rgb(15 58 71 / 72%);
     backdrop-filter: blur(4px);
     display: grid;
     place-items: center;
@@ -1583,7 +1583,7 @@
     border-top: 1px solid var(--trait-fin);
     font-size: var(--t-base);
     line-height: 1.45;
-    color: #8d3323;
+    color: #a33220;
   }
 
   .risque::before {
@@ -1683,12 +1683,12 @@
     gap: var(--e2);
     margin-top: var(--e4);
     padding-top: var(--e3);
-    border-top: 1px solid rgb(230 200 148 / 24%);
+    border-top: 1px solid rgb(255 107 93 / 24%);
   }
 
   .passerelles button {
     background: none;
-    border: 1px solid rgb(230 200 148 / 45%);
+    border: 1px solid rgb(255 107 93 / 45%);
     color: var(--or-clair);
     border-radius: 0;
     padding: var(--e2) var(--e4);
@@ -1700,7 +1700,7 @@
 
   .passerelles button:hover {
     background: var(--or);
-    color: #17301f;
+    color: #0f3a47;
   }
 
   @media (max-width: 820px) {
