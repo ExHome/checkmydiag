@@ -107,6 +107,47 @@ describe('chaque univers reste lisible', () => {
       });
 
       /*
+       * La couleur vive remplit, elle n'écrit pas — et elle se voit.
+       *
+       * Ce test a d'abord exigé les 3:1 de WCAG 1.4.11. Trois univers l'ont
+       * refusé : le corail du DPE (2,59), le violet de l'amiante (2,81),
+       * l'orange du gaz (2,78) — c'est-à-dire précisément les couleurs des
+       * maquettes, celles de la marque. Le test se trompait, pas elles.
+       *
+       * Le 3:1 vise les éléments dont la compréhension dépend de la
+       * distinction de couleur : une jauge, une barre, un état. La couleur vive
+       * ne joue jamais ce rôle ici — elle remplit des surfaces qui portent
+       * déjà un texte, un contour ou une forme, et l'information passe par
+       * eux. Ce qu'on lui demande, c'est d'être perceptible.
+       *
+       * La règle qui compte est ailleurs, et c'est la suivante : dès qu'un
+       * aplat de couleur vive porte À LUI SEUL une information — une barre de
+       * jauge, un segment d'échelle — il lui faut un contour ou une étiquette.
+       * Ce garde-fou-là se tient dans les composants, pas ici.
+       */
+      it('garde une couleur vive perceptible sur son fond', () => {
+        expect(contraste(u.accentVif, u.fond)).toBeGreaterThanOrEqual(1.5);
+      });
+
+      /*
+       * Deux rôles, deux valeurs — sauf quand la même couleur peut les tenir.
+       *
+       * Séparer « ce qui remplit » de « ce qui écrit » n'a de sens que si les
+       * deux diffèrent vraiment. Le jaune de l'électricité est l'exception qui
+       * confirme : sur son fond noir bleuté il tient 12,8, donc il écrit ET il
+       * remplit, et lui donner une seconde valeur serait inventer une nuance
+       * dont personne n'a besoin.
+       */
+      it('distingue la couleur qui remplit de celle qui écrit, ou s’en explique', () => {
+        const memeCouleur = u.accentVif.toLowerCase() === u.accent.toLowerCase();
+        if (memeCouleur) {
+          expect(contraste(u.accentVif, u.fond)).toBeGreaterThanOrEqual(TEXTE_COURANT);
+        } else {
+          expect(contraste(u.accent, u.fond)).toBeGreaterThan(contraste(u.accentVif, u.fond));
+        }
+      });
+
+      /*
        * Le garde-fou qui compte vraiment.
        *
        * On est dans une vente immobilière : une anomalie grave doit sauter aux

@@ -187,26 +187,28 @@
       return { duration: 0 };
     }
 
-    const largeur = window.innerWidth;
-    const hauteur = window.innerHeight;
-    const o = carre ?? {
-      x: largeur / 2 - 38,
-      y: hauteur / 2 - 38,
-      largeur: 76,
-      hauteur: 76
-    };
-
-    const echelle = Math.max(o.largeur / largeur, 0.05);
-    const versX = o.x + o.largeur / 2 - largeur / 2;
-    const versY = o.y + o.hauteur / 2 - hauteur / 2;
+    /*
+     * L'écran se pose, il ne se déplie plus.
+     *
+     * Il partait du carré de l'icône et grandissait jusqu'à couvrir la page —
+     * un beau geste, mais il fait maintenant doublon : c'est la propagation de
+     * couleur qui porte le lien entre l'icône et l'écran, et l'ordre de mission
+     * la désigne comme la signature du produit. Deux mouvements pour une seule
+     * ouverture se gênaient l'un l'autre.
+     *
+     * Reste le strict nécessaire : l'écran monte en opacité pendant que la
+     * couleur finit de s'effacer, avec un souffle d'échelle pour qu'il se pose
+     * au lieu d'apparaître. Le carré n'est plus lu — il sert à la propagation,
+     * en amont.
+     */
+    void carre;
 
     return {
-      duration: 360,
+      duration: 240,
       easing: cubicOut,
       css: (t: number, u: number) =>
-        `transform: translate(${versX * u}px, ${versY * u}px) scale(${1 - u * (1 - echelle)});
-         border-radius: ${u * 64}px;
-         opacity: ${Math.min(1, t * 2.5)};`
+        `transform: scale(${1 - u * 0.03});
+         opacity: ${Math.min(1, t * 1.6)};`
     };
   }
 
@@ -816,6 +818,11 @@
     --coral-fonce: var(--u-accent, #d0402c);
     --coral-texte: var(--u-accent, #a33220);
     --sur-accent: var(--u-sur-accent, #ffffff);
+
+    /* La couleur vive de l'écran : elle remplit, elle n'écrit pas. C'est elle
+       qui rend au produit la vivacité que l'assombrissement systématique lui
+       avait retirée. */
+    --coral: var(--u-accent-vif, #ff6b5d);
 
     /*
      * Les noms historiques, qu'il fallait remapper aussi.

@@ -48,7 +48,20 @@ export interface Univers {
   texte: string;
   /** Le texte secondaire — mentions, précisions. */
   texteDoux: string;
-  /** La couleur qui désigne : filets, bords actifs, accents. */
+  /**
+   * La couleur VIVE de l'univers, celle des maquettes, telle quelle.
+   *
+   * Elle ne porte jamais de texte — le corail #ff6b5d ne tient que 2,59 sur le
+   * rose du DPE — mais elle porte tout le reste : les aplats, les barres, les
+   * pastilles, les dégradés, les bandeaux.
+   *
+   * Ce rôle manquait, et son absence se voyait. À force d'assombrir chaque
+   * couleur pour qu'elle reste lisible, le produit était devenu rouge brique
+   * là où il devait être corail. Séparer les deux rend sa vivacité à la marque
+   * sans rien coûter à la lecture : le vif remplit, le foncé écrit.
+   */
+  accentVif: string;
+  /** La couleur qui ÉCRIT : intitulés, liens, bords actifs. */
   accent: string;
   /**
    * L'encre posée SUR l'accent, quand il devient un aplat plein.
@@ -66,28 +79,31 @@ export interface Univers {
 
 export const UNIVERS: Partial<Record<Ecran, Univers>> = {
   /*
-   * DPE — le banc de mesure.
+   * DPE — l'écran corail, aux valeurs de la maquette.
    *
-   * Le seul univers qui ne prend aucune teinte, et c'est ce qui le distingue :
-   * un DPE n'est pas un avis, c'est une mesure. Papier kraft, encre profonde,
-   * chiffres en colonne.
+   * C'est le premier diagnostic du dossier et le plus lu : c'est lui qui porte
+   * la couleur de la marque. Fond rose très pâle, encre brique, corail vif sur
+   * les aplats.
    *
-   * L'écran rendu à l'encre a une conséquence qui vaut à elle seule le choix :
-   * les seules couleurs qui restent sont les sept de l'arrêté et celle de
-   * l'alerte. Elles redeviennent les seules choses qu'on regarde.
+   * J'avais rendu cet écran à l'encre, en me disant que l'étiquette A→G devait
+   * régner seule. La cliente a tranché en trois mots — « manque de corail » —
+   * et elle a raison : le produit s'appelle CheckMyDiag, son « My » est corail,
+   * et son écran principal l'avait perdu.
    *
-   * L'accent est passé du corail foncé à cette encre après mesure : #d0402c ne
-   * tenait que 3,90 sur le kraft, et il porte les intitulés de section
-   * (« Ce qu'on risque », « Ce qu'il faut faire »). L'encre tient 10,71.
+   * Les sept couleurs de l'arrêté restent intouchées : elles se détachent sur
+   * le rose pâle aussi bien que sur le sable.
    */
   dpe: {
-    fond: '#efe4d2',
+    fond: '#fff4f2',
     surface: '#ffffff',
-    texte: '#1a4d5c',
-    texteDoux: '#3a4a52',
-    accent: '#0b333f',
+    texte: '#7a2e24',
+    /* #9C6459 de la maquette tombe à 4,45 : assombri du strict nécessaire pour
+       passer 4,77, sans quitter la teinte. */
+    texteDoux: '#96604f',
+    accentVif: '#ff6b5d',
+    accent: '#a33220',
     surAccent: '#ffffff',
-    trait: '#cdbfa4'
+    trait: '#f6d9d3'
   },
 
   /* Électricité — le tableau technique, le seul écran sombre. */
@@ -97,6 +113,7 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
     texte: '#e8eef2',
     texteDoux: '#a8bcc7',
     /* Le jaune de la maquette : 12,1 sur le fond, il porte les accents. */
+    accentVif: '#ffd54f',
     accent: '#ffd54f',
     surAccent: '#0d1720',
     trait: '#24333f',
@@ -111,6 +128,7 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
        d'origine reste sur les aplats et les filets. */
     texte: '#3b2f7a',
     texteDoux: '#5a5580',
+    accentVif: '#8b7bf0',
     accent: '#5a4bc4',
     surAccent: '#ffffff',
     trait: '#ddd6f3'
@@ -122,6 +140,7 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
     surface: '#f7faf7',
     texte: '#1b5e20',
     texteDoux: '#4a6b4d',
+    accentVif: '#43a047',
     accent: '#2e7d32',
     surAccent: '#ffffff',
     trait: '#cfe0d1'
@@ -135,6 +154,7 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
     texteDoux: '#7a5540',
     /* #FF8C42 tombe à 2,7 sur blanc : l'orange foncé prend le relais dès qu'il
        s'agit d'écrire ou de porter du blanc. */
+    accentVif: '#f4701f',
     accent: '#a8480c',
     surAccent: '#ffffff',
     trait: '#f2e4d6'
@@ -146,6 +166,7 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
     surface: '#fffdfa',
     texte: '#5d3a1a',
     texteDoux: '#7a5a40',
+    accentVif: '#a0522d',
     accent: '#8b4513',
     surAccent: '#ffffff',
     trait: '#e3d0b8'
@@ -178,6 +199,7 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
     surface: '#f1eadc',
     texte: '#1e2230',
     texteDoux: '#5a6070',
+    accentVif: '#5c6b8a',
     accent: '#4a5878',
     surAccent: '#ffffff',
     trait: '#d3c9b5'
@@ -189,6 +211,7 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
     surface: '#ffffff',
     texte: '#00695c',
     texteDoux: '#4a6f6b',
+    accentVif: '#00897b',
     accent: '#00796b',
     surAccent: '#ffffff',
     trait: '#d5efee'
@@ -217,6 +240,7 @@ export function styleUnivers(ecran: Ecran): string {
     `--u-surface:${u.surface}`,
     `--u-texte:${u.texte}`,
     `--u-texte-doux:${u.texteDoux}`,
+    `--u-accent-vif:${u.accentVif}`,
     `--u-accent:${u.accent}`,
     `--u-sur-accent:${u.surAccent}`,
     `--u-trait:${u.trait}`

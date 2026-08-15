@@ -17,6 +17,7 @@
   import { compterLeDossier, origineDe, phraseDuDossier, type Origine } from '../lib/bureau';
   import { APPS } from '../lib/apps';
   import Dicodiag from './Dicodiag.svelte';
+  import Propagation from './Propagation.svelte';
 
   interface Props {
     analyse: Analyse;
@@ -104,8 +105,29 @@
    */
   function ouvrir(evenement: MouseEvent, type: TypeDiag): void {
     const bouton = evenement.currentTarget as HTMLElement;
-    surOuvrirDiagnostic?.(type, origineDe(bouton.querySelector('.icone')));
+    const carre = origineDe(bouton.querySelector('.icone'));
+
+    /*
+     * La couleur part d'abord, l'écran suit.
+     *
+     * Sans carré mesurable — un clavier, un lecteur d'écran, une icône hors
+     * champ — on ouvre directement : une propagation sans point de départ
+     * n'aurait rien à relier.
+     */
+    if (!carre) {
+      surOuvrirDiagnostic?.(type, null);
+      return;
+    }
+
+    propagation = { carre, couleur: APPS[type].degrade, type };
   }
+
+  /** La couleur en train d'envahir l'écran, le temps d'un geste. */
+  let propagation = $state<{
+    carre: Origine;
+    couleur: string;
+    type: TypeDiag;
+  } | null>(null);
 
   /**
    * Les neuf applications, présentes ou non.
@@ -304,15 +326,80 @@
   <Dicodiag surFermer={() => (dicodiagOuvert = false)} />
 {/if}
 
+{#if propagation}
+  <Propagation
+    depuis={propagation.carre}
+    couleur={propagation.couleur}
+    surCouvert={() => propagation && surOuvrirDiagnostic?.(propagation.type, propagation.carre)}
+    surFini={() => (propagation = null)}
+  />
+{/if}
+
 <style>
+  /*
+   * L'écran d'accueil est en bleu pétrole, et les applications y ressortent.
+   *
+   * Sur le sable, neuf icônes colorées et un fond chaud se disputaient l'œil :
+   * l'écran était joli mais plat, et rien n'appelait le doigt. Sur le pétrole,
+   * chaque icône devient une source de couleur — c'est la mécanique d'un écran
+   * de téléphone, et c'est ce qui fait qu'on y repère son application sans lire
+   * son nom.
+   *
+   * Le fond déborde volontairement de la section, jusqu'aux bords de la fenêtre
+   * et sous la barre du site : un aplat qui s'arrête à mi-écran donnerait un
+   * rectangle posé sur une page, pas un bureau.
+   *
+   * Les jetons sont ceux de l'inversion déjà écrite pour l'écran de démarrage.
+   * Ils ne sont pas recopiés ici : toute surface claire posée sur ce fond doit
+   * les remettre à l'endroit, sinon elle hérite d'un texte sable sur du blanc —
+   * la régression qui a déjà coûté un écran de conditions illisible.
+   */
   .bureau {
     margin-bottom: var(--e6);
+    padding: var(--e5) var(--e4) var(--e6);
+    /* Jusqu'aux bords, quelle que soit la largeur de la colonne de lecture. */
+    margin-inline: calc(50% - 50vw);
+    padding-inline: max(var(--e4), calc(50vw - 480px));
+    background: var(--petrole);
+    color: var(--sable);
+    /* Le bas s'arrondit : la page continue en dessous, et un aplat coupé net
+       ressemblerait à un défaut de rendu plutôt qu'à un panneau. */
+    border-end-start-radius: 28px;
+    border-end-end-radius: 28px;
+
+    --sur-fond: #f4e8d8;
+    --sur-fond-doux: #d8ccbc;
+    --encre: #f4e8d8;
+    --encre-doux: #d8ccbc;
+    --gris: #d8ccbc;
+    --surface: rgb(244 232 216 / 6%);
+    --surface-forte: rgb(244 232 216 / 10%);
+    --surface-bord: rgb(244 232 216 / 20%);
+    --trait: rgb(244 232 216 / 22%);
+    --trait-fin: rgb(244 232 216 / 12%);
+    --coral-texte: #ffb3aa;
   }
 
   /* ---- Le cartouche ------------------------------------------------------
-     Blanc sur le sable, largement arrondi, une ombre douce : il flotte
-     au-dessus du fond sans l'écraser. */
+     Blanc sur le pétrole, largement arrondi, une ombre douce : il flotte
+     au-dessus du fond sans l'écraser.
+
+     Il remet les jetons à l'endroit pour lui-même : sa surface est claire, et
+     le texte sable de l'écran y tomberait à 1,07. */
   .cartouche {
+    --sur-fond: #1a4d5c;
+    --sur-fond-doux: #555555;
+    --encre: #1a4d5c;
+    --encre-doux: #555555;
+    --gris: #666666;
+    --surface: rgb(26 77 92 / 3%);
+    --surface-forte: rgb(26 77 92 / 6%);
+    --surface-bord: rgb(26 77 92 / 10%);
+    --trait: #e8dcc8;
+    --trait-fin: #f0eae0;
+    --coral-texte: #a33220;
+    color: var(--petrole);
+
     background: var(--papier);
     border: 1px solid var(--surface-bord);
     border-radius: var(--rayon-large);
@@ -639,6 +726,19 @@
      écrans, et une barre flottante y masquerait du texte à chaque défilement.
      Il en garde la forme — verre dépoli, coins ronds — et la fonction : les
      trois destinations, toujours au même endroit. */
+  /*
+   * Le verre du dock est teinté, pas clair.
+   *
+   * Il était blanc à 70 % : sur le sable, cela donnait une plaque dépolie très
+   * lisible. Sur le pétrole, la même plaque devient presque blanche et les
+   * libellés sable qui la traversent tombent à 1,4 — le dock reste beau et
+   * cesse d'être lisible.
+   *
+   * Le piège vaut d'être noté : un aplat translucide ne se mesure pas à la
+   * couleur qu'on écrit, mais à ce qu'elle donne UNE FOIS COMPOSÉE avec le fond
+   * du dessous. Ma sonde automatique n'avait rien vu — elle avait remonté la
+   * chaîne jusqu'au pétrole et mesuré un couple qui n'existe pas à l'écran.
+   */
   .dock {
     margin-top: var(--e5);
     display: flex;
@@ -646,9 +746,9 @@
     gap: var(--e5);
     padding: var(--e3);
     border-radius: 24px;
-    background: rgb(255 255 255 / 70%);
+    background: rgb(15 58 71 / 55%);
     backdrop-filter: blur(20px);
-    border: 1px solid rgb(255 255 255 / 60%);
+    border: 1px solid rgb(244 232 216 / 16%);
     box-shadow: var(--ombre-lourde);
   }
 
