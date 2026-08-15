@@ -8,6 +8,7 @@
  */
 import type { Diagnostic, EtatIsolation, Etiquette, Fait, Isolation, Lettre } from '../modele';
 import { contient, nombre, trouver } from './texte';
+import { dateFrancaise, faitDesReformes, OU_RECTIFIER, reformesDepuis } from './reformes';
 
 const LETTRES: Lettre[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 
@@ -383,6 +384,10 @@ export function analyserDpe(lignes: string[], plage: [number, number]): Diagnost
   if (valable?.[1]) faits.push({ libelle: 'Valable jusqu’au', valeur: valable[1] });
   if (ademe?.[1]) faits.push({ libelle: 'N° ADEME', valeur: ademe[1] });
 
+  const reformes = reformesDepuis(dateFrancaise(etabli?.[1]), m.surface);
+  const faitReformes = faitDesReformes(reformes);
+  if (faitReformes) faits.push(faitReformes);
+
   const explication: string[] = [
     "Le DPE mesure deux choses : l'énergie que le logement consomme pour cinq usages (chauffage, eau chaude, climatisation, éclairage, ventilation) et le CO₂ qu'il émet. Chacune donne une lettre ; la lettre affichée sur l'annonce est la moins bonne des deux.",
     "Ces chiffres ne dépendent pas de vos habitudes : ils décrivent le bâtiment (isolation, fenêtres, chauffage) pour un usage standardisé. C'est ce qui permet de comparer deux logements entre eux."
@@ -413,6 +418,23 @@ export function analyserDpe(lignes: string[], plage: [number, number]): Diagnost
     );
     explication.push(
       "Nous ne recalculons donc pas la lettre ici : elle serait fausse, et plus mauvaise que la vraie. La lettre qui fait foi est celle imprimée sur l'étiquette du rapport, établie par le diagnostiqueur avec les seuils de cette surface. Les chiffres ci-dessus, eux, sont ceux du rapport."
+    );
+  }
+
+  /*
+   * Ce qui a changé depuis que ce diagnostic a été établi.
+   *
+   * Un DPE ne vieillit pas seulement : la règle change sous lui. Plutôt que de
+   * recalculer une lettre qu'on n'a pas le moyen d'établir, on regarde la date,
+   * on dit ce qui a changé depuis, et on renvoie là où la rectification se
+   * demande — gratuitement, sans nouvelle visite.
+   */
+  for (const reforme of reformes) {
+    explication.push(reforme.texte);
+  }
+  if (reformes.length) {
+    explication.push(
+      `Où faire rectifier : ${OU_RECTIFIER.texte}, ${OU_RECTIFIER.url}. ${OU_RECTIFIER.comment}`
     );
   }
   if (energie && !climat) {

@@ -547,6 +547,30 @@
                 <Releves releves={d.releves} page={d.pages[0]} type={d.type} />
               {/if}
 
+              <!--
+                Ce que ce rapport-ci raconte.
+
+                Le canevas ci-dessous vient des fiches : il est le même pour
+                tous les DPE, tous les constats plomb. Ces paragraphes-là sont
+                écrits à partir du rapport déposé — la lettre qu'on s'abstient
+                de recalculer et pourquoi, les réformes intervenues depuis la
+                date du diagnostic, le relevé qui part à l'agence régionale de
+                santé, les volets que l'état parasitaire couvre en plus.
+
+                Ils n'étaient affichés nulle part. Le moteur les produisait
+                depuis toujours, chaque analyseur en écrivait trois à sept, et
+                le lecteur n'en voyait aucun : le champ n'était lu par aucun
+                composant. Tout ce qui distingue un dossier d'un autre restait
+                dans la mémoire du programme.
+              -->
+              {#if d.explication.length}
+                <div class="propre-au-rapport">
+                  {#each d.explication as paragraphe (paragraphe)}
+                    <p><MotsExpliques texte={paragraphe} /></p>
+                  {/each}
+                </div>
+              {/if}
+
               <dl class="canevas">
                 {#each BLOCS as bloc (bloc.cle)}
                   <div>
@@ -1234,6 +1258,30 @@
     font-size: var(--t-petit);
     font-weight: 400;
     color: var(--sur-fond-doux);
+  }
+
+  /*
+   * Ce qui est propre à ce rapport-ci, distingué du fond commun.
+   *
+   * Un filet corail sur le bord gauche, et un fond très légèrement teinté : ces
+   * paragraphes parlent du logement du lecteur, pas des diagnostics en général.
+   * La différence doit se voir sans qu'on ait à la lire.
+   */
+  .propre-au-rapport {
+    margin: var(--e4) 0;
+    padding: var(--e3) var(--e4);
+    background: var(--surface);
+    border-left: 3px solid var(--coral-fonce);
+    border-radius: 0 var(--rayon) var(--rayon) 0;
+    display: grid;
+    gap: var(--e3);
+  }
+
+  .propre-au-rapport p {
+    margin: 0;
+    font-size: var(--t-petit);
+    line-height: 1.6;
+    color: var(--sur-fond);
   }
 
   /* Le canevas : les cinq mêmes questions pour les neuf diagnostics. */

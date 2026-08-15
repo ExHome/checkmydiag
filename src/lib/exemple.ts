@@ -50,8 +50,18 @@ export function pagesExemple(): PageTexte[] {
       lignes: [
         'N°ADEME : 2633E2660001X',
         'Diagnostic de performance',
-        'Etabli le : 12/03/2026',
-        'énergétique (logement) Valable jusqu’au : 11/03/2036',
+        /*
+         * Un DPE de 2025, pas de 2026.
+         *
+         * L'exemple doit ressembler à ce qu'on reçoit. Mesuré sur le corpus :
+         * les trente-et-un DPE réels sont tous antérieurs au 1ᵉʳ janvier 2026,
+         * donc tous concernés par le changement du facteur de conversion de
+         * l'électricité — et par le droit à une mise à jour gratuite. Daté de
+         * 2026, l'exemple était en avance sur le parc et ne montrait rien de
+         * cette réforme.
+         */
+        'Etabli le : 12/03/2025',
+        'énergétique (logement) Valable jusqu’au : 11/03/2035',
         'Adresse : 12 rue de l’Exemple',
         '33000 BORDEAUX (France)',
         'Type de bien : Appartement',
