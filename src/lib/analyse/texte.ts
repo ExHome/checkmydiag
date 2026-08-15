@@ -45,10 +45,33 @@ export function nombre(s: string | undefined | null): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
+/**
+ * Rend un motif indifférent à la forme de l'apostrophe.
+ *
+ * Mesuré sur quarante dossiers : trente-neuf emploient les DEUX apostrophes,
+ * la droite et la typographique, souvent dans le même rapport et parfois dans
+ * la même phrase — c'est le générateur de PDF qui décide, pas le rédacteur. Un
+ * motif écrit avec « n'a » rate donc « n’a » une fois sur deux.
+ *
+ * L'échec est silencieux, et c'est ce qui le rend dangereux : une conclusion
+ * d'absence non reconnue ne provoque aucune erreur, elle laisse simplement le
+ * diagnostic sans verdict. Un test sur l'amiante l'a révélé — les conclusions
+ * par liste n'étaient lues que dans leur version à apostrophe droite.
+ *
+ * On réécrit le motif plutôt que la ligne : les groupes capturés gardent ainsi
+ * le texte exact du rapport, apostrophe typographique comprise, et rien de ce
+ * qu'on affiche n'est altéré.
+ */
+function tolerantAuxApostrophes(motif: RegExp): RegExp {
+  if (!motif.source.includes("'")) return motif;
+  return new RegExp(motif.source.replace(/'/g, "['’]"), motif.flags);
+}
+
 /** Première ligne qui satisfait le motif, avec ses groupes de capture. */
 export function trouver(lignes: string[], motif: RegExp): RegExpMatchArray | null {
+  const m2 = tolerantAuxApostrophes(motif);
   for (const ligne of lignes) {
-    const m = ligne.match(motif);
+    const m = ligne.match(m2);
     if (m) return m;
   }
   return null;
@@ -56,9 +79,10 @@ export function trouver(lignes: string[], motif: RegExp): RegExpMatchArray | nul
 
 /** Toutes les lignes qui satisfont le motif. */
 export function trouverToutes(lignes: string[], motif: RegExp): RegExpMatchArray[] {
+  const m2 = tolerantAuxApostrophes(motif);
   const res: RegExpMatchArray[] = [];
   for (const ligne of lignes) {
-    const m = ligne.match(motif);
+    const m = ligne.match(m2);
     if (m) res.push(m);
   }
   return res;

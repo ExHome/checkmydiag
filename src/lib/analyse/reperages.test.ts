@@ -129,6 +129,54 @@ describe('le plan de l’amiante', () => {
 });
 
 /**
+ * Une absence sur une liste n'efface pas une présence sur une autre.
+ *
+ * Un rapport d'amiante conclut liste par liste. Le moteur écrivait « pas de
+ * phrase d'absence ET (présence ou liste positive) » : la première phrase
+ * d'absence annulait tout le reste, et le verdict passait au vert sur un
+ * logement amianté.
+ *
+ * C'est la faute la plus grave qu'un lecteur de diagnostic puisse commettre :
+ * elle ne prive pas d'une information, elle affirme le contraire. Trouvée par
+ * l'audit notarial.
+ */
+describe('une présence relevée ne se laisse pas annuler', () => {
+  const MIXTE = [
+    'RAPPORT DE REPÉRAGE AMIANTE',
+    'Liste A : il n’a pas été repéré de matériaux et produits contenant de l’amiante.',
+    'Liste B : il a été repéré des matériaux et produits contenant de l’amiante.'
+  ];
+
+  it('conclut à la présence quand une seule liste en trouve', () => {
+    const d = analyserAmiante(MIXTE, [4, 9]);
+    /* Le barème du produit : l'amiante repérée est « attention », pas
+       « alerte » — un matériau en bon état qu'on ne touche pas ne libère rien.
+       Ce qui compte ici, c'est qu'on ne conclue plus à l'absence. */
+    expect(d.gravite).toBe('attention');
+    expect(d.verdict).not.toMatch(/aucun|n’a pas été repéré/i);
+  });
+
+  it('ne conclut à l’absence que si aucune liste ne trouve rien', () => {
+    const d = analyserAmiante(
+      [
+        'RAPPORT DE REPÉRAGE AMIANTE',
+        'Liste A : il n’a pas été repéré de matériaux et produits contenant de l’amiante.',
+        'Liste B : il n’a pas été repéré de matériaux et produits contenant de l’amiante.'
+      ],
+      [4, 9]
+    );
+    expect(d.gravite).toBe('bon');
+  });
+
+  it('le plan montre la liste positive en alerte, pas en vert', () => {
+    const zones = zonesDe(analyserAmiante(MIXTE, [4, 9]));
+    const b = zones.find((z) => z.nom === 'Liste B');
+    expect(b?.etat).toBe('attention');
+    expect(b?.dit).toMatch(/signale des matériaux/);
+  });
+});
+
+/**
  * La forme dominante des rapports réels, mesurée sur quarante dossiers : la
  * liste est citée en intitulé de tableau, sans conclusion attachée. Elle
  * n'était pas reconnue du tout — un dossier sur quarante contre dix-huit.

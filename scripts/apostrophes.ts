@@ -1,13 +1,16 @@
 /**
- * Une seule question, mesurée sur le corpus réel — LOCAL UNIQUEMENT.
+ * Quelle apostrophe les rapports emploient-ils — LOCAL UNIQUEMENT.
  *
- * Les motifs qui détectent les listes A/B/C de l'amiante lisent la ligne brute,
- * sans passer par la normalisation : ils attendent donc l'apostrophe droite.
- * Si les rapports emploient l'apostrophe typographique, ces motifs ne trouvent
- * rien — et la conclusion de l'amiante passe à la trappe sur tout le corpus.
+ * Un test vient de révéler que la boucle qui lit les conclusions par liste
+ * d'amiante teste la ligne BRUTE : `ligne.match(/n'?a pas été repéré/)`. Ce
+ * motif reconnaît l'apostrophe droite ('), pas la typographique (’). Or
+ * `trouver()` et `trouverToutes()` ne normalisent pas non plus.
  *
- * ⚠️ Ces rapports contiennent le nom et l'adresse de vraies personnes. Ce
- * script ne recopie AUCUN contenu : il ne sort que des compteurs.
+ * Si les rapports écrivent « n’a pas », des dizaines de motifs du moteur
+ * échouent en silence — et un échec silencieux sur une conclusion d'absence est
+ * exactement le genre de trou qui ne se voit jamais.
+ *
+ * ⚠️ Aucun contenu de dossier n'est recopié : uniquement des compteurs.
  *
  *   npx vite-node scripts/apostrophes.ts -- "<dossier>" [nombre]
  */
@@ -18,8 +21,7 @@ import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
 const [, , racineArg, combienArg] = process.argv;
 const racine = racineArg ?? '.';
 const combien = combienArg ? Number(combienArg) : 40;
-
-const INTERESSANT = /^(DDT|RAPPORT|DPE|CREP|ERP|DAPP)[-_ ]/i;
+const INTERESSANT = /^(DDT|RAPPORT|DPE|CREP|ERP|DAPP|AMIANTE)[-_ ]/i;
 
 async function trouver(dossier: string, sortie: string[], plafond: number): Promise<void> {
   if (sortie.length >= plafond) return;
@@ -45,47 +47,55 @@ async function trouver(dossier: string, sortie: string[], plafond: number): Prom
 
 const compte = {
   fichiers: 0,
-  avecLigneListe: 0,
-  ligneListeApostropheDroite: 0,
-  ligneListeApostropheTypographique: 0,
-  detecteParLeMotifActuel: 0
+  dossiersAvecApostropheDroite: 0,
+  dossiersAvecApostropheTypographique: 0,
+  dossiersAvecLesDeux: 0,
+  // Le cas qui décide : la conclusion d'absence, telle que le moteur la cherche
+  absenceEcriteAvecDroite: 0,
+  absenceEcriteAvecTypographique: 0
 };
 
-const fichiers: string[] = [];
-await trouver(racine, fichiers, combien);
+const chemins: string[] = [];
+await trouver(racine, chemins, combien);
 
-for (const chemin of fichiers) {
+for (const chemin of chemins) {
+  let doc;
   try {
-    const doc = await getDocument({ url: chemin, useSystemFonts: true }).promise;
-    let vuListe = false;
+    doc = await getDocument({ url: chemin, useSystemFonts: true }).promise;
+  } catch {
+    continue;
+  }
+
+  let droite = false;
+  let typo = false;
+  let absDroite = false;
+  let absTypo = false;
+
+  try {
     for (let p = 1; p <= doc.numPages; p++) {
       const page = await doc.getPage(p);
       const contenu = await page.getTextContent();
-      const texte = contenu.items
-        .map((i) => ('str' in i ? i.str : ''))
-        .join(' ')
-        .replace(/\s+/g, ' ');
+      const brut = contenu.items.map((i) => ('str' in i ? i.str : '')).join(' ');
 
-      for (const bout of texte.split(/(?=Liste\s*[ABC]\s*:)/i)) {
-        if (!/^Liste\s*[ABC]\s*:/i.test(bout)) continue;
-        const ligne = bout.slice(0, 200);
-        vuListe = true;
-        if (/’/.test(ligne)) compte.ligneListeApostropheTypographique++;
-        if (/'/.test(ligne)) compte.ligneListeApostropheDroite++;
-        if (
-          /n'?a\s*pas\s*[ée]t[ée]\s*rep[ée]r[ée]/i.test(ligne) ||
-          /il\s*a\s*[ée]t[ée]\s*rep[ée]r[ée]/i.test(ligne)
-        ) {
-          compte.detecteParLeMotifActuel++;
-        }
-      }
+      if (brut.includes("'")) droite = true;
+      if (brut.includes('’')) typo = true;
+
+      // « il n'a pas été repéré » / « n'ayant pu être visitées », les deux formes
+      if (/n'a pas [ée]t[ée] rep[ée]r[ée]|n'ayant pu/i.test(brut)) absDroite = true;
+      if (/n’a pas [ée]t[ée] rep[ée]r[ée]|n’ayant pu/i.test(brut)) absTypo = true;
     }
-    compte.fichiers++;
-    if (vuListe) compte.avecLigneListe++;
-    await doc.destroy();
   } catch {
-    // un rapport illisible ne fausse pas la mesure : il n'y entre pas
+    // illisible
   }
+
+  compte.fichiers++;
+  if (droite) compte.dossiersAvecApostropheDroite++;
+  if (typo) compte.dossiersAvecApostropheTypographique++;
+  if (droite && typo) compte.dossiersAvecLesDeux++;
+  if (absDroite) compte.absenceEcriteAvecDroite++;
+  if (absTypo) compte.absenceEcriteAvecTypographique++;
+
+  await doc.destroy();
 }
 
 console.log(JSON.stringify(compte, null, 2));

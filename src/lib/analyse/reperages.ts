@@ -215,7 +215,9 @@ export function analyserAmiante(lignes: string[], plage: [number, number]): Diag
   for (const ligne of lignes) {
     const m = ligne.match(/Liste\s*([ABC])\s*:/i);
     if (!m?.[1]) continue;
-    if (/n'?a\s*pas\s*[ée]t[ée]\s*rep[ée]r[ée]/i.test(ligne)) {
+    /* Les deux apostrophes : trente-neuf dossiers sur quarante emploient les
+       deux, parfois dans la même phrase. Voir `tolerantAuxApostrophes`. */
+    if (/n['’]?a\s*pas\s*[ée]t[ée]\s*rep[ée]r[ée]/i.test(ligne)) {
       listes.push({ liste: m[1].toUpperCase(), presence: false });
     } else if (/il\s*a\s*[ée]t[ée]\s*rep[ée]r[ée]/i.test(ligne)) {
       listes.push({ liste: m[1].toUpperCase(), presence: true });
@@ -248,7 +250,21 @@ export function analyserAmiante(lignes: string[], plage: [number, number]): Diag
   }
 
   const listesAvecAmiante = listes.filter((l) => l.presence).map((l) => l.liste);
-  const amianteTrouvee = !phraseAbsence && (!!phrasePresence || listesAvecAmiante.length > 0);
+
+  /*
+   * Une absence sur une liste n'efface pas une présence sur une autre.
+   *
+   * On écrivait « pas de phrase d'absence ET (présence ou liste positive) » :
+   * la phrase d'absence annulait tout le reste. Or un rapport conclut liste par
+   * liste. « Liste A : il n'a pas été repéré… », suivi de « Liste B : il a été
+   * repéré des dalles de sol », déclenchait la première branche — et le verdict
+   * passait au vert sur un logement amianté.
+   *
+   * C'est la faute la plus grave qu'un lecteur de diagnostic puisse commettre :
+   * elle ne prive pas d'une information, elle affirme le contraire. Un relevé
+   * positif l'emporte désormais sur toute phrase d'absence, d'où qu'elle vienne.
+   */
+  const amianteTrouvee = listesAvecAmiante.length > 0 || (!phraseAbsence && !!phrasePresence);
   const conclusionLue = !!phraseAbsence || listes.length > 0 || !!phrasePresence;
 
   /*
