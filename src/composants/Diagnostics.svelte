@@ -13,6 +13,7 @@
    */
   import type { Analyse, Diagnostic, TypeDiag } from '../lib/modele';
   import Explicatif from './schemas/Explicatif.svelte';
+  import PlanDuLogement from './plans/PlanDuLogement.svelte';
   import MotsExpliques from './MotsExpliques.svelte';
   import Releves from './Releves.svelte';
   import AVerifier from './AVerifier.svelte';
@@ -21,6 +22,7 @@
   import { echeance } from '../lib/echeance';
   import { etiquetteDe } from '../lib/analyse/confiance';
   import type { Origine } from '../lib/bureau';
+  import { APPS } from '../lib/apps';
   import { cubicOut } from 'svelte/easing';
   import { tick, untrack } from 'svelte';
 
@@ -81,6 +83,9 @@
   let pleinEcran = $state(false);
   /** Le carré d'où l'écran s'ouvre, figé au moment du clic. */
   let depuis = $state<Origine | null>(null);
+
+  /** L'identité de l'application ouverte : sa couleur habille tout l'écran. */
+  const identite = $derived(diags[courant] ? APPS[diags[courant].type] : null);
 
   // Une demande venue de l'accueil ou de l'état descriptif : on se positionne,
   // et si l'on sait d'où part le geste, on ouvre en grand.
@@ -504,7 +509,12 @@
 
           <div class="corps">
             <div class="dessin">
+              <!-- Deux dessins, deux questions. Le premier explique pourquoi ce
+                   contrôle existe ; le second dit ce qu'on a trouvé chez vous,
+                   zone par zone. Le second n'apparaît que si le rapport permet
+                   de le remplir. -->
               <Explicatif type={d.type} isolation={isolationDe(d)} lettre={lettreDe(d)} />
+              <PlanDuLogement diagnostic={d} />
             </div>
 
             <div class="dit">
@@ -601,12 +611,19 @@
     role="dialog"
     aria-modal="true"
     aria-label={diags[courant]?.titre ?? 'Diagnostic'}
+    style="--teinte: {identite?.teinte ?? 'var(--coral)'}; --teinte-foncee: {identite?.teinteFoncee ??
+      'var(--coral-fonce)'}"
     transition:commeUneApp={{ carre: depuis }}
   >
     <header class="barre-app">
       <button type="button" class="retour" onclick={fermerLApp}>
         <span aria-hidden="true">←</span> Retour
       </button>
+      {#if identite}
+        <span class="signe-app" aria-hidden="true" style="background: {identite.degrade}">
+          {identite.signe}
+        </span>
+      {/if}
       <p class="nom-app">{diags[courant]?.titre ?? ''}</p>
     </header>
 
@@ -645,15 +662,27 @@
   /* La barre du haut : la sortie à gauche, le nom du diagnostic à côté. Elle ne
      défile pas — on doit pouvoir ressortir depuis n'importe quel endroit de la
      fiche, sans remonter. */
+  /* La barre porte la couleur de l'application : un filet en bas, et l'icône à
+     côté du nom. On sait dans quelle application on est sans lire le titre. */
   .barre-app {
     flex: none;
     display: flex;
     align-items: center;
-    gap: var(--e3);
+    gap: var(--e2);
     padding: var(--e2) var(--e3);
     background: rgb(255 255 255 / 82%);
     backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--trait);
+    border-bottom: 2px solid var(--teinte, var(--trait));
+  }
+
+  .signe-app {
+    flex: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    font-size: 15px;
   }
 
   .retour {
@@ -662,18 +691,18 @@
     align-items: center;
     gap: 4px;
     min-height: 44px;
-    padding: 0 var(--e3);
+    padding: 0 var(--e2);
     background: transparent;
     border: none;
     border-radius: var(--rayon-badge);
-    color: var(--coral-texte);
+    color: var(--teinte-foncee, var(--coral-texte));
     font-size: var(--t-base);
     font-weight: 700;
     cursor: pointer;
   }
 
   .retour:hover {
-    background: var(--or-pale);
+    background: var(--surface);
   }
 
   .nom-app {

@@ -15,6 +15,7 @@
   import type { Analyse, Diagnostic, TypeDiag } from '../lib/modele';
   import { libelleCourt } from '../lib/libelle';
   import { compterLeDossier, origineDe, phraseDuDossier, type Origine } from '../lib/bureau';
+  import { APPS } from '../lib/apps';
 
   interface Props {
     analyse: Analyse;
@@ -41,17 +42,7 @@
    * cherche : le plomb est dans les peintures, les termites dans le bois. Un
    * symbole faux ferait plus de mal qu'un symbole absent.
    */
-  const TUILES: Record<TypeDiag, { nom: string; signe: string; degrade: string }> = {
-    dpe: { nom: 'DPE', signe: '📊', degrade: 'linear-gradient(135deg, #ff6b5d, #f05844)' },
-    electricite: { nom: 'Électricité', signe: '⚡', degrade: 'linear-gradient(135deg, #ffd54a, #f5a800)' },
-    amiante: { nom: 'Amiante', signe: '🧱', degrade: 'linear-gradient(135deg, #7b68ee, #5a4bc4)' },
-    plomb: { nom: 'Plomb', signe: '🎨', degrade: 'linear-gradient(135deg, #4caf50, #38913c)' },
-    gaz: { nom: 'Gaz', signe: '🔥', degrade: 'linear-gradient(135deg, #ff8c42, #ee6a17)' },
-    termites: { nom: 'Termites', signe: '🪵', degrade: 'linear-gradient(135deg, #a0522d, #7a3d1f)' },
-    erp: { nom: 'Risques', signe: '🌍', degrade: 'linear-gradient(135deg, #20b2aa, #00776f)' },
-    carrez: { nom: 'Surface', signe: '📐', degrade: 'linear-gradient(135deg, #5c6bc0, #3949ab)' },
-    assainissement: { nom: 'Assainissement', signe: '💧', degrade: 'linear-gradient(135deg, #29b6f6, #0288d1)' }
-  };
+  const TUILES = APPS;
 
   /**
    * Les trois compteurs.

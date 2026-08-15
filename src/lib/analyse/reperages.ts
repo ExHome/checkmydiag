@@ -138,6 +138,36 @@ export function analyserAmiante(lignes: string[], plage: [number, number]): Diag
   const amianteTrouvee = !phraseAbsence && (!!phrasePresence || listesAvecAmiante.length > 0);
   const conclusionLue = !!phraseAbsence || listes.length > 0 || !!phrasePresence;
 
+  /*
+   * Le plan de l'amiante, ce sont ses listes.
+   *
+   * Un repérage amiante ne parcourt pas des pièces : il contrôle des catégories
+   * de matériaux, définies en annexe du code de la santé publique. C'est donc
+   * cela qu'on place sur le plan — et seulement les listes que le rapport cite.
+   * Une liste qu'il ne mentionne pas n'est pas une liste sans amiante : c'est
+   * une liste dont il ne dit rien, et elle n'a pas à s'afficher en vert.
+   *
+   * Le texte de la vente ne vise que A et B (R. 1334-29-7 du code de la santé
+   * publique, lu le 14/08/2026). La liste C relève du repérage avant démolition
+   * — quand elle apparaît, on le dit, parce que le lecteur qui la voit tient
+   * peut-être un autre document que celui qu'il croit.
+   */
+  const COUVRE: Record<string, string> = {
+    A: 'flocages, calorifugeages et faux plafonds',
+    B: 'autres matériaux accessibles sans travaux destructifs',
+    C: 'liste du repérage avant démolition, qui n’est pas le repérage de vente'
+  };
+
+  const zonesAmiante = listes.map((l) => ({
+    nom: `Liste ${l.liste}`,
+    etat: (l.presence ? 'attention' : 'bon') as Gravite,
+    detail: `${
+      l.presence
+        ? 'Le rapport signale des matériaux de cette liste dans le bien.'
+        : 'Le rapport ne relève aucun matériau de cette liste dans les parties accessibles.'
+    } La liste ${l.liste} couvre les ${COUVRE[l.liste] ?? 'matériaux qu’elle désigne'}.`
+  }));
+
   const faits: Fait[] = [];
   const date = trouver(lignes, /Date du rep[ée]rage\s*:?[\s.]*(\d{2}\/\d{2}\/\d{4})/i);
   if (date?.[1]) faits.push({ libelle: 'Date du repérage', valeur: date[1] });
@@ -175,7 +205,7 @@ export function analyserAmiante(lignes: string[], plage: [number, number]): Diag
           'Un repérage « avant vente » sans amiante n’a pas de limite de validité, tant qu’il n’y a pas de travaux.',
           'Avant des travaux touchant la structure, un repérage « avant travaux » (plus poussé, avec sondages) reste obligatoire.'
         ],
-    schema: null,
+    schema: zonesAmiante.length ? { genre: 'pieces', zones: zonesAmiante } : null,
     pages: plage,
     ...(date?.[1] ? { date: date[1] } : {})
   };

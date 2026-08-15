@@ -654,3 +654,63 @@ button {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Les plans du logement
+
+   Sept dessins, un par diagnostic, et le même vocabulaire de couleurs pour
+   tous : ce que le rapport signale, ce qu'il faut vérifier, ce qu'il a regardé
+   sans rien relever, et ce dont il ne dit rien.
+
+   Ces règles vivent ici plutôt que dans chaque dessin. Recopiées sept fois,
+   elles auraient fini par diverger — et un même état n'aurait plus eu la même
+   couleur d'une application à l'autre.
+   --------------------------------------------------------------------------- */
+.plan-svg .z {
+  cursor: pointer;
+}
+
+.plan-svg .z > * {
+  stroke: var(--sur-fond);
+  stroke-width: 1.5;
+  transition: opacity var(--duree) var(--courbe);
+}
+
+.plan-svg .z.bon > * {
+  fill: var(--ok-fond);
+}
+
+.plan-svg .z.attention > * {
+  fill: var(--attention-fond);
+}
+
+.plan-svg .z.alerte > * {
+  fill: var(--alerte-fond);
+}
+
+/* Le rapport ne dit rien de cette zone : hachures. Ni vert ni rouge — on ne
+   sait pas, et le dessin doit le montrer plutôt que de choisir un camp. */
+.plan-svg .z.neutre > * {
+  fill: url(#hachures-plan);
+}
+
+.plan-svg .z:hover > * {
+  opacity: 0.75;
+}
+
+.plan-svg .z.choisie > * {
+  stroke: var(--teinte, var(--petrole));
+  stroke-width: 3;
+}
+
+.plan-svg .etiquette {
+  font-size: 8px;
+  fill: var(--sur-fond-doux);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plan-svg .z > * {
+    transition: none;
+  }
+}
