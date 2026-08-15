@@ -209,30 +209,64 @@
    * teal, au survol le corail, et l'ambre au moment précis où le fichier est
    * au-dessus. C'est cette troisième couleur qui dit « lâchez ».
    */
+  /*
+   * L'encadré de l'écran de démarrage : un cadre corail, un intérieur sable.
+   *
+   * Posé sur le bleu pétrole, il est la seule chose claire de l'écran — donc la
+   * seule chose qu'on regarde, et c'est celle sur laquelle il faut cliquer. Le
+   * cadre corail redit la même chose une seconde fois.
+   *
+   * Le sable revient ici avec ses couleurs de texte : l'inversion générale de
+   * l'écran s'arrête au bord du cadre. Sans cette remise à l'endroit, le texte
+   * serait resté sable sur sable.
+   */
   .depot {
     display: block;
     width: 100%;
     font: inherit;
-    color: inherit;
-    border: 3px solid var(--petrole);
-    border-radius: 8px;
-    background: rgb(26 77 92 / 4%);
+    border: 3px solid var(--coral);
+    border-radius: var(--rayon-large);
+    background: var(--sable);
     padding: var(--e7) var(--e6);
     text-align: center;
     cursor: pointer;
+
+    --sur-fond: var(--petrole);
+    --sur-fond-doux: #555555;
+    --encre: var(--petrole);
+    --encre-doux: #555555;
+    --vert-500: var(--petrole);
+    --vert-700: var(--petrole);
+    color: var(--petrole);
+
+    box-shadow: 0 8px 32px rgb(15 58 71 / 45%);
     transition:
       border-color var(--duree) ease,
-      background var(--duree) ease;
+      background var(--duree) ease,
+      transform var(--duree) var(--courbe);
   }
 
   .depot:hover:not(:disabled) {
-    border-color: var(--coral);
-    background: rgb(255 107 93 / 3%);
+    border-color: var(--coral-fonce);
+    background: var(--sable-clair);
+    transform: translateY(-2px);
   }
 
+  /* Le survol d'un fichier qu'on tient encore : la troisième couleur, celle qui
+     dit « lâchez ». Elle reste dans la charte — c'est le corail plein. */
   .depot.survol {
-    border-color: var(--attention);
-    background: rgb(138 90 5 / 5%);
+    border-color: var(--coral-fonce);
+    background: #fff;
+    transform: translateY(-2px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .depot,
+    .depot:hover:not(:disabled),
+    .depot.survol {
+      transition: none;
+      transform: none;
+    }
   }
 
   .depot:disabled {
@@ -431,10 +465,13 @@
   /* L'appel principal de l'écran : le bouton de la charte, corail plein, avec
      son ombre de la même couleur. Il était en navy à angles vifs — il attendait
      au lieu d'inviter. */
+  /* Le corail foncé, pas le corail vif : avec du texte blanc, le vif ne tient
+     que 2,8 de contraste, et c'est le seul mot de l'écran sur lequel il faut
+     cliquer. Mesuré. */
   .faux-bouton {
     display: inline-block;
     margin-top: var(--e5);
-    background: var(--coral);
+    background: var(--coral-fonce);
     color: #fff;
     border-radius: var(--rayon);
     padding: 14px 40px;

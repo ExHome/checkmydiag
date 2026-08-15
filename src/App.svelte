@@ -288,6 +288,24 @@
     exploration.dossier = analyse?.diagnostics ?? [];
   });
 
+  /**
+   * L'écran de démarrage s'annonce sur le corps du document.
+   *
+   * Il ne suffit pas de peindre le contenu : le fond bleu pétrole doit couvrir
+   * toute la page, bandeau compris et sous la ligne de flottaison, sinon on
+   * voit réapparaître le sable dès qu'on tire l'écran vers le bas. La classe
+   * est posée sur `body`, et tout le reste en découle par les variables.
+   */
+  $effect(() => {
+    const corps = document.body;
+    if (etat === 'resultat') {
+      corps.classList.remove('demarrage');
+      return;
+    }
+    corps.classList.add('demarrage');
+    return () => corps.classList.remove('demarrage');
+  });
+
   function recommencer(): void {
     analyse = null;
     erreur = null;

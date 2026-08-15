@@ -733,3 +733,58 @@ button {
     transition: none;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   L'écran de démarrage
+
+   Bleu pétrole en grand, l'encadré de dépôt en corail, son intérieur en sable.
+   C'est le premier écran : il doit dire la marque avant de dire quoi faire.
+
+   L'inversion ne réécrit aucune règle de composant. Elle redéfinit les quatre
+   variables qui portent le texte et les traits — celles que les composants
+   demandent déjà partout — et tout suit. C'est exactement ce pour quoi ces
+   variables existent : un composant qui demande « la couleur du texte sur le
+   fond » obtient la bonne sans savoir que le fond a changé de camp.
+   --------------------------------------------------------------------------- */
+body.demarrage {
+  background: var(--petrole);
+
+  /* Sur le bleu, le texte passe au sable. Mesuré : 9,4 de contraste. */
+  --sur-fond: #f4e8d8;
+  --sur-fond-doux: #d8ccbc;
+  --encre: #f4e8d8;
+  --encre-doux: #d8ccbc;
+
+  /* Les surfaces posées sur le bleu s'éclaircissent au lieu de s'assombrir. */
+  --surface: rgb(244 232 216 / 6%);
+  --surface-forte: rgb(244 232 216 / 10%);
+  --surface-bord: rgb(244 232 216 / 20%);
+
+  --trait: rgb(244 232 216 / 22%);
+  --trait-fin: rgb(244 232 216 / 12%);
+  --trait-or: rgb(255 107 93 / 55%);
+
+  /* Le corail éclairci pour le texte sur bleu. Mesuré : #FF9084 n'y tient que
+     4,24 — sous le seuil, de peu, mais sous le seuil. #FFB3AA passe. */
+  --or-clair: #ffb3aa;
+  --coral-texte: #ffb3aa;
+
+  /* Le gris de texte suit le fond, sinon il disparaît : #888888 sur le bleu
+     ne tient que 2,62. */
+  --gris: #d8ccbc;
+
+  /* Les fonds d'état, éclaircis par transparence plutôt qu'en dur. */
+  --alerte-fond: rgb(255 107 93 / 14%);
+  --attention-fond: rgb(255 213 74 / 14%);
+  --ok-fond: rgb(244 232 216 / 10%);
+  --alerte: #ff9084;
+  --attention: #ffd54a;
+  --ok: #f4e8d8;
+}
+
+/* Le bandeau du site suit le fond : un rectangle blanc en haut d'un écran
+   bleu couperait l'écran en deux au lieu de le coiffer. */
+body.demarrage .entete {
+  background: transparent;
+  border-bottom-color: rgb(244 232 216 / 18%);
+}
