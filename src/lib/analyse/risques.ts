@@ -135,6 +135,29 @@ export function analyserErp(lignes: string[], plage: [number, number]): Diagnost
    */
   const vendeur = champsDuVendeur(lignes);
 
+  /*
+   * Le second tableau, informatif mais concret. Il ne rejoint pas le verdict —
+   * voir `risquesComplementaires` — mais il vaut d'être dit.
+   */
+  const complements = risquesComplementaires(lignes);
+  const releves: NonNullable<Diagnostic['releves']> = [];
+  if (complements.nappe?.concernee) {
+    releves.push({
+      genre: 'complement',
+      libelle:
+        'Un second tableau, plus loin dans le document et donné à titre informatif, classe le terrain en zone potentiellement sujette aux inondations de cave par remontée de nappe. Si le logement a une cave ou un sous-sol, c’est la ligne à retenir : elle ne se voit pas lors d’une visite en été.' +
+        (complements.nappe.fiabiliteDeLaCarte
+          ? ` La mention « fiabilité ${complements.nappe.fiabiliteDeLaCarte} » qualifie la carte, pas le danger : elle dit que la donnée est sûre, pas que le risque est élevé.`
+          : '')
+    });
+  }
+  if (complements.icpe) {
+    releves.push({
+      genre: 'complement',
+      libelle: `Le même tableau signale une ou plusieurs installations industrielles classées dans un rayon de ${complements.icpe} mètres. Cela ne veut pas dire qu’il y a un danger, mais que ces installations sont recensées et surveillées : la liste est consultable sur Géorisques.`
+    });
+  }
+
   return {
     type: 'erp',
     titre: 'Risques et pollutions (ERP)',
@@ -174,9 +197,10 @@ export function analyserErp(lignes: string[], plage: [number, number]): Diagnost
     ],
     schema: risques.length ? { genre: 'risques', risques } : null,
     pages: plage,
-    ...(vendeur.argiles || vendeur.sinistres
+    ...(vendeur.argiles || vendeur.sinistres || releves.length
       ? {
           releves: [
+            ...releves,
             ...(vendeur.sinistres
               ? [
                   {
@@ -468,6 +492,74 @@ export function champsDuVendeur(lignes: string[]): ChampsDuVendeur {
        n'apparaît que si le tableau des sinistres est là. */
     sinistres: /cochez[^.]{0,40}case correspondante[^.]{0,40}Indemnis/i.test(texte)
   };
+}
+
+/**
+ * Le SECOND tableau de l'état des risques — celui que personne ne lit.
+ *
+ * L'imprimé officiel tient sur une page : PPRn, PPRm, PPRt, sismicité, radon,
+ * SIS. C'est ce que la loi impose, et c'est ce qu'un lecteur attentif finit par
+ * parcourir. Le générateur ajoute derrière un tableau « Etat des risques
+ * complémentaires (Géorisques) », marqué « à titre informatif » — et ce tableau
+ * porte des lignes autrement plus concrètes que le zonage sismique.
+ *
+ * Mesuré sur 140 dossiers du corpus : 68 % le contiennent, et sur ceux-là la
+ * remontée de nappe est cochée « oui » dans 80 cas sur 83. Un dossier sur sept
+ * réunit cette ligne ET une cave au logement.
+ *
+ * ── Le piège de lecture ────────────────────────────────────────────────────
+ *
+ * La phrase est : « Zones potentiellement sujettes aux inondations de cave,
+ * fiabilité FORTE (dans un rayon de 500 mètres). » Le mot FORTE qualifie la
+ * CARTE, pas le danger : il dit que la donnée est sûre, pas que le risque est
+ * élevé. Écrire « risque de remontée de nappe : fort » serait un contresens —
+ * exactement le genre de raccourci que ce produit ne doit jamais prendre.
+ *
+ * ── Ce qu'on en fait ───────────────────────────────────────────────────────
+ *
+ * Un complément, jamais un risque du verdict. Le verdict énonce ce que le
+ * document oppose légalement à l'acheteur ; ces lignes-ci sont informatives, et
+ * les mélanger reviendrait à durcir un état des risques de sa propre autorité.
+ */
+export interface RisquesComplementaires {
+  /** La ligne « Remontées de nappes », si elle porte une réponse lisible. */
+  nappe: { concernee: boolean; fiabiliteDeLaCarte: string | null } | null;
+  /** Rayon, en mètres, dans lequel des installations classées sont recensées. */
+  icpe: number | null;
+}
+
+export function risquesComplementaires(lignes: string[]): RisquesComplementaires {
+  const nappe = ligneNappe(lignes);
+  const icpe = lignes.join(' ').match(/rayon de (\d+)\s*m[èe]tres d['’]une ou plusieurs/i);
+
+  return {
+    nappe,
+    icpe: icpe?.[1] ? Number(icpe[1]) : null
+  };
+}
+
+/**
+ * La ligne de la nappe, lue sur cinq lignes.
+ *
+ * Les colonnes du tableau sortent entrelacées du PDF : le détail arrive avant
+ * le nom du risque, et la valeur deux lignes plus bas.
+ *
+ *   Zones potentiellement sujettes aux inondations de cave, fiabilité
+ *   Remontées de nappes Oui
+ *   FORTE (dans un rayon de 500 mètres).
+ *
+ * Chercher « fiabilité FORTE » à la suite ne trouvait qu'un cas sur huit.
+ */
+function ligneNappe(lignes: string[]): { concernee: boolean; fiabiliteDeLaCarte: string | null } | null {
+  for (let i = 0; i < lignes.length; i++) {
+    if (!/Remont[ée]es? de nappes?/i.test(lignes[i] ?? '')) continue;
+    const fenetre = lignes.slice(i, i + 5).join(' ');
+    const concernee = /\bOui\b/.test(fenetre) ? true : /\bNon\b/.test(fenetre) ? false : null;
+    if (concernee === null) continue;
+    const f = fenetre.match(/\b(FORTE|MOYENNE|FAIBLE)\b\s*\(dans un rayon/i);
+    return { concernee, fiabiliteDeLaCarte: f?.[1] ? f[1].toLowerCase() : null };
+  }
+  return null;
 }
 
 /** Une pièce du tableau de mesurage. */
