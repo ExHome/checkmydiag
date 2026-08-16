@@ -21,12 +21,45 @@ export interface Echeance {
  * jamais résulter d'un simple trou dans la table. Un feu vert par oubli est le
  * pire cas possible — c'est une autorisation de signer donnée par inadvertance.
  */
-const SANS_LIMITE = new Set<Diagnostic['type']>(['amiante', 'plomb', 'carrez']);
+const SANS_LIMITE = new Set<Diagnostic['type']>(['amiante', 'carrez']);
+
+/**
+ * Le constat plomb ne vaut « sans limite » que s'il est NÉGATIF.
+ *
+ * Le produit l'annonçait ainsi dans tous les cas, et c'était faux. L'article
+ * L. 1334-6 du code de la santé publique dit l'inverse : en vente, le CREP doit
+ * avoir été établi depuis moins d'UN AN. La validité illimitée est une
+ * exception, réservée au constat qui établit l'absence de revêtements
+ * contenant du plomb, ou des concentrations inférieures aux seuils.
+ *
+ * Autrement dit : un CREP qui trouve du plomb périme au bout d'un an. Le
+ * rapport lui-même l'écrit — « du fait de la présence de revêtement contenant
+ * du plomb […] le présent constat a une durée de validité de 1 an » — et le
+ * produit affichait « Sans limite » par-dessus. Un dossier de deux ans avec du
+ * plomb classé 3 passait pour valable.
+ *
+ * Lu au texte le 16/08/2026.
+ */
+function plombSansLimite(d: Diagnostic): boolean {
+  if (d.type !== 'plomb') return false;
+  /* Sans tableau lisible, on ne tranche pas : « durée non renseignée » invite à
+     vérifier, quand « sans limite » donnerait un feu vert par défaut. */
+  if (d.schema?.genre !== 'plomb') return false;
+  const [c0, c1, c2, c3] = d.schema.classes;
+  void c0;
+  return c1 + c2 + c3 === 0;
+}
 
 export function echeance(d: Diagnostic, aujourdhui: Date = new Date()): Echeance {
-  const duree = VALIDITE_MOIS[d.type];
+  /*
+   * Le plomb : douze mois s'il trouve quelque chose, sans limite sinon.
+   *
+   * On le traite avant la table des durées, parce que sa validité ne dépend pas
+   * de son type mais de son RÉSULTAT — c'est le seul diagnostic dans ce cas.
+   */
+  const duree = d.type === 'plomb' ? (plombSansLimite(d) ? undefined : 12) : VALIDITE_MOIS[d.type];
   if (duree === undefined) {
-    return SANS_LIMITE.has(d.type)
+    return SANS_LIMITE.has(d.type) || (d.type === 'plomb' && plombSansLimite(d))
       ? { texte: 'Sans limite', perimee: false }
       : { texte: 'Durée non renseignée', perimee: false };
   }
