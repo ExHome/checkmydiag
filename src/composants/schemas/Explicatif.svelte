@@ -13,6 +13,7 @@
   import CircuitGaz from './CircuitGaz.svelte';
   import CheminTermites from './CheminTermites.svelte';
   import SurfaceCarrez from './SurfaceCarrez.svelte';
+  import TroisSurfaces from './TroisSurfaces.svelte';
   import Assainissement from './Assainissement.svelte';
 
   import type { Isolation, Lettre } from '../../lib/modele';
@@ -58,6 +59,9 @@
       <Argiles />
     {:else if type === 'carrez'}
       <SurfaceCarrez />
+      <!-- Le second schéma répond à la question qui vient juste après : pourquoi
+           les trois surfaces du dossier ne donnent-elles pas le même chiffre ? -->
+      <TroisSurfaces />
     {:else if type === 'assainissement'}
       <Assainissement />
     {/if}
