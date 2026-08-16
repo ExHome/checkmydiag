@@ -468,32 +468,40 @@
    * La verrière, dessinée en CSS plutôt qu'en image.
    *
    * Six carreaux, un seul éclairé — c'est toute la règle du logo, et elle tient
-   * en une grille de trois par deux. En CSS, elle suit la couleur du texte,
-   * s'imprime, et ne coûte pas une requête. L'image reste disponible dans
-   * public/logo pour tout ce qui sort du navigateur.
+   * en une grille de trois par deux. En CSS, elle s'imprime et ne coûte pas une
+   * requête. Les images restent dans public/logo pour tout ce qui sort du
+   * navigateur.
+   *
+   * La construction suit le tracé d'origine, et pas l'inverse : ce sont les
+   * MONTANTS qui sont sable, et les carreaux qui laissent voir le fond. Ma
+   * première version remplissait les carreaux de sable pâle — une fenêtre
+   * laiteuse au lieu d'une verrière. Le sable est donc porté par le fond du
+   * cadre, et les carreaux le découpent.
    */
   .carreaux {
     flex: none;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    /* L'écart entre carreaux EST le montant : sa largeur suit celle du cadre,
+       comme les 19 unités du tracé sur 512. */
     gap: 2px;
-    width: 34px;
-    height: 24px;
-    padding: 3px;
-    border-radius: 6px;
-    background: linear-gradient(145deg, #22606f, #12333d);
+    width: 36px;
+    height: 26px;
+    padding: 2px;
+    border-radius: 4px;
+    background: var(--sable);
   }
 
   .carreaux span {
-    border-radius: 1px;
-    background: rgb(244 232 216 / 22%);
+    background: linear-gradient(145deg, #22606f, #12333d);
   }
 
   /*
-   * Le carreau par où la lumière entre.
+   * Le carreau par où la lumière entre — deuxième colonne, première rangée.
    *
-   * Le corail ne sert qu'à lui — jamais deux carreaux, jamais les montants.
-   * C'est la seule touche vive du logo, et c'est ce qui lui donne sa force :
+   * Le corail ne sert qu'à lui : jamais deux carreaux, jamais les montants.
+   * C'est la seule touche vive du logo, et c'est ce qui lui donne sa force —
    * six carreaux sombres, un éclairé, le rapport devient lisible.
    */
   .jour {

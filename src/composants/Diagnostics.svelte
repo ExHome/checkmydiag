@@ -31,6 +31,7 @@
   import type { Origine } from '../lib/bureau';
   import { APPS } from '../lib/apps';
   import { estSombre, styleUnivers } from '../lib/univers';
+  import { lumiereSur } from '../lib/lumiere';
   import { cubicOut } from 'svelte/easing';
   import { tick, untrack } from 'svelte';
 
@@ -782,6 +783,11 @@
       class:sombre={estSombre(diags[courant]?.type ?? 'dpe')}
       style={styleUnivers(diags[courant]?.type ?? 'dpe')}
     >
+      <!-- La promesse de la marque, appliquée à l'écran qu'on vient d'ouvrir.
+           Elle nomme le sujet du diagnostic, jamais son résultat : une accroche
+           qui inquiète avant d'avoir lu ne sert personne. -->
+      <p class="lumiere">{lumiereSur(diags[courant]?.type ?? 'dpe')}</p>
+
       <section class="diagnostics">
         {@render dossier()}
       </section>
@@ -989,6 +995,31 @@
     max-width: 900px;
     margin-inline: auto;
     margin-bottom: 0;
+  }
+
+  /*
+   * L'accroche de la marque, à l'entrée de l'écran.
+   *
+   * En petites capitales et à l'accent de l'univers : elle annonce, elle ne
+   * concurrence pas le verdict qui vient juste dessous. C'est un seuil, pas un
+   * titre — le titre du diagnostic est déjà dans la barre.
+   */
+  .lumiere {
+    max-width: 900px;
+    margin: 0 auto var(--e3);
+    font-size: var(--t-micro);
+    font-weight: 700;
+    letter-spacing: var(--suivi);
+    text-transform: uppercase;
+    color: var(--coral-texte);
+  }
+
+  /* À l'impression, le dossier se lit d'un bloc : l'accroche d'un écran qu'on
+     n'a pas ouvert n'y a pas sa place. */
+  @media print {
+    .lumiere {
+      display: none;
+    }
   }
 
   /* Une application ne s'imprime pas : c'est le dossier qu'on imprime. */
