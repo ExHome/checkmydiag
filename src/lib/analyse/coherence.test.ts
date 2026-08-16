@@ -142,6 +142,15 @@ describe('contrôle des diagnostics manquants', () => {
 });
 
 describe('contrôle des surfaces', () => {
+  /** Une attestation de surface HABITABLE — la loi Boutin. */
+  function boutin(valeur: string): Diagnostic {
+    return {
+      ...diag('carrez', '01/07/2026'),
+      faits: [{ libelle: 'Surface habitable', valeur }]
+    };
+  }
+
+  /** Une attestation de superficie privative — la loi Carrez. */
   function carrez(valeur: string): Diagnostic {
     return {
       ...diag('carrez', '01/07/2026'),
@@ -149,15 +158,30 @@ describe('contrôle des surfaces', () => {
     };
   }
 
-  it('signale un écart important entre le DPE et le mesurage', () => {
-    const points = controler({ surface: 86 }, [carrez('62 m²')], AUJOURDHUI);
+  it('signale un écart important entre le DPE et la surface habitable', () => {
+    const points = controler({ surface: 86 }, [boutin('62 m²')], AUJOURDHUI);
     const ecart = points.find((p) => p.genre === 'incoherence');
     expect(ecart).toBeDefined();
     expect(ecart?.explication).toMatch(/28 %/);
   });
 
+  /*
+   * Le DPE n'a JAMAIS employé la superficie Carrez : surface habitable avant le
+   * 1ᵉʳ juillet 2024, surface de référence depuis. La Carrez, elle, mesure la
+   * superficie privative d'un lot de copropriété — elle exclut caves, garages,
+   * terrasses et tout ce qui est sous 1,80 m.
+   *
+   * Les comparer et s'alarmer d'un écart revient à s'étonner qu'un poids
+   * diffère d'une longueur. Ce test fige la règle : sur un dossier qui ne porte
+   * qu'une Carrez, le contrôle se tait.
+   */
+  it('ne compare pas le DPE à une superficie Carrez', () => {
+    const points = controler({ surface: 86 }, [carrez('62 m²')], AUJOURDHUI);
+    expect(points.find((p) => p.genre === 'incoherence')).toBeUndefined();
+  });
+
   it('tolère un écart de quelques pourcents', () => {
-    const points = controler({ surface: 86 }, [carrez('82,14 m²')], AUJOURDHUI);
+    const points = controler({ surface: 86 }, [boutin('82,14 m²')], AUJOURDHUI);
     expect(points.filter((p) => p.genre === 'incoherence')).toHaveLength(0);
   });
 

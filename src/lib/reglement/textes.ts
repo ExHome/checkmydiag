@@ -115,6 +115,39 @@ export const REGLEMENT: Partial<Record<TypeDiag, Reglement>> = {
           'En vigueur depuis le 1ᵉʳ juillet 2024. Les tranches usuelles — moins de 70, de 70 à 110… — ne valent donc pas sous 40 m².'
       },
       {
+        /*
+         * La surface du DPE a changé de nom ET de définition.
+         *
+         * Le même arrêté du 25 mars 2024 remplace, dans tout le texte, « Sh »
+         * par « Sref » et « surface habitable » par « surface de référence ».
+         * Ce n'est pas un simple changement de vocabulaire : la surface de
+         * référence AJOUTE à l'habitable les vérandas chauffées et les locaux
+         * chauffés d'au moins 1,80 m de hauteur.
+         *
+         * Conséquence directe sur la lettre : elle se calcule en divisant la
+         * consommation par la surface. À consommation égale, une surface plus
+         * grande donne une meilleure lettre. Un logement avec véranda chauffée
+         * peut donc mieux se classer après juillet 2024 qu'avant, sans qu'un
+         * seul travail ait été fait.
+         *
+         * Ce qu'il faut retenir surtout : le DPE n'a JAMAIS employé la
+         * superficie Carrez. Les comparer est une faute de raisonnement, pas
+         * une incohérence du dossier.
+         *
+         * Lu au texte le 16/08/2026.
+         */
+        enonce:
+          'Depuis le 1ᵉʳ juillet 2024, le DPE se calcule sur la surface de référence : la surface habitable, augmentée des vérandas chauffées et des locaux chauffés destinés à l’occupation humaine d’une hauteur d’au moins 1,80 m. Avant cette date, il employait la surface habitable. Il n’a jamais employé la superficie privative de la loi Carrez.',
+        source: {
+          reference:
+            'arrêté du 25 mars 2024, article 1er, modifiant l’arrêté du 31 mars 2021 (« Sh » devient « Sref »)',
+          url: 'https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000049446315',
+          luLe: '2026-08-16'
+        },
+        reserve:
+          'La lettre se calcule en divisant la consommation par la surface : à consommation égale, une surface plus grande donne une meilleure lettre. Comparer la surface du DPE à une superficie Carrez n’a donc pas de sens — ce sont deux mesures de choses différentes.'
+      },
+      {
         enonce:
           'Le terme « surface habitable » est remplacé par « surface de référence » dans les documents du diagnostic.',
         source: {

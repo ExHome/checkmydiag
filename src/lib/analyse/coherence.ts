@@ -228,9 +228,24 @@ function surfaces(bien: Bien, diagnostics: Diagnostic[]): PointDeControle[] {
    * vingt-neuf dossiers sur quarante qui portent une attestation de surface
    * habitable — c'est-à-dire la majorité.
    */
-  const surfaceCarrez = carrez?.faits.find(
-    (f) => f.libelle === 'Superficie privative' || f.libelle === 'Surface habitable'
-  )?.valeur;
+  /*
+   * On ne compare que ce qui est comparable.
+   *
+   * Le DPE n'a JAMAIS employé la superficie Carrez. Il utilisait la surface
+   * HABITABLE, et depuis le 1ᵉʳ juillet 2024 la surface de RÉFÉRENCE — c'est-à-
+   * dire l'habitable augmentée des vérandas chauffées et des locaux chauffés
+   * d'au moins 1,80 m de hauteur (arrêté du 25 mars 2024, lu le 16/08/2026).
+   *
+   * La Carrez, elle, mesure la superficie privative d'un lot de copropriété :
+   * elle exclut caves, garages, terrasses, et tout ce qui est sous 1,80 m. Deux
+   * notions différentes, sur deux périmètres différents, pour deux usages
+   * différents.
+   *
+   * Les comparer et s'alarmer d'un écart revient à s'étonner qu'un poids diffère
+   * d'une longueur. Le contrôle ne porte donc que sur l'attestation de surface
+   * HABITABLE — la loi Boutin —, qui mesure bien la même chose que le DPE.
+   */
+  const surfaceCarrez = carrez?.faits.find((f) => f.libelle === 'Surface habitable')?.valeur;
   const valeurCarrez = surfaceCarrez ? Number.parseFloat(surfaceCarrez.replace(',', '.')) : NaN;
   const valeurDpe = bien.surface;
 
@@ -268,7 +283,7 @@ function surfaces(bien: Bien, diagnostics: Diagnostic[]): PointDeControle[] {
       // sa famille dans le tableau de bord, plutôt que de l'y laisser orphelin.
       type: 'carrez',
       titre: 'Deux surfaces différentes dans le même dossier',
-      explication: `Le DPE parle de ${nombreFr(valeurDpe)} m², le mesurage de ${nombreFr(valeurCarrez)} m². Ces deux calculs ne comptent pas exactement la même chose, donc un petit écart est normal — mais ici la différence est de ${Math.round(proportion * 100)} %. ${consequence}`,
+      explication: `Le DPE parle de ${nombreFr(valeurDpe)} m², l’attestation de surface habitable de ${nombreFr(valeurCarrez)} m². Ces deux documents mesurent la même chose : un écart de ${Math.round(proportion * 100)} % pose donc une vraie question. ${consequence}`,
       quoiFaire:
         'Demandez au diagnostiqueur laquelle des deux surfaces fait foi pour la vente, et sur quelle surface la lettre du DPE a été calculée. C’est le chiffre du mesurage qui sera écrit dans l’acte.'
     }
