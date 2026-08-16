@@ -316,14 +316,48 @@ export function analyserAmiante(lignes: string[], plage: [number, number]): Diag
       precision: 'A : flocages · B : dalles, conduits, toiture'
     });
 
+  /*
+   * Ce qui a été trouvé, et la suite à lui donner.
+   *
+   * Le produit disait « des matériaux contenant de l'amiante ont été repérés »
+   * sans jamais dire lesquels ni où. Le rapport, lui, les nomme, les situe, et
+   * indique la suite — trois suites existent pour la liste B, et elles
+   * n'engagent pas au même point.
+   */
+  const materiaux = materiauxAmiantes(lignes);
+  const aSurveiller = materiaux.filter((m) => m.suite === 'evaluation');
+  const aTraiter = materiaux.filter((m) => m.suite === 'action-1' || m.suite === 'action-2');
+
+  if (materiaux.length) {
+    faits.push({
+      libelle: materiaux.length > 1 ? 'Matériaux repérés' : 'Matériau repéré',
+      valeur: materiaux.map((m) => m.quoi).slice(0, 3).join(' · '),
+      precision: materiaux
+        .map((m) => m.ou)
+        .filter((o): o is string => Boolean(o))
+        .slice(0, 3)
+        .join(' · ')
+    });
+  }
+
   return {
     type: 'amiante',
     titre: 'Amiante',
     verdict: !conclusionLue
       ? 'Un repérage amiante figure au dossier ; sa conclusion n’a pas pu être lue automatiquement.'
-      : amianteTrouvee
-        ? 'Des matériaux contenant de l’amiante ont été repérés dans le bien.'
-        : 'Aucun matériau contenant de l’amiante n’a été repéré dans les parties accessibles.',
+      : materiaux.length
+        ? `Amiante repérée : ${materiaux[0]?.quoi}${materiaux[0]?.ou ? ` (${materiaux[0]?.ou})` : ''}${
+            materiaux.length > 1 ? `, et ${materiaux.length - 1} autre${materiaux.length > 2 ? 's' : ''}` : ''
+          }.${
+            aTraiter.length
+              ? ' Des travaux sont recommandés.'
+              : aSurveiller.length
+                ? ' Une évaluation périodique est recommandée : on revient contrôler l’état tous les trois ans.'
+                : ''
+          }`
+        : amianteTrouvee
+          ? 'Des matériaux contenant de l’amiante ont été repérés dans le bien.'
+          : 'Aucun matériau contenant de l’amiante n’a été repéré dans les parties accessibles.',
     gravite: !conclusionLue ? 'neutre' : amianteTrouvee ? 'attention' : 'bon',
     faits,
     analogie:
@@ -350,3 +384,71 @@ export function analyserAmiante(lignes: string[], plage: [number, number]): Diag
 }
 
 export const _interne = { zonesTermites };
+
+/** Un matériau amianté repéré, avec ce que le rapport en dit. */
+export interface MateriauAmiante {
+  /** Ce que c'est : « Conduits de fumée en amiante-ciment ». */
+  quoi: string;
+  /** Où : « 1er étage - Terrasse ». */
+  ou: string | null;
+  /** La suite à donner, telle que le rapport la recommande. */
+  suite: 'evaluation' | 'action-1' | 'action-2' | null;
+}
+
+/**
+ * Les matériaux amiantés repérés, et la suite à leur donner.
+ *
+ * Le produit lisait les listes A et B — présence ou absence — sans jamais dire
+ * CE QUI a été trouvé. Or le rapport le nomme, le situe, et indique la suite :
+ *
+ *   Conduits de fumée en amiante-ciment (1er étage - Terrasse) pour lequel il
+ *   est recommandé de réaliser une évaluation périodique.
+ *
+ * Trois suites existent pour la liste B, et elles n'engagent pas au même point.
+ * L'évaluation périodique est une surveillance — on revient regarder tous les
+ * trois ans. Les actions correctives de premier et de second niveau sont des
+ * travaux : la seconde impose en plus de confiner ou retirer le matériau.
+ *
+ * Un acquéreur qui lit « amiante repérée » sans savoir laquelle des trois
+ * s'applique ne peut ni chiffrer ni décider. C'est pourtant écrit.
+ */
+export function materiauxAmiantes(lignes: string[]): MateriauAmiante[] {
+  const trouves: MateriauAmiante[] = [];
+
+  for (let i = 0; i < lignes.length; i++) {
+    const brut = (lignes[i] ?? '').trim();
+
+    /* La ligne du matériau commence par son nom et porte sa localisation entre
+       parenthèses. On exige l'un ET l'autre : une phrase d'explication sur
+       l'amiante en général n'a pas de localisation. */
+    const m = /^([A-ZÉÈÀ][^()]{4,70}?)\s*\(([^)]{3,60})\)/.exec(brut);
+    if (!m?.[1] || !m[2]) continue;
+
+    /*
+     * La suite déborde sur la ligne suivante.
+     *
+     * « … pour lequel il est recommandé de réaliser / une évaluation
+     * périodique. » : la phrase est coupée en deux par la mise en page, et
+     * chercher sur la seule ligne du matériau ne trouvait jamais rien. C'est le
+     * même piège que la date « Rapport du : » — l'extraction découpe en lignes
+     * ce que le rapport écrit en phrases.
+     */
+    const avecSuite = brut + ' ' + (lignes[i + 1] ?? '');
+
+    const quoi = m[1].replace(/\s+/g, ' ').trim();
+    /* Les intitulés de rubrique et les renvois n'en sont pas. */
+    if (/^(?:liste|dans le cadre|article|annexe|voir|conclusion)/i.test(quoi)) continue;
+
+    const suite = /action corrective de second niveau|second niveau/i.test(avecSuite)
+      ? ('action-2' as const)
+      : /action corrective|premier niveau/i.test(avecSuite)
+        ? ('action-1' as const)
+        : /[ée]valuation p[ée]riodique/i.test(avecSuite)
+          ? ('evaluation' as const)
+          : null;
+
+    trouves.push({ quoi, ou: m[2].replace(/\s+/g, ' ').trim(), suite });
+  }
+
+  return trouves;
+}
