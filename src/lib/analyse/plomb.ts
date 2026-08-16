@@ -8,6 +8,7 @@
 import type { Diagnostic, Fait, Gravite } from '../modele';
 import { nombre, contient } from './texte';
 import { dateDuRapport } from './dateRapport';
+import { enDate } from './coherence';
 
 /**
  * Le tableau de conclusion se présente ainsi :
@@ -176,6 +177,16 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
      */
   }
 
+  /*
+   * L'appareil, et les conditions de validité du constat.
+   *
+   * Une mesure faite avec un appareil dont l'autorisation ASN a expiré, ou sans
+   * vérification de justesse sur étalon, ne vaut pas ce qu'elle prétend valoir.
+   * Ces lignes sont en page 4 d'un rapport de dix-neuf pages : personne ne les
+   * regarde.
+   */
+  const appareil = appareilPlomb(lignes);
+
   const faits: Fait[] = [];
   if (chiffres) {
     /*
@@ -227,6 +238,19 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
    * de chargement et deux d'étalonnage. `dateDuRapport` les écarte.
    */
   const date = dateDuRapport(lignes);
+
+  /*
+   * L'autorisation de l'appareil couvrait-elle le jour du constat ?
+   *
+   * Une mesure faite avec un appareil dont l'autorisation ASN a expiré ne vaut
+   * pas ce qu'elle prétend valoir. C'est une condition de validité du constat,
+   * pas un détail d'intendance — et elle est écrite en page 4, au milieu des
+   * numéros de série.
+   */
+  const jourDuConstat = enDate(date ?? undefined);
+  const finAutorisation = enDate(appareil.finAutorisation ?? undefined);
+  const autorisationPerimee =
+    jourDuConstat !== null && finAutorisation !== null && jourDuConstat > finAutorisation;
   if (date) faits.push({ libelle: 'Date du constat', valeur: date });
 
   const explication = [
@@ -260,12 +284,42 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
           'Surveillez l’état des peintures anciennes : une classe 1 qui s’écaille devient une classe 3.'
         ];
 
+  /*
+   * Deux conditions de validité, signalées au lecteur.
+   *
+   * On les met dans les relevés plutôt que dans le verdict : ce sont des
+   * réserves sur la portée du constat, pas des conclusions sur le logement. Un
+   * constat dont l'appareil n'était plus autorisé reste un constat — il ne
+   * vaut simplement pas ce qu'il prétend valoir, et c'est au lecteur d'en
+   * tirer les conséquences avec son notaire.
+   */
+  const surLAppareil = [
+    ...(autorisationPerimee
+      ? [
+          {
+            genre: 'complement' as const,
+            libelle: `L’autorisation de l’appareil de mesure avait expiré le ${appareil.finAutorisation} lorsque le constat a été fait. Signalez-le à votre notaire : c’est une condition de validité des mesures.`
+          }
+        ]
+      : []),
+    ...(chiffres && !appareil.etalonnageDuJour
+      ? [
+          {
+            genre: 'complement' as const,
+            libelle:
+              'La vérification de justesse de l’appareil, en début et en fin de constat, n’apparaît pas au rapport. La norme la prévoit à chaque constat.'
+          }
+        ]
+      : [])
+  ];
+
   return {
     type: 'plomb',
     titre: 'Plomb dans les peintures (CREP)',
     verdict,
     gravite,
     faits,
+    ...(surLAppareil.length ? { releves: surLAppareil } : {}),
     analogie:
       'Le plomb d’une vieille peinture, c’est du sucre glace pris dans un gâteau. Tant que le gâteau est entier, rien ne s’échappe. Dès qu’il s’effrite, la poudre se répand — sur le sol, sur les jouets, sur les mains.',
     explication,
@@ -294,3 +348,60 @@ export const _interne = { compter };
 
 /** Ré-export utilitaire pour les tests. */
 export const _nombre = nombre;
+
+/** Ce que le rapport dit de l'appareil qui a servi à mesurer. */
+export interface AppareilPlomb {
+  /** Fin de validité de l'autorisation ASN, telle qu'écrite. */
+  finAutorisation: string | null;
+  /** Vrai si la justesse a été vérifiée le jour même, en entrée et en sortie. */
+  etalonnageDuJour: boolean;
+}
+
+/**
+ * L'appareil à fluorescence X, et sa conformité.
+ *
+ * Le plomb se mesure avec une source radioactive — du cobalt 57 — et cet
+ * appareil est réglementé pour lui-même : il faut une autorisation de
+ * l'Autorité de sûreté nucléaire, et la justesse doit être vérifiée sur étalon
+ * en début ET en fin de chaque constat, comme le rappelle le rapport.
+ *
+ * ── Pourquoi le vérifier ────────────────────────────────────────────────────
+ *
+ * Ce sont des conditions de validité du constat, pas des détails d'intendance.
+ * Une mesure faite avec un appareil dont l'autorisation a expiré, ou sans
+ * vérification de justesse, ne vaut pas ce qu'elle prétend valoir — et le
+ * constat conclut pourtant.
+ *
+ * Personne ne le regarde : ces lignes sont en page 4 d'un rapport de dix-neuf
+ * pages, au milieu des références de série et des numéros de police.
+ *
+ * ── Ce qu'on ne fait pas dire à ces chiffres ────────────────────────────────
+ *
+ * La « durée de vie » annoncée de la source — deux ans — n'est PAS une date de
+ * péremption du constat. Le cobalt 57 perd la moitié de son activité tous les
+ * neuf mois environ ; passé ce terme, les mesures durent plus longtemps, mais
+ * l'appareil reste juste tant qu'il passe la vérification sur étalon. C'est
+ * cette vérification qui fait foi, pas l'âge de la source — et c'est pourquoi
+ * on la relève, elle, plutôt que de compter les mois.
+ */
+export function appareilPlomb(lignes: string[]): AppareilPlomb {
+  const texte = lignes.join('\n');
+
+  /* La ligne d'autorisation porte deux dates : celle de la déclaration, puis
+     celle de fin de validité. C'est la seconde qui nous intéresse. */
+  const validite =
+    /Date d[’']autorisation[^\n]{0,80}?\n?[^\n]{0,40}?(\d{2}\/\d{2}\/\d{4})\s+(\d{2}\/\d{2}\/\d{4})/i.exec(
+      texte
+    );
+
+  const etalons = lignes.filter((l) => /[ÉEée]talonnage\s+(?:entr[ée]e|sortie)/i.test(l));
+  const dates = etalons
+    .map((l) => /(\d{2}\/\d{2}\/\d{4})/.exec(l)?.[1])
+    .filter((d): d is string => Boolean(d));
+
+  return {
+    finAutorisation: validite?.[2] ?? null,
+    /* Entrée ET sortie, le même jour : c'est ce que la norme demande. */
+    etalonnageDuJour: dates.length >= 2 && new Set(dates).size === 1
+  };
+}
