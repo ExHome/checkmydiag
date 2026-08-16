@@ -103,6 +103,38 @@ export const REGLEMENT: Partial<Record<TypeDiag, Reglement>> = {
           'Un logement sobre chauffé au fioul est donc classé sur son CO₂, pas sur sa consommation. Ce texte a été modifié par les arrêtés du 25 mars 2024, du 16 juin 2025 et du 13 août 2025 : celui du 16 juin 2025 n’a pas encore été dépouillé.'
       },
       {
+        /*
+         * LA RÈGLE QUI COMMANDE TOUT LE DISCOURS SUR LE DPE.
+         *
+         * Le moteur de calcul d'un logiciel de DPE est validé par l'ADEME avant
+         * de pouvoir être utilisé : le calcul, lui, est bon. Ce que le produit
+         * retrouve à partir des chiffres du rapport n'est donc PAS une
+         * vérification du diagnostiqueur — c'est une manière de lire une
+         * étiquette qui est une image.
+         *
+         * Conséquence directe sur ce qu'on écrit : quand un DPE se révèle faux,
+         * on n'envoie jamais le lecteur vers « une erreur de calcul ». On
+         * l'envoie vers les DONNÉES SAISIES — surface, année de construction,
+         * nature des murs, isolant, équipements —, seules responsables. C'est
+         * aussi ce qui rend la rectification possible : on fait corriger une
+         * saisie, pas un moteur.
+         *
+         * Posé par Aude le 16/08/2026 : « les logiciels sont validés par
+         * l'ADEME, le calcul est forcément bon ; s'il y a erreur, c'est qu'un
+         * diagnostiqueur a entré une mauvaise donnée. »
+         */
+        enonce:
+          'Les logiciels utilisés pour établir un DPE sont validés par l’ADEME : leur moteur de calcul est contrôlé, et la lettre imprimée fait foi. Un DPE erroné l’est par ses données d’entrée — surface, année de construction, parois, isolant, équipements —, jamais par son calcul. C’est donc la saisie qu’il faut faire rectifier.',
+        source: {
+          reference:
+            'arrêté du 31 mars 2021 relatif aux méthodes et procédures applicables au DPE (validation des logiciels)',
+          url: 'https://www.legifrance.gouv.fr/loda/id/JORFTEXT000043341459',
+          luLe: '2026-08-16'
+        },
+        reserve:
+          'Le classement que ce produit retrouve à partir des chiffres du rapport n’est pas un contrôle du diagnostiqueur : l’étiquette colorée est une image, illisible par un programme, et c’est le seul moyen de la lire. Un écart avec l’étiquette imprimée signale une donnée saisie à vérifier, ou un changement de seuils depuis la date du rapport — jamais un calcul fautif.'
+      },
+      {
         enonce:
           'Les logements dont la surface de référence est inférieure ou égale à 40 m² relèvent de seuils propres, établis surface par surface entre 8 et 40 m² et interpolés entre deux valeurs. La table est relevée dans `analyse/seuilsPetitesSurfaces.ts` ; à 40 m², elle rejoint exactement les seuils généraux de 2021. Un second jeu de valeurs vise les logements situés à 800 mètres d’altitude ou plus, et ne touche que les classes E et F.',
         source: {

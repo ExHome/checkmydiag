@@ -481,25 +481,45 @@ export function analyserDpe(lignes: string[], plage: [number, number]): Diagnost
     );
   }
   if (energie?.recalculee) {
+    /*
+     * Ce que notre calcul EST, et ce qu'il n'est pas.
+     *
+     * Les logiciels de DPE sont validés par l'ADEME : leur moteur de calcul est
+     * contrôlé, et la lettre imprimée sur le rapport fait foi. Nous ne
+     * refaisons pas ce calcul pour le vérifier — nous refaisons le classement
+     * final, parce que l'étiquette colorée est une image qu'aucun programme ne
+     * peut lire, à partir des chiffres que le rapport écrit en toutes lettres.
+     * C'est une façon de LIRE l'étiquette, pas de la contester.
+     *
+     * Et quand un DPE se révèle faux, ce n'est pas le calcul qui a fauté : ce
+     * sont les données entrées — une surface, une année de construction, un
+     * type d'isolant, un équipement mal renseignés. Le produit doit envoyer le
+     * lecteur là, pas vers une prétendue erreur de calcul.
+     */
     explication.push(
-      "Précision de méthode : sur ce type de rapport, l'étiquette colorée est une image, illisible par un programme. La lettre ci-dessus a été recalculée à partir des chiffres écrits dans le rapport, avec les seuils officiels. Vérifiez qu'elle correspond bien à l'étiquette imprimée."
+      "Précision de méthode : l'étiquette colorée est une image, qu'aucun programme ne sait lire. La lettre ci-dessus est donc retrouvée à partir des chiffres écrits dans le rapport, avec les seuils officiels — c'est une manière de lire l'étiquette, pas de la corriger. Le logiciel du diagnostiqueur est validé par l'ADEME : son calcul fait foi."
+    );
+    explication.push(
+      "Si la lettre ci-dessus ne correspond pas à celle imprimée, le calcul n'est pas en cause : regardez les données saisies — surface, année de construction, isolation, équipements. C'est là que se logent les erreurs d'un DPE, et c'est ce qu'on peut faire rectifier."
     );
   }
 
   /*
-   * Ce qu'on dit quand on s'abstient.
+   * Les petites surfaces, une fois la table connue.
    *
-   * Le silence seul serait pire que l'erreur : le lecteur croirait que le
-   * rapport ne dit rien. On explique donc pourquoi la lettre n'est pas
-   * recalculée ici, et où la trouver — sur l'étiquette imprimée, établie par le
-   * diagnostiqueur avec les seuils qui conviennent à cette surface.
+   * Ce paragraphe disait « nous ne recalculons donc pas la lettre ici ». C'était
+   * vrai le matin même, ça ne l'est plus : la table de l'arrêté est relevée et
+   * appliquée. Un texte qui décrit un comportement abandonné est un mensonge
+   * dans l'interface, même quand il a été juste.
    */
   if (petiteSurface && (m.consoParM2 !== null || m.gesParM2 !== null)) {
     explication.push(
-      `Ce logement fait ${m.surface} m². Depuis le 1ᵉʳ juillet 2024, les logements de 40 m² ou moins relèvent de seuils propres, établis mètre carré par mètre carré : l'échelle habituelle — moins de 70, de 70 à 110… — ne s'y applique pas. Elle est plus sévère qu'elle ne devrait pour une petite surface.`
+      `Ce logement fait ${m.surface} m². Depuis le 1ᵉʳ juillet 2024, les logements de 40 m² ou moins ont leur propre échelle, établie mètre carré par mètre carré : un petit logement consomme davantage au mètre carré, l'eau chaude d'une personne se répartissant sur 25 m² au lieu de 100.`
     );
     explication.push(
-      "Nous ne recalculons donc pas la lettre ici : elle serait fausse, et plus mauvaise que la vraie. La lettre qui fait foi est celle imprimée sur l'étiquette du rapport, établie par le diagnostiqueur avec les seuils de cette surface. Les chiffres ci-dessus, eux, sont ceux du rapport."
+      sansEchelle
+        ? "Ce logement se situe en altitude, où les seuils diffèrent encore. La lettre qui fait foi est celle imprimée sur l'étiquette du rapport."
+        : "C'est cette échelle-là qui est appliquée ci-dessus, et non l'échelle habituelle — plus sévère, elle classerait ce logement moins bien qu'il ne l'est."
     );
   }
 

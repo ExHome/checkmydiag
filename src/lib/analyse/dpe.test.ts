@@ -148,11 +148,13 @@ describe('un logement de 40 m² ou moins', () => {
     expect(diag.gravite).not.toBe('alerte');
   });
 
-  it('dit que les petites surfaces ont leurs propres seuils', () => {
+  it('dit que les petites surfaces ont leur propre échelle, et pourquoi', () => {
     const texte = diag.explication.join(' ');
     expect(texte).toMatch(/40 m² ou moins/);
-    expect(texte).toMatch(/seuils propres/);
-    expect(texte).toMatch(/étiquette du rapport|étiquette imprimée/);
+    expect(texte).toMatch(/leur propre [ée]chelle/);
+    /* La raison physique, pas seulement la règle : c'est ce qui la rend
+       compréhensible sans être diagnostiqueur. */
+    expect(texte).toMatch(/consomme davantage au m[èe]tre carr[ée]/);
   });
 
   it('garde les chiffres du rapport, qui restent vrais', () => {
@@ -179,8 +181,20 @@ describe('ce qu’un DPE donne, quelle que soit la surface', () => {
     expect(diag.schema.postes[0]?.kwh).toBe(5200);
   });
 
-  it('avertit que la lettre a été recalculée', () => {
-    expect(diag.explication.join(' ')).toMatch(/recalcul/i);
+  /*
+   * Le mot « recalculée » a été retiré de l'interface à dessein.
+   *
+   * Recalculer, c'est refaire le calcul de quelqu'un — donc le mettre en doute.
+   * Or les logiciels de DPE sont validés par l'ADEME et leur calcul fait foi.
+   * Ce qu'on fait ici est plus modeste : retrouver le classement à partir des
+   * chiffres écrits, parce que l'étiquette colorée est une image. Le lecteur
+   * doit être averti de ce détour, sans qu'on lui laisse croire qu'on corrige
+   * son diagnostiqueur.
+   */
+  it('avertit que la lettre vient des chiffres, l’étiquette étant une image', () => {
+    const texte = diag.explication.join(' ');
+    expect(texte).toMatch(/[ée]tiquette color[ée]e est une image/i);
+    expect(texte).toMatch(/[àa] partir des chiffres [ée]crits dans le rapport/i);
   });
 });
 
