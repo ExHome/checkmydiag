@@ -471,6 +471,44 @@ comptent. La coche est dessinée. On ne peut pas savoir lesquelles sont vraies.
 
 ---
 
+## 15 · Le constat amiante, lu en entier
+
+### Sa date est écrite trois fois
+
+« Date du repérage », « Date d'émission du rapport de repérage, remis au
+propriétaire le … », et « Rapport du : » en pied de page, sur deux lignes. Il
+n'y a donc jamais de raison de repartir sans date — sauf si le rapport lui-même
+n'est pas au dossier, ce qui est le cas une fois sur deux.
+
+### La rubrique 1.2 dit ce qu'on n'a pas pu regarder
+
+Tableau à trois colonnes — Localisation, Parties du local, Raison — dont la
+première déborde sur cinq lignes quand quinze pièces sont concernées. Motifs
+réellement rencontrés : absence de trappe de visite, revêtement fixé,
+impossibilité d'investigation non destructive, encombrement, absence de clé.
+
+Sur 28 constats : 10 rubriques portent « Néant », 9 n'ont aucun empêchement,
+5 en portent vraiment. Une rubrique présente et vide est un RÉSULTAT — même
+règle qu'à la rubrique E du gaz.
+
+### Et le rapport en tire la conséquence lui-même
+
+> les obligations réglementaires du propriétaire ne sont pas remplies […] de ce
+> fait le vendeur reste responsable au titre des vices cachés
+
+C'est-à-dire : le constat ne protège pas le vendeur sur ce qu'il n'a pas pu
+voir. Sur le dossier lu, quatorze pièces de murs et quinze de sols n'avaient pas
+pu être sondées — presque tout le logement.
+
+### Un piège de motif à retenir
+
+`[^.]` ne convient pas dans une phrase qui cite des articles : « R.1334-15 à
+R.1334-18 » contient trois points, et chacun coupe la recherche. La sonde qui
+mesurait ce cas portait le même défaut et annonçait zéro occurrence sur tout le
+corpus — alors que la phrase était sous les yeux dans le premier rapport lu.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [ ] Le tableau « E. — Anomalies identifiées » du gaz : c'est là qu'est la
@@ -482,10 +520,16 @@ comptent. La coche est dessinée. On ne peut pas savoir lesquelles sont vraies.
 - [ ] Les termites : « informations collectées auprès du donneur d'ordre »
       (traitement antérieur, présence déclarée) sont des cases dessinées, donc
       illisibles. Y a-t-il une autre trace de ces réponses dans le rapport ?
-- [ ] L'amiante repart sans date dans 43 % des cas — le plus mauvais chiffre de
-      tous les volets. Où sa date est-elle écrite ?
-- [ ] Le DPE est muet dans 42 % des cas : quelle conclusion ne sait-on pas lire ?
+- [x] ~~L'amiante repart sans date dans 43 % des cas~~ → ce n'était pas une
+      lecture manquée : le rapport n'est pas au dossier une fois sur deux.
+- [x] ~~Le DPE est muet dans 42 % des cas~~ → 33 studios sur 40, faute de la
+      table des petites surfaces. Réglé : 4 %.
 - [ ] Le gaz ne produit aucun schéma (0 %), le mesurage non plus.
-- [ ] Mesurer la JUSTESSE et non la présence : une sonde par volet qui compare
-      ce que le document déclare à ce que le verdict en retient, sur le modèle de
-      `argile-detectee.local.ts`.
+- [ ] L'amiante n'a de schéma que dans 53 % des cas.
+- [ ] L'ERP reste muet dans 11 % des cas : lesquels ?
+- [ ] Une rubrique présente et VIDE est un résultat — gaz et amiante le
+      confirment. Faut-il le dire au lecteur (« tout a pu être examiné ») ?
+- [ ] Mesurer la JUSTESSE et non la présence, volet par volet : une sonde qui
+      compare ce que le document déclare à ce que le verdict en retient, sur le
+      modèle de `argile-detectee.local.ts`. Fait pour l'argile ; reste le plomb,
+      l'électricité, les termites.
