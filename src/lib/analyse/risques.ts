@@ -249,6 +249,18 @@ export function analyserCarrez(lignes: string[], plage: [number, number]): Diagn
   const boutin = loi === 'boutin';
   const nomSurface = boutin ? 'Surface habitable' : 'Superficie privative';
 
+  /*
+   * Les pièces qui ne comptent pas, nommées.
+   *
+   * L'écart entre les deux totaux n'est pas une subtilité de calcul : ce sont
+   * des pièces entières — une cave, une terrasse, une buanderie — qui existent,
+   * se visitent, et ne figurent pas dans la superficie vendue. Le tableau du
+   * rapport les liste ; personne ne le lit.
+   */
+  const pieces = piecesMesurees(lignes);
+  const horsCompte = pieces.filter((p) => p.privative === 0);
+  const perdus = horsCompte.reduce((n, p) => n + p.auSol, 0);
+
   const faits: Fait[] = [];
   if (surface !== null) faits.push({ libelle: nomSurface, valeur: `${fr(surface)} m²` });
 
@@ -269,6 +281,17 @@ export function analyserCarrez(lignes: string[], plage: [number, number]): Diagn
       valeur: `${fr(auSol)} m²`,
       precision: 'avant déduction des murs et des hauteurs sous 1,80 m'
     });
+
+  if (horsCompte.length && perdus > 0) {
+    faits.push({
+      libelle: 'Pièces hors superficie',
+      valeur: `${fr(Math.round(perdus * 100) / 100)} m²`,
+      precision: horsCompte
+        .map((p) => p.nom.replace(/^.*?-\s*/, ''))
+        .slice(0, 6)
+        .join(', ')
+    });
+  }
 
   return {
     type: 'carrez',
@@ -445,4 +468,77 @@ export function champsDuVendeur(lignes: string[]): ChampsDuVendeur {
        n'apparaît que si le tableau des sinistres est là. */
     sinistres: /cochez[^.]{0,40}case correspondante[^.]{0,40}Indemnis/i.test(texte)
   };
+}
+
+/** Une pièce du tableau de mesurage. */
+export interface PieceMesuree {
+  nom: string;
+  /** Ce qui compte au sens de la loi, en m². */
+  privative: number;
+  /** Ce que la pièce fait réellement au sol, en m². */
+  auSol: number;
+}
+
+/**
+ * Le tableau pièce par pièce du certificat de superficie.
+ *
+ * C'est la partie du rapport qui explique l'écart entre les deux chiffres
+ * affichés — « Surface loi Carrez totale » et « Surface au sol totale » —, et
+ * elle est la seule à le faire.
+ *
+ * ── Pourquoi cela vaut d'être lu ────────────────────────────────────────────
+ *
+ * Sur le dossier qui a servi à écrire ceci : 189,82 m² au sens Carrez pour
+ * 236,66 m² au sol. Quarante-sept mètres carrés d'écart, soit un cinquième du
+ * bien — et le tableau dit exactement lesquels : la cave, la terrasse, la
+ * buanderie, l'atelier, la chaufferie. Chacune de ces pièces existe, se
+ * visite, et ne compte pas.
+ *
+ * Un acheteur qui lit « 189,82 m² » et visite un bien qui en paraît beaucoup
+ * plus n'a aucun moyen de comprendre l'écart sans ce tableau. C'est
+ * précisément ce que le produit doit lui rendre.
+ *
+ * ── La forme lue ───────────────────────────────────────────────────────────
+ *
+ *   Rez de jardin - Cave            0      16.18
+ *   1er étage - Chambre 01      17.36      17.36
+ *
+ * Deux nombres en fin de ligne : le privatif, puis le sol. Une ligne dont le
+ * privatif vaut zéro désigne une pièce qui ne compte pas.
+ */
+export function piecesMesurees(lignes: string[]): PieceMesuree[] {
+  const pieces: PieceMesuree[] = [];
+
+  for (const ligne of lignes) {
+    /*
+     * Un nom de pièce, puis deux nombres. Le nom commence par un niveau
+     * (« Rez de chaussée », « 1er étage », « Sous-sol ») ou par un mot :
+     * l'ancrage sur les deux nombres finaux suffit à écarter le reste du
+     * rapport, où l'on ne trouve pas cette forme.
+     */
+    /*
+     * Le nom PEUT contenir des chiffres — « 1er étage - Chambre 01 » — et ma
+     * première version l'interdisait, ce qui écartait une pièce sur deux.
+     * L'ancrage se fait donc sur les deux derniers nombres de la ligne, pas sur
+     * la forme du nom.
+     */
+    const m = /^(.{3,60}?)\s+(\d+(?:[.,]\d+)?)\s+(\d+(?:[.,]\d+)?)\s*$/.exec(ligne.trim());
+    if (!m) continue;
+
+    const nom = (m[1] ?? '').replace(/\s+/g, ' ').trim();
+    const privative = Number((m[2] ?? '').replace(',', '.'));
+    const auSol = Number((m[3] ?? '').replace(',', '.'));
+
+    /* Le total récapitulatif n'est pas une pièce, et les lignes d'en-tête non
+       plus. Une pièce a un nom qui ne parle ni de surface ni de total. */
+    if (/total|superficie|surface|sens Carrez|commentaire/i.test(nom)) continue;
+    if (!Number.isFinite(privative) || !Number.isFinite(auSol)) continue;
+    /* Au sol nul et privatif non nul n'a pas de sens : c'est une ligne mal
+       découpée, pas un mesurage. */
+    if (auSol <= 0) continue;
+
+    pieces.push({ nom, privative, auSol });
+  }
+
+  return pieces;
 }
