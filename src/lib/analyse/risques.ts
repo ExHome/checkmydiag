@@ -126,6 +126,15 @@ export function analyserErp(lignes: string[], plage: [number, number]): Diagnost
   const date = dateDuRapport(lignes);
   if (date) faits.push({ libelle: 'Établi le', valeur: date });
 
+  /*
+   * Les rubriques que le vendeur doit remplir lui-même.
+   *
+   * Elles ne relèvent pas du diagnostiqueur, et personne ne prévient le
+   * vendeur qu'elles existent. Les signaler ici est l'un des rares endroits où
+   * ce produit apporte quelque chose que le rapport ne dit pas.
+   */
+  const vendeur = champsDuVendeur(lignes);
+
   return {
     type: 'erp',
     titre: 'Risques et pollutions (ERP)',
@@ -165,6 +174,30 @@ export function analyserErp(lignes: string[], plage: [number, number]): Diagnost
     ],
     schema: risques.length ? { genre: 'risques', risques } : null,
     pages: plage,
+    ...(vendeur.argiles || vendeur.sinistres
+      ? {
+          releves: [
+            ...(vendeur.sinistres
+              ? [
+                  {
+                    genre: 'complement' as const,
+                    libelle:
+                      'La colonne « Indemnisé » du tableau des catastrophes naturelles est à remplir par le vendeur : vérifiez qu’elle l’a été sur votre exemplaire.'
+                  }
+                ]
+              : []),
+            ...(vendeur.argiles
+              ? [
+                  {
+                    genre: 'complement' as const,
+                    libelle:
+                      'Argiles : si le logement a subi des fissures indemnisées et non réparées, le vendeur doit joindre la liste des travaux restant à faire (article R125-24 du code de l’environnement). La case correspondante est à cocher par lui.'
+                  }
+                ]
+              : [])
+          ]
+        }
+      : {}),
     ...(date ? { date } : {})
   };
 }
@@ -366,5 +399,50 @@ export function analyserAssainissement(lignes: string[], plage: [number, number]
       : ['Validité : trois ans pour un contrôle d’installation autonome.'],
     schema: null,
     pages: plage
+  };
+}
+
+/**
+ * Ce que le VENDEUR doit remplir dans l'état des risques, et qui reste vide.
+ *
+ * Trois champs du formulaire ne relèvent pas du diagnostiqueur : la loi les
+ * confie au vendeur, qui ignore le plus souvent qu'ils existent. Ils sont donc
+ * livrés vierges, et le dossier est incomplet sans que personne ne le voie.
+ *
+ * ── Pourquoi cela compte plus qu'il n'y paraît ──────────────────────────────
+ *
+ * Le plus lourd des trois est celui des argiles. L'article R125-24 du code de
+ * l'environnement impose au vendeur, si le bien a subi des désordres liés à la
+ * sécheresse — indemnisés mais non réparés —, de joindre à l'état des risques
+ * la liste des travaux restant à faire. Deux cases, « Oui » et « Non ». Quand
+ * aucune n'est cochée, l'obligation n'est ni assumée ni écartée.
+ *
+ * Sur le dossier qui a servi à écrire ceci, le bien est en aléa Fort pour le
+ * retrait-gonflement des argiles, dans une commune reconnue treize fois en
+ * catastrophe naturelle sécheresse depuis 1989. C'est exactement le cas où
+ * cette case compte.
+ *
+ * ── Ce qu'on affirme, et ce qu'on n'affirme pas ─────────────────────────────
+ *
+ * On ne dit jamais « le vendeur a oublié » : la case peut avoir été cochée à la
+ * main sur le papier signé, et une coche manuscrite ne sort pas d'un PDF. On
+ * dit que la rubrique existe et qu'aucune réponse n'est lisible — au lecteur
+ * d'aller vérifier sur son exemplaire.
+ */
+export interface ChampsDuVendeur {
+  /** La rubrique « travaux non réalisés » des argiles est présente. */
+  argiles: boolean;
+  /** Le tableau des arrêtés CATNAT, avec sa colonne « Indemnisé ». */
+  sinistres: boolean;
+}
+
+export function champsDuVendeur(lignes: string[]): ChampsDuVendeur {
+  const texte = lignes.join(' ');
+
+  return {
+    argiles: /Information relative aux travaux non r[ée]alis[ée]s/i.test(texte),
+    /* La consigne s'adresse au lecteur : « cochez ci-dessous la case ». Elle
+       n'apparaît que si le tableau des sinistres est là. */
+    sinistres: /cochez[^.]{0,40}case correspondante[^.]{0,40}Indemnis/i.test(texte)
   };
 }

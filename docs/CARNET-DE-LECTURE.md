@@ -210,6 +210,39 @@ fait partie de ce qui est dû à l'acquéreur. Personne ne le remarque.
 Dans le même bloc, le champ **« Établi le : » reste vide** alors que le
 document porte par ailleurs sa date de réalisation.
 
+### Trois cases que le vendeur doit remplir, et qui restent vides
+
+Le même état des risques en compte trois, toutes vierges :
+
+1. **« Indemnisé »**, dans le tableau des arrêtés CATNAT.
+2. **« Établi le : »**, au pied de la déclaration de sinistres.
+3. **« Argiles — Information relative aux travaux non réalisés »**, le plus
+   lourd des trois.
+
+Cette dernière reproduit l'article R125-24 du code de l'environnement : en cas
+de vente, si le bien a subi des désordres liés à la sécheresse, indemnisés mais
+non réparés, **le vendeur doit joindre la liste des travaux restant à faire**.
+Deux cases, « Oui » et « Non ». Aucune n'est cochée.
+
+Le dossier lu est en zone d'aléa **Fort** pour le retrait-gonflement des
+argiles, dans une commune reconnue treize fois en catastrophe naturelle
+sécheresse. C'est exactement le cas où cette case compte — et c'est le cas où
+elle est vide.
+
+Ces trois champs ne sont pas du ressort du diagnostiqueur : ils incombent au
+vendeur, qui ignore le plus souvent qu'ils existent. Un produit qui explique un
+dossier devrait le lui dire.
+
+### Le radon : 100 Bq/m³ n'est pas un seuil
+
+La fiche d'information annexée écrit : « le niveau moyen de radon dans l'habitat
+français est inférieur à 100 Bq/m³ ». C'est une **moyenne constatée**, pas une
+limite réglementaire.
+
+Le seuil d'action est de **300 Bq/m³** (code de la santé publique). La confusion
+entre les deux est facile — la fiche ne cite pas le second — et elle est
+exactement celle qu'un brief antérieur avait déjà commise.
+
 ### Le nombre d'arrêtés CATNAT dit quelque chose
 
 Le dossier lu en compte **45 sur la commune**, dont **treize** pour
