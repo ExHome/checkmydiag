@@ -202,7 +202,31 @@ export function analyser(brutes: PageTexte[]): Analyse {
   for (const bloc of blocs) {
     if (diagnostics.some((d) => d.type === bloc.type)) continue;
     const diag = EXTRACTEURS[bloc.type](bloc.lignes, plageSynthese ?? [1, pages.length]);
-    diagnostics.push(depuisSynthese(diag, blocs));
+    const depuisLaSynthese = depuisSynthese(diag, blocs);
+    /*
+     * Ici, le rapport lui-même n'est pas dans le PDF.
+     *
+     * On récupérait sa conclusion sur la page de synthèse — c'est mieux que de
+     * faire comme si le diagnostic n'existait pas — et l'étiquette d'origine le
+     * disait. Mais elle ne disait pas ce que cela COÛTE au lecteur : la
+     * synthèse tient en une phrase, sans date, sans détail des matériaux, sans
+     * les réserves ni les pièces non visitées. Or c'est là que tout se joue.
+     *
+     * Mesuré sur 140 dossiers : 21 constats amiante sur 49 sont dans ce cas —
+     * et c'est ce qui explique à lui seul le taux de « constats sans date ».
+     * Ils n'ont pas de date parce que le rapport qui la porte est ailleurs.
+     */
+    diagnostics.push({
+      ...depuisLaSynthese,
+      releves: [
+        ...(depuisLaSynthese.releves ?? []),
+        {
+          genre: 'complement',
+          libelle:
+            'Le rapport détaillé de ce diagnostic ne figure pas dans le PDF : seule sa conclusion, recopiée en page de synthèse, a pu être lue. Réclamez-le au vendeur ou au diagnostiqueur — c’est lui qui porte la date, le détail de ce qui a été examiné, et les réserves.'
+        }
+      ]
+    });
   }
 
   // Extracteur resté muet sur une section reconnue : la synthèse prend le relais.
