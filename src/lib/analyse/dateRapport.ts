@@ -59,6 +59,30 @@ import { trouver } from './texte';
 const JOUR = String.raw`(?<![\d\/.-])(\d{1,2}[\/.-]\d{1,2}[\/.-]\d{4})(?![\d\/-]|\.\d)`;
 
 /**
+ * La même date, écrite en toutes lettres : « 12 novembre 2024 ».
+ *
+ * L'état des risques l'écrit ainsi, et lui seul : « Date de réalisation : 12
+ * novembre 2024 (Valable 6 mois) ». Aucun relevé de formes numériques ne
+ * pouvait la montrer — il fallait lire le document.
+ */
+const JOUR_EN_LETTRES = String.raw`(\d{1,2}\s+(?:janvier|f[ée]vrier|mars|avril|mai|juin|juillet|ao[ûu]t|septembre|octobre|novembre|d[ée]cembre)\s+\d{4})`;
+
+const MOIS: Record<string, string> = {
+  janvier: '01',
+  fevrier: '02',
+  mars: '03',
+  avril: '04',
+  mai: '05',
+  juin: '06',
+  juillet: '07',
+  aout: '08',
+  septembre: '09',
+  octobre: '10',
+  novembre: '11',
+  decembre: '12'
+};
+
+/**
  * Les mots qui disqualifient une ligne.
  *
  * Leur présence signe une date qui appartient à quelqu'un d'autre : au
@@ -91,6 +115,8 @@ const FORMES: RegExp[] = [
   new RegExp(String.raw`Visite\s+effectu[ée]e?\s+le\s*:?[\s.]*` + JOUR, 'i'),
   new RegExp(String.raw`Document\s+r[ée]alis[ée]\s+le\s*:?[\s.]*` + JOUR, 'i'),
   new RegExp(String.raw`Date\s+de\s+(?:r[ée]alisation|cr[ée]ation)\s*:?[\s.]*` + JOUR, 'i'),
+  /* L'état des risques date sa réalisation en toutes lettres, et lui seul. */
+  new RegExp(String.raw`Date\s+de\s+(?:r[ée]alisation|cr[ée]ation)\s*:?[\s.]*` + JOUR_EN_LETTRES, 'i'),
   new RegExp(String.raw`r[ée]dig[ée]\s+par[^.\n]{0,40}?\s+le\s*:?[\s.]*` + JOUR, 'i'),
   /* L'état des risques se date dans sa propre phrase d'introduction. « en date
      du » seul serait bien trop large — la même tournure introduit les arrêtés
@@ -134,11 +160,44 @@ function chercher(lignes: string[]): string | null {
     const m = trouver(propres, forme);
     if (m?.[1]) return normaliser(m[1]);
   }
+  return surDeuxLignes(propres);
+}
+
+/**
+ * « Rapport du : » — et la date sur la ligne SUIVANTE.
+ *
+ * C'est la mention la plus fiable de tout le dossier : elle figure en pied de
+ * chaque page de chaque volet, et elle date le rapport lui-même. Les
+ * extracteurs la manquaient tous, pour une raison bête — ils lisent ligne par
+ * ligne, et l'intitulé se trouve sur une ligne, la date sur la suivante.
+ *
+ * Ce défaut ne se voit dans aucun relevé de gabarits : « Rapport du : » y
+ * apparaît comme une ligne sans date, donc sans intérêt apparent. Il a fallu
+ * lire un dossier en entier, du début à la fin, pour le voir.
+ */
+function surDeuxLignes(lignes: string[]): string | null {
+  const seule = new RegExp('^\\s*' + JOUR + '\\s*$');
+  for (let i = 0; i < lignes.length - 1; i++) {
+    if (!/Rapport\s+du\s*:?\s*$/i.test(lignes[i] ?? '')) continue;
+    const m = seule.exec(lignes[i + 1] ?? '');
+    if (m?.[1]) return normaliser(m[1]);
+  }
   return null;
 }
 
 /** Le format du produit : JJ/MM/AAAA, quel que soit le séparateur d'origine. */
 function normaliser(brut: string): string {
+  const enLettres = /^(\d{1,2})\s+([A-Za-zÀ-ÿ]+)\s+(\d{4})$/.exec(brut.trim());
+  if (enLettres) {
+    const [, j = '', nom = '', a = ''] = enLettres;
+    const cle = nom
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '');
+    const m = MOIS[cle];
+    return m ? `${j.padStart(2, '0')}/${m}/${a}` : brut;
+  }
+
   const [j, m, a] = brut.split(/[\/.-]/);
   if (!j || !m || !a) return brut;
   return `${j.padStart(2, '0')}/${m.padStart(2, '0')}/${a}`;

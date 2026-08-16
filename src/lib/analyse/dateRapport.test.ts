@@ -118,3 +118,63 @@ describe('quand on ne sait pas', () => {
     ).toBe('14/03/2024');
   });
 });
+
+/**
+ * La forme qu'aucun relevé de gabarits ne pouvait montrer.
+ *
+ * « Rapport du : » figure en pied de chaque page de chaque volet, et la date
+ * est sur la ligne SUIVANTE. Dans un relevé de lignes contenant une date, cet
+ * intitulé n'apparaît jamais — il n'en porte pas. Il a fallu lire un dossier
+ * entier pour le voir.
+ */
+describe('la date écrite sur deux lignes', () => {
+  it('lit « Rapport du : » suivi de la date', () => {
+    expect(dateDuRapport(['Rapport du :', '12/11/2024'])).toBe('12/11/2024');
+  });
+
+  it('la trouve même au milieu d’un pied de page', () => {
+    expect(
+      dateDuRapport([
+        'SARL EXEMPLE | 76 COURS PORTAL 33000 VILLE | Tél. : 06.72.70.03.38',
+        '3 / 8',
+        'RCS : Ville B 891 287 070 | MMA 114.231.812',
+        'Rapport du :',
+        '12/11/2024'
+      ])
+    ).toBe('12/11/2024');
+  });
+
+  /* Les libellés explicites passent devant : ils datent la VISITE, quand
+     « Rapport du » date l'édition. Les deux coïncident presque toujours, mais
+     quand elles diffèrent, c'est la visite qui fait foi. */
+  it('cède le pas à un libellé explicite', () => {
+    expect(
+      dateDuRapport(['Date du repérage : 12/11/2024', 'Rapport du :', '28/11/2024'])
+    ).toBe('12/11/2024');
+  });
+
+  it('ne prend pas une date isolée sans son intitulé', () => {
+    expect(dateDuRapport(['Page 3 sur 8', '12/11/2024'])).toBeNull();
+  });
+});
+
+/**
+ * La date en toutes lettres.
+ *
+ * L'état des risques écrit « Date de réalisation : 12 novembre 2024 (Valable
+ * 6 mois) », et lui seul. Aucun relevé de formes numériques ne pouvait la
+ * montrer : elle ne contient pas un seul séparateur de date.
+ */
+describe('la date écrite en toutes lettres', () => {
+  it('lit « Date de réalisation : 12 novembre 2024 »', () => {
+    expect(
+      dateDuRapport(['Référence : 24/IMO/0000X Date de réalisation : 12 novembre 2024 (Valable 6 mois)'])
+    ).toBe('12/11/2024');
+  });
+
+  it('accepte les mois accentués', () => {
+    expect(dateDuRapport(['Date de réalisation : 3 février 2025'])).toBe('03/02/2025');
+    expect(dateDuRapport(['Date de réalisation : 9 août 2024'])).toBe('09/08/2024');
+    expect(dateDuRapport(['Date de réalisation : 1 décembre 2023'])).toBe('01/12/2023');
+  });
+});

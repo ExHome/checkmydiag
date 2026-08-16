@@ -189,7 +189,21 @@ export function analyserGaz(lignes: string[], plage: [number, number]): Diagnost
   // Même levier que pour l'électricité : la liste des domaines tranche là où
   // la case cochée reste illisible. Le gaz en avait le plus besoin — six
   // rapports sur sept restaient sans verdict.
-  const etat = conclusion.etat === 'inconnu' && anomalies.length > 0 ? 'anomalies' : conclusion.etat;
+  /*
+   * Une rubrique d'anomalies présente et VIDE conclut.
+   *
+   * Le formulaire de fin de rapport ne dit rien — ses quatre cases sont toutes
+   * imprimées, et la coche est un dessin. Mais si la rubrique « E. — Anomalies
+   * identifiées » existe et ne liste rien, le diagnostiqueur n'a rien
+   * constaté : c'est un résultat, et il vaut « aucune anomalie ».
+   */
+  const rubrique = sectionAnomalies(lignes);
+  const etat =
+    conclusion.etat === 'inconnu' && anomalies.length > 0
+      ? 'anomalies'
+      : conclusion.etat === 'inconnu' && rubrique !== null && rubrique.types === ''
+        ? 'aucune'
+        : conclusion.etat;
   const total = conclusion.nombre ?? (anomalies.length > 0 ? anomalies.length : null);
 
   // Même piège pour les types d'anomalie : la page de conclusion du rapport
@@ -201,13 +215,37 @@ export function analyserGaz(lignes: string[], plage: [number, number]): Diagnost
   );
   const formulaire = phrasesTypes.length >= 3;
   const types = formulaire
-    ? ''
+    ? /*
+       * Le formulaire ne dit rien — mais le TABLEAU des anomalies, si.
+       *
+       * Les quatre conclusions possibles figurent toutes dans chaque rapport,
+       * et l'on coche celle qui s'applique. Vérifié en lisant : la coche est un
+       * dessin, elle ne sort pas du PDF. Le produit renonçait donc, et un
+       * rapport gaz sur deux ressortait sans conclusion.
+       *
+       * La rubrique « E. — Anomalies identifiées », elle, est du texte. Chaque
+       * anomalie y porte son point de contrôle normé et son type — « Organe de
+       * Coupure d'Appareil (OCA)  A2 » — avec le risque encouru en clair. C'est
+       * une source plus sûre que la case : elle dit ce qui a été constaté, pas
+       * ce que l'opérateur a coché.
+       */
+      typesDuTableau(lignes)
     : phrasesTypes
         .map((m) => (m[1] ?? '').toUpperCase())
         .join(' ');
   const a1 = types.includes('A1');
   const a2 = types.includes('A2');
   const dgi = types.includes('DGI');
+
+  /*
+   * Les essais faits sur place, remontés avant les types d'anomalie.
+   *
+   * Une installation « sans anomalie » dont on n'a pas mesuré le monoxyde de
+   * carbone n'a pas été contrôlée sur le point qui compte le plus. Le rapport
+   * l'écrit — « Mesure CO : Non réalisée », « Appareil à l'arrêt » — dans un
+   * tableau de la page 2 que personne ne lit.
+   */
+  const essais = essaisGaz(lignes);
 
   let gravite: Gravite = 'neutre';
   let verdict =
@@ -216,8 +254,28 @@ export function analyserGaz(lignes: string[], plage: [number, number]): Diagnost
     gravite = 'alerte';
     verdict = 'Danger grave et immédiat (DGI) : une partie de l’installation gaz doit être mise hors service.';
   } else if (etat === 'aucune') {
-    gravite = 'bon';
-    verdict = 'L’installation de gaz ne présente aucune anomalie.';
+    /*
+     * « Aucune anomalie » ne veut pas dire la même chose selon que le CO a été
+     * mesuré ou non.
+     *
+     * Quand l'appareil est resté à l'arrêt, l'essai le plus important du
+     * diagnostic n'a pas eu lieu : le monoxyde de carbone ne se voit pas, ne se
+     * sent pas, et tue. Annoncer une installation saine sur la foi d'un
+     * contrôle qui n'a pas pu se faire serait une fausse réassurance — et c'est
+     * exactement ce que le produit affichait.
+     *
+     * La gravité descend donc à « attention » : il reste quelque chose à
+     * vérifier, et l'acheteur doit le savoir avant de signer.
+     */
+    if (essais.co === 'non-realisee') {
+      gravite = 'attention';
+      verdict = essais.aLArret
+        ? 'Aucune anomalie relevée — mais le monoxyde de carbone n’a pas été mesuré : l’appareil était à l’arrêt le jour de la visite.'
+        : 'Aucune anomalie relevée — mais le monoxyde de carbone n’a pas été mesuré.';
+    } else {
+      gravite = 'bon';
+      verdict = 'L’installation de gaz ne présente aucune anomalie.';
+    }
   } else if (etat === 'anomalies' || a1 || a2) {
     gravite = 'attention';
     const listeTypes = [a1 && 'A1', a2 && 'A2'].filter(Boolean).join(' et ');
@@ -228,6 +286,30 @@ export function analyserGaz(lignes: string[], plage: [number, number]): Diagnost
 
   const faits: Fait[] = [];
   if (total !== null) faits.push({ libelle: 'Anomalies relevées', valeur: String(total) });
+
+  if (essais.co === 'non-realisee') {
+    faits.push({
+      libelle: 'Mesure du monoxyde de carbone',
+      valeur: 'non réalisée',
+      precision: essais.aLArret
+        ? 'l’appareil était à l’arrêt le jour de la visite'
+        : 'le rapport ne dit pas pourquoi'
+    });
+  } else if (essais.co === 'realisee') {
+    faits.push({
+      libelle: 'Mesure du monoxyde de carbone',
+      valeur: essais.ppm !== null ? `${essais.ppm} ppm` : 'réalisée'
+    });
+  }
+
+  if (essais.anneeAppareil !== null) {
+    faits.push({
+      libelle: 'Appareil installé en',
+      valeur: String(essais.anneeAppareil),
+      precision: 'une chaudière gaz dure en général 15 à 20 ans'
+    });
+  }
+
   if (a1) faits.push({ libelle: 'Type A1', valeur: 'présent', precision: 'à corriger sans urgence' });
   if (a2) faits.push({ libelle: 'Type A2', valeur: 'présent', precision: 'à corriger rapidement' });
   if (dgi) faits.push({ libelle: 'DGI', valeur: 'oui', precision: 'mise hors service immédiate' });
@@ -262,5 +344,127 @@ export function analyserGaz(lignes: string[], plage: [number, number]): Diagnost
     schema: null,
     pages: plage,
     ...(dateVisite?.[1] ? { date: dateVisite[1] } : {})
+  };
+}
+
+/**
+ * Les types d'anomalie relevés dans le tableau du rapport gaz.
+ *
+ * La rubrique « E. — Anomalies identifiées » liste ce qui a été constaté, une
+ * anomalie par bloc, chacune portant son type : A1, A2, DGI, ou 32c. C'est la
+ * seule conclusion lisible du document — la case cochée en fin de rapport est
+ * un dessin, et ne sort pas du PDF.
+ *
+ * ── Les deux pièges de cette rubrique ───────────────────────────────────────
+ *
+ * Son EN-TÊTE énumère les quatre types, comme légende de colonne :
+ * « (selon la norme) (A1 , A2 , DGI , 32c ) ». Une ligne qui les cite tous est
+ * donc une légende, jamais un constat — même règle que pour la page de
+ * conclusion.
+ *
+ * Et le tableau ne s'arrête pas tout seul : il faut le borner à la rubrique
+ * suivante (« F. — … »), sans quoi on ramasse les rappels réglementaires qui
+ * expliquent ce que sont A1, A2 et DGI.
+ */
+function typesDuTableau(lignes: string[]): string {
+  return sectionAnomalies(lignes)?.types ?? '';
+}
+
+/**
+ * La rubrique des anomalies : présente et vide, ou absente ?
+ *
+ * La distinction commande la conclusion, et rien ne la remplace. Une rubrique
+ * PRÉSENTE mais vide dit « aucune anomalie constatée » — c'est un résultat.
+ * Une rubrique ABSENTE dit seulement qu'on n'a pas su la lire — ce n'en est
+ * pas un.
+ *
+ * Les confondre revient à annoncer une installation saine parce qu'on n'a rien
+ * trouvé à lire. C'est le contraire du service rendu, et sur le gaz cela
+ * porterait sur le seul diagnostic qui peut faire couper l'alimentation le
+ * jour même.
+ */
+function sectionAnomalies(lignes: string[]): { types: string } | null {
+  /* « E. - Anomalies identifiées » : le point ET le tiret, séparés d'espaces. */
+  const debut = lignes.findIndex((l) =>
+    /^\s*E\s*[.\-–]?\s*[-–]?\s*Anomalies identifi[ée]es/i.test(l)
+  );
+  if (debut < 0) return null;
+
+  const apres = lignes.findIndex(
+    (l, i) => i > debut && /^\s*[FG]\s*[.\-–]?\s*[-–]?\s/.test(l)
+  );
+  const zone = lignes.slice(debut + 1, apres > debut ? apres : undefined);
+
+  const trouves = new Set<string>();
+  for (const ligne of zone) {
+    /* Une ligne qui cite trois types ou plus est la légende de la colonne. */
+    const cites = ligne.match(/\b(?:A1|A2|DGI|32c)\b/gi) ?? [];
+    if (cites.length >= 3) continue;
+    for (const t of cites) trouves.add(t.toUpperCase());
+  }
+
+  /*
+   * « 32c » est l'anomalie de la ventilation collective : elle ne se répare pas
+   * par le propriétaire mais par le syndic, sous contrôle du distributeur. Elle
+   * n'est ni A1 ni A2 — le produit la traite à part, et ne la fait donc pas
+   * remonter ici.
+   */
+  trouves.delete('32C');
+  return { types: [...trouves].join(' ') };
+}
+
+/** Ce que les essais sur place ont donné — ou n'ont pas donné. */
+export interface EssaisGaz {
+  /** Mesure du monoxyde de carbone : faite, non faite, ou non lue. */
+  co: 'realisee' | 'non-realisee' | null;
+  /** Le taux mesuré, en ppm, quand il est écrit. */
+  ppm: number | null;
+  /** Vrai si au moins un appareil n'a pas pu être mis en marche. */
+  aLArret: boolean;
+  /** L'année d'installation de l'appareil, quand le rapport la porte. */
+  anneeAppareil: number | null;
+}
+
+/**
+ * Les essais faits sur place, rubrique « D. — Identification des appareils ».
+ *
+ * Un état du gaz n'est pas qu'une liste de points cochés : le diagnostiqueur
+ * fait des essais. Le plus important est la mesure du monoxyde de carbone dans
+ * les produits de combustion — le CO ne se voit pas, ne se sent pas, et tue.
+ *
+ * ── Pourquoi c'est ici que ça se joue ───────────────────────────────────────
+ *
+ * Le rapport écrit « Mesure CO : Non réalisée » et, juste dessous,
+ * « Fonctionnement : Appareil à l'arrêt ». Autrement dit : le contrôle le plus
+ * important du diagnostic n'a pas eu lieu, faute d'avoir pu allumer la
+ * chaudière. C'est une information capitale pour un acheteur, et elle est
+ * enterrée dans un tableau de la page 2, en petits caractères.
+ *
+ * Un rapport sans anomalie ET sans mesure de CO ne dit pas « tout va bien » :
+ * il dit « je n'ai pas pu vérifier ce qui compte le plus ». La nuance change
+ * tout, et personne ne la voit.
+ *
+ * L'année d'installation est relevée au passage : elle donne la vétusté de
+ * l'appareil, que le rapport ne commente jamais.
+ */
+export function essaisGaz(lignes: string[]): EssaisGaz {
+  const debut = lignes.findIndex((l) =>
+    /^\s*D\s*[.\-–]?\s*[-–]?\s*Identification des appareils/i.test(l)
+  );
+  const fin = lignes.findIndex((l, i) => i > debut && /^\s*E\s*[.\-–]?\s*[-–]?\s/.test(l));
+  const zone = debut >= 0 ? lignes.slice(debut, fin > debut ? fin : undefined) : lignes;
+
+  const mentions = zone.filter((l) => /Mesure\s*CO/i.test(l));
+  const nonRealisee = mentions.some((l) => /Mesure\s*CO\s*:?\s*Non/i.test(l));
+  const realisee = mentions.some((l) => /Mesure\s*CO\s*:?\s*(?:Oui|R[ée]alis)/i.test(l));
+
+  const taux = trouver(zone, /Mesure\s*CO[^\n]{0,30}?(\d{1,5})\s*ppm/i);
+  const annee = trouver(zone, /Installation\s*:?\s*(19\d{2}|20\d{2})\b/i);
+
+  return {
+    co: realisee ? 'realisee' : nonRealisee ? 'non-realisee' : null,
+    ppm: taux?.[1] ? Number(taux[1]) : null,
+    aLArret: zone.some((l) => /Fonctionnement\s*:?\s*Appareil\s+[àa]\s+l['’]arr[êe]t/i.test(l)),
+    anneeAppareil: annee?.[1] ? Number(annee[1]) : null
   };
 }
