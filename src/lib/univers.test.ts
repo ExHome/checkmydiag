@@ -230,8 +230,32 @@ describe('les jetons livrés au CSS', () => {
    * Les diagnostics sans univers ne doivent pas se retrouver sans couleurs :
    * une chaîne vide laisse jouer les replis de la charte, écrits dans le CSS.
    * Renvoyer des jetons à moitié remplis les casserait à la place.
+   *
+   * Le mesurage servait d'exemple ici — il n'avait pas d'univers. Il en a un
+   * depuis le passage au fond pétrole, comme l'assainissement et « En clair » :
+   * les onze écrans sont désormais couverts, et il n'y a plus de repli à
+   * démontrer sur un cas réel. On vérifie donc le comportement lui-même, sur un
+   * écran qui n'existe pas.
    */
-  it('se tait pour un diagnostic sans univers, et laisse la charte reprendre', () => {
-    expect(styleUnivers('carrez')).toBe('');
+  it('se tait pour un écran sans univers, et laisse la charte reprendre', () => {
+    expect(styleUnivers('inconnu' as never)).toBe('');
+  });
+
+  it('couvre les onze écrans du produit', () => {
+    for (const ecran of [
+      'dpe',
+      'electricite',
+      'amiante',
+      'plomb',
+      'gaz',
+      'termites',
+      'erp',
+      'carrez',
+      'assainissement',
+      'dicodiag',
+      'en-clair'
+    ] as Ecran[]) {
+      expect(styleUnivers(ecran), ecran).not.toBe('');
+    }
   });
 });

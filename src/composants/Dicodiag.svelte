@@ -296,32 +296,34 @@
     display: flex;
     overflow: hidden;
 
-    background-color: var(--u-fond, #fbf7ef);
-    color: var(--u-texte, #1e2230);
+    background-color: var(--u-fond, #153e4c);
+    color: var(--u-texte, #f5f1e8);
 
-    --fond: var(--u-fond, #fbf7ef);
-    --papier: var(--u-surface, #f1eadc);
-    --sur-fond: var(--u-texte, #1e2230);
-    --sur-fond-doux: var(--u-texte-doux, #5a6070);
-    --encre: var(--u-texte, #1e2230);
-    --encre-doux: var(--u-texte-doux, #5a6070);
-    --gris: var(--u-texte-doux, #5a6070);
-    --trait: var(--u-trait, #d3c9b5);
-    --coral-fonce: var(--u-accent, #4a5878);
-    --coral-texte: var(--u-accent, #4a5878);
-    --surface: color-mix(in srgb, var(--u-texte, #1e2230) 4%, transparent);
+    --fond: var(--u-fond, #153e4c);
+    --papier: var(--u-surface, #274c58);
+    --sur-fond: var(--u-texte, #f5f1e8);
+    --sur-fond-doux: var(--u-texte-doux, #cbd8dd);
+    --encre: var(--u-texte, #f5f1e8);
+    --encre-doux: var(--u-texte-doux, #cbd8dd);
+    --gris: var(--u-texte-doux, #cbd8dd);
+    --trait: var(--u-trait, #839698);
+    --coral-fonce: var(--u-accent, #bfc5d1);
+    --coral-texte: var(--u-accent, #bfc5d1);
+    --surface: color-mix(in srgb, var(--u-texte, #f5f1e8) 4%, transparent);
 
     /*
-     * Le grain du papier, borné par la mesure.
+     * Le grain de papier est parti, et c'était le plus urgent.
      *
-     * Il ne vit que sur le fond nu : toute surface opaque posée dessus le
-     * masque et garde donc la mesure de sa couleur pleine. Au pire pixel — du
-     * noir à 5,5 % — le texte secondaire tient encore 5,19. C'est la raison du
-     * 0.055, et de rien de plus.
+     * Cet écran portait un bruit fractal en fond — un vrai grain de papier —
+     * plus un halo blanc en haut de page. Sur un fond ivoire, cela faisait
+     * littéralement du parchemin : « du parchemin de chez tante Véro ». Sur le
+     * pétrole, cela n'aurait plus aucun sens.
+     *
+     * Ce qui reste de l'intention d'origine — un ouvrage qu'on consulte, pas un
+     * constat qu'on subit — tient maintenant dans son accent neutre et dans sa
+     * mise en page, pas dans une imitation de matière.
      */
-    background-image:
-      radial-gradient(130% 55% at 50% -12%, rgb(255 255 255 / 55%), transparent 62%),
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)' opacity='0.055'/%3E%3C/svg%3E");
+    background-image: radial-gradient(120% 60% at 50% -10%, rgb(245 241 232 / 7%), transparent 64%);
   }
 
   .ouvrage {
@@ -578,7 +580,7 @@
     gap: 1px;
     padding: var(--e2) 6px;
     border-left: 1px solid var(--trait);
-    background: color-mix(in srgb, var(--u-texte, #1e2230) 3%, transparent);
+    background: color-mix(in srgb, var(--u-texte, #f5f1e8) 3%, transparent);
     overflow: hidden;
   }
 

@@ -79,150 +79,197 @@ export interface Univers {
 
 export const UNIVERS: Partial<Record<Ecran, Univers>> = {
   /*
-   * DPE — l'écran corail, aux valeurs de la maquette.
+   * ── TOUS LES UNIVERS SONT SOMBRES, ET C'EST UNE DÉCISION ─────────────────
    *
-   * C'est le premier diagnostic du dossier et le plus lu : c'est lui qui porte
-   * la couleur de la marque. Fond rose très pâle, encre brique, corail vif sur
-   * les aplats.
+   * Ils étaient bâtis sur des fonds clairs et chauds : rose pâle, sable, crème,
+   * vert d'eau. La cliente a tranché : « du parchemin de chez tante Véro », « le
+   * sable avec liséré bleu, ça fait vieux », « je ne veux pas du sable dominant ».
    *
-   * J'avais rendu cet écran à l'encre, en me disant que l'étiquette A→G devait
-   * régner seule. La cliente a tranché en trois mots — « manque de corail » —
-   * et elle avait raison : le corail est la seule couleur vive de la marque, et
-   * l'écran le plus lu du dossier l'avait perdu.
+   * Chaque écran repose donc sur le pétrole du produit, teinté à 8 % seulement
+   * de sa propre couleur. Une seule famille, onze nuances — et c'est l'ACCENT
+   * qui distingue les écrans, pas le fond. Un fond par écran aurait fait onze
+   * produits.
    *
-   * Les sept couleurs de l'arrêté restent intouchées : elles se détachent sur
-   * le rose pâle aussi bien que sur le sable.
+   * ── Ce que le fond sombre rend possible ──────────────────────────────────
+   *
+   * Le corail EXACT de la marque, #FF6B5D, tient 4,05 sur le fond du DPE. Sur
+   * le rose pâle d'avant, il fallait l'assombrir jusqu'à #A33220 pour qu'il
+   * s'écrive — et il devenait la brique qu'on nous reproche depuis le début.
+   * Le fond sombre est ce qui rend son corail à la marque.
+   *
+   * ── Comment ces valeurs ont été obtenues ─────────────────────────────────
+   *
+   * Calculées, pas choisies. Pour chaque univers : le fond est le pétrole
+   * mélangé à 8 % de la couleur vive ; la surface, ce fond éclairci de 8 % de
+   * crème ; l'accent, la couleur vive éclaircie jusqu'à tenir 4,5 sur la
+   * surface. Quand une teinte est trop sombre pour remplir une barre — le brun
+   * des termites à 2,1, le bleu ardoise du mesurage à 2,1 —, c'est ELLE qu'on
+   * éclaircit jusqu'à 3:1, jamais le fond : la famille reste entière.
+   *
+   * Les sept couleurs A→G de l'arrêté ne bougent pas, ici comme ailleurs.
    */
-  dpe: {
-    fond: '#fff4f2',
-    surface: '#ffffff',
-    texte: '#7a2e24',
-    /*
-     * Le #9C6459 de la maquette tombe à 4,45 sur le fond nu. Assombri une
-     * première fois à #96604F, il passait la mesure — et échouait quand même à
-     * l'écran, 35 fois : les cartes et les encarts posent des aplats
-     * translucides teintés par-dessus le rose, et sur le plus sombre d'entre
-     * eux il retombait à 3,75.
-     *
-     * Le fond nu n'est donc pas le pire cas, et une mesure faite sur lui seul
-     * ne prouve rien. #875349 tient 4,55 sur l'aplat le plus dense.
-     */
-    texteDoux: '#875349',
-    accentVif: '#ff6b5d',
-    accent: '#a33220',
-    surAccent: '#ffffff',
-    trait: '#f6d9d3'
-  },
 
-  /* Électricité — le tableau technique, le seul écran sombre. */
-  electricite: {
-    fond: '#0d1720',
-    surface: '#14212b',
-    texte: '#e8eef2',
-    texteDoux: '#a8bcc7',
-    /* Le jaune de la maquette : 12,1 sur le fond, il porte les accents. */
-    accentVif: '#ffd54f',
-    accent: '#ffd54f',
-    surAccent: '#0d1720',
-    trait: '#24333f',
+  /* DPE — le corail de la marque, enfin lisible tel quel. */
+  dpe: {
+    fond: '#223e49',
+    surface: '#334c56',
+    texte: '#f5f1e8',
+    texteDoux: '#cbd8dd',
+    accentVif: '#ff6b5d',
+    accent: '#ffb4ac',
+    surAccent: '#0c2f3a',
+    trait: '#8c9899',
     sombre: true
   },
 
-  /* Amiante — le violet du prélèvement, sur le sable. */
+  /* Électricité — le tableau technique, et son jaune de phase. */
+  electricite: {
+    /* Le jaune tient 7,3 sur le fond : il n'a besoin d'aucune version claire. */
+    fond: '#224648',
+    surface: '#335455',
+    texte: '#f5f1e8',
+    texteDoux: '#cbd8dd',
+    accentVif: '#ffd54f',
+    accent: '#ffd54f',
+    surAccent: '#0c2f3a',
+    trait: '#909f9b',
+    sombre: true
+  },
+
+  /* Amiante — le violet du prélèvement en laboratoire. */
   amiante: {
-    fond: '#f4e8d8',
-    surface: '#ffffff',
-    /* #7B68EE ne tient que 3,6 sur blanc : assombri pour le texte, la teinte
-       d'origine reste sur les aplats et les filets. */
-    texte: '#3b2f7a',
-    texteDoux: '#59547f',
+    fond: '#193f55',
+    surface: '#2b4d61',
+    texte: '#f5f1e8',
+    texteDoux: '#cbd8dd',
     accentVif: '#8b7bf0',
-    accent: '#5647ba',
-    surAccent: '#ffffff',
-    trait: '#ddd6f3'
+    accent: '#cac2f8',
+    surAccent: '#04161c',
+    trait: '#87989f',
+    sombre: true
   },
 
-  /* Plomb — le laboratoire d'analyse, fonds très pâles et verts profonds. */
+  /* Plomb — le vert du réactif. */
   plomb: {
-    fond: '#f2f8f2',
-    surface: '#f7faf7',
-    texte: '#1b5e20',
-    texteDoux: '#496a4c',
+    fond: '#134247',
+    surface: '#255054',
+    texte: '#f5f1e8',
+    texteDoux: '#cbd8dd',
     accentVif: '#43a047',
-    accent: '#276b2a',
-    surAccent: '#ffffff',
-    trait: '#cfe0d1'
+    accent: '#acd5ae',
+    surAccent: '#04161c',
+    trait: '#849a98',
+    sombre: true
   },
 
-  /* Gaz — la chaufferie : sable chaud, orange de la flamme. */
+  /* Gaz — la flamme de la chaudière. */
   gaz: {
-    fond: '#fff8f2',
-    surface: '#ffffff',
-    texte: '#8b3e00',
-    texteDoux: '#7a5540',
-    /* #FF8C42 tombe à 2,7 sur blanc : l'orange foncé prend le relais dès qu'il
-       s'agit d'écrire ou de porter du blanc. */
+    fond: '#213e44',
+    surface: '#324c51',
+    texte: '#f5f1e8',
+    texteDoux: '#cbd8dd',
     accentVif: '#f4701f',
-    accent: '#a6470c',
-    surAccent: '#ffffff',
-    trait: '#f2e4d6'
+    accent: '#fab88f',
+    surAccent: '#0c2f3a',
+    trait: '#899694',
+    sombre: true
   },
 
-  /* Termites — le bois : cernes, fibres, terres brûlées. */
+  /*
+   * Termites — le bois.
+   *
+   * Le brun #A0522D ne tenait que 2,1 sur le fond : invisible dès qu'il
+   * remplissait quelque chose. Éclairci jusqu'à 3:1, il reste un bois — un
+   * bois chaud plutôt qu'une terre brûlée.
+   */
   termites: {
-    fond: '#f4e8d8',
-    surface: '#fffdfa',
-    texte: '#5d3a1a',
-    texteDoux: '#6f5239',
-    accentVif: '#a0522d',
-    accent: '#8b4513',
-    surAccent: '#ffffff',
-    trait: '#e3d0b8'
+    fond: '#1b3c45',
+    surface: '#2c4a52',
+    texte: '#f5f1e8',
+    texteDoux: '#cbd8dd',
+    accentVif: '#b17153',
+    accent: '#dbbdaf',
+    surAccent: '#04161c',
+    trait: '#869595',
+    sombre: true
+  },
+
+  /* Risques — l'eau et la roche : le teal profond de la coupe géologique. */
+  erp: {
+    fond: '#0e404b',
+    surface: '#204e58',
+    texte: '#f5f1e8',
+    texteDoux: '#cbd8dd',
+    accentVif: '#179487',
+    accent: '#9cd1cc',
+    surAccent: '#04161c',
+    trait: '#82999a',
+    sombre: true
+  },
+
+  /*
+   * Surface — le bleu du plan d'architecte.
+   *
+   * C'est ici que se logeait le reproche le plus net : un fond crème avec des
+   * filets bleu ardoise, « ça fait vieux ». Le plan se lit désormais en clair
+   * sur fond sombre, comme un calque rétroéclairé.
+   */
+  carrez: {
+    fond: '#153e4c',
+    surface: '#274c58',
+    texte: '#f5f1e8',
+    texteDoux: '#cbd8dd',
+    accentVif: '#76839d',
+    accent: '#bfc5d1',
+    surAccent: '#04161c',
+    trait: '#839698',
+    sombre: true
+  },
+
+  /* Assainissement — l'eau, encore, mais celle qui s'en va. */
+  assainissement: {
+    fond: '#0e404b',
+    surface: '#204e58',
+    texte: '#f5f1e8',
+    texteDoux: '#cbd8dd',
+    accentVif: '#179487',
+    accent: '#9cd1cc',
+    surAccent: '#04161c',
+    trait: '#82999a',
+    sombre: true
   },
 
   /*
    * Dicodiag — l'ouvrage de référence.
    *
-   * Ce n'est pas un diagnostic, et il ne doit pas en avoir l'air : on consulte,
-   * on ne subit pas. Rien de ce qui est écrit ici ne parle de votre bien.
-   *
-   * La rupture n'est pas dans la couleur, elle est dans la matière — et c'est
-   * ce qui la rend impossible à confondre avec un huitième diagnostic. Les
-   * autres univers sont bâtis sur des cartes claires posées sur un fond teinté.
-   * Ici la surface est plus SOMBRE que le fond : le bloc s'enfonce dans la page
-   * au lieu de s'en détacher, comme un encadré dans un livre. Un rapport a
-   * besoin de la carte pour y poser sa pastille de gravité — ce fond lui est
-   * structurellement inutilisable.
-   *
-   * L'encre est presque neutre, quand les sept autres ont un texte teinté :
-   * c'est la signature de l'imprimé. Et l'accent n'est pas une huitième teinte
-   * inventée — c'est le bleu ardoise de l'icône Dicodiag, assombri jusqu'à
-   * passer la mesure (#5c6b8a n'atteignait que 4,47 sur les surfaces).
-   *
-   * Aucune couleur de danger n'apparaît, et surtout pas de rouge : sur cet
-   * écran, il n'y a rien à alerter.
+   * On consulte, on ne subit pas : rien de ce qui est écrit ici ne parle de
+   * votre bien. Sa rupture n'est plus dans la matière du fond — tous sont
+   * sombres — mais dans son accent, le seul qui soit neutre : un bleu ardoise
+   * quand les neuf autres portent une couleur de métier.
    */
   dicodiag: {
-    fond: '#fbf7ef',
-    surface: '#f1eadc',
-    texte: '#1e2230',
-    texteDoux: '#595f6f',
-    accentVif: '#5c6b8a',
-    accent: '#4a5878',
-    surAccent: '#ffffff',
-    trait: '#d3c9b5'
+    fond: '#153e4c',
+    surface: '#274c58',
+    texte: '#f5f1e8',
+    texteDoux: '#cbd8dd',
+    accentVif: '#76839d',
+    accent: '#bfc5d1',
+    surAccent: '#04161c',
+    trait: '#839698',
+    sombre: true
   },
 
-  /* Risques — la coupe géologique : eaux claires, teal profond. */
-  erp: {
-    fond: '#f2fafa',
-    surface: '#ffffff',
-    texte: '#00695c',
-    texteDoux: '#476b67',
-    accentVif: '#00897b',
-    accent: '#007164',
-    surAccent: '#ffffff',
-    trait: '#d5efee'
+  /* En clair — les réponses, dans le corail de la marque. */
+  'en-clair': {
+    fond: '#223e49',
+    surface: '#334c56',
+    texte: '#f5f1e8',
+    texteDoux: '#cbd8dd',
+    accentVif: '#ff6b5d',
+    accent: '#ffb4ac',
+    surAccent: '#0c2f3a',
+    trait: '#8c9899',
+    sombre: true
   }
 };
 

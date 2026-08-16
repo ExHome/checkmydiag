@@ -379,9 +379,9 @@
     border-end-start-radius: 28px;
     border-end-end-radius: 28px;
 
-    --sur-fond: #f4e8d8;
+    --sur-fond: #f5f1e8;
     --sur-fond-doux: #d8ccbc;
-    --encre: #f4e8d8;
+    --encre: #f5f1e8;
     --encre-doux: #d8ccbc;
     --gris: #d8ccbc;
     --surface: rgb(244 232 216 / 6%);

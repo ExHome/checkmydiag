@@ -906,10 +906,10 @@
     -webkit-overflow-scrolling: touch;
     padding: var(--e4) var(--e4) var(--e7);
 
-    background: var(--u-fond, #f4e8d8);
+    background: var(--u-fond, #0f3a47);
     color: var(--u-texte, #1a4d5c);
 
-    --fond: var(--u-fond, #f4e8d8);
+    --fond: var(--u-fond, #0f3a47);
     --fond-clair: var(--u-surface, #ffffff);
     --papier: var(--u-surface, #ffffff);
     --papier-doux: color-mix(in srgb, var(--u-texte, #1a4d5c) 4%, var(--u-surface, #ffffff));
@@ -952,7 +952,7 @@
      */
     --petrole: var(--u-texte, #1a4d5c);
     --petrole-fonce: var(--u-texte, #0f3a47);
-    --sable: var(--u-fond, #f4e8d8);
+    --sable: var(--u-fond, #0f3a47);
     --sable-clair: var(--u-surface, #f5f1e8);
     --vert-900: var(--u-texte, #0f3a47);
     --vert-800: var(--u-texte, #14434f);

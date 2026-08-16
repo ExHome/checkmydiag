@@ -3,8 +3,8 @@
 
    TROIS COULEURS, ET ELLES SEULES :
 
-     Bleu pétrole  #1A4D5C   la structure, le texte, les traits
-     Sable         #F4E8D8   le fond
+     Bleu pétrole  #1A4D5C   le FOND, en grand
+     Sable         #F4E8D8   les encarts posés dessus, jamais le fond
      Corail        #FF6B5D   l'action, l'accent, l'alerte
 
    Tout le reste en découle : les nuances plus claires ou plus foncées des trois
@@ -96,13 +96,17 @@
   --sur-coral: #0c2f3a;
 
   /*
-   * Le corail porte l'action, jamais le texte courant.
+   * Le corail qui S'ÉCRIT, sur fond pétrole.
    *
-   * Sur le sable, #FF6B5D ne tient que 2,7 de contraste : parfait pour un
-   * bouton dont le fond est plein et le texte blanc, insuffisant pour lire une
-   * phrase. Sa version foncée existe pour les rares cas où il doit s'écrire.
+   * Le vrai corail #FF6B5D tient 4,6 sur le pétrole foncé : il peut donc
+   * s'écrire tel quel, ce qui était impossible sur le sable où il tombait à
+   * 2,7. Pour le texte courant on garde tout de même une version très
+   * légèrement éclaircie, qui passe 5,4 et ne fatigue pas en petit corps.
+   *
+   * C'est le fond sombre qui rend son corail à la marque. Assombrir la couleur
+   * pour la rendre lisible, c'était la transformer en brique.
    */
-  --coral-texte: #a33220;
+  --coral-texte: #ffb3aa;
 
   /* Les noms historiques, remappés une dernière fois. L'ossature du produit
      n'a pas bougé depuis le vert nuit : ce sont toujours les mêmes variables
@@ -115,54 +119,84 @@
   --vert-100: #e8f0f2;
 
   --or: #ff6b5d;
-  --or-fonce: #a33220;
-  --or-clair: #1a4d5c;
-  --or-pale: #ffe6e2;
+  --or-fonce: #ffb3aa;
+  --or-clair: #ffb3aa;
+  --or-pale: rgb(255 107 93 / 16%);
 
-  --encre: #1a4d5c;
-  --encre-doux: #555555;
-  --gris: #888888;
+  /*
+   * ── LE FOND EST PÉTROLE. LE SABLE EST UN ENCART. ──────────────────────────
+   *
+   * Le produit avait le sable en fond de page : #F4E8D8 sur toute la surface,
+   * avec des cartes claires et des filets bleus posés dessus. Verdict de la
+   * cliente, et il est juste : « du parchemin de chez tante Véro », « le sable
+   * avec liséré bleu, ça fait vieux », « je ne veux pas du sable dominant ».
+   *
+   * L'écran de démarrage, lui, était déjà dans le bon sens — pétrole en grand,
+   * encadré de dépôt en corail, intérieur en sable — et c'est le seul écran que
+   * personne n'a jamais critiqué. On généralise donc ce qui marchait au lieu
+   * d'inventer autre chose.
+   *
+   * ── Ce que le pétrole rend possible ───────────────────────────────────────
+   *
+   * Le corail EXACT de la marque, #FF6B5D, tient 4,6 de contraste sur ce
+   * pétrole foncé. Sur le sable, il ne tenait que 2,7 : il fallait l'assombrir
+   * pour l'écrire, et il devenait rouge brique — le reproche qui revient depuis
+   * le début. Le fond sombre est ce qui rend enfin le vrai corail lisible.
+   *
+   * ── Où le sable et la crème restent ───────────────────────────────────────
+   *
+   * En ENCARTS pleins, jamais en fond de page : le panneau de dépôt, les
+   * cartouches d'explication, les blocs qu'on veut détacher du fond. Et la
+   * crème remplace le sable partout où il ne s'agit que d'écrire : #F5F1E8 est
+   * franc là où #F4E8D8 tire vers le papier jauni.
+   */
+  --encre: #f5f1e8;
+  --encre-doux: #cbd8dd;
+  --gris: #a9bcc3;
   --papier: #ffffff;
   --papier-doux: #f5f1e8;
-  --fond: #f4e8d8;
-  --fond-clair: #ffffff;
-  --sur-fond: #1a4d5c;
-  --sur-fond-doux: #555555;
+  --fond: #0f3a47;
+  --fond-clair: #14434f;
+  --sur-fond: #f5f1e8;
+  --sur-fond-doux: #cbd8dd;
 
   /*
-   * Les surfaces posées sur le fond.
+   * Les surfaces posées sur le pétrole : un voile de crème très dilué.
    *
-   * Elles étaient écrites en blanc translucide — « var(--surface-forte) » —
-   * ce qui n'éclaircit une surface que sur un fond sombre. Sur fond clair, il
-   * faut au contraire poser une encre très diluée. Cinquante-huit déclarations
-   * passent par ces deux variables plutôt que par une couleur en dur.
+   * Sur fond clair, une surface se détache en s'assombrissant ; sur fond
+   * sombre, en s'éclaircissant. Les cinquante-huit déclarations qui passent par
+   * ces variables n'ont rien à savoir de ce basculement — c'est précisément
+   * pour cela qu'elles existent.
    */
-  /* Les surfaces posées sur le sable : un voile de bleu pétrole très dilué. */
-  --surface: rgb(26 77 92 / 3%);
-  --surface-forte: rgb(26 77 92 / 6%);
-  --surface-bord: rgb(26 77 92 / 10%);
-
-  /* Les filets de la charte : un bord chaud sur les cartes, plus clair pour
-     les séparations internes. */
-  --trait: #e8dcc8;
-  --trait-fin: #f0eae0;
-  --trait-or: #e8dcc8;
+  --surface: rgb(245 241 232 / 5%);
+  --surface-forte: rgb(245 241 232 / 9%);
+  --surface-bord: rgb(245 241 232 / 18%);
 
   /*
-   * Les trois états.
+   * Les filets, en crème diluée.
    *
-   * Le corail sert l'alerte, comme la charte le demande — mais en version
-   * foncée dès qu'il s'agit d'écrire, sinon rien ne se lit. L'attention garde
-   * un ambre assombri, et le bon prend le bleu pétrole plutôt qu'un vert de
-   * plus : la palette n'en compte pas, et en inventer un serait revenir sur ce
-   * qui vient d'être décidé.
+   * Le liseré bleu sur fond chaud est ce qui datait le plus le produit. Sur
+   * pétrole, un filet ne se dessine plus en fonçant mais en éclaircissant, et
+   * il devient discret au lieu d'être un cadre.
    */
-  --alerte: #a33220;
-  --alerte-fond: #ffeeeb;
-  --attention: #8a5a05;
-  --attention-fond: #fdf3e0;
-  --ok: #1a4d5c;
-  --ok-fond: #e8f0f2;
+  --trait: rgb(245 241 232 / 20%);
+  --trait-fin: rgb(245 241 232 / 11%);
+  --trait-or: rgb(255 107 93 / 55%);
+
+  /*
+   * Sur pétrole, les trois états s'éclaircissent au lieu de s'assombrir.
+   *
+   * Les versions foncées — corail brique, ambre brûlé, pétrole — s'éteignaient
+   * sur ce fond : le corail foncé n'y tient que 2,1. Ce sont les versions
+   * claires qui signalent, et leurs fonds sont des voiles teintés plutôt que
+   * des aplats pastel, qui feraient des rectangles laiteux sur le bleu.
+   */
+  --alerte: #ff9084;
+  --alerte-fond: rgb(255 107 93 / 15%);
+  --attention: #ffd54a;
+  --attention-fond: rgb(255 213 74 / 14%);
+  --ok: #7fd4c8;
+  --ok-fond: rgb(127 212 200 / 14%);
 
   /*
    * La couleur qui SIGNALE, distincte de celle qui décore.
@@ -864,42 +898,13 @@ button {
    fond » obtient la bonne sans savoir que le fond a changé de camp.
    --------------------------------------------------------------------------- */
 body.demarrage {
+  /*
+   * L'écran de démarrage inversait le produit : pétrole en grand quand tout le
+   * reste était sable. Depuis que le fond est pétrole partout, il n'a plus rien
+   * à inverser — il ne garde que ce qui lui est propre, le pétrole plein plutôt
+   * que le pétrole profond du reste de l'application.
+   */
   background: var(--petrole);
-
-  /* Sur le bleu, le texte passe au sable. Mesuré : 9,4 de contraste. */
-  --sur-fond: #f4e8d8;
-  --sur-fond-doux: #d8ccbc;
-  --encre: #f4e8d8;
-  --encre-doux: #d8ccbc;
-
-  /* Les surfaces posées sur le bleu s'éclaircissent au lieu de s'assombrir. */
-  --surface: rgb(244 232 216 / 6%);
-  --surface-forte: rgb(244 232 216 / 10%);
-  --surface-bord: rgb(244 232 216 / 20%);
-
-  --trait: rgb(244 232 216 / 22%);
-  --trait-fin: rgb(244 232 216 / 12%);
-  --trait-or: rgb(255 107 93 / 55%);
-
-  /* Le corail éclairci pour le texte sur bleu. Mesuré : #FF9084 n'y tient que
-     4,24 — sous le seuil, de peu, mais sous le seuil. #FFB3AA passe. */
-  --or-clair: #ffb3aa;
-  --coral-texte: #ffb3aa;
-
-  /* Le gris de texte suit le fond, sinon il disparaît : #888888 sur le bleu
-     ne tient que 2,62. */
-  --gris: #d8ccbc;
-
-  /* Les fonds d'état, éclaircis par transparence plutôt qu'en dur. */
-  --alerte-fond: rgb(255 107 93 / 14%);
-  --attention-fond: rgb(255 213 74 / 14%);
-  --ok-fond: rgb(244 232 216 / 10%);
-  --alerte: #ff9084;
-  --attention: #ffd54a;
-  --ok: #f4e8d8;
-  /* Sur fond sombre, le corail foncé s'éteint : 2,1 sur le pétrole. C'est la
-     version claire qui signale. */
-  --alerte-vive: #ff9084;
 }
 
 /* Le bandeau du site suit le fond : un rectangle blanc en haut d'un écran
