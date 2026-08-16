@@ -514,7 +514,56 @@ export const REGLEMENT: Partial<Record<TypeDiag, Reglement>> = {
         'Ce sont deux mesurages distincts : les combles non aménagés, greniers et vérandas de plus d’1,80 m entrent dans la superficie privative et pas dans la surface habitable. La Carrez vise tout lot de copropriété, quel qu’en soit l’usage — bureau et local commercial compris.'
     },
     validiteMois: null,
-    regles: []
+    regles: [
+      {
+        /*
+         * La marge de cinq pour cent, et le délai d'un an.
+         *
+         * Le produit énonçait la règle depuis longtemps, mais elle n'était pas
+         * ici : donc pas sourcée, pas datée, pas contestable. C'est exactement
+         * ce que ce fichier existe pour empêcher.
+         *
+         * Le texte dit « un vingtième », pas « cinq pour cent » — c'est la même
+         * chose, et la fraction est ce qui fait foi. Deux délais coexistent, et
+         * ils ne durent pas la même chose : UN AN pour demander la diminution
+         * du prix, UN MOIS pour l'action en nullité quand la superficie n'est
+         * pas mentionnée du tout. Les confondre coûterait le recours.
+         *
+         * Lu au texte le 16/08/2026, version en vigueur du 22 décembre 2014.
+         */
+        enonce:
+          'Si la superficie réelle est inférieure de plus d’un vingtième — cinq pour cent — à celle exprimée dans l’acte, le vendeur supporte, à la demande de l’acquéreur, une diminution du prix proportionnelle à la moindre mesure. L’action doit être intentée dans un délai d’un an à compter de l’acte authentique constatant la réalisation de la vente, à peine de déchéance.',
+        source: {
+          reference: 'loi n° 65-557 du 10 juillet 1965, article 46',
+          url: 'https://www.legifrance.gouv.fr/loda/article_lc/LEGIARTI000029946555',
+          luLe: '2026-08-16'
+        },
+        reserve:
+          'Un écart en PLUS ne donne aucun droit au vendeur : la règle ne joue que dans un sens. Et elle porte sur la superficie exprimée dans l’acte, pas sur celle d’un autre diagnostic du dossier — un écart entre le mesurage et la surface du DPE n’ouvre à lui seul aucun recours.'
+      },
+      {
+        enonce:
+          'À défaut de toute mention de la superficie de la partie privative dans l’acte, la nullité peut être invoquée — mais l’action se prescrit à l’expiration d’un délai d’un mois à compter de l’acte authentique.',
+        source: {
+          reference: 'loi n° 65-557 du 10 juillet 1965, article 46',
+          url: 'https://www.legifrance.gouv.fr/loda/article_lc/LEGIARTI000029946555',
+          luLe: '2026-08-16'
+        },
+        reserve:
+          'Un mois, c’est très court, et le délai court depuis la signature : passé ce terme, l’absence de mention ne s’attaque plus.'
+      },
+      {
+        enonce:
+          'Les caves, garages et emplacements de stationnement sont exclus de l’obligation, ainsi que les lots d’une superficie inférieure au seuil fixé par décret — huit mètres carrés.',
+        source: {
+          reference: 'loi n° 65-557 du 10 juillet 1965, article 46',
+          url: 'https://www.legifrance.gouv.fr/loda/article_lc/LEGIARTI000029946555',
+          luLe: '2026-08-16'
+        },
+        reserve:
+          'C’est pourquoi une cave ou une terrasse figure au tableau du mesurage avec une superficie privative nulle : elle existe, elle se visite, et elle ne compte pas dans le chiffre porté à l’acte.'
+      }
+    ]
   }
 };
 

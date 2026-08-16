@@ -255,7 +255,48 @@ d'écart.
 
 ---
 
-## 8 · À vérifier lors des prochaines lectures
+## 8 · Le plomb : ce que « non mesurée » veut dire
+
+Le tableau de conclusion du CREP compte six colonnes :
+
+```
+Total  Non mesurées  Classe 0  Classe 1  Classe 2  Classe 3
+ 208        39         130         1         2        36
+```
+
+**« Non mesurée » ne veut pas dire « pas contrôlée ».** Le détail du rapport
+l'écrit, unité par unité :
+
+```
+Mur Pierre           Non mesurée - NM   Absence de revêtement
+Plinthes Carrelage   Non mesurée - NM   Absence de revêtement
+Fenêtre Métal        Non mesurée - NM   Absence de revêtement
+```
+
+Une unité non mesurée est une unité **sans revêtement à mesurer** : pierre nue,
+carrelage, métal, PVC. Le plomb se cherche dans les peintures ; là où il n'y en
+a pas, il n'y a rien à mesurer, et la norme NF X46-030 prévoit ce classement.
+
+Le taux de non mesurées ne dit donc rien de la qualité du contrôle : il dit
+combien de surfaces du logement ne sont pas peintes.
+
+> **Erreur commise ici même.** J'avais tempéré la conclusion d'un constat
+> rassurant au motif que 19 % des unités n'étaient pas mesurées, croyant qu'une
+> part du logement avait échappé au contrôle. C'est l'inverse du service rendu :
+> inquiéter sur une donnée normale. La règle qui en sort — **avant de faire
+> d'un chiffre une réserve, chercher ce que la norme en dit.**
+
+Ce qui compte vraiment dans ce tableau, c'est la **classe 3** : revêtement au
+plomb dégradé. L'article L.1334-9 du code de la santé publique impose alors au
+propriétaire des travaux pour supprimer l'exposition, et la transmission du
+constat aux occupants et à toute entreprise intervenant.
+
+Le rapport relève aussi la présence d'**enfants de moins de six ans**, et le
+nombre. C'est le facteur qui déclenche le risque de saturnisme infantile.
+
+---
+
+## 9 · À vérifier lors des prochaines lectures
 
 - [ ] Le tableau « E. — Anomalies identifiées » du gaz : c'est là qu'est la
       conclusion réelle, puisque la case cochée est illisible.

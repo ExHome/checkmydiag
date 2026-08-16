@@ -152,6 +152,28 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
       gravite = 'bon';
       verdict = 'Aucun revêtement contenant du plomb au-delà du seuil réglementaire.';
     }
+
+    /*
+     * « Non mesurée » ne veut PAS dire « pas contrôlée ».
+     *
+     * J'avais tempéré la conclusion à partir de ce chiffre, en croyant qu'une
+     * part du logement avait échappé au contrôle. C'est faux, et la cliente l'a
+     * corrigé aussitôt : le rapport lui-même l'écrit, unité par unité —
+     *
+     *     Mur Pierre        Non mesurée - NM   Absence de revêtement
+     *     Plinthes Carrelage Non mesurée - NM  Absence de revêtement
+     *     Fenêtre Métal      Non mesurée - NM  Absence de revêtement
+     *
+     * Une unité non mesurée est une unité SANS REVÊTEMENT à mesurer : pierre
+     * nue, carrelage, métal, PVC. Le plomb se cherche dans les peintures ; là
+     * où il n'y en a pas, il n'y a rien à mesurer, et la norme NF X46-030
+     * prévoit exactement ce classement.
+     *
+     * Le taux de non mesurées ne dit donc rien de la qualité du contrôle : il
+     * dit combien de surfaces du logement ne sont pas peintes. En faire une
+     * réserve revenait à inquiéter pour une donnée parfaitement normale — la
+     * faute inverse de celle que ce produit combat.
+     */
   }
 
   const faits: Fait[] = [];
