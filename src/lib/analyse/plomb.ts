@@ -333,6 +333,15 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
    * vaut simplement pas ce qu'il prétend valoir, et c'est au lecteur d'en
    * tirer les conséquences avec son notaire.
    */
+  /*
+   * Le signalement à l'ARS : une information que personne ne voit.
+   *
+   * Elle est en page 15 sur 19, et elle dit que le logement a été signalé à
+   * l'administration sanitaire. Ce n'est ni une sanction ni une interdiction,
+   * mais un vendeur l'ignore souvent et un acquéreur ne la trouve jamais.
+   */
+  const signale = transmisALArs(lignes);
+
   const surLAppareil = [
     ...(autorisationPerimee
       ? [
@@ -348,6 +357,15 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
             genre: 'complement' as const,
             libelle:
               'La vérification de justesse de l’appareil, en début et en fin de constat, n’apparaît pas au rapport. La norme la prévoit à chaque constat.'
+          }
+        ]
+      : []),
+    ...(signale
+      ? [
+          {
+            genre: 'complement' as const,
+            libelle:
+              'Ce constat a été transmis à l’agence régionale de santé : le rapport le dit. C’est ce que la loi impose dès qu’une des cinq situations de risque est constatée — un local à plus de 50 % de classe 3, l’ensemble du logement à plus de 20 %, un plancher menaçant, des écoulements d’eau ou des moisissures sur plusieurs unités d’une même pièce. Le logement est donc signalé à l’administration sanitaire ; ce n’est ni une sanction ni une interdiction de vendre.'
           }
         ]
       : [])
@@ -444,4 +462,51 @@ export function appareilPlomb(lignes: string[]): AppareilPlomb {
     /* Entrée ET sortie, le même jour : c'est ce que la norme demande. */
     etalonnageDuJour: dates.length >= 2 && new Set(dates).size === 1
   };
+}
+
+/**
+ * Le constat a-t-il été transmis à l'agence régionale de santé ?
+ *
+ * L'arrêté du 19 août 2011 définit CINQ situations de risque, et une seule
+ * suffit à déclencher la transmission :
+ *
+ *   · un local présentant au moins 50 % d'unités de diagnostic de classe 3 ;
+ *   · l'ensemble des locaux en présentant au moins 20 % ;
+ *   · un plancher ou plafond menaçant de s'effondrer, ou effondré ;
+ *   · des traces importantes de coulures, ruissellements ou écoulements d'eau
+ *     sur plusieurs unités d'une même pièce ;
+ *   · plusieurs unités d'une même pièce couvertes de moisissures ou de taches
+ *     d'humidité.
+ *
+ * L'auteur du constat transmet alors une copie au directeur général de l'ARS
+ * dans les cinq jours ouvrables (article L. 1334-10 du code de la santé
+ * publique), qui en informe le préfet.
+ *
+ * ── Pourquoi le lire plutôt que le calculer ─────────────────────────────────
+ *
+ * Les deux premiers critères se calculent, les trois autres non : ils tiennent
+ * à ce que le diagnostiqueur a VU sur place. Le rapport, lui, répond aux cinq
+ * et conclut. On lit donc sa conclusion, plutôt que d'en recalculer une part et
+ * d'ignorer le reste.
+ *
+ * ── Ce que cela signifie pour un acheteur ───────────────────────────────────
+ *
+ * Que le logement est signalé à l'administration sanitaire. Ce n'est ni une
+ * sanction ni une interdiction — c'est une information que le vendeur connaît
+ * rarement, et que l'acquéreur ne voit jamais : elle est en page 15 sur 19.
+ */
+export function transmisALArs(lignes: string[]): boolean {
+  const texte = lignes.join(' ').replace(/\s+/g, ' ');
+
+  /*
+   * On exige la phrase d'ACTION, pas le rappel de la règle.
+   *
+   * La rubrique 6.5 reproduit d'abord le texte de l'arrêté — « si le constat
+   * identifie au moins l'une de ces cinq situations, son auteur transmet… » —
+   * qui figure dans tous les rapports, y compris ceux qui n'ont rien transmis.
+   * Seule la phrase au passé composé dit que ça a été fait.
+   */
+  return /nous avons donc[^.]{0,120}?transmis|avons transmis imm[ée]diatement|a [ée]t[ée] transmis[^.]{0,60}?agence r[ée]gionale/i.test(
+    texte
+  );
 }

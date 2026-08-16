@@ -296,7 +296,68 @@ nombre. C'est le facteur qui déclenche le risque de saturnisme infantile.
 
 ---
 
-## 9 · À vérifier lors des prochaines lectures
+## 9 · Le CREP : les cinq situations, et la validité
+
+### Les cinq situations de risque sont chiffrées
+
+Arrêté du 19 août 2011, articles 1 et 8. Le rapport y répond une par une :
+
+| Situation | Seuil |
+|---|---|
+| Un local à au moins **50 %** d'unités de classe 3 | calculable |
+| L'ensemble des locaux à au moins **20 %** | calculable |
+| Un plancher ou plafond menaçant de s'effondrer | constaté sur place |
+| Coulures, ruissellements, écoulements d'eau sur plusieurs unités d'une même pièce | constaté |
+| Moisissures ou taches d'humidité sur plusieurs unités d'une même pièce | constaté |
+
+**Une seule suffit** à déclencher la transmission du constat au directeur
+général de l'ARS dans les cinq jours ouvrables (article L. 1334-10), qui en
+informe le préfet.
+
+Le logement est alors signalé à l'administration sanitaire. Ce n'est ni une
+sanction ni une interdiction de vendre — mais le vendeur l'ignore souvent, et
+l'acquéreur ne le trouve jamais : c'est en page 15 sur 19.
+
+Sur le constat lu, la première situation était remplie : salle d'eau à 86 % de
+classe 3, salle de bain à 80 %. La transmission a été faite.
+
+> **Piège de lecture.** La rubrique 6.5 reproduit le texte de l'arrêté — « si le
+> constat identifie au moins l'une de ces cinq situations, son auteur
+> transmet… » — dans TOUS les rapports, y compris ceux qui n'ont rien transmis.
+> Seule la phrase au passé dit que ça a été fait : « Nous avons donc […]
+> transmis immédiatement une copie du rapport ».
+
+### La validité dépend du RÉSULTAT, pas du type
+
+C'est le seul diagnostic dans ce cas.
+
+- Constat **négatif** — aucun revêtement au-dessus des seuils : validité
+  **illimitée**, pas besoin d'en refaire un à chaque mutation.
+- Constat **positif** — au moins une unité de classe 1, 2 ou 3 : **un an** en
+  vente (article L. 1334-6), six ans en location (L. 1334-7).
+
+Une seule unité de classe 1 suffit : le texte parle de **présence** de
+revêtements au-dessus des seuils, pas de leur dégradation. Un logement avec du
+plomb en parfait état a quand même un constat qui périme.
+
+### Le classement, tel que la norme le définit
+
+| Concentration | Dégradations | Classe |
+|---|---|---|
+| < seuil | — | 0 |
+| ≥ seuil | non dégradé ou non visible | 1 |
+| ≥ seuil | état d'usage | 2 |
+| ≥ seuil | dégradé | 3 |
+
+Seuil : **1 mg/cm²** (arrêté du 19 août 2011, article 5).
+
+Stratégie de mesurage : une mesure si elle dépasse le seuil ; deux si la
+première ne le dépasse pas ; trois si les deux premières ne le dépassent pas
+mais que des unités du même type ont dépassé dans le même local.
+
+---
+
+## 10 · À vérifier lors des prochaines lectures
 
 - [ ] Le tableau « E. — Anomalies identifiées » du gaz : c'est là qu'est la
       conclusion réelle, puisque la case cochée est illisible.
