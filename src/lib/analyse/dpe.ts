@@ -173,6 +173,38 @@ function postes(lignes: string[]): { nom: string; kwh: number; cout?: string }[]
  * On ne conclut que sur ce qui est affirmé : une paroi jamais décrite reste
  * « inconnue », et le schéma la laisse en gris.
  */
+/**
+ * La ventilation du logement, telle que le DPE la décrit.
+ *
+ * « Ventilation par ouverture des fenêtres » veut dire qu'il n'y a AUCUNE
+ * ventilation mécanique. Le DPE l'écrit ainsi, sans commentaire, dans sa vue
+ * d'ensemble des équipements — et c'est l'une des lignes les plus lourdes de
+ * conséquences du rapport.
+ *
+ * ── Pourquoi cela dépasse la performance énergétique ────────────────────────
+ *
+ * Un logement sans ventilation mécanique évacue mal l'humidité. L'humidité
+ * décolle les peintures — et une peinture qui s'écaille est exactement ce qui
+ * fait passer un revêtement au plomb de la classe 1 à la classe 3. C'est le
+ * mécanisme qu'on observe dans les constats plomb, où le classe 3 se concentre
+ * dans les pièces d'eau.
+ *
+ * Deux diagnostics du même dossier disent donc la même chose sans jamais se
+ * rencontrer : le DPE constate l'absence de ventilation, le CREP en constate
+ * l'effet. Personne ne fait le lien, et c'est pourtant lui qui indique par où
+ * commencer les travaux.
+ */
+export function lireVentilation(lignes: string[]): 'aucune' | 'mecanique' | null {
+  const surLaLigne = lignes.find((l) => /^\s*Ventilation/i.test(l));
+  if (!surLaLigne) return null;
+
+  if (/ouverture des fen[êe]tres|naturelle par ouvrants/i.test(surLaLigne)) return 'aucune';
+  if (/VMC|simple flux|double flux|m[ée]canique|hygror[ée]glable/i.test(surLaLigne)) {
+    return 'mecanique';
+  }
+  return null;
+}
+
 function lireIsolation(lignes: string[]): Isolation {
   /**
    * Seules les lignes du descriptif détaillé constatent quelque chose. Le reste
@@ -399,6 +431,24 @@ export function analyserDpe(lignes: string[], plage: [number, number]): Diagnost
   if (etabli?.[1]) faits.push({ libelle: 'Établi le', valeur: etabli[1] });
   if (valable?.[1]) faits.push({ libelle: 'Valable jusqu’au', valeur: valable[1] });
   if (ademe?.[1]) faits.push({ libelle: 'N° ADEME', valeur: ademe[1] });
+
+  /*
+   * L'absence de ventilation mécanique, dite en clair.
+   *
+   * Le DPE l'écrit sans commentaire — « Ventilation par ouverture des
+   * fenêtres » — au milieu d'une liste d'équipements. C'est pourtant l'une des
+   * lignes les plus lourdes du rapport : sans extraction, l'humidité stagne,
+   * décolle les peintures, et fait passer un revêtement au plomb de la classe 1
+   * à la classe 3. Le constat plomb du même dossier en montre l'effet, sans
+   * que jamais les deux documents se rencontrent.
+   */
+  if (lireVentilation(lignes) === 'aucune') {
+    faits.push({
+      libelle: 'Ventilation',
+      valeur: 'par ouverture des fenêtres',
+      precision: 'aucune ventilation mécanique : l’humidité s’évacue mal'
+    });
+  }
 
   const reformes = reformesDepuis(dateFrancaise(etabli?.[1]), m.surface);
   const faitReformes = faitDesReformes(reformes);

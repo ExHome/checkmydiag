@@ -283,8 +283,31 @@ export const GLOSSAIRE: Terme[] = [
     points: [
       'Le plancher, moins les murs, cloisons, marches, gaines et embrasures',
       'Sous 1,80 m de hauteur, ça ne compte pas',
-      'C’est la base de la loi Boutin',
+      'Exclut aussi : combles non aménagés, cave, sous-sol, garage, remise',
+      'Et : terrasse, loggia, balcon, séchoir, VÉRANDA, volume vitré',
+      'C’est la base de la loi Boutin — article R. 156-1 du code de la construction',
       'Plus petite que la surface au sol, toujours'
+    ]
+  },
+  {
+    /*
+     * Trois surfaces pour un même logement, et la véranda qui change de camp.
+     *
+     * C'est la question que tout acheteur finit par poser, et la réponse tient
+     * dans un tableau. Le produit s'y était lui-même trompé — en comparant une
+     * Carrez à la surface d'un DPE, qui ne mesurent pas la même chose.
+     */
+    motif: /surface de r[ée]f[ée]rence|trois surfaces|Sref/i,
+    titre: 'Surface de référence',
+    schema: 'surface',
+    points: [
+      'Celle du DPE, depuis le 1ᵉʳ juillet 2024',
+      'C’est la surface habitable + les vérandas chauffées',
+      '+ les locaux chauffés d’au moins 1,80 m de hauteur',
+      'Avant cette date, le DPE employait la surface habitable',
+      'Le DPE n’a JAMAIS employé la superficie Carrez',
+      'La véranda close compte en Carrez, pas en habitable, et en Sref si chauffée',
+      'Une surface plus grande donne une meilleure lettre : consommation ÷ surface'
     ]
   },
   {

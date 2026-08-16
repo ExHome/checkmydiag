@@ -586,6 +586,37 @@ export const REGLEMENT: Partial<Record<TypeDiag, Reglement>> = {
           'Un mois, c’est très court, et le délai court depuis la signature : passé ce terme, l’absence de mention ne s’attaque plus.'
       },
       {
+        /*
+         * Les trois surfaces, et ce qui les sépare vraiment.
+         *
+         * C'est le point le plus casse-gueule de tout le dossier, et le
+         * produit s'y était déjà trompé une fois — en comparant la Carrez à la
+         * surface du DPE, qui ne mesurent pas la même chose.
+         *
+         * Le piège tient en un mot : la VÉRANDA. Close et couverte, elle compte
+         * en Carrez. L'article R156-1 l'exclut nommément de la surface
+         * habitable. Et la surface de référence du DPE l'y réintègre depuis
+         * juillet 2024, à condition qu'elle soit chauffée. Le même volume, donc,
+         * dans deux surfaces sur trois — et jamais pour la même raison.
+         *
+         * Second piège, moins connu : la Carrez ne compte pas les lots de moins
+         * de huit mètres carrés, quand les deux autres les comptent.
+         *
+         * Lu au texte le 16/08/2026 : R156-1 du CCH pour l'habitable, article 46
+         * de la loi de 1965 pour la Carrez, arrêté du 25 mars 2024 pour la
+         * surface de référence.
+         */
+        enonce:
+          'La surface habitable est la surface de plancher construite, déduction faite des murs, cloisons, marches et cages d’escaliers, gaines et embrasures de portes et fenêtres. En sont exclus les combles non aménagés, caves, sous-sols, remises, garages, terrasses, loggias, balcons, séchoirs extérieurs, vérandas, volumes vitrés, locaux communs, dépendances, et toute partie d’une hauteur inférieure à 1,80 mètre.',
+        source: {
+          reference: 'article R. 156-1 du code de la construction et de l’habitation',
+          url: 'https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043819221',
+          luLe: '2026-08-16'
+        },
+        reserve:
+          'À ne pas confondre avec la superficie Carrez, qui porte sur les planchers des locaux CLOS ET COUVERTS : une véranda close y compte, alors que la surface habitable l’exclut. Ni avec la surface de référence du DPE, qui réintègre depuis juillet 2024 les vérandas et locaux chauffés d’au moins 1,80 m.'
+      },
+      {
         enonce:
           'Les caves, garages et emplacements de stationnement sont exclus de l’obligation, ainsi que les lots d’une superficie inférieure au seuil fixé par décret — huit mètres carrés.',
         source: {
