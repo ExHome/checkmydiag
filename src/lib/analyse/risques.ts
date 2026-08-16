@@ -17,14 +17,40 @@ interface Detecteur {
   /** Absence explicite : prioritaire sur le positif. */
   negatif?: RegExp;
   niveau: Gravite;
+  /** Comment nommer ce que le motif a capturé. Par défaut : « niveau X ». */
+  detail?: (m: RegExpMatchArray) => string | undefined;
 }
 
 const DETECTEURS: Detecteur[] = [
   {
     nom: 'Retrait-gonflement des argiles',
-    positif: /zone d'exposition (forte|moyenne)[^.]{0,60}retrait/i,
-    negatif: /(?:pas|non) (?:concern[ée]|situ[ée])[^.]{0,40}retrait[ -]gonflement/i,
-    niveau: 'attention'
+    /*
+     * Le risque n°1 en Gironde, et le moteur le ratait neuf fois sur dix.
+     *
+     * Mesuré sur 140 dossiers : 73 déclarent le bien concerné, le verdict n'en
+     * annonçait que 6. Le motif ne connaissait qu'une seule des trois formes du
+     * document — « zone d'exposition moyenne » —, avec l'apostrophe droite et
+     * le tiret collé. Or la forme DOMINANTE, présente dans les 73, est la ligne
+     * du tableau de synthèse :
+     *
+     *   Zonage du retrait-gonflement des argiles   Oui   Aléa Moyen
+     *
+     * Elle ne ressemble pas à une phrase, elle ne nomme pas le bien, et le
+     * filtre des affirmations la jetait avant même le détecteur.
+     *
+     * Les trois formes sont ici, avec les deux apostrophes et le tiret libre.
+     */
+    positif:
+      /Zonage du retrait[\s-]*gonflement des argiles\s+Oui(?:\s+Al[ée]a\s+(Faible|Moyen|Fort))?|zone d['’]exposition (forte|moyenne)[^.]{0,60}retrait|zone r[ée]glement[ée]e du risque retrait[\s-]*gonflement/i,
+    negatif:
+      /Zonage du retrait[\s-]*gonflement des argiles\s+Non|(?:pas|non) (?:concern[ée]|situ[ée])[^.]{0,40}retrait[\s-]*gonflement/i,
+    niveau: 'attention',
+    /* L'aléa, quand le tableau le donne : c'est lui qui décide de l'obligation
+       d'étude de sol, à partir du niveau moyen. */
+    detail: (m) => {
+      const alea = m[1] ?? m[2];
+      return alea ? `aléa ${alea.toLowerCase()}` : undefined;
+    }
   },
   {
     nom: 'Sismicité',
@@ -84,8 +110,19 @@ export function analyserErp(lignes: string[], plage: [number, number]): Diagnost
    * Ces lignes-là étaient écartées, et le diagnostic ressortait « aucun risque »
    * alors que le document en portait.
    */
+  /*
+   * Les lignes de TABLEAU affirment, elles aussi.
+   *
+   * Le filtre ne gardait que des phrases — « le bien se situe… ». Or le tableau
+   * de synthèse porte ses conclusions sous forme de colonnes : « Zonage du
+   * retrait-gonflement des argiles | Oui | Aléa Moyen ». Aucun verbe, aucun
+   * sujet nommé, et pourtant c'est là que 73 dossiers sur 140 déclarent le
+   * risque le plus fréquent de la région. On les laisse passer nommément :
+   * ouvrir le filtre en grand ferait rentrer le formulaire vierge, dont les
+   * cases sont des images.
+   */
   const affirmations = lignes.filter((l) =>
-    /(?:le bien|l['’]immeuble|la parcelle|le terrain|le logement) (?:se situe|ne se situe|est |n['’]est )|est ainsi concern[ée]|^\s*-\s*le risque|^le risque|la commune dans laquelle|zone de sismicit[ée]|potentiel radon|zone [àa] potentiel/i.test(
+    /(?:le bien|l['’]immeuble|la parcelle|le terrain|le logement) (?:se situe|ne se situe|est |n['’]est )|est ainsi concern[ée]|^\s*-\s*le risque|^le risque|la commune dans laquelle|zone de sismicit[ée]|potentiel radon|zone [àa] potentiel|Zonage du retrait[\s-]*gonflement|zone r[ée]glement[ée]e du risque/i.test(
       l
     )
   );
@@ -100,7 +137,8 @@ export function analyserErp(lignes: string[], plage: [number, number]): Diagnost
     const m = texte.match(d.positif);
     if (m) {
       const risque: { nom: string; niveau: Gravite; detail?: string } = { nom: d.nom, niveau: d.niveau };
-      if (m[1]) risque.detail = `niveau ${m[1]}`;
+      const detail = d.detail ? d.detail(m) : m[1] ? `niveau ${m[1]}` : undefined;
+      if (detail) risque.detail = detail;
       risques.push(risque);
     }
   }
@@ -151,6 +189,23 @@ export function analyserErp(lignes: string[], plage: [number, number]): Diagnost
           : '')
     });
   }
+  /*
+   * Les arrêtés sécheresse donnent sa chair au classement en argile. On ne les
+   * dit que si le bien est effectivement en zone d'argile : ailleurs, ce serait
+   * un chiffre inquiétant sans objet.
+   */
+  const catnat = arretesCatnat(lignes);
+  const enZoneArgile = concernes.some((r) => r.nom.startsWith('Retrait-gonflement'));
+  if (catnat && catnat.secheresse >= 3 && enZoneArgile) {
+    releves.push({
+      genre: 'complement',
+      libelle:
+        `« Zone d’argile » reste abstrait tant qu’on ne l’a pas mis en face de ceci : la commune a été reconnue ${catnat.secheresse} fois en état de catastrophe naturelle pour sécheresse et tassements différentiels` +
+        (catnat.derniereSecheresse ? `, la dernière fois en ${catnat.derniereSecheresse}` : '') +
+        '. Le tableau est dans votre état des risques. Attention : ces arrêtés concernent la commune, pas ce logement — ils ouvrent un droit à indemnisation à qui a subi un dommage, ils ne disent pas que cette maison en a subi un.'
+    });
+  }
+
   if (complements.icpe) {
     releves.push({
       genre: 'complement',
@@ -560,6 +615,76 @@ function ligneNappe(lignes: string[]): { concernee: boolean; fiabiliteDeLaCarte:
     return { concernee, fiabiliteDeLaCarte: f?.[1] ? f[1].toLowerCase() : null };
   }
   return null;
+}
+
+/**
+ * Ce que le classement en zone d'argile veut dire concrètement.
+ *
+ * L'état des risques annonce « retrait-gonflement des argiles : aléa moyen ».
+ * Le lecteur n'en tire rien : c'est une couleur sur une carte. Trois pages plus
+ * loin, le même document liste les arrêtés de catastrophe naturelle pris sur la
+ * commune — et sur les communes girondines du corpus, la moitié de ces arrêtés
+ * porte la mention « Sécheresse et réhydratation - Tassements différentiels ».
+ *
+ * Mesuré sur 140 dossiers : 94 portent ce tableau, avec en moyenne 16 arrêtés
+ * sécheresse et jusqu'à 23. Ce n'est plus une couleur sur une carte : c'est le
+ * nombre de fois où l'État a reconnu que des maisons de cette commune s'étaient
+ * fissurées à cause du sol.
+ *
+ * ── Ce que ce compte ne dit PAS ────────────────────────────────────────────
+ *
+ * Il porte sur la COMMUNE, jamais sur le bien. Un arrêté ouvre le droit à
+ * indemnisation à ceux qui ont subi un dommage ; il ne dit pas que cette maison
+ * en a subi un. L'explication doit tenir les deux bouts, sans quoi elle
+ * inquiète pour rien.
+ */
+export interface ArretesCatnat {
+  total: number;
+  secheresse: number;
+  inondation: number;
+  /** L'année du dernier épisode de sécheresse reconnu, si elle est lisible. */
+  derniereSecheresse: number | null;
+}
+
+export function arretesCatnat(lignes: string[]): ArretesCatnat | null {
+  const debut = lignes.findIndex((l) => /Arr[êe]t[ée]s CATNAT sur la commune/i.test(l));
+  if (debut < 0) return null;
+  /* Le tableau s'arrête au renvoi vers Géorisques, ou au bloc préfecture. */
+  let fin = lignes.length;
+  for (let i = debut + 1; i < lignes.length; i++) {
+    if (/Pour en savoir plus|^\s*Pr[ée]fecture\s*:/i.test(lignes[i] ?? '')) {
+      fin = i;
+      break;
+    }
+  }
+
+  const corps = lignes.slice(debut + 1, fin);
+  let total = 0;
+  let secheresse = 0;
+  let inondation = 0;
+  let derniereSecheresse: number | null = null;
+
+  for (const l of corps) {
+    /* Une ligne d'arrêté porte un intitulé de risque. Les dates peuvent être
+       rejetées sur la ligne suivante quand l'intitulé est long — on compte donc
+       sur l'intitulé, jamais sur la présence des dates. */
+    const estSecheresse = /S[ée]cheresse et r[ée]hydratation/i.test(l);
+    const estInondation = /d[ée]bordement de cours d'eau|ruissellement et coul[ée]e de boue|submersion marine/i.test(l);
+    if (!estSecheresse && !estInondation && !/Temp[êe]te|Glissement de terrain|Mouvement de terrain|Avalanche|S[ée]isme/i.test(l))
+      continue;
+    total++;
+    if (estSecheresse) {
+      secheresse++;
+      const an = l.match(/\d{1,2}\/\d{1,2}\/(\d{4})/);
+      if (an?.[1]) {
+        const annee = Number(an[1]);
+        if (derniereSecheresse === null || annee > derniereSecheresse) derniereSecheresse = annee;
+      }
+    }
+    if (estInondation) inondation++;
+  }
+
+  return total ? { total, secheresse, inondation, derniereSecheresse } : null;
 }
 
 /** Une pièce du tableau de mesurage. */

@@ -6,7 +6,81 @@
  * celui qui qualifierait le danger.
  */
 import { describe, expect, it } from 'vitest';
-import { analyserErp, risquesComplementaires } from './risques';
+import { analyserErp, arretesCatnat, risquesComplementaires } from './risques';
+
+/* Recopié d'un dossier girondin : dix-neuf arrêtés, dont onze sécheresse. */
+const CATNAT = [
+  'Arrêtés CATNAT sur la commune',
+  'Risque Début Fin JO Indemnisé',
+  "Par une crue (débordement de cours d'eau) - Par ruissellement et coulée de boue 20/06/2022 22/06/2022 11/08/2022",
+  'Sécheresse et réhydratation - Tassements différentiels 01/10/2018 31/12/2018 26/10/2019',
+  'Sécheresse et réhydratation - Tassements différentiels 01/01/2017 30/06/2017 20/10/2018',
+  'Sécheresse et réhydratation - Tassements différentiels 01/03/2012 31/03/2012 25/05/2013',
+  "Par une crue (débordement de cours d'eau) - Par ruissellement et coulée de boue",
+  '24/01/2009 27/01/2009 29/01/2009',
+  'Tempête (vent) 06/11/1982 10/11/1982 02/12/1982',
+  'Pour en savoir plus, chacun peut consulter en préfecture ou en mairie, le dossier départemental',
+  'Sécheresse et réhydratation - Tassements différentiels 01/01/1900 31/12/1900 01/01/1901'
+];
+
+describe('les arrêtés de catastrophe naturelle', () => {
+  it('compte les arrêtés par famille', () => {
+    const a = arretesCatnat(CATNAT);
+    expect(a?.secheresse).toBe(3);
+    expect(a?.inondation).toBe(2);
+    expect(a?.total).toBe(6);
+  });
+
+  it('s’arrête à la fin du tableau, pas à la fin du document', () => {
+    /* La dernière ligne est après le renvoi Géorisques : elle appartient à une
+       autre page et ne doit pas être comptée. */
+    expect(arretesCatnat(CATNAT)?.derniereSecheresse).toBe(2018);
+  });
+
+  it('compte une ligne dont les dates sont rejetées à la ligne suivante', () => {
+    /* L'intitulé long fait passer les trois dates à la ligne d'après : compter
+       sur la présence des dates perdrait cet arrêté. */
+    expect(arretesCatnat(CATNAT)?.inondation).toBe(2);
+  });
+
+  it('ne dit rien quand le tableau est absent', () => {
+    expect(arretesCatnat(['Etat des Risques et Pollutions'])).toBeNull();
+  });
+});
+
+describe('le croisement argile ↔ arrêtés sécheresse', () => {
+  const lignes = [
+    'Etat des Risques et Pollutions',
+    'Document réalisé le : 03/08/2023',
+    'Le bien se situe dans une zone d’exposition moyenne au retrait-gonflement des argiles.',
+    ...CATNAT
+  ];
+
+  it('donne sa chair au classement en argile', () => {
+    const dit = (analyserErp(lignes, [1, 15]).releves ?? []).map((r) => r.libelle).join(' ');
+    expect(dit).toMatch(/3 fois en état de catastrophe naturelle/);
+    expect(dit).toMatch(/2018/);
+  });
+
+  it('dit que ces arrêtés visent la commune et non le logement', () => {
+    const dit = (analyserErp(lignes, [1, 15]).releves ?? []).map((r) => r.libelle).join(' ');
+    expect(dit).toMatch(/concernent la commune, pas ce logement/i);
+  });
+
+  it('se tait hors zone d’argile : le chiffre inquiéterait sans objet', () => {
+    const ailleurs = analyserErp(
+      [
+        'Etat des Risques et Pollutions',
+        'Document réalisé le : 03/08/2023',
+        'Le bien ne se situe pas dans une zone de retrait-gonflement des argiles.',
+        ...CATNAT
+      ],
+      [1, 15]
+    );
+    const dit = (ailleurs.releves ?? []).map((r) => r.libelle).join(' ');
+    expect(dit).not.toMatch(/catastrophe naturelle/);
+  });
+});
 
 /* La forme exacte, telle qu'elle sort du PDF : le détail avant le nom du
    risque, la valeur deux lignes plus bas. */

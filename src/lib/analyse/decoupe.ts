@@ -13,6 +13,20 @@ interface Marqueur {
   type: TypeDiag;
   /** Fragments « collés » cherchés en tête de page. */
   entetes: string[];
+  /**
+   * Ce qui prouve qu'une page appartient ENCORE à ce rapport.
+   *
+   * Un rapport se reconnaît d'ordinaire au titre répété en en-tête. L'état des
+   * risques fait exception : il est produit par un autre éditeur, et ses pages
+   * suivantes ne portent que « Mode EDITION » et l'adresse du bien. La section
+   * se fermait donc à la première page, et tout ce qui suit — le tableau de
+   * synthèse en tête, l'imprimé officiel, les arrêtés de catastrophe naturelle —
+   * tombait hors section.
+   *
+   * Mesuré sur 140 dossiers : treize fois, le tableau qui déclare le bien en
+   * zone d'argile se trouvait exactement une page après la fin de la plage.
+   */
+  traces?: string[];
 }
 
 const MARQUEURS: Marqueur[] = [
@@ -67,6 +81,22 @@ const MARQUEURS: Marqueur[] = [
       'etatdesrisquesetpollutions',
       'etatdesrisquesreglemente',
       'etatdesrisquesnaturelsminiersettechnologiques'
+    ],
+    /* La signature du générateur, présente sur chaque page de sa suite. */
+    traces: [
+      'etatdesrisquesetpollutions',
+      'modeedition',
+      'preventimmo',
+      'kinaxia',
+      /* Les fragments sont comparés à du texte « collé » : ni point ni tiret. */
+      'georisquesgouvfr',
+      'arretescatnatsurlacommune',
+      'informationacquereurlocataire',
+      /* Le second tableau et l'état approfondi, qui portent le classement en
+         argile — la ligne pour laquelle toute cette découpe existe. */
+      'etatdesrisquesapprofondi',
+      'zonageduretraitgonflementdesargiles',
+      'risquescomplementaires'
     ]
   },
   {
@@ -192,7 +222,8 @@ function typeDeLaPage(page: PageTexte): TypeDiag | null {
 function porteLaTrace(page: PageTexte, type: TypeDiag): boolean {
   const colle = compact(page.lignes.join(' '));
   const marqueur = MARQUEURS.find((m) => m.type === type);
-  return marqueur ? marqueur.entetes.some((e) => colle.includes(e)) : false;
+  if (!marqueur) return false;
+  return (marqueur.traces ?? marqueur.entetes).some((e) => colle.includes(e));
 }
 
 export function decouper(pages: PageTexte[]): Decoupe {
