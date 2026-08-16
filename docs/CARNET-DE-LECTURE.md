@@ -146,7 +146,83 @@ mention de la durée, sur la première ligne d'un document de vingt et une pages
 
 ---
 
-## 6 · À vérifier lors des prochaines lectures
+## 6 · Le gaz : les essais, et ce qu'ils cachent
+
+### La conclusion est un formulaire dont la coche est un dessin
+
+Les quatre issues sont imprimées dans chaque rapport — « ne comporte aucune
+anomalie », « des anomalies de type A1 », « de type A2 », « de type DGI » — et
+l'on coche celle qui s'applique. **La coche ne sort pas du PDF.** Vérifié en
+lisant deux volets entiers : les quatre libellés se suivent, sans marque.
+
+L'état des risques, lui, est produit par un autre éditeur et sort ses coches
+en `x` dans le texte. **Les cases à cocher dépendent donc du générateur** : un
+seul exemple ne fait pas une règle.
+
+### La rubrique E dit ce que la coche ne dit pas
+
+« E. — Anomalies identifiées » est du texte. Chaque anomalie y porte son point
+de contrôle normé, son type et son risque :
+
+```
+C.7 - 8b  Organe de Coupure d'Appareil (OCA)   A2
+Remarques : L'extrémité de la tuyauterie en attente n'est pas obturée
+Risque(s) constaté(s) : Dégagement de gaz et donc un risque d'explosion
+```
+
+Piège : l'en-tête de colonne énumère les quatre types comme légende — une ligne
+qui les cite tous n'est pas un constat.
+
+Et une distinction qui commande tout : rubrique **présente et vide** = aucune
+anomalie constatée, c'est un résultat ; rubrique **absente** = on n'a pas su
+lire, ce n'en est pas un.
+
+### Les essais sur place, rubrique D
+
+```
+Mesure CO : Non réalisée
+Fonctionnement : Appareil à l'arrêt
+Chaudière MARQUE MODELE — 23 kW — Installation: 1997
+```
+
+Le monoxyde de carbone ne se voit pas, ne se sent pas, et tue. Quand l'appareil
+est resté à l'arrêt, **l'essai le plus important n'a pas eu lieu** — et le
+rapport peut conclure « aucune anomalie ». Ce n'est pas la même chose qu'une
+installation vérifiée.
+
+L'année d'installation est là aussi, et donne la vétusté que le rapport ne
+commente jamais.
+
+---
+
+## 7 · L'état des risques : ce qui est écrit et jamais lu
+
+### La colonne « Indemnisé » est à remplir par le vendeur
+
+Le tableau des arrêtés de catastrophe naturelle porte une colonne « Indemnisé »,
+**vide**, avec la consigne : « cochez ci-dessous la case correspondante ». Ce
+n'est pas au diagnostiqueur de la remplir.
+
+Un ERP livré avec cette colonne vierge est donc incomplet au sens de l'article
+L125-5 du code de l'environnement : l'information sur les sinistres indemnisés
+fait partie de ce qui est dû à l'acquéreur. Personne ne le remarque.
+
+Dans le même bloc, le champ **« Établi le : » reste vide** alors que le
+document porte par ailleurs sa date de réalisation.
+
+### Le nombre d'arrêtés CATNAT dit quelque chose
+
+Le dossier lu en compte **45 sur la commune**, dont **treize** pour
+« Sécheresse et réhydratation — Tassements différentiels » depuis 1989.
+
+Rapproché de la ligne « Zonage du retrait-gonflement des argiles : Oui, Aléa
+Fort », cela dessine un risque concret — fissures, fondations — que ni le
+rapport ni le produit ne formulent. Les deux informations sont à onze pages
+d'écart.
+
+---
+
+## 8 · À vérifier lors des prochaines lectures
 
 - [ ] Le tableau « E. — Anomalies identifiées » du gaz : c'est là qu'est la
       conclusion réelle, puisque la case cochée est illisible.
