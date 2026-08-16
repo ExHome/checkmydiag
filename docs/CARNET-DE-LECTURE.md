@@ -357,6 +357,87 @@ mais que des unités du même type ont dépassé dans le même local.
 
 ---
 
+## 11 · Le second tableau de l'état des risques
+
+Après l'imprimé officiel — celui que la loi impose —, le générateur ajoute un
+tableau « Etat des risques complémentaires (Géorisques) » marqué *à titre
+informatif*. Personne ne le lit, et il porte des lignes autrement plus concrètes
+que le zonage sismique.
+
+Mesuré sur 140 dossiers : 68 % le contiennent. La remontée de nappe y est cochée
+« oui » dans 80 cas sur 83, et un dossier sur sept la réunit avec une cave au
+logement. Les installations classées dans un rayon donné y figurent une fois sur
+deux.
+
+### Ses colonnes sortent entrelacées
+
+    Zones potentiellement sujettes aux inondations de cave, fiabilité
+    Remontées de nappes Oui
+    FORTE (dans un rayon de 500 mètres).
+
+Le détail arrive **avant** le nom du risque, la valeur deux lignes plus bas.
+Chercher « fiabilité FORTE » à la suite ne trouvait qu'un cas sur huit.
+
+### « Fiabilité forte » ne veut pas dire « risque fort »
+
+Le mot qualifie la **carte**, pas le danger : il dit que la donnée est sûre. Le
+raccourci serait un contresens, et un contresens alarmant.
+
+---
+
+## 12 · L'argile, ou pourquoi une sonde verte ne prouve rien
+
+Le retrait-gonflement des argiles est le risque n°1 de la région. Sur 140
+dossiers, 73 déclarent le bien concerné — le moteur en annonçait **6**.
+
+Trois causes empilées, dont aucune n'était visible depuis un test unitaire :
+
+1. **La forme dominante est une ligne de tableau**, pas une phrase :
+   `Zonage du retrait-gonflement des argiles | Oui | Aléa Moyen`. Le détecteur ne
+   connaissait que « zone d'exposition moyenne », apostrophe droite et tiret
+   collé.
+2. **Le filtre des affirmations la jetait** avant même le détecteur : il ne
+   gardait que les lignes nommant le bien, et une ligne de tableau n'a ni verbe
+   ni sujet.
+3. **La découpe fermait l'ERP à sa première page.** Ses pages suivantes viennent
+   d'un autre éditeur et ne répètent pas le titre : elles portent « Mode EDITION »
+   et l'adresse. Douze fois, le tableau tombait exactement une page après la fin
+   de la plage.
+
+### La leçon, et elle vaut pour tout le reste
+
+L'épreuve du corpus n'a **pas bougé d'une unité** entre avant et après. Elle
+compte les verdicts qui existent, jamais ceux qui disent vrai : un état des
+risques annonçant « aucun risque majeur recensé » sur un bien classé en argile y
+figurait comme réussi.
+
+Une mesure de présence ne vaut pas une mesure de justesse. Toute sonde qui ne
+compare pas ce que le document DIT à ce que le moteur EN RETIENT peut rester
+verte sur une erreur de fond.
+
+---
+
+## 13 · Ce qu'on a failli écrire, et qu'il ne fallait pas
+
+Chaque dossier porte les garanties de l'opérateur : échéance de certification
+par prestation, et validité de la police d'assurance. Comparer ces dates à celle
+de la visite est immédiat, et paraît être un beau contrôle.
+
+Mesure faite : **45 dossiers sur 113 portent une assurance expirée au jour du
+rapport.** De quoi crier à l'anomalie — sauf qu'il n'y a que quatre dates
+d'assurance distinctes dans tout l'échantillon (01/10/2025, 30/09/2023,
+31/12/2021, 31/12/2022), et que les retards se groupent en paquets nets.
+
+Ce sont les échéances annuelles successives d'une même police : le modèle de
+document n'est pas mis à jour au renouvellement. L'opérateur est assuré ; c'est
+le papier qui traîne. Annoncer « le diagnostiqueur n'était pas assuré » aurait
+été faux, et grave.
+
+Aucun signal n'a été ajouté. La mesure n'a servi qu'à éviter une fausse alerte —
+c'est déjà sa fonction.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [ ] Le tableau « E. — Anomalies identifiées » du gaz : c'est là qu'est la
@@ -365,3 +446,13 @@ mais que des unités du même type ont dépassé dans le même local.
 - [ ] Le CREP : comment les classes 0 à 3 sont-elles présentées ?
 - [ ] Le DPE : où sont les seuils des petites surfaces ?
 - [ ] Un dossier de copropriété (DTG, PPPT) : structure encore jamais lue.
+- [ ] Les termites : « informations collectées auprès du donneur d'ordre »
+      (traitement antérieur, présence déclarée) sont des cases dessinées, donc
+      illisibles. Y a-t-il une autre trace de ces réponses dans le rapport ?
+- [ ] L'amiante repart sans date dans 43 % des cas — le plus mauvais chiffre de
+      tous les volets. Où sa date est-elle écrite ?
+- [ ] Le DPE est muet dans 42 % des cas : quelle conclusion ne sait-on pas lire ?
+- [ ] Le gaz ne produit aucun schéma (0 %), le mesurage non plus.
+- [ ] Mesurer la JUSTESSE et non la présence : une sonde par volet qui compare
+      ce que le document déclare à ce que le verdict en retient, sur le modèle de
+      `argile-detectee.local.ts`.
