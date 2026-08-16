@@ -6,6 +6,7 @@
  * signalent une présence pour ne pas dépendre d'une seule formulation.
  */
 import type { Diagnostic, Fait, Gravite } from '../modele';
+import type { Releve } from './anomalies';
 import { compact, trouver } from './texte';
 
 function zonesTermites(lignes: string[]): { nom: string; etat: Gravite; detail?: string }[] {
@@ -192,6 +193,84 @@ export function analyserTermites(lignes: string[], plage: [number, number]): Dia
   };
 }
 
+/**
+ * Ce que le constat amiante n'a PAS pu regarder.
+ *
+ * La rubrique 1.2 énumère les locaux et composants non visités, et le motif de
+ * chacun. Mesuré sur 28 constats du corpus : 24 la portent, et le moteur n'en
+ * tirait rien du tout. C'est pourtant la moitié de ce qu'un acheteur doit
+ * savoir — un constat qui n'a pas pu sonder les sols de tout le logement ne dit
+ * rien des sols de tout le logement.
+ *
+ * ── Pourquoi la lecture générique échouait ─────────────────────────────────
+ *
+ * Elle attendait la forme « endroit (raison) » de l'électricité, sur sept
+ * lignes après un intitulé court. Le constat amiante présente un tableau à
+ * trois colonnes — Localisation, Parties du local, Raison — dont la première
+ * s'étale sur cinq ou six lignes quand quinze pièces sont concernées :
+ *
+ *   Rez de chaussée - Salon / Séjour, Rez de chaussée
+ *   - Cuisine / Salle à manger, Rez de jardin - Chambre 1,
+ *   Mur                                    Revetement fixé
+ *
+ * On ne cherche donc pas à reconstituer la liste des pièces : on relève le
+ * COMPOSANT et le MOTIF, qui tiennent sur la même ligne et disent l'essentiel.
+ * Prétendre restituer quinze noms de pièces à partir de ce charabia produirait
+ * de la fausse précision.
+ */
+const COMPOSANT = String.raw`(Toutes?|Murs?|Sols?|Plafonds?|Cloisons?|Charpentes?|Conduits?|Toitures?)`;
+const MOTIF_EMPECHEMENT = String.raw`(Absence de [^.,;]{3,40}|Rev[êe]tements? fix[ée]s?|Impossibilit[ée] d['’]investigation[^.,;]{0,45}|Encombrement trop important|Local(?:aux)? ferm[ée]s?[^.,;]{0,25}|Zone inaccessible[^.,;]{0,25})`;
+
+export function nonVisitesAmiante(lignes: string[]): Releve[] {
+  const debut = lignes.findIndex((l) =>
+    /qui n['’]ont pu [êe]tre visit[ée]s|n['’]ayant pu [êe]tre visit[ée]e?s|investigations compl[ée]mentaires sont n[ée]cessaires/i.test(
+      l
+    )
+  );
+  if (debut === -1) return [];
+
+  /* La rubrique s'arrête au chapitre suivant : les laboratoires d'analyse. */
+  let fin = lignes.length;
+  for (let i = debut + 1; i < lignes.length; i++) {
+    if (/^\s*2\s*[.–-]|laboratoire\(s\) d['’]analyses/i.test(lignes[i] ?? '')) {
+      fin = i;
+      break;
+    }
+  }
+
+  const avecOu = new RegExp(String.raw`^(.{3,60}?)\s+${COMPOSANT}\s+${MOTIF_EMPECHEMENT}\s*$`, 'i');
+  const sansOu = new RegExp(String.raw`^${COMPOSANT}\s+${MOTIF_EMPECHEMENT}\s*$`, 'i');
+  const seul = new RegExp(String.raw`^${MOTIF_EMPECHEMENT}\s*$`, 'i');
+
+  const releves: Releve[] = [];
+  const dejaVus = new Set<string>();
+  for (const ligne of lignes.slice(debut + 1, fin)) {
+    const l = ligne.trim();
+    if (!l || /^n[ée]ant$/i.test(l)) continue;
+
+    const a = l.match(avecOu);
+    const b = a ? null : l.match(sansOu);
+    const c = a || b ? null : l.match(seul);
+
+    const composant = (a?.[2] ?? b?.[1] ?? '').trim();
+    const motif = (a?.[3] ?? b?.[2] ?? c?.[1] ?? '').trim();
+    if (!motif) continue;
+
+    const ou = a?.[1]?.trim();
+    /* Le même motif revient à chaque page du tableau : on ne le répète pas. */
+    const empreinte = `${composant}|${motif}`.toLowerCase();
+    if (dejaVus.has(empreinte)) continue;
+    dejaVus.add(empreinte);
+
+    releves.push({
+      genre: 'nonVisite',
+      libelle: motif,
+      ...(ou ? { ou } : composant ? { ou: composant.toLowerCase() === 'toutes' ? 'toutes les parties' : composant } : {})
+    });
+  }
+  return releves;
+}
+
 export function analyserAmiante(lignes: string[], plage: [number, number]): Diagnostic {
   // Piège : le titre du rapport contient « repérage des matériaux et produits
   // contenant de l'amiante », et le corps explique longuement ce qu'est
@@ -340,6 +419,30 @@ export function analyserAmiante(lignes: string[], plage: [number, number]): Diag
     });
   }
 
+  /*
+   * Ce qui n'a pas pu être regardé, et la conséquence que le rapport en tire
+   * lui-même : sans sondage possible, le vendeur reste tenu des vices cachés.
+   * La phrase est dans le document ; on ne l'invente pas, on la remonte.
+   */
+  const nonVus = nonVisitesAmiante(lignes);
+  if (
+    nonVus.length &&
+    /vices? cach[ée]s/i.test(lignes.join(' ')) &&
+    /*
+     * Pas de `[^.]` ici : la phrase cite « les articles R.1334-15 à R.1334-18 »,
+     * et chacun de ces points coupait le motif. La sonde qui a servi à mesurer
+     * ce cas portait le même défaut et annonçait zéro occurrence sur tout le
+     * corpus — alors que la phrase est sous les yeux dans le premier rapport lu.
+     */
+    /obligations r[èe]glementaires[\s\S]{0,220}ne sont pas remplies/i.test(lignes.join(' '))
+  ) {
+    nonVus.push({
+      genre: 'complement',
+      libelle:
+        'Le rapport en tire lui-même la conséquence : les obligations du propriétaire ne sont pas remplies pour ces parties, et le vendeur y reste responsable des vices cachés. Autrement dit, le constat ne le protège pas sur ce qu’il n’a pas pu voir.'
+    });
+  }
+
   return {
     type: 'amiante',
     titre: 'Amiante',
@@ -379,6 +482,7 @@ export function analyserAmiante(lignes: string[], plage: [number, number]): Diag
         ],
     schema: zonesAmiante.length ? { genre: 'pieces', zones: zonesAmiante } : null,
     pages: plage,
+    ...(nonVus.length ? { releves: nonVus } : {}),
     ...(date?.[1] ? { date: date[1] } : {})
   };
 }
