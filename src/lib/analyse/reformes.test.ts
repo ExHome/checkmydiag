@@ -212,9 +212,20 @@ describe('sur un rapport réel', () => {
     expect(recent.demarche).toBeUndefined();
   });
 
-  it('n’en profite pas pour recalculer une lettre', () => {
+  /*
+   * Ce rapport date du 5 août 2023 : il a été établi sous l'échelle générale,
+   * qui donnait F à ce studio de 22,4 m² — 362 kWh/m²/an contre un seuil E|F à
+   * 330. Depuis le 1ᵉʳ juillet 2024, sa propre frontière est à 373 : il est en
+   * E, et n'est plus une passoire. C'est précisément la réforme que ce module
+   * annonce, et le calcul doit la refléter plutôt que l'ignorer.
+   *
+   * La lettre que nous donnons n'est donc PAS celle imprimée sur ce rapport-là.
+   * Elle est marquée « recalculée » pour que rien ne les confonde.
+   */
+  it('applique les seuils d’aujourd’hui, pas ceux du jour du rapport', () => {
     if (diag.schema?.genre !== 'dpe') throw new Error('schéma DPE attendu');
-    expect(diag.schema.finale).toBeNull();
+    expect(diag.schema.finale).toBe('E');
+    expect(diag.schema.energie?.recalculee).toBe(true);
     expect(texte).not.toMatch(/passoire/i);
   });
 });

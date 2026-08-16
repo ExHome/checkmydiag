@@ -9,6 +9,7 @@
 import type { Diagnostic, EtatIsolation, Etiquette, Fait, Isolation, Lettre } from '../modele';
 import { contient, nombre, trouver } from './texte';
 import { dateFrancaise, faitDesReformes, OU_RECTIFIER, reformesDepuis } from './reformes';
+import { enAltitude, seuilsClimat, seuilsEnergie } from './seuilsPetitesSurfaces';
 
 const LETTRES: Lettre[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 
@@ -341,10 +342,14 @@ const SURFACE_PETITE = 40;
  * pour cette raison exacte, l'écran du notaire masque la tranche sous 40 m².
  * Seul le calcul, qui décide de tout, l'ignorait.
  *
- * On ne code pas la table des petites surfaces : elle s'établit mètre carré par
- * mètre carré et doit être relevée au texte officiel, pas déduite d'une lecture
- * de seconde main. En attendant, on s'abstient — dire la consommation sans
- * conclure sur la lettre est vrai ; conclure faux ne l'est pas.
+ * La table est désormais codée — relevée au texte de l'arrêté, recoupée à ses
+ * bornes, et gardée dans son propre module avec sa source. Voir
+ * `seuilsPetitesSurfaces.ts`. Un tiers des DPE du corpus repartaient sans
+ * lettre pour cette seule raison : c'était le premier des silences du moteur.
+ *
+ * On continue de s'abstenir dans un cas : quand le rapport situe le logement à
+ * 800 mètres d'altitude ou plus, où l'arrêté prévoit d'autres valeurs pour les
+ * classes E et F, qui ne sont pas codées.
  *
  * L'étiquette lue directement dans le rapport n'est pas concernée : elle vient
  * du diagnostiqueur, qui a appliqué les bons seuils.
@@ -356,11 +361,22 @@ function echellePetiteSurface(surface: number | null): boolean {
 export function analyserDpe(lignes: string[], plage: [number, number]): Diagnostic {
   const m = mesurer(lignes);
   const petiteSurface = echellePetiteSurface(m.surface);
+  /*
+   * Sous 40 m², l'échelle change. On la prend dans la table de l'arrêté, sauf
+   * en altitude où ses valeurs ne sont pas codées : là, on s'abstient encore.
+   */
+  const altitude = enAltitude(lignes);
+  const echelleEnergie =
+    petiteSurface && m.surface !== null && !altitude ? seuilsEnergie(m.surface) : SEUILS_ENERGIE;
+  const echelleClimat =
+    petiteSurface && m.surface !== null && !altitude ? seuilsClimat(m.surface) : SEUILS_CLIMAT;
+  /* On s'abstient si, et seulement si, l'échelle due reste introuvable. */
+  const sansEchelle = !echelleEnergie || !echelleClimat;
 
   const energie: Etiquette | null =
-    m.consoParM2 !== null && !petiteSurface
+    m.consoParM2 !== null && echelleEnergie
       ? {
-          lettre: classePour(m.consoParM2, SEUILS_ENERGIE),
+          lettre: classePour(m.consoParM2, echelleEnergie),
           valeur: Math.round(m.consoParM2),
           unite: 'kWh/m²/an',
           recalculee: true
@@ -368,9 +384,9 @@ export function analyserDpe(lignes: string[], plage: [number, number]): Diagnost
       : null;
 
   const climat: Etiquette | null =
-    m.gesParM2 !== null && !petiteSurface
+    m.gesParM2 !== null && echelleClimat
       ? {
-          lettre: classePour(m.gesParM2, SEUILS_CLIMAT),
+          lettre: classePour(m.gesParM2, echelleClimat),
           valeur: m.gesParM2,
           unite: 'kg CO₂/m²/an',
           recalculee: true
@@ -389,9 +405,9 @@ export function analyserDpe(lignes: string[], plage: [number, number]): Diagnost
    * trompeur qu'un mauvais résultat.
    */
   const { verdict, gravite } =
-    petiteSurface && chiffresLus
+    sansEchelle && chiffresLus
       ? {
-          verdict: `Ce logement fait ${m.surface} m². Les logements de 40 m² ou moins ont leurs propres seuils depuis juillet 2024 : nous ne recalculons pas la lettre, elle serait plus mauvaise que la vraie. Lisez celle imprimée sur l’étiquette du rapport.`,
+          verdict: `Ce logement fait ${m.surface} m² et se situe en altitude, où les seuils diffèrent encore. Nous ne recalculons pas la lettre : lisez celle imprimée sur l’étiquette du rapport.`,
           gravite: 'neutre' as const
         }
       : phraseVerdict(finale);

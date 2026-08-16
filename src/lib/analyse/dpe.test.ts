@@ -117,15 +117,23 @@ describe('ce qu’on dit à un logement classé E', () => {
  * deux mètres carrés — figeait précisément l'erreur : il attendait la classe F
  * et la mention « passoire thermique » pour un logement dont personne ne sait
  * ici s'il en est une. C'est un audit notarial qui l'a trouvé.
+ *
+ * On s'est alors abstenu de conclure, faute de connaître la table. Elle est
+ * désormais relevée au texte et codée : la lettre se calcule sur l'échelle DUE,
+ * pas sur l'échelle générale. Ce qui ne change pas, c'est le garde-fou : pas de
+ * passoire annoncée sur un petit logement qui n'en est pas une.
  */
 describe('un logement de 40 m² ou moins', () => {
   const diag = analyserDpe(DPE_TYPE, [4, 15]);
 
-  it('ne recalcule aucune lettre avec l’échelle générale', () => {
+  it('recalcule avec l’échelle qui lui est due, pas la générale', () => {
     if (diag.schema?.genre !== 'dpe') throw new Error('schéma DPE attendu');
-    expect(diag.schema.energie).toBeNull();
-    expect(diag.schema.climat).toBeNull();
-    expect(diag.schema.finale).toBeNull();
+    /* 362 kWh/m²/an sur 22 m² : au-dessus de 330, l'échelle générale dirait F.
+       Sa propre frontière E|F est à 375 — il reste en E. */
+    expect(diag.schema.energie?.valeur).toBe(362);
+    expect(diag.schema.energie?.lettre).toBe('E');
+    expect(diag.schema.finale).not.toBe('F');
+    expect(diag.schema.finale).not.toBe('G');
   });
 
   /*
@@ -140,7 +148,7 @@ describe('un logement de 40 m² ou moins', () => {
     expect(diag.gravite).not.toBe('alerte');
   });
 
-  it('dit pourquoi il s’abstient, et où trouver la vraie lettre', () => {
+  it('dit que les petites surfaces ont leurs propres seuils', () => {
     const texte = diag.explication.join(' ');
     expect(texte).toMatch(/40 m² ou moins/);
     expect(texte).toMatch(/seuils propres/);
