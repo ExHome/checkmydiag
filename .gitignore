@@ -3,6 +3,11 @@ dist/
 .DS_Store
 *.local
 
+# Les sondes jetables du corpus. Elles lisent de vrais rapports pour en relever
+# les formes ; leur code n'a d'intérêt que le jour où on les écrit, et les
+# laisser traîner dans un dépôt public invite à les relancer sans réfléchir.
+*.local.ts
+
 # Jamais de rapports de diagnostic dans le dépôt : ils contiennent le nom et
 # l'adresse de vraies personnes. Les tests lisent un dossier hors dépôt.
 *.pdf

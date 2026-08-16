@@ -8,6 +8,7 @@
  */
 import type { Diagnostic, Fait, Gravite } from '../modele';
 import { nombre, trouver } from './texte';
+import { dateDuRapport } from './dateRapport';
 
 interface Detecteur {
   nom: string;
@@ -110,8 +111,20 @@ export function analyserErp(lignes: string[], plage: [number, number]): Diagnost
   const faits: Fait[] = [];
   if (concernes.length)
     faits.push({ libelle: 'Risques concernant le bien', valeur: String(concernes.length) });
-  const date = trouver(lignes, /(?:[ée]tabli|d[ée]livr[ée]|date)[^.]{0,20}(\d{2}\/\d{2}\/\d{4})/i);
-  if (date?.[1]) faits.push({ libelle: 'Établi le', valeur: date[1] });
+  /*
+   * La date passe par la fonction commune.
+   *
+   * Le motif d'ici cherchait « établi », « délivré » ou « date » suivis d'un
+   * jour. Aucun des trois n'apparaît dans la forme réelle de l'état des
+   * risques — « Document réalisé le : … » — et huit volets sur dix repartaient
+   * sans date. Or l'ERP ne vaut que six mois : c'est le diagnostic où
+   * l'oubli coûte le plus cher.
+   *
+   * Le motif attrapait en revanche les dates d'approbation des plans de
+   * prévention, dont le volet est rempli. `dateDuRapport` les écarte.
+   */
+  const date = dateDuRapport(lignes);
+  if (date) faits.push({ libelle: 'Établi le', valeur: date });
 
   return {
     type: 'erp',
@@ -152,7 +165,7 @@ export function analyserErp(lignes: string[], plage: [number, number]): Diagnost
     ],
     schema: risques.length ? { genre: 'risques', risques } : null,
     pages: plage,
-    ...(date?.[1] ? { date: date[1] } : {})
+    ...(date ? { date } : {})
   };
 }
 
@@ -205,6 +218,18 @@ export function analyserCarrez(lignes: string[], plage: [number, number]): Diagn
 
   const faits: Fait[] = [];
   if (surface !== null) faits.push({ libelle: nomSurface, valeur: `${fr(surface)} m²` });
+
+  /*
+   * Le mesurage porte sa date, comme tout rapport — et ce module ne la
+   * cherchait pas du tout : cent pour cent des attestations repartaient sans.
+   *
+   * Une superficie Carrez n'a pas de durée de validité, ce qui rend l'oubli
+   * moins spectaculaire qu'ailleurs. Mais sa date sert aux contrôles de
+   * cohérence entre rapports du même dossier : deux mesurages à un an
+   * d'intervalle qui ne donnent pas la même surface, c'est une question à
+   * poser avant de signer.
+   */
+  const date = dateDuRapport(lignes);
   if (auSol !== null)
     faits.push({
       libelle: 'Surface au sol',
@@ -250,7 +275,8 @@ export function analyserCarrez(lignes: string[], plage: [number, number]): Diagn
           'Le mesurage n’a pas de durée de validité tant que le logement n’est pas modifié.'
         ],
     schema: null,
-    pages: plage
+    pages: plage,
+    ...(date ? { date } : {})
   };
 }
 

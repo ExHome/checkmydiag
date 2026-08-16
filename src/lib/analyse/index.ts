@@ -17,6 +17,7 @@ import { confianceDuDossier, origineDe } from './confiance';
 import { reperer } from './reperes';
 import { conclusionDe, graviteDe, lireSynthese, type BlocSynthese } from './synthese';
 import { nombre, trouver } from './texte';
+import { dateDuRapport } from './dateRapport';
 
 type Extracteur = (lignes: string[], plage: [number, number]) => Diagnostic;
 
@@ -170,9 +171,25 @@ export function analyser(brutes: PageTexte[]): Analyse {
     );
     const releves = [...(diag.releves ?? []), ...perimetre];
 
+    /*
+     * La date, repêchée hors du volet quand il n'en porte pas.
+     *
+     * Mesuré sur le corpus : l'état des risques ne date JAMAIS son propre
+     * volet — la découpe ne lui rattache pas la page qui le fait. Sans ce
+     * repêchage, le diagnostic le plus fréquent du dossier, et l'un des deux
+     * qui périment en six mois, échappe au contrôle de péremption.
+     *
+     * On ne repêche que si le volet s'est tu, et `dateDuRapport` applique aux
+     * pages non rattachées les mêmes libellés stricts qu'ailleurs : elles
+     * appartiennent à tout le monde, et y pêcher une date au hasard daterait
+     * un rapport avec la visite d'un autre.
+     */
+    const dateRepechee = diag.date ?? dateDuRapport([], horsSection);
+
     diagnostics.push({
       ...diag,
       feuillets,
+      ...(dateRepechee ? { date: dateRepechee } : {}),
       ...(releves.length ? { releves } : {}),
       ...(reperes.length ? { reperes } : {})
     });

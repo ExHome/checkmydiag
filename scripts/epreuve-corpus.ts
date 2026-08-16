@@ -20,7 +20,7 @@
  * Usage :
  *   npx vite-node scripts/epreuve-corpus.ts -- <racine> [nombre]
  */
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
 import { lignesDePage, type PageTexte } from '../src/lib/lignes';
@@ -63,7 +63,41 @@ function trouver(dossier: string, trouves: string[], profondeur = 0): void {
   }
 }
 
+/**
+ * Le texte d'un rapport, lu une seule fois dans sa vie.
+ *
+ * Les rapports vivent dans une Dropbox en « fichiers à la demande » : ils sont
+ * référencés localement mais stockés en ligne, et les OUVRIR les fait
+ * descendre. Relire le corpus à chaque mesure, c'est donc rapatrier des
+ * gigaoctets pour n'en garder que du texte.
+ *
+ * Le texte extrait est mis de côté hors du dépôt. Les mesures suivantes le
+ * relisent sans jamais rouvrir le PDF — ni disque, ni bande passante.
+ *
+ * ── Où il est rangé, et pourquoi pas ici ────────────────────────────────────
+ *
+ * Dans le dossier temporaire de la session, jamais dans le dépôt : ce texte
+ * contient le nom et l'adresse de vraies personnes. Le dépôt est public.
+ */
+const CACHE = join(
+  process.env.TEMP ?? process.env.TMP ?? '.',
+  'verriere-texte-corpus'
+);
+
+function clef(chemin: string): string {
+  /* Un nom de fichier stable et anodin : le chemin d'origine porte le nom du
+     client, il ne doit pas se retrouver en clair dans un nom de cache. */
+  let h = 0;
+  for (let i = 0; i < chemin.length; i++) h = (Math.imul(31, h) + chemin.charCodeAt(i)) | 0;
+  return join(CACHE, `${(h >>> 0).toString(36)}.json`);
+}
+
 async function pagesDe(chemin: string): Promise<PageTexte[]> {
+  const range = clef(chemin);
+  if (existsSync(range)) {
+    return JSON.parse(readFileSync(range, 'utf8')) as PageTexte[];
+  }
+
   const donnees = new Uint8Array(readFileSync(chemin));
   const pdf = await getDocument({ data: donnees, useSystemFonts: true, verbosity: 0 }).promise;
   const pages: PageTexte[] = [];
@@ -80,6 +114,9 @@ async function pagesDe(chemin: string): Promise<PageTexte[]> {
     });
   }
   await pdf.destroy();
+
+  mkdirSync(CACHE, { recursive: true });
+  writeFileSync(range, JSON.stringify(pages), 'utf8');
   return pages;
 }
 
@@ -141,10 +178,33 @@ for (const chemin of echantillon) {
       /* « Muet » : le moteur a reconnu le diagnostic mais n'a pas su conclure.
          C'est le chiffre qui compte — il dit ce qu'il reste à apprendre. */
       if (d.gravite === 'neutre') muets.set(d.type, (muets.get(d.type) ?? 0) + 1);
-      const aUneDate = d.faits.some((f) => /valab|établi|etabli|réalis|realis/i.test(f.libelle));
-      if (!aUneDate) sansDate.set(d.type, (sansDate.get(d.type) ?? 0) + 1);
+      /*
+       * La date, c'est `d.date` — pas un libellé deviné.
+       *
+       * La première version de cette sonde cherchait des intitulés au jugé :
+       * « valable », « établi », « réalisé ». Or les modules écrivent « Date du
+       * repérage », « Date de la visite », « Date du constat » — aucun de ces
+       * trois ne contenait les mots cherchés. La sonde annonçait donc 100 % de
+       * diagnostics sans date pour six types sur neuf, et le défaut était dans
+       * la sonde.
+       *
+       * C'est `d.date` qui commande le contrôle de péremption dans
+       * `echeance.ts`. C'est donc lui qu'il faut mesurer, et rien d'autre.
+       */
+      if (!d.date) sansDate.set(d.type, (sansDate.get(d.type) ?? 0) + 1);
     }
-  } catch {
+  } catch (e) {
+    /*
+     * Un rapport illisible, ou une faute de ma part ?
+     *
+     * Ce catch avalait tout. Un import oublié dans le cache a fait échouer les
+     * soixante lectures, et le compteur a annoncé « 60 rapports illisibles » —
+     * une donnée parfaitement fausse, présentée avec l'aplomb d'une mesure.
+     *
+     * Les erreurs de programmation remontent donc désormais : elles doivent
+     * casser l'épreuve, pas la teinter.
+     */
+    if (e instanceof ReferenceError || e instanceof TypeError) throw e;
     illisibles++;
   }
 }

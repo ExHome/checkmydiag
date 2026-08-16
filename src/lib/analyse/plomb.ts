@@ -6,7 +6,8 @@
  * une obligation de travaux.
  */
 import type { Diagnostic, Fait, Gravite } from '../modele';
-import { nombre, trouver, contient } from './texte';
+import { nombre, contient } from './texte';
+import { dateDuRapport } from './dateRapport';
 
 /**
  * Le tableau de conclusion se présente ainsi :
@@ -191,8 +192,20 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
     });
   }
 
-  const date = trouver(lignes, /rédigé par .{0,40}? le\s*(\d{2}\/\d{2}\/\d{4})/i);
-  if (date?.[1]) faits.push({ libelle: 'Date du constat', valeur: date[1] });
+  /*
+   * La date passe par la fonction commune.
+   *
+   * Le motif d'ici ne connaissait qu'une seule tournure — « rédigé par X le
+   * … » — et un constat sur deux repartait sans date. Les rapports écrivent
+   * aussi « Date du repérage », « Date(s) de la visite faisant l'objet du
+   * CREP », ou signent par « Fait à …, le … ».
+   *
+   * Le volet du plomb est de surcroît le plus piégeux du dossier : l'appareil
+   * de mesure est un fluorescence X, dont la source radioactive porte une date
+   * de chargement et deux d'étalonnage. `dateDuRapport` les écarte.
+   */
+  const date = dateDuRapport(lignes);
+  if (date) faits.push({ libelle: 'Date du constat', valeur: date });
 
   const explication = [
     // « unité de diagnostic », « classe 3 » et « saturnisme » s'ouvrent au
@@ -246,7 +259,7 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
         }
       : null,
     pages: plage,
-    ...(date?.[1] ? { date: date[1] } : {})
+    ...(date ? { date } : {})
   };
 }
 
