@@ -438,6 +438,39 @@ c'est déjà sa fonction.
 
 ---
 
+## 14 · Le DPE : ce que « muet » recouvrait
+
+Quatre DPE sur dix sortaient sans lettre. Le mot cachait deux choses très
+différentes, et il a fallu les séparer avant de corriger quoi que ce soit.
+
+**Sept étaient de vrais échecs de lecture** : un des trois nombres du calcul
+manquait — consommation totale, surface de référence, émissions.
+
+**Trente-trois étaient un refus assumé** : des logements de 40 m² ou moins, pour
+lesquels le moteur préférait se taire plutôt qu'appliquer une échelle trop
+sévère. Un tiers du corpus. À Bordeaux, les studios sont partout.
+
+### La table existe, elle était seulement à aller chercher
+
+Relevée au texte de l'arrêté du 25 mars 2024, puis vérifiée à ses bornes : la
+ligne 40 m² redonne exactement les seuils généraux de 2021. Résultat mesuré :
+42 % de DPE muets, puis **4 %**.
+
+### Une lettre recalculée n'est pas celle du rapport
+
+Un DPE de 2023 portait l'échelle d'alors. Le même studio calculé aujourd'hui
+change de classe — c'est la réforme, pas une contradiction. Le champ
+`recalculee` existe pour que rien ne les confonde, et l'explication des réformes
+dit déjà pourquoi la lettre a bougé.
+
+### Ce que la page du DPE ne dira jamais au texte
+
+Le confort d'été liste « bonne inertie / logement traversant / toiture isolée » —
+mais c'est le catalogue des caractéristiques possibles, et seules les cochées
+comptent. La coche est dessinée. On ne peut pas savoir lesquelles sont vraies.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [ ] Le tableau « E. — Anomalies identifiées » du gaz : c'est là qu'est la

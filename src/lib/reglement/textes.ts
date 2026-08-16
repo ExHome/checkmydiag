@@ -104,7 +104,7 @@ export const REGLEMENT: Partial<Record<TypeDiag, Reglement>> = {
       },
       {
         enonce:
-          'Les logements dont la surface de référence est inférieure ou égale à 40 m² relèvent de seuils propres, établis surface par surface entre 8 et 40 m² et interpolés entre deux valeurs.',
+          'Les logements dont la surface de référence est inférieure ou égale à 40 m² relèvent de seuils propres, établis surface par surface entre 8 et 40 m² et interpolés entre deux valeurs. La table est relevée dans `analyse/seuilsPetitesSurfaces.ts` ; à 40 m², elle rejoint exactement les seuils généraux de 2021. Un second jeu de valeurs vise les logements situés à 800 mètres d’altitude ou plus, et ne touche que les classes E et F.',
         source: {
           reference:
             'arrêté du 25 mars 2024 modifiant les seuils des étiquettes du DPE pour les logements de petites surfaces',
