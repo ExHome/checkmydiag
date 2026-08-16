@@ -43,9 +43,26 @@ function compter(lignes: string[]): {
 const ELEMENTS =
   /^(?:[A-Z]\s+)?(Plinthes?|Portes?(?:\s*\([^)]*\))?|Murs?|Plafonds?|Fen[êe]tres?(?:\s*\([^)]*\))?|Sols?|Volets?|Placards?|Radiateurs?|Escaliers?|Rampes?|Cloisons?|Huisseries?)\b/i;
 
-/** Noms de pièce, écrits seuls sur une ligne au-dessus de leur bloc de mesures. */
-const PIECES =
-  /^(Cuisine|S[ée]jour|Salon|Chambre\s*\d*|Salle de bain|Salle d'eau|WC|Toilettes|Couloir|D[ée]gagement|Entr[ée]e|Buanderie|Cellier|Garage|Cave|Grenier|Combles|Balcon|Terrasse|Jardin|Ext[ée]rieur|Palier|Escalier|Bureau|Mezzanine)(\s*\/\s*\S.*)?$/i;
+/**
+ * Noms de pièce, écrits seuls sur une ligne au-dessus de leur bloc de mesures.
+ *
+ * Le NIVEAU précède souvent le nom — « Rez de jardin - Salle de bain 01 »,
+ * « 1er étage - Chambre 02 » —, et le motif l'ignorait : ancré au début de la
+ * ligne, il ne reconnaissait que les pièces écrites seules. Sur un constat où
+ * toutes les pièces portent leur étage, aucune n'était rattachée, et le plomb
+ * ressortait « emplacement non précisé » d'un bout à l'autre.
+ *
+ * Le numéro qui suit parfois le nom — « Salle de bain 01 » — est admis pour la
+ * même raison.
+ */
+const NIVEAU = String.raw`(?:(?:Rez[\s-]*de[\s-]*(?:chauss[ée]e|jardin)|Sous[\s-]*sol|\d+\s*[èe]?me?\s*[ée]tage|\d+er\s*[ée]tage|Combles?)\s*[-–]\s*)?`;
+
+const PIECES = new RegExp(
+  '^' +
+    NIVEAU +
+    String.raw`(Cuisine|S[ée]jour|Salon|Chambre\s*\d*|Salle de bain|Salle d'eau|WC|Toilettes|Couloir|D[ée]gagement|Entr[ée]e|Buanderie|Atelier|Chaufferie|Cellier|Garage|Cave|Grenier|Combles|Balcon|Loggia|Terrasse|Jardin|Ext[ée]rieur|Palier|Escalier|Bureau|Mezzanine|Pi[èe]ce)(?:\s*\d+)?(\s*\/\s*\S.*)?$`,
+  'i'
+);
 
 /**
  * Où se trouve le plomb, pièce par pièce.
@@ -253,6 +270,23 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
     jourDuConstat !== null && finAutorisation !== null && jourDuConstat > finAutorisation;
   if (date) faits.push({ libelle: 'Date du constat', valeur: date });
 
+  /*
+   * Où le plomb dégradé se concentre, et pourquoi.
+   *
+   * Lu dans un constat réel, le classement par pièce ne laisse aucun doute :
+   * salle d'eau 86 % de classe 3, salle de bain 80 %, seconde salle de bain
+   * 56 % — quand les chambres et les paliers sont à 7 ou 12 %.
+   *
+   * Ce n'est pas un hasard, et c'est explicable en une phrase : l'humidité
+   * décolle les peintures, et une peinture qui s'écaille est précisément ce qui
+   * fait passer un revêtement de la classe 1 à la classe 3. Le lecteur qui sait
+   * cela comprend d'un coup pourquoi son constat vise ces pièces-là, et ce
+   * qu'il faut surveiller ailleurs.
+   */
+  const pieces = emplacements(lignes).filter((e) => e.classe >= 3);
+  const humides = pieces.filter((e) => /salle de bain|salle d.eau|cuisine|buanderie|wc|toilette/i.test(e.zone));
+  const surtoutHumide = pieces.length >= 3 && humides.length / pieces.length >= 0.5;
+
   const explication = [
     // « unité de diagnostic », « classe 3 » et « saturnisme » s'ouvrent au
     // clic : ces trois phrases n'ont plus à les définir en passant.
@@ -266,6 +300,12 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
      * 15/08/2026 : L. 1334-5 pour le relevé, L. 1334-10 pour la transmission.
      */
     'Le constat ne s’arrête pas aux peintures : il dresse aussi un relevé des facteurs de dégradation du bâti — l’humidité qui décolle les revêtements, un plancher ou un plafond qui menace, des peintures qui s’écaillent. C’est ce qui transforme du plomb inerte en poussière respirable.',
+
+    ...(surtoutHumide
+      ? [
+          'Dans ce logement, le plomb dégradé se concentre dans les pièces d’eau. C’est le cas le plus courant, et il s’explique : l’humidité décolle les peintures, et une peinture qui s’écaille est exactement ce qui fait passer un revêtement en classe 3. Traiter la cause — ventilation, étanchéité — évite que le reste du logement suive.'
+        ]
+      : []),
     'Ce relevé a une conséquence que peu de vendeurs connaissent : si le constat fait apparaître ces facteurs, le diagnostiqueur en transmet immédiatement une copie à l’agence régionale de santé, qui informe le préfet. Cela ne dépend pas de la classe des revêtements — un logement peut être signalé sans qu’aucune unité ne soit classée 3.',
     'Si un enfant de moins de six ans vit dans le logement, ou doit y vivre, ce point cesse d’être une formalité : c’est chez eux que le saturnisme fait ses dégâts, parce qu’ils portent leurs mains à la bouche et que leur organisme absorbe le plomb bien plus que celui d’un adulte.'
   ];
