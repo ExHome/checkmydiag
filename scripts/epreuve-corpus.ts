@@ -136,11 +136,14 @@ const vus = new Map<TypeDiag, number>();
 const avecSchema = new Map<TypeDiag, number>();
 const muets = new Map<TypeDiag, number>();
 const sansDate = new Map<TypeDiag, number>();
+/** Fiches nées de la page de synthèse : leur rapport n'est pas dans le PDF. */
+const sansRapport = new Map<TypeDiag, number>();
 for (const t of TYPES) {
   vus.set(t, 0);
   avecSchema.set(t, 0);
   muets.set(t, 0);
   sansDate.set(t, 0);
+  sansRapport.set(t, 0);
 }
 
 let lus = 0;
@@ -191,7 +194,22 @@ for (const chemin of echantillon) {
        * C'est `d.date` qui commande le contrôle de péremption dans
        * `echeance.ts`. C'est donc lui qu'il faut mesurer, et rien d'autre.
        */
-      if (!d.date) sansDate.set(d.type, (sansDate.get(d.type) ?? 0) + 1);
+      /*
+       * Deux causes très différentes se cachaient dans une seule colonne.
+       *
+       * L'amiante affichait 43 % « sans date », et on l'a longtemps pris pour
+       * un défaut de lecture. C'en était un tout autre : dans 21 cas sur 49, le
+       * rapport n'est pas dans le PDF — seule sa conclusion, recopiée en page
+       * de synthèse, y figure. Il n'a pas de date parce que le document qui la
+       * porte est ailleurs, et aucune correction du moteur n'y changera rien.
+       *
+       * On les sépare donc : « sans rapport » compte les fiches nées de la
+       * synthèse, « sans date » ne compte plus que celles dont le rapport EST
+       * là et dont la date n'a pas été trouvée. Ce second chiffre, lui, se
+       * corrige.
+       */
+      if (d.origine === 'synthese') sansRapport.set(d.type, (sansRapport.get(d.type) ?? 0) + 1);
+      else if (!d.date) sansDate.set(d.type, (sansDate.get(d.type) ?? 0) + 1);
     }
   } catch (e) {
     /*
@@ -218,16 +236,16 @@ if (parDossier.length) {
   console.log(`par dossier         : médiane ${tri[Math.floor(tri.length / 2)]}, min ${tri[0]}, max ${tri[tri.length - 1]}`);
 }
 
-console.log('\ntype             trouvés   schéma     muets   sans date');
+console.log('\ntype             trouvés   schéma     muets   sans date  sans rapport');
 for (const t of TYPES) {
   const n = vus.get(t) ?? 0;
   if (!n) {
-    console.log(`${t.padEnd(16)} ${String(0).padStart(7)}         —         —           —`);
+    console.log(`${t.padEnd(16)} ${String(0).padStart(7)}         —         —           —             —`);
     continue;
   }
   const pc = (x: number) => `${Math.round((x / n) * 100)} %`;
   console.log(
     `${t.padEnd(16)} ${String(n).padStart(7)} ${pc(avecSchema.get(t) ?? 0).padStart(9)} ` +
-      `${pc(muets.get(t) ?? 0).padStart(9)} ${pc(sansDate.get(t) ?? 0).padStart(11)}`
+      `${pc(muets.get(t) ?? 0).padStart(9)} ${pc(sansDate.get(t) ?? 0).padStart(11)} ${pc(sansRapport.get(t) ?? 0).padStart(13)}`
   );
 }
