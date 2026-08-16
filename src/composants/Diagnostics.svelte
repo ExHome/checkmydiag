@@ -13,6 +13,13 @@
    */
   import type { Analyse, Diagnostic, TypeDiag } from '../lib/modele';
   import Explicatif from './schemas/Explicatif.svelte';
+  import VisuelDpe from './visuels/VisuelDpe.svelte';
+  import TableauElectrique from './visuels/TableauElectrique.svelte';
+  import VisuelAmiante from './visuels/VisuelAmiante.svelte';
+  import VisuelPlomb from './visuels/VisuelPlomb.svelte';
+  import VisuelGaz from './visuels/VisuelGaz.svelte';
+  import VisuelTermites from './visuels/VisuelTermites.svelte';
+  import VisuelRisques from './visuels/VisuelRisques.svelte';
   import PlanDuLogement from './plans/PlanDuLogement.svelte';
   import MotsExpliques from './MotsExpliques.svelte';
   import Releves from './Releves.svelte';
@@ -394,6 +401,64 @@
   function lettreDe(d: Diagnostic) {
     return d.schema?.genre === 'dpe' ? d.schema.finale : null;
   }
+
+  /*
+   * ---- Le visuel propre au diagnostic --------------------------------------
+   *
+   * Chaque écran a son dessin : l'escalier A→G, le tableau à disjoncteurs, le
+   * champ d'observation du repérage, la paillasse d'analyse, la chaudière et sa
+   * jauge, les zones sondées du bois, la coupe de terrain. Ils viennent des
+   * maquettes de la cliente, et ils ne sont pas interchangeables — c'est ce qui
+   * fait qu'on reconnaît l'écran avant d'avoir lu son titre.
+   *
+   * Chaque accesseur rend le schéma d'un bloc plutôt que champ par champ : le
+   * rétrécissement de type par `d.schema?.genre === '…'` ne survit pas à trois
+   * lectures séparées dans le balisage.
+   *
+   * Quand le moteur n'a rien pu lire, l'accesseur rend `null` et le visuel le
+   * dit à sa façon. Aucun ne devine, aucun ne remplit : un dessin qui invente
+   * ses données ment mieux qu'un paragraphe.
+   */
+  function dpeDe(d: Diagnostic) {
+    return d.schema?.genre === 'dpe' ? d.schema : null;
+  }
+
+  function plombDe(d: Diagnostic) {
+    return d.schema?.genre === 'plomb' ? d.schema : null;
+  }
+
+  function zonesDe(d: Diagnostic) {
+    return d.schema?.genre === 'pieces' ? d.schema.zones : null;
+  }
+
+  function risquesDe(d: Diagnostic) {
+    return d.schema?.genre === 'risques' ? d.schema.risques : null;
+  }
+
+  /**
+   * Les points de contrôle de l'installation électrique.
+   *
+   * Le moteur rend des groupes d'anomalies — « appareil général de commande :
+   * 2 », « liaison équipotentielle : 1 ». Le tableau les dessine en rangée de
+   * modules, un par groupe relevé.
+   *
+   * Il n'invente pas les points SANS anomalie : la norme en compte six, mais un
+   * rapport qui n'en cite aucun n'établit pas pour autant que les autres sont
+   * conformes. Dessiner six modules dont quatre verts affirmerait un contrôle
+   * que personne n'a lu.
+   */
+  function pointsDe(d: Diagnostic) {
+    if (d.schema?.genre !== 'anomalies') return null;
+    return d.schema.groupes.map((g) => ({
+      nom: g.nom,
+      etat: 'anomalie' as const,
+      detail: g.nombre > 1 ? `${g.nombre} anomalies` : '1 anomalie'
+    }));
+  }
+
+  function nombreAnomaliesDe(d: Diagnostic) {
+    return d.schema?.genre === 'anomalies' ? d.schema.total : null;
+  }
 </script>
 
 <svelte:window
@@ -512,6 +577,48 @@
 
           <div class="corps">
             <div class="dessin">
+              <!-- Le visuel de l'écran vient en premier : c'est lui qui dit,
+                   avant tout mot, dans quel diagnostic on est entré. -->
+              {#if d.type === 'dpe'}
+                {@const s = dpeDe(d)}
+                {#if s}
+                  <VisuelDpe energie={s.energie} climat={s.climat} finale={s.finale} />
+                {/if}
+              {:else if d.type === 'electricite'}
+                {@const points = pointsDe(d)}
+                {#if points}
+                  <TableauElectrique
+                    {points}
+                    nombreAnnonce={nombreAnomaliesDe(d)}
+                    gravite={d.gravite}
+                  />
+                {/if}
+              {:else if d.type === 'amiante'}
+                <VisuelAmiante gravite={d.gravite} zones={zonesDe(d)} />
+              {:else if d.type === 'plomb'}
+                {@const s = plombDe(d)}
+                {#if s}
+                  <VisuelPlomb
+                    classes={s.classes}
+                    nonMesurees={s.nonMesurees}
+                    total={s.total}
+                  />
+                {/if}
+              {:else if d.type === 'gaz'}
+                <!-- L'année de la chaudière n'est pas relevée par le moteur : le
+                     visuel s'en passe et le dit, plutôt que d'afficher celle de
+                     la maquette. -->
+                <VisuelGaz />
+              {:else if d.type === 'termites'}
+                <VisuelTermites
+                  conclusion={d.gravite === 'bon' ? 'sain' : d.gravite === 'alerte' ? 'indices' : null}
+                  zones={zonesDe(d)}
+                  page={d.pages?.[0] ?? null}
+                />
+              {:else if d.type === 'erp'}
+                <VisuelRisques risques={risquesDe(d)} />
+              {/if}
+
               <!-- Deux dessins, deux questions. Le premier explique pourquoi ce
                    contrôle existe ; le second dit ce qu'on a trouvé chez vous,
                    zone par zone. Le second n'apparaît que si le rapport permet

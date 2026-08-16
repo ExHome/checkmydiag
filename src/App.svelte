@@ -317,26 +317,44 @@
 
 <header class="entete">
   <div class="enveloppe entete-ligne">
+    <!--
+      La marque, avec sa signature.
+
+      La charte demande que le nom ne circule jamais seul : c'est la signature
+      qui dit l'activité, pas le nom. « Verrière » seul ne se comprend qu'une
+      fois qu'on sait — et une marque nouvelle ne peut compter sur personne pour
+      le savoir.
+
+      Le mot s'écrit sans article. « La Verrière » désigne une commune des
+      Yvelines, et le référencement s'y perdrait.
+    -->
     <a class="marque" href="./" onclick={(e) => { e.preventDefault(); recommencer(); }}>
-      Check<span>My</span>Diag
+      <span class="carreaux" aria-hidden="true">
+        <span></span><span class="jour"></span><span></span>
+        <span></span><span></span><span></span>
+      </span>
+      <span class="mot">
+        Verrière
+        <span class="signature">Lumière sur vos diagnostics</span>
+      </span>
     </a>
     <!--
-      « En clair » n'est plus dans le bandeau.
+      « En clair » n'est plus dans le bandeau, nulle part.
 
       Il y était comme une sortie de secours, en haut à droite, à côté de la
       marque : deux liens au même endroit, dont un qui quitte l'application. Il
       brouillait la lecture de l'écran plutôt que de l'ouvrir.
 
-      Il est devenu une application, dans la rangée « Pour comprendre » de
-      l'accueil, à côté de Dicodiag. On y va quand on cherche une réponse, pas
-      parce qu'on l'a croisé.
+      Il avait d'abord été retiré du seul écran de résultat, ce qui ne réglait
+      rien : c'est sur l'écran de dépôt — le premier qu'on voit — qu'il tirait
+      l'œil hors du geste qu'on venait faire.
 
-      Sur l'écran de dépôt, où il n'y a pas encore de grille, la sortie reste
-      offerte en toutes lettres sous la zone de dépôt.
+      Deux accès subsistent, tous deux à leur place : en toutes lettres sous la
+      zone de dépôt, pour qui arrive sans rapport sous la main, et en
+      application dans la rangée « Pour comprendre » de l'accueil, à côté de
+      Dicodiag. On y va quand on cherche une réponse, pas parce qu'on l'a
+      croisé.
     -->
-    {#if etat !== 'resultat'}
-      <a class="rubrique" href="./en-clair/">En clair</a>
-    {/if}
   </div>
 </header>
 
@@ -437,61 +455,83 @@
     background: var(--fond-clair);
   }
 
-  /* La marque en Fraunces, comme les titres du site. « My » prend l'or : une
-     seule couleur d'accent, pas un arc-en-ciel. */
   .marque {
-    font-family: var(--police-titre);
-    font-size: var(--t-titre);
-    font-weight: 500;
-    letter-spacing: -0.022em;
-    text-decoration: none;
-    color: var(--sur-fond);
     display: inline-flex;
     align-items: center;
+    gap: var(--e2);
     min-height: 44px;
+    text-decoration: none;
+    color: var(--sur-fond);
   }
 
   /*
-   * Le « My » prend le corail vif, et le garde sur les deux fonds.
+   * La verrière, dessinée en CSS plutôt qu'en image.
    *
-   * C'est le seul endroit du produit où une couleur de marque passe avant la
-   * mesure de contraste, et ce n'est pas un écart à la règle : WCAG exempte
-   * nommément le texte qui fait partie d'un logotype ou d'un nom de marque
-   * (critère 1.4.3). Partout ailleurs, le corail vif reste interdit au texte —
-   * il n'y tient que 2,7 sur le sable.
+   * Six carreaux, un seul éclairé — c'est toute la règle du logo, et elle tient
+   * en une grille de trois par deux. En CSS, elle suit la couleur du texte,
+   * s'imprime, et ne coûte pas une requête. L'image reste disponible dans
+   * public/logo pour tout ce qui sort du navigateur.
    */
-  .marque span {
-    color: var(--coral);
+  .carreaux {
+    flex: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    width: 34px;
+    height: 24px;
+    padding: 3px;
+    border-radius: 6px;
+    background: linear-gradient(145deg, #22606f, #12333d);
   }
 
+  .carreaux span {
+    border-radius: 1px;
+    background: rgb(244 232 216 / 22%);
+  }
+
+  /*
+   * Le carreau par où la lumière entre.
+   *
+   * Le corail ne sert qu'à lui — jamais deux carreaux, jamais les montants.
+   * C'est la seule touche vive du logo, et c'est ce qui lui donne sa force :
+   * six carreaux sombres, un éclairé, le rapport devient lisible.
+   */
+  .jour {
+    background: var(--coral) !important;
+  }
+
+  .mot {
+    display: grid;
+    font-family: var(--police-titre);
+    font-size: var(--t-titre);
+    font-weight: 700;
+    letter-spacing: -0.022em;
+    line-height: 1.05;
+  }
+
+  /*
+   * La signature accompagne le nom partout.
+   *
+   * C'est une exigence de la charte, et elle est juste : « Verrière » seul ne
+   * dit pas ce que fait le produit. Une marque installée peut se le permettre,
+   * une marque de trois jours non.
+   */
+  .signature {
+    font-family: var(--police);
+    font-size: var(--t-micro);
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--sur-fond-doux);
+  }
+
+  /* Le bandeau ne porte plus que la marque : l'alignement sur la ligne de base
+     servait à caler un second lien qui n'existe plus, et il désalignait la
+     verrière de son mot. */
   .entete-ligne {
     display: flex;
-    align-items: baseline;
-    justify-content: space-between;
+    align-items: center;
     gap: var(--e4);
     flex-wrap: wrap;
-  }
-
-  /* Le lien vers la rubrique : il attend, il n'appelle pas. Celui qui a son
-     rapport dépose son fichier ; celui qui n'en a pas trouve la sortie. */
-  /* Le lien tenait sur 19 pixels de haut : impossible à viser au pouce. Le
-     texte garde sa taille, c'est la zone touchable qui grandit — 44 px, le
-     minimum admis pour une cible tactile. */
-  .rubrique {
-    font-size: var(--t-micro);
-    letter-spacing: 0.16em;
-    color: var(--or-clair);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    padding-inline: var(--e1);
-  }
-
-  .rubrique:hover {
-    color: var(--sur-fond);
-    text-decoration: underline;
-    text-underline-offset: 4px;
   }
 
   /*

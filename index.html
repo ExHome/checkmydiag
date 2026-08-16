@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Check My Diag — l’antisèche de votre diagnostic immobilier</title>
+    <title>Verrière — lumière sur vos diagnostics</title>
     <meta
       name="description"
       content="Déposez votre rapport de diagnostic immobilier (DPE, électricité, amiante, plomb, gaz, termites…) : il devient cliquable. Chaque ligne s’explique en clair, avec un schéma. Votre document ne quitte jamais votre appareil."
@@ -16,7 +16,13 @@
          que EDITEUR_CONNU dans src/lib/nuls/rendu.ts. -->
     <meta name="robots" content="noindex, nofollow" />
     <meta name="theme-color" content="#0f3a47" />
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>" />
+    <!-- Le vrai logo remplace l'emoji de chantier. Les favicons ne montrent que
+         quatre carreaux : sous 28 px, la grille de six sature et devient une
+         tache. La charte dit que cette simplification est volontaire. -->
+    <link rel="icon" href="./logo/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./logo/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./logo/favicon-16.png" />
+    <link rel="apple-touch-icon" href="./logo/icone-180.png" />
   </head>
   <body>
     <div id="app"></div>
@@ -26,7 +32,7 @@
       les explications, qui sont, elles, de vraies pages HTML.
     -->
     <noscript>
-      <h1>Check My Diag</h1>
+      <h1>Verrière — lumière sur vos diagnostics</h1>
       <p>
         Cet outil lit votre rapport de diagnostic immobilier directement dans votre navigateur :
         il a besoin de JavaScript pour fonctionner, et c’est ce qui garantit que votre document
