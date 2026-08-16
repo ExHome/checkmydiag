@@ -32,7 +32,7 @@ export const TERMITES: Theme = {
       piege:
         'Un rapport qui conclut « aucun indice d’infestation » ne veut pas dire « pas de termites ». Il veut dire : on n’a rien vu, là où on pouvait regarder.',
       chezMoi:
-        'Check My Diag traduit le verdict de votre rapport en langage ordinaire, et vous rappelle sa date — six mois passent vite.',
+        'Verrière traduit le verdict de votre rapport en langage ordinaire, et vous rappelle sa date — six mois passent vite.',
       aussi: ['comment-reconnaitre-des-termites', 'j-ai-des-termites-que-faire', 'c-est-quoi-la-merule'],
       savoir: ['cordonnet'],
       sources: [{ titre: 'Code de la construction et de l’habitation, articles L. 126-4 et suivants', url: LEGI }],

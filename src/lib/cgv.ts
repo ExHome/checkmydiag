@@ -16,7 +16,7 @@
  * lecteur bouge — pas pour une virgule : chaque changement fait redemander son
  * accord à tout le monde.
  */
-export const VERSION_CGV = '2026-08-13';
+export const VERSION_CGV = '2026-08-16';
 
 /**
  * Identité de l'éditeur.
@@ -48,6 +48,18 @@ export interface Acceptation {
   quand: string;
 }
 
+/*
+ * La clé de stockage garde l'ancien nom, et ce n'est pas un oubli.
+ *
+ * Le produit s'appelle Verrière depuis le 16/08/2026, mais renommer cette clé
+ * ferait disparaître l'accord de tous ceux qui l'ont déjà donné : le navigateur
+ * ne saurait plus où le chercher. Ils se verraient redemander leur
+ * consentement, sans qu'aucune clause n'ait bougé de leur point de vue.
+ *
+ * Une clé de stockage n'est pas un nom de marque : c'est une adresse interne,
+ * que personne ne lit. Elle changera le jour où une migration écrira sous le
+ * nouveau nom avant d'effacer l'ancien — pas avant.
+ */
 const CLE = 'checkmydiag.cgv';
 
 /** L'accord déjà donné, s'il porte bien sur la version en vigueur. */
@@ -103,7 +115,7 @@ export const CGV: Article[] = [
   {
     titre: '1. Ce que fait ce site',
     points: [
-      'CheckMyDiag lit un rapport de diagnostic immobilier et vous l’explique en français courant, avec des schémas.',
+      'Verrière lit un rapport de diagnostic immobilier et vous l’explique en français courant, avec des schémas.',
       'Il vous signale aussi ce qui mérite une question : un diagnostic périmé, un diagnostic absent du dossier, des chiffres qui ne concordent pas.',
       'Le service est gratuit pour vous, et le restera. Vous n’avez pas de compte à créer.'
     ]
@@ -111,7 +123,7 @@ export const CGV: Article[] = [
   {
     titre: '2. Ce que ce site n’est pas',
     points: [
-      'CheckMyDiag n’est pas un diagnostiqueur. Il n’établit aucun diagnostic et n’a aucune valeur réglementaire.',
+      'Verrière n’est pas un diagnostiqueur. Il n’établit aucun diagnostic et n’a aucune valeur réglementaire.',
       'Le rapport signé par votre diagnostiqueur reste le seul document qui fait foi. En cas de différence entre ce que ce site affiche et ce que dit votre rapport, c’est votre rapport qui a raison.',
       'Ce site ne remplace pas l’avis d’un professionnel. Il vous aide à comprendre et à poser les bonnes questions.'
     ]
@@ -138,7 +150,7 @@ export const CGV: Article[] = [
     points: [
       'Quand votre rapport signale un problème, le site peut vous indiquer un professionnel de votre secteur — un électricien si l’installation présente une anomalie, par exemple.',
       'Ce référencement est payant : le professionnel paie un abonnement fixe pour être présent sur son secteur. Cela est écrit à l’endroit où il apparaît.',
-      'CheckMyDiag ne touche aucune commission sur les travaux, et n’est pas rémunéré au résultat. Le montant payé par le professionnel ne dépend jamais de ce que vous faites ensuite.',
+      'Verrière ne touche aucune commission sur les travaux, et n’est pas rémunéré au résultat. Le montant payé par le professionnel ne dépend jamais de ce que vous faites ensuite.',
       'Ce n’est ni un label, ni une garantie de qualité, ni une recommandation d’expert. Chaque professionnel est vérifié à son inscription (entreprise réelle, assurance en cours, qualification quand le métier l’exige), mais nous ne répondons pas de ses travaux.',
       'Vous n’êtes jamais mis en relation sans le vouloir : c’est vous qui appelez ou demandez un devis. Votre rapport n’est jamais transmis à un professionnel.'
     ]
@@ -161,7 +173,7 @@ export const CGV: Article[] = [
   {
     titre: '8. Le contenu du site',
     points: [
-      'Les textes, les schémas et les explications de CheckMyDiag lui appartiennent. Vous pouvez les lire, les imprimer et les partager pour votre usage personnel.',
+      'Les textes, les schémas et les explications de Verrière lui appartiennent. Vous pouvez les lire, les imprimer et les partager pour votre usage personnel.',
       'Votre rapport de diagnostic vous appartient. Nous n’en revendiquons rien.'
     ]
   },

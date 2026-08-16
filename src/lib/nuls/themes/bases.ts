@@ -70,7 +70,7 @@ export const BASES: Theme = {
       piege:
         'On cherche « la » conclusion du dossier. Elle n’existe pas : il y a autant de conclusions que de diagnostics, et une bonne nouvelle sur l’amiante ne dit rien de l’électricité.',
       chezMoi:
-        'C’est exactement ce que fait Check My Diag : il découpe votre PDF rapport par rapport, et vous rend une ligne de verdict par diagnostic.',
+        'C’est exactement ce que fait Verrière : il découpe votre PDF rapport par rapport, et vous rend une ligne de verdict par diagnostic.',
       aussi: ['c-est-quoi-un-diagnostic-immobilier', 'combien-de-temps-un-diagnostic-est-valable'],
       verifie: V
     },
@@ -240,7 +240,7 @@ export const BASES: Theme = {
       piege:
         'On regarde la date d’édition du PDF, en bas de page. Ce n’est pas elle qui compte : c’est la date de visite, souvent antérieure de plusieurs jours.',
       chezMoi:
-        'Check My Diag calcule cette date pour chaque rapport de votre dossier et vous signale ceux qui sont périmés ou sur le point de l’être.',
+        'Verrière calcule cette date pour chaque rapport de votre dossier et vous signale ceux qui sont périmés ou sur le point de l’être.',
       aussi: ['mon-diagnostic-est-perime-que-faire', 'c-est-quoi-le-dossier-de-diagnostic-technique'],
       sources: [
         {

@@ -18,6 +18,7 @@
   import { APPS } from '../lib/apps';
   import Dicodiag from './Dicodiag.svelte';
   import Propagation from './Propagation.svelte';
+  import { aLOuverture, auToucher } from '../lib/toucher';
 
   interface Props {
     analyse: Analyse;
@@ -106,6 +107,10 @@
   function ouvrir(evenement: MouseEvent, type: TypeDiag): void {
     const bouton = evenement.currentTarget as HTMLElement;
     const carre = origineDe(bouton.querySelector('.icone'));
+
+    /* La secousse part avec le geste, avant tout calcul : c'est la réponse au
+       doigt, elle n'a pas à attendre que l'écran soit prêt. */
+    aLOuverture();
 
     /*
      * La couleur part d'abord, l'écran suit.
@@ -264,7 +269,7 @@
           title={d ? undefined : (tuile.manque?.titre ?? 'Ce diagnostic ne figure pas dans le dossier déposé.')}
           onclick={(e) => d && ouvrir(e, tuile.type)}
         >
-          <span class="icone" style="background: {t.degrade}">
+          <span class="icone halo" style="background: {t.degrade}">
             <span class="signe" aria-hidden="true">{t.signe}</span>
             {#if p}
               <span class="pastille {p.classe}" aria-hidden="true">{p.signe}</span>
@@ -293,15 +298,22 @@
           <!-- « En clair » est une vraie rubrique du site, en pages HTML : elle
                s'ouvre comme un lien, pas comme un écran. -->
           <a class="tuile" href="./en-clair/">
-            <span class="icone" style="background: {o.degrade}">
+            <span class="icone halo" style="background: {o.degrade}">
               <span class="signe" aria-hidden="true">{o.signe}</span>
             </span>
             <span class="nom">{o.nom}</span>
             <span class="dit">{o.dit}</span>
           </a>
         {:else}
-          <button type="button" class="tuile" onclick={() => (dicodiagOuvert = true)}>
-            <span class="icone" style="background: {o.degrade}">
+          <button
+            type="button"
+            class="tuile"
+            onclick={() => {
+              aLOuverture();
+              dicodiagOuvert = true;
+            }}
+          >
+            <span class="icone halo" style="background: {o.degrade}">
               <span class="signe" aria-hidden="true">{o.signe}</span>
             </span>
             <span class="nom">{o.nom}</span>
@@ -314,8 +326,8 @@
 
   <nav class="dock" aria-label="Les parties du dossier">
     {#each DOCK as d (d.cle)}
-      <button type="button" onclick={() => surVue?.(d.cle)}>
-        <span class="signe" aria-hidden="true">{d.signe}</span>
+      <button type="button" onclick={() => { auToucher(); surVue?.(d.cle); }}>
+        <span class="signe halo" aria-hidden="true">{d.signe}</span>
         <span class="nom">{d.nom}</span>
       </button>
     {/each}
@@ -672,6 +684,44 @@
     box-shadow:
       inset 0 0 0 1px rgb(15 58 71 / 30%),
       0 6px 18px rgb(26 77 92 / 26%);
+  }
+
+  /*
+   * Le halo s'allume au survol de la TUILE, pas de l'icône seule.
+   *
+   * On vise le carré coloré, mais la zone qu'on touche est le bouton entier,
+   * nom compris. Une lueur qui n'apparaît qu'en passant exactement sur l'icône
+   * raterait la moitié des gestes — et sur un téléphone, il n'y a pas de survol
+   * du tout : c'est l'appui qui compte, et il porte sur le bouton.
+   */
+  .tuile:not(.eteinte):hover .icone::after,
+  .tuile:not(.eteinte):focus-visible .icone::after {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .tuile:not(.eteinte):active .icone::after {
+    opacity: 1;
+    transform: scale(0.99);
+    transition-duration: 0.06s;
+  }
+
+  /* Une application absente ne s'éclaire pas : elle n'est pas là, et rien ne
+     doit laisser croire qu'on peut l'ouvrir. */
+  .tuile.eteinte .icone::after {
+    display: none;
+  }
+
+  /*
+   * Sur le fond pétrole de l'accueil, la lueur se renforce.
+   *
+   * La valeur par défaut est réglée pour un fond clair. Sur du sombre, un voile
+   * corail à 32 % se perd — c'est le même piège que le dock blanc, une couleur
+   * translucide ne vaut que par ce qu'il y a dessous.
+   */
+  .bureau {
+    --lueur: rgb(255 107 93 / 85%);
+    --lueur-large: rgb(255 107 93 / 45%);
   }
 
   /* La pastille d'état : une forme d'abord, une couleur ensuite. Elle relie la

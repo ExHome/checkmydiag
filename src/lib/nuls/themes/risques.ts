@@ -34,7 +34,7 @@ export const RISQUES: Theme = {
       piege:
         'C’est un document qui périme pendant les ventes qui traînent. Six mois, c’est la durée d’un compromis un peu long : pensez à le régénérer avant la signature.',
       chezMoi:
-        'Check My Diag remonte les risques cochés dans votre rapport et vous dit ce que chacun implique concrètement.',
+        'Verrière remonte les risques cochés dans votre rapport et vous dit ce que chacun implique concrètement.',
       aussi: ['verifier-les-risques-de-mon-adresse', 'c-est-quoi-le-retrait-gonflement-des-argiles', 'c-est-quoi-le-radon'],
       sources: [
         { titre: 'Code de l’environnement, article L. 125-5', url: LEGI },

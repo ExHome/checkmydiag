@@ -1,6 +1,6 @@
 <script lang="ts">
   /**
-   * Le clip : le point d'entrée du langage Check My Diag.
+   * Le clip : le point d'entrée du langage Verrière.
    *
    *     Fenêtre ─── ●
    *

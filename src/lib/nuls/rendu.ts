@@ -37,7 +37,7 @@ export const SITE = (
 /** Le nom de la rubrique, et son dossier. */
 export const RUBRIQUE = 'en-clair';
 const NOM = 'En clair';
-const MARQUE = 'Check My Diag';
+const MARQUE = 'Verrière';
 
 /* -------------------------------------------------------------------------- */
 /*  Adresses                                                                   */
@@ -223,7 +223,7 @@ function gabarit(page: Page): string {
     <meta property="og:image" content="${SITE}/${page.carte}" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Check My Diag — en clair" />
+    <meta property="og:image:alt" content="Verrière — en clair" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content="${SITE}/${page.carte}" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>" />

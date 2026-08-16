@@ -50,7 +50,7 @@ export const VENDRE: Theme = {
       piege:
         'On croit souvent qu’un logement rénové échappe à l’amiante ou au plomb. Ce n’est pas la rénovation qui compte, c’est la date du permis de construire du bâtiment.',
       chezMoi:
-        'Déposez votre dossier : Check My Diag vous dit quels diagnostics il a trouvés — et lesquels manquent au regard de ce que le dossier lui-même décrit.',
+        'Déposez votre dossier : Verrière vous dit quels diagnostics il a trouvés — et lesquels manquent au regard de ce que le dossier lui-même décrit.',
       aussi: [
         'quand-faire-les-diagnostics-pour-vendre',
         'quels-diagnostics-pour-louer',
@@ -173,7 +173,7 @@ export const VENDRE: Theme = {
         'Pour tout le reste, la règle est l’information, pas la mise en conformité.'
       ],
       chezMoi:
-        'Check My Diag distingue ce que dit le rapport de ce qu’il implique : un verdict, puis « ce que ça change pour vous ».',
+        'Verrière distingue ce que dit le rapport de ce qu’il implique : un verdict, puis « ce que ça change pour vous ».',
       aussi: ['les-diagnostics-font-ils-baisser-le-prix', 'c-est-quoi-le-diagnostic-electricite', 'c-est-quoi-le-crep-plomb'],
       verifie: V
     },

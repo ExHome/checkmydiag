@@ -1,6 +1,6 @@
 <script module lang="ts">
   /**
-   * La maison de Check My Diag — première brique de la bibliothèque visuelle
+   * La maison de Verrière — première brique de la bibliothèque visuelle
    * (§ 19 de ORDRE-DE-MISSION-SCHEMAS.md).
    *
    * Trois schémas dessinaient trois maisons différentes : celle du DPE, celle

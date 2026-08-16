@@ -131,7 +131,7 @@
                 </p>
               {/if}
               <p class="reserve">
-                Le rapport signé reste la référence : Check My Diag n’a aucune valeur
+                Le rapport signé reste la référence : Verrière n’a aucune valeur
                 réglementaire.
               </p>
             </div>

@@ -33,7 +33,7 @@ export const MON_RAPPORT: Theme = {
       piege:
         'Beaucoup de rapports citent des chiffres qui ne sont pas ceux de votre logement : seuils réglementaires, valeurs de référence, gains après travaux. Vérifiez toujours que la phrase autour du chiffre parle bien de votre bien, aujourd’hui.',
       chezMoi:
-        'C’est exactement le travail que fait Check My Diag : trouver la conclusion de chaque rapport, la traduire, et vous montrer la ligne d’origine dans votre PDF.',
+        'C’est exactement le travail que fait Verrière : trouver la conclusion de chaque rapport, la traduire, et vous montrer la ligne d’origine dans votre PDF.',
       aussi: [
         'que-veut-dire-non-visite',
         'mon-rapport-contient-une-erreur',
@@ -82,7 +82,7 @@ export const MON_RAPPORT: Theme = {
         'Ne corrigez jamais vous-même un PDF : un document modifié perd toute valeur, et vous exposerait bien plus que l’erreur.'
       ],
       chezMoi:
-        'Check My Diag compare les informations d’un rapport à l’autre dans votre dossier et signale les écarts — une surface qui change d’un document au suivant, par exemple.',
+        'Verrière compare les informations d’un rapport à l’autre dans votre dossier et signale les écarts — une surface qui change d’un document au suivant, par exemple.',
       aussi: ['contester-un-diagnostic', 'comment-lire-mon-rapport', 'le-dpe-est-il-fiable'],
       verifie: V
     },
@@ -158,7 +158,7 @@ export const MON_RAPPORT: Theme = {
         'Sur un scan, les cases cochées passent souvent inaperçues : c’est là que se glissent les contresens.'
       ],
       chezMoi:
-        'Check My Diag vous le dit franchement : si votre PDF ne contient presque pas de texte, il vous prévient plutôt que de deviner.',
+        'Verrière vous le dit franchement : si votre PDF ne contient presque pas de texte, il vous prévient plutôt que de deviner.',
       aussi: ['comment-lire-mon-rapport', 'mon-rapport-contient-une-erreur'],
       verifie: V
     },

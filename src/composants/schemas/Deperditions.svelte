@@ -1,6 +1,6 @@
 <script lang="ts">
   /**
-   * La maison du dossier — le schéma-mère de Check My Diag.
+   * La maison du dossier — le schéma-mère de Verrière.
    *
    * C'est ici que le langage se voit en entier : huit éléments dessinés, huit
    * clips, et derrière chacun une notion qui descend jusqu'à « et chez moi ? »

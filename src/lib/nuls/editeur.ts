@@ -7,7 +7,7 @@
  * moteur de recherche pose une question avant toutes les autres — *qui a écrit
  * ça, et de quel droit ?* — et un site anonyme n'y répond pas.
  *
- * ⚠️ Check My Diag est une **marque indépendante** (décision du 13/08/2026) :
+ * ⚠️ Verrière est une **marque indépendante** (décision du 13/08/2026) :
  * elle ne s'adosse à aucun cabinet de diagnostic, et `societe` reste vide si
  * l'auteur ne souhaite pas mentionner son activité. Indépendant ne veut pas dire
  * anonyme pour autant : `auteur` et `metier` restent indispensables, car c'est

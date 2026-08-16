@@ -1,9 +1,9 @@
-# Check My Diag
+# Verrière
 
 Un particulier reçoit soixante pages de PDF technique et n'a qu'une question :
 **est-ce que c'est grave ?**
 
-Check My Diag lit son rapport de diagnostic immobilier dans le navigateur. Le
+Verrière lit son rapport de diagnostic immobilier dans le navigateur. Le
 rapport s'affiche d'un côté, les passages qui comptent y sont surlignés : on en
 touche un, l'explication arrive en face — en puces, avec un petit dessin. Des
 antisèches, pas un cours.

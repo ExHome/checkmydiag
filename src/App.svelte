@@ -329,10 +329,7 @@
       Yvelines, et le référencement s'y perdrait.
     -->
     <a class="marque" href="./" onclick={(e) => { e.preventDefault(); recommencer(); }}>
-      <span class="carreaux" aria-hidden="true">
-        <span></span><span class="jour"></span><span></span>
-        <span></span><span></span><span></span>
-      </span>
+      <img class="tuile-logo" src="./logo/logo.svg" alt="" width="40" height="40" />
       <span class="mot">
         Verrière
         <span class="signature">Lumière sur vos diagnostics</span>
@@ -423,7 +420,7 @@
     {:else if analyse.diagnostics.length === 0}
       <p class="erreur" role="alert">
         Aucun diagnostic reconnu dans ce document. Il s’agit peut-être d’un autre type de rapport,
-        ou d’une mise en page que Check My Diag ne sait pas encore lire.
+        ou d’une mise en page que Verrière ne sait pas encore lire.
       </p>
     {/if}
 
@@ -465,47 +462,24 @@
   }
 
   /*
-   * La verrière, dessinée en CSS plutôt qu'en image.
+   * La tuile du logo, telle qu'elle est fournie.
    *
-   * Six carreaux, un seul éclairé — c'est toute la règle du logo, et elle tient
-   * en une grille de trois par deux. En CSS, elle s'imprime et ne coûte pas une
-   * requête. Les images restent dans public/logo pour tout ce qui sort du
-   * navigateur.
+   * Elle n'est pas refaite en CSS. Je l'avais redessinée — six carreaux en
+   * grille, un montant par écart — et c'était contraire à la consigne : le
+   * logo est fourni, il ne se redessine pas. La reconstruction avait d'ailleurs
+   * déjà produit deux écarts : des carreaux remplis de sable au lieu du fond,
+   * et un rayon d'angle qui n'était pas celui du tracé.
    *
-   * La construction suit le tracé d'origine, et pas l'inverse : ce sont les
-   * MONTANTS qui sont sable, et les carreaux qui laissent voir le fond. Ma
-   * première version remplissait les carreaux de sable pâle — une fenêtre
-   * laiteuse au lieu d'une verrière. Le sable est donc porté par le fond du
-   * cadre, et les carreaux le découpent.
+   * Le seul argument qui la justifiait — « en CSS, elle s'imprime » — est faux :
+   * le bandeau entier est masqué à l'impression.
+   *
+   * 40 px est la taille minimale que la charte fixe à l'écran. En dessous, elle
+   * demande la version favicon, à quatre carreaux.
    */
-  .carreaux {
+  .tuile-logo {
     flex: none;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    /* L'écart entre carreaux EST le montant : sa largeur suit celle du cadre,
-       comme les 19 unités du tracé sur 512. */
-    gap: 2px;
-    width: 36px;
-    height: 26px;
-    padding: 2px;
-    border-radius: 4px;
-    background: var(--sable);
-  }
-
-  .carreaux span {
-    background: linear-gradient(145deg, #22606f, #12333d);
-  }
-
-  /*
-   * Le carreau par où la lumière entre — deuxième colonne, première rangée.
-   *
-   * Le corail ne sert qu'à lui : jamais deux carreaux, jamais les montants.
-   * C'est la seule touche vive du logo, et c'est ce qui lui donne sa force —
-   * six carreaux sombres, un éclairé, le rapport devient lisible.
-   */
-  .jour {
-    background: var(--coral) !important;
+    width: 40px;
+    height: 40px;
   }
 
   .mot {

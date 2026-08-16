@@ -90,7 +90,7 @@ export const PLOMB: Theme = {
         'Si des enfants vivent dans le logement, le médecin traitant est le bon interlocuteur pour un dépistage.'
       ],
       chezMoi:
-        'Check My Diag compte vos unités par classe et vous dit tout de suite si votre rapport contient de la classe 3, et où.',
+        'Verrière compte vos unités par classe et vous dit tout de suite si votre rapport contient de la classe 3, et où.',
       aussi: ['c-est-quoi-le-saturnisme', 'c-est-quoi-le-crep-plomb', 'une-anomalie-empeche-t-elle-de-vendre'],
       savoir: ['classe-3'],
       sources: [{ titre: 'Code de la santé publique, article L. 1334-9', url: LEGI }],

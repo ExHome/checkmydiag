@@ -87,8 +87,8 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
    *
    * J'avais rendu cet écran à l'encre, en me disant que l'étiquette A→G devait
    * régner seule. La cliente a tranché en trois mots — « manque de corail » —
-   * et elle a raison : le produit s'appelle CheckMyDiag, son « My » est corail,
-   * et son écran principal l'avait perdu.
+   * et elle avait raison : le corail est la seule couleur vive de la marque, et
+   * l'écran le plus lu du dossier l'avait perdu.
    *
    * Les sept couleurs de l'arrêté restent intouchées : elles se détachent sur
    * le rose pâle aussi bien que sur le sable.

@@ -17,7 +17,10 @@
 
 <section class="cgv" aria-labelledby="cgv-titre">
   <h2 id="cgv-titre">Conditions d’utilisation</h2>
-  <p class="version">Version du 13 août 2026</p>
+  <!-- Cette date doit rester alignée sur VERSION_CGV dans src/lib/cgv.ts :
+       l'une est ce que le lecteur voit, l'autre ce que le produit compare. Rien
+       dans le code ne les relie — les bumper ensemble, ou ni l'une ni l'autre. -->
+  <p class="version">Version du 16 août 2026</p>
 
   {#if !editeurRenseigne()}
     <!-- Sans éditeur identifiable, un tel texte n'engage personne. Le dire

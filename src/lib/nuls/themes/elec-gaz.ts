@@ -33,7 +33,7 @@ export const ELEC_GAZ: Theme = {
       piege:
         'Un grand nombre d’anomalies n’égale pas un grand danger. Une même cause — l’absence de terre dans un logement ancien — génère mécaniquement des dizaines de lignes.',
       chezMoi:
-        'Check My Diag regroupe vos anomalies par point de contrôle : vous voyez d’un coup si vous avez un problème, ou le même problème répété trente fois.',
+        'Verrière regroupe vos anomalies par point de contrôle : vous voyez d’un coup si vous avez un problème, ou le même problème répété trente fois.',
       aussi: ['mon-installation-a-des-anomalies-c-est-grave', 'c-est-quoi-un-differentiel', 'dois-je-mettre-mon-installation-aux-normes'],
       savoir: ['differentiel', 'mise-a-la-terre'],
       sources: [{ titre: 'Arrêté du 28 septembre 2017 (diagnostic électricité)', url: LEGI }],
@@ -86,7 +86,7 @@ export const ELEC_GAZ: Theme = {
       piege:
         'Le rapport ne hiérarchise pas pour vous. Toutes les anomalies s’écrivent avec le même ton réglementaire, qu’il s’agisse d’un risque mortel ou d’une prise mal placée.',
       chezMoi:
-        'Check My Diag regroupe vos anomalies par point de contrôle : vous voyez d’un coup si vous avez six problèmes distincts, ou le même répété trente fois — ce qui ne se chiffre pas pareil chez un électricien.',
+        'Verrière regroupe vos anomalies par point de contrôle : vous voyez d’un coup si vous avez six problèmes distincts, ou le même répété trente fois — ce qui ne se chiffre pas pareil chez un électricien.',
       aussi: ['c-est-quoi-un-differentiel', 'dois-je-mettre-mon-installation-aux-normes', 'une-anomalie-empeche-t-elle-de-vendre'],
       verifie: V
     },
@@ -135,7 +135,7 @@ export const ELEC_GAZ: Theme = {
         'Il ne remplace pas l’entretien annuel de la chaudière, qui est une autre obligation.'
       ],
       chezMoi:
-        'Le verdict du diagnostic gaz tient en une phrase, souvent noyée. Check My Diag la remonte, et vous dit si un DGI a été relevé.',
+        'Le verdict du diagnostic gaz tient en une phrase, souvent noyée. Verrière la remonte, et vous dit si un DGI a été relevé.',
       aussi: ['c-est-quoi-un-dgi-gaz', 'le-monoxyde-de-carbone-c-est-quoi', 'c-est-quoi-le-diagnostic-electricite'],
       savoir: ['monoxyde-de-carbone'],
       sources: [{ titre: 'Arrêté du 23 février 2018 (diagnostic gaz)', url: LEGI }],

@@ -135,7 +135,7 @@
     </svg>
 
     <!-- L'écran d'accueil répétait le nom du site. Un visiteur qui arrive ne
-         sait pas ce qu'est Check My Diag : il faut lui dire ce qui va se
+         sait pas ce qu'est Verrière : il faut lui dire ce qui va se
          passer, pas comment ça s'appelle. -->
     <p class="titre">
       {survol ? 'Lâchez, on s’occupe du reste' : 'Déposez votre rapport de diagnostic'}

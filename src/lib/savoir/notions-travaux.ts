@@ -84,7 +84,7 @@ export const NOTIONS_TRAVAUX: Notion[] = [
         bribes: [
           {
             texte:
-              'Check My Diag ne donne pas de prix : nous n’avons pas de source assez sérieuse pour en avancer un, et un chiffre inventé serait pire que rien.'
+              'Verrière ne donne pas de prix : nous n’avons pas de source assez sérieuse pour en avancer un, et un chiffre inventé serait pire que rien.'
           },
           {
             /*

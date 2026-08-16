@@ -82,7 +82,7 @@ export const DPE: Theme = {
       piege:
         'La lettre A→G est imprimée en image dans le PDF. Un logiciel qui la « lit » ne la lit pas vraiment : il faut la recalculer depuis les valeurs chiffrées. Si votre lettre et vos chiffres ne concordent pas, le point mérite une question.',
       chezMoi:
-        'Check My Diag recalcule votre classe à partir de la consommation, de la surface et des émissions, avec les seuils de l’arrêté — et vous dit si elle correspond à la lettre imprimée.',
+        'Verrière recalcule votre classe à partir de la consommation, de la surface et des émissions, avec les seuils de l’arrêté — et vous dit si elle correspond à la lettre imprimée.',
       aussi: ['c-est-quoi-le-dpe', 'pourquoi-mon-logement-electrique-est-mal-note', 'le-dpe-est-il-fiable'],
       sources: [{ titre: 'Arrêté du 31 mars 2021, annexe relative aux seuils', url: LEGI }],
       verifie: V

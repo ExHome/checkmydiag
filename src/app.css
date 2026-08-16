@@ -277,6 +277,94 @@
   box-sizing: border-box;
 }
 
+/*
+ * ── Le halo ─────────────────────────────────────────────────────────────────
+ *
+ * Un anneau de lumière sur le pourtour de ce qu'on s'apprête à toucher. C'est
+ * la marque qui devient geste : le produit s'appelle Verrière, sa promesse est
+ * la lumière, et ce que le doigt vise s'éclaire avant d'être touché.
+ *
+ * ── Ce qui le rend fluide ───────────────────────────────────────────────────
+ *
+ * Rien d'animé n'est coûteux ici : l'anneau est un pseudo-élément dont l'ombre
+ * ne change JAMAIS, et seules son opacité et son échelle bougent. Animer
+ * directement `box-shadow` ou `filter` obligerait le navigateur à repeindre à
+ * chaque image — sur un téléphone, c'est la différence entre 60 images par
+ * seconde et une bouillie.
+ *
+ * Il ne capte aucun geste : il déborde de son élément, et sans
+ * `pointer-events: none` il volerait les clics de ses voisins.
+ *
+ * ── Comment s'en servir ─────────────────────────────────────────────────────
+ *
+ * Sur un élément en `position: relative` dont on veut éclairer le pourtour :
+ *   <button class="halo">…</button>
+ * L'anneau épouse le rayon de l'élément. Pour une forme qui a son propre rayon
+ * (une icône dans un bouton), poser la classe sur la forme, pas sur le bouton.
+ */
+.halo {
+  position: relative;
+}
+
+.halo::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.96);
+  /* Deux couches : un liseré net qui dessine le contour, un voile large qui
+     fait la lueur. La couleur suit celle de l'écran — corail sur la coque,
+     accent de l'univers à l'intérieur d'une application. */
+  box-shadow:
+    0 0 0 2px var(--lueur, rgb(255 107 93 / 55%)),
+    0 0 16px 3px var(--lueur-large, rgb(255 107 93 / 32%));
+  transition:
+    opacity var(--duree) var(--courbe),
+    transform var(--duree) var(--courbe);
+}
+
+.halo:hover::after,
+.halo:focus-visible::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* À l'appui, la lueur se resserre : le geste a été pris en compte. */
+.halo:active::after {
+  opacity: 1;
+  transform: scale(0.99);
+  transition-duration: 0.06s;
+}
+
+/*
+ * Le halo ne remplace jamais l'anneau de focus du navigateur.
+ *
+ * Il l'accompagne : qui navigue au clavier a besoin d'un repère franc, pas
+ * d'une lueur. Les composants gardent donc leur `outline` propre.
+ */
+
+@media (prefers-reduced-motion: reduce) {
+  .halo::after {
+    transition: none;
+    transform: none;
+  }
+
+  .halo:hover::after,
+  .halo:focus-visible::after,
+  .halo:active::after {
+    transform: none;
+  }
+}
+
+/* Un halo n'a pas de sens sur du papier. */
+@media print {
+  .halo::after {
+    display: none;
+  }
+}
+
 html {
   scroll-behavior: smooth;
 }

@@ -14,7 +14,7 @@
  * ⚠️ Les sept couleurs A→G n'apparaissent que dans `etiquette` et
  * `deux-etiquettes`, sur fond blanc, comme une planche réglementaire reproduite.
  * Elles ne colorent jamais un autre dessin : c'est ce qui les empêche de
- * ressembler à un avis de Check My Diag.
+ * ressembler à un avis de Verrière.
  */
 
 export interface Dessin {
