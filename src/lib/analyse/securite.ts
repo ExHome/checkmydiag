@@ -89,9 +89,38 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
   let gravite: Gravite = 'neutre';
   let verdict =
     'La conclusion est cochée à la main : un programme ne peut pas la lire. Elle est sur la page « Conclusion » du rapport.';
+
+  /*
+   * Ce que le diagnostiqueur n'a pas pu essayer.
+   *
+   * Quand l'installation n'était pas alimentée, les essais de déclenchement du
+   * différentiel n'ont pas eu lieu — et c'est le seul organe du tableau qui
+   * protège les personnes. Le rapport le dit dans sa rubrique 6 ; le produit
+   * l'ignorait.
+   */
+  const nonVerifies = pointsNonVerifies(lignes);
+
+  /*
+   * Le différentiel non essayé change la portée de la conclusion.
+   *
+   * C'est le seul organe du tableau qui protège les PERSONNES : il coupe le
+   * courant quand celui-ci passe par quelqu'un. Quand l'installation n'était
+   * pas alimentée le jour de la visite, son déclenchement n'a pas pu être
+   * essayé — et « aucune anomalie » ne veut alors pas dire qu'il fonctionne.
+   */
+  const differentielNonEssaye = nonVerifies.some((p) =>
+    /d[ée]clenche|diff[ée]rentiel|bouton test/i.test(p.quoi)
+  );
+
   if (etat === 'aucune') {
-    gravite = 'bon';
-    verdict = 'L’installation électrique ne présente aucune anomalie.';
+    if (differentielNonEssaye) {
+      gravite = 'attention';
+      verdict =
+        'Aucune anomalie relevée — mais le déclenchement du différentiel n’a pas pu être essayé : l’installation n’était pas alimentée le jour de la visite.';
+    } else {
+      gravite = 'bon';
+      verdict = 'L’installation électrique ne présente aucune anomalie.';
+    }
   } else if (etat === 'anomalies') {
     gravite = total !== null && total >= 5 ? 'alerte' : 'attention';
 
@@ -126,6 +155,17 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
   }
   const date = trouver(lignes, /Date (?:du|de la) (?:rep[ée]rage|visite|diagnostic)\s*:?[\s.]*(\d{2}\/\d{2}\/\d{4})/i);
   if (date?.[1]) faits.push({ libelle: 'Date de la visite', valeur: date[1] });
+
+  if (nonVerifies.length) {
+    /* Le motif est le même pour tous les points d'un rapport : on le cite une
+       fois, plutôt que de répéter dix lignes identiques. */
+    const motif = nonVerifies[0]?.motif ?? '';
+    faits.push({
+      libelle: 'Points non vérifiés',
+      valeur: String(nonVerifies.length),
+      precision: motif
+    });
+  }
 
   return {
     type: 'electricite',
@@ -467,4 +507,72 @@ export function essaisGaz(lignes: string[]): EssaisGaz {
     aLArret: zone.some((l) => /Fonctionnement\s*:?\s*Appareil\s+[àa]\s+l['’]arr[êe]t/i.test(l)),
     anneeAppareil: annee?.[1] ? Number(annee[1]) : null
   };
+}
+
+/** Un point de contrôle que le diagnostiqueur n'a pas pu vérifier. */
+export interface PointNonVerifie {
+  /** Ce qui aurait dû être contrôlé. */
+  quoi: string;
+  /** Pourquoi ça n'a pas pu l'être. */
+  motif: string;
+}
+
+/**
+ * La rubrique « Points de contrôle n'ayant pu être vérifiés ».
+ *
+ * C'est le pendant électrique de la mesure de CO manquante du gaz, et il est
+ * tout aussi grave. Relevé dans un rapport réel :
+ *
+ *   Dispositif de protection différentiel — Courant différentiel-résiduel assigné
+ *   Point à vérifier : Déclenche, lors de l'essai de fonctionnement
+ *   Motifs : L'installation n'était pas alimentée en électricité le jour de la visite.
+ *
+ * Autrement dit : personne n'a vérifié que le différentiel déclenche. Or c'est
+ * lui qui coupe le courant quand il passe par quelqu'un — c'est le seul organe
+ * du tableau qui protège les personnes, et non le matériel.
+ *
+ * Le rapport conclut quand même, avec sa liste d'anomalies. Un lecteur en
+ * retire que l'installation a été contrôlée. Elle ne l'a pas été sur ce qui
+ * compte le plus.
+ *
+ * ── Ce qui n'est pas de cette rubrique ──────────────────────────────────────
+ *
+ * Les « parties non visitées » du logement sont autre chose : une pièce fermée
+ * ne dit rien de la qualité du contrôle ailleurs. Ici, le point de contrôle
+ * existait, était accessible, et n'a pas pu être ESSAYÉ.
+ */
+export function pointsNonVerifies(lignes: string[]): PointNonVerifie[] {
+  const debut = lignes.findIndex((l) =>
+    /Points? de contr[ôo]le n[’']?ayant pu [êe]tre v[ée]rifi[ée]s?/i.test(l)
+  );
+  if (debut < 0) return [];
+
+  /*
+   * La rubrique suivante s'annonce « 7. – … », avec un tiret entouré d'espaces.
+   *
+   * Ce tiret n'est pas un détail : les DOMAINES du tableau sont numérotés eux
+   * aussi — « 1. L'appareil général de commande » — et un motif qui se contente
+   * du numéro coupe la rubrique dès sa première ligne. C'est ce qu'il faisait,
+   * et il ne remontait donc jamais rien.
+   */
+  const fin = lignes.findIndex((l, i) => i > debut && /^\s*\d+\s*[.]?\s*[–—-]\s+/.test(l));
+  const zone = lignes.slice(debut + 1, fin > debut ? fin : undefined);
+
+  const points: PointNonVerifie[] = [];
+  let quoi: string | null = null;
+
+  for (const ligne of zone) {
+    const aVerifier = /Point [àa] v[ée]rifier\s*:?\s*(.+)$/i.exec(ligne.trim());
+    if (aVerifier?.[1]) {
+      quoi = aVerifier[1].trim();
+      continue;
+    }
+    const motif = /Motifs?\s*:?\s*(.+)$/i.exec(ligne.trim());
+    if (motif?.[1] && quoi) {
+      points.push({ quoi, motif: motif[1].trim() });
+      quoi = null;
+    }
+  }
+
+  return points;
 }

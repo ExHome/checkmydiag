@@ -242,6 +242,25 @@ function surfaces(bien: Bien, diagnostics: Diagnostic[]): PointDeControle[] {
   // les mêmes surfaces. Au-delà de 10 %, la question se pose.
   if (proportion <= 0.1) return [];
 
+  /*
+   * Le SENS de l'écart compte autant que sa taille.
+   *
+   * La lettre du DPE se calcule en divisant la consommation par la surface. Une
+   * surface de référence plus GRANDE que la surface réellement mesurée abaisse
+   * donc les kWh par mètre carré, et améliore la classe. Une surface plus
+   * petite fait l'inverse.
+   *
+   * Ce n'est pas une accusation : la surface de référence du DPE ne compte pas
+   * la même chose que le mesurage — depuis l'arrêté du 25 mars 2024 elle inclut
+   * des surfaces chauffées que la loi Carrez exclut, et il est normal qu'elle
+   * soit un peu supérieure. Mais le lecteur a le droit de savoir dans quel sens
+   * penche l'écart, parce que l'un des deux sens l'arrange et l'autre non.
+   */
+  const dpePlusGrand = valeurDpe > valeurCarrez;
+  const consequence = dpePlusGrand
+    ? 'Le DPE retient la surface la plus grande des deux. Or sa lettre se calcule en divisant la consommation par la surface : à consommation égale, une surface plus grande donne une meilleure lettre.'
+    : 'Le DPE retient la surface la plus petite des deux. Or sa lettre se calcule en divisant la consommation par la surface : à consommation égale, une surface plus petite donne une lettre moins bonne.';
+
   return [
     {
       genre: 'incoherence',
@@ -249,8 +268,9 @@ function surfaces(bien: Bien, diagnostics: Diagnostic[]): PointDeControle[] {
       // sa famille dans le tableau de bord, plutôt que de l'y laisser orphelin.
       type: 'carrez',
       titre: 'Deux surfaces différentes dans le même dossier',
-      explication: `Le DPE parle de ${nombreFr(valeurDpe)} m², le mesurage de ${nombreFr(valeurCarrez)} m². Ces deux calculs ne comptent pas exactement la même chose, donc un petit écart est normal — mais ici la différence est de ${Math.round(proportion * 100)} %.`,
-      quoiFaire: 'Demandez au diagnostiqueur laquelle des deux surfaces fait foi pour la vente. C’est le chiffre du mesurage qui sera écrit dans l’acte.'
+      explication: `Le DPE parle de ${nombreFr(valeurDpe)} m², le mesurage de ${nombreFr(valeurCarrez)} m². Ces deux calculs ne comptent pas exactement la même chose, donc un petit écart est normal — mais ici la différence est de ${Math.round(proportion * 100)} %. ${consequence}`,
+      quoiFaire:
+        'Demandez au diagnostiqueur laquelle des deux surfaces fait foi pour la vente, et sur quelle surface la lettre du DPE a été calculée. C’est le chiffre du mesurage qui sera écrit dans l’acte.'
     }
   ];
 }
