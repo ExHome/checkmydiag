@@ -1187,6 +1187,87 @@ Les quatre gardes qui en sortent :
 
 ---
 
+## 30 · L'état des risques, lu en entier — et la croix qui change de côté
+
+Vingt pages lues page à page, sur un bien de Bordeaux en zone inondable. Le
+§7 avait décrit ce document ; ce qui suit le complète sur trois points qu'une
+seule lecture ne pouvait pas donner.
+
+### Deux mises en page coexistent, et elles sont inverses
+
+L'imprimé officiel — celui que la loi impose — sort ses croix en texte. Mais la
+place de la réponse a changé entre deux millésimes du même éditeur, devenu
+Septeo Solutions Proptech :
+
+```
+2023        L'immeuble est situé dans le périmètre d'un PPRn approuvé   oui non x
+                                                                         ↑ après
+
+2024        non x
+            L'immeuble est situé dans le périmètre d'un PPRn prescrit   oui
+             ↑ avant, sur la ligne précédente
+```
+
+**Mesuré sur 63 volets : 28 portent la réponse après la phrase, 21 avant, 14
+restent illisibles.** Les deux formes sont donc presque à parts égales, et
+elles se contredisent : une lecture qui cherche la croix après la phrase lit,
+sur la seconde, le mot resté seul à la fin — c'est-à-dire la réponse opposée.
+
+Sur le dossier lu, cela change tout : le bien **est** en PPRn Inondation
+approuvé, avec prescriptions de travaux. Une lecture naïve aurait annoncé
+l'inverse.
+
+**Ce que le produit fait, et pourquoi il ne se trompe pas** : il lit le tableau
+de synthèse du volet — `PPRn Inondation approuvé 05/12/2023 oui oui p.3` — et
+non l'imprimé. Vérifié : sur les sept biens en PPR approuvé de l'échantillon,
+il le dit sept fois. L'imprimé officiel reste donc un gisement inexploité, pas
+une source d'erreur.
+
+### Les prescriptions de travaux sont conditionnelles
+
+Le tableau de synthèse porte deux colonnes, « Concerné » et « Travaux ». Quand
+la seconde dit oui, le rapport détaille — et ce détail se lit mal :
+
+> Pour le PPR « Inondation » approuvé le 05/12/2023, des prescriptions
+> s'appliquent dans les cas suivants :
+> - Quelle que soit la zone et sous la condition « aire de stationnement ou
+>   garage souterrain (gestionnaire, public ou privé) » : référez-vous au
+>   règlement, page(s) 94
+> - … « cuve à combustible (propriétaire ou gestionnaire) » : page(s) 86
+
+Ce ne sont pas des travaux imposés au logement : ce sont des cas de figure, à
+recouper avec ce que le bien possède. Un acquéreur qui lit « des prescriptions
+de travaux existent » sans cette nuance croira devoir faire des travaux ; un
+autre qui a un garage souterrain passera à côté de ce qui le concerne.
+
+### Quarante-trois arrêtés de catastrophe naturelle
+
+Sur la commune lue : crues et ruissellements presque chaque année, sécheresses
+à répétition, une tempête, une submersion marine. La colonne « Indemnisé »
+reste vide — c'est au vendeur de la remplir (§7), et elle ne l'est jamais.
+
+### La rubrique argiles a maintenant sa page
+
+Le §7 l'avait trouvée noyée dans le bloc des sinistres. Le millésime 2024 lui
+consacre une page entière — « Argiles : information relative aux travaux non
+réalisés » — avec le texte de l'article R. 125-24 reproduit, et deux cases
+« Oui / Non ».
+
+**Elles ne sont pas cochées.** Deux éditeurs, deux millésimes, deux communes
+différentes : la case reste vierge. Ce n'est donc pas un oubli isolé, c'est un
+défaut structurel de la chaîne — le vendeur ignore que cette case existe.
+
+### Deux chiffres qui situent
+
+- **100 sites** Basias, Basol ou ICPE à moins de 500 mètres, contre 36 et 2 sur
+  les deux autres dossiers lus. Le chiffre est en petits caractères, dans un
+  tableau « donné à titre informatif ».
+- **Un risque nouveau apparaît** dans ce millésime : le **recul du trait de
+  côte**. Ici, « commune non concernée » — mais la ligne existe désormais, et
+  Verrière ne la connaît pas.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion
@@ -1255,3 +1336,12 @@ Les quatre gardes qui en sortent :
 - [ ] La mérule : le même arrêté la délimite, le produit n'en parle jamais.
 - [ ] La déclaration en mairie obligatoire en cas de termites (L. 126-4 et
       L. 126-5) : à dire au propriétaire.
+- [ ] Exploiter l'imprimé officiel de l'ERP : deux mises en page inverses,
+      mesurées 28 contre 21 sur 63 volets, et 14 illisibles. Le tableau de
+      synthèse suffit aujourd'hui, mais l'imprimé porte des réponses que rien
+      d'autre ne donne.
+- [ ] Distinguer les prescriptions de travaux CONDITIONNELLES (garage
+      souterrain, cuve à combustible…) des travaux imposés : le rapport les
+      liste comme des cas de figure, le produit pourrait alarmer à tort.
+- [ ] Le recul du trait de côte : ligne nouvelle des ERP 2024, inconnue du
+      produit.

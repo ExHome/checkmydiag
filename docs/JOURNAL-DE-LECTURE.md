@@ -24,8 +24,10 @@ Dropbox.
   (location et vente) pour le volet **électricité**.
 - **Reprendre par** : les diagnostics classiques, la copropriété passant après
   — décision du 19/08. Faits : plomb (22/22), amiante (19/19), termites
-  (38/38). Reste l'**ERP**, seul diagnostic classique jamais mesuré. Puis
-  élargir la découpe de l'amiante, 15 pages trop courte sur 20 volets sur 20.
+  (38/38), ERP (PPR approuvé annoncé 7 fois sur 7). Les six diagnostics
+  classiques sont désormais mesurés. Prochain chantier : **élargir la découpe
+  de l'amiante**, 15 pages trop courte sur 20 volets sur 20 — c'est ce qui
+  empêche de dire QUEL matériau contient de l'amiante.
 - **À vérifier au texte avant tout contrôle** : le calendrier du DPE collectif
   (L126-31 du CCH, article 158 de la loi n° 2021-1104), cité par le DTG mais
   pas encore relu à la source. Légifrance n'a pas répondu aux adresses
@@ -39,6 +41,7 @@ Dropbox.
 | | Total |
 |---|---|
 | Rapports lus en entier | 3 |
+| Volets lus page à page | 13 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 5 majeures |
 | Corrections livrées | 8 |
@@ -58,7 +61,7 @@ Ce que « lu » veut dire ici : le volet a été lu page à page, pas survolé.
 | Électricité | 2 | **59/60** verdicts justes (contre 17/31) | catalogue démasqué, deux variantes de constat lues, anomalies compensées distinguées |
 | Gaz | 3 | **7/7** verdicts justes (contre 0/3) | rubrique E lue juste ; rubrique G et « installation non alimentée » restent à remonter |
 | DPE | 2 | 4 % de muets | cas du DPE vierge rencontré, pas encore traité |
-| ERP | 3 | argile 73/140 dossiers | trois écritures de l'argile connues ; l'imprimé officiel et ses croix restent à exploiter |
+| ERP | 4 | PPR approuvé dit 7/7 | deux mises en page inverses mesurées (28 vs 21 sur 63) ; l'imprimé officiel reste inexploité |
 | Plomb | 2 | **22/22** verdicts justes | le moteur est bon ; la validité du constat positif était fausse, corrigée |
 | Amiante | 2 | **19/19** verdicts justes (contre 2/19) | fausse alerte massive corrigée ; la découpe reste 15 pages trop courte |
 | Termites | 2 | **38/38** verdicts justes | le moteur est bon ; zone d'arrêté et mérule restent à restituer |
@@ -230,3 +233,29 @@ moteur à tort dans la même séance. Aucune erreur n'a été publiée, chaque �
 ayant été ouvert avant d'être annoncé. La leçon : sur ce corpus, il est plus
 facile d'écrire une sonde fausse qu'un extracteur faux, parce qu'une sonde ne
 casse rien — un zéro se lit comme un résultat.
+
+### 19 août 2026 — l'état des risques, et la croix qui change de côté
+
+Vingt pages lues page à page, sur un bien de Bordeaux **en zone inondable avec
+prescriptions de travaux**.
+
+**La découverte : deux mises en page coexistent, et elles sont inverses.** Dans
+le millésime 2023, la croix suit la phrase — « … PPRn approuvé  oui non x ».
+Dans celui de 2024, la réponse est sur la ligne **précédente** — « non x »,
+puis la phrase. Mesuré sur 63 volets : **28 contre 21**, et 14 illisibles.
+
+Une lecture qui chercherait la croix après la phrase lirait donc, sur la
+seconde forme, le mot resté seul en fin de ligne : la réponse opposée. Sur le
+dossier lu, cela aurait annoncé « pas de PPR » à un bien en zone inondable.
+
+**Le produit ne s'y trompe pas** : il lit le tableau de synthèse du volet, pas
+l'imprimé. Vérifié — sur les sept biens en PPR approuvé de l'échantillon, il le
+dit sept fois. L'imprimé officiel reste un gisement inexploité, pas une source
+d'erreur.
+
+Trois autres acquis : les **prescriptions de travaux sont conditionnelles** (un
+garage souterrain, une cuve à combustible) et non imposées au logement ; la
+**case argiles du vendeur reste vierge** sur deux éditeurs et deux millésimes,
+ce qui en fait un défaut structurel et non un oubli ; et un **risque nouveau**
+apparaît dans les ERP 2024, le recul du trait de côte, que Verrière ne connaît
+pas.
