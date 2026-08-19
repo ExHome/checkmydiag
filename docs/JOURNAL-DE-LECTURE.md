@@ -23,8 +23,8 @@ Dropbox.
   — le premier document d'immeuble du carnet. Avant lui, deux DDT complets
   (location et vente) pour le volet **électricité**.
 - **Reprendre par** : les diagnostics classiques, la copropriété passant après
-  — décision du 19/08. Dans l'ordre : le **plomb** et l'**amiante**, dont la
-  justesse n'a jamais été mesurée, puis les **termites** et l'**ERP**.
+  — décision du 19/08. Le plomb est fait (22/22). Reste l'**amiante**, puis les
+  **termites** et l'**ERP**, dont la justesse n'a jamais été mesurée.
 - **À vérifier au texte avant tout contrôle** : le calendrier du DPE collectif
   (L126-31 du CCH, article 158 de la loi n° 2021-1104), cité par le DTG mais
   pas encore relu à la source. Légifrance n'a pas répondu aux adresses
@@ -39,9 +39,10 @@ Dropbox.
 |---|---|
 | Rapports lus en entier | 3 |
 | Volets et documents lus page à page | 9 |
-| Erreurs de moteur trouvées par la lecture | 3 majeures |
-| Corrections livrées | 5 |
-| Tests de non-régression ajoutés | 18 |
+| Erreurs de moteur trouvées par la lecture | 4 majeures |
+| Corrections livrées | 6 |
+| Tests de non-régression ajoutés | 21 |
+| Fausses alertes de mes propres sondes, écartées avant annonce | 3 |
 | Sondes de justesse écrites | 2 |
 | Notions métier versées au produit | 4 |
 | Fiches versées à la Dropbox | 2 |
@@ -57,7 +58,7 @@ Ce que « lu » veut dire ici : le volet a été lu page à page, pas survolé.
 | Gaz | 3 | **7/7** verdicts justes (contre 0/3) | rubrique E lue juste ; rubrique G et « installation non alimentée » restent à remonter |
 | DPE | 2 | 4 % de muets | cas du DPE vierge rencontré, pas encore traité |
 | ERP | 3 | argile 73/140 dossiers | trois écritures de l'argile connues ; l'imprimé officiel et ses croix restent à exploiter |
-| Plomb | 1 (session antérieure) | — | classes et cinq situations lues |
+| Plomb | 2 | **22/22** verdicts justes | le moteur est bon ; la validité du constat positif était fausse, corrigée |
 | Amiante | 1 (session antérieure) | — | rubrique 1.2 lue |
 | Termites | 1 (session antérieure) | — | tableau de repérage lu |
 | Surface | 2 | — | Boutin et Carrez distingués |
@@ -156,3 +157,32 @@ contredisait le rapport ; il suit maintenant sa conclusion et dit le point
 compensé dans les faits. **Électricité : 59 justes sur 60.**
 
 Huit tests supplémentaires, dont un tiré mot pour mot de la rubrique E lue.
+
+### 19 août 2026 — le plomb, et trois erreurs qui n'existaient pas
+
+**Mesure : 22 verdicts justes sur 22.** Le moteur du plomb est bon — c'est le
+premier diagnostic à sortir sans faute de la mesure.
+
+Il a fallu trois sondes pour l'établir, et les deux premières accusaient à
+tort. La première cherchait la conclusion dans les cinq premières pages et
+lisait la **grille des quarante prestations du cabinet** — le piège n°1 du
+carnet, commis en écrivant l'outil censé le déjouer. La seconde lisait la
+**gravité** au lieu du verdict : « Du plomb est présent, mais tous les
+revêtements sont en bon état » porte la couleur « bon », et c'est justifié.
+
+Trois erreurs annoncées, zéro réelle, aucune publiée. Une sonde se vérifie sur
+un cas connu avant de servir de juge.
+
+**La vraie erreur était ailleurs**, et la lecture l'a trouvée : le produit
+annonçait « sans limite de durée à la vente » dès qu'aucune unité n'était
+classée 3. Or **une seule unité de classe 1 rend le constat positif**, et un
+constat positif ne vaut qu'un an à la vente — c'est la présence de plomb qui
+compte, pas sa dégradation. Un vendeur s'y fiant aurait présenté un constat
+caduc à la signature.
+
+Le savoir était déjà au carnet (§9) et au référentiel (R. 1334-11) ; le code ne
+l'avait pas suivi. **Un acquis n'est acquis que là où il est appliqué.** Trois
+tests le verrouillent désormais.
+
+Relevé au passage : le CREP sort ses croix **en texte** — « X Avant la vente » —
+et c'est la première marque lisible qui dise vente ou location.

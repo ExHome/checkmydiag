@@ -149,8 +149,19 @@ function facteursDeDegradation(lignes: string[]): { cle: string; nom: string }[]
 
 export function analyserPlomb(lignes: string[], plage: [number, number]): Diagnostic {
   const chiffres = compter(lignes);
+  const c1 = chiffres?.classes[1] ?? 0;
   const c2 = chiffres?.classes[2] ?? 0;
   const c3 = chiffres?.classes[3] ?? 0;
+  /*
+   * Positif ou négatif : c'est la PRÉSENCE qui compte, pas la dégradation.
+   *
+   * Une seule unité de classe 1 rend le constat positif — le texte parle de
+   * revêtements au-dessus des seuils, pas de leur état. Un logement dont les
+   * peintures au plomb sont intactes a donc un constat qui périme : un an à la
+   * vente, six ans à la location. C'est l'inverse d'un constat négatif, valable
+   * sans limite de durée (article R. 1334-11 du code de la santé publique).
+   */
+  const positif = c1 + c2 + c3 > 0;
   const degradation = facteursDeDegradation(lignes);
 
   let gravite: Gravite = 'neutre';
@@ -316,13 +327,19 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
           'Le propriétaire doit faire réaliser les travaux qui suppriment l’exposition (recouvrement, remplacement ou retrait par une entreprise formée) — article L.1334-9 du code de la santé publique.',
           'Le constat complet, annexes comprises, doit être remis aux occupants et à toute entreprise appelée à travailler dans le logement.',
           'Ne poncez jamais une peinture au plomb à sec : c’est le geste qui contamine tout le logement.',
-          'Avec au moins une classe 3, le CREP n’est valable qu’un an à la vente (six ans à la location).'
+          'Ce constat est positif : il n’est valable qu’un an à la vente, six ans à la location.'
         ]
-      : [
-          'Sans classe 3, aucun travaux n’est imposé.',
-          'Un CREP sans plomb dégradé est valable six ans à la location, et sans limite de durée à la vente si aucun plomb n’a été détecté.',
-          'Surveillez l’état des peintures anciennes : une classe 1 qui s’écaille devient une classe 3.'
-        ];
+      : positif
+        ? [
+            'Sans classe 3, aucun travail n’est imposé : il s’agit d’entretenir les revêtements pour qu’ils ne se dégradent pas.',
+            'Attention à la durée : du plomb a été détecté, même en bon état. Le constat est donc positif, et il n’est valable qu’un an à la vente, six ans à la location — c’est la présence qui compte, pas l’état.',
+            'Surveillez l’état des peintures anciennes : une classe 1 qui s’écaille devient une classe 3.'
+          ]
+        : [
+            'Aucun revêtement au-dessus des seuils : aucun travail n’est imposé.',
+            'Un constat négatif n’a pas de limite de durée — ni à la vente, ni à la location. Il ne sera pas à refaire.',
+            'Surveillez tout de même l’état des peintures anciennes lors de travaux : le constat ne porte que sur ce qui était accessible.'
+          ];
 
   /*
    * Deux conditions de validité, signalées au lecteur.

@@ -84,3 +84,36 @@ describe('ce que la fiche plomb doit dire', () => {
     expect(d.explication.join(' ')).toMatch(/moins de six ans/);
   });
 });
+
+/**
+ * La validité du CREP dépend du RÉSULTAT, pas de la dégradation.
+ *
+ * Le produit annonçait « sans limite de durée à la vente » dès qu'aucune unité
+ * n'était classée 3 — or une seule unité de classe 1 suffit à rendre le constat
+ * positif, et un constat positif périme au bout d'un an à la vente. Un vendeur
+ * s'y fiant aurait présenté un constat caduc à la signature.
+ */
+describe('la durée de validité, selon le résultat', () => {
+  const CREP = (c1: number, c2: number, c3: number) => [
+    'Constat de risque d’exposition au plomb',
+    'Total Non mesurées Classe 0 Classe 1 Classe 2 Classe 3',
+    `12 2 ${12 - 2 - c1 - c2 - c3} ${c1} ${c2} ${c3}`
+  ];
+
+  it('dit « un an à la vente » pour une seule classe 1, en bon état', () => {
+    const d = analyserPlomb(CREP(1, 0, 0), [1, 12]);
+    expect(d.aFaire.join(' ')).toMatch(/valable qu’un an à la vente/);
+    expect(d.aFaire.join(' ')).not.toMatch(/pas de limite de durée/);
+  });
+
+  it('ne promet « pas de limite de durée » que si rien n’a été détecté', () => {
+    const d = analyserPlomb(CREP(0, 0, 0), [1, 12]);
+    expect(d.aFaire.join(' ')).toMatch(/pas de limite de durée/);
+  });
+
+  it('garde l’obligation de travaux quand une classe 3 est présente', () => {
+    const d = analyserPlomb(CREP(0, 0, 2), [1, 12]);
+    expect(d.aFaire.join(' ')).toMatch(/L\.1334-9/);
+    expect(d.aFaire.join(' ')).toMatch(/valable qu’un an à la vente/);
+  });
+});

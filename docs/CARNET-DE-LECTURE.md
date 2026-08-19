@@ -935,6 +935,103 @@ La mesure le confirme : **59 verdicts justes sur 60**.
 
 ---
 
+## 25 · Le plomb, mesuré — et deux sondes qui mentaient
+
+Le CREP du dossier de vente lu page à page, puis mesuré sur le corpus.
+Résultat, et c'est le premier de cette qualité : **22 verdicts justes sur 22.**
+Le moteur du plomb est bon.
+
+Mais il a fallu deux tentatives pour le savoir, et les deux premières
+annonçaient des erreurs qui n'existaient pas.
+
+### Première sonde : elle lisait la page de garde
+
+Elle cherchait « plomb » dans les cinq premières pages du dossier pour y
+trouver la conclusion de synthèse. Elle tombait sur la **grille des quarante
+prestations du cabinet** — « Exposition au plomb (CREP) » — imprimée sur tous
+les dossiers, et concluait « présence de plomb » partout.
+
+C'est le piège n°1 du carnet, écrit noir sur blanc au §2 de
+[[checkmydiag-calibrer-sur-corpus]] — et commis en écrivant l'outil censé le
+déjouer. Deux « erreurs du moteur » ont été annoncées sur cette base.
+
+### Deuxième sonde : elle lisait la couleur, pas la phrase
+
+Corrigée pour prendre la vérité au **tableau des classes** — du texte, qui se
+recompte —, elle comptait encore trois erreurs. Elles n'existaient pas non
+plus : le produit disait « Du plomb est présent, mais tous les revêtements
+concernés sont en bon état (classe 1) », avec la gravité « bon ». La sonde
+lisait la gravité et en déduisait « pas de plomb ».
+
+**On mesure ce que le produit DIT, pas la couleur qu'il affiche.** Une gravité
+« bon » sur un constat positif est un choix juste : il n'y a rien à faire
+d'urgent.
+
+### La leçon, qui vaut au-delà du plomb
+
+Trois erreurs annoncées, zéro réelle. Une sonde est un programme comme un
+autre : elle se vérifie sur un cas connu avant de servir de juge. Le réflexe
+qui a sauvé la mesure : **ouvrir la ligne que la sonde a retenue**, et regarder
+d'où elle vient. Les deux fois, elle venait d'ailleurs que du volet.
+
+---
+
+## 26 · Ce que le CREP dit et que le produit ne lisait pas
+
+### Ses cases sont cochées EN TEXTE
+
+Contrairement au gaz et à l'électricité, l'en-tête du CREP sort ses croix :
+
+```
+X Les parties privatives          X Avant la vente
+  Les parties occupées              Avant la mise en location
+  Les parties communes              Avant travaux
+```
+
+C'est la première marque lisible qui dise **vente ou location**, et elle est
+précieuse : toutes les validités en dépendent (§17). Les cases cochées ne
+dépendent donc pas du diagnostic mais du **formulaire** : un même dossier peut
+mêler des coches lisibles et des coches dessinées.
+
+### La validité dépend du résultat, et le produit se trompait
+
+Le §9 l'avait établi : **une seule unité de classe 1 rend le constat positif**,
+et un constat positif n'est valable qu'un an à la vente, six ans à la location.
+C'est la présence de plomb qui compte, pas sa dégradation — article R. 1334-11
+du code de la santé publique, déjà inscrit au référentiel.
+
+Or le produit annonçait « sans limite de durée à la vente » dès qu'aucune unité
+n'était classée 3. Un vendeur dont les peintures au plomb sont intactes s'y
+serait fié, et aurait présenté un constat caduc à la signature.
+
+Corrigé : trois cas distincts au lieu de deux — négatif (aucune limite),
+positif sans classe 3 (un an, pas de travaux imposés), classe 3 (un an, et
+travaux obligatoires). Trois tests le verrouillent.
+
+Le savoir était au carnet et au référentiel ; c'est le code qui ne l'avait pas
+suivi. **Un acquis n'est acquis que là où il est appliqué.**
+
+### « Non mesurée » a une seconde raison
+
+Le §8 avait établi la première : pas de revêtement à mesurer — pierre nue,
+carrelage, métal. Le rapport en donne une autre, dans sa méthodologie :
+
+> Les éléments de construction de facture récente ou clairement identifiables
+> comme **postérieurs au 1er janvier 1949** ne sont pas mesurés, à l'exception
+> des huisseries ou autres éléments métalliques.
+
+Une unité non mesurée peut donc être simplement trop récente pour contenir du
+plomb. Deux raisons, aucune inquiétante.
+
+### Et une incohérence d'arrondi
+
+Sur le constat lu : 5 unités de classe 0 et 5 de classe 2, sur 12 au total. Le
+rapport écrit **41,8 %** pour l'une et **41,7 %** pour l'autre — le même
+compte, deux pourcentages. Sans conséquence, mais c'est le genre d'écart qui
+fait douter d'un tableau quand on le remarque sans l'expliquer.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion
@@ -943,7 +1040,8 @@ La mesure le confirme : **59 verdicts justes sur 60**.
 - [x] ~~Le volet électricité : mêmes rubriques que le gaz ?~~ -> voir §16 :
       même conclusion-formulaire, mais sa liste de domaines est un catalogue,
       et deux variantes de tableau constatent vraiment.
-- [ ] Le CREP : comment les classes 0 à 3 sont-elles présentées ?
+- [x] ~~Le CREP : comment les classes 0 à 3 sont-elles présentées ?~~ → un
+      tableau à six colonnes, du texte, qui se recompte. Mesuré : 22/22 justes.
 - [ ] Le DPE : où sont les seuils des petites surfaces ?
 - [x] ~~Un dossier de copropriété (DTG, PPPT) : structure jamais lue.~~ → un DTG
       lu en entier, voir §21. Restent le PPPT, le DTA, le RAAT et le DPE
@@ -986,3 +1084,9 @@ La mesure le confirme : **59 verdicts justes sur 60**.
       non essayé. Mesurer d'abord sa fréquence sur le corpus.
 - [ ] La contradiction F « Néant » / G « certains points n'ont pu être
       contrôlés » : la signaler sans trancher.
+- [ ] Lire les croix du CREP (« X Avant la vente » / « Avant la mise en
+      location ») pour déduire la transaction, et en tirer toutes les validités.
+- [ ] Un CREP dont le tableau porte « 0 0 0 0 0 0 » : aucune unité mesurée
+      n'est pas « aucun plomb ». Vu une fois, à retrouver et à traiter.
+- [ ] Vérifier au texte la validité du CREP en location (six ans) : le
+      référentiel la donne, la lecture ne l'a pas encore confirmée sur pièce.
