@@ -1736,6 +1736,52 @@ lecteur choisir.
 
 ---
 
+## 41 · L'etat des risques qui ne dit plus « Mode EDITION »
+
+Un millesime de decembre 2025 change d'en-tete : ses pages ne portent plus que
+**la date**, et rien n'y rappelle le rapport. La decoupe, qui cherchait
+« Mode EDITION » ou l'adresse, se fermait a la troisieme page.
+
+Ce qui se perdait : les **conclusions redigees**, en page seize — celles qui
+enumerent ce dont le bien est reellement concerne. Sur le dossier lu, un
+**risque sismique** y disparaissait, alors que le tableau du haut avait bien
+donne l'argile.
+
+### Le pied de page, encore
+
+Ce qui reste stable est en bas :
+
+```
+Réf. 25/IMO/1047N – Page 17 / 17
+```
+
+Le numero change a chaque feuille : aucun fragment fixe ne l'attrape. C'est une
+**forme**, exactement comme le « Page 8 / 11 » du DPE (§33). Le mecanisme
+existait deja ; il suffisait de lui donner ce motif-la.
+
+### Ce que la mesure donne
+
+| | avant | apres |
+|---|---|---|
+| conclusions hors plage | 9 sur 50 | **0** |
+| inondations detectees | 19 | **22** |
+| faux risques technologiques | 0 | 0 |
+| autres volets degrades | — | aucun |
+
+Trois biens de plus voient leur inondation annoncee, et aucune conclusion ne
+tombe plus hors de son volet.
+
+### La lecon, et c'est la troisieme fois
+
+Amiante, DPE, maintenant l'etat des risques : **quand un rapport ne repete pas
+son titre, il se reconnait a son pied de page**. Les trois fois, la marque etait
+une forme numerotee, et les trois fois le document se comptait lui-meme.
+
+Il faut desormais regarder le pied avant l'en-tete quand une section parait
+courte.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion

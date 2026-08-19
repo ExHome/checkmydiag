@@ -260,3 +260,42 @@ describe('le rapport qui se déclare', () => {
     expect(sections.find((s) => s.type === 'carrez')?.plage).toEqual([3, 3]);
   });
 });
+
+/**
+ * L'état des risques dont l'en-tête ne porte plus que la date.
+ *
+ * Un millésime de décembre 2025 n'écrit plus « Mode EDITION » en tête de ses
+ * pages : la première ligne est la date, et rien d'autre ne rappelle le
+ * rapport. La section se fermait à la troisième page, et ses conclusions
+ * rédigées — celles qui énumèrent les risques du bien — tombaient en page
+ * seize, hors de la plage. Un risque sismique s'y perdait.
+ */
+describe('l’état des risques sans « Mode EDITION »', () => {
+  const page = (numero: number, ...lignes: string[]) => ({ numero, lignes });
+
+  it('suit le rapport jusqu’à ses conclusions, grâce au pied de page', () => {
+    const { sections } = decouper([
+      page(1, 'Etat des Risques et Pollutions', 'Zonage du retrait-gonflement des argiles Oui Aléa Moyen'),
+      page(2, '22 décembre 2025', '13 Rue Lhote', 'Réf. 25/IMO/1047N – Page 2 / 17'),
+      page(
+        3,
+        '22 décembre 2025',
+        'Conclusions',
+        'le BIEN est ainsi concerné par :',
+        'Le risque sismique (niveau 2, sismicité Faible)',
+        'Réf. 25/IMO/1047N – Page 3 / 17'
+      )
+    ]);
+    const erp = sections.find((s) => s.type === 'erp');
+    expect(erp?.plage).toEqual([1, 3]);
+    expect(erp?.lignes.join(' ')).toMatch(/risque sismique/i);
+  });
+
+  it('s’arrête quand la page ne porte plus rien du rapport', () => {
+    const { sections } = decouper([
+      page(1, 'Etat des Risques et Pollutions', 'Synthèses'),
+      page(2, 'ATTESTATION SUR L’HONNEUR réalisée pour le dossier n° 25/IMO/1047N')
+    ]);
+    expect(sections.find((s) => s.type === 'erp')?.plage).toEqual([1, 1]);
+  });
+});

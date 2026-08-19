@@ -125,7 +125,21 @@ const MARQUEURS: Marqueur[] = [
       'etatdesrisquesapprofondi',
       'zonageduretraitgonflementdesargiles',
       'risquescomplementaires'
-    ]
+    ],
+    /*
+     * Une variante ou l'en-tete ne porte plus que la DATE.
+     *
+     * Un etat des risques de decembre 2025 n'ecrit plus « Mode EDITION » en
+     * tete de ses pages : la premiere ligne est la date, et rien d'autre ne
+     * rappelle le rapport. La section se fermait a la troisieme page, et ses
+     * conclusions redigees — celles qui enumerent les risques du bien —
+     * tombaient en page seize, hors de la plage. Un risque sismique s'y perdait.
+     *
+     * Ce qui reste stable, c'est le pied : « Ref. 25/IMO/1047N - Page 17 / 17 ».
+     * Le numero change a chaque feuille, donc aucun fragment fixe ne l'attrape :
+     * c'est une forme, comme pour le DPE.
+     */
+    traceMotif: /R[ée]f\.\s*\S{4,20}\s*[-–—]\s*Page\s*\d+\s*\/\s*\d+/i
   },
   {
     type: 'carrez',

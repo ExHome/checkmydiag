@@ -53,8 +53,8 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 | Volets lus page à page | 24 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 6 majeures |
-| Corrections livrées | 15 |
-| Tests de non-régression ajoutés | 47 |
+| Corrections livrées | 16 |
+| Tests de non-régression ajoutés | 49 |
 | Fausses alertes de mes propres sondes, écartées avant annonce | 6 |
 | Sondes de justesse écrites | 2 |
 | Notions métier versées au produit | 5 |
@@ -70,7 +70,7 @@ Ce que « lu » veut dire ici : le volet a été lu page à page, pas survolé.
 | Électricité | 3 | **60/60** verdicts justes (contre 17/31) | catalogue démasqué et rendu robuste aux libellés longs |
 | Gaz | 3 | **7/7** verdicts justes (contre 0/3) | rubrique E lue juste ; rubrique G et « installation non alimentée » restent à remonter |
 | DPE | 3 | **2 %** de muets (contre 4 %) | annexes rattachées : 7 volets courts sur 58, contre 58 |
-| ERP | 8 | **1/63** faux risque techno (contre 49/63) ; argile rattrapée **55/55** | le formulaire vierge n'est plus lu comme un constat |
+| ERP | 9 | **1/63** faux risque techno (contre 49/63) ; argile rattrapée **55/55** | le formulaire vierge n'est plus lu comme un constat |
 | Plomb | 2 | **22/22** verdicts justes | le moteur est bon ; la validité du constat positif était fausse, corrigée |
 | Amiante | 2 | **19/19** verdicts justes (contre 2/19) | fausse alerte massive corrigée ; la découpe reste 15 pages trop courte |
 | Termites | 2 | **38/38** verdicts justes | le moteur est bon ; zone d'arrêté et mérule restent à restituer |
@@ -502,3 +502,20 @@ qu'on lit.
 **Les huit indécis ne sont pas un échec** : ils portent réellement les deux
 surfaces, un certificat Carrez et une attestation habitable. Se taire est alors
 la seule réponse juste.
+
+### 19 août 2026, nuit — l'ERP qui ne dit plus « Mode EDITION »
+
+Un millésime de décembre 2025 change d'en-tête : ses pages ne portent plus que
+la date. La découpe se fermait à la troisième page, et les **conclusions
+rédigées** tombaient en page seize — un **risque sismique** s'y perdait.
+
+Ce qui reste stable est en bas : « Réf. 25/IMO/1047N – Page 17 / 17 ». Une
+forme, comme le « Page 8 / 11 » du DPE ; le mécanisme existait déjà.
+
+**Mesure : conclusions hors plage, 9 sur 50 → 0. Inondations détectées, 19 →
+22.** Aucun autre volet dégradé, zéro faux risque technologique.
+
+**Troisième fois que la même leçon revient** — amiante, DPE, état des risques :
+quand un rapport ne répète pas son titre, il se reconnaît à son pied de page, et
+la marque est une forme numérotée. Regarder le pied avant l'en-tête quand une
+section paraît courte.
