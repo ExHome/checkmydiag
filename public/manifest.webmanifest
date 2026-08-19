@@ -1,0 +1,26 @@
+{
+  "name": "Verrière — La lumière sur vos diagnostics",
+  "short_name": "Verrière",
+  "description": "Déposez votre rapport de diagnostic immobilier : il devient lisible. Votre document ne quitte jamais votre appareil.",
+  "lang": "fr",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a2b23",
+  "theme_color": "#0a2b23",
+  "categories": ["utilities", "productivity"],
+  "icons": [
+    { "src": "./logo/icone-96.png", "sizes": "96x96", "type": "image/png" },
+    { "src": "./logo/icone-128.png", "sizes": "128x128", "type": "image/png" },
+    { "src": "./logo/icone-144.png", "sizes": "144x144", "type": "image/png" },
+    { "src": "./logo/icone-152.png", "sizes": "152x152", "type": "image/png" },
+    { "src": "./logo/icone-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "./logo/icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "./logo/icone-256.png", "sizes": "256x256", "type": "image/png" },
+    { "src": "./logo/icone-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "./logo/icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "./logo/icone-1024.png", "sizes": "1024x1024", "type": "image/png" }
+  ]
+}

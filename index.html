@@ -19,7 +19,12 @@
          sont écartés. À retirer le jour de l'immatriculation, en même temps
          que EDITEUR_CONNU dans src/lib/nuls/rendu.ts. -->
     <meta name="robots" content="noindex, nofollow" />
-    <meta name="theme-color" content="#0f3a47" />
+    <!-- Le vert profond de la charte, et non le bleu pétrole qui traînait ici :
+         cette couleur teinte la barre du navigateur sur mobile, c'est-à-dire le
+         premier centimètre de Verrière qu'on voit sur un téléphone. Le pétrole
+         est retiré du produit depuis le 19/08 — un test l'interdit dans le
+         code, il restait dans cette page. -->
+    <meta name="theme-color" content="#0a2b23" />
     <!-- Le vrai logo remplace l'emoji de chantier. Les favicons ne montrent que
          quatre carreaux : sous 28 px, la grille de six sature et devient une
          tache. La charte dit que cette simplification est volontaire. -->
@@ -27,6 +32,21 @@
     <link rel="icon" type="image/png" sizes="32x32" href="./logo/favicon-32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="./logo/favicon-16.png" />
     <link rel="apple-touch-icon" href="./logo/icone-180.png" />
+    <!--
+      Ajouté à l'écran d'accueil, le site devient une application.
+
+      Sur iPhone, ces trois lignes changent tout : l'app s'ouvre en plein écran
+      sans barre d'adresse, la zone d'état prend le vert de la marque, et le nom
+      sous l'icône est « Verrière » — pas le titre complet, qui serait tronqué
+      en « Verrière — La lumière su… ».
+
+      Le manifeste, lui, est ce qu'Android attend pour proposer l'installation :
+      sans lui, il n'offre rien du tout.
+    -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Verrière" />
+    <link rel="manifest" href="./manifest.webmanifest" />
   </head>
   <body>
     <div id="app"></div>
