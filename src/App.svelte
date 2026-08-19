@@ -506,13 +506,29 @@
     height: 43px;
   }
 
+  /*
+   * « V E R R I E R E » : capitales largement espacees.
+   *
+   * C'est ainsi que le nom est ecrit sur TOUS les visuels de la Dropbox sans
+   * exception -- la publicite, le brand board du prisme, l'ordre de mission
+   * visuel, la maquette d'accueil. Le mot y respire, en capitales fines et
+   * espacees, a cote du prisme.
+   *
+   * Il etait ici en casse normale, en gras, avec un interlettrage NEGATIF
+   * (-0,022em) : exactement l'inverse. Sur l'element le plus visible de la
+   * marque, present sur chaque ecran.
+   *
+   * Les capitales sont posees par le style et non ecrites dans le texte : un
+   * lecteur d'ecran prononce « Verriere », pas « V E R R I E R E ».
+   */
   .mot {
     display: grid;
     font-family: var(--police-titre);
-    font-size: var(--t-titre);
-    font-weight: 700;
-    letter-spacing: -0.022em;
-    line-height: 1.05;
+    font-size: var(--t-lead);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    line-height: 1.15;
   }
 
   /*
@@ -522,11 +538,15 @@
    * dit pas ce que fait le produit. Une marque installée peut se le permettre,
    * une marque de trois jours non.
    */
+  /* La signature reprend le meme parti : capitales fines et espacees, calees
+     sous le nom. Son interlettrage est plus large encore -- c'est ce qui la
+     tient a la largeur du mot au-dessus, sur les visuels comme ici. */
   .signature {
     font-family: var(--police);
     font-size: var(--t-micro);
     font-weight: 400;
-    letter-spacing: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
     color: var(--sur-fond-doux);
   }
 

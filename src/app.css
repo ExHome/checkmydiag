@@ -899,12 +899,51 @@ button {
    --------------------------------------------------------------------------- */
 body.demarrage {
   /*
-   * L'écran de démarrage inversait le produit : pétrole en grand quand tout le
-   * reste était sable. Depuis que le fond est pétrole partout, il n'a plus rien
-   * à inverser — il ne garde que ce qui lui est propre, le pétrole plein plutôt
-   * que le pétrole profond du reste de l'application.
+   * L'écran de démarrage porte un aplat vert plein, là où le reste de
+   * l'application vit sur l'ivoire.
+   *
+   * ── L'encre devait suivre, et elle ne suivait pas ────────────────────────
+   *
+   * Le fond avait changé de camp ; les variables qui portent le texte, non.
+   * Résultat mesuré à l'écran : douze échecs de contraste sur vingt textes,
+   * entre 1,42 et 2,15 pour un seuil de 4,5. Le nom « VERRIÈRE » lui-même
+   * était écrit en vert profond #0a2b23 sur ce vert #12463b — la marque était
+   * illisible sur le premier écran que voit un visiteur.
+   *
+   * On redéfinit donc les jetons d'encre pour cet écran, ce qui est
+   * exactement ce pour quoi ils existent : un composant qui demande « la
+   * couleur du texte sur le fond » obtient la bonne sans savoir que le fond a
+   * changé de camp.
    */
   background: var(--petrole);
+
+  --sur-fond: var(--ivoire);
+  --sur-fond-doux: rgb(247 246 242 / 82%);
+  --trait-fin: rgb(247 246 242 / 20%);
+  --trait: rgb(247 246 242 / 34%);
+  /* Les deux noms hérités de l'ancienne charte portent encore du texte :
+     « Ce que nous savons lire » passe par --gris, « Le radon… » par
+     --encre-doux. Oubliés, ils restaient sombres sur le vert. */
+  --gris: rgb(247 246 242 / 78%);
+  --encre-doux: rgb(247 246 242 / 78%);
+}
+
+/*
+ * Les deux cartes claires de cet écran reprennent l'encre sombre.
+ *
+ * Elles posent leur propre fond ivoire : sans ce rétablissement, elles
+ * hériteraient de l'encre ivoire ci-dessus et deviendraient illisibles à leur
+ * tour — on aurait déplacé le défaut au lieu de le corriger.
+ */
+body.demarrage .depot,
+body.demarrage .promesse-locale {
+  --sur-fond: #0a2b23;
+  --sur-fond-doux: #4a5a55;
+  --trait-fin: #dfe6db;
+  --trait: #779576;
+  --gris: #58775f;
+  --encre-doux: #4a5a55;
+  color: var(--sur-fond);
 }
 
 /* Le bandeau du site suit le fond : un rectangle blanc en haut d'un écran
