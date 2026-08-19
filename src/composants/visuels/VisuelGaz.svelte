@@ -19,13 +19,18 @@
    *    visuel qui affiche une valeur d'exemple ruine la seule promesse du
    *    produit.
    *
-   * 2. TROIS COULEURS. La maquette écrit l'intitulé, la légende sous la
-   *    chaudière et les graduations en `--u-faint` (#C0A08D) : 2,43:1 sur la
-   *    carte blanche, illisible — et ce jeton n'existe même pas côté produit,
-   *    `styleUnivers()` n'en pose que huit. Le chiffre de l'âge est en #F4701F :
-   *    2,92:1, sous le seuil y compris celui du grand texte. Les jetons de
-   *    l'univers disent la même chose à 6,56:1 et 5,84:1. Le détail de chaque
-   *    substitution est en commentaire dans le style.
+   * 2. LA LUMIÈRE EST INVERSÉE. La maquette pose ce dessin sur une carte
+   *    blanche ; l'univers gaz est désormais un pétrole sombre (fond #213e44,
+   *    carte #324c51). Tout ce qui était encre foncée passe aux jetons clairs
+   *    de l'univers, tout ce qui était aplat pâle devient un voile de crème
+   *    translucide. Le SUJET ne bouge pas : la flamme reste orange, l'afficheur
+   *    reste un afficheur sombre à chiffres orange, la jauge garde son
+   *    vert → rouge. Seule change la lumière qui tombe dessus.
+   *
+   *    Chaque couple est mesuré (WCAG 2.1, luminance relative avec correction
+   *    gamma, voiles composés sur leur fond réel) et la mesure est écrite en
+   *    face de la règle. Le pire texte du dessin tient 5,20:1, le pire élément
+   *    porteur d'information 3,10:1.
    *
    * 3. DEUX ANIMATIONS. Les flammes montaient en animant leur HAUTEUR et la
    *    jauge se remplissait en animant sa LARGEUR : un recalcul de mise en page
@@ -185,9 +190,11 @@
 
 <style>
   /* ── La carte ───────────────────────────────────────────────────────────────
-     `.d-card` de la maquette. Elle s'habille aux jetons : dans l'écran gaz,
-     `.dedans` pose `--papier: #ffffff` et `--trait: #f2e4d6` à partir des
-     `--u-*` de `styleUnivers('gaz')`. */
+     `.d-card` de la maquette. Elle s'habille aux jetons, et c'est pour ça
+     qu'elle a suivi le passage au sombre sans qu'on la touche : dans l'écran
+     gaz, `.dedans` pose maintenant `--papier: #324c51` et `--trait: #899694` à
+     partir des `--u-*` de `styleUnivers('gaz')`. Le filet mesure 3,73:1 sur le
+     fond de l'écran (#213e44) — c'est ce côté-là qui détache la carte. */
   .visuel-gaz {
     margin: 0 0 var(--e4);
     padding: var(--e4);
@@ -200,9 +207,9 @@
    * `.d-label` de la maquette.
    *
    * Deux corrections : le 10,5px passe au plus petit corps du produit (12px),
-   * en dessous personne ne lit ; et le #C0A08D d'origine (2,43:1 sur la carte
-   * blanche — illisible, et jeton inexistant côté produit) devient le texte
-   * doux de l'univers, #7a5540, mesuré 6,56:1.
+   * en dessous personne ne lit ; et le #C0A08D d'origine (un beige, jeton
+   * inexistant côté produit, et de toute façon 1,79:1 sur la carte pétrole)
+   * devient le texte doux de l'univers, #cbd8dd, mesuré 6,30:1 sur #324c51.
    */
   .titre {
     margin: 0 0 var(--e4);
@@ -232,24 +239,43 @@
     align-items: center;
     gap: 9px;
     padding: 12px 10px;
-    border: 2.5px solid color-mix(in srgb, var(--u-accent, #a8480c) 24%, transparent);
+    /* Le bord est la seule ligne qui dessine l'objet : il doit tenir 3:1. À 24 %
+       comme dans la maquette, l'accent clair composé sur la carte sombre ne
+       donnait plus que 1,57:1 — la chaudière disparaissait. À 70 %, il mesure
+       3,62:1 sur la carte. */
+    border: 2.5px solid color-mix(in srgb, var(--u-accent, #fab88f) 70%, transparent);
     border-radius: 14px;
     /* La maquette pose du blanc à 55 % sur une carte blanche : le corps y est
-       strictement invisible, seul le bord le dessine. 4 % d'accent lui rendent
-       son volume sans rien changer d'autre. */
-    background: color-mix(in srgb, var(--u-accent, #a8480c) 4%, var(--papier));
+       strictement invisible, seul le bord le dessine. Sur le pétrole, le même
+       geste se fait à l'envers — un voile de crème très dilué, qui rend son
+       volume au corps sans en faire une plaque laiteuse. */
+    background: rgb(245 241 232 / 7%); /* = #40585c sur la carte */
   }
 
-  /* `.b-screen`. Couleurs d'objet, conservées telles quelles : #ff8c42 sur
-     #33211a mesure 6,61:1. Les chiffres tabulaires viennent de
-     TEST_GAZ_CONTROLE.html — un afficheur ne gigote pas. */
+  /*
+   * `.b-screen`. Un afficheur de chaudière est sombre à chiffres orange : c'est
+   * le SUJET, il ne s'inverse pas parce que la page s'assombrit. Les deux
+   * couleurs d'objet restent donc, le brun juste creusé de #33211a à #26160f —
+   * sur une carte sombre, un afficheur éteint doit être plus sombre que ce qui
+   * l'entoure pour rester un renfoncement, et les chiffres y gagnent (6,61:1
+   * dans la maquette, 7,54:1 ici).
+   *
+   * Nouveau : le cerclage. Sur la carte blanche, le brun découpait l'afficheur
+   * tout seul ; sur le corps sombre il ne le détache plus qu'à 2,36:1. Un filet
+   * d'accent le borde — 4,45:1 sur le corps, 10,23:1 sur le verre. Il ne coûte
+   * pas un pixel de hauteur, `box-sizing: border-box` étant global.
+   *
+   * Les chiffres tabulaires viennent de TEST_GAZ_CONTROLE.html — un afficheur
+   * ne gigote pas.
+   */
   .ecran {
     width: 100%;
     height: 33px;
     display: grid;
     place-items: center;
+    border: 1px solid var(--u-accent, #fab88f);
     border-radius: 7px;
-    background: #33211a;
+    background: #26160f;
     color: #ff8c42;
     font-size: 15px;
     font-weight: 700;
@@ -271,12 +297,19 @@
    * image, en boucle. Même dessin par `scaleY` depuis la base : hauteur fixe à
    * 30px, échelle 0,63 → 1. Le dégradé et le rayon se compriment exactement
    * comme ils le faisaient, mais l'animation reste sur le compositeur.
+   *
+   * Une flamme reste orange : le dégradé est celui de la maquette, sa base
+   * seulement éclaircie de #ff6f00 à #ff8420. Le #ff6f00 ne tenait plus que
+   * 2,80:1 sur le corps sombre — la flamme s'éteignait par le bas. À #ff8420
+   * elle mesure 3,10:1, et sa pointe jaune 5,38:1. `--u-accent-vif` aurait été
+   * le jeton naturel, mais son #f4701f tombe à 2,83:1 ici : c'est la seule
+   * raison pour laquelle cette valeur reste écrite en clair.
    */
   .flamme {
     width: 10px;
     height: 30px;
     border-radius: 50% 50% 45% 45%;
-    background: linear-gradient(180deg, #ffd54f, #ff6f00);
+    background: linear-gradient(180deg, #ffd54f, #ff8420);
     transform-origin: bottom center;
     animation: flamme 0.9s ease-in-out infinite;
   }
@@ -302,8 +335,10 @@
     }
   }
 
-  /* `.b-cap`. Même correction de couleur que l'intitulé : 6,20:1 sur le corps
-     très pâle de la chaudière. */
+  /* `.b-cap`. Même correction de couleur que l'intitulé : 5,20:1 sur le corps
+     de la chaudière (#40585c, le voile de crème composé sur la carte). C'est le
+     texte le moins contrasté du dessin, et il est encore à 0,7 au-dessus du
+     seuil. */
   .plaque {
     font-size: var(--t-micro);
     font-weight: 600;

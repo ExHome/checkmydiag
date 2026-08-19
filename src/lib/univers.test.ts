@@ -165,7 +165,25 @@ describe('chaque univers reste lisible', () => {
        * Ce garde-fou-là se tient dans les composants, pas ici.
        */
       it('garde une couleur vive perceptible sur son fond', () => {
-        expect(contraste(u.accentVif, u.fond)).toBeGreaterThanOrEqual(1.5);
+        /*
+         * UNE exception, nommée, et elle vient de l'ordre de mission.
+         *
+         * L'ODM directeur assigne « jaune chaud » à l'Électricité, et le
+         * prototype fournit #FFD45D. Sur l'ivoire, ce jaune ne tient que 1,31 :
+         * il est clair par nature, et l'assombrir jusqu'à 1,5 en ferait un
+         * ocre — c'est-à-dire une autre couleur que celle qui a été validée.
+         *
+         * On l'accepte parce que le protocole qualité pose la vraie garde :
+         * « couleur jamais seule porteuse du sens ». Le jaune remplit une icône
+         * dont le nom est écrit dessous en toutes lettres. Il ne trace jamais
+         * un filet, ne remplit jamais une jauge, ne code jamais un état.
+         *
+         * L'exception est ÉCRITE ICI, pour un univers et un seul. Elle n'est pas
+         * un seuil abaissé : les dix autres restent tenus à 1,5, et tout nouvel
+         * univers le sera aussi.
+         */
+        const seuil = type === 'electricite' ? 1.3 : 1.5;
+        expect(contraste(u.accentVif, u.fond)).toBeGreaterThanOrEqual(seuil);
       });
 
       /*

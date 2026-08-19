@@ -1,15 +1,17 @@
 /* ---------------------------------------------------------------------------
    Check My Diag — design system
 
-   TROIS COULEURS, ET ELLES SEULES :
+   LE SOCLE, tel que le fixe l'ODM directeur du 18 août 2026 :
 
-     Bleu pétrole  #1A4D5C   le FOND, en grand
-     Sable         #F4E8D8   les encarts posés dessus, jamais le fond
-     Corail        #FF6B5D   l'action, l'accent, l'alerte
+     Vert profond   #0A2B23   l'encre, le bandeau, le socle de marque
+     Vert Verrière  #12463B   la structure, les aplats
+     Ivoire         #F7F6F2   le fond — la lumière et la respiration
+     Vert sauge     #A6C39A   les filets, les fonds d'état
+     Citron doux    #D6E66A   l'accent, avec retenue
 
-   Tout le reste en découle : les nuances plus claires ou plus foncées des trois
-   mêmes teintes, le blanc, et les gris neutres du texte. Aucune couleur
-   étrangère n'entre ici — ni vert, ni or, ni violet, ni turquoise.
+   LA COULEUR VIVE EST RÉSERVÉE aux huit mini-apps et aux données qui ont un
+   sens métier. Pas d'arc-en-ciel décoratif : chaque teinte vive porte une
+   information, ou elle n'a rien à faire ici.
 
    Une seule exception, et elle n'est pas décorative : les couleurs A→G de
    l'étiquette énergétique, fixées par arrêté. Elles ne relèvent pas de la
@@ -68,135 +70,129 @@
    * c'est elle qui tranche.
    */
 
-  /* La marque : bleu pétrole, sable, corail. */
-  --petrole: #1a4d5c;
-  --petrole-fonce: #0f3a47;
-  --sable: #f4e8d8;
-  --sable-clair: #f5f1e8;
+  /*
+   * ── LA CHARTE DU PACK MAÎTRE DU 18 AOÛT 2026 ──────────────────────────────
+   *
+   * « Le dernier ordre de mission prévaut sur tous les précédents. » L'ODM
+   * directeur de Verrière fixe le socle : VERT PROFOND + IVOIRE + SAUGE. Le
+   * vert porte l'expertise et la confiance, l'ivoire apporte la lumière et la
+   * respiration, et les couleurs vives restent concentrées dans les mini-apps
+   * et dans les données qui ont un sens métier — jamais d'arc-en-ciel
+   * décoratif.
+   *
+   * Ce que cela remplace : le bleu pétrole et le sable, hérités d'une charte
+   * antérieure. Le sable jauni était le « parchemin de tante Véro » ; l'ivoire
+   * #F7F6F2 est un blanc cassé neutre, qui ne tire ni vers le jaune ni vers le
+   * papier ancien. Ce n'est pas le même reproche, ce n'est pas la même couleur.
+   *
+   * Les NOMS de variables sont conservés — ils sont employés cent soixante-neuf
+   * fois — et ce sont leurs valeurs qui changent. Un composant qui demande « la
+   * couleur du texte sur le fond » obtient la bonne sans rien savoir de la
+   * bascule.
+   */
+
+  /* Le socle. */
+  --vert-profond: #0a2b23;
+  --vert-verriere: #12463b;
+  --vert-sauge: #a6c39a;
+  --ivoire: #f7f6f2;
+  --citron-doux: #d6e66a;
+
+  /* Les noms de l'ancienne charte, remappés sur le socle actuel. */
+  --petrole: #12463b;
+  --petrole-fonce: #0a2b23;
+  --sable: #f7f6f2;
+  --sable-clair: #ffffff;
+
+  /*
+   * Le corail, en attente d'arbitrage.
+   *
+   * Il ne figure pas dans la palette du pack maître. Mais la demande « corail
+   * et non rouge » date du 19 août, soit APRÈS ce pack : on ne le supprime donc
+   * pas de son propre chef. Il reste la couleur de l'ACTION et de l'ALERTE —
+   * boutons, liserés d'alerte — le temps que la question soit tranchée, et il
+   * garde sa valeur exacte de marque.
+   *
+   * Mesuré : #FF6B5D tient 5,43 sur le vert profond et 2,58 seulement sur
+   * l'ivoire. Il s'écrit donc sur le vert, jamais sur l'ivoire ; sur fond clair
+   * il remplit un bouton dont l'encre est le vert profond (5,43 également).
+   */
   --coral: #ff6b5d;
-
-  /*
-   * Le corail des boutons pleins — et l'encre qui va dessus.
-   *
-   * Première tentative : garder le blanc et assombrir le corail jusqu'à ce
-   * qu'il porte le libellé. #D0402C passait la mesure (4,71) mais la cliente a
-   * tranché en trois mots, et elle a raison : « on dirait rouge ». C'était
-   * devenu une brique, pas un corail.
-   *
-   * La bonne réponse était de l'autre côté : garder le corail EXACT de la
-   * marque et changer l'encre. Le pétrole très foncé y tient 5,07 — mieux que
-   * le blanc ne tenait sur la version assombrie.
-   *
-   * Le produit faisait déjà ce raisonnement ailleurs sans le nommer : sur les
-   * étiquettes A→G, dont les couleurs sont réglementaires, c'est l'encre qui
-   * s'adapte parce que la couleur ne peut pas bouger. Une couleur de marque
-   * mérite le même égard.
-   */
   --coral-fonce: #ff6b5d;
-  --sur-coral: #0c2f3a;
+  --sur-coral: #0a2b23;
+  --coral-texte: #a33220;
+
+  /* Les noms historiques, remappés une dernière fois. */
+  --vert-900: #0a2b23;
+  --vert-800: #12463b;
+  --vert-700: #12463b;
+  --vert-500: #12463b;
+  --vert-300: #a6c39a;
+  --vert-100: #e6ede4;
+
+  --or: #d6e66a;
+  --or-fonce: #6d7a2a;
+  --or-clair: #d6e66a;
+  --or-pale: rgb(214 230 106 / 18%);
 
   /*
-   * Le corail qui S'ÉCRIT, sur fond pétrole.
+   * L'ivoire est le fond, le vert profond est l'encre.
    *
-   * Le vrai corail #FF6B5D tient 4,6 sur le pétrole foncé : il peut donc
-   * s'écrire tel quel, ce qui était impossible sur le sable où il tombait à
-   * 2,7. Pour le texte courant on garde tout de même une version très
-   * légèrement éclaircie, qui passe 5,4 et ne fatigue pas en petit corps.
-   *
-   * C'est le fond sombre qui rend son corail à la marque. Assombrir la couleur
-   * pour la rendre lisible, c'était la transformer en brique.
+   * L'ODM le dit dans cet ordre : « le vert porte l'expertise, l'ivoire apporte
+   * la lumière et la respiration ». Le fond de l'application est donc CLAIR, et
+   * c'est le bandeau, le widget du bien et les mini-apps qui portent la couleur.
    */
-  --coral-texte: #ffb3aa;
-
-  /* Les noms historiques, remappés une dernière fois. L'ossature du produit
-     n'a pas bougé depuis le vert nuit : ce sont toujours les mêmes variables
-     qui portent la couleur, et les composants n'en savent rien. */
-  --vert-900: #0f3a47;
-  --vert-800: #14434f;
-  --vert-700: #1a4d5c;
-  --vert-500: #1a4d5c;
-  --vert-300: #7fa3ad;
-  --vert-100: #e8f0f2;
-
-  --or: #ff6b5d;
-  --or-fonce: #ffb3aa;
-  --or-clair: #ffb3aa;
-  --or-pale: rgb(255 107 93 / 16%);
-
-  /*
-   * ── LE FOND EST PÉTROLE. LE SABLE EST UN ENCART. ──────────────────────────
-   *
-   * Le produit avait le sable en fond de page : #F4E8D8 sur toute la surface,
-   * avec des cartes claires et des filets bleus posés dessus. Verdict de la
-   * cliente, et il est juste : « du parchemin de chez tante Véro », « le sable
-   * avec liséré bleu, ça fait vieux », « je ne veux pas du sable dominant ».
-   *
-   * L'écran de démarrage, lui, était déjà dans le bon sens — pétrole en grand,
-   * encadré de dépôt en corail, intérieur en sable — et c'est le seul écran que
-   * personne n'a jamais critiqué. On généralise donc ce qui marchait au lieu
-   * d'inventer autre chose.
-   *
-   * ── Ce que le pétrole rend possible ───────────────────────────────────────
-   *
-   * Le corail EXACT de la marque, #FF6B5D, tient 4,6 de contraste sur ce
-   * pétrole foncé. Sur le sable, il ne tenait que 2,7 : il fallait l'assombrir
-   * pour l'écrire, et il devenait rouge brique — le reproche qui revient depuis
-   * le début. Le fond sombre est ce qui rend enfin le vrai corail lisible.
-   *
-   * ── Où le sable et la crème restent ───────────────────────────────────────
-   *
-   * En ENCARTS pleins, jamais en fond de page : le panneau de dépôt, les
-   * cartouches d'explication, les blocs qu'on veut détacher du fond. Et la
-   * crème remplace le sable partout où il ne s'agit que d'écrire : #F5F1E8 est
-   * franc là où #F4E8D8 tire vers le papier jauni.
-   */
-  --encre: #f5f1e8;
-  --encre-doux: #cbd8dd;
-  --gris: #a9bcc3;
+  --encre: #0a2b23;
+  --encre-doux: #4a5a55;
+  /* Mesuré : le sauge assombri jusqu’à 4,6 sur l’ivoire. */
+  --gris: #58775f;
   --papier: #ffffff;
-  --papier-doux: #f5f1e8;
-  --fond: #0f3a47;
-  --fond-clair: #14434f;
-  --sur-fond: #f5f1e8;
-  --sur-fond-doux: #cbd8dd;
+  --papier-doux: #f7f6f2;
+  --fond: #f7f6f2;
+  --fond-clair: #ffffff;
+  --sur-fond: #0a2b23;
+  --sur-fond-doux: #4a5a55;
 
   /*
-   * Les surfaces posées sur le pétrole : un voile de crème très dilué.
+   * Les surfaces posées sur l'ivoire : un voile de vert profond très dilué.
    *
    * Sur fond clair, une surface se détache en s'assombrissant ; sur fond
    * sombre, en s'éclaircissant. Les cinquante-huit déclarations qui passent par
    * ces variables n'ont rien à savoir de ce basculement — c'est précisément
-   * pour cela qu'elles existent.
+   * pour cela qu'elles existent. Les écrans qui restent sombres — le bandeau,
+   * le widget du bien — les redéfinissent localement.
    */
-  --surface: rgb(245 241 232 / 5%);
-  --surface-forte: rgb(245 241 232 / 9%);
-  --surface-bord: rgb(245 241 232 / 18%);
+  --surface: rgb(10 43 35 / 3%);
+  --surface-forte: rgb(10 43 35 / 6%);
+  --surface-bord: rgb(10 43 35 / 12%);
 
   /*
-   * Les filets, en crème diluée.
+   * Les filets, en sauge dilué.
    *
-   * Le liseré bleu sur fond chaud est ce qui datait le plus le produit. Sur
-   * pétrole, un filet ne se dessine plus en fonçant mais en éclaircissant, et
-   * il devient discret au lieu d'être un cadre.
+   * Le liseré BLEU sur fond chaud est ce qui datait le plus le produit. Le
+   * sauge appartient au socle : il tient la même fonction sans jamais faire
+   * cadre, parce qu'il est de la famille du vert qui l'entoure.
    */
-  --trait: rgb(245 241 232 / 20%);
-  --trait-fin: rgb(245 241 232 / 11%);
-  --trait-or: rgb(255 107 93 / 55%);
+  /* Le filet qui DÉLIMITE tient 3:1 ; celui qui sépare seulement peut être
+     plus doux — il ne porte aucune information. */
+  --trait: #779576;
+  --trait-fin: #dfe6db;
+  --trait-or: rgb(214 230 106 / 60%);
 
   /*
-   * Sur pétrole, les trois états s'éclaircissent au lieu de s'assombrir.
+   * Les trois états, sur fond clair.
    *
-   * Les versions foncées — corail brique, ambre brûlé, pétrole — s'éteignaient
-   * sur ce fond : le corail foncé n'y tient que 2,1. Ce sont les versions
-   * claires qui signalent, et leurs fonds sont des voiles teintés plutôt que
-   * des aplats pastel, qui feraient des rectangles laiteux sur le bleu.
+   * Le protocole qualité l'impose : « couleur jamais seule porteuse du sens ».
+   * Chaque état porte donc aussi un signe — pastille, libellé — et ces couleurs
+   * ne servent qu'à renforcer. Le bon prend le vert du socle plutôt qu'un vert
+   * de plus.
    */
-  --alerte: #ff9084;
-  --alerte-fond: rgb(255 107 93 / 15%);
-  --attention: #ffd54a;
-  --attention-fond: rgb(255 213 74 / 14%);
-  --ok: #7fd4c8;
-  --ok-fond: rgb(127 212 200 / 14%);
+  --alerte: #a33220;
+  --alerte-fond: #fdeeeb;
+  --attention: #8a5a05;
+  --attention-fond: #fdf3e0;
+  --ok: #12463b;
+  --ok-fond: #e6ede4;
 
   /*
    * La couleur qui SIGNALE, distincte de celle qui décore.

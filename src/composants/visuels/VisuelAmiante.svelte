@@ -54,9 +54,10 @@
    * La maquette fait scintiller les hexagones en faisant varier LEUR opacité
    * (0,22 → 0,72). Ici les cristaux portent une marque : à 0,22 d'opacité, cette
    * marque tombe sous le seuil de contraste au creux de chaque cycle. Le cristal
-   * reste donc à pleine opacité et c'est un voile blanc posé dessus qui pulse.
-   * À l'œil le scintillement est le même ; mesuré, il ne fait que RELEVER le
-   * contraste au lieu de le détruire (3,63 au repos → 5,27 au sommet).
+   * reste donc à pleine opacité et c'est un voile de crème posé dessus qui pulse.
+   * À l'œil le scintillement est le même ; mesuré, il RELÈVE le contraste des
+   * marques sombres au lieu de le détruire (3,61 au repos → 4,79 au sommet, pour
+   * un seuil de 3).
    */
   const { gravite, zones }: { gravite: Gravite; zones: ZoneAmiante[] | null } = $props();
 
@@ -163,11 +164,22 @@
   }
 
   function remplissage(l: Lecture): string {
+    /*
+     * Évidé : le rapport a regardé là, il n'en tire pas de conclusion. Une
+     * couleur pleine, quelle qu'elle soit, en affirmerait une.
+     *
+     * Ce voile de crème ne pèse que 1,32 contre la boîte : il ne PORTE pas
+     * l'information, et il n'a pas à la porter. Ce qui la porte, c'est le bord
+     * pointillé (4,01) et le « ? » (6,57 au pire du scintillement) — tous deux
+     * au-dessus de leur seuil. Un aplat à 3:1 ici remplirait le cristal, c'est-
+     * à-dire dirait quelque chose.
+     *
+     * La crème est celle de la charte (`--u-texte`), écrite à la main : ceci
+     * part dans un attribut de présentation SVG, où `var()` n'est pas substitué.
+     */
     if (l === 'absente') return `url(#${uid}-violet)`;
     if (l === 'reperee') return `url(#${uid}-repere)`;
-    /* Évidé : le rapport a regardé là, il n'en tire pas de conclusion. Une
-       couleur pleine, quelle qu'elle soit, en affirmerait une. */
-    return 'rgb(255 255 255 / 10%)';
+    return 'rgb(245 241 232 / 10%)';
   }
 
   /* Le dessin porte de l'information : il lui faut son équivalent en texte. La
@@ -271,10 +283,14 @@
    * Hors de la boîte, le composant s'habille des jetons du design system.
    *
    * `--sur-fond-doux`, `--ok`, `--attention` sont déjà retraduits par l'univers
-   * de l'écran (`Diagnostics.svelte`, règle `.dedans`) : sur l'écran amiante,
-   * `--sur-fond-doux` vaut #5A5580, mesuré à 6,90 sur le blanc de `.dessin` et
-   * 5,71 sur le sable. Les couleurs d'état, elles, ne suivent JAMAIS l'univers —
-   * c'est la doctrine du fichier, et elle vaut ici comme ailleurs.
+   * de l'écran (`Diagnostics.svelte`, règle `.dedans`) : rien n'est à corriger
+   * ici pour le passage au pétrole, c'est le rôle même de ces jetons. Sur
+   * l'écran amiante, `--sur-fond-doux` vaut désormais #CBD8DD, mesuré à 6,16
+   * sur le #2B4D61 de `.dessin` — l'ancienne mesure, 6,90 sur du blanc, ne
+   * décrivait plus rien.
+   *
+   * Les couleurs d'état, elles, ne suivent JAMAIS l'univers — c'est la doctrine
+   * du fichier, et elle vaut ici comme ailleurs.
    */
   .etiquette {
     margin: 0 0 var(--e2);
@@ -286,35 +302,72 @@
   }
 
   /*
-   * La boîte du microscope, sombre quel que soit l'écran autour.
+   * La boîte du microscope : le seul endroit du produit plus sombre que sa page.
    *
-   * Les deux maquettes concordent : la boîte est sombre, y compris posée sur le
-   * sable. Ses couleurs ne peuvent donc pas venir des jetons — ceux-ci sont
-   * mesurés pour le sable et le blanc de l'univers amiante, et un gris qui passe
-   * sur le sable disparaît sur du #1E1B3A. Toutes les valeurs ci-dessous sont
-   * mesurées sur le point le plus CLAIR du dégradé (#1E1B3A), le pire cas, et
-   * non sur sa moyenne.
+   * Elle l'était déjà quand la page était sable — les deux maquettes concordent
+   * là-dessus. Le basculement vers le pétrole ne lui retire donc rien : elle
+   * passe d'un trou dans du clair à un puits dans du sombre. Mesurée contre le
+   * #2B4D61 de `.dessin`, elle s'en détache de 2,18 : assez pour se lire comme
+   * un creux, pas assez pour découper un rectangle noir dans l'écran. Ni son
+   * dégradé ni ses deux violets ne bougent, ce sont des valeurs de maquette.
+   *
+   * CE QUI CHANGE, c'est d'où viennent ses ENCRES. Elles étaient littérales
+   * parce qu'aucun jeton n'était sûr sur un fond aussi sombre : ils étaient
+   * calculés pour le sable et le blanc. Le produit ayant basculé, les jetons de
+   * l'univers SONT désormais des couleurs de fond sombre, et la boîte peut s'y
+   * brancher — un visuel branché suit la prochaine charte tout seul. Ce qui
+   * reste littéral l'est pour une raison écrite en face.
+   *
+   * Toutes les mesures ci-dessous sont prises sur le point le plus CLAIR du
+   * dégradé (#1E1B3A), le pire cas, et non sur sa moyenne.
    */
   .scope {
-    /* Les deux violets de la maquette, tels quels. */
-    --cristal-clair: #8b7bf0; /* 4,83 sur la boîte */
-    --cristal-fonce: #6a5acd;
+    /*
+     * Le violet de la maquette et l'accent vif de l'univers amiante sont la
+     * MÊME couleur, #8B7BF0 : `univers.ts` l'a relevée sur cette maquette-ci.
+     * Passer par le jeton ne déplace donc pas un pixel aujourd'hui, et fait
+     * suivre le cristal si la charte déplace le violet demain.
+     */
+    --cristal-clair: var(--u-accent-vif, #8b7bf0); /* 4,86 sur la boîte */
+    /* Le second violet de la maquette. Aucun mélange de `--u-accent-vif` ne le
+       reproduit — le bleu manquerait de 19 points —, il reste donc littéral, et
+       c'est cette ligne qu'il faudra revoir si l'accent amiante change. */
+    --cristal-fonce: #6a5acd; /* 3,11 */
 
     /*
-     * Le jaune que le produit emploie déjà quand le fond est sombre
-     * (`.dedans.sombre` et `body.demarrage`) : #8A5A05, l'attention des fonds
-     * clairs, ne tient que 2,72 ici et disparaîtrait. Son second ton de dégradé
-     * est assombri dans la même teinte, comme `univers.ts` le fait partout.
+     * Le jaune d'attention du produit, pris à sa variable au lieu d'être
+     * recopié. `--attention` vaut #FFD54A partout depuis que les fonds sont
+     * sombres : la valeur écrite ici à la main était déjà exactement celle-là.
+     * Les couleurs d'état ne suivent jamais l'univers, elles suivent le
+     * produit — c'est précisément ce que fait le jeton.
      */
-    --cristal-repere: #ffd54a; /* 11,50 sur la boîte */
-    --cristal-repere-fonce: #e5aa00; /* 7,87 */
+    --cristal-repere: var(--attention, #ffd54a); /* 11,68 sur la boîte */
+    --cristal-repere-fonce: #e5aa00; /* 7,92 — son ton d'ombre, sans jeton */
 
-    --scope-encre: #ffffff; /* 16,39 */
-    --scope-doux: #a9a6c9; /* 7,00 */
-    /* Le « bon » des fonds sombres du produit (`.dedans.sombre`), repris tel
-       quel plutôt qu'un vert de plus : la charte n'en compte pas. */
-    --scope-ok: #cfe3ea; /* 12,35 */
-    --scope-sombre: #0b0a18; /* l'encre des marques : 3,63 au pire sur le violet */
+    /*
+     * Les trois encres de la boîte, désormais branchées sur l'univers.
+     *
+     * La crème #F5F1E8 remplace le blanc pur : depuis le passage au pétrole, la
+     * charte écrit en crème et réserve le blanc aux surfaces. 14,63 laisse toute
+     * la marge nécessaire. Le gris lavande #A9A6C9 laisse la place au gris de
+     * l'univers, qui est le même sur les onze écrans — un seul gris secondaire
+     * dans le produit vaut mieux qu'un par dessin.
+     */
+    --scope-encre: var(--u-texte, #f5f1e8); /* 14,63 */
+    --scope-doux: var(--u-texte-doux, #cbd8dd); /* 11,32 */
+    /* Le « bon » des fonds sombres du produit, pris à sa variable plutôt que
+       recopié : la charte ne compte pas de vert, et `--ok` vaut #CFE3EA. */
+    --scope-ok: var(--ok, #cfe3ea); /* 12,43 */
+
+    /*
+     * L'encre posée SUR le cristal une fois qu'il est un aplat plein — mot pour
+     * mot le rôle que `univers.ts` donne à `--u-sur-accent`, et qu'il calcule
+     * pour tenir sur `--u-accent-vif`. Elle vaut 3,61 au pire (second violet,
+     * scintillement au repos) et 8,97 sur le jaune, pour un seuil de 3.
+     * L'ancien #0B0A18 mesurait 3,85 au même endroit : on cède un quart de
+     * point pour que l'encre et son aplat ne puissent plus diverger.
+     */
+    --scope-sombre: var(--u-sur-accent, #04161c);
 
     padding: var(--e5);
     border-radius: var(--rayon);

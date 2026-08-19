@@ -446,10 +446,19 @@
      page de six écrans, la navigation disparaissait dès le premier défilement.
      Entre une marque toujours visible et une navigation toujours visible, c'est
      la navigation qui reste. */
+  /*
+   * Le bandeau ne se distingue plus par une couleur, mais par un filet.
+   *
+   * Il portait --fond-clair, qui était le blanc sur fond sable. Depuis que le
+   * fond est pétrole, ce jeton vaut un second bleu : le bandeau formait une
+   * bande d'une nuance à peine différente, ce qui se lit comme un défaut de
+   * rendu plutôt que comme une structure. Un filet corail dilué suffit à poser
+   * la limite, et l'écran gagne un aplat continu du haut jusqu'au dock.
+   */
   .entete {
     padding: var(--e4) 0;
     border-bottom: 1px solid var(--trait-or);
-    background: var(--fond-clair);
+    background: transparent;
   }
 
   .marque {

@@ -412,12 +412,21 @@
      ligne, et chaque tuile ouvre la fiche correspondante. -->
 <Bureau {analyse} surOuvrirDiagnostic={ouvrirDansLAnalyse} surVue={allerALaVue} />
 
-<!-- Ce qu'il faut retenir, avant le dossier lui-même. C'est la seule chose de
-     l'écran qui doit être comprise sans rien ouvrir : il est donc au-dessus des
-     vues, et il s'affiche même si aucun passage n'a pu être repéré. -->
-<Verdict {analyse} {photo} surOuvrirDiagnostic={ouvrirDansLAnalyse} />
+<!--
+  L'ACCUEIL NE MONTRE QUE DES APPLIS.
 
-{#if reperes.length}
+  « Je ne veux pas voir de texte plus bas ; l'interface marche comme un iPhone :
+  on ne voit que les applis et on clique. » C'était juste, et ce ne l'était pas :
+  sous la grille d'icônes, tout le dossier continuait de se dérouler en liste —
+  le verdict, les six familles, chaque diagnostic avec sa date de validité. Un
+  écran d'accueil d'iPhone ne déroule pas le contenu des applications sous les
+  icônes.
+
+  Le verdict et le dossier ne sont donc rendus qu'une fois une vue ouverte, par
+  le dock ou par « Voir le détail ». Rien n'est perdu : c'est le même contenu,
+  à un clic.
+-->
+{#if reperes.length && vueOuverte}
   <section class="lecteur" class:plein={vueOuverte}>
     {#if vueOuverte}
       <!-- La barre de l'application : la sortie, puis le nom de ce qu'on lit. -->
@@ -448,6 +457,10 @@
     </nav>
 
     <div class="vue" class:cachee={vue !== 'point'} id="analyse-diags">
+      <!-- Ce qu'il faut retenir, avant le dossier lui-même : il ouvre l'analyse
+           plutôt que de s'étaler sur l'écran d'accueil. -->
+      <Verdict {analyse} {photo} surOuvrirDiagnostic={ouvrirDansLAnalyse} />
+
       <!-- Le dossier diagnostic par diagnostic. On les feuillette : un volet à
            la fois, le bandeau dit lequel. La fiche donne le verdict, le rapport
            en donne la preuve. -->
@@ -947,7 +960,10 @@
     z-index: 8;
     margin-bottom: var(--e5);
     padding: var(--e1);
-    background: var(--sable);
+    /* Le sélecteur de vues était un bandeau SABLE posé sur le fond : « pourquoi
+       l'analyse, le rapport et le conseil sont en sable ». Il devient un rail
+       de la même famille que le fond, et c'est l'onglet actif qui se détache. */
+    background: var(--surface-forte);
     border: 1px solid var(--trait);
     border-radius: 999px;
     box-shadow: var(--ombre);
@@ -972,8 +988,8 @@
   }
 
   .vues button.courante {
-    color: #fff;
-    background: var(--petrole);
+    color: var(--sur-coral);
+    background: var(--coral);
     box-shadow: 0 2px 0 var(--coral) inset;
   }
 

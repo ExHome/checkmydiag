@@ -24,23 +24,37 @@
    * reste éteinte au lieu de s'allumer au hasard. La réserve est écrite sous le
    * dessin, pas cachée dans ce commentaire.
    *
-   * ── Pourquoi les couleurs sont écrites ici et pas prises aux jetons ─────────
+   * ── Ce qui passe par les jetons, et ce qui reste écrit ici ──────────────────
    *
-   * Deux raisons, et la seconde est un piège vérifié.
+   * Ce dessin était déjà sombre : l'électricité était le seul écran noir du
+   * produit, et ses couleurs avaient été mesurées sur une carte presque noire,
+   * le #14212b de l'ancien univers. Le passage au pétrole ne l'a donc pas rendu
+   * illisible d'un coup — il a fait pire, il l'a rendu illisible par endroits :
+   * la carte s'est ÉCLAIRCIE jusqu'au #335455, et trois couples sont passés
+   * sous le seuil sans que rien ne change à l'écran de manière visible. Le gris
+   * doux tombait à 4,21, l'orange d'usure à 3,57, le gris éteint à 2,61.
    *
-   * D'abord un coffret électrique EST jaune et gris anthracite : ce sont des
-   * couleurs de sujet, au même titre que les sept teintes A→G de l'étiquette.
+   * Ce qui ÉCRIT et ce qui SÉPARE passe désormais par les jetons de l'univers :
+   * `--u-texte`, `--u-texte-doux`, `--u-accent-vif`, `--u-trait`. Le prochain
+   * mouvement de charte les emportera sans qu'on rouvre ce fichier — et brancher
+   * les manettes sur l'accent vif ne trahit rien, puisque le jaune de phase EST
+   * déjà, à la valeur près, l'accent vif de l'écran Électricité.
    *
-   * Ensuite le dossier ne s'affiche pas qu'à l'intérieur de l'application. Quand
-   * il est rendu à plat — la page complète, l'impression — le conteneur
-   * `.dedans` n'est pas là, donc `--u-*` non plus, et `--encre` vaut alors le
-   * bleu pétrole #1a4d5c de la charte. Un coffret sombre écrit avec cette encre
-   * tomberait à 1,4:1. Le composant porte donc ses propres couleurs, mesurées
-   * sur son propre fond, et reste lisible où qu'on le pose.
+   * Ce qui reste écrit ici, ce sont les couleurs de SUJET : un coffret est un
+   * boîtier anthracite, une manette usée tire vers l'orange, une manette hors
+   * tension est grise. Aucun jeton ne dit cela, et un jeton qui le dirait serait
+   * un jeton de trop. Elles gardent une valeur en dur, mesurée sur son fond
+   * réel, au même titre que les sept teintes A→G de l'étiquette.
    *
-   * Une seule couleur de la maquette a été refusée : le #5F7686 des repères, qui
-   * ne tient que 3,19 sur le corps du module — remplacé par #a8bcc7 (7,71), qui
-   * est déjà le texte doux de l'univers Électricité.
+   * Les valeurs de repli sont celles de l'univers Électricité : rendu à plat —
+   * page complète, impression — le conteneur `.dedans` n'est pas là, donc
+   * `--u-*` non plus. Ce repli jouait autrefois contre le dessin, quand la
+   * charte était claire et que `--encre` valait le bleu pétrole #1a4d5c ; la
+   * charte étant sombre des deux côtés, il joue maintenant avec lui.
+   *
+   * Une seule couleur de la maquette reste refusée : le #5F7686 des repères, qui
+   * ne tient que 2,35 sur le corps du module — remplacé par le texte doux de
+   * l'univers, #cbd8dd (7,65).
    */
 
   /** Ce que le rapport permet de dire d'un point de contrôle. */

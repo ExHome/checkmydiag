@@ -31,7 +31,15 @@ function fichiers(dossier: string, sortie: string[] = []): string[] {
 }
 
 /** Les tournures qui présentent 2,3 comme la valeur en vigueur. */
-const AFFIRME_ANCIENNE_VALEUR = /(?:×|x |fois |vaut |par |de |à )2,3(?!\s*(?:avant|jusqu))/i;
+/*
+ * Le coefficient s'écrit « 2,3 » et rien d'autre.
+ *
+ * Le motif attrapait aussi « à 2,36:1 » — un rapport de contraste WCAG écrit
+ * dans le commentaire d'un visuel. Un faux positif de ce genre finit par
+ * apprendre à contourner le test plutôt qu'à le respecter, ce qui est pire que
+ * pas de test du tout. Le chiffre suivant est donc exclu.
+ */
+const AFFIRME_ANCIENNE_VALEUR = /(?:×|x |fois |vaut |par |de |à )2,3(?![\d])(?!\s*(?:avant|jusqu))/i;
 /** Ce qui suffit à montrer qu'on parle du passé. */
 const SITUE_DANS_LE_PASSE = /avant|jusqu|ancien|remplac|passe de/i;
 

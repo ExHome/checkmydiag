@@ -79,7 +79,28 @@ export interface Univers {
 
 export const UNIVERS: Partial<Record<Ecran, Univers>> = {
   /*
-   * ── TOUS LES UNIVERS SONT SOMBRES, ET C'EST UNE DÉCISION ─────────────────
+   * ── LES HUIT COULEURS DE L'ORDRE DE MISSION DIRECTEUR ────────────────────
+   *
+   * L'ODM du 18 août 2026 nomme la couleur et le signe de chaque mini-app :
+   * DPE vert énergétique, Électricité jaune chaud, Gaz bleu profond, Amiante
+   * violet minéral, Plomb terre, Termites orange chaud, ERP bleu gris,
+   * Mesurage turquoise. Les valeurs viennent du prototype fourni dans le pack
+   * (06_CODE), reprises telles quelles.
+   *
+   * LE FOND RESTE IVOIRE. « Le vert porte l'expertise, l'ivoire apporte la
+   * lumière et la respiration ; les couleurs vives sont concentrées dans les
+   * mini-apps et dans les données qui ont un sens métier. » Un fond coloré par
+   * écran ferait l'arc-en-ciel décoratif que l'ODM refuse : la couleur d'un
+   * univers vit dans son en-tête, ses pictogrammes et ses données, pas en
+   * aplat sous le texte.
+   *
+   * Un écart assumé, et un seul : le jaune de l'Électricité ne tient que 1,31
+   * sur l'ivoire, contre 3 pour les dix autres. L'assombrir en ferait un ocre
+   * et trahirait le « jaune chaud » de l'ODM. Il ne porte jamais seul une
+   * information — le nom de l'app est toujours écrit dessous, comme l'exige le
+   * protocole qualité — et il remplit des surfaces larges, jamais un trait.
+   *
+   * ── Ce qui a précédé, et pourquoi c'est abandonné ────────────────────────
    *
    * Ils étaient bâtis sur des fonds clairs et chauds : rose pâle, sable, crème,
    * vert d'eau. La cliente a tranché : « du parchemin de chez tante Véro », « le
@@ -111,68 +132,63 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
 
   /* DPE — le corail de la marque, enfin lisible tel quel. */
   dpe: {
-    fond: '#223e49',
-    surface: '#334c56',
-    texte: '#f5f1e8',
-    texteDoux: '#cbd8dd',
-    accentVif: '#ff6b5d',
-    accent: '#ffb4ac',
-    surAccent: '#0c2f3a',
-    trait: '#8c9899',
-    sombre: true
+    fond: '#f7f6f2',
+    surface: '#ffffff',
+    texte: '#0a2b23',
+    texteDoux: '#4a5a55',
+    accentVif: '#649c4b',
+    accent: '#2e6a35',
+    surAccent: '#ffffff',
+    trait: '#779576'
   },
 
   /* Électricité — le tableau technique, et son jaune de phase. */
   electricite: {
     /* Le jaune tient 7,3 sur le fond : il n'a besoin d'aucune version claire. */
-    fond: '#224648',
-    surface: '#335455',
-    texte: '#f5f1e8',
-    texteDoux: '#cbd8dd',
-    accentVif: '#ffd54f',
-    accent: '#ffd54f',
-    surAccent: '#0c2f3a',
-    trait: '#909f9b',
-    sombre: true
+    fond: '#f7f6f2',
+    surface: '#ffffff',
+    texte: '#0a2b23',
+    texteDoux: '#4a5a55',
+    accentVif: '#ffd45d',
+    accent: '#7d550a',
+    surAccent: '#ffffff',
+    trait: '#779576'
   },
 
   /* Amiante — le violet du prélèvement en laboratoire. */
   amiante: {
-    fond: '#193f55',
-    surface: '#2b4d61',
-    texte: '#f5f1e8',
-    texteDoux: '#cbd8dd',
-    accentVif: '#8b7bf0',
-    accent: '#cac2f8',
-    surAccent: '#04161c',
-    trait: '#87989f',
-    sombre: true
+    fond: '#f7f6f2',
+    surface: '#ffffff',
+    texte: '#0a2b23',
+    texteDoux: '#4a5a55',
+    accentVif: '#9884c8',
+    accent: '#5b477e',
+    surAccent: '#ffffff',
+    trait: '#779576'
   },
 
   /* Plomb — le vert du réactif. */
   plomb: {
-    fond: '#134247',
-    surface: '#255054',
-    texte: '#f5f1e8',
-    texteDoux: '#cbd8dd',
-    accentVif: '#43a047',
-    accent: '#acd5ae',
-    surAccent: '#04161c',
-    trait: '#849a98',
-    sombre: true
+    fond: '#f7f6f2',
+    surface: '#ffffff',
+    texte: '#0a2b23',
+    texteDoux: '#4a5a55',
+    accentVif: '#b8825f',
+    accent: '#70462f',
+    surAccent: '#ffffff',
+    trait: '#779576'
   },
 
   /* Gaz — la flamme de la chaudière. */
   gaz: {
-    fond: '#213e44',
-    surface: '#324c51',
-    texte: '#f5f1e8',
-    texteDoux: '#cbd8dd',
-    accentVif: '#f4701f',
-    accent: '#fab88f',
-    surAccent: '#0c2f3a',
-    trait: '#899694',
-    sombre: true
+    fond: '#f7f6f2',
+    surface: '#ffffff',
+    texte: '#0a2b23',
+    texteDoux: '#4a5a55',
+    accentVif: '#5c95b4',
+    accent: '#245d7b',
+    surAccent: '#ffffff',
+    trait: '#779576'
   },
 
   /*
@@ -183,28 +199,26 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
    * bois chaud plutôt qu'une terre brûlée.
    */
   termites: {
-    fond: '#1b3c45',
-    surface: '#2c4a52',
-    texte: '#f5f1e8',
-    texteDoux: '#cbd8dd',
-    accentVif: '#b17153',
-    accent: '#dbbdaf',
-    surAccent: '#04161c',
-    trait: '#869595',
-    sombre: true
+    fond: '#f7f6f2',
+    surface: '#ffffff',
+    texte: '#0a2b23',
+    texteDoux: '#4a5a55',
+    accentVif: '#da721e',
+    accent: '#a04107',
+    surAccent: '#ffffff',
+    trait: '#779576'
   },
 
   /* Risques — l'eau et la roche : le teal profond de la coupe géologique. */
   erp: {
-    fond: '#0e404b',
-    surface: '#204e58',
-    texte: '#f5f1e8',
-    texteDoux: '#cbd8dd',
-    accentVif: '#179487',
-    accent: '#9cd1cc',
-    surAccent: '#04161c',
-    trait: '#82999a',
-    sombre: true
+    fond: '#f7f6f2',
+    surface: '#ffffff',
+    texte: '#0a2b23',
+    texteDoux: '#4a5a55',
+    accentVif: '#7193a8',
+    accent: '#354f60',
+    surAccent: '#ffffff',
+    trait: '#779576'
   },
 
   /*
@@ -215,28 +229,26 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
    * sur fond sombre, comme un calque rétroéclairé.
    */
   carrez: {
-    fond: '#153e4c',
-    surface: '#274c58',
-    texte: '#f5f1e8',
-    texteDoux: '#cbd8dd',
-    accentVif: '#76839d',
-    accent: '#bfc5d1',
-    surAccent: '#04161c',
-    trait: '#839698',
-    sombre: true
+    fond: '#f7f6f2',
+    surface: '#ffffff',
+    texte: '#0a2b23',
+    texteDoux: '#4a5a55',
+    accentVif: '#469c90',
+    accent: '#216961',
+    surAccent: '#ffffff',
+    trait: '#779576'
   },
 
   /* Assainissement — l'eau, encore, mais celle qui s'en va. */
   assainissement: {
-    fond: '#0e404b',
-    surface: '#204e58',
-    texte: '#f5f1e8',
-    texteDoux: '#cbd8dd',
-    accentVif: '#179487',
-    accent: '#9cd1cc',
-    surAccent: '#04161c',
-    trait: '#82999a',
-    sombre: true
+    fond: '#f7f6f2',
+    surface: '#ffffff',
+    texte: '#0a2b23',
+    texteDoux: '#4a5a55',
+    accentVif: '#5c95b4',
+    accent: '#245d7b',
+    surAccent: '#ffffff',
+    trait: '#779576'
   },
 
   /*
@@ -248,28 +260,26 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
    * quand les neuf autres portent une couleur de métier.
    */
   dicodiag: {
-    fond: '#153e4c',
-    surface: '#274c58',
-    texte: '#f5f1e8',
-    texteDoux: '#cbd8dd',
-    accentVif: '#76839d',
-    accent: '#bfc5d1',
-    surAccent: '#04161c',
-    trait: '#839698',
-    sombre: true
+    fond: '#f7f6f2',
+    surface: '#ffffff',
+    texte: '#0a2b23',
+    texteDoux: '#4a5a55',
+    accentVif: '#729779',
+    accent: '#12463b',
+    surAccent: '#ffffff',
+    trait: '#779576'
   },
 
   /* En clair — les réponses, dans le corail de la marque. */
   'en-clair': {
-    fond: '#223e49',
-    surface: '#334c56',
-    texte: '#f5f1e8',
-    texteDoux: '#cbd8dd',
-    accentVif: '#ff6b5d',
-    accent: '#ffb4ac',
-    surAccent: '#0c2f3a',
-    trait: '#8c9899',
-    sombre: true
+    fond: '#f7f6f2',
+    surface: '#ffffff',
+    texte: '#0a2b23',
+    texteDoux: '#4a5a55',
+    accentVif: '#88963b',
+    accent: '#586322',
+    surAccent: '#ffffff',
+    trait: '#779576'
   }
 };
 

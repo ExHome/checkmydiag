@@ -40,16 +40,41 @@
    * ── Les couleurs ──────────────────────────────────────────────────────────
    *
    * Les sept teintes sont celles de l'arrêté, prises aux jetons `--etq-*`. Elles
-   * ne se réinventent pas et ne suivent pas l'univers : la maquette proposait
-   * des teintes adoucies (#2E9E5B, #F5D442, #D8342A…), on garde les officielles
-   * — le lecteur a l'étiquette de son rapport sous les yeux, et `DoubleSeuil`
-   * les emploie déjà. Corollaire mesuré : le D tient 1,09 de contraste sur le
-   * blanc, le C 1,20. Trois marches sur sept n'auraient aucune forme sans le
-   * filet intérieur ajouté plus bas.
+   * ne se réinventent pas, ne suivent pas l'univers et ne suivent pas le passage
+   * au fond sombre : la maquette proposait des teintes adoucies (#2E9E5B,
+   * #F5D442, #D8342A…), on garde les officielles — le lecteur a l'étiquette de
+   * son rapport sous les yeux, et `DoubleSeuil` les emploie déjà.
    *
-   * Tout le reste s'habille aux jetons — et à `--encre-doux`, jamais à `--gris` :
-   * ce dossier est rendu à deux endroits, dans l'univers DPE (où `--gris` vaut
-   * #96604f, lisible) et hors univers (où il vaut #888888, soit 3,54 sur blanc).
+   * ── Le fond est passé au pétrole, et ça retourne tout le dessin ────────────
+   *
+   * Ce visuel était écrit pour du papier clair. Deux mesures suffisent à dire ce
+   * que le basculement a cassé, et elles disent l'inverse l'une de l'autre :
+   *
+   *   Sur le blanc, les marches pâles étaient les invisibles — le D (#fbfe06)
+   *   tenait 1,09 et le C (#cbfc34) 1,20. C'est pour elles que le filet
+   *   intérieur avait été inventé, en encre SOMBRE.
+   *
+   *   Sur la carte pétrole (#334c56), ce sont les marches FONCÉES qui
+   *   disparaissent : le A (#319834) tombe à 2,46 et le G (#fc0205) à 2,23,
+   *   sous le seuil de 3 des éléments non textuels. Le C et le D, eux, montent
+   *   à 7,58 et 8,35.
+   *
+   * Le filet ne disparaît donc pas : il change de camp. En crème à 70 %, il
+   * donne son bord aux sept marches, la plus faible étant le G à 4,85 contre la
+   * carte. Le sujet ne bouge pas, la lumière si.
+   *
+   * ── Pourquoi les jetons `--u-*` plutôt que `--papier` / `--encre` ──────────
+   *
+   * Ce dossier est rendu à deux endroits. Dans l'application ouverte, `.dedans`
+   * remappe `--papier` sur `--u-surface` et `--encre` sur `--u-texte` : tout va
+   * bien. Hors de ce bloc — et c'est le rendu PAR DÉFAUT, `pleinEcran` vaut
+   * `false` au départ — les deux jetons viennent de `:root`, où `--papier` vaut
+   * encore #ffffff pendant que `--encre` est passé au crème #f5f1e8. Le couple
+   * est contradictoire : 1,13 de contraste, du texte crème sur du papier blanc.
+   *
+   * On s'attache donc aux jetons de l'univers, avec des replis sombres. Ils
+   * valent la même chose dans l'application ouverte, et ils tiennent debout en
+   * dehors. Le jour où la charte rebouge, ce visuel suit sans qu'on le rouvre.
    */
   import type { Etiquette, Lettre } from '../../lib/modele';
 
@@ -263,26 +288,32 @@
 </figure>
 
 <style>
-  /* La carte de la maquette : surface, filet, grand rayon. Aux jetons du
-     produit, pas aux couleurs de l'univers écrites en dur. Elle est posée sur
-     `.dessin`, qui est déjà `--papier` : c'est le filet qui la détache. */
+  /* La carte de la maquette : surface, filet, grand rayon. Aux jetons de
+     l'univers, jamais à des couleurs écrites en dur. Elle est posée sur
+     `.dessin`, de la même teinte : c'est le filet qui la détache, et il tient
+     3,06 sur la surface (#8c9899 sur #334c56).
+
+     La couleur de base est posée ici plutôt que laissée à l'héritage : hors de
+     l'application ouverte, ce figure hérite d'un `--encre` crème sur un
+     `--papier` blanc. Une seule ligne ferme cette porte pour tout le bloc. */
   .visuel-dpe {
     margin: 0 0 var(--e5);
     padding: var(--e4);
-    background: var(--papier);
-    border: 1px solid var(--trait);
+    background: var(--u-surface, #334c56);
+    border: 1px solid var(--u-trait, #8c9899);
     border-radius: var(--rayon-large);
+    color: var(--u-texte, #f5f1e8);
   }
 
-  /* `.d-label` de la maquette. En `--encre-doux`, jamais `--gris` : hors univers
-     `--gris` vaut #888888, soit 3,54 sur le blanc. */
+  /* `.d-label` de la maquette, en texte doux : #cbd8dd tient 6,24 sur la carte,
+     et c'est du 12 px, donc c'est bien 4,5 qu'il lui faut. */
   .intitule {
     margin: 0 0 var(--e4);
     font-size: var(--t-micro);
     font-weight: 700;
     letter-spacing: var(--suivi);
     text-transform: uppercase;
-    color: var(--encre-doux);
+    color: var(--u-texte-doux, #cbd8dd);
   }
 
   /* Les 6 px et les 132 px sont ceux de la maquette : c'est la géométrie du
@@ -303,10 +334,17 @@
    * de base. La leçon est écrite dans app.css : une animation qui ne se joue
    * pas laisserait ici sept barres de hauteur nulle, définitivement.
    *
-   * Le filet intérieur donne son bord à la marche : mesuré, le D (#fbfe06) tient
-   * 1,09 de contraste sur le blanc et le C (#cbfc34) 1,20 — sans lui, trois
-   * marches sur sept n'ont pas de forme. Il suit l'encre du contexte, donc il
-   * s'adapte à l'univers.
+   * Le filet intérieur donne son bord à la marche, et sur fond sombre il a
+   * changé de camp : il n'est plus là pour détacher les marches pâles du papier
+   * blanc, mais pour détacher les marches FONCÉES de la carte pétrole. Le A
+   * (#319834) ne tient que 2,46 sur #334c56 et le G (#fc0205) 2,23 — sous le
+   * seuil de 3 : sans filet, deux marches sur sept n'ont plus de bord.
+   *
+   * En crème à 70 %, le filet mesuré CONTRE LA CARTE — c'est là qu'il sépare —
+   * donne 5,80 sur le A, 6,52 sur le B, 7,82 sur le C, 8,03 sur le D, 7,27 sur
+   * le E, 6,62 sur le F, 4,85 sur le G. Les sept marches ont un bord.
+   *
+   * Il suit `--u-texte`, donc il suivra le prochain changement de charte.
    */
   .barre {
     flex: 1;
@@ -314,7 +352,7 @@
     border-radius: 6px 6px 3px 3px;
     position: relative;
     transform-origin: bottom;
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--encre) 60%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--u-texte, #f5f1e8) 70%, transparent);
     animation: monte 0.5s var(--courbe) backwards;
   }
 

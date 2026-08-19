@@ -44,21 +44,38 @@
    * en dessous, un tube par emplacement mesuré. Redire ici, c'est se contredire
    * un jour. Le visuel montre combien, par classe. Rien d'autre.
    *
-   * ── Couleurs ────────────────────────────────────────────────────────────────
+   * ── Couleurs, depuis le passage au pétrole ──────────────────────────────────
    *
    * Le composant n'a pas de fond à lui : il vit dans `.dessin`, dont le
-   * `--papier` vaut `--u-surface` (#f7faf7 pour cet univers). Poser une carte
-   * #f7faf7 sur un fond #f7faf7 revenait à dessiner une carte invisible — c'est
-   * ce que faisait le brouillon. Tous les contrastes ci-dessous sont donc
-   * mesurés sur #f7faf7, et sur #fbfdfb pour l'intérieur du tube (blanc à 50 %
-   * recomposé sur #f7faf7). Hors univers (galerie, impression), les replis
-   * reprennent les valeurs de `univers.ts` et les fonds deviennent blancs :
-   * chaque couple y monte, aucun n'y descend.
+   * `--papier` vaut `--u-surface` — #255054 pour le plomb depuis que tous les
+   * univers reposent sur le pétrole. La paillasse était dessinée pour un fond
+   * clair : encre verte foncée, verre pâle, liquides sombres. Tout cela est
+   * retourné ici, et passe par les jetons `--u-*` pour suivre la prochaine
+   * charte sans réécriture.
    *
-   * Les quatre teintes de liquide sont des couleurs de sujet : elles portent
-   * l'échelle des classes. Aucune couleur d'état du produit (--alerte, --ok…)
-   * n'est employée — elles basculent avec le thème alors que la surface de
-   * l'univers, elle, reste claire.
+   * Un point demandait un arbitrage. L'intérieur du tube était « blanc à 50 % » :
+   * traduit en voile crème sur le pétrole, il donnait un fond à ~#3e6366, sur
+   * lequel le vert vif de l'univers ne tient que 2,00 — la classe 0 devenait
+   * illisible, et il aurait fallu éclaircir #43a047, c'est-à-dire abandonner la
+   * couleur vive de l'univers. Le verre montre donc le fond profond
+   * (`--u-fond`, #134247) : une éprouvette vide est un creux dans la carte, et
+   * c'est la lèvre claire qui la dessine. Le vif reste le vif — 3,35 sur ce
+   * fond — et toute l'échelle des classes respire au-dessus de 3.
+   *
+   * Contrastes mesurés (WCAG 2.1, luminance relative avec correction gamma ;
+   * les voiles translucides recomposés sur leur fond réel avant mesure) :
+   *
+   *   sur la surface #255054   texte #f5f1e8 7,91 · doux #cbd8dd 6,12 ·
+   *                            accent #acd5ae 5,47
+   *   sur le tube #134247      verre #acd5ae 6,79 · verre actif #f5f1e8 9,82 ·
+   *                            liquides 3,35 → 6,39
+   *   sur la fiche #315a5d     titre 6,77 · texte 5,24 · lien #acd5ae 4,68 ·
+   *   (voile crème 6 %)        filet de classe 3,23 → 4,41
+   *
+   * Les quatre teintes de liquide restent des couleurs de sujet : elles portent
+   * l'échelle des classes, du vert au rouge, et gardent leur teinte — seule leur
+   * clarté monte, parce que le fond a baissé. Aucune couleur d'état du produit
+   * (--alerte, --ok…) n'est employée : elles répondent au thème, pas à l'univers.
    */
 
   interface Props {
@@ -82,32 +99,40 @@
   /*
    * Les quatre classes du CREP. Le texte de chacune est celui qu'on donnerait de
    * vive voix : ce que le diagnostiqueur a vu, et ce que ça oblige.
+   *
+   * L'échelle de couleur est la même qu'avant — vert, olive, orange, rouge —
+   * mais relevée d'un cran de clarté : le liquide se lit désormais sur le
+   * pétrole du tube (#134247) et non plus sur un verre blanc. `haut` est la
+   * surface du liquide, celle qui prend la lumière ; `bas` est le corps. Pour la
+   * classe 0, ce corps est exactement `--u-accent-vif` (#43a047), le vert du
+   * réactif : la couleur vive de l'univers reste la couleur vive de l'univers.
+   * Chaque teinte tient au moins 3 sur le fond du tube — mesuré, pas estimé.
    */
   const DEFINITIONS: Definition[] = [
     {
-      haut: '#43a047',
-      bas: '#2e7d32',
+      haut: '#66bb6a',
+      bas: '#43a047',
       titre: 'Classe 0 — pas de plomb',
       texte:
         'Le revêtement ne contient pas de plomb, ou en contient moins que le seuil réglementaire. Rien à surveiller, rien à faire.'
     },
     {
-      haut: '#6b8e23',
-      bas: '#4e6b1a',
+      haut: '#b0cc55',
+      bas: '#8ea62e',
       titre: 'Classe 1 — du plomb, revêtement intact',
       texte:
         'Il y a du plomb sous la peinture, mais la peinture tient. Rien ne s’en échappe tant qu’on ne la ponce pas, qu’on ne la gratte pas et qu’elle ne se dégrade pas.'
     },
     {
-      haut: '#b26a00',
-      bas: '#8a5200',
+      haut: '#ffb74d',
+      bas: '#ef8a1a',
       titre: 'Classe 2 — du plomb, revêtement usé',
       texte:
         'Le revêtement est éraflé, usé, entamé par endroits. C’est l’état qui précède la classe 3 : entretenu il y reste, laissé il s’y dégrade.'
     },
     {
-      haut: '#c62828',
-      bas: '#9e1f1f',
+      haut: '#ff8a80',
+      bas: '#f4675f',
       titre: 'Classe 3 — du plomb, revêtement dégradé',
       texte:
         'La peinture s’écaille, se pulvérise, tombe. C’est la classe qui contamine par la poussière, et la seule qui oblige le propriétaire à faire supprimer l’exposition.'
@@ -268,7 +293,7 @@
        en même temps que son contenu n'est pas annoncé de façon fiable. -->
   <div class="sortie" aria-live="polite">
     {#if detail}
-      <div class="fiche" style="--bord:{detail.pointille ? 'var(--u-texte-doux, #4a6b4d)' : detail.haut}">
+      <div class="fiche" style="--bord:{detail.pointille ? 'var(--u-texte-doux, #cbd8dd)' : detail.haut}">
         <p class="fiche-titre">{detail.titre}</p>
         <p class="fiche-texte">{detail.texte}</p>
         <button type="button" class="fermer" onclick={() => (choisi = null)}>
@@ -291,12 +316,12 @@
     /* La paillasse de la maquette : tube de 40 × 126, lèvre de 7 px. */
     --h-tube: 126px;
     /*
-     * Le verre. La maquette pose rgba(67,160,71,.24), soit #cfe0d1 recomposé :
-     * 1,31 sur la surface. Or c'est ce trait qui donne au niveau du liquide un
-     * repère — sans lui, la hauteur ne veut plus rien dire. #6f9a75 tient 3,13
-     * sur l'intérieur du tube et 3,05 sur la surface.
+     * Le verre. La maquette pose rgba(67,160,71,.24), soit un liséré pâle :
+     * invisible sur le pétrole. Or c'est ce trait qui donne au niveau du liquide
+     * un repère — sans lui, la hauteur ne veut plus rien dire. On prend donc le
+     * jeton qui écrit : 5,47 sur la surface, 6,79 sur l'intérieur du tube.
      */
-    --verre: #6f9a75;
+    --verre: var(--u-accent, #acd5ae);
 
     margin: var(--e5) 0 0;
     padding: 0;
@@ -316,7 +341,7 @@
     font-weight: 700;
     letter-spacing: 0.09em;
     text-transform: uppercase;
-    color: var(--u-texte-doux, #4a6b4d);
+    color: var(--u-texte-doux, #cbd8dd);
   }
 
   /*
@@ -332,7 +357,7 @@
     justify-content: center;
     gap: clamp(4px, 2.5vw, 24px);
     padding-bottom: var(--e3);
-    border-bottom: 3px solid var(--u-trait, #cfe0d1);
+    border-bottom: 3px solid var(--u-trait, #849a98);
   }
 
   /* Cinq éprouvettes au maximum : 48 px de cible chacune, gouttière élastique. */
@@ -352,7 +377,7 @@
   }
 
   .tw:focus-visible {
-    outline: 2px solid var(--u-accent, #2e7d32);
+    outline: 2px solid var(--u-accent, #acd5ae);
     outline-offset: 2px;
   }
 
@@ -384,13 +409,19 @@
     border-radius: 5px 5px 0 0;
   }
 
+  /*
+   * L'intérieur du tube. La maquette y mettait du blanc à 50 % ; sur le pétrole
+   * ce serait un voile clair, et l'échelle des classes n'aurait plus de place
+   * pour vivre au-dessus (voir l'en-tête). Le verre montre donc le fond profond
+   * de l'univers : l'éprouvette vide est un creux, la lèvre claire la dessine.
+   */
   .tube {
     position: relative;
     display: block;
     box-sizing: border-box;
     width: 40px;
     height: calc(var(--h-tube) - 7px);
-    background: rgb(255 255 255 / 50%);
+    background: var(--u-fond, #134247);
     border: 2.5px solid var(--verre);
     border-top: none;
     border-radius: 0 0 20px 20px;
@@ -431,13 +462,20 @@
   }
 
   /* Les bulles remontent en translateY, et non en `bottom` : une propriété de
-     mise en page animée en boucle sur cinq tubes coûte un recalcul par image. */
+     mise en page animée en boucle sur cinq tubes coûte un recalcul par image.
+
+     Elles étaient blanches sur des liquides sombres. Les liquides sont
+     maintenant clairs — du blanc à 75 % y descendrait à 1,38 sur l'orange de la
+     classe 2, c'est-à-dire disparaîtrait. La bulle prend donc le pétrole du
+     tube : un creux dans le liquide plutôt qu'un reflet, visible sur les huit
+     teintes de la rampe (2,98 au pire, sur le vert vif). C'est un ornement — il
+     ne porte aucun chiffre, le compte est écrit sous chaque tube. */
   .bul {
     position: absolute;
     bottom: 6px;
     width: 5px;
     height: 5px;
-    background: rgb(255 255 255 / 75%);
+    background: var(--u-fond, #134247);
     border-radius: 50%;
     opacity: 0;
     animation: monter 2.8s ease-in var(--retard) infinite;
@@ -463,44 +501,53 @@
     font-weight: 600;
     line-height: 1.25;
     white-space: nowrap;
-    color: var(--u-texte-doux, #4a6b4d);
+    color: var(--u-texte-doux, #cbd8dd);
   }
 
   .mesure {
     font-size: var(--t-base);
     font-weight: 800;
     line-height: 1;
-    color: var(--u-texte, #1b5e20);
+    color: var(--u-texte, #f5f1e8);
   }
 
+  /* Au repos le verre écrit en accent ; touché, il monte à l'encre pleine. Sur
+     un fond clair on assombrissait pour marquer l'état actif — sur le pétrole
+     c'est l'inverse, on éclaircit. 5,47 → 7,91 sur la surface. */
   .tw:hover .tube,
   .tw:hover .verre::before,
   .tw.actif .tube,
   .tw.actif .verre::before {
-    border-color: var(--u-accent, #2e7d32);
+    border-color: var(--u-texte, #f5f1e8);
   }
 
   .tw.actif .nom {
-    color: var(--u-texte, #1b5e20);
+    color: var(--u-texte, #f5f1e8);
   }
 
   .bilan {
     margin: var(--e3) 0 0;
     font-size: var(--t-petit);
     line-height: 1.5;
-    color: var(--u-texte-doux, #4a6b4d);
+    color: var(--u-texte-doux, #cbd8dd);
   }
 
   .invite {
     margin: var(--e4) 0 0;
     font-size: var(--t-petit);
-    color: var(--u-texte-doux, #4a6b4d);
+    color: var(--u-texte-doux, #cbd8dd);
   }
 
+  /*
+   * La fiche était une carte blanche teintée d'accent. Sur le pétrole elle
+   * devient un voile crème à 6 % — l'encart clair que la charte autorise, sans
+   * l'aplat sable qui a été refusé. Recomposé sur la surface : #315a5d, où le
+   * lien du bas tient encore 4,68. Au-delà de 6 % il tomberait sous 4,5.
+   */
   .fiche {
     margin-top: var(--e4);
     padding: var(--e3) var(--e4);
-    background: color-mix(in srgb, var(--u-accent, #2e7d32) 8%, #ffffff);
+    background: rgb(245 241 232 / 6%);
     border-left: 4px solid var(--bord);
     border-radius: var(--rayon-petit);
     animation: paraitre 0.35s cubic-bezier(0.22, 1, 0.36, 1);
@@ -510,14 +557,14 @@
     margin: 0 0 var(--e2);
     font-size: var(--t-base);
     font-weight: 800;
-    color: var(--u-texte, #1b5e20);
+    color: var(--u-texte, #f5f1e8);
   }
 
   .fiche-texte {
     margin: 0;
     font-size: var(--t-petit);
     line-height: 1.6;
-    color: var(--u-texte-doux, #4a6b4d);
+    color: var(--u-texte-doux, #cbd8dd);
   }
 
   .fermer {
@@ -528,12 +575,12 @@
     font: inherit;
     font-size: var(--t-petit);
     font-weight: 700;
-    color: var(--u-accent, #2e7d32);
+    color: var(--u-accent, #acd5ae);
     cursor: pointer;
   }
 
   .fermer:focus-visible {
-    outline: 2px solid var(--u-accent, #2e7d32);
+    outline: 2px solid var(--u-accent, #acd5ae);
     outline-offset: 2px;
   }
 

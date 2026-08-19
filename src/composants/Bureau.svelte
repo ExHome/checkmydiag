@@ -372,24 +372,34 @@
     /* Jusqu'aux bords, quelle que soit la largeur de la colonne de lecture. */
     margin-inline: calc(50% - 50vw);
     padding-inline: max(var(--e4), calc(50vw - 480px));
-    background: var(--petrole);
-    color: var(--sable);
+    /*
+     * Le bureau posait un second pétrole — #1A4D5C — sur le fond général qui
+     * est maintenant #0F3A47. Deux bleus voisins mais distincts font une
+     * strate visible en haut de page, comme un défaut de rendu. Il porte
+     * désormais le fond du produit, et se détache par son arrondi et son
+     * contenu, pas par une nuance de plus.
+     */
+    background: transparent;
+    color: var(--sur-fond);
     /* Le bas s'arrondit : la page continue en dessous, et un aplat coupé net
        ressemblerait à un défaut de rendu plutôt qu'à un panneau. */
     border-end-start-radius: 28px;
     border-end-end-radius: 28px;
 
-    --sur-fond: #f5f1e8;
-    --sur-fond-doux: #d8ccbc;
-    --encre: #f5f1e8;
-    --encre-doux: #d8ccbc;
-    --gris: #d8ccbc;
-    --surface: rgb(244 232 216 / 6%);
-    --surface-forte: rgb(244 232 216 / 10%);
-    --surface-bord: rgb(244 232 216 / 20%);
-    --trait: rgb(244 232 216 / 22%);
-    --trait-fin: rgb(244 232 216 / 12%);
-    --coral-texte: #ffb3aa;
+    /* Le bureau suit le socle : ivoire dessous, vert profond dessus. Il portait
+       une encre claire, héritée du temps où son fond était sombre — sur
+       l'ivoire, les noms des applis tombaient à 1,04 de contraste. */
+    --sur-fond: #0a2b23;
+    --sur-fond-doux: #4a5a55;
+    --encre: #0a2b23;
+    --encre-doux: #4a5a55;
+    --gris: #58775f;
+    --surface: rgb(10 43 35 / 3%);
+    --surface-forte: rgb(10 43 35 / 6%);
+    --surface-bord: rgb(10 43 35 / 12%);
+    --trait: #779576;
+    --trait-fin: #dfe6db;
+    --coral-texte: #a33220;
   }
 
   /* ---- Le cartouche ------------------------------------------------------
@@ -804,9 +814,12 @@
     gap: var(--e5);
     padding: var(--e3);
     border-radius: 24px;
-    background: rgb(15 58 71 / 55%);
+    /* La barre du bas, façon iOS : un verre dépoli plutôt qu'un aplat. Elle
+       portait un voile de pétrole hérité de l'ancienne charte ; c'est le blanc
+       qui convient sur l'ivoire, comme dans le visuel de référence. */
+    background: rgb(255 255 255 / 72%);
     backdrop-filter: blur(20px);
-    border: 1px solid rgb(244 232 216 / 16%);
+    border: 1px solid var(--trait-fin);
     box-shadow: var(--ombre-lourde);
   }
 
@@ -828,7 +841,7 @@
     display: grid;
     place-items: center;
     font-size: 24px;
-    background: linear-gradient(135deg, var(--sable-clair), var(--sable));
+    background: linear-gradient(145deg, #ffffff, var(--ivoire));
     box-shadow: var(--ombre);
     transition: transform var(--duree) var(--courbe);
   }
