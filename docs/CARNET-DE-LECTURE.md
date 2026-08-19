@@ -509,11 +509,185 @@ corpus — alors que la phrase était sous les yeux dans le premier rapport lu.
 
 ---
 
+## 16 · L'électricité, lue en entier — et la liste qui ne dit rien
+
+Deux volets lus intégralement : un rapport sans anomalie (janvier 2023,
+location) et un rapport qui en relève cinq (octobre 2024, vente).
+
+### La conclusion est un formulaire, comme au gaz
+
+Les deux issues sont imprimées l'une sous l'autre — « ne comporte aucune
+anomalie », « comporte une ou des anomalies » — et l'on coche. La coche est un
+dessin. Chercher l'une des deux phrases dans le volet donne donc un faux
+positif dans un rapport sur deux.
+
+### La liste des domaines n'est PAS un constat
+
+Sous « Anomalies avérées selon les domaines suivants : » vient une liste de six
+domaines. Le moteur la prenait pour un relevé — elle ne l'est pas : c'est le
+**catalogue de l'arrêté du 28 septembre 2017**, imprimé à l'identique dans tous
+les rapports.
+
+Mesuré sur trente et un volets : **six domaines, les mêmes, dans 100 % des
+cas** — quatorze rapports sans anomalie comme dix-sept qui en ont. Conséquence
+avant correction : **quatorze logements sur trente et un se voyaient annoncer
+un défaut électrique qu'ils n'avaient pas.** Après : trente verdicts justes sur
+trente et un.
+
+C'est la leçon du §12 qui se répète : une sonde de présence reste verte sur une
+erreur de fond. Ici, la liste était *présente*, donc « lue » ; elle ne
+*disait* rien.
+
+### Ce qui constate vraiment, en deux variantes
+
+| Variante | Forme | Ce qu'elle donne |
+|---|---|---|
+| 2023 | `Libellé de l'anomalie : B7.3 a  L'Enveloppe d'au moins un matériel est détériorée.` | le défaut exact, avec son code de norme |
+| 2024 | tableau `Domaines / Anomalies / Photo`, domaines **numérotés** | quels domaines, et le libellé normé |
+
+Dans la seconde, les deux colonnes s'entrelacent à l'extraction — le nom du
+domaine est coupé au bout de trois mots et la suite de la ligne appartient déjà
+au texte de l'anomalie. Ce qui survit, c'est le **numéro en tête de ligne**, et
+il suit l'ordre du catalogue. Le numéro dit lequel, l'amorce du libellé
+confirme, et le lecteur apprend enfin *lesquels* des six domaines sont en
+cause, au lieu d'un simple compte.
+
+### Le piège : un second tableau, numéroté pareil
+
+Deux rapports sans la moindre anomalie se voyaient reprocher trois domaines. La
+cause : un autre tableau, même numérotation, mais qui **décrit** au lieu de
+juger — « 1. L'appareil général de | Coupure de l'ensemble de l'installation
+électrique », « 2. Dispositif de protection | Emplacement ». Ce qui les sépare
+est leur en-tête : `Domaines Anomalies Photo` d'un côté, `Domaines Informations
+complémentaires` de l'autre. Sans cet ancrage, la lecture d'un tableau attrape
+son voisin.
+
+### Les mesures compensatoires
+
+Le rapport de 2024 écrit, après deux anomalies : *« (Cette anomalie fait l'objet
+d'une mesure compensatoire pour limiter le risque de choc électrique) »*. Ce
+n'est pas un détail de rédaction : une anomalie compensée n'expose pas au même
+danger qu'une anomalie nue. Verrière ne le dit pas encore.
+
+### Et ce que la rubrique 6 apprend
+
+« Points de contrôle n'ayant pu être vérifiés » : tableau Domaines / Points de
+contrôle, « Néant - » quand tout a pu l'être. Présente et vide = résultat —
+troisième volet à confirmer la règle, après le gaz et l'amiante.
+
+---
+
+## 17 · Vente ou location : le même dossier ne dit pas la même chose
+
+Les deux dossiers lus n'ont pas le même objet, et le rapport l'écrit lui-même.
+
+| | Location (janvier 2023) | Vente (octobre 2024) |
+|---|---|---|
+| Surface | attestation **loi Boutin** (habitable) | certificat **loi Carrez** (privative) |
+| Électricité | « prévu à l'article 3-3 de la loi n°89-462 […] **durée de validité de 6 ans** » | « **durée de validité de 3 ans** » |
+| Parties | Bailleur / Locataire | Vendeur / Acquéreur |
+
+La validité de l'électricité et du gaz **dépend de la transaction**, pas du
+diagnostic : trois ans à la vente, six ans à la location. Le préambule du volet
+le dit en toutes lettres, et il change d'un dossier à l'autre. Un produit qui
+annoncerait « validité : 6 ans » à un vendeur se tromperait du double.
+
+Le CREP suit une logique voisine mais distincte (§9) : sa validité dépend du
+résultat *et* de la transaction — illimitée si négatif, un an en vente et six
+ans en location si positif.
+
+---
+
+## 18 · L'imprimé officiel de l'ERP : la croix, et de quel côté
+
+Contrairement au reste du dossier, l'imprimé officiel de l'état des risques
+sort ses coches en texte. Mais la croix ne se lit pas seule :
+
+```
+L'immeuble est situé dans le périmètre d'un PPRn prescrit      oui X non
+L'immeuble est situé dans le périmètre d'un PPRn approuvé      oui non X
+```
+
+**C'est la position de la croix entre les deux mots qui répond.** Chercher
+« prescrit » puis « oui » sur la même ligne se trompe une fois sur deux — les
+deux mots y sont toujours.
+
+Même mécanique pour les zonages, où la croix suit la valeur retenue :
+
+```
+zone 5   zone 4   zone 3   zone 2 X   zone 1        → sismicité 2
+zone 3   zone 2   zone 1 X                          → potentiel radon 1
+Feu de forêt X   autre                              → le risque coché
+```
+
+### L'argile, troisième formulation
+
+Le §12 en connaissait deux. Un troisième dossier l'écrit en **texte
+réglementaire**, dans la synthèse : *« Le bien se situe dans une zone
+réglementée du risque retrait-gonflement des argiles (L.132-4 du Code de la
+construction et de l'habitation) »*, suivi de quinze lignes sur l'étude
+géotechnique et l'attestation RGA obligatoire depuis le 1er janvier 2024. Le
+mot « aléa » n'y figure pas.
+
+Et le tableau Géorisques, lui, la formule en phrase : « Le bien se situe dans
+une zone d'aléa Fort. » — là où le §12 avait relevé une ligne de tableau
+`Zonage du retrait-gonflement des argiles | Oui | Aléa Moyen`. Une même réalité,
+trois écritures : c'est le cas d'école de la notion canonique et de ses
+variantes.
+
+---
+
+## 19 · L'assurance : la preuve du §13
+
+Le §13 avait conclu, par la statistique, que les assurances « expirées » du
+corpus étaient un modèle de document non mis à jour. Un dossier lu en entier le
+démontre :
+
+- pied de page, sur les 43 pages : `MMA n° 114.231.812` ;
+- volets et attestation sur l'honneur : `114.231.812 - 31/12/2022`, expirée au
+  jour du rapport (10/01/2023) ;
+- **annexe, attestation d'assurance** : cabinet courtier, compagnie **Allianz**,
+  police `86517808`, *« Période de validité : du 03/01/2023 au 02/02/2023 »*.
+
+L'opérateur était donc bien assuré. **Le pied de page et l'attestation sur
+l'honneur portent l'ancienne police ; l'attestation jointe en annexe fait foi.**
+Un second dossier (octobre 2024) le confirme : pied de page `MMA 114.231.812`,
+volets `KLARITY CDIAGK000266 - 01/10/2025`.
+
+### Et l'attestation sur l'honneur est un modèle, elle aussi
+
+Elle liste les certifications par prestation — amiante, termites, gaz, plomb,
+DPE, électricité — dans un dossier qui ne contient ni amiante, ni termites, ni
+gaz. Chercher un diagnostic par son nom dans le texte entier y trouve donc six
+prestations absentes. Même piège que l'en-tête commercial : c'est le **titre en
+tête de page** qui dit ce que le dossier contient.
+
+---
+
+## 20 · Le DPE vierge, et le local sans chauffage
+
+Un dossier de vente porte, en synthèse : **« DPE vierge – Pas de système de
+chauffages fixes. »** Le bien est un plateau de 51,20 m² au rez-de-chaussée.
+
+Sans système de chauffage fixe, la méthode 3CL n'a rien à calculer : le DPE
+sort sans étiquette. Ce n'est ni un oubli du diagnostiqueur, ni un dossier
+incomplet — mais un produit qui affiche « DPE : non lu » ou reste muet laisse
+croire à un manque. Il faut le dire, et dire pourquoi.
+
+À vérifier au texte avant d'en faire une règle : depuis la réforme de 2021, le
+DPE vierge a disparu pour les logements ; le cas rencontré est un local dont la
+destination n'est pas celle d'un logement chauffé. La distinction se tranche au
+texte, pas à l'observation.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [ ] Le tableau « E. — Anomalies identifiées » du gaz : c'est là qu'est la
       conclusion réelle, puisque la case cochée est illisible.
-- [ ] Le volet électricité : mêmes rubriques que le gaz ? mêmes pièges ?
+- [x] ~~Le volet électricité : mêmes rubriques que le gaz ?~~ -> voir §16 :
+      même conclusion-formulaire, mais sa liste de domaines est un catalogue,
+      et deux variantes de tableau constatent vraiment.
 - [ ] Le CREP : comment les classes 0 à 3 sont-elles présentées ?
 - [ ] Le DPE : où sont les seuils des petites surfaces ?
 - [ ] Un dossier de copropriété (DTG, PPPT) : structure encore jamais lue.
@@ -533,3 +707,12 @@ corpus — alors que la phrase était sous les yeux dans le premier rapport lu.
       compare ce que le document déclare à ce que le verdict en retient, sur le
       modèle de `argile-detectee.local.ts`. Fait pour l'argile ; reste le plomb,
       l'électricité, les termites.
+- [ ] Un rapport dont la synthèse dit « aucune anomalie » et dont le volet
+      porte six libellés d'anomalie : contradiction du rapport, ou section qui
+      déborde sur le volet voisin ? Un cas sur trente et un, à ouvrir.
+- [ ] `conclusionDe` ne rattache pas la conclusion électricité que la page de
+      synthèse écrit pourtant en clair sur ce même dossier : gain à prendre.
+- [ ] Les mesures compensatoires de l'électricité : les dire, et expliquer ce
+      qu'elles changent au risque.
+- [ ] Vente ou location : le dossier le dit (Boutin/Carrez, 6 ans/3 ans). En
+      déduire la nature de la transaction, et adapter toutes les validités.

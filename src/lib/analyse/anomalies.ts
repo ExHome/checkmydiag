@@ -98,7 +98,7 @@ const NOMS_DOMAINES = [
  * en-tête : « Domaines Anomalies Photo » d'un côté, « Domaines Informations
  * complémentaires » de l'autre.
  */
-const ENTETE_ANOMALIES = /^\s*Domaines\s+Anomalies/i;
+const ENTETE_ANOMALIES = /^\s*Domaines\s+Anomalies/i;
 const FIN_TABLEAU_ANOMALIES =
   /^\s*(?:Anomalies relatives|Informations compl[ée]mentaires|Domaines\s+Informations|\d\s*[.–-]\s*[–-]?\s*(?:Avertissement|Conclusion|Explications))/i;
 
