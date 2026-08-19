@@ -121,7 +121,44 @@ export function analyserErp(lignes: string[], plage: [number, number]): Diagnost
    * ouvrir le filtre en grand ferait rentrer le formulaire vierge, dont les
    * cases sont des images.
    */
+  /*
+   * L'imprimé officiel affirme, lui aussi — mais sa réponse est une croix.
+   *
+   * « L'immeuble est situé dans le périmètre d'un PPRt approuvé  oui non x »
+   * commence exactement comme une affirmation sur le bien, et l'intitulé de
+   * rubrique « … au regard de plans de prévention des risques technologiques
+   * [PPRt] » est imprimé dans TOUS les états des risques. Résultat mesuré :
+   * quarante-neuf volets sur soixante-trois annonçaient un risque
+   * technologique, et pas un seul dossier ne portait de PPRt concerné.
+   *
+   * C'est le piège du catalogue, une fois de plus : un formulaire vierge n'est
+   * pas un constat. Et la croix ne peut pas trancher — sa place a changé entre
+   * deux millésimes du même éditeur (voir le carnet, § 30).
+   *
+   * Ce qui affirme vraiment reste lu : les conclusions rédigées (« le BIEN est
+   * ainsi concerné par : - Le risque Inondation… ») et les lignes du tableau de
+   * synthèse.
+   */
+  const FORMULAIRE_PPR =
+    /est situ[ée]e? (?:dans|en)[^.]{0,60}(?:p[ée]rim[èe]tre d'un PPR|secteur d'expropriation|zone de prescription|secteur d'information sur les sols)|se situe dans une zone [àa] potentiel radon|est situ[ée]e? dans une commune de sismicit[ée]|risques (?:naturels|miniers|technologiques) pris en compte|est concern[ée] par des prescriptions de travaux dans le r[èe]glement/i;
+
+  /*
+   * Et la marque générale du formulaire : il propose au lieu d'affirmer.
+   *
+   * Deux formes le trahissent, quel que soit le risque et quel que soit
+   * l'éditeur — les deux réponses côte à côte (« oui non »), et l'échelle
+   * énumérée en entier (« zone 5 zone 4 zone 3 zone 2 zone 1 »). Une phrase qui
+   * affirme ne fait ni l'un ni l'autre.
+   *
+   * C'est ce qui restait après le PPRt : « L'immeuble est situé dans un Secteur
+   * d'Information sur les Sols (SIS) oui non x » faisait annoncer une pollution
+   * des sols à des biens que le tableau déclare non concernés.
+   */
+  const PROPOSE_AU_LIEU_D_AFFIRMER = /oui\s*\W{0,4}\s*non|(?:zone\s*\d.{0,12}){3,}/i;
+
   const affirmations = lignes.filter((l) =>
+    !FORMULAIRE_PPR.test(l) &&
+    !PROPOSE_AU_LIEU_D_AFFIRMER.test(l) &&
     /(?:le bien|l['’]immeuble|la parcelle|le terrain|le logement) (?:se situe|ne se situe|est |n['’]est )|est ainsi concern[ée]|^\s*-\s*le risque|^le risque|la commune dans laquelle|zone de sismicit[ée]|potentiel radon|zone [àa] potentiel|Zonage du retrait[\s-]*gonflement|zone r[ée]glement[ée]e du risque/i.test(
       l
     )

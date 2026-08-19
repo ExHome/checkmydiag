@@ -49,9 +49,9 @@ Dropbox.
 | Rapports lus en entier | 5 |
 | Volets lus page à page | 15 |
 | Volets et documents lus page à page | 9 |
-| Erreurs de moteur trouvées par la lecture | 5 majeures |
-| Corrections livrées | 8 |
-| Tests de non-régression ajoutés | 24 |
+| Erreurs de moteur trouvées par la lecture | 6 majeures |
+| Corrections livrées | 9 |
+| Tests de non-régression ajoutés | 30 |
 | Fausses alertes de mes propres sondes, écartées avant annonce | 6 |
 | Sondes de justesse écrites | 2 |
 | Notions métier versées au produit | 4 |
@@ -67,7 +67,7 @@ Ce que « lu » veut dire ici : le volet a été lu page à page, pas survolé.
 | Électricité | 2 | **59/60** verdicts justes (contre 17/31) | catalogue démasqué, deux variantes de constat lues, anomalies compensées distinguées |
 | Gaz | 3 | **7/7** verdicts justes (contre 0/3) | rubrique E lue juste ; rubrique G et « installation non alimentée » restent à remonter |
 | DPE | 2 | 4 % de muets | cas du DPE vierge rencontré, pas encore traité |
-| ERP | 4 | PPR approuvé dit 7/7 | deux mises en page inverses mesurées (28 vs 21 sur 63) ; l'imprimé officiel reste inexploité |
+| ERP | 6 | **1/63** faux risque techno (contre 49/63) | le formulaire vierge n'est plus lu comme un constat ; inondation conservée 26 fois |
 | Plomb | 2 | **22/22** verdicts justes | le moteur est bon ; la validité du constat positif était fausse, corrigée |
 | Amiante | 2 | **19/19** verdicts justes (contre 2/19) | fausse alerte massive corrigée ; la découpe reste 15 pages trop courte |
 | Termites | 2 | **38/38** verdicts justes | le moteur est bon ; zone d'arrêté et mérule restent à restituer |
@@ -312,3 +312,24 @@ le chiffre sans repère serait alarmiste.
 Un RAAT a été ouvert puis écarté : il relève du code du travail et d'un
 programme de repérage bien plus large (dix familles au lieu des listes A et B).
 Il est hors périmètre pour le moment, et inscrit au registre comme « vu ».
+
+### 19 août 2026 — le formulaire de l'ERP, troisième catalogue démasqué
+
+Un état des risques de Pessac portait, dans le verdict du produit, un « risque
+technologique » absent du rapport. La cause est celle qu'on connaît désormais
+par cœur : l'imprimé officiel énumère les rubriques que la loi impose, qu'elles
+concernent le bien ou non, et ses lignes commencent par « L'immeuble est
+situé » — donc le filtre des affirmations les gardait.
+
+**Mesuré : 49 volets sur 63. Pas un seul dossier ne porte de PPRt concerné.**
+
+Deux marques reconnaissent un formulaire, quel que soit le risque : les deux
+réponses côte à côte (« oui non ») et l'échelle énumérée en entier (« zone 5
+zone 4 zone 3 »). En les écartant, le faux risque technologique tombe à **1**,
+la pollution des sols à **0**, et l'inondation reste annoncée **26** fois —
+la détection utile est intacte. Quatre tests le verrouillent.
+
+**Et un cas qui justifie le produit à lui seul** : sur ce même dossier, le
+tableau déclare l'argile en **aléa fort**, et les conclusions rédigées du
+rapport ne citent que la sismicité. Un lecteur qui s'arrête aux conclusions ne
+saura jamais que son bien est en aléa fort. Verrière le dit.

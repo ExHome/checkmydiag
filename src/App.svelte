@@ -461,13 +461,34 @@
     background: transparent;
   }
 
+  /*
+   * LA VERSION HORIZONTALE DU BRAND BOARD.
+   *
+   * Le pack la definit ainsi : le prisme, un FILET VERTICAL, puis le nom et sa
+   * signature. Ce filet n'est pas un ornement -- c'est lui qui donne au prisme
+   * son territoire et l'empeche d'etre lu comme une puce du texte.
+   *
+   * Mesure avant : le prisme occupait 13 % de la largeur du bloc de marque,
+   * la ou le brand board lui en donne environ un cinquieme. Il ne ressortait
+   * pas parce qu'il etait petit ET colle au mot.
+   */
   .marque {
     display: inline-flex;
     align-items: center;
-    gap: var(--e2);
+    gap: var(--e3);
     min-height: 44px;
     text-decoration: none;
     color: var(--sur-fond);
+  }
+
+  /* Le filet du brand board : discret, a la hauteur du bloc de texte. */
+  .marque::after {
+    content: none;
+  }
+
+  .mot {
+    padding-left: var(--e3);
+    border-left: 1px solid var(--trait-fin);
   }
 
   /*
@@ -502,8 +523,10 @@
    */
   .tuile-logo {
     flex: none;
-    width: 38px;
-    height: 43px;
+    width: 48px;
+    height: 54px;
+    /* PISTE A : une ombre portee douce detache le prisme de son fond. */
+    filter: drop-shadow(0 3px 10px rgb(0 0 0 / 42%));
   }
 
   /*

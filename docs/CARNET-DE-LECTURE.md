@@ -1321,6 +1321,58 @@ centaine est la règle : l'annoncer sans repère serait alarmiste.
 
 ---
 
+## 32 · Le formulaire de l'ERP annonçait un risque technologique à 49 biens sur 63
+
+La lecture d'un état des risques de Pessac a fait apparaître, dans le verdict du
+produit, un « risque technologique » que le rapport ne porte nulle part.
+
+### La cause, et c'est la troisième fois du même genre
+
+L'imprimé officiel énumère les rubriques que la loi impose, qu'elles concernent
+le bien ou non :
+
+```
+Situation de l'immeuble au regard de plans de prévention des risques technologiques [PPRt]
+L'immeuble est situé dans le périmètre d'un PPRt approuvé   oui non x
+L'immeuble est situé dans le périmètre d'un PPRt prescrit   oui non x
+```
+
+Ces lignes commencent par « L'immeuble est situé » : le filtre des affirmations
+les gardait, et le détecteur y trouvait « PPRt ». Elles sont imprimées dans
+**tous** les états des risques.
+
+**Mesuré : 49 volets sur 63 annonçaient un risque technologique. Pas un seul
+dossier ne porte de PPRt concerné.**
+
+C'est le catalogue de l'électricité (§16) et l'attestation d'assurance (§19)
+sous une troisième forme : *un texte imprimé dans tous les rapports ne dit rien
+de celui qu'on lit*. La règle est désormais acquise trois fois ; elle mérite
+d'être cherchée partout où un formulaire précède un constat.
+
+### Deux marques reconnaissent un formulaire, quel que soit le risque
+
+1. **les deux réponses côte à côte** — « oui non » ;
+2. **l'échelle énumérée en entier** — « zone 5 zone 4 zone 3 zone 2 zone 1 ».
+
+Une phrase qui affirme ne fait ni l'un ni l'autre. En écartant ces deux formes,
+la fausse alerte technologique tombe de **49 à 1**, la pollution des sols de
+plusieurs dossiers à **zéro** — et l'inondation reste annoncée dans **26**
+dossiers, ce qui prouve que la détection utile n'a pas été perdue.
+
+### Et une omission du rapport, que le produit répare
+
+Sur ce même dossier de Pessac, le tableau de synthèse porte
+`Zonage du retrait-gonflement des argiles | Oui | Aléa Fort`. Les
+**conclusions rédigées** du rapport, elles, ne citent que la sismicité :
+l'argile — le risque n°1 de la région, et le seul « fort » du dossier — n'y
+figure pas.
+
+Un lecteur qui s'arrête aux conclusions ne saura donc jamais que son bien est
+en aléa fort. Verrière le dit. C'est exactement ce pour quoi elle existe, et
+c'est le premier cas où on peut le montrer aussi nettement.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion
@@ -1402,3 +1454,8 @@ centaine est la règle : l'annoncer sans repère serait alarmiste.
       (approuvé + prescrit) : le produit n'en retient qu'une.
 - [ ] Savoir dire qu'un règlement de PPR est annexé, plutôt que de compter des
       pages non exploitées.
+- [ ] Le radon annoncé « niveau 2 » quand la colonne « Votre immeuble » du
+      tableau porte « non » : le zonage est communal, l'obligation ne vise que
+      la zone 3. À trancher au texte avant de changer quoi que ce soit.
+- [ ] Un dernier volet sur 63 annonce encore un risque technologique : trouver
+      d'où il vient.
