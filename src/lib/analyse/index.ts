@@ -93,9 +93,20 @@ function identifierBien(pages: PageTexte[], horsSection: string[]): Bien {
    * les tirets et les comparateurs : sans eux, une tranche de construction —
    * la forme la plus fréquente du corpus — ne ressortait pas.
    */
+  /*
+   * On s'arrete a l'annee, pas a la colonne d'a cote.
+   *
+   * La page de garde met deux colonnes sur la meme ligne : « Annee de
+   * construction : 1900   Altitude : inferieur a 400 m ». Le motif ramassait
+   * tout ce qui suivait, et le bien portait « Avant 1948 Altitude ».
+   *
+   * Ce n'est pas qu'un defaut d'affichage : cette annee decide si le produit
+   * reclame un constat plomb ou un reperage amiante. Une valeur salie reste
+   * lisible pour un humain, jamais pour le controle.
+   */
   const annee = trouver(
     source,
-    /[Aa]nnée de construction\s*:?[\s.]*([<>]?\s*[A-Za-zÀ-ÿ0-9][A-Za-zÀ-ÿ0-9 -]{2,20})/
+    /[Aa]nnée de construction\s*:?[\s.]*((?:[Aa]vant |[Aa]près |[<>]\s*)?\d{4}(?:\s*[-–]\s*\d{4})?|[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ ]{2,18}?\s*\d{4})/
   );
   if (annee?.[1]) bien.anneeConstruction = annee[1].replace(/\s+/g, ' ').trim();
 

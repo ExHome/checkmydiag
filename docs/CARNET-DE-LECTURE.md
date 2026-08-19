@@ -2088,6 +2088,39 @@ d'argile ; il pourra le reprocher.
 
 ---
 
+## 49 · L'annee qui fonde les reclamations
+
+Le §48 fait reclamer un reperage amiante quand le logement date d'avant 1997, un
+constat plomb avant 1949. Ces reclamations ne valent que si **l'annee lue est la
+bonne** — sinon le produit reclame a tort, ce qui est exactement ce qu'il ne
+faut pas faire.
+
+Verification : sur dix-neuf reclamations, **dix-huit reposaient sur une annee
+reellement ecrite au document**. La dix-neuvieme portait :
+
+> Annee lue : « **Avant 1948 Altitude** » · ecrite au document : « Avant 1948 »
+
+C'est le bug de la colonne voisine, deja corrige dans le DPE au §42 et qui
+subsistait la ou il compte le plus : la page de garde met deux colonnes sur la
+meme ligne — « Annee de construction : 1900   Altitude : inferieur a 400 m » —
+et le motif ramassait tout ce qui suivait.
+
+**Une valeur salie reste lisible pour un humain, jamais pour un controle.**
+« Avant 1948 Altitude » se comprend d'un coup d'oeil ; mais la fonction qui en
+extrait un millesime pour decider s'il faut reclamer un constat plomb, elle, n'y
+comprend rien.
+
+Apres correction : **dix-neuf sur dix-neuf**.
+
+### La lecon, et elle vaut pour toutes les extractions
+
+Un champ mal extrait ne fait pas toujours de degat visible. Celui-ci s'affichait
+depuis des semaines sans que personne ne s'en emeuve — jusqu'a ce qu'il serve a
+DECIDER quelque chose. **Le jour ou une donnee cesse d'etre affichee pour etre
+utilisee, sa proprete cesse d'etre cosmetique.**
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion

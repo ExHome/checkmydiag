@@ -55,9 +55,11 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
   Couverture : **375/383, soit 98 %**.
 - **Dire ce qui manque est fait** (§48) : 44 dossiers sur 100 portent au moins
   un manque signalé, et zéro réclamation à tort.
-- **Prochain chantier** : les 15 amiante et 10 plomb réclamés — vérifier au cas
-  par cas que l'obligation s'applique vraiment (année de construction lue au
-  bon endroit), comme cela a été fait pour l'ERP et le DPE.
+- **Les réclamations amiante et plomb sont vérifiées** (§49) : 19 sur 19
+  reposent sur une année réellement écrite au document.
+- **Prochain chantier** : reprendre la lecture large. Les huit chantiers ouverts
+  par le point de reprise sont tous refermés ; le corpus compte encore 3 974
+  dossiers non lus.
 
 ## Compteurs
 
@@ -67,8 +69,8 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 | Volets lus page à page | 24 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 6 majeures |
-| Corrections livrées | 22 |
-| Tests de non-régression ajoutés | 69 |
+| Corrections livrées | 23 |
+| Tests de non-régression ajoutés | 71 |
 | Fausses alertes de mes propres sondes, écartées avant annonce | 6 |
 | Sondes de justesse écrites | 2 |
 | Notions métier versées au produit | 5 |
@@ -674,3 +676,22 @@ tort**, vérifié par contre-épreuve sur les deux diagnostics ajoutés.
 
 C'est le chantier le plus utile de la nuit : tout le reste améliorait la lecture
 d'un document présent, celui-ci dit ce qui n'y est pas.
+
+### 20 août 2026, nuit — l'année qui fonde les réclamations
+
+Réclamer un repérage amiante ou un constat plomb repose sur l'année de
+construction : si elle est mal lue, la réclamation est fausse. Vérification sur
+dix-neuf réclamations : **dix-huit reposaient sur une année réellement écrite au
+document**, la dix-neuvième portait « Avant 1948 **Altitude** ».
+
+C'est le bug de la colonne voisine, déjà corrigé dans le DPE et qui subsistait
+là où il compte le plus. **Une valeur salie reste lisible pour un humain, jamais
+pour un contrôle** : « Avant 1948 Altitude » se comprend d'un coup d'œil, mais
+la fonction qui en extrait un millésime pour décider n'y comprend rien.
+
+Après correction : **19 sur 19**.
+
+La leçon vaut pour toutes les extractions : ce champ s'affichait depuis des
+semaines sans émouvoir personne — jusqu'à ce qu'il serve à **décider** quelque
+chose. Le jour où une donnée cesse d'être affichée pour être utilisée, sa
+propreté cesse d'être cosmétique.

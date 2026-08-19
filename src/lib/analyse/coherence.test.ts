@@ -254,3 +254,35 @@ describe('ne jamais réclamer ce qui est déjà dans le document', () => {
     expect(controles.some((c) => c.genre === 'manque' && c.type === 'erp')).toBe(true);
   });
 });
+
+describe('l’année qui fonde les réclamations', () => {
+  const page = (numero: number, ...lignes: string[]) => ({ numero, lignes });
+
+  /*
+   * L'année de construction décide si le produit réclame un constat plomb ou un
+   * repérage amiante. La page de garde met deux colonnes sur la même ligne, et
+   * le bien portait « Avant 1948 Altitude » : une valeur salie reste lisible
+   * pour un humain, jamais pour un contrôle.
+   */
+  it('ne ramasse pas la colonne voisine', () => {
+    const { bien } = analyser([
+      page(1, 'Dossier Technique Immobilier', 'Année de construction : 1900 Altitude : inférieur à 400 m'),
+      page(2, 'Résumé de l’expertise n° 24/IMO/0154N', 'Prestations Conclusion')
+    ]);
+    expect(bien.anneeConstruction).toBe('1900');
+  });
+
+  it('garde les tranches et les mentions de seuil', () => {
+    const tranche = analyser([
+      page(1, 'Dossier Technique Immobilier', 'Année de construction : 2006 - 2012'),
+      page(2, 'Résumé de l’expertise', 'Prestations Conclusion')
+    ]);
+    expect(tranche.bien.anneeConstruction).toBe('2006 - 2012');
+
+    const seuil = analyser([
+      page(1, 'Dossier Technique Immobilier', 'Année de construction : Avant 1948'),
+      page(2, 'Résumé de l’expertise', 'Prestations Conclusion')
+    ]);
+    expect(seuil.bien.anneeConstruction).toBe('Avant 1948');
+  });
+});
