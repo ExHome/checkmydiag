@@ -334,21 +334,57 @@
     depoli : deux informations de nature differente -- le bien d'un cote, ce que
     le dossier en dit de l'autre -- tenaient dans le meme objet.
   -->
-  <button type="button" class="etat" onclick={() => surVue?.('point')}>
-    <span class="lu">
-      <span class="rond bon" aria-hidden="true">✓</span>
-      {analyse.diagnostics.length} diagnostic{analyse.diagnostics.length > 1 ? 's' : ''} analysé{analyse
-        .diagnostics.length > 1
-        ? 's'
-        : ''}
+  <!--
+    LE WIDGET « À RETENIR » — la vue d'ensemble, sans quitter l'écran d'accueil.
+
+    L'ordre de mission demande qu'on ne déverse pas les diagnostics d'emblée :
+    d'abord le bien, puis ce qu'il faut retenir en trois niveaux, puis seulement
+    les univers.
+
+    Il demande aussi de garder le principe iPhone. Les deux ne s'opposent pas —
+    un écran d'accueil iOS, c'est précisément DES WIDGETS PUIS DES APPS. « À
+    retenir » est donc un second widget, accolé au premier, et non un écran
+    intercalé qui ajouterait un geste.
+
+    Trois niveaux, jamais deux : un dossier n'a pas seulement du bon et du
+    mauvais. Et un quatrième, seulement s'il existe — ce qu'on n'a pas su lire
+    ne se range pas avec ce qui va bien.
+  -->
+  <button type="button" class="retenir" onclick={() => surVue?.('point')}>
+    <span class="titre-retenir">À retenir</span>
+
+    <span class="niveaux">
+      {#if compte.aRegler > 0}
+        <span class="niveau important">
+          <span class="puce" aria-hidden="true"></span>
+          <b>{compte.aRegler}</b>
+          {compte.aRegler > 1 ? 'points importants' : 'point important'}
+        </span>
+      {/if}
+      {#if compte.aVerifier > 0}
+        <span class="niveau surveiller">
+          <span class="puce" aria-hidden="true"></span>
+          <b>{compte.aVerifier}</b>
+          à surveiller
+        </span>
+      {/if}
+      {#if compte.pourInformation > 0}
+        <span class="niveau rassurant">
+          <span class="puce" aria-hidden="true"></span>
+          <b>{compte.pourInformation}</b>
+          {compte.pourInformation > 1 ? 'points rassurants' : 'point rassurant'}
+        </span>
+      {/if}
+      {#if compte.nonLus > 0}
+        <span class="niveau non-lu">
+          <span class="puce" aria-hidden="true"></span>
+          <b>{compte.nonLus}</b>
+          non {compte.nonLus > 1 ? 'lus' : 'lu'}
+        </span>
+      {/if}
     </span>
-    <span class="separateur" aria-hidden="true"></span>
-    <span class="veiller">
-      <span class="rond veille" aria-hidden="true">●</span>
-      {compte.aRegler + compte.aVerifier} point{compte.aRegler + compte.aVerifier > 1 ? 's' : ''} à
-      surveiller
-    </span>
-    <span class="chevron" aria-hidden="true">›</span>
+
+    <span class="mener">Voir les diagnostics <span aria-hidden="true">›</span></span>
   </button>
 
   <!-- La grille. Un diagnostic absent du rapport n'a pas de tuile : le dossier
@@ -753,31 +789,94 @@
    * hierarchie d'accueil protege. Collee, elle est l'etat d'analyse du bien,
    * qui fait partie du widget par le point 1 de ces memes priorites.
    */
-  .etat {
+  /*
+   * LE WIDGET « À RETENIR ».
+   *
+   * Accolé au widget du bien, dont il reprend la largeur et les coins bas : les
+   * deux forment un seul objet sur l'écran d'accueil, comme deux widgets
+   * empilés d'iOS. Rien ne s'intercale entre le bien et ses applications.
+   */
+  .retenir {
     position: relative;
     width: 100%;
     margin: 0;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    padding: var(--e4) var(--e4) var(--e3);
+    display: grid;
+    gap: var(--e3);
     border: 1px solid var(--trait-fin);
     border-top: none;
     border-radius: 0 0 28px 28px;
     background: #ffffff;
     color: var(--sur-fond);
-    font-size: var(--t-petit);
-    font-weight: 600;
     cursor: pointer;
     text-align: left;
     box-shadow: var(--ombre);
   }
 
-  .etat:hover {
+  .retenir:hover {
     border-color: var(--trait);
     box-shadow: var(--ombre-forte);
+  }
+
+  .titre-retenir {
+    font-size: var(--t-micro);
+    font-weight: 700;
+    letter-spacing: var(--suivi);
+    text-transform: uppercase;
+    color: var(--sur-fond-doux);
+  }
+
+  /* Les niveaux se posent à la file et passent à la ligne : sur un téléphone
+     ils s'empilent, sur un écran large ils tiennent sur une ligne. */
+  .niveaux {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e2) var(--e5);
+  }
+
+  .niveau {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--t-base);
+    color: var(--sur-fond);
+  }
+
+  .niveau b {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* La pastille porte la couleur ; le mot porte le sens. Jamais la couleur
+     seule — c'est la règle du protocole qualité. */
+  .puce {
+    width: 11px;
+    height: 11px;
+    flex: none;
+    border-radius: 50%;
+  }
+
+  .important .puce {
+    background: var(--alerte);
+  }
+
+  .surveiller .puce {
+    background: var(--attention);
+  }
+
+  .rassurant .puce {
+    background: var(--ok, #2e6a35);
+  }
+
+  .non-lu .puce {
+    background: var(--gris);
+  }
+
+  /* L'action, une seule, en bas du widget. */
+  .mener {
+    font-size: var(--t-petit);
+    font-weight: 700;
+    color: var(--action);
   }
 
   .lu,

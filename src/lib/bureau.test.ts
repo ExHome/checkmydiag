@@ -24,43 +24,46 @@ describe('les compteurs de l’écran d’accueil', () => {
       diag('neutre')
     ]);
 
-    expect(compte).toEqual({ aRegler: 2, aVerifier: 1, pourInformation: 2 });
+    /* « Non lu » a sa propre colonne : il était rangé avec « pour
+       information », ce qui revenait à présenter un rapport illisible comme
+       un rapport sans problème. */
+    expect(compte).toEqual({ aRegler: 2, aVerifier: 1, pourInformation: 1, nonLus: 1 });
   });
 
   /*
    * Le lecteur peut recompter les tuiles à l'œil : si la somme des trois
    * compteurs ne fait pas le nombre de diagnostics, il voit l'erreur avant nous.
    */
-  it('la somme des trois compteurs fait le dossier entier', () => {
+  it('la somme des quatre compteurs fait le dossier entier', () => {
     const dossier = [diag('alerte'), diag('attention'), diag('bon'), diag('neutre'), diag('bon')];
     const c = compterLeDossier(dossier);
 
-    expect(c.aRegler + c.aVerifier + c.pourInformation).toBe(dossier.length);
+    expect(c.aRegler + c.aVerifier + c.pourInformation + c.nonLus).toBe(dossier.length);
   });
 
   it('un dossier vide ne compte rien', () => {
-    expect(compterLeDossier([])).toEqual({ aRegler: 0, aVerifier: 0, pourInformation: 0 });
+    expect(compterLeDossier([])).toEqual({ aRegler: 0, aVerifier: 0, pourInformation: 0, nonLus: 0 });
   });
 });
 
 describe('la phrase du cartouche', () => {
   it('annonce d’abord ce qui bloque', () => {
-    expect(phraseDuDossier({ aRegler: 2, aVerifier: 3, pourInformation: 1 })).toBe(
+    expect(phraseDuDossier({ aRegler: 2, aVerifier: 3, pourInformation: 1, nonLus: 0 })).toBe(
       '2 diagnostics demandent une action avant la signature.'
     );
   });
 
   it('accorde le singulier', () => {
-    expect(phraseDuDossier({ aRegler: 1, aVerifier: 0, pourInformation: 4 })).toBe(
+    expect(phraseDuDossier({ aRegler: 1, aVerifier: 0, pourInformation: 4, nonLus: 0 })).toBe(
       'Un diagnostic demande une action avant la signature.'
     );
-    expect(phraseDuDossier({ aRegler: 0, aVerifier: 1, pourInformation: 4 })).toBe(
+    expect(phraseDuDossier({ aRegler: 0, aVerifier: 1, pourInformation: 4, nonLus: 0 })).toBe(
       'Un diagnostic mérite une question au vendeur.'
     );
   });
 
   it('ne parle de rien à signaler que si rien n’est signalé', () => {
-    expect(phraseDuDossier({ aRegler: 0, aVerifier: 0, pourInformation: 7 })).toBe(
+    expect(phraseDuDossier({ aRegler: 0, aVerifier: 0, pourInformation: 7, nonLus: 0 })).toBe(
       'Aucun diagnostic du dossier ne signale d’anomalie.'
     );
   });
@@ -74,9 +77,9 @@ describe('la phrase du cartouche', () => {
    */
   it('ne chiffre jamais de travaux, de délai ni de montant', () => {
     const cas = [
-      { aRegler: 3, aVerifier: 2, pourInformation: 1 },
-      { aRegler: 0, aVerifier: 2, pourInformation: 5 },
-      { aRegler: 0, aVerifier: 0, pourInformation: 9 }
+      { aRegler: 3, aVerifier: 2, pourInformation: 1, nonLus: 0 },
+      { aRegler: 0, aVerifier: 2, pourInformation: 5, nonLus: 0 },
+      { aRegler: 0, aVerifier: 0, pourInformation: 9, nonLus: 0 }
     ];
 
     for (const c of cas) {

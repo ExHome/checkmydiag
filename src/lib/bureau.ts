@@ -51,13 +51,23 @@ export interface CompteDuDossier {
    * n'établit pas une absence, il dit ce qu'il a cherché et où.
    */
   pourInformation: number;
+  /**
+   * Ce qu'on n'a PAS su lire.
+   *
+   * Il était compté avec « pour information », et c'est la confusion que ce
+   * produit combat partout ailleurs : « je n'ai pas pu lire » n'est pas « il
+   * n'y a rien ». L'accueil annonce trois niveaux — rassurant, à surveiller,
+   * important — et un quatrième compte ne peut pas se cacher dans le premier.
+   */
+  nonLus: number;
 }
 
 export function compterLeDossier(diagnostics: readonly Diagnostic[]): CompteDuDossier {
   return {
     aRegler: diagnostics.filter((d) => d.gravite === 'alerte').length,
     aVerifier: diagnostics.filter((d) => d.gravite === 'attention').length,
-    pourInformation: diagnostics.filter((d) => d.gravite === 'bon' || d.gravite === 'neutre').length
+    pourInformation: diagnostics.filter((d) => d.gravite === 'bon').length,
+    nonLus: diagnostics.filter((d) => d.gravite === 'neutre').length
   };
 }
 
