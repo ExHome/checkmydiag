@@ -76,6 +76,23 @@
    * ligne unique — l'adresse est ce que le lecteur reconnaît d'abord.
    */
 
+  /** La lettre du DPE, telle que l'étiquette du rapport la donne. */
+  const lettre = $derived.by(() => {
+    const d = analyse.diagnostics.find((x) => x.type === 'dpe');
+    return d?.schema?.genre === 'dpe' ? d.schema.finale : null;
+  });
+
+  /** Les couleurs de l'arrêté. Elles ne se réinventent pas. */
+  const TEINTE_DPE: Record<string, string> = {
+    A: '#319834',
+    B: '#33cc31',
+    C: '#cbfc34',
+    D: '#fbfe06',
+    E: '#fbcc05',
+    F: '#fc9935',
+    G: '#fc0205'
+  };
+
   /*
    * La phrase de synthèse a quitté l'accueil.
    *
@@ -269,43 +286,55 @@
       <span aria-hidden="true">⋯</span>
     </button>
 
-    <!--
-      LA PHOTO ET L'ADRESSE, RIEN D'AUTRE.
-
-      Le widget portait aussi le type de bien, la surface, l'annee de
-      construction, la classe du DPE et deux boutons. Tout cela est vrai et
-      utile, mais ce n'est pas ce qu'on regarde en ouvrant un dossier : on
-      verifie qu'on est bien chez soi. Le reste se lit dans les Conclusions,
-      qui decrivent le bien en detail -- rien n'est perdu, tout est deplace.
-    -->
     <div class="dessous">
       <h2>{analyse.bien.adresse ?? titre}</h2>
       {#if analyse.bien.commune}<p class="commune">{analyse.bien.commune}</p>{/if}
+
+      <p class="traits">
+        {#if analyse.bien.typeBien}<span>{analyse.bien.typeBien}</span>{/if}
+        {#if analyse.bien.surface !== undefined}
+          <span>{analyse.bien.surface.toLocaleString('fr-FR')} m²</span>
+        {/if}
+        {#if analyse.bien.anneeConstruction}
+          <span>Construit {analyse.bien.anneeConstruction}</span>
+        {/if}
+      </p>
+
+      {#if lettre}
+        <span class="lettre" style="background: {TEINTE_DPE[lettre] ?? 'var(--action)'}">
+          {lettre}
+        </span>
+      {/if}
+
+      <button type="button" class="voir" onclick={() => surVue?.('point')}>
+        Voir le bien <span aria-hidden="true">›</span>
+      </button>
     </div>
+
+    <!-- Les deux chiffres que l'ODM demande, et rien de plus : le détail
+         s'ouvre d'un geste, il n'encombre pas l'accueil. -->
+    <button type="button" class="etat" onclick={() => surVue?.('point')}>
+      <span class="lu">
+        <span class="rond bon" aria-hidden="true">✓</span>
+        {analyse.diagnostics.length} diagnostic{analyse.diagnostics.length > 1 ? 's' : ''} analysé{analyse
+          .diagnostics.length > 1
+          ? 's'
+          : ''}
+      </span>
+      <span class="separateur" aria-hidden="true"></span>
+      <span class="veiller">
+        <span class="rond veille" aria-hidden="true">●</span>
+        {compte.aRegler + compte.aVerifier} point{compte.aRegler + compte.aVerifier > 1 ? 's' : ''} à
+        surveiller
+      </span>
+      <span class="chevron" aria-hidden="true">›</span>
+    </button>
   </article>
 
   <!-- La grille. Un diagnostic absent du rapport n'a pas de tuile : le dossier
        montre ce qu'il contient, pas ce qu'il devrait contenir. Ce qui manque est
        signalé ailleurs, comme un manque, pas comme une case grise. -->
-  <!--
-    Les deux chiffres ont quitte le widget avec le reste, mais ils ne se
-    perdent pas : ils tiennent sur la ligne de titre, ou ils qualifient
-    justement ce qui suit. Aucun bloc ne s'intercale donc entre le bien et
-    ses diagnostics.
-  -->
-  <div class="intitule-ligne">
-    <h3 class="intitule">Vos diagnostics</h3>
-    <button type="button" class="compte" onclick={() => surVue?.('point')}>
-      <span class="rond bon" aria-hidden="true">✓</span>
-      {analyse.diagnostics.length} analysé{analyse.diagnostics.length > 1 ? 's' : ''}
-      {#if compte.aRegler + compte.aVerifier > 0}
-        <span class="separateur" aria-hidden="true"></span>
-        <span class="rond veille" aria-hidden="true">●</span>
-        {compte.aRegler + compte.aVerifier} à surveiller
-      {/if}
-      <span class="chevron" aria-hidden="true">›</span>
-    </button>
-  </div>
+  <h3 class="intitule">Vos diagnostics</h3>
 
   <ul class="grille">
     {#each tuiles as tuile (tuile.type)}
@@ -623,34 +652,80 @@
     opacity: 0.92;
   }
 
-  /* La ligne de titre : l'intitule a gauche, les deux chiffres a droite.
-     Ils qualifient ce qui suit, donc ils tiennent sur la meme ligne plutot
-     que de former un bloc entre le bien et ses diagnostics. */
-  .intitule-ligne {
+  /* Type, surface, année : séparés par des points médians, comme le visuel. */
+  .traits {
+    margin: 6px 0 0;
     display: flex;
     flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--e2);
+    gap: 4px 10px;
+    font-size: var(--t-micro);
+    opacity: 0.9;
   }
 
-  .compte {
+  .traits span + span::before {
+    content: '·';
+    margin-right: 10px;
+    opacity: 0.7;
+  }
+
+  /* La lettre du DPE : couleur de l'arrêté, encre noire — sur un jaune
+     réglementaire, du blanc ne se lit pas. */
+  .lettre {
+    position: absolute;
+    right: var(--e4);
+    bottom: calc(var(--e4) + 46px);
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: var(--t-lead);
+    color: #1c1c1c;
+    box-shadow: var(--ombre);
+  }
+
+  .voir {
+    justify-self: start;
+    margin-top: var(--e2);
+    min-height: 40px;
+    padding: 0 18px;
+    border: none;
+    border-radius: 999px;
+    background: #ffffff;
+    color: var(--vert-profond);
+    font-size: var(--t-petit);
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform var(--duree) var(--courbe);
+  }
+
+  .voir:hover {
+    transform: translateY(-2px);
+  }
+
+  /* Le bandeau d'état : les deux chiffres que l'ODM demande, posés sur un
+     verre dépoli à l'intérieur même du widget. */
+  .etat {
+    position: relative;
+    margin: 0 var(--e3) var(--e3);
+    padding: 12px 14px;
     display: flex;
     align-items: center;
-    gap: 7px;
-    padding: 6px 10px;
-    border: 1px solid var(--trait-fin);
-    border-radius: 999px;
-    background: transparent;
-    color: var(--sur-fond-doux);
+    gap: 10px;
+    border: 1px solid rgb(255 255 255 / 18%);
+    border-radius: 16px;
+    background: rgb(4 22 18 / 55%);
+    backdrop-filter: blur(10px);
+    color: #ffffff;
     font-size: var(--t-micro);
     font-weight: 600;
     cursor: pointer;
+    text-align: left;
   }
 
-  .compte:hover {
-    border-color: var(--trait);
-    color: var(--sur-fond);
+  .etat:hover {
+    background: rgb(4 22 18 / 70%);
   }
 
   .lu,
@@ -661,9 +736,9 @@
   }
 
   .separateur {
-    width: 1px;
-    height: 12px;
-    border-left: 1px solid var(--trait-fin);
+    flex: 1;
+    height: 18px;
+    border-left: 1px solid rgb(255 255 255 / 22%);
   }
 
   .rond {

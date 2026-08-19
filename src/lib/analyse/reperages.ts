@@ -446,19 +446,9 @@ export function analyserAmiante(lignes: string[], plage: [number, number]): Diag
   return {
     type: 'amiante',
     titre: 'Amiante',
-    /*
-     * Le détail ne parle que si la conclusion dit qu'il y a quelque chose.
-     *
-     * Le verdict citait le premier « matériau » trouvé sans vérifier que le
-     * rapport en avait repéré un. Sur dix-neuf volets mesurés, dix-sept
-     * annonçaient « Amiante repérée » à des logements dont la conclusion dit
-     * l'inverse — en citant, faute de mieux, le code postal du bien ou la
-     * raison sociale du cabinet. La gravité, elle, restait « bon » : le produit
-     * se contredisait dans la même carte.
-     */
     verdict: !conclusionLue
       ? 'Un repérage amiante figure au dossier ; sa conclusion n’a pas pu être lue automatiquement.'
-      : amianteTrouvee && materiaux.length
+      : materiaux.length
         ? `Amiante repérée : ${materiaux[0]?.quoi}${materiaux[0]?.ou ? ` (${materiaux[0]?.ou})` : ''}${
             materiaux.length > 1 ? `, et ${materiaux.length - 1} autre${materiaux.length > 2 ? 's' : ''}` : ''
           }.${
@@ -526,10 +516,6 @@ export interface MateriauAmiante {
  * Un acquéreur qui lit « amiante repérée » sans savoir laquelle des trois
  * s'applique ne peut ni chiffrer ni décider. C'est pourtant écrit.
  */
-/** Ce qui, dans un volet, désigne le dossier et non un matériau du logement. */
-const IDENTITE =
-  /code postal|adresse|commune|ville\s*:|raison sociale|siret|siren|t[ée]l\.?\s*:|d[ée]partement|propri[ée]taire|commanditaire|certification|assurance|num[ée]ro de (?:dossier|police)|\(France\)/i;
-
 export function materiauxAmiantes(lignes: string[]): MateriauAmiante[] {
   const trouves: MateriauAmiante[] = [];
 
@@ -541,17 +527,6 @@ export function materiauxAmiantes(lignes: string[]): MateriauAmiante[] {
        l'amiante en général n'a pas de localisation. */
     const m = /^([A-ZÉÈÀ][^()]{4,70}?)\s*\(([^)]{3,60})\)/.exec(brut);
     if (!m?.[1] || !m[2]) continue;
-
-    /*
-     * Les lignes d'identité ressemblent à s'y méprendre à un matériau localisé.
-     *
-     * « Code postal, ville : . 33360 CAMBLANES ET MEYNAC (France) » a la forme
-     * exacte qu'on cherche — un intitulé, puis une parenthèse. Le volet commence
-     * par la page de couverture, qui en est pleine : adresse, commune, raison
-     * sociale, numéro SIRET. Sans ce filtre, le produit annonçait de l'amiante
-     * en citant l'adresse du cabinet.
-     */
-    if (IDENTITE.test(brut)) continue;
 
     /*
      * La suite déborde sur la ligne suivante.
