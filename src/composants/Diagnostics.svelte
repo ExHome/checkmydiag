@@ -33,6 +33,18 @@
   import { APPS } from '../lib/apps';
   import { estSombre, styleUnivers } from '../lib/univers';
   import { lumiereSur, questionDe } from '../lib/lumiere';
+
+  /* Les sept couleurs de l'arrete du 31 mars 2021. Elles ne s'inventent pas et
+     ne se reinterpretent pas : ce sont celles de l'etiquette officielle. */
+  const TEINTE_ARRETE: Record<string, string> = {
+    A: '#319834',
+    B: '#33cc31',
+    C: '#cbfc34',
+    D: '#fbfe06',
+    E: '#fbcc05',
+    F: '#fc9935',
+    G: '#fc0205'
+  };
   import { cubicOut } from 'svelte/easing';
   import { tick, untrack } from 'svelte';
 
@@ -553,6 +565,25 @@
           aria-hidden={i !== courant ? 'true' : undefined}
         >
           <header>
+            <!--
+              LA CLASSE, EN GRAND, DANS SA COULEUR REGLEMENTAIRE.
+
+              Test du silence sur cette fiche : textes masques, toute la zone du
+              verdict etait vide. La conclusion -- priorite visuelle numero un --
+              n'existait qu'en mots, alors que le DPE a justement un signe : sa
+              lettre.
+
+              Elle est posee dans la couleur de l'arrete, qui ne s'invente pas,
+              et elle n'ajoute aucune information : c'est le meme verdict, rendu
+              visible d'un regard. Seul le DPE en a une ; les autres diagnostics
+              gardent leur en-tete tel quel.
+            -->
+            {#if d.schema?.genre === 'dpe' && d.schema.finale}
+              <span
+                class="classe-dpe"
+                style="background: {TEINTE_ARRETE[d.schema.finale]}"
+                aria-hidden="true">{d.schema.finale}</span>
+            {/if}
             <p class="quoi">{d.titre}</p>
             <h3>{libelleCourt(d)}</h3>
             <p class="jusqua-fiche" class:perimee={quand.perimee}>{quand.texte}</p>
@@ -1118,6 +1149,35 @@
    * concurrence pas le verdict qui vient juste dessous. C'est un seuil, pas un
    * titre — le titre du diagnostic est déjà dans la barre.
    */
+  /*
+   * LA CLASSE DU DPE : le verdict, rendu visible.
+   *
+   * Elle se pose en haut a droite de l'en-tete, dans la couleur de l'arrete.
+   * L'encre est sombre et non blanche : sur le jaune reglementaire d'un D,
+   * du blanc ne se lit pas -- la couleur vient du texte, pas de nous, et il
+   * faut s'y adapter.
+   */
+  .classe-dpe {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 54px;
+    height: 54px;
+    display: grid;
+    place-items: center;
+    border-radius: 16px;
+    font-family: var(--police-titre);
+    font-size: 30px;
+    font-weight: 700;
+    color: #1c1c1c;
+    box-shadow: 0 6px 16px -6px rgb(0 0 0 / 45%);
+  }
+
+  .fiche-diag header {
+    position: relative;
+    padding-right: 68px;
+  }
+
   /* L'entree de l'ecran : l'accroche en surtitre, la question en titre. */
   .entree {
     max-width: 900px;
