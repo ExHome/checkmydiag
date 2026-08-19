@@ -23,8 +23,10 @@ Dropbox.
   — le premier document d'immeuble du carnet. Avant lui, deux DDT complets
   (location et vente) pour le volet **électricité**.
 - **Reprendre par** : les diagnostics classiques, la copropriété passant après
-  — décision du 19/08. Le plomb est fait (22/22). Reste l'**amiante**, puis les
-  **termites** et l'**ERP**, dont la justesse n'a jamais été mesurée.
+  — décision du 19/08. Faits : plomb (22/22), amiante (19/19). Restent les
+  **termites** et l'**ERP**, dont la justesse n'a jamais été mesurée. Puis
+  élargir la découpe de l'amiante, mesurée 15 pages trop courte sur 20 volets
+  sur 20.
 - **À vérifier au texte avant tout contrôle** : le calendrier du DPE collectif
   (L126-31 du CCH, article 158 de la loi n° 2021-1104), cité par le DTG mais
   pas encore relu à la source. Légifrance n'a pas répondu aux adresses
@@ -39,9 +41,9 @@ Dropbox.
 |---|---|
 | Rapports lus en entier | 3 |
 | Volets et documents lus page à page | 9 |
-| Erreurs de moteur trouvées par la lecture | 4 majeures |
-| Corrections livrées | 6 |
-| Tests de non-régression ajoutés | 21 |
+| Erreurs de moteur trouvées par la lecture | 5 majeures |
+| Corrections livrées | 8 |
+| Tests de non-régression ajoutés | 24 |
 | Fausses alertes de mes propres sondes, écartées avant annonce | 3 |
 | Sondes de justesse écrites | 2 |
 | Notions métier versées au produit | 4 |
@@ -59,7 +61,7 @@ Ce que « lu » veut dire ici : le volet a été lu page à page, pas survolé.
 | DPE | 2 | 4 % de muets | cas du DPE vierge rencontré, pas encore traité |
 | ERP | 3 | argile 73/140 dossiers | trois écritures de l'argile connues ; l'imprimé officiel et ses croix restent à exploiter |
 | Plomb | 2 | **22/22** verdicts justes | le moteur est bon ; la validité du constat positif était fausse, corrigée |
-| Amiante | 1 (session antérieure) | — | rubrique 1.2 lue |
+| Amiante | 2 | **19/19** verdicts justes (contre 2/19) | fausse alerte massive corrigée ; la découpe reste 15 pages trop courte |
 | Termites | 1 (session antérieure) | — | tableau de repérage lu |
 | Surface | 2 | — | Boutin et Carrez distingués |
 | **DTG** | **1** | — | structure, curatifs, rubriques vides et cinq points de vigilance ; notions versées au produit |
@@ -186,3 +188,30 @@ tests le verrouillent désormais.
 
 Relevé au passage : le CREP sort ses croix **en texte** — « X Avant la vente » —
 et c'est la première marque lisible qui dise vente ou location.
+
+### 19 août 2026 — l'amiante, et la pire fausse alerte du corpus
+
+Le produit affichait « **Amiante repérée : Code postal, ville : . 33360
+CAMBLANES ET MEYNAC (France), et 2 autres** » sur des rapports dont la
+conclusion dit qu'il n'a rien été repéré. Ailleurs, le « matériau » cité était
+la raison sociale du cabinet.
+
+**Mesuré : 17 volets sur 19.** Deux verdicts justes sur dix-neuf.
+
+Deux fautes superposées. Le motif qui lit les matériaux — un intitulé, puis sa
+localisation entre parenthèses — a la même forme qu'une ligne d'adresse, et le
+volet commence par sa page de couverture. Surtout, le verdict citait ce
+« matériau » **sans vérifier que le rapport en avait repéré un** : la gravité,
+elle, venait de la conclusion. La carte annonçait donc de l'amiante avec une
+pastille verte, et se contredisait dans le même bloc.
+
+**Après : 19 sur 19.** Trois tests tiennent, dont un qui vérifie que le verdict
+et la gravité s'accordent.
+
+**Une mesure nouvelle, et un chantier ouvert** : le constat amiante annonce sa
+propre pagination — « le présent rapport est constitué de 11 pages, la
+conclusion est située en page 2 ». Sur **20 volets sur 20**, la découpe leur
+attribue moins de pages qu'ils n'en revendiquent, **15 en moyenne**. Le verdict
+reste juste puisqu'il vient de la conclusion, mais la liste détaillée des
+matériaux n'est jamais lue : quand il y a de l'amiante, le produit ne peut pas
+dire lequel.

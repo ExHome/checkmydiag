@@ -1032,6 +1032,87 @@ fait douter d'un tableau quand on le remarque sans l'expliquer.
 
 ---
 
+## 27 · L'amiante : dix-sept logements se voyaient annoncer une amiante inexistante
+
+La pire fausse alerte trouvée à ce jour, et la plus visible — il suffisait de
+lire une carte pour la voir.
+
+Le produit affichait :
+
+> **Amiante repérée : Code postal, ville : . 33360 CAMBLANES ET MEYNAC
+> (France), et 2 autres.**
+
+…sur un rapport dont la conclusion écrit « il n'a pas été repéré de matériaux
+ou produits de la liste A contenant de l'amiante ». Ailleurs, le « matériau »
+cité était l'adresse du bien, ou **la raison sociale du cabinet**.
+
+**Mesuré : dix-sept volets sur dix-neuf.** Deux verdicts justes sur dix-neuf.
+
+### Deux fautes superposées
+
+**La première est un motif trop large.** La liste des matériaux se lit par sa
+forme — un intitulé, puis sa localisation entre parenthèses :
+
+```
+Dalles de sol (Cuisine)                        ← un matériau
+Code postal, ville : . 33800 BORDEAUX (France) ← la page de couverture
+```
+
+Les deux ont la même forme. Le volet commençant par sa page de couverture, qui
+est pleine d'adresses, de communes et de raisons sociales, le motif y trouvait
+toujours de quoi remplir un verdict.
+
+**La seconde est plus grave, et c'est elle qui rendait la première visible** :
+le verdict citait le premier matériau trouvé **sans vérifier que le rapport en
+avait repéré un**. La gravité, elle, était calculée sur la conclusion — d'où
+une carte qui annonçait « Amiante repérée » avec une pastille verte. Le produit
+se contredisait dans le même bloc, et personne ne l'avait vu.
+
+Corrigé : le détail ne parle que si la conclusion dit qu'il y a quelque chose,
+et les lignes d'identité sont écartées. **Dix-neuf sur dix-neuf.** Trois tests
+tiennent l'acquis, dont un qui vérifie que verdict et gravité s'accordent.
+
+### La conclusion tient sur deux lignes, et la première porte la négation
+
+```
+1.1 Liste A : Dans le cadre de mission décrit à l’article 3.2 , il n'a pas été repéré
+- de matériaux ou produits de la liste A contenant de l'amiante.
+```
+
+Lue ligne à ligne, la seconde dit exactement le contraire de la première. C'est
+le même piège que la date « Rapport du : », et il coûte ici un contresens
+complet.
+
+### Deux listes, deux conclusions
+
+Le constat conclut **séparément** sur la **liste A** — flocages, calorifugeages,
+faux plafonds — et sur la **liste B** — le reste des matériaux accessibles. Un
+rapport peut être négatif sur l'une et positif sur l'autre, et les
+conséquences ne sont pas les mêmes. Les confondre en un seul verdict ferait
+perdre l'essentiel.
+
+### Le rapport annonce sa propre pagination
+
+En page de couverture :
+
+> Pagination : le présent rapport avec les annexes comprises, est constitué de
+> **11 pages**, la conclusion est située en **page 2**.
+
+C'est un contrôle d'intégrité offert : si le volet n'a pas le nombre de pages
+qu'il s'attribue, il en manque — ou la découpe s'est trompée.
+
+**Mesuré : sur vingt volets qui annoncent leur pagination, vingt sont plus
+courts que ce qu'ils annoncent, de près de quinze pages en moyenne.** La
+découpe ferme donc systématiquement l'amiante après sa conclusion, et tout ce
+qui suit — la liste détaillée des matériaux, leur état de conservation, les
+parties non visitées — n'est jamais lu.
+
+Le verdict reste juste, puisqu'il vient de la conclusion. Mais quand il y a de
+l'amiante, le produit ne peut pas dire **lequel**. C'est le prochain chantier,
+et la pagination annoncée est la mesure qui le guidera.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion
@@ -1055,6 +1136,11 @@ fait douter d'un tableau quand on le remarque sans l'expliquer.
       table des petites surfaces. Réglé : 4 %.
 - [ ] Le gaz ne produit aucun schéma (0 %), le mesurage non plus.
 - [ ] L'amiante n'a de schéma que dans 53 % des cas.
+- [ ] Élargir la découpe de l'amiante à la pagination qu'il annonce (20/20
+      volets trop courts, 14,8 pages en moyenne) : c'est ce qui empêche de dire
+      QUEL matériau contient de l'amiante.
+- [ ] Conclure séparément sur la liste A et la liste B : le rapport le fait,
+      le produit les fond en un seul verdict.
 - [ ] L'ERP reste muet dans 11 % des cas : lesquels ?
 - [ ] Une rubrique présente et VIDE est un résultat — gaz et amiante le
       confirment. Faut-il le dire au lecteur (« tout a pu être examiné ») ?
