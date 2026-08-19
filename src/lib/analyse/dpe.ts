@@ -419,8 +419,8 @@ export function analyserDpe(lignes: string[], plage: [number, number]): Diagnost
 
   const faits: Fait[] = [];
   const ademe = trouver(lignes, /N°\s*ADEME\s*:?\s*([0-9A-Z]{8,})/i);
-  const etabli = trouver(lignes, /[ÉEe]tabli le\s*:?\s*(\d{2}\/\d{2}\/\d{4})/);
-  const valable = trouver(lignes, /[Vv]alable jusqu.{0,4}au\s*:?\s*(\d{2}\/\d{2}\/\d{4})/);
+  const etabli = trouver(lignes, /[ÉEe]tabli le\s*:?\s*(\d{1,2}\/\d{1,2}\/\d{4})/);
+  const valable = trouver(lignes, /[Vv]alable jusqu.{0,4}au\s*:?\s*(\d{1,2}\/\d{1,2}\/\d{4})/);
   const typeBien = trouver(lignes, /[Tt]ype de bien\s*:?[\s.]*([A-Za-zÀ-ÿ' -]{3,30})/);
   /*
    * L'année de construction, sans la colonne d'à côté.

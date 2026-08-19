@@ -28,7 +28,7 @@ export interface Reforme {
 /** « 05/08/2025 » → Date, ou null si la forme n'est pas celle attendue. */
 export function dateFrancaise(valeur: string | undefined | null): Date | null {
   if (!valeur) return null;
-  const m = valeur.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  const m = valeur.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
   if (!m) return null;
   const [, j, mo, a] = m;
   const d = new Date(Number(a), Number(mo) - 1, Number(j));

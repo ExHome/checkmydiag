@@ -286,3 +286,25 @@ describe('l’année qui fonde les réclamations', () => {
     expect(seuil.bien.anneeConstruction).toBe('Avant 1948');
   });
 });
+
+describe('les dates écrites sur un seul chiffre', () => {
+  /*
+   * Un rapport termites d'avril 2026 porte « Date du repérage : 9/04/2026 » —
+   * le jour sur un chiffre. Les motifs exigeaient deux chiffres partout : la
+   * date était perdue, et avec elle la validité, qui n'est que de six mois pour
+   * ce diagnostic.
+   */
+  it('calcule la péremption sur une date au jour non paddé', () => {
+    const bien: Bien = { anneeConstruction: '2015' };
+    const rapport = [diag('termites', '9/04/2026'), diag('erp', '9/04/2026'), diag('dpe', '9/04/2026')];
+    const perimes = controler(bien, rapport, new Date('2026-12-01')).filter((p) => p.genre === 'perime');
+    expect(perimes.some((p) => p.type === 'termites')).toBe(true);
+  });
+
+  it('ne périme pas un rapport récent écrit de la même façon', () => {
+    const bien: Bien = { anneeConstruction: '2015' };
+    const rapport = [diag('termites', '9/04/2026'), diag('erp', '9/04/2026'), diag('dpe', '9/04/2026')];
+    const perimes = controler(bien, rapport, new Date('2026-05-01')).filter((p) => p.genre === 'perime');
+    expect(perimes.some((p) => p.type === 'termites')).toBe(false);
+  });
+});

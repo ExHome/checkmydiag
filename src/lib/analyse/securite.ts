@@ -196,7 +196,7 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
       precision: 'domaines et libellés énumérés par le rapport'
     });
   }
-  const date = trouver(lignes, /Date (?:du|de la) (?:rep[ée]rage|visite|diagnostic)\s*:?[\s.]*(\d{2}\/\d{2}\/\d{4})/i);
+  const date = trouver(lignes, /Date (?:du|de la) (?:rep[ée]rage|visite|diagnostic)\s*:?[\s.]*(\d{1,2}\/\d{1,2}\/\d{4})/i);
   if (date?.[1]) faits.push({ libelle: 'Date de la visite', valeur: date[1] });
 
   if (nonVerifies.length) {
@@ -263,7 +263,7 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
 export function analyserGaz(lignes: string[], plage: [number, number]): Diagnostic {
   const dateVisite = trouver(
     lignes,
-    /Date (?:du|de la) (?:rep[ée]rage|visite|diagnostic|contr[ôo]le)\s*:?[\s.]*(\d{2}\/\d{2}\/\d{4})/i
+    /Date (?:du|de la) (?:rep[ée]rage|visite|diagnostic|contr[ôo]le)\s*:?[\s.]*(\d{1,2}\/\d{1,2}\/\d{4})/i
   );
   const conclusion = conclure(lignes, /installation(?: int[ée]rieure(?: de gaz)?)?/);
   const releves = releverTout(lignes);

@@ -138,7 +138,7 @@ export function analyserTermites(lignes: string[], plage: [number, number]): Dia
   }
   const niveau = trouver(lignes, /Niveau d'infestation\s*(\w+)/i);
   if (niveau?.[1]) faits.push({ libelle: 'Niveau d’infestation de la commune', valeur: niveau[1] });
-  const date = trouver(lignes, /Date du rep[ée]rage\s*:?[\s.]*(\d{2}\/\d{2}\/\d{4})/i);
+  const date = trouver(lignes, /Date du rep[ée]rage\s*:?[\s.]*(\d{1,2}\/\d{1,2}\/\d{4})/i);
   if (date?.[1]) faits.push({ libelle: 'Date du repérage', valeur: date[1] });
 
   /*
@@ -413,7 +413,7 @@ export function analyserAmiante(lignes: string[], plage: [number, number]): Diag
   ];
 
   const faits: Fait[] = [];
-  const date = trouver(lignes, /Date du rep[ée]rage\s*:?[\s.]*(\d{2}\/\d{2}\/\d{4})/i);
+  const date = trouver(lignes, /Date du rep[ée]rage\s*:?[\s.]*(\d{1,2}\/\d{1,2}\/\d{4})/i);
   if (date?.[1]) faits.push({ libelle: 'Date du repérage', valeur: date[1] });
   if (listesAvecAmiante.length)
     faits.push({

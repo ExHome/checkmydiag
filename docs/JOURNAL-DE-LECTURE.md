@@ -57,9 +57,9 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
   un manque signalé, et zéro réclamation à tort.
 - **Les réclamations amiante et plomb sont vérifiées** (§49) : 19 sur 19
   reposent sur une année réellement écrite au document.
-- **Prochain chantier** : reprendre la lecture large. Les huit chantiers ouverts
-  par le point de reprise sont tous refermés ; le corpus compte encore 3 974
-  dossiers non lus.
+- **Prochain chantier** : reprendre la lecture large. Le corpus compte encore
+  3 973 dossiers non lus, et les termites lus d'affilée n'apprennent plus rien —
+  chercher un dossier complet.
 
 ## Compteurs
 
@@ -69,8 +69,8 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 | Volets lus page à page | 24 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 6 majeures |
-| Corrections livrées | 23 |
-| Tests de non-régression ajoutés | 71 |
+| Corrections livrées | 24 |
+| Tests de non-régression ajoutés | 73 |
 | Fausses alertes de mes propres sondes, écartées avant annonce | 6 |
 | Sondes de justesse écrites | 2 |
 | Notions métier versées au produit | 5 |
@@ -695,3 +695,22 @@ La leçon vaut pour toutes les extractions : ce champ s'affichait depuis des
 semaines sans émouvoir personne — jusqu'à ce qu'il serve à **décider** quelque
 chose. Le jour où une donnée cesse d'être affichée pour être utilisée, sa
 propreté cesse d'être cosmétique.
+
+### 20 août 2026, nuit — « 9/04/2026 »
+
+Un rapport termites ne montrait aucune date dans sa fiche. Le document en porte
+trois — mais le jour est écrit **sur un seul chiffre**, et tous les motifs du
+produit exigeaient deux chiffres.
+
+Ce n'est pas un détail d'affichage : la date décide de la **péremption**, et le
+termites ne vaut que six mois. Sans elle, aucun contrôle de validité ne peut se
+faire.
+
+Sept motifs corrigés dans cinq fichiers, **plus les deux fonctions qui découpent
+une date** — élargir la capture sans élargir le découpage aurait donné une date
+lue mais incalculable. Deux tests vérifient qu'un rapport du 9 avril est bien
+périmé au 1ᵉʳ décembre, et ne l'est pas au 1ᵉʳ mai.
+
+**La rareté n'excuse rien** : aucun autre dossier de l'échantillon de cent ne
+porte cette forme. Mais c'est un cas où le produit se tait sur une péremption
+possible, et élargir un motif ne coûte rien.

@@ -115,7 +115,7 @@ function identifierBien(pages: PageTexte[], horsSection: string[]): Bien {
   );
   if (surface !== null) bien.surface = surface;
 
-  const date = trouver(source, /Date du rep[ée]rage\s*:?[\s.]*(\d{2}\/\d{2}\/\d{4})/i);
+  const date = trouver(source, /Date du rep[ée]rage\s*:?[\s.]*(\d{1,2}\/\d{1,2}\/\d{4})/i);
   if (date?.[1]) bien.dateRepérage = date[1];
 
   return bien;

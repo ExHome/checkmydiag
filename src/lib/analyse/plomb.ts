@@ -465,13 +465,13 @@ export function appareilPlomb(lignes: string[]): AppareilPlomb {
   /* La ligne d'autorisation porte deux dates : celle de la déclaration, puis
      celle de fin de validité. C'est la seconde qui nous intéresse. */
   const validite =
-    /Date d[’']autorisation[^\n]{0,80}?\n?[^\n]{0,40}?(\d{2}\/\d{2}\/\d{4})\s+(\d{2}\/\d{2}\/\d{4})/i.exec(
+    /Date d[’']autorisation[^\n]{0,80}?\n?[^\n]{0,40}?(\d{1,2}\/\d{1,2}\/\d{4})\s+(\d{1,2}\/\d{1,2}\/\d{4})/i.exec(
       texte
     );
 
   const etalons = lignes.filter((l) => /[ÉEée]talonnage\s+(?:entr[ée]e|sortie)/i.test(l));
   const dates = etalons
-    .map((l) => /(\d{2}\/\d{2}\/\d{4})/.exec(l)?.[1])
+    .map((l) => /(\d{1,2}\/\d{1,2}\/\d{4})/.exec(l)?.[1])
     .filter((d): d is string => Boolean(d));
 
   return {

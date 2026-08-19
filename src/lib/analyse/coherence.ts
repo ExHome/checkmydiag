@@ -61,7 +61,7 @@ const NOMS: Record<TypeDiag, string> = {
 /** « 12/03/2026 » → Date, ou null si la chaîne n'est pas une date lisible. */
 export function enDate(texte: string | undefined): Date | null {
   if (!texte) return null;
-  const m = texte.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  const m = texte.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
   if (!m) return null;
   const [, j, mois, a] = m;
   const d = new Date(Number(a), Number(mois) - 1, Number(j));

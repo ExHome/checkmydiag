@@ -2121,6 +2121,43 @@ utilisee, sa proprete cesse d'etre cosmetique.**
 
 ---
 
+## 50 · « 9/04/2026 » — le jour sur un seul chiffre
+
+Un rapport termites d'avril 2026, lu en entier, ne montrait aucune date dans sa
+fiche. Le document en porte pourtant trois :
+
+```
+Date du reperage : 9/04/2026
+Visite effectuee le 9/04/2026
+Fait a LANGON , le 9/04/2026
+```
+
+Le jour est ecrit **sur un chiffre**. Tous les motifs du produit exigeaient
+`\d{2}` — deux chiffres, toujours — et la date etait perdue.
+
+### Ce que cela coutait
+
+La date n'est pas un ornement : c'est elle qui decide de la peremption. Le
+termites ne vaut que **six mois** ; l'etat des risques aussi. Sans date, aucun
+controle de validite ne peut se faire, et le produit ne peut pas dire au
+lecteur que son rapport est perime.
+
+Sept motifs corriges dans cinq fichiers, plus les deux fonctions qui DECOUPENT
+une date — car elargir la capture sans elargir le decoupage aurait donne une
+date lue mais incalculable. Deux tests verifient qu'un rapport du 9 avril est
+bien perime au 1er decembre, et ne l'est pas au 1er mai.
+
+### La rarete n'excuse rien
+
+Mesure : **aucun autre dossier de l'echantillon de cent** ne porte cette forme.
+Un cas sur cent, peut-etre moins.
+
+Mais c'est un cas ou le produit se tait sur une peremption possible, et le cout
+d'une correction qui elargit un motif est nul. **Un defaut rare qui fait perdre
+une information legale ne se traite pas comme une coquille.**
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion
