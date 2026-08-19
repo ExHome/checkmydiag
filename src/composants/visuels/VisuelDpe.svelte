@@ -256,9 +256,10 @@
       {/if}
       {#if recalculee}
         <span class="mention">
-          Cette lettre a été recalculée à partir des chiffres écrits dans le rapport : sur ce type de
-          document l’étiquette colorée est une image, qu’un programme ne sait pas lire. Vérifiez
-          qu’elle correspond bien à celle imprimée.
+          L’étiquette colorée du rapport est une image, qu’aucun programme ne sait lire. Cette lettre
+          est donc retrouvée à partir des chiffres écrits juste à côté, avec les seuils officiels :
+          c’est une manière de lire l’étiquette, pas de la corriger. Le logiciel du diagnostiqueur
+          est validé par l’ADEME.
         </span>
       {/if}
     </figcaption>

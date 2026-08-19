@@ -38,7 +38,20 @@ const INDICE: Record<Origine, number> = {
 const ETIQUETTE: Record<Origine, string> = {
   rapport: 'Le rapport dit',
   synthese: 'Écrit sur la page de synthèse du dossier',
-  calcul: 'Recalculé : la valeur n’est pas lisible dans le PDF',
+  /*
+   * « Recalculé » est banni, et cette étiquette l'employait encore.
+   *
+   * Les logiciels de DPE sont validés par l'ADEME : leur calcul fait foi.
+   * Recalculer, c'est refaire le calcul de quelqu'un — donc le mettre en doute.
+   * Ce que ce produit fait est plus modeste : l'étiquette colorée est une
+   * image, et il retrouve la lettre à partir des chiffres écrits à côté.
+   *
+   * La règle avait été posée dans le moteur et dans le référentiel, avec ses
+   * tests ; ce libellé-ci vivait ailleurs et personne ne l'avait suivi. C'est
+   * exactement la régression que le § 14 de l'ODM d'exécution décrit : une
+   * correction locale qui laisse trois incohérences ailleurs.
+   */
+  calcul: 'Lettre retrouvée à partir des chiffres du rapport — l’étiquette est une image',
   illisible: 'Non lisible automatiquement'
 };
 

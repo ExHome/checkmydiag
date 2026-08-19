@@ -299,13 +299,38 @@
    * la hauteur du volet ouvert. Plus rien à mesurer, donc plus de boucle.
    */
 
+  /*
+   * LES SIX ÉTAPES DE L'ORDRE DE MISSION DIRECTEUR — voir `lib/etapes.ts`.
+   *
+   * « CE QU'IL FAUT SAVOIR → EST-CE IMPORTANT ? → OÙ ? → POURQUOI ? → QUE
+   * FAIRE ? → POUR ALLER PLUS LOIN. » Rien n'est créé ici : tout ce contenu
+   * existait déjà, mais à la file et sans intitulés. Le lecteur traversait la
+   * fiche sans savoir où il en était.
+   *
+   * La liste est dans `lib/etapes.ts` et un test compare ce que ce composant
+   * affiche à ce qu'elle prescrit : l'ordre ne peut plus se défaire en silence.
+   */
+  /**
+   * Les rubriques de fond, réparties dans les six étapes.
+   *
+   * Elles étaient présentées à la file, sous cinq titres de même niveau. Chacune
+   * répond en réalité à l'une des six questions : « ce qu'on risque » dit si
+   * c'est important, « ce qu'il faut faire » dit quoi faire, « pourquoi ce
+   * diagnostic existe » et « comment il est fait » relèvent du fond, et « ce que
+   * ça change pour vendre » de l'approfondissement.
+   */
   const BLOCS = [
-    { cle: 'pourquoi', mot: 'Pourquoi ce diagnostic existe' },
-    { cle: 'comment', mot: 'Comment il est fait' },
-    { cle: 'risque', mot: 'Ce qu’on risque' },
-    { cle: 'quoiFaire', mot: 'Ce qu’il faut faire' },
-    { cle: 'vente', mot: 'Ce que ça change pour vendre' }
+    { cle: 'risque', mot: 'Ce qu’on risque', etape: 'importance' },
+    { cle: 'pourquoi', mot: 'Pourquoi ce diagnostic existe', etape: 'pourquoi' },
+    { cle: 'quoiFaire', mot: 'Ce qu’il faut faire', etape: 'faire' },
+    { cle: 'comment', mot: 'Comment il est fait', etape: 'loin' },
+    { cle: 'vente', mot: 'Ce que ça change pour vendre', etape: 'loin' }
   ] as const;
+
+  /** Les rubriques d'une étape donnée. */
+  function blocsDe(etape: string) {
+    return BLOCS.filter((b) => b.etape === etape);
+  }
 
   /**
    * Les réserves propres à chaque diagnostic.
@@ -637,81 +662,110 @@
                    pas dans la page ne s'imprime pas, et le dossier remis doit
                    être complet quel que soit le bouton laissé enfoncé. -->
               <div class="detail" class:replie={modeDe(d.type) === 'succinct'}>
+
+              <!-- 1 · CE QU'IL FAUT SAVOIR — les chiffres du rapport, avant
+                   toute explication. Le résultat avant le commentaire. -->
               {#if d.faits.length}
-                <dl class="chiffres">
-                  {#each d.faits.slice(0, 4) as fait (fait.libelle)}
-                    <div>
-                      <dt>{fait.libelle}</dt>
-                      <dd>
-                        {fait.valeur}
-                        {#if fait.precision}<span class="precision">{fait.precision}</span>{/if}
-                      </dd>
-                    </div>
-                  {/each}
-                </dl>
+                <section class="etape" aria-labelledby="et-savoir-{d.type}">
+                  <h4 id="et-savoir-{d.type}" class="titre-etape">Ce qu’il faut savoir</h4>
+                  <dl class="chiffres">
+                    {#each d.faits.slice(0, 4) as fait (fait.libelle)}
+                      <div>
+                        <dt>{fait.libelle}</dt>
+                        <dd>
+                          {fait.valeur}
+                          {#if fait.precision}<span class="precision">{fait.precision}</span>{/if}
+                        </dd>
+                      </div>
+                    {/each}
+                  </dl>
+                </section>
               {/if}
 
-              <!-- Tout ce que le rapport énumère, sans en retirer un seul. Placé
-                   après les chiffres et avant l'explication générale : c'est le
-                   constat, il précède la pédagogie. -->
+              <!-- 2 · EST-CE IMPORTANT ? — ce qu'on risque, et ce que le dossier
+                   en dit concrètement. C'est la question que tout le monde se
+                   pose en premier, et à laquelle rien ne répondait directement. -->
+              <section class="etape" aria-labelledby="et-importance-{d.type}">
+                <h4 id="et-importance-{d.type}" class="titre-etape">Est-ce important&nbsp;?</h4>
+                {#if pratique}
+                  <p class="reponse-etape"><MotsExpliques texte={pratique} /></p>
+                {/if}
+                {#each blocsDe('importance') as bloc (bloc.cle)}
+                  <p class="reponse-etape"><MotsExpliques texte={FICHES[d.type][bloc.cle]} /></p>
+                {/each}
+              </section>
+
+              <!-- 3 · OÙ ? — tout ce que le rapport énumère, rattaché à sa pièce,
+                   sans en retirer un seul. Le constat précède la pédagogie. -->
               {#if d.releves?.length}
-                <Releves releves={d.releves} page={d.pages[0]} type={d.type} />
+                <section class="etape" aria-labelledby="et-ou-{d.type}">
+                  <h4 id="et-ou-{d.type}" class="titre-etape">Où&nbsp;?</h4>
+                  <Releves releves={d.releves} page={d.pages[0]} type={d.type} />
+                </section>
               {/if}
 
               <!--
-                Ce que ce rapport-ci raconte.
+                4 · POURQUOI ? — d'abord ce que CE rapport-ci raconte, ensuite
+                pourquoi ce diagnostic existe.
 
-                Le canevas ci-dessous vient des fiches : il est le même pour
-                tous les DPE, tous les constats plomb. Ces paragraphes-là sont
-                écrits à partir du rapport déposé — la lettre qu'on s'abstient
-                de recalculer et pourquoi, les réformes intervenues depuis la
-                date du diagnostic, le relevé qui part à l'agence régionale de
-                santé, les volets que l'état parasitaire couvre en plus.
-
-                Ils n'étaient affichés nulle part. Le moteur les produisait
-                depuis toujours, chaque analyseur en écrivait trois à sept, et
-                le lecteur n'en voyait aucun : le champ n'était lu par aucun
-                composant. Tout ce qui distingue un dossier d'un autre restait
-                dans la mémoire du programme.
+                Les paragraphes propres au rapport n'étaient affichés nulle part :
+                le moteur les produisait depuis toujours, chaque analyseur en
+                écrivait trois à sept, et le champ n'était lu par aucun composant.
+                Tout ce qui distingue un dossier d'un autre restait dans la
+                mémoire du programme.
               -->
-              {#if d.explication.length}
-                <div class="propre-au-rapport">
-                  {#each d.explication as paragraphe (paragraphe)}
-                    <p><MotsExpliques texte={paragraphe} /></p>
-                  {/each}
-
-                  <!-- La démarche qu'on peut faire tout de suite. Un bouton, et
-                       ce qu'il faut avoir sous la main avant de cliquer. -->
-                  {#if d.demarche}
-                    <p class="quoi-emporter">{d.demarche.quoiEmporter}</p>
-                    <a
-                      class="demarche"
-                      href={d.demarche.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {d.demarche.texte}
-                      <span aria-hidden="true">→</span>
-                    </a>
-                  {/if}
-                </div>
-              {/if}
-
-              <dl class="canevas">
-                {#each BLOCS as bloc (bloc.cle)}
-                  <div>
-                    <dt>{bloc.mot}</dt>
-                    <dd><MotsExpliques texte={FICHES[d.type][bloc.cle]} /></dd>
+              <section class="etape" aria-labelledby="et-pourquoi-{d.type}">
+                <h4 id="et-pourquoi-{d.type}" class="titre-etape">Pourquoi&nbsp;?</h4>
+                {#if d.explication.length}
+                  <div class="propre-au-rapport">
+                    {#each d.explication as paragraphe (paragraphe)}
+                      <p><MotsExpliques texte={paragraphe} /></p>
+                    {/each}
                   </div>
+                {/if}
+                {#each blocsDe('pourquoi') as bloc (bloc.cle)}
+                  <p class="reponse-etape"><MotsExpliques texte={FICHES[d.type][bloc.cle]} /></p>
                 {/each}
-              </dl>
+              </section>
 
-              <!-- La liste officielle de ce qu'il faut contrôler soi-même. Le
-                   ministère la publie, personne ne la lit : elle a sa place ici,
-                   à côté du rapport qu'elle concerne. -->
-              {#if d.type === 'dpe'}
-                <AVerifier dpe={d} />
-              {/if}
+              <!-- 5 · QUE FAIRE ? — l'action possible, après la compréhension.
+                   La démarche qu'on peut engager tout de suite y trouve enfin sa
+                   place : elle était perdue au milieu de l'explication. -->
+              <section class="etape" aria-labelledby="et-faire-{d.type}">
+                <h4 id="et-faire-{d.type}" class="titre-etape">Que faire&nbsp;?</h4>
+                {#each blocsDe('faire') as bloc (bloc.cle)}
+                  <p class="reponse-etape"><MotsExpliques texte={FICHES[d.type][bloc.cle]} /></p>
+                {/each}
+                {#if d.demarche}
+                  <p class="quoi-emporter">{d.demarche.quoiEmporter}</p>
+                  <a
+                    class="demarche"
+                    href={d.demarche.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {d.demarche.texte}
+                    <span aria-hidden="true">→</span>
+                  </a>
+                {/if}
+                {#if d.type === 'dpe'}
+                  <AVerifier dpe={d} />
+                {/if}
+              </section>
+
+              <!-- 6 · POUR ALLER PLUS LOIN — la profondeur technique reste
+                   disponible, mais elle ne barre plus la route. -->
+              <section class="etape aller-plus-loin" aria-labelledby="et-loin-{d.type}">
+                <h4 id="et-loin-{d.type}" class="titre-etape">Pour aller plus loin</h4>
+                <dl class="canevas">
+                  {#each blocsDe('loin') as bloc (bloc.cle)}
+                    <div>
+                      <dt>{bloc.mot}</dt>
+                      <dd><MotsExpliques texte={FICHES[d.type][bloc.cle]} /></dd>
+                    </div>
+                  {/each}
+                </dl>
+              </section>
               </div>
 
               <!-- Les réserves : ce que ce diagnostic-là ne couvre pas. Sans
@@ -1600,7 +1654,49 @@
     }
   }
 
-  /* Le canevas : les cinq mêmes questions pour les neuf diagnostics. */
+  /*
+   * Les six étapes : ce qui donne au lecteur sa position dans la fiche.
+   *
+   * Le titre est petit, espacé, en capitales douces : il structure sans se
+   * disputer la place avec le contenu. C'est le rôle d'un intitulé de section —
+   * on le lit une fois, puis on l'oublie et on lit ce qu'il annonce.
+   *
+   * Le filet supérieur remplace la marge : deux sections séparées par du vide
+   * paraissent deux blocs sans lien, alors qu'elles forment une progression.
+   */
+  .etape + .etape {
+    margin-top: var(--e5);
+    padding-top: var(--e4);
+    border-top: 1px solid var(--u-trait, var(--trait-fin));
+  }
+
+  .titre-etape {
+    margin: 0 0 var(--e3);
+    font-family: var(--police-titre);
+    font-size: var(--t-micro);
+    font-weight: 700;
+    letter-spacing: var(--suivi);
+    text-transform: uppercase;
+    color: var(--u-accent, var(--action-texte));
+  }
+
+  .reponse-etape {
+    margin: 0 0 var(--e2);
+    font-size: var(--t-petit);
+    line-height: 1.55;
+    color: var(--u-texte, var(--sur-fond));
+  }
+
+  .reponse-etape:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Le fond commun, à la fin : disponible sans barrer la route. */
+  .aller-plus-loin {
+    opacity: 0.94;
+  }
+
+  /* Le canevas : les mêmes questions pour tous les diagnostics. */
   .canevas {
     margin: 0;
     display: grid;

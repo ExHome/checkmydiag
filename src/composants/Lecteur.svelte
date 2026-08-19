@@ -210,6 +210,15 @@
 
   function ouvrirDansLAnalyse(type: TypeDiag, origine: Origine | null = null): void {
     vue = 'point';
+    /*
+     * Ouvrir la vue, sans quoi le clic ne fait plus rien.
+     *
+     * Tant que le lecteur était rendu sous l'accueil, régler `vue` suffisait :
+     * la fiche existait déjà, on la faisait défiler. Depuis que l'accueil ne
+     * montre que les applis, le lecteur n'existe qu'une fois ouvert — et
+     * cliquer sur une icône ne produisait plus rien du tout.
+     */
+    vueOuverte = true;
     diagOuvert = type;
     origineIcone = origine;
     demandeNo += 1;
