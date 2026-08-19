@@ -47,9 +47,11 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
   ramonage non justifiés, conduit non visitable. 16 volets sur 18 en portent.
 - **« Installation alimentée en gaz : NON » est dit** (§44) : 4 volets sur 17,
   avec la nuance selon qu'un DGI est constaté ou non.
-- **Prochain chantier** : la contradiction interne du gaz — rubrique F qui dit
-  « Néant » et rubrique G qui dit « certains points n'ont pu être contrôlés ».
-  La signaler sans trancher.
+- **La contradiction interne du gaz est signalée** (§45) : 4 volets sur 18.
+- **Prochain chantier** : le volet gaz est désormais riche — non alimentée,
+  contradiction, constatations, types. Reprendre la lecture large : le corpus
+  compte encore 3 978 dossiers non lus, et les états des risques isolés
+  n'apprennent plus rien. Chercher des dossiers complets.
 
 ## Compteurs
 
@@ -59,8 +61,8 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 | Volets lus page à page | 24 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 6 majeures |
-| Corrections livrées | 19 |
-| Tests de non-régression ajoutés | 60 |
+| Corrections livrées | 20 |
+| Tests de non-régression ajoutés | 63 |
 | Fausses alertes de mes propres sondes, écartées avant annonce | 6 |
 | Sondes de justesse écrites | 2 |
 | Notions métier versées au produit | 5 |
@@ -584,3 +586,19 @@ se lit jamais seul.**
 Deux erreurs attrapées par les tests au passage : une constante utilisée avant
 sa déclaration — que la suite du corpus n'atteignait pas — et un fixture qui
 plaçait un constat hors de sa rubrique.
+
+### 20 août 2026, nuit — le rapport qui se contredit
+
+Repérée au §23, mesurée aujourd'hui : **quatre volets gaz sur dix-huit** portent
+deux affirmations incompatibles à deux lignes d'écart. La rubrique F dit
+« Néant » — tout a pu être contrôlé — et la rubrique G dit que certains points
+ne l'ont pas été, en en tirant une conséquence juridique.
+
+Le produit ne peut pas savoir laquelle dit vrai : il ne verra jamais le
+logement. Mais il fait poser la question — « à faire préciser ». Ni rassurer,
+ni inquiéter : rendre visible ce qui ne colle pas.
+
+**La fiche gaz d'un même dossier porte maintenant quatre choses qui n'y étaient
+pas il y a vingt-quatre heures** : installation non alimentée, contradiction
+interne, entretien et ramonage non justifiés, anomalies de type A2. Le même
+document, lu autrement.

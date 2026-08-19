@@ -1893,6 +1893,50 @@ date » a l'amiante et « refus assume / echec de lecture » au DPE.
 
 ---
 
+## 45 · Le rapport qui se contredit sur ce qu'il a pu voir
+
+Repere au §23, mesure aujourd'hui : **quatre volets gaz sur dix-huit** portent
+deux affirmations incompatibles, a deux lignes d'ecart.
+
+```
+F. – Identification des batiments et parties du batiment n'ayant pu etre controles
+Neant
+
+G. - Constatations diverses
+Certains points de controles n'ont pu etre controles. De ce fait la
+responsabilite du donneur d'ordre reste pleinement engagee.
+```
+
+La premiere dit que tout a pu etre vu. La seconde dit le contraire, et en tire
+une consequence juridique — la responsabilite du proprietaire reste engagee sur
+ce qui n'a pas ete controle.
+
+### On le dit, on ne tranche pas
+
+Le produit ne peut pas savoir laquelle des deux rubriques dit vrai : il ne
+verra jamais le logement. Mais il peut faire en sorte que la question soit
+posee :
+
+> **Le rapport se contredit** : sa rubrique F ne signale aucun point non
+> controle, sa rubrique G dit que certains ne l'ont pas ete — a faire preciser.
+
+C'est le traqueur d'erreurs grossieres de l'ordre de mission, dans sa forme la
+plus simple : ni rassurer, ni inquieter, **rendre visible ce qui ne colle pas**.
+
+### Ce que la fiche gaz dit desormais d'un seul dossier
+
+Sur le rapport lu au §23, elle porte maintenant quatre choses qu'aucune ne
+figurait il y a vingt-quatre heures :
+
+- l'installation **n'etait pas alimentee** le jour de la visite ;
+- le rapport **se contredit** sur ce qu'il a pu controler ;
+- l'entretien de la chaudiere et le ramonage **ne sont pas justifies** ;
+- les anomalies sont de **type A2**, a reparer dans les meilleurs delais.
+
+Le meme document, lu autrement.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion
@@ -1949,8 +1993,9 @@ date » a l'amiante et « refus assume / echec de lecture » au DPE.
       sont bien des constats.
 - [x] ~~« Installation alimentée en gaz : NON » : le dire.~~ → fait, §44.
       4 volets sur 17, et la nuance selon qu'un DGI est constaté ou non.
-- [ ] La contradiction F « Néant » / G « certains points n'ont pu être
-      contrôlés » : la signaler sans trancher.
+- [x] ~~La contradiction F « Néant » / G « certains points n'ont pu être
+      contrôlés ».~~ → faite, §45 : 4 volets sur 18, signalée sans être
+      tranchée.
 - [ ] Lire les croix du CREP (« X Avant la vente » / « Avant la mise en
       location ») pour déduire la transaction, et en tirer toutes les validités.
 - [ ] Un CREP dont le tableau porte « 0 0 0 0 0 0 » : aucune unité mesurée

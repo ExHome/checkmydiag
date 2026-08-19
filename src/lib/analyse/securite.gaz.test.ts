@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { alimenteEnGaz, analyserGaz, constatationsGaz, typesConstates } from './securite';
+import {
+  alimenteEnGaz,
+  analyserGaz,
+  constatationsGaz,
+  contradictionControle,
+  typesConstates
+} from './securite';
 
 /**
  * La rubrique « E. — Anomalies identifiées » d'un rapport gaz réel
@@ -148,5 +154,39 @@ describe('l’installation qui n’était pas alimentée', () => {
     );
     const fait = d.faits.find((f) => f.libelle === 'Installation alimentée le jour de la visite');
     expect(fait?.precision).toMatch(/l’opérateur a fermé/i);
+  });
+});
+
+describe('la contradiction interne du gaz', () => {
+  /*
+   * La rubrique F dit « Néant » — tout a pu être contrôlé — et la rubrique G,
+   * deux lignes plus bas, dit que certains points ne l'ont pas été. Quatre
+   * volets sur dix-huit. On ne tranche pas : on fait poser la question.
+   */
+  const AVEC = [
+    'Etat de l’Installation Intérieure de Gaz',
+    'F. – Identification des bâtiments et parties du bâtiment (pièces et volumes) n’ayant pu être contrôlés',
+    'Néant',
+    'G. - Constatations diverses',
+    'Commentaires :',
+    'Certains points de contrôles n’ont pu être contrôlés. De ce fait la responsabilité du donneur d’ordre reste pleinement engagée'
+  ];
+
+  it('signale la contradiction quand les deux rubriques s’opposent', () => {
+    expect(contradictionControle(AVEC)).toBe(true);
+    const fait = analyserGaz(AVEC, [1, 5]).faits.find((f) => f.libelle === 'Le rapport se contredit');
+    expect(fait?.precision).toMatch(/à faire préciser/);
+  });
+
+  it('ne signale rien quand la rubrique F liste vraiment quelque chose', () => {
+    const coherent = [...AVEC];
+    coherent[2] = 'Cave - accès condamné le jour de la visite';
+    expect(contradictionControle(coherent)).toBe(false);
+  });
+
+  it('ne signale rien quand la rubrique G ne dit pas le contraire', () => {
+    const coherent = [...AVEC];
+    coherent[5] = 'Attestation d’entretien de la chaudière non présentée';
+    expect(contradictionControle(coherent)).toBe(false);
   });
 });

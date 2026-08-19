@@ -431,6 +431,22 @@ export function analyserGaz(lignes: string[], plage: [number, number]): Diagnost
     });
   }
 
+  /*
+   * La contradiction interne, dite sans etre tranchee.
+   *
+   * C'est au diagnostiqueur de preciser laquelle des deux rubriques dit vrai.
+   * Le produit ne peut pas le savoir — mais il peut faire en sorte que la
+   * question soit posee.
+   */
+  if (contradictionControle(lignes)) {
+    faits.push({
+      libelle: 'Le rapport se contredit',
+      valeur: 'sur ce qui a pu être contrôlé',
+      precision:
+        'sa rubrique F ne signale aucun point non contrôlé, sa rubrique G dit que certains ne l’ont pas été — à faire préciser'
+    });
+  }
+
   const constatations = constatationsGaz(lignes);
   if (constatations.length) {
     faits.push({
@@ -614,6 +630,31 @@ export function alimenteEnGaz(lignes: string[]): boolean | null {
   if (/Installation aliment[ée]e en gaz\s*:?\s*\.*\s*NON\b/i.test(ligne)) return false;
   if (/Installation aliment[ée]e en gaz\s*:?\s*\.*\s*OUI\b/i.test(ligne)) return true;
   return null;
+}
+
+/**
+ * Le rapport se contredit-il sur ce qu'il a pu controler ?
+ *
+ * La rubrique F — « bâtiments et parties du bâtiment n'ayant pu être contrôlés »
+ * — porte « Néant » : tout a pu l'etre. Et deux lignes plus bas, la rubrique G
+ * ecrit « Certains points de controle n'ont pu etre controles. De ce fait la
+ * responsabilite du donneur d'ordre reste pleinement engagee ».
+ *
+ * Les deux ne peuvent pas etre vraies. Mesure : quatre volets sur dix-huit.
+ *
+ * On ne tranche pas — ni pour rassurer, ni pour inquieter. On le dit, parce que
+ * c'est au diagnostiqueur de preciser, et parce qu'un acheteur qui l'ignore ne
+ * saura jamais quelle partie de son installation a vraiment ete vue.
+ */
+export function contradictionControle(lignes: string[]): boolean {
+  const f = rubriqueDe(lignes, 'gaz', 'nonControles');
+  const g = rubriqueDe(lignes, 'gaz', 'constatations');
+  if (!f || !g) return false;
+  const fDitNeant = f.lignes.some((l) => /^\s*N[ée]ant\s*$/i.test(l));
+  const gDitNonControle = g.lignes.some((l) =>
+    /points? de contr[ôo]les? n['’]ont? pu [êe]tre contr[ôo]l/i.test(l)
+  );
+  return fDitNeant && gDitNonControle;
 }
 
 export function constatationsGaz(lignes: string[]): string[] {
