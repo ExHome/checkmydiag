@@ -1689,6 +1689,53 @@ electricite justes sur 24**, zero faux. Ce cas etait le catalogue non reconnu
 
 ---
 
+## 40 · Vente ou location : le dossier le dit, et cela commande les durees
+
+C'etait le dernier point ouvert de l'electricite. Rien n'ecrit la transaction en
+toutes lettres sur la page de garde — mais le dossier se trahit de quatre
+facons, toutes relevees en lisant :
+
+| Marque | Penche vers |
+|---|---|
+| « durée de validité de 3 ans » (electricite, gaz) | vente |
+| « durée de validité de 6 ans » | location |
+| « article 3-3 de la loi n°89-462 » (rapports locatifs) | location |
+| certificat de superficie, loi Carrez | vente |
+| attestation de surface habitable, bail d'habitation | location |
+| CREP coche « X Avant la vente » / « X Avant la mise en location » | l'un ou l'autre |
+
+**Mesure sur soixante dossiers : 37 vendus, 13 loues, 8 indecis, 2 muets.**
+Cinquante sur soixante se laissent classer.
+
+### Une cinquieme piste, essayee et abandonnee
+
+L'etat des risques nomme les parties — « Bailleur / Locataire » ou « Vendeur /
+Acquereur ». C'etait tentant, et faux : l'imprime porte l'intitule **meme quand
+la case est vide**, et les fiches d'information annexes parlent toutes
+d'« acquereur - locataire ». Huit dossiers en devenaient contradictoires.
+
+C'est le piege du formulaire pour la quatrieme fois de la journee, apres le
+catalogue de l'electricite, l'attestation d'assurance et les rubriques PPRt.
+**Un intitule imprime partout ne dit rien du dossier qu'on lit.**
+
+### Les huit indecis ne sont pas un echec
+
+Ils portent reellement **les deux surfaces** — un certificat Carrez et une
+attestation de surface habitable dans le meme dossier. Cela arrive : un
+proprietaire qui fait tout faire d'un coup, sans savoir encore s'il vendra ou
+louera. Se taire est alors la seule reponse juste : annoncer « trois ans »
+quand c'est six, ou l'inverse, ferait presenter un document caduc a la
+signature.
+
+### Ce qui reste a faire
+
+Le module lit la transaction et sait en deduire les durees. Il reste a les
+brancher sur les fiches — aujourd'hui, l'electricite et le gaz annoncent encore
+« trois ans a la vente, six ans a la location », ce qui est vrai mais laisse le
+lecteur choisir.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion
@@ -1730,8 +1777,9 @@ electricite justes sur 24**, zero faux. Ce cas etait le catalogue non reconnu
       synthèse écrit pourtant en clair sur ce même dossier : gain à prendre.
 - [x] ~~Les mesures compensatoires : les dire, puis les expliquer.~~ → fait,
       §24 et §39.
-- [ ] Vente ou location : le dossier le dit (Boutin/Carrez, 6 ans/3 ans). En
-      déduire la nature de la transaction, et adapter toutes les validités.
+- [x] ~~Vente ou location : en déduire la nature de la transaction.~~ → fait,
+      §40 : 50 dossiers sur 60 classés. Reste à brancher les durées sur les
+      fiches.
 - [ ] Vérifier au texte officiel le calendrier du DPE collectif — article
       L126-31 du CCH et article 158 de la loi n° 2021-1104. Cité par un DTG,
       pas encore relu à la source : tant que ce n'est pas fait, aucun contrôle

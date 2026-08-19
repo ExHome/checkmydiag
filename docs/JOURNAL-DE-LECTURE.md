@@ -40,9 +40,10 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
   (L126-31 du CCH, article 158 de la loi n° 2021-1104), cité par le DTG mais
   pas encore relu à la source. Légifrance n'a pas répondu aux adresses
   essayées le 19/08.
-- Sur l'électricité, il ne reste que **la déduction vente/location** : la
-  contradiction synthèse/volet était le catalogue non reconnu (24/24 depuis),
-  et les mesures compensatoires sont dites et expliquées (§39).
+- **La déduction vente/location est faite** (§40) : 50 dossiers sur 60 classés,
+  37 vendus et 13 loués. Reste à **brancher les durées sur les fiches** —
+  l'électricité et le gaz annoncent encore « trois ans à la vente, six ans à la
+  location », ce qui est vrai mais laisse le lecteur choisir.
 
 ## Compteurs
 
@@ -52,8 +53,8 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 | Volets lus page à page | 24 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 6 majeures |
-| Corrections livrées | 14 |
-| Tests de non-régression ajoutés | 39 |
+| Corrections livrées | 15 |
+| Tests de non-régression ajoutés | 47 |
 | Fausses alertes de mes propres sondes, écartées avant annonce | 6 |
 | Sondes de justesse écrites | 2 |
 | Notions métier versées au produit | 5 |
@@ -478,3 +479,26 @@ Mesure du cycle : **24 verdicts électricité justes sur 24**, 5 sur 5 au gaz.
 
 Un rapport termites lu au passage, juste, sans rien à corriger — la correction
 de l'arrêté préfectoral du cycle précédent s'y vérifie.
+
+### 19 août 2026, nuit — vente ou location, le dossier le dit
+
+Dernier point ouvert de l'électricité, et il commande toutes les durées : trois
+ans pour l'électricité et le gaz à la vente, six ans à la location ; un an pour
+un constat plomb positif à la vente, six ans à la location.
+
+Rien ne l'écrit sur la page de garde, mais le dossier se trahit — la durée que
+le rapport annonce lui-même, l'article 3-3 de la loi de 1989 qu'il cite pour la
+location, la surface demandée (Carrez pour vendre, habitable pour louer), et la
+case du CREP cochée en texte.
+
+**Mesure : 37 dossiers vendus, 13 loués, 8 indécis, 2 muets sur 60.**
+
+**Une cinquième piste essayée et abandonnée** : les parties nommées par l'état
+des risques. L'imprimé porte « bailleur » et « locataire » même pour une vente,
+et huit dossiers en devenaient contradictoires. C'est le piège du formulaire
+pour la quatrième fois — un intitulé imprimé partout ne dit rien du dossier
+qu'on lit.
+
+**Les huit indécis ne sont pas un échec** : ils portent réellement les deux
+surfaces, un certificat Carrez et une attestation habitable. Se taire est alors
+la seule réponse juste.
