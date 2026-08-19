@@ -215,18 +215,18 @@ reste juste puisqu'il vient de la conclusion, mais la liste détaillée des
 matériaux n'est jamais lue : quand il y a de l'amiante, le produit ne peut pas
 dire lequel.
 
-### 19 aout 2026 - les termites, et le compte des sondes
+### 19 août 2026 — les termites, et le compte des sondes
 
-**38 verdicts justes sur 38.** Troisieme diagnostic sans faute, apres le plomb
-et l'amiante corrige. Le tableau se lit en lineaire : ce volet ne piege pas.
+**38 verdicts justes sur 38.** Troisième diagnostic sans faute, après le plomb
+et l'amiante corrigé. Le tableau se lit en linéaire : ce volet ne piège pas.
 
 Ce que la lecture ajoute sans corriger : le rapport dit **si le bien est en
-zone d'arrete prefectoral** - l'etat termites n'est exigible que la -, le meme
-arrete delimite les zones de **merule**, et la presence de termites oblige a
-une **declaration en mairie**. Trois informations que Verriere ne restitue pas.
+zone d'arrêté préfectoral** — l'état termites n'est exigible que là —, le même
+arrêté délimite les zones de **mérule**, et la présence de termites oblige à
+une **déclaration en mairie**. Trois informations que Verrière ne restitue pas.
 
-**Le compte des sondes est severe** : quatre outils de mesure ont accuse le
-moteur a tort dans la meme seance. Aucune erreur n'a ete publiee, chaque ecart
-ayant ete ouvert avant d'etre annonce. La lecon : sur ce corpus, il est plus
-facile d'ecrire une sonde fausse qu'un extracteur faux, parce qu'une sonde ne
-casse rien - un zero se lit comme un resultat.
+**Le compte des sondes est sévère** : quatre outils de mesure ont accusé le
+moteur à tort dans la même séance. Aucune erreur n'a été publiée, chaque écart
+ayant été ouvert avant d'être annoncé. La leçon : sur ce corpus, il est plus
+facile d'écrire une sonde fausse qu'un extracteur faux, parce qu'une sonde ne
+casse rien — un zéro se lit comme un résultat.

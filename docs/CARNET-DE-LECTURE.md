@@ -1150,7 +1150,9 @@ affirmer, et ce qu'il ne peut pas.
 
 ### Et la confirmation d'un point ouvert
 
-- [x] ~~Les termites : les informations collectees aupres du donneur d'ordre~~
+- [x] ~~Les termites : les « informations collectées auprès du donneur d'ordre »
+      ont-elles une autre trace ?~~ → non, confirmé §28 : ces trois lignes ne
+      seront jamais lisibles.
 antérieur, présence déclarée de termites, notice technique — sont bien des
 **cases dessinées**, sans autre trace dans le rapport. Le §10 le soupçonnait ;
 la lecture le confirme. Ces trois lignes ne seront jamais lisibles.
@@ -1248,8 +1250,8 @@ Les quatre gardes qui en sortent :
       n'est pas « aucun plomb ». Vu une fois, à retrouver et à traiter.
 - [ ] Vérifier au texte la validité du CREP en location (six ans) : le
       référentiel la donne, la lecture ne l'a pas encore confirmée sur pièce.
-- [ ] Restituer la situation du bien au regard d'un arrete prefectoral (volet
-      termites) : c'est elle qui dit si la commune est en zone.
-- [ ] La merule : le meme arrete la delimite, le produit n'en parle jamais.
-- [ ] La declaration en mairie obligatoire en cas de termites (L. 126-4 et
-      L. 126-5) : a dire au proprietaire.
+- [ ] Restituer la « situation du bien au regard d'un arrêté préfectoral » du
+      volet termites : c'est elle qui dit si la commune est en zone.
+- [ ] La mérule : le même arrêté la délimite, le produit n'en parle jamais.
+- [ ] La déclaration en mairie obligatoire en cas de termites (L. 126-4 et
+      L. 126-5) : à dire au propriétaire.
