@@ -24,6 +24,7 @@
   import MotsExpliques from './MotsExpliques.svelte';
   import Releves from './Releves.svelte';
   import AVerifier from './AVerifier.svelte';
+  import Travaux from './Travaux.svelte';
   import { libelleCourt } from '../lib/libelle';
   import { enPratique, FICHES } from '../lib/analyse/fiches';
   import { echeance } from '../lib/echeance';
@@ -749,6 +750,10 @@
                   </a>
                 {/if}
                 {#if d.type === 'dpe'}
+                  <!-- Les travaux d'abord : c'est la réponse la plus directe à
+                       « que faire ? ». Les vérifications viennent ensuite —
+                       elles portent sur le document, pas sur le logement. -->
+                  <Travaux dpe={d} />
                   <AVerifier dpe={d} />
                 {/if}
               </section>

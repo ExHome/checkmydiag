@@ -134,8 +134,20 @@ function recommandationsDe(lignes: string[]): Recommandation[] {
   for (const brut of lignes) {
     const l = brut.trim();
     if (!l) continue;
-    /* Les mentions de pied de tableau ne sont pas des recommandations. */
-    if (/^Travaux pouvant n[ée]cessiter|^Commentaires\s*:|^Lot\s+Description/i.test(l)) continue;
+    /*
+     * Les mentions de pied de tableau ne sont pas des recommandations.
+     *
+     * Le montant en fait partie : il est déjà lu par `coutDe` et rendu à part.
+     * Sans cette ligne, il ouvrait la description de la première recommandation
+     * — « Montant estimé : 4600 à 6800€ Isolation des combles… » — et le lecteur
+     * voyait la somme deux fois, dont une au milieu d'une phrase.
+     */
+    if (
+      /^Travaux pouvant n[ée]cessiter|^Commentaires\s*:|^Lot\s+Description|^Montant estim[ée]/i.test(
+        l
+      )
+    )
+      continue;
 
     const seul = l.match(MOTIF_LOT);
     if (seul?.[1]) {

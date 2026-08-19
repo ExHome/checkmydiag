@@ -106,3 +106,24 @@ describe('ce que le DPE recommande', () => {
     expect(travauxDuDpe(['Diagnostic de performance', 'Etabli le : 05/07/2024'])).toEqual([]);
   });
 });
+
+/**
+ * Le montant appartient au pack, pas à la description.
+ *
+ * Il est lu par `coutDe` et rendu à part. Ramassé une seconde fois dans le
+ * texte, il s'affichait au milieu d'une phrase — « Montant estimé : 4600 à
+ * 6800€ Isolation des combles perdus… » — et le lecteur voyait la somme deux
+ * fois, dont une là où elle n'a pas de sens.
+ */
+describe('le montant ne se lit qu’une fois', () => {
+  it('ne le laisse pas ouvrir la description', () => {
+    const packs = travauxDuDpe(RAPPORT);
+    for (const p of packs) {
+      for (const r of p.recommandations) {
+        expect(r.description).not.toMatch(/Montant estim/i);
+      }
+    }
+    /* Il reste bien lu, à sa place. */
+    expect(packs[0]?.cout?.de).toBe(4600);
+  });
+});

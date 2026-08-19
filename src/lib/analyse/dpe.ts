@@ -10,6 +10,7 @@ import type { Diagnostic, EtatIsolation, Etiquette, Fait, Isolation, Lettre } fr
 import { contient, nombre, trouver } from './texte';
 import { dateFrancaise, faitDesReformes, OU_RECTIFIER, reformesDepuis } from './reformes';
 import { enAltitude, seuilsClimat, seuilsEnergie } from './seuilsPetitesSurfaces';
+import { travauxDuDpe } from './reco';
 
 const LETTRES: Lettre[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 
@@ -548,6 +549,19 @@ export function analyserDpe(lignes: string[], plage: [number, number]): Diagnost
 
   const detailPostes = postes(lignes);
 
+  /*
+   * Ce que le DPE recommande comme travaux.
+   *
+   * Le moteur écartait cette page en bloc, et pour une bonne raison : elle
+   * chiffre des GAINS après travaux dans le même format qu'une consommation.
+   * L'écarter faisait perdre du même coup les recommandations — le seul endroit
+   * du rapport qui dise au propriétaire quoi faire, et pour combien.
+   *
+   * `travauxDuDpe` lit sans rien calculer : postes, descriptions, performances
+   * visées et montants, tels qu'ils sont imprimés.
+   */
+  const travaux = travauxDuDpe(lignes);
+
   return {
     type: 'dpe',
     titre: estAudit ? 'Audit énergétique (DPE inclus)' : 'Performance énergétique (DPE)',
@@ -588,6 +602,7 @@ export function analyserDpe(lignes: string[], plage: [number, number]): Diagnost
       isolation: lireIsolation(lignes)
     },
     pages: plage,
+    ...(travaux.length ? { travaux } : {}),
     ...(etabli?.[1] ? { date: etabli[1] } : {})
   };
 }

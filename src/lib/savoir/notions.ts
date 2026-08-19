@@ -18,6 +18,7 @@ import { NOTIONS_CARREZ } from './notions-carrez';
 import { NOTIONS_ERP } from './notions-erp';
 import { NOTIONS_ASSAINISSEMENT } from './notions-assainissement';
 import { NOTIONS_TRAVAUX } from './notions-travaux';
+import { NOTIONS_COPROPRIETE } from './notions-copropriete';
 
 export const NOTIONS: Notion[] = [
   ...NOTIONS_DPE,
@@ -29,7 +30,8 @@ export const NOTIONS: Notion[] = [
   ...NOTIONS_CARREZ,
   ...NOTIONS_ERP,
   ...NOTIONS_ASSAINISSEMENT,
-  ...NOTIONS_TRAVAUX
+  ...NOTIONS_TRAVAUX,
+  ...NOTIONS_COPROPRIETE
 ];
 
 export const notion = (id: string): Notion | undefined => NOTIONS.find((n) => n.id === id);

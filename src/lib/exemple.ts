@@ -80,7 +80,29 @@ export function pagesExemple(): PageTexte[] {
         'eau chaude Gaz naturel 4 100 (3 700 é.f.) entre 410 € et 560 €',
         'éclairage Electrique 260 (113 é.f.) entre 20 € et 40 €',
         'auxiliaires Electrique 340 (148 é.f.) entre 30 € et 60 €',
-        'énergie totale pour les 18 100 kWh entre 1 890 € et 2 560 €'
+        'énergie totale pour les 18 100 kWh entre 1 890 € et 2 560 €',
+        // La page des recommandations, dans sa mise en forme réelle : le nom du
+        // poste sort au MILIEU de sa propre description, parce que la cellule de
+        // gauche est centrée verticalement. C'est cet entrelacement que
+        // `analyse/reco.ts` sait défaire — la démonstration doit donc le porter,
+        // sans quoi elle montrerait un cas plus facile que la réalité.
+        'DPE Diagnostic de performance énergétique (logement) p. 5',
+        'Recommandations d’amélioration de la performance',
+        'Les travaux essentiels',
+        'Montant estimé : 4600 à 6800€',
+        'Lot Description Performance recommandée',
+        'Isolation des combles perdus par soufflage.',
+        'Toiture/plafond Poser un isolant en vrac sur le plancher des combles, en R > 7 m².K/W',
+        'veillant à ne pas obstruer les entrées d’air.',
+        'Travaux pouvant nécessiter une autorisation d’urbanisme',
+        'Les travaux à envisager',
+        'Montant estimé : 14200 à 19800€',
+        'Lot Description Performance recommandée',
+        'Remplacer les fenêtres par du double vitrage à isolation',
+        'Portes et fenêtres',
+        'renforcée. Uw = 1,3 W/m².K, Sw = 0,42',
+        'Chauffage',
+        'Remplacer la chaudière par une pompe à chaleur air/eau. SCOP = 4'
       ]
     },
     {

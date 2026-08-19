@@ -67,12 +67,35 @@ function regrouper(items: Fragment[]): { y: number; frags: Paquet[] }[] {
     .map(([y, frags]) => ({ y, frags: frags.sort((a, b) => a.x - b.x) }));
 }
 
+/**
+ * Les ligatures typographiques, sorties du PDF comme des mots isolés.
+ *
+ * Certains générateurs — celui des DTG, entre autres — codent « fi », « fl »,
+ * « ffi »… dans un glyphe de ligature que pdf.js rend en fragment séparé.
+ * Assemblés avec des espaces, ils font éclater un mot sur trois :
+ * « dé fi nition », « identi fi ant », « véri fi cation », « in fl uence »,
+ * « a fi n », « su ffi t », « quali fi é ».
+ *
+ * Aucun motif ne survit à ça : chercher « définition » dans un DTG ne trouve
+ * rien, et la sonde qui le mesure trouve zéro sans que rien ne paraisse
+ * cassé. On recolle donc, et sans risque : ni « fi », ni « fl », ni « ff »,
+ * ni « ffi », ni « ffl » n'est un mot français.
+ */
+const LIGATURE = /^(?:fi|fl|ff|ffi|ffl|ft|st)$/;
+
 function assembler(frags: Paquet[]): string {
-  return frags
-    .map((f) => f.s)
-    .join(' ')
-    .replace(/\s+/g, ' ')
-    .trim();
+  let texte = '';
+  let collerAuSuivant = false;
+
+  for (const f of frags) {
+    const morceau = f.s;
+    const estLigature = LIGATURE.test(morceau.trim());
+    const espace = texte && !collerAuSuivant && !estLigature ? ' ' : '';
+    texte += espace + morceau;
+    collerAuSuivant = estLigature;
+  }
+
+  return texte.replace(/\s+/g, ' ').trim();
 }
 
 export function lignesDePage(items: Fragment[]): string[] {

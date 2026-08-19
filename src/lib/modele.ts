@@ -176,6 +176,22 @@ export interface Diagnostic {
     ou?: string;
     genre: 'anomalie' | 'nonVisite' | 'nonVerifie' | 'complement';
   }[];
+  /**
+   * Les travaux que le DPE recommande, tels qu'il les écrit.
+   *
+   * Le type complet vit dans `analyse/reco.ts` ; on le garde souple ici pour la
+   * même raison que les repères — le modèle ne dépend pas de l'extraction.
+   *
+   * Rien n'y est calculé : ni classe future promise, ni économies annoncées, ni
+   * addition de gains de travaux indépendants. Ce sont les mots du rapport, et
+   * le montant est celui qu'il imprime.
+   */
+  travaux?: {
+    rang: 1 | 2;
+    intitule: string;
+    cout?: { de: number; a: number; statut: string };
+    recommandations: { lot: string; description: string; performance?: string; statut: string }[];
+  }[];
 }
 
 export interface Bien {
