@@ -40,10 +40,13 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
   (L126-31 du CCH, article 158 de la loi n° 2021-1104), cité par le DTG mais
   pas encore relu à la source. Légifrance n'a pas répondu aux adresses
   essayées le 19/08.
-- **La déduction vente/location est faite** (§40) : 50 dossiers sur 60 classés,
-  37 vendus et 13 loués. Reste à **brancher les durées sur les fiches** —
-  l'électricité et le gaz annoncent encore « trois ans à la vente, six ans à la
-  location », ce qui est vrai mais laisse le lecteur choisir.
+- **La déduction vente/location est faite et branchée** (§40, §42) : 50 dossiers
+  sur 60 classés, et les fiches annoncent désormais « Validité : trois ans — ce
+  dossier est un dossier de vente, et son rapport l'écrit lui-même ».
+- **Prochain chantier** : le gaz reste le volet le moins couvert (9 volets vus,
+  7/7 justes). Chercher un dossier qui en porte un, et lire la rubrique G —
+  entretien de chaudière et ramonage non justifiés n'y sont toujours pas
+  remontés.
 
 ## Compteurs
 
@@ -53,8 +56,8 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 | Volets lus page à page | 24 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 6 majeures |
-| Corrections livrées | 16 |
-| Tests de non-régression ajoutés | 49 |
+| Corrections livrées | 17 |
+| Tests de non-régression ajoutés | 52 |
 | Fausses alertes de mes propres sondes, écartées avant annonce | 6 |
 | Sondes de justesse écrites | 2 |
 | Notions métier versées au produit | 5 |
@@ -519,3 +522,22 @@ forme, comme le « Page 8 / 11 » du DPE ; le mécanisme existait déjà.
 quand un rapport ne répète pas son titre, il se reconnaît à son pied de page, et
 la marque est une forme numérotée. Regarder le pied avant l'en-tête quand une
 section paraît courte.
+
+### 19 août 2026, nuit — les durées de validité, branchées
+
+« Validité : trois ans à la vente, six ans à la location » était vrai et
+laissait le lecteur choisir. Les fiches disent maintenant **la durée qui
+s'applique**, et d'où vient la certitude : « ce dossier est un dossier de vente,
+et son rapport l'écrit lui-même ».
+
+Quand le dossier ne tranche pas — il porte les deux surfaces —, les deux durées
+restent énoncées.
+
+**Une erreur de sens attrapée en vérifiant** : la première version déduisait
+« constat positif » de la gravité affichée et se trompait de sens ; un constat
+plomb positif s'y voyait annoncer « sans limite de durée », l'inverse exact de
+ce qu'il faut dire. La correction n'a pas été de mieux calculer, mais de **ne
+plus calculer** : la phrase portait déjà le résultat.
+
+Recalculer ce qu'on a sous la main, c'est se donner une seconde chance de se
+tromper.

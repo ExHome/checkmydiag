@@ -1782,6 +1782,38 @@ courte.
 
 ---
 
+## 42 · « Validite : trois ans a la vente, six ans a la location »
+
+C'etait vrai, et cela laissait le lecteur choisir — alors que son dossier
+repond. Le §40 avait appris a lire la transaction ; elle est desormais branchee
+sur les fiches :
+
+> **Validite : trois ans — ce dossier est un dossier de vente, et son rapport
+> l'ecrit lui-meme.**
+
+Pour le plomb, la phrase garde son conditionnement au resultat : « du plomb a
+ete detecte, meme en bon etat. Le constat est donc positif, et il n'est valable
+qu'un an, ce dossier etant un dossier de vente. »
+
+Et quand le dossier ne tranche pas — il porte les deux surfaces —, les deux
+durees restent enoncees. Mieux vaut laisser choisir que choisir au hasard.
+
+### Une erreur de sens, attrapee par la lecture du resultat
+
+La premiere version deduisait « constat positif » de la gravite affichee. Elle
+se trompait de sens, et un constat plomb positif s'y voyait annoncer **« sans
+limite de duree »** — l'inverse exact de ce qu'il faut dire, sur le seul
+diagnostic ou la duree depend du resultat.
+
+La correction n'a pas ete de mieux calculer, mais de **ne plus calculer** : la
+phrase que la fiche portait deja contient le resultat, puisqu'elle sort du meme
+raisonnement que le verdict. On ne fait que retenir la branche qui s'applique.
+
+**Recalculer ce qu'on a deja sous la main, c'est se donner une seconde chance
+de se tromper.**
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion

@@ -18,6 +18,7 @@ import { reperer } from './reperes';
 import { conclusionDe, graviteDe, lireSynthese, type BlocSynthese } from './synthese';
 import { nombre, trouver } from './texte';
 import { dateDuRapport } from './dateRapport';
+import { lireTransaction, validite, type Transaction } from './transaction';
 
 type Extracteur = (lignes: string[], plage: [number, number]) => Diagnostic;
 
@@ -236,6 +237,24 @@ export function analyser(brutes: PageTexte[]): Analyse {
     }
   }
 
+  /*
+   * Les durees de validite, une fois qu'on sait de quelle transaction il s'agit.
+   *
+   * Les extracteurs ne peuvent pas le savoir : chacun ne voit que son volet, et
+   * la marque est ailleurs dans le dossier — la surface demandee, l'article
+   * cite, la case du CREP. On la lit donc ici, sur l'ensemble, puis on precise
+   * ce que chaque fiche annoncait en deux branches.
+   *
+   * « Validite : trois ans a la vente, six ans a la location » est vrai, mais
+   * laisse le lecteur choisir. Quand le dossier tranche, on tranche avec lui ;
+   * quand il ne tranche pas, on garde les deux — c'est le cas des dossiers qui
+   * portent les deux surfaces.
+   */
+  const { transaction } = lireTransaction(pages.flatMap((p) => p.lignes));
+  for (const [i, diag] of diagnostics.entries()) {
+    diagnostics[i] = preciserValidite(diag, transaction);
+  }
+
   diagnostics.sort((a, b) => ORDRE.indexOf(a.type) - ORDRE.indexOf(b.type));
 
   // L'origine se calcule en dernier : elle dépend du verdict final, une fois
@@ -293,6 +312,44 @@ export function analyser(brutes: PageTexte[]): Analyse {
     nbPages: pages.length,
     confiance: confianceDuDossier(diagnostics)
   };
+}
+
+/**
+ * Precise « trois ans a la vente, six ans a la location » quand on sait lequel.
+ *
+ * On ne reecrit pas la phrase : on la remplace par celle qui correspond, en
+ * disant d'ou vient la certitude. Le lecteur doit pouvoir verifier — c'est son
+ * rapport qui l'affirme, pas nous.
+ */
+function preciserValidite(diag: Diagnostic, transaction: Transaction | null): Diagnostic {
+  if (!transaction) return diag;
+  const vente = transaction === 'vente';
+
+  const aFaire = diag.aFaire.map((phrase) => {
+    /*
+     * On ne recalcule rien : la phrase porte deja le resultat du constat, et
+     * c'est lui qui commande pour le plomb. On ne fait que retenir la branche
+     * qui s'applique, en disant d'ou vient la certitude.
+     *
+     * Une premiere version deduisait « constat positif » de la gravite affichee
+     * et se trompait de sens : un constat positif s'y voyait annoncer « sans
+     * limite de duree ». La phrase, elle, ne peut pas se tromper — elle vient
+     * du meme calcul que le verdict.
+     */
+    if (/Validit[ée] : trois ans [àa] la vente, six ans [àa] la location\./i.test(phrase))
+      return `Validité : ${vente ? 'trois ans' : 'six ans'} — ce dossier est un dossier ${vente ? 'de vente' : 'de location'}, et son rapport l’écrit lui-même.`;
+
+    if (/valable qu[’']un an [àa] la vente, six ans [àa] la location/i.test(phrase))
+      return phrase.replace(
+        /valable qu[’']un an [àa] la vente, six ans [àa] la location/i,
+        vente ? 'valable qu’un an, ce dossier étant un dossier de vente' : 'valable six ans, ce dossier étant un dossier de location'
+      );
+
+    if (/valable qu[’']un an [àa] la vente, six ans [àa] la location/i.test(phrase)) return phrase;
+    return phrase;
+  });
+
+  return aFaire.some((p, i) => p !== diag.aFaire[i]) ? { ...diag, aFaire } : diag;
 }
 
 /** Remplace le verdict par la conclusion écrite au dossier, si elle existe. */
