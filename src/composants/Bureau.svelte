@@ -930,7 +930,20 @@
     width: 100%;
     max-width: 76px;
     aspect-ratio: 1;
-    border-radius: 18px;
+    /*
+     * LE SQUIRCLE D'iOS, PAS UN COIN ARRONDI.
+     *
+     * Un `border-radius` classique raccorde le coin par un quart de cercle :
+     * la courbure y saute d'un coup, et l'oeil le voit -- c'est ce qui donne
+     * aux carres arrondis du web leur air de bouton, quand ceux d'iOS ont l'air
+     * d'objets. La superellipse, elle, entre et sort de la courbe
+     * progressivement.
+     *
+     * `border-radius: 28% / 28%` en pourcentage approche cette continuite bien
+     * mieux qu'une valeur en pixels, et elle suit la taille de l'icone : la
+     * meme forme a 76 px et a 44 px.
+     */
+    border-radius: 28%;
     display: grid;
     place-items: center;
     font-size: 32px;
@@ -948,10 +961,48 @@
      * ne valait plus rien. Un anneau qui fait le tour aplatit l'icône au lieu
      * de la lever.
      */
+    /*
+     * L'OMBRE A TROIS COUCHES, comme un objet pose.
+     *
+     * Une ombre unique aplatit : elle dit « il y a quelque chose dessous »
+     * sans dire a quelle hauteur. Trois couches donnent la distance --
+     * c'est ce que fait iOS, et c'est ce que montre la publicite.
+     *
+     *  1. le contact : courte, dense, juste sous l'objet ;
+     *  2. la portee : longue, diffuse, qui pose l'objet dans la page ;
+     *  3. l'arete eclairee, a l'interieur, en haut : la lumiere tombe d'en
+     *     haut et le bord superieur la recoit.
+     */
     box-shadow:
-      inset 0 1px rgb(255 255 255 / 53%),
-      0 10px 20px rgb(10 43 35 / 19%);
-    transition: transform var(--duree) var(--courbe), box-shadow var(--duree) var(--courbe);
+      0 2px 4px rgb(10 43 35 / 22%),
+      0 12px 24px -6px rgb(10 43 35 / 30%),
+      inset 0 1.5px rgb(255 255 255 / 58%);
+    transition:
+      transform 0.34s cubic-bezier(0.34, 1.4, 0.5, 1),
+      box-shadow 0.34s cubic-bezier(0.34, 1.4, 0.5, 1);
+  }
+
+  /*
+   * LE BOMBE : la face n'est pas plate.
+   *
+   * Sur la publicite, chaque icone est une pastille bombee -- la couleur y est
+   * plus claire en haut, plus dense en bas, et une lumiere glisse sur la
+   * moitie superieure. C'est ce degrade-la qui fait « premium » ; sans lui,
+   * une couleur pleine reste une vignette.
+   *
+   * Le fond colore de l'app est pose en `background` par le style en ligne :
+   * ce voile se superpose SANS le remplacer, ce qui laisse chaque app libre de
+   * sa teinte.
+   */
+  .icone::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background:
+      radial-gradient(120% 80% at 50% -18%, rgb(255 255 255 / 46%) 0%, transparent 62%),
+      linear-gradient(180deg, rgb(255 255 255 / 16%) 0%, transparent 46%, rgb(0 0 0 / 16%) 100%);
+    pointer-events: none;
   }
 
   /*
@@ -972,7 +1023,10 @@
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: linear-gradient(135deg, rgb(255 255 255 / 20%) 0%, transparent 60%);
+    /* Le glissement de lumiere, en diagonale : il croise le bombe et donne
+       a la face sa courbure. Deux gradients, pas un -- l'un porte le volume,
+       l'autre l'eclat. */
+    background: linear-gradient(128deg, rgb(255 255 255 / 26%) 0%, transparent 54%);
     pointer-events: none;
   }
 
@@ -1062,12 +1116,26 @@
 
   /* Au survol, l'objet se lève : l'ombre s'allonge et se fonce, le liseré
      du haut reste. C'est le même relief, vu de plus près. */
+  /* Au survol l'objet se leve : l'ombre de contact s'ecarte, la portee
+     s'allonge et s'adoucit. C'est la meme lumiere, vue de plus pres. */
   .tuile:not(.eteinte):hover .icone,
   .tuile:not(.eteinte):focus-visible .icone {
-    transform: scale(1.05);
+    transform: translateY(-3px) scale(1.04);
     box-shadow:
-      inset 0 1px rgb(255 255 255 / 60%),
-      0 14px 26px rgb(10 43 35 / 26%);
+      0 4px 8px rgb(10 43 35 / 20%),
+      0 20px 34px -8px rgb(10 43 35 / 34%),
+      inset 0 1.5px rgb(255 255 255 / 68%);
+  }
+
+  /* A l'appui, l'objet s'enfonce : l'ombre se resserre sous lui. Sur un
+     telephone, c'est le seul retour qu'on ait. */
+  .tuile:not(.eteinte):active .icone {
+    transform: translateY(0) scale(0.97);
+    box-shadow:
+      0 1px 2px rgb(10 43 35 / 26%),
+      0 4px 10px -4px rgb(10 43 35 / 24%),
+      inset 0 1px rgb(255 255 255 / 40%);
+    transition-duration: 0.09s;
   }
 
   /* Une application absente ne s'éclaire pas : elle n'est pas là, et rien ne
