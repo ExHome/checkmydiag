@@ -2200,6 +2200,52 @@ verifie pas tout seul — il faut, de temps en temps, relire le code AVEC lui.
 
 ---
 
+## 52 · Relire le code AVEC le carnet : ce que la revue a donne
+
+Le §51 avait montre que deux savoirs consignes n'etaient pas appliques. Revue
+systematique des affirmations chiffrees du carnet, confrontees au code :
+
+| Ce que le carnet etablit | Dans le code ? |
+|---|---|
+| termites : validite six mois, declaration en mairie si presence | **oui** |
+| amiante : listes A et B conclues separement | **oui** |
+| plomb : cinq situations de risque, seuils 50 % et 20 % | **oui** |
+| plomb : classe 2 = etat d'usage, classe 3 = degrade | corrige au §51 |
+| CREP positif : un an a la vente | corrige au §25 |
+| **radon : le seuil d'action est 300 Bq/m³** | **manquant** |
+
+Le code suit le carnet bien mieux que la premiere impression ne le laissait
+craindre. Un seul manque, mais il est serieux.
+
+### Le radon n'avait aucune notion
+
+Le produit annonce « radon (niveau 2) » dans ses verdicts d'etat des risques, et
+le lecteur n'avait **rien** pour comprendre ce que cela veut dire.
+
+Or c'est precisement la que le §7 avait releve un piege avere : la fiche
+d'information annexee ecrit « le niveau moyen dans l'habitat francais est
+inferieur a 100 Bq/m³ » et **ne cite jamais le seuil**. Un lecteur pressé
+retient 100 comme une limite. Le seuil d'action du code de la sante publique est
+**300**, trois fois plus haut.
+
+La notion ecrite dit donc, dans l'ordre : le zonage porte sur le sous-sol de la
+COMMUNE et non sur le logement ; le chiffre a retenir est 300 et les 100 sont
+une moyenne ; le risque est celui d'une exposition longue, deuxieme cause de
+cancer du poumon apres le tabac ; et le premier geste ne coute rien — aerer,
+verifier que les grilles ne sont pas bouchees.
+
+Elle lit aussi la zone dans le verdict, et adapte : en zone 3, « une mesure chez
+vous a du sens ».
+
+### La lecon de la revue
+
+**Relire le code avec le carnet en main prend une heure et trouve ce que la
+lecture de mille dossiers ne trouverait pas.** Les deux exercices ne cherchent
+pas la meme chose : lire un rapport revele ce que le produit lit mal ; relire le
+carnet revele ce qu'il ne dit pas du tout.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion
@@ -2296,6 +2342,7 @@ verifie pas tout seul — il faut, de temps en temps, relire le code AVEC lui.
       moins un manque, et zéro réclamation à tort.
 - [ ] L'assainissement : deux volets sur cent dossiers, aucun verdict. À
       traiter quand un cas se présentera.
-- [ ] Relire le code du plomb AVEC le §9 en main, et faire de meme pour chaque
-      diagnostic : deux ecarts trouves sur le seul plomb (validite, vocabulaire
-      des classes).
+- [x] ~~Relire le code AVEC le carnet en main.~~ → fait, §52 : un seul manque
+      trouve, le radon, qui n'avait aucune notion.
+- [ ] Le seuil plomb de 1 mg/cm² n'est nulle part dans le produit : l'ajouter
+      aux notions, c'est ce qui definit une classe.

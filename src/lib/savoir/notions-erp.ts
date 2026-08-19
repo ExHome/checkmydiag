@@ -136,5 +136,77 @@ export const NOTIONS_ERP: Notion[] = [
       }
       return { etat: 'muet', phrase: 'L’état des risques est là, mais son détail n’a pas pu être lu.' };
     }
+  },
+
+  {
+    id: 'radon',
+    terme: 'Radon',
+    definition:
+      'Un gaz radioactif naturel, sans odeur ni couleur, qui sort du sous-sol granitique et s’accumule dans les pièces mal ventilées.',
+    niveaux: [
+      {
+        rang: 2,
+        bribes: [
+          {
+            texte:
+              'L’état des risques ne mesure rien : il dit seulement dans quelle zone se trouve la commune, sur une échelle de 1 à 3. C’est une carte du sous-sol, pas une analyse de votre logement.'
+          },
+          {
+            texte:
+              'Zone 1 : potentiel faible. Zone 2 : faible, mais avec des failles qui peuvent faire remonter le gaz. Zone 3 : potentiel significatif — une partie de la Gironde et tout le Massif central y sont.'
+          }
+        ]
+      },
+      {
+        rang: 3,
+        bribes: [
+          {
+            /*
+             * Le piège que la fiche d'information annexée entretient — et qu'un
+             * brief antérieur avait déjà commis. Elle écrit « le niveau moyen
+             * dans l'habitat français est inférieur à 100 Bq/m³ » : c'est une
+             * MOYENNE CONSTATÉE, pas une limite. La fiche ne cite jamais le
+             * seuil, qui est trois fois plus haut.
+             */
+            texte:
+              'Le chiffre à retenir est 300 becquerels par mètre cube : c’est à partir de là que le code de la santé publique demande d’agir. Les 100 Bq/m³ que citent les fiches d’information sont la moyenne des logements français, pas une limite à ne pas dépasser.'
+          },
+          {
+            texte:
+              'Le risque n’est pas immédiat : c’est une exposition de longue durée qui compte, et elle est la deuxième cause de cancer du poumon après le tabac.'
+          }
+        ]
+      },
+      {
+        rang: 6,
+        bribes: [
+          {
+            texte:
+              'Le premier geste ne coûte rien : aérer, et vérifier que les grilles de ventilation ne sont pas bouchées. Le radon se dilue dès que l’air circule.'
+          },
+          {
+            texte:
+              'Pour savoir où l’on en est, il faut mesurer : un dosimètre se pose deux mois en période de chauffe, dans la pièce de vie. C’est la seule façon de connaître le chiffre de son propre logement.'
+          }
+        ]
+      }
+    ],
+    chezMoi: (diagnostics) => {
+      const erp = trouve(diagnostics, 'erp');
+      if (!erp) return { etat: 'absent' };
+      const zone = /radon \(niveau (\d)\)/i.exec(erp.verdict)?.[1];
+      if (!zone)
+        return {
+          etat: 'muet',
+          phrase: 'Votre état des risques ne mentionne pas de zone à potentiel radon.'
+        };
+      return {
+        etat: 'dit',
+        phrase:
+          zone === '3'
+            ? 'Votre commune est en zone 3, celle du potentiel le plus fort : une mesure chez vous a du sens.'
+            : `Votre commune est en zone ${zone}. Le zonage porte sur le sous-sol de la commune, pas sur votre logement : seule une mesure dirait ce qu’il en est chez vous.`
+      };
+    }
   }
 ];

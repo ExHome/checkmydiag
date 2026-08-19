@@ -57,10 +57,10 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
   un manque signalé, et zéro réclamation à tort.
 - **Les réclamations amiante et plomb sont vérifiées** (§49) : 19 sur 19
   reposent sur une année réellement écrite au document.
-- **Prochain chantier** : relire le code de chaque diagnostic **avec le carnet
-  en main**. Deux écarts trouvés sur le seul plomb — la validité du constat
-  positif (§25) et le vocabulaire des classes (§51) — étaient tous deux
-  consignés au carnet depuis longtemps, mais absents du code.
+- **La revue « code contre carnet » est faite** (§52) : un seul manque, le
+  radon, qui n'avait aucune notion alors que le produit l'annonce.
+- **Prochain chantier** : le seuil plomb de 1 mg/cm², absent du produit — c'est
+  lui qui définit une classe. Puis reprendre la lecture large.
 
 ## Compteurs
 
@@ -70,11 +70,11 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 | Volets lus page à page | 24 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 6 majeures |
-| Corrections livrées | 25 |
-| Tests de non-régression ajoutés | 76 |
+| Corrections livrées | 26 |
+| Tests de non-régression ajoutés | 79 |
 | Fausses alertes de mes propres sondes, écartées avant annonce | 6 |
 | Sondes de justesse écrites | 2 |
-| Notions métier versées au produit | 5 |
+| Notions métier versées au produit | 6 |
 | Fiches versées à la Dropbox | 2 |
 | Points ouverts au carnet | 15 |
 
@@ -733,3 +733,28 @@ norme — « Dégradés » et « En état d'usage ».
 lisant la norme, et il était juste. Le code ne l'avait pas suivi. C'est la
 deuxième fois après la validité du CREP positif. **Un savoir consigné n'est
 acquis que là où il est appliqué** — et le carnet ne se vérifie pas tout seul.
+
+### 20 août 2026, nuit — relire le code avec le carnet
+
+Revue systématique des affirmations chiffrées du carnet, confrontées au code :
+termites (validité six mois, déclaration en mairie), amiante (listes A et B
+conclues séparément), plomb (cinq situations, seuils 50 % et 20 %) — **tout y
+est**. Le code suit le carnet mieux que la première impression ne le laissait
+craindre.
+
+**Un seul manque, et il est sérieux** : le radon n'avait aucune notion. Le
+produit annonce « radon (niveau 2) » dans ses verdicts, et le lecteur n'avait
+rien pour comprendre.
+
+C'est précisément là que le carnet avait relevé un piège avéré : la fiche
+d'information annexée écrit « le niveau moyen dans l'habitat français est
+inférieur à 100 Bq/m³ » et **ne cite jamais le seuil**, qui est de **300**.
+
+La notion écrite dit le zonage (il porte sur la commune, pas sur le logement),
+le seuil, le risque — exposition longue, deuxième cause de cancer du poumon — et
+le geste qui ne coûte rien : aérer, vérifier les grilles. Elle lit la zone dans
+le verdict et adapte son propos.
+
+**La leçon** : relire le code avec le carnet prend une heure et trouve ce que la
+lecture de mille dossiers ne trouverait pas. Lire un rapport révèle ce que le
+produit lit mal ; relire le carnet révèle ce qu'il **ne dit pas du tout**.

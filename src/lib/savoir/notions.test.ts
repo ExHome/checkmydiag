@@ -174,3 +174,38 @@ describe('les parois du DPE', () => {
     expect(notion('ventilation')?.chezMoi?.(dpe(tout)).etat).toBe('muet');
   });
 });
+
+describe('la notion du radon', () => {
+  const radon = NOTIONS.find((n) => n.id === 'radon');
+
+  it('existe — le produit annonçait « radon (niveau 2) » sans rien pour l’expliquer', () => {
+    expect(radon).toBeDefined();
+  });
+
+  it('donne le seuil d’action, et pas la moyenne', () => {
+    /*
+     * La fiche d'information annexée à l'état des risques écrit « le niveau
+     * moyen dans l'habitat français est inférieur à 100 Bq/m³ » et ne cite
+     * jamais le seuil. Confondre les deux est le piège que le carnet a relevé.
+     */
+    const texte = radon?.niveaux.flatMap((n) => n.bribes.map((b) => b.texte)).join(' ') ?? '';
+    expect(texte).toMatch(/300 becquerels/);
+    expect(texte).toMatch(/moyenne des logements français, pas une limite/);
+  });
+
+  it('lit la zone dans le verdict de l’état des risques', () => {
+    const chez = radon?.chezMoi?.([
+      {
+        type: 'erp',
+        titre: 'État des risques',
+        verdict: 'Le bien est concerné par : sismicité (niveau 2), radon (niveau 3).',
+        gravite: 'attention',
+        faits: [],
+        explication: [],
+        aFaire: []
+      }
+    ]);
+    expect(chez?.etat).toBe('dit');
+    expect(chez && 'phrase' in chez ? chez.phrase : '').toMatch(/zone 3/);
+  });
+});
