@@ -176,11 +176,13 @@
     opacity: 0.3;
   }
 
-  /* La classe du logement dépasse des autres : on la trouve sans la chercher. */
+  /* La classe du logement dépasse des autres : on la trouve sans la chercher.
+     Le cerne prend l'encre de l'univers, qui suit le fond : en vert fixe, il
+     disparaissait sur les fonds sombres. */
   .barreau.ici {
     transform: translateY(-8px);
     box-shadow: 0 6px 16px -6px rgb(10 43 35 / 45%);
-    outline: 2px solid var(--vert-700);
+    outline: 2px solid var(--sur-fond);
     outline-offset: 2px;
   }
 
@@ -194,7 +196,9 @@
     font-size: var(--t-micro);
     font-weight: 700;
     letter-spacing: 0.08em;
-    color: var(--vert-700);
+    /* « Le logement » : mesuré à 1,83 sur les univers sombres, en vert fixe.
+       L'encre de l'univers suit le fond, quel qu'il soit. */
+    color: var(--sur-fond);
   }
 
   .echeances {

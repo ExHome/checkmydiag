@@ -238,7 +238,16 @@
     --usure: #ff8a65; /*        7,65 sur le coffret · 5,28 sur le module */
     --eteinte: #7d94a3; /*      5,59 sur le coffret · 3,86 sur le module */
     --ecrit: #e8eef2; /*       13,99 sur la carte */
-    --ecrit-doux: #a8bcc7; /*   8,33 sur la carte · 6,21 sur le module */
+    /*
+     * Eclairci de #a8bcc7 a #bccdd7.
+     *
+     * Ces valeurs avaient ete mesurees sur les fonds du COFFRET, qui sont
+     * tres sombres. Mais quatre classes qui s'en servent -- detail, etat,
+     * intitule, reserve -- s'ecrivent en dehors du coffret, sur la surface de
+     * l'univers. La mesure ne les couvrait pas : 4,36 mesure a l'ecran sur
+     * l'electricite, sous le seuil de 4,5, quinze fois.
+     */
+    --ecrit-doux: #bccdd7; /*   plus de 4,5 sur le coffret, le module ET la surface */
   }
 
   .intitule {

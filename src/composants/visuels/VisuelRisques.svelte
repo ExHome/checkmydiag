@@ -394,7 +394,9 @@
     gap: var(--e2);
     min-height: 52px;
     background: linear-gradient(180deg, #e0f7fa, #d3eceb);
-    color: #00695c;
+    /* L'encre de l'univers, qui suit le fond : ce vert fixe tombait a 1,3
+       sur les fonds sombres. */
+    color: var(--sur-fond);
     --or: #00796b;
     animation: ciel-entre 0.5s var(--courbe);
   }
@@ -591,18 +593,18 @@
   }
 
   .aiguille line {
-    stroke: #00695c;
+    stroke: var(--sur-fond);
     stroke-width: 3.5;
     stroke-linecap: round;
   }
 
   .moyeu {
-    fill: #00695c;
+    fill: var(--sur-fond);
   }
 
   .moyeu.creux {
     fill: var(--papier);
-    stroke: #00695c;
+    stroke: var(--sur-fond);
     stroke-width: 2;
     stroke-dasharray: 3 3;
   }
