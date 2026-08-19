@@ -792,7 +792,20 @@
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    /*
+     * Quatre colonnes EGALES, comme sur la publicite.
+     *
+     * `1fr` seul vaut `minmax(auto, 1fr)` : une colonne ne descend jamais sous
+     * la largeur de son contenu. Un libelle un peu long -- « Assainissement »,
+     * « Electricite » -- elargissait donc sa colonne aux depens des autres.
+     * Mesure a 390 px : 86 px pour la premiere, 78,7 px pour les trois
+     * suivantes. Les icones ne tombaient pas sur une trame reguliere, et cela
+     * se voit sur une grille d'applications, ou l'oeil attend un pas constant.
+     *
+     * `minmax(0, 1fr)` autorise la colonne a se serrer : les quatre sont alors
+     * strictement egales, et c'est le texte qui passe a la ligne.
+     */
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: var(--e3) var(--e3);
   }
 
@@ -806,6 +819,7 @@
   @media (min-width: 560px) {
     .grille {
       grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+      justify-content: start;
       gap: var(--e5) var(--e4);
     }
   }
@@ -1067,7 +1081,23 @@
    * réparties sur toute la largeur se lisent comme une barre système : on sait
    * où l'on est, et l'onglet courant se distingue sans qu'on ait à le chercher.
    */
+  /*
+   * La barre reste en bas, comme sur le telephone de la publicite.
+   *
+   * Elle etait dans le flux : dernier bloc de la page, elle defilait avec le
+   * contenu et disparaissait des qu'on descendait. Une barre de navigation qui
+   * s'en va n'en est plus une -- et le badge des alertes, qui compte ce qu'il
+   * reste a regler, n'etait visible que tout en bas, la ou on n'en a plus
+   * besoin.
+   *
+   * `sticky` plutot que `fixed` : elle colle au bas de la fenetre pendant le
+   * defilement, puis se pose a sa place naturelle en fin de page. Rien ne
+   * passe dessous, aucune reserve de hauteur a maintenir a la main.
+   */
   .dock {
+    position: sticky;
+    bottom: var(--e3);
+    z-index: 5;
     margin-top: var(--e5);
     display: grid;
     grid-template-columns: repeat(5, 1fr);

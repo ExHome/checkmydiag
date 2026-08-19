@@ -50,6 +50,17 @@ const MARQUEURS: Marqueur[] = [
     entetes: [
       'reperagedesmateriauxetproduitscontenantdelamiante',
       'rapportdereperageamiante',
+      /*
+       * Le titre courant que ce générateur répète en tête de CHAQUE page.
+       *
+       * Il manquait, et le volet se fermait après sa deuxième page : les neuf
+       * suivantes — celles qui portent la liste des matériaux, leur état de
+       * conservation et les parties non visitées — partaient hors section.
+       * Mesuré sur vingt volets qui annoncent eux-mêmes leur pagination
+       * (« le présent rapport est constitué de 11 pages »), vingt étaient plus
+       * courts que ce qu'ils revendiquent, de quinze pages en moyenne.
+       */
+      'constatdereperageamiante',
       'dossiertechniqueamiante',
       'constatamianteavantvente',
       'etatmentiondelapresencedamiante'

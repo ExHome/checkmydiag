@@ -145,3 +145,43 @@ describe('ce que la fermeture ne doit pas casser', () => {
     expect(termites[0]?.plage).toEqual([1, 3]);
   });
 });
+
+/**
+ * Le volet amiante se fermait après sa deuxième page.
+ *
+ * Ce générateur répète son titre courant en tête de chaque page — « Constat de
+ * repérage Amiante n° … » — et ce titre ne figurait pas parmi les marqueurs.
+ * Les neuf pages suivantes, celles qui portent la liste des matériaux et leur
+ * état de conservation, partaient donc hors section.
+ *
+ * Le rapport annonce lui-même sa pagination : « le présent rapport, annexes
+ * comprises, est constitué de 11 pages ». C'est la mesure qui a révélé le
+ * défaut — vingt volets sur vingt étaient plus courts que ce qu'ils
+ * revendiquent, de quinze pages en moyenne ; il en reste un.
+ */
+describe('le volet amiante et son titre courant', () => {
+  const page = (numero: number, ...lignes: string[]) => ({ numero, lignes });
+
+  it('garde les pages qui répètent « Constat de repérage Amiante »', () => {
+    const { sections } = decouper([
+      page(1, 'Constat de repérage Amiante n° 24/IMO/0154N', 'Rapport de mission de repérage'),
+      page(2, 'Constat de repérage Amiante n° 24/IMO/0154N', '1. – Les conclusions'),
+      page(3, 'Constat de repérage Amiante n° 24/IMO/0154N', '3. – La mission de repérage'),
+      page(4, 'Constat de repérage Amiante n° 24/IMO/0154N', '5. – Résultats détaillés du repérage'),
+      page(5, 'Constat de repérage Amiante n° 24/IMO/0154N', 'Dalles de sol (Cuisine)')
+    ]);
+    const amiante = sections.filter((s) => s.type === 'amiante');
+    expect(amiante).toHaveLength(1);
+    expect(amiante[0]?.plage).toEqual([1, 5]);
+  });
+
+  it('s’arrête quand le rapport suivant commence', () => {
+    const { sections } = decouper([
+      page(1, 'Constat de repérage Amiante n° 24/IMO/0154N', '1. – Les conclusions'),
+      page(2, 'Constat de repérage Amiante n° 24/IMO/0154N', '5. – Résultats détaillés'),
+      page(3, 'Etat relatif à la présence de termites n° 24/IMO/0154N', 'A. - Désignation')
+    ]);
+    expect(sections.find((s) => s.type === 'amiante')?.plage).toEqual([1, 2]);
+    expect(sections.find((s) => s.type === 'termites')?.plage).toEqual([3, 3]);
+  });
+});

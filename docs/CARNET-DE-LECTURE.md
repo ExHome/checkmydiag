@@ -1108,8 +1108,22 @@ qui suit — la liste détaillée des matériaux, leur état de conservation, le
 parties non visitées — n'est jamais lu.
 
 Le verdict reste juste, puisqu'il vient de la conclusion. Mais quand il y a de
-l'amiante, le produit ne peut pas dire **lequel**. C'est le prochain chantier,
-et la pagination annoncée est la mesure qui le guidera.
+l'amiante, le produit ne peut pas dire **lequel**.
+
+**Corrigé le 19/08/2026, et la cause était d'une simplicité désarmante** : ce
+générateur répète son titre courant en tête de chaque page — « Constat de
+repérage Amiante n° … » — et ce titre ne figurait pas parmi les marqueurs de
+découpe. La section se fermait donc après la conclusion, et les neuf pages
+suivantes partaient hors section.
+
+**Mesuré après : 1 volet sur 20 reste plus court que ce qu'il annonce**, contre
+20 sur 20. La justesse ne bouge pas — 19 sur 19 —, et aucun autre diagnostic
+n'est touché : électricité 30/31, gaz 3/3, plomb 13/13.
+
+Une leçon de méthode : le défaut était invisible depuis les verdicts, qui
+restaient justes. C'est **le rapport lui-même qui a dénoncé la découpe**, en
+annonçant sa pagination. Un document qui se compte est un document qui se
+vérifie — à chercher ailleurs.
 
 ---
 

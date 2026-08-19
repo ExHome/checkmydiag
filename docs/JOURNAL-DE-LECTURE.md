@@ -25,9 +25,10 @@ Dropbox.
 - **Reprendre par** : les diagnostics classiques, la copropriété passant après
   — décision du 19/08. Faits : plomb (22/22), amiante (19/19), termites
   (38/38), ERP (PPR approuvé annoncé 7 fois sur 7). Les six diagnostics
-  classiques sont désormais mesurés. Prochain chantier : **élargir la découpe
-  de l'amiante**, 15 pages trop courte sur 20 volets sur 20 — c'est ce qui
-  empêche de dire QUEL matériau contient de l'amiante.
+  classiques sont désormais mesurés, et la découpe de l'amiante est corrigée
+  (1 volet trop court sur 20, contre 20). **Prochain chantier** : vérifier si
+  d'autres volets se ferment trop tôt, en cherchant les rapports qui annoncent
+  leur pagination.
 - **À vérifier au texte avant tout contrôle** : le calendrier du DPE collectif
   (L126-31 du CCH, article 158 de la loi n° 2021-1104), cité par le DTG mais
   pas encore relu à la source. Légifrance n'a pas répondu aux adresses
@@ -67,6 +68,7 @@ Ce que « lu » veut dire ici : le volet a été lu page à page, pas survolé.
 | Termites | 2 | **38/38** verdicts justes | le moteur est bon ; zone d'arrêté et mérule restent à restituer |
 | Surface | 2 | — | Boutin et Carrez distingués |
 | **DTG** | **1** | — | structure, curatifs, rubriques vides et cinq points de vigilance ; notions versées au produit |
+| *(découpe)* | 20 volets amiante | **1/20** trop courts, contre 20/20 | le titre courant manquait aux marqueurs |
 | PPPT, DTA, RAAT, DPE collectif | 0 | — | **jamais ouverts** — le corpus en contient |
 
 ## Ce que chaque séance a rapporté
@@ -259,3 +261,26 @@ garage souterrain, une cuve à combustible) et non imposées au logement ; la
 ce qui en fait un défaut structurel et non un oubli ; et un **risque nouveau**
 apparaît dans les ERP 2024, le recul du trait de côte, que Verrière ne connaît
 pas.
+
+### 19 août 2026 — la découpe de l'amiante, et un rapport qui se compte
+
+La cause du volet tronqué était d'une simplicité désarmante : ce générateur
+répète son titre courant en tête de chaque page — « Constat de repérage
+Amiante n° … » — et ce titre **ne figurait pas parmi les marqueurs de
+découpe**. La section se fermait après la conclusion ; les neuf pages
+suivantes, celles qui portent la liste des matériaux, partaient hors section.
+
+**Mesuré : 1 volet sur 20 reste plus court que ce qu'il annonce, contre 20 sur
+20.** La justesse ne bouge pas (19/19) et aucun autre diagnostic n'est touché —
+électricité 30/31, gaz 3/3, plomb 13/13. Deux tests verrouillent la découpe,
+dont un qui vérifie qu'elle s'arrête bien au rapport suivant.
+
+**La leçon de méthode** : ce défaut était invisible depuis les verdicts, qui
+restaient justes. C'est le rapport lui-même qui a dénoncé la découpe, en
+annonçant sa pagination. Un document qui se compte est un document qui se
+vérifie — à chercher ailleurs.
+
+**Incident à noter** : la correction de la fausse alerte amiante, livrée une
+heure plus tôt, avait été écrasée dans `reperages.ts` par une autre session
+travaillant sur le même dépôt. Les trois tests écrits pour elle l'ont
+immédiatement signalé. Sans eux, la régression repartait en production.
