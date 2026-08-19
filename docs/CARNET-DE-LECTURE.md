@@ -1660,6 +1660,35 @@ rattrapee en trois secondes.
 
 ---
 
+## 39 · La mesure compensatoire, expliquee au lecteur
+
+Le §24 avait etabli le fait : un rapport peut relever une anomalie, la dire
+compensee, et conclure malgre tout que l'installation n'en comporte pas. Les
+deux disent vrai. Restait a l'expliquer a celui qui lit.
+
+C'est fait, et la notion tient en trois idees :
+
+1. **Ce que c'est** — une prise dont la broche de terre n'est pas raccordee est
+   une anomalie ; si un differentiel 30 mA protege tout le logement, il coupera
+   le courant avant que le choc ne devienne dangereux.
+2. **Compense ne veut pas dire repare** — la broche reste a raccorder le jour ou
+   l'on refait l'electricite. Ce n'est simplement pas une urgence.
+3. **La compensation peut tomber** — si le dispositif qui protege disparait, un
+   differentiel remplace par un modele inadapte par exemple, le defaut redevient
+   entier. Ce qui rend l'installation sure aujourd'hui doit etre maintenu.
+
+La troisieme n'est ecrite dans aucun rapport. Elle se deduit du mecanisme, et
+c'est exactement le genre de chose qu'un lecteur ne peut pas trouver seul.
+
+### Et le point ouvert de l'electricite se referme
+
+Le carnet gardait en suspens « un rapport dont la synthese dit aucune anomalie
+et dont le volet porte six libelles ». La mesure du jour repond : **24 verdicts
+electricite justes sur 24**, zero faux. Ce cas etait le catalogue non reconnu
+(§35), et il a disparu avec lui.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion
@@ -1695,13 +1724,12 @@ rattrapee en trois secondes.
       compare ce que le document déclare à ce que le verdict en retient, sur le
       modèle de `argile-detectee.local.ts`. Fait pour l'argile ; reste le plomb,
       l'électricité, les termites.
-- [ ] Un rapport dont la synthèse dit « aucune anomalie » et dont le volet
-      porte six libellés d'anomalie : contradiction du rapport, ou section qui
-      déborde sur le volet voisin ? Un cas sur trente et un, à ouvrir.
+- [x] ~~Un rapport dont la synthèse dit « aucune anomalie » et dont le volet
+      porte six libellés.~~ → c'était le catalogue non reconnu (§35). 24/24.
 - [ ] `conclusionDe` ne rattache pas la conclusion électricité que la page de
       synthèse écrit pourtant en clair sur ce même dossier : gain à prendre.
-- [x] ~~Les mesures compensatoires de l'électricité : les dire.~~ → fait, §24.
-      Reste à les expliquer au lecteur, dans les notions.
+- [x] ~~Les mesures compensatoires : les dire, puis les expliquer.~~ → fait,
+      §24 et §39.
 - [ ] Vente ou location : le dossier le dit (Boutin/Carrez, 6 ans/3 ans). En
       déduire la nature de la transaction, et adapter toutes les validités.
 - [ ] Vérifier au texte officiel le calendrier du DPE collectif — article

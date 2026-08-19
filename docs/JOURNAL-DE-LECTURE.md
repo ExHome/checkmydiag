@@ -40,9 +40,9 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
   (L126-31 du CCH, article 158 de la loi n° 2021-1104), cité par le DTG mais
   pas encore relu à la source. Légifrance n'a pas répondu aux adresses
   essayées le 19/08.
-- Restent ouverts sur l'électricité : la contradiction synthèse/volet d'un
-  rapport, le rattachement de la synthèse, les mesures compensatoires, et la
-  déduction vente/location.
+- Sur l'électricité, il ne reste que **la déduction vente/location** : la
+  contradiction synthèse/volet était le catalogue non reconnu (24/24 depuis),
+  et les mesures compensatoires sont dites et expliquées (§39).
 
 ## Compteurs
 
@@ -56,7 +56,7 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 | Tests de non-régression ajoutés | 39 |
 | Fausses alertes de mes propres sondes, écartées avant annonce | 6 |
 | Sondes de justesse écrites | 2 |
-| Notions métier versées au produit | 4 |
+| Notions métier versées au produit | 5 |
 | Fiches versées à la Dropbox | 2 |
 | Points ouverts au carnet | 15 |
 
@@ -460,3 +460,21 @@ délimitée par arrêté », ou le numéro quand il y en a un.
 Le premier test a échoué sur une **apostrophe typographique** — la garde
 consignée le matin même. Une règle écrite ne se respecte pas toute seule ; le
 test l'a rattrapée en trois secondes.
+
+### 19 août 2026, nuit — la mesure compensatoire, expliquée
+
+Un rapport peut relever une anomalie, la dire compensée, et conclure que
+l'installation n'en comporte pas : les deux disent vrai. Le produit le disait
+déjà ; il l'explique désormais, en trois idées — ce que c'est, que **compensé
+ne veut pas dire réparé**, et que **la compensation peut tomber** si le
+dispositif qui protège disparaît.
+
+La troisième n'est écrite dans aucun rapport. Elle se déduit du mécanisme, et
+c'est ce qu'un lecteur ne peut pas trouver seul.
+
+**Un point ouvert se referme** : le rapport dont la synthèse disait « aucune
+anomalie » quand le volet portait six libellés était le catalogue non reconnu.
+Mesure du cycle : **24 verdicts électricité justes sur 24**, 5 sur 5 au gaz.
+
+Un rapport termites lu au passage, juste, sans rien à corriger — la correction
+de l'arrêté préfectoral du cycle précédent s'y vérifie.

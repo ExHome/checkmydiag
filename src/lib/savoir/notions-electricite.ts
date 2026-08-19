@@ -133,5 +133,64 @@ export const NOTIONS_ELECTRICITE: Notion[] = [
         phrase: 'Le rapport électrique est là, mais le détail par point de contrôle n’a pas pu être lu.'
       };
     }
+  },
+
+  {
+    id: 'mesure-compensatoire',
+    terme: 'Mesure compensatoire',
+    definition:
+      'Un défaut que le rapport signale, mais dont le danger est déjà limité par un autre dispositif de l’installation.',
+    niveaux: [
+      {
+        rang: 2,
+        bribes: [
+          {
+            texte:
+              'Exemple lu dans des rapports réels : une prise dont la broche de terre n’est pas raccordée. C’est une anomalie — mais si un différentiel 30 mA protège tout le logement, il coupera le courant avant que le choc ne devienne dangereux.',
+            clips: ['differentiel', 'mise-a-la-terre']
+          },
+          {
+            texte:
+              'Le rapport l’écrit alors entre parenthèses : « cette anomalie fait l’objet d’une mesure compensatoire pour limiter le risque de choc électrique ».'
+          }
+        ]
+      },
+      {
+        rang: 3,
+        bribes: [
+          {
+            texte:
+              'C’est pourquoi un rapport peut relever un point et conclure malgré tout que l’installation ne comporte pas d’anomalie : les deux ne se contredisent pas.'
+          },
+          {
+            texte:
+              'Compensé ne veut pas dire réparé. La broche reste à raccorder le jour où l’on refait l’électricité ; simplement, ce n’est pas une urgence.'
+          }
+        ]
+      },
+      {
+        rang: 4,
+        bribes: [
+          {
+            texte:
+              'La compensation tombe si le dispositif qui protège disparaît — un différentiel remplacé par un modèle inadapté, par exemple. Ce qui la rend sûre aujourd’hui doit être maintenu.'
+          }
+        ]
+      }
+    ],
+    chezMoi: (diagnostics) => {
+      const elec = trouve(diagnostics, 'electricite');
+      if (!elec) return { etat: 'absent' };
+      const compense = elec.faits.find((f) => f.libelle === 'Point relevé, mais compensé');
+      return compense
+        ? {
+            etat: 'dit',
+            phrase: `Votre rapport signale un point compensé : ${compense.valeur.toLowerCase()}. Le risque est limité, mais le défaut reste à traiter lors de futurs travaux.`
+          }
+        : {
+            etat: 'muet',
+            phrase: 'Votre rapport ne signale aucune mesure compensatoire.'
+          };
+    }
   }
 ];
