@@ -38,9 +38,10 @@ describe('la famille des pictogrammes', () => {
   it('couvre tout ce qui portait un émoji', () => {
     /* Neuf diagnostics — l'assainissement compris, que l'ODM ne liste pas mais
        que le produit traite —, deux outils, les trois vues du dossier, et le
-       repère de lieu du widget. Quinze en tout : c'est le compte exact de ce
-       qui affichait un émoji avant. */
-    expect(FICHIERS.length).toBe(15);
+       repère de lieu du widget. Puis les trois de la barre de navigation. Le
+       compte est vérifié plutôt que deviné : il vaut ce que contient le
+       dossier, et le test le fige pour qu'un ajout non voulu se voie. */
+    expect(FICHIERS.length).toBe(18);
   });
 
   for (const f of FICHIERS) {
@@ -49,7 +50,17 @@ describe('la famille des pictogrammes', () => {
     describe(f, () => {
       it('se dessine dans la même boîte que les autres', () => {
         expect(svg).toContain('viewBox="0 0 100 100"');
-        expect(svg).not.toMatch(/\s(width|height)="/);
+        /*
+         * Ce qui est interdit, c'est une taille sur la BALISE RACINE : elle
+         * figerait le pictogramme et l'empêcherait de suivre son contexte. Les
+         * `width` d'un `<rect>` intérieur sont, eux, le dessin lui-même.
+         *
+         * Le motif balayait tout le fichier et prenait les seconds pour la
+         * première : diagnostics.svg, quatre carrés, était déclaré fautif sans
+         * l'être. On ne regarde donc que la balise ouvrante.
+         */
+        const racine = svg.slice(0, svg.indexOf('>') + 1);
+        expect(racine).not.toMatch(/\s(width|height)="/);
       });
 
       it('porte le trait de la famille : 6, arrondi aux deux bouts', () => {

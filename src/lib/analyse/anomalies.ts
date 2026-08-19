@@ -8,10 +8,14 @@
  *
  * Ce que les rapports d'électricité et de gaz contiennent réellement :
  *
- *  - une **liste de domaines en anomalie**, sous la phrase « Anomalies avérées
- *    selon les domaines suivants ». Elle n'est imprimée que s'il y en a : c'est
- *    donc un constat, pas un formulaire — contrairement aux deux conclusions
- *    contradictoires imprimées côte à côte, dont la bonne est cochée à la main.
+ *  - une **liste de domaines sous « Anomalies avérées selon les domaines
+ *    suivants »**. On l'a longtemps prise pour un constat. Elle n'en est pas
+ *    un : c'est le catalogue des domaines de l'arrêté du 28 septembre 2017,
+ *    imprimé à l'identique dans TOUS les rapports, y compris ceux qui ne
+ *    relèvent aucune anomalie. Mesuré sur le corpus : six domaines, les mêmes,
+ *    dans 100 % des volets — 14 sur 14 des rapports sans anomalie comme 17 sur
+ *    17 de ceux qui en ont. La croire faisait annoncer un défaut électrique à
+ *    quatorze logements sur trente et un qui n'en avaient aucun.
  *  - des **libellés précis** (« B7.3 a — L'enveloppe d'au moins un matériel
  *    est… »), qui nomment le défaut exact.
  *  - les **parties non visitées** et les **points non vérifiés**, qui disent
@@ -57,7 +61,46 @@ function estBruit(ligne: string): boolean {
  * se termine, pas où la phrase s'achève. On recolle donc jusqu'au point final,
  * sans quoi une anomalie compterait pour trois.
  */
-export function domainesEnAnomalie(lignes: string[]): string[] {
+/**
+ * Les libellés du catalogue, tels que l'arrêté du 28 septembre 2017 les nomme.
+ *
+ * Ils sont génériques — ils décrivent le domaine contrôlé, jamais un défaut
+ * constaté chez quelqu'un. C'est à cela qu'on les reconnaît, et c'est pour cela
+ * qu'ils ne peuvent pas servir de verdict.
+ */
+const DOMAINES_CATALOGUE: RegExp[] = [
+  /appareil g[ée]n[ée]ral de commande et de protection/i,
+  /protection diff[ée]rentiel.{0,60}(?:origine de l'installation|prise de terre)/i,
+  /protection contre les surintensit[ée]s adapt[ée]/i,
+  /liaison [ée]quipotentielle.{0,80}(?:douche|baignoire)/i,
+  /risques? de contacts? directs?.{0,60}sous tension/i,
+  /mat[ée]riels? [ée]lectriques? v[ée]tustes?/i
+];
+
+/**
+ * Cette liste est-elle le catalogue imprimé, ou un vrai constat ?
+ *
+ * Le catalogue énumère les domaines de la norme, tous, dans l'ordre. Un constat
+ * n'en nomme que les concernés. Le seuil est à cinq domaines canoniques sur
+ * six : en dessous, on lit un constat ; au-dessus, on lit le formulaire.
+ *
+ * Le doute profite au silence. Un générateur qui n'imprimerait que les domaines
+ * réellement en anomalie, et qui en aurait cinq, serait tu à tort — on perd une
+ * information, on n'en invente pas une fausse.
+ */
+export function estCatalogueDomaines(domaines: string[]): boolean {
+  if (domaines.length < 5) return false;
+  const texte = domaines.join(' | ');
+  return DOMAINES_CATALOGUE.filter((m) => m.test(texte)).length >= 5;
+}
+
+/**
+ * Les domaines que le rapport énumère — vidés quand ce n'est que le catalogue.
+ *
+ * `brutes` rend la liste telle qu'elle est imprimée, pour les sondes et pour
+ * qui veut la voir ; `domainesEnAnomalie` ne rend que ce qui constate.
+ */
+export function domainesEnumeres(lignes: string[]): string[] {
   const debut = lignes.findIndex((l) => DEBUT_DOMAINES.test(l));
   if (debut === -1) return [];
 
@@ -83,6 +126,12 @@ export function domainesEnAnomalie(lignes: string[]): string[] {
   // Un même domaine peut être répété par la mise en page (colonne reprise en
   // haut de page suivante).
   return [...new Set(domaines)].filter((d) => d.length > 12);
+}
+
+/** Les domaines réellement constatés : rien, quand la liste est le catalogue. */
+export function domainesEnAnomalie(lignes: string[]): string[] {
+  const enumeres = domainesEnumeres(lignes);
+  return estCatalogueDomaines(enumeres) ? [] : enumeres;
 }
 
 function nettoyer(texte: string): string {

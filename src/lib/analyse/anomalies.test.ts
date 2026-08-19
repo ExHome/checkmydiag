@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { domainesEnAnomalie, libellesPrecis, nonVisites, releverTout } from './anomalies';
+import {
+  domainesEnAnomalie,
+  domainesEnumeres,
+  estCatalogueDomaines,
+  libellesPrecis,
+  nonVisites,
+  releverTout
+} from './anomalies';
 
 /**
  * Extrait fidèle d'un vrai rapport d'électricité (DGLM, novembre 2023), avec
@@ -35,11 +42,66 @@ const RAPPORT_ELEC = [
   '3 / 8'
 ];
 
-describe('les domaines en anomalie', () => {
-  const domaines = domainesEnAnomalie(RAPPORT_ELEC);
+/**
+ * Le même bloc, pris dans un rapport qui ne relève AUCUNE anomalie (DGLM,
+ * janvier 2023) — sa page de synthèse écrit « L'installation intérieure
+ * d'électricité ne comporte aucune anomalie ».
+ *
+ * Les libellés sont mot pour mot ceux du rapport précédent, qui en avait deux.
+ * C'est la preuve que cette liste est le catalogue de l'arrêté du 28 septembre
+ * 2017, pas un constat : mesuré sur le corpus, six domaines identiques dans
+ * 100 % des volets, avec ou sans anomalie.
+ */
+const RAPPORT_ELEC_SANS_ANOMALIE = [
+  '5. – Conclusion relative à l’évaluation des risques pouvant porter atteinte à la sécurité des personnes',
+  'L\'installation intérieure d\'électricité ne comporte aucune anomalie.',
+  'L\'installation intérieure d\'électricité comporte une ou des anomalies.',
+  'Anomalies avérées selon les domaines suivants :',
+  'L’appareil général de commande et de protection et de son accessibilité.',
+  'Dispositif de protection différentiel à l\'origine de l\'installation / Prise de terre et installation de mise à la',
+  'terre.',
+  'Dispositif de protection contre les surintensités adapté à la section des conducteurs, sur chaque circuit.',
+  'La liaison équipotentielle et installation électrique adaptées aux conditions particulières des locaux',
+  'contenant une douche ou une baignoire.',
+  'Matériels électriques présentant des risques de contacts directs avec des éléments sous tension -',
+  'Protection mécanique des conducteurs.',
+  'Matériels électriques vétustes, inadaptés à l\'usage.',
+  'Anomalies relatives aux installations particulières :',
+  'Appareils d\'utilisation situés dans des parties communes et alimentés depuis la partie privative ou',
+  'inversement.',
+  'Piscine privée, ou bassin de fontaine',
+  '6. – Avertissement particulier'
+];
+
+describe('le catalogue des domaines, qui n’est pas un constat', () => {
+  it('reconnaît la liste imprimée d’un rapport sans la moindre anomalie', () => {
+    expect(estCatalogueDomaines(domainesEnumeres(RAPPORT_ELEC_SANS_ANOMALIE))).toBe(true);
+  });
+
+  it('ne relève donc AUCUNE anomalie sur ce rapport', () => {
+    // La régression à ne jamais refaire : quatorze logements sur trente et un
+    // se voyaient annoncer un défaut électrique qu'ils n'avaient pas.
+    expect(domainesEnAnomalie(RAPPORT_ELEC_SANS_ANOMALIE)).toEqual([]);
+    expect(releverTout(RAPPORT_ELEC_SANS_ANOMALIE).filter((r) => r.genre === 'anomalie')).toEqual([]);
+  });
+
+  it('laisse passer une liste courte, qui elle constate vraiment', () => {
+    const constat = [
+      'Anomalies avérées selon les domaines suivants :',
+      'L’appareil général de commande et de protection et de son accessibilité.',
+      'Prise de terre et installation de mise à la terre.',
+      '6. – Avertissement particulier'
+    ];
+    expect(estCatalogueDomaines(domainesEnumeres(constat))).toBe(false);
+    expect(domainesEnAnomalie(constat)).toHaveLength(2);
+  });
+});
+
+describe('les domaines énumérés', () => {
+  const domaines = domainesEnumeres(RAPPORT_ELEC);
 
   it('les relève tous — cinq, pas trois', () => {
-    // C'est la règle du produit : si le rapport en liste cinq, on en rend cinq.
+    // C'est la règle de lecture : si le rapport en liste cinq, on en rend cinq.
     expect(domaines).toHaveLength(5);
   });
 
@@ -60,7 +122,7 @@ describe('les domaines en anomalie', () => {
   });
 
   it('ne dit rien quand le rapport ne liste aucun domaine', () => {
-    expect(domainesEnAnomalie(['Rapport sans anomalie', 'Néant'])).toEqual([]);
+    expect(domainesEnumeres(['Rapport sans anomalie', 'Néant'])).toEqual([]);
   });
 });
 

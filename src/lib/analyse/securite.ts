@@ -9,6 +9,7 @@
 import type { Diagnostic, Fait, Gravite } from '../modele';
 import { trouver, trouverToutes } from './texte';
 import { releverTout } from './anomalies';
+import { rubrique as rubriqueDe } from './rubriques';
 import { dateFrancaise, OU_REFAIRE, reformesElectricite } from './reformes';
 
 /** Thèmes de la norme XC 16-600, dans l'ordre où ils apparaissent au rapport. */
@@ -73,10 +74,16 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
   const anomalies = releves.filter((r) => r.genre === 'anomalie');
 
   /*
-   * La liste « Anomalies avérées selon les domaines suivants » tranche ce que
-   * la case cochée ne permettait pas de lire : elle n'est imprimée que s'il y
-   * a des anomalies. Là où le moteur se taisait — deux rapports lus sur
-   * vingt-neuf —, il peut désormais conclure, et dire lesquelles.
+   * Ce qui tranche, et ce qui ne tranche pas.
+   *
+   * La liste « Anomalies avérées selon les domaines suivants » ne tranche
+   * RIEN : c'est le catalogue de l'arrêté, imprimé dans tous les rapports
+   * (voir `estCatalogueDomaines`). Seuls les libellés « Libellé de l'anomalie :
+   * B7.3 a … » constatent quelque chose — ils ne sont écrits que s'il y a
+   * quelque chose à écrire.
+   *
+   * Quand rien ne constate, on se tait : la page de synthèse du dossier, elle,
+   * écrit la conclusion en clair, et `depuisSynthese` la reprend.
    */
   const etat = conclusion.etat === 'inconnu' && anomalies.length > 0 ? 'anomalies' : conclusion.etat;
   const total = conclusion.nombre ?? (anomalies.length > 0 ? anomalies.length : null);
@@ -226,9 +233,9 @@ export function analyserGaz(lignes: string[], plage: [number, number]): Diagnost
   const releves = releverTout(lignes);
   const anomalies = releves.filter((r) => r.genre === 'anomalie');
 
-  // Même levier que pour l'électricité : la liste des domaines tranche là où
-  // la case cochée reste illisible. Le gaz en avait le plus besoin — six
-  // rapports sur sept restaient sans verdict.
+  // Le gaz, lui, a une vraie rubrique de constat — « E. — Anomalies
+  // identifiées » —, et c'est elle qui tranche. La liste de domaines partagée
+  // avec l'électricité ne conclut pas : voir `estCatalogueDomaines`.
   /*
    * Une rubrique d'anomalies présente et VIDE conclut.
    *
@@ -424,21 +431,25 @@ function typesDuTableau(lignes: string[]): string {
  * jour même.
  */
 function sectionAnomalies(lignes: string[]): { types: string } | null {
-  /* « E. - Anomalies identifiées » : le point ET le tiret, séparés d'espaces. */
-  const debut = lignes.findIndex((l) =>
-    /^\s*E\s*[.\-–]?\s*[-–]?\s*Anomalies identifi[ée]es/i.test(l)
-  );
-  if (debut < 0) return null;
-
-  const apres = lignes.findIndex(
-    (l, i) => i > debut && /^\s*[FG]\s*[.\-–]?\s*[-–]?\s/.test(l)
-  );
-  const zone = lignes.slice(debut + 1, apres > debut ? apres : undefined);
+  /*
+   * La rubrique est trouvée par son INTITULÉ, plus par sa lettre.
+   *
+   * L'ancien repérage cherchait « ^E. - Anomalies identifiées » et bornait au
+   * premier F ou G venu. Mesuré sur le corpus, ce bornage ramassait les
+   * rappels réglementaires qui suivent le tableau — la légende des types A1,
+   * A2 et DGI — c'est-à-dire précisément les mots qu'on vient y chercher.
+   *
+   * Chercher dans la rubrique nommée supprime la classe entière de ces fautes :
+   * l'écart mesuré à l'entrée est désormais nul, et les six rapports où la
+   * rubrique débordait sur la suivante sont bornés juste.
+   */
+  const r = rubriqueDe(lignes, 'gaz', 'anomalies');
+  if (!r) return null;
 
   const trouves = new Set<string>();
-  for (const ligne of zone) {
+  for (const ligne of r.lignes) {
     /* Une ligne qui cite trois types ou plus est la légende de la colonne. */
-    const cites = ligne.match(/\b(?:A1|A2|DGI|32c)\b/gi) ?? [];
+    const cites = ligne.match(/(?:A1|A2|DGI|32c)/gi) ?? [];
     if (cites.length >= 3) continue;
     for (const t of cites) trouves.add(t.toUpperCase());
   }
@@ -488,22 +499,41 @@ export interface EssaisGaz {
  * l'appareil, que le rapport ne commente jamais.
  */
 export function essaisGaz(lignes: string[]): EssaisGaz {
-  const debut = lignes.findIndex((l) =>
-    /^\s*D\s*[.\-–]?\s*[-–]?\s*Identification des appareils/i.test(l)
-  );
-  const fin = lignes.findIndex((l, i) => i > debut && /^\s*E\s*[.\-–]?\s*[-–]?\s/.test(l));
-  const zone = debut >= 0 ? lignes.slice(debut, fin > debut ? fin : undefined) : lignes;
+  /* Même correction que pour les anomalies : la rubrique se trouve par son
+     intitulé, et se borne à la partie suivante quelle que soit sa lettre. À
+     défaut de rubrique, on cherche dans tout le volet plutôt que de renoncer —
+     deux rapports du corpus n'ont pas cette partie. */
+  const r = rubriqueDe(lignes, 'gaz', 'appareils');
+  const zone = r ? r.lignes : lignes;
 
   const mentions = zone.filter((l) => /Mesure\s*CO/i.test(l));
   const nonRealisee = mentions.some((l) => /Mesure\s*CO\s*:?\s*Non/i.test(l));
-  const realisee = mentions.some((l) => /Mesure\s*CO\s*:?\s*(?:Oui|R[ée]alis)/i.test(l));
+  /*
+   * Une mesure CHIFFRÉE est une mesure réalisée.
+   *
+   * Aucun rapport du corpus n'écrit « Mesure CO : Oui ». Ils écrivent la
+   * valeur — « Mesure CO : 0 ppm » — et neuf volets sur dix-huit la portent
+   * ainsi. Aucun n'était compté : le produit annonçait « le monoxyde de
+   * carbone n'a pas été mesuré » à des lecteurs dont le rapport donnait le
+   * relevé, et ce relevé était rassurant.
+   */
+  const realisee = mentions.some((l) =>
+    /Mesure\s*CO\s*:?\s*(?:Oui|R[ée]alis|[\d.,]+\s*ppm)/i.test(l)
+  );
 
-  const taux = trouver(zone, /Mesure\s*CO[^\n]{0,30}?(\d{1,5})\s*ppm/i);
+  /*
+   * Le taux, virgule comprise.
+   *
+   * « 0,3 ppm » se lisait « 3 ppm » : le motif n'acceptait que des chiffres
+   * entiers, et ramassait ce qui suivait la virgule. Un facteur dix sur une
+   * mesure de monoxyde de carbone.
+   */
+  const taux = trouver(zone, /Mesure\s*CO[^\n]{0,30}?(\d{1,5}(?:[.,]\d{1,2})?)\s*ppm/i);
   const annee = trouver(zone, /Installation\s*:?\s*(19\d{2}|20\d{2})\b/i);
 
   return {
     co: realisee ? 'realisee' : nonRealisee ? 'non-realisee' : null,
-    ppm: taux?.[1] ? Number(taux[1]) : null,
+    ppm: taux?.[1] ? Number(taux[1].replace(',', '.')) : null,
     aLArret: zone.some((l) => /Fonctionnement\s*:?\s*Appareil\s+[àa]\s+l['’]arr[êe]t/i.test(l)),
     anneeAppareil: annee?.[1] ? Number(annee[1]) : null
   };
@@ -554,6 +584,19 @@ export function pointsNonVerifies(lignes: string[]): PointNonVerifie[] {
    * aussi — « 1. L'appareil général de commande » — et un motif qui se contente
    * du numéro coupe la rubrique dès sa première ligne. C'est ce qu'il faisait,
    * et il ne remontait donc jamais rien.
+   *
+   * ── Pourquoi le découpage en rubriques ne sert PAS ici ──────────────────
+   *
+   * On a essayé, et il fallait le mesurer plutôt que le supposer : borner à la
+   * partie suivante du rapport paraît plus solide que ce tiret. Ça ne l'est
+   * pas. Les domaines de ce tableau portent des numéros de la MÊME famille que
+   * les parties de l'arrêté — 1, 2, 3 — et le squelette ne peut pas les
+   * distinguer. La borne tombait alors sur le premier domaine, c'est-à-dire une
+   * ligne après le début, et la liste redevenait vide.
+   *
+   * L'outil des rubriques vaut pour les parties d'un rapport, pas pour ce qui
+   * vit à l'intérieur d'une partie. Le tiret reste, et il est ici le bon
+   * critère : les parties le portent, les domaines non.
    */
   const fin = lignes.findIndex((l, i) => i > debut && /^\s*\d+\s*[.]?\s*[–—-]\s+/.test(l));
   const zone = lignes.slice(debut + 1, fin > debut ? fin : undefined);

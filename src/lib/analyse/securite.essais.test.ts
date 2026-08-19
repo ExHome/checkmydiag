@@ -116,3 +116,30 @@ describe('aucune anomalie, mais aucune mesure de CO', () => {
     expect(libelles).toContain('Appareil installé en');
   });
 });
+
+/**
+ * La mesure de monoxyde de carbone, telle que les rapports l'écrivent.
+ *
+ * Relevé sur le corpus : aucun rapport n'écrit « Mesure CO : Oui ». Ils
+ * écrivent la valeur — « Mesure CO : 0 ppm » — et le produit les comptait
+ * toutes comme non mesurées.
+ */
+describe('la mesure de CO chiffrée', () => {
+  it('reconnaît une mesure écrite en ppm', () => {
+    const e = essaisGaz(['D. — Identification des appareils', 'Chaudière SAUNIER DUVAL Mesure CO : 0 ppm']);
+    expect(e.co).toBe('realisee');
+    expect(e.ppm).toBe(0);
+  });
+
+  it('lit la virgule décimale sans la perdre', () => {
+    /* « 0,3 ppm » se lisait « 3 ppm » : dix fois trop. */
+    const e = essaisGaz(['D. — Identification des appareils', 'Chaudière SAUNIER DUVAL Mesure CO : 0,3 ppm']);
+    expect(e.ppm).toBe(0.3);
+  });
+
+  it('sait encore qu’une mesure annoncée « Non réalisée » ne l’est pas', () => {
+    const e = essaisGaz(['D. — Identification des appareils', 'Cuisinière SAUTER Mesure CO : Non réalisée']);
+    expect(e.co).toBe('non-realisee');
+    expect(e.ppm).toBeNull();
+  });
+});
