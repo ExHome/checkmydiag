@@ -428,19 +428,32 @@
     gap: var(--e3);
     margin: 0;
     padding: var(--e4);
-    background: var(--vert-100);
-    border-left: 3px solid var(--vert-500);
+    /*
+     * Une couleur FRANCHE, pas un lavis.
+     *
+     * Ce bloc portait un vert #e6ede4 : un vert grisatre, si pale qu'il ne
+     * disait ni « vert » ni « fond » -- exactement ce qu'on ne veut plus voir.
+     * Or c'est la promesse la plus importante du produit : le document ne part
+     * nulle part. Elle merite un aplat plein.
+     *
+     * Vert profond, encre ivoire : le contraste est maximal, l'affirmation
+     * aussi.
+     */
+    background: var(--vert-profond);
+    border: none;
     border-radius: var(--rayon);
     font-size: var(--t-petit);
     line-height: 1.5;
-    color: var(--vert-700);
+    color: var(--ivoire);
   }
 
   .promesse-locale svg {
     flex: none;
     width: 22px;
     height: 22px;
-    color: var(--vert-500);
+    /* Sur l'aplat vert, le bouclier passe en sauge : il se detache sans
+       crier, et le sauge est du socle de marque. */
+    color: var(--vert-sauge);
   }
 
   .promesse-locale strong {
@@ -454,16 +467,18 @@
     padding: 0;
     background: none;
     border: none;
-    border-bottom: 1px solid var(--vert-500);
+    /* Le lien vit maintenant sur l'aplat vert : encre ivoire, souligne du
+       meme trait. Sans quoi il disparaissait dans le fond. */
+    border-bottom: 1px solid rgb(247 246 242 / 55%);
     font: inherit;
     font-weight: 600;
-    color: var(--vert-500);
+    color: var(--ivoire);
     cursor: pointer;
   }
 
   .verifier:hover {
-    color: var(--vert-700);
-    border-bottom-color: var(--vert-700);
+    color: #ffffff;
+    border-bottom-color: #ffffff;
   }
 
   .preuve {

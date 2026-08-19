@@ -132,63 +132,68 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
 
   /* DPE — le vert énergétique, comme le spectre A→G de l'étiquette. */
   dpe: {
-    fond: '#f7f6f2',
-    surface: '#ffffff',
-    texte: '#0a2b23',
-    texteDoux: '#4a5a55',
+    fond: '#192e1b',
+    surface: '#233c21',
+    texte: '#f7f6f2',
+    texteDoux: '#c6cac3',
     accentVif: '#649c4b',
-    accent: '#2e6a35',
-    surAccent: '#ffffff',
-    trait: '#779576'
+    accent: '#99be88',
+    surAccent: '#0a2b23',
+    trait: '#4a5a4a',
+    sombre: true
   },
 
   /* Électricité — le tableau technique, et son jaune de phase. */
   electricite: {
     /* Le jaune tient 7,3 sur le fond : il n'a besoin d'aucune version claire. */
-    fond: '#f7f6f2',
-    surface: '#ffffff',
-    texte: '#0a2b23',
-    texteDoux: '#4a5a55',
+    fond: '#38391f',
+    surface: '#524d27',
+    texte: '#f7f6f2',
+    texteDoux: '#cdccc4',
     accentVif: '#ffd45d',
-    accent: '#7d550a',
-    surAccent: '#ffffff',
-    trait: '#779576'
+    accent: '#ffd45d',
+    surAccent: '#0a2b23',
+    trait: '#62634d',
+    sombre: true
   },
 
   /* Amiante — le violet du prélèvement en laboratoire. */
   amiante: {
-    fond: '#f7f6f2',
-    surface: '#ffffff',
-    texte: '#0a2b23',
-    texteDoux: '#4a5a55',
+    fond: '#232934',
+    surface: '#323547',
+    texte: '#f7f6f2',
+    texteDoux: '#c8c9c8',
     accentVif: '#9884c8',
-    accent: '#5b477e',
-    surAccent: '#ffffff',
-    trait: '#779576'
+    accent: '#baadda',
+    surAccent: '#0a2b23',
+    trait: '#52565e',
+    sombre: true
   },
 
   /* Plomb — le vert du réactif. */
   plomb: {
-    fond: '#f7f6f2',
-    surface: '#ffffff',
-    texte: '#0a2b23',
-    texteDoux: '#4a5a55',
+    fond: '#2a281f',
+    surface: '#3c3427',
+    texte: '#f7f6f2',
+    texteDoux: '#cac9c4',
     accentVif: '#b8825f',
-    accent: '#70462f',
-    surAccent: '#ffffff',
-    trait: '#779576'
+    accent: '#cfab94',
+    surAccent: '#0a2b23',
+    trait: '#57554d',
+    sombre: true
   },
 
   /* Gaz — la flamme de la chaudière. */
   gaz: {
-    fond: '#f7f6f2',
-    surface: '#ffffff',
-    texte: '#0a2b23',
-    texteDoux: '#4a5a55',
+    fond: '#172c30',
+    surface: '#203a41',
+    texte: '#f7f6f2',
+    texteDoux: '#c6cac7',
     accentVif: '#5c95b4',
-    accent: '#245d7b',
-    surAccent: '#ffffff',
-    trait: '#779576'
+    accent: '#92b8cd',
+    surAccent: '#0a2b23',
+    trait: '#48585b',
+    sombre: true
   },
 
   /*
@@ -199,26 +204,28 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
    * bois chaud plutôt qu'une terre brûlée.
    */
   termites: {
-    fond: '#f7f6f2',
-    surface: '#ffffff',
-    texte: '#0a2b23',
-    texteDoux: '#4a5a55',
+    fond: '#302512',
+    surface: '#462f14',
+    texte: '#f7f6f2',
+    texteDoux: '#cbc8c1',
     accentVif: '#da721e',
-    accent: '#a04107',
-    surAccent: '#ffffff',
-    trait: '#779576'
+    accent: '#e6a168',
+    surAccent: '#0a2b23',
+    trait: '#5c5343',
+    sombre: true
   },
 
   /* Risques — l'eau et la roche : le teal profond de la coupe géologique. */
   erp: {
-    fond: '#f7f6f2',
-    surface: '#ffffff',
-    texte: '#0a2b23',
-    texteDoux: '#4a5a55',
+    fond: '#1b2c2e',
+    surface: '#26393e',
+    texte: '#f7f6f2',
+    texteDoux: '#c7cac7',
     accentVif: '#7193a8',
-    accent: '#354f60',
-    surAccent: '#ffffff',
-    trait: '#779576'
+    accent: '#a0b7c5',
+    surAccent: '#0a2b23',
+    trait: '#4b5859',
+    sombre: true
   },
 
   /*
@@ -229,26 +236,28 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
    * sur fond sombre, comme un calque rétroéclairé.
    */
   carrez: {
-    fond: '#f7f6f2',
-    surface: '#ffffff',
-    texte: '#0a2b23',
-    texteDoux: '#4a5a55',
+    fond: '#132e29',
+    surface: '#1a3c36',
+    texte: '#f7f6f2',
+    texteDoux: '#c5cac6',
     accentVif: '#469c90',
-    accent: '#216961',
-    surAccent: '#ffffff',
-    trait: '#779576'
+    accent: '#85beb6',
+    surAccent: '#0a2b23',
+    trait: '#455a55',
+    sombre: true
   },
 
   /* Assainissement — l'eau, encore, mais celle qui s'en va. */
   assainissement: {
-    fond: '#f7f6f2',
-    surface: '#ffffff',
-    texte: '#0a2b23',
-    texteDoux: '#4a5a55',
+    fond: '#212d39',
+    surface: '#2f3b4f',
+    texte: '#f7f6f2',
+    texteDoux: '#c8cac9',
     accentVif: '#5c95b4',
-    accent: '#245d7b',
-    surAccent: '#ffffff',
-    trait: '#779576'
+    accent: '#aab3e8',
+    surAccent: '#0a2b23',
+    trait: '#505962',
+    sombre: true
   },
 
   /*
@@ -260,26 +269,28 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
    * quand les neuf autres portent une couleur de métier.
    */
   dicodiag: {
-    fond: '#f7f6f2',
-    surface: '#ffffff',
-    texte: '#0a2b23',
-    texteDoux: '#4a5a55',
+    fond: '#1c2d24',
+    surface: '#273b2f',
+    texte: '#f7f6f2',
+    texteDoux: '#c7cac5',
     accentVif: '#729779',
-    accent: '#12463b',
-    surAccent: '#ffffff',
-    trait: '#779576'
+    accent: '#a1b9a5',
+    surAccent: '#0a2b23',
+    trait: '#4c5951',
+    sombre: true
   },
 
   /* En clair — les réponses, dans le citron doux de l'accent. */
   'en-clair': {
-    fond: '#f7f6f2',
-    surface: '#ffffff',
-    texte: '#0a2b23',
-    texteDoux: '#4a5a55',
+    fond: '#202c18',
+    surface: '#2e3a1d',
+    texte: '#f7f6f2',
+    texteDoux: '#c8cac2',
     accentVif: '#88963b',
-    accent: '#586322',
-    surAccent: '#ffffff',
-    trait: '#779576'
+    accent: '#aeb87a',
+    surAccent: '#0a2b23',
+    trait: '#4f5848',
+    sombre: true
   }
 };
 
