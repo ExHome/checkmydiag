@@ -22,6 +22,11 @@ Dropbox.
 - Dernier document lu en entier : un **DTG** de mise en copropriété (35 pages)
   — le premier document d'immeuble du carnet. Avant lui, deux DDT complets
   (location et vente) pour le volet **électricité**.
+- **Périmètre fixé le 19/08** : les diagnostics classiques de la **vente et de
+  la location**, et eux seuls. RAAT, avant-démolition, DTA, DTG et PPPT
+  attendent leur tour — ordre de passage, pas abandon. Les rapports d'essai de
+  laboratoire, factures et attestations ne sont pas des diagnostics et ne se
+  lisent pas.
 - **Reprendre par** : les diagnostics classiques, la copropriété passant après
   — décision du 19/08. Faits : plomb (22/22), amiante (19/19), termites
   (38/38), ERP (PPR approuvé annoncé 7 fois sur 7). Les six diagnostics
@@ -41,8 +46,8 @@ Dropbox.
 
 | | Total |
 |---|---|
-| Rapports lus en entier | 3 |
-| Volets lus page à page | 13 |
+| Rapports lus en entier | 5 |
+| Volets lus page à page | 15 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 5 majeures |
 | Corrections livrées | 8 |
@@ -284,3 +289,26 @@ vérifie — à chercher ailleurs.
 heure plus tôt, avait été écrasée dans `reperages.ts` par une autre session
 travaillant sur le même dépôt. Les trois tests écrits pour elle l'ont
 immédiatement signalé. Sans eux, la régression repartait en production.
+
+### 19 août 2026 — lecture continue, trois cas d'espèce
+
+Deux dossiers de plus, lus dans le périmètre vente/location.
+
+**Un ERP de 111 pages dont 83 de règlement de PPR annexé** : le rapport en
+occupe douze, le reste est le règlement de prévention, l'arrêté préfectoral et
+la fiche d'information, signés des services de l'État. La découpe a raison de
+ne pas les rattacher — mais il faudra savoir le dire, plutôt que de laisser
+croire à 99 pages non exploitées.
+
+**Deux plans de prévention sur le même risque** : un PPRn Inondation approuvé
+en 2005 et un autre prescrit en 2012, tous deux concernant le bien, l'un avec
+prescriptions de travaux et l'autre sans. Lire « le » PPR au singulier fait
+perdre la plus contraignante des deux.
+
+**Les sites pollués voisins se comptent par centaines** : 2, 100 et 118 sur les
+trois dossiers lus. À Bordeaux intra-muros, la centaine est la règle — annoncer
+le chiffre sans repère serait alarmiste.
+
+Un RAAT a été ouvert puis écarté : il relève du code du travail et d'un
+programme de repérage bien plus large (dix familles au lieu des listes A et B).
+Il est hors périmètre pour le moment, et inscrit au registre comme « vu ».

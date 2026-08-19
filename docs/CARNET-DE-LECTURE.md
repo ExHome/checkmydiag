@@ -1282,6 +1282,45 @@ défaut structurel de la chaîne — le vendeur ignore que cette case existe.
 
 ---
 
+## 31 · Trois cas d'espèce, relevés en poursuivant la lecture
+
+Lecture cumulative : on ne note que ce que le dossier ajoute.
+
+### Un ERP peut peser cent onze pages, dont quatre-vingt-trois de règlement
+
+Un dossier de location de Bordeaux ne contient **qu'un seul diagnostic** —
+l'état des risques — mais le PDF fait 111 pages : le rapport en occupe 12, et
+le **règlement du PPR Inondation y est annexé en entier**, 83 pages signées de
+la Direction Départementale de l'Équipement, plus l'arrêté préfectoral et la
+fiche d'information acquéreur-locataire.
+
+La découpe a raison de ne pas les rattacher — ce sont des textes officiels
+tiers, pas le rapport. Mais un produit qui affiche « 99 pages non exploitées »
+inquiéterait à tort. Il faut savoir dire : *c'est un état des risques, et son
+règlement de prévention est joint.*
+
+### Deux plans de prévention peuvent coexister sur le même risque
+
+```
+PPRn  Inondation  approuvé   07/07/2005  oui  oui   p.3
+PPRn  Inondation  prescrit   02/03/2012  oui  non   p.3
+```
+
+Le même bien est concerné par **deux procédures simultanées** — l'une approuvée
+avec prescriptions de travaux, l'autre prescrite sans. Lire « le » PPR au
+singulier fait perdre la moitié de l'information, et probablement la plus
+contraignante des deux.
+
+### Les sites pollués voisins se comptent par centaines
+
+Trois dossiers lus, trois ordres de grandeur : **2**, **100** et **118** sites
+Basias, Basol ou ICPE à moins de 500 mètres. Le chiffre figure en petits
+caractères dans un tableau « donné à titre informatif », et rien ne dit au
+lecteur ce qu'est un ordre de grandeur normal. À Bordeaux intra-muros, la
+centaine est la règle : l'annoncer sans repère serait alarmiste.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion
@@ -1359,3 +1398,7 @@ défaut structurel de la chaîne — le vendeur ignore que cette case existe.
       liste comme des cas de figure, le produit pourrait alarmer à tort.
 - [ ] Le recul du trait de côte : ligne nouvelle des ERP 2024, inconnue du
       produit.
+- [ ] Lire les DEUX lignes de PPR quand un risque en porte plusieurs
+      (approuvé + prescrit) : le produit n'en retient qu'une.
+- [ ] Savoir dire qu'un règlement de PPR est annexé, plutôt que de compter des
+      pages non exploitées.
