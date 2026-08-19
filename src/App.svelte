@@ -523,10 +523,17 @@
    */
   .tuile-logo {
     flex: none;
-    width: 48px;
-    height: 54px;
-    /* PISTE A : une ombre portee douce detache le prisme de son fond. */
-    filter: drop-shadow(0 3px 10px rgb(0 0 0 / 42%));
+    width: 60px;
+    height: 68px;
+    /*
+     * Une ombre portee, et elle n'est pas cosmetique.
+     *
+     * La moitie pleine du prisme est un vert tres sombre. Posee sur le vert de
+     * l'ecran d'accueil, elle a presque la meme valeur : le logo perdait sa
+     * silhouette et se diluait dans le fond. L'ombre lui rend son contour sans
+     * toucher a ses couleurs.
+     */
+    filter: drop-shadow(0 4px 12px rgb(0 0 0 / 45%));
   }
 
   /*

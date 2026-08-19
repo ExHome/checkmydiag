@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 112" role="img" aria-label="Verrière">
   <title>Verrière</title>
   <defs>
-    <linearGradient id="l0" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#1fb4b8"/><stop offset="1" stop-color="#3fc19f"/></linearGradient>
-    <linearGradient id="l1" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#43c58d"/><stop offset="1" stop-color="#4fc667"/></linearGradient>
-    <linearGradient id="l2" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#5bc562"/><stop offset="1" stop-color="#9ed352"/></linearGradient>
-    <linearGradient id="l3" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#c3dd3a"/><stop offset="1" stop-color="#f6dc3b"/></linearGradient>
-    <linearGradient id="l4" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#f9d227"/><stop offset="1" stop-color="#f88704"/></linearGradient>
-    <linearGradient id="l5" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#fb4a02"/><stop offset="1" stop-color="#e81c03"/></linearGradient>
+    <linearGradient id="l0" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#2f8f43"/><stop offset="1" stop-color="#4caf3d"/></linearGradient>
+    <linearGradient id="l1" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#4caf3d"/><stop offset="1" stop-color="#7cc23a"/></linearGradient>
+    <linearGradient id="l2" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#7cc23a"/><stop offset="1" stop-color="#c3d438"/></linearGradient>
+    <linearGradient id="l3" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#c3d438"/><stop offset="1" stop-color="#fbd232"/></linearGradient>
+    <linearGradient id="l4" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#fbd232"/><stop offset="1" stop-color="#f28c28"/></linearGradient>
+    <linearGradient id="l5" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#f28c28"/><stop offset="1" stop-color="#e53935"/></linearGradient>
     <!-- La moitié pleine n'est pas un aplat : elle a une facette éclairée. -->
     <linearGradient id="plein" x1="0.15" y1="0" x2="0.9" y2="0.85">
       <stop offset="0" stop-color="#15503f"/>
@@ -27,7 +27,17 @@
   <g filter="url(#ombre)">
     <!-- L'information avant qu'on la regarde : opaque, dense. -->
     <path d="M50.0 4.0L4.0 54.0L50.0 104.0Z" fill="url(#plein)"/>
-    <!-- La lumière décomposée : six lames convergeant vers la pointe. -->
+    <!-- La lumiere decomposee : six lames convergeant vers la pointe.
+
+       Les six teintes sont interpolees sur les QUATRE couleurs spectrales de la
+       palette officielle : vert #4CAF3D, jaune #FBD232, orange #F28C28, rouge
+       #E53935. Le spectre va donc du vert au rouge, comme l'etiquette DPE dont
+       ce prisme est l'embleme.
+
+       Il commencait par un turquoise #1fb4b8 qui n'appartient a aucune charte
+       Verriere, et finissait a l'orange sans jamais atteindre le rouge. Le
+       logo en sortait froid et delave, la ou le brand board le montre
+       eclatant. -->
     <path d="M50.0 4.0L96.0 54.0L50.0 25.7Z" fill="url(#l0)"/><!-- turquoise -->
     <path d="M50.0 25.7L96.0 54.0L50.0 41.0Z" fill="url(#l1)"/><!-- vert d’eau -->
     <path d="M50.0 41.0L96.0 54.0L50.0 54.0Z" fill="url(#l2)"/><!-- vert -->
