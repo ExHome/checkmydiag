@@ -1413,6 +1413,46 @@ cette annonce partout où elle existe.
 
 ---
 
+## 34 · Le rapport déclare l'argile, et ne la dit pas
+
+C'est le constat le plus net de toute la lecture, et il tient en trois nombres.
+Sur 63 états des risques :
+
+| | |
+|---|---|
+| déclarent l'argile dans leur tableau de synthèse | **55** |
+| la citent dans leurs **conclusions rédigées** | **3** |
+| Verrière la dit | **42** |
+
+**Cinquante-deux rapports sur cinquante-cinq taisent, dans leur conclusion, un
+risque qu'ils déclarent quatre pages plus haut.**
+
+Ce n'est pas une négligence du diagnostiqueur : les conclusions rédigées ne
+reprennent que les **procédures officielles** — PPR, sismicité, radon — et le
+retrait-gonflement des argiles vit dans le second tableau, celui qui porte la
+mention « donné à titre informatif ». La chaîne est ainsi faite.
+
+Sauf que c'est le **risque n°1 de la région**, qu'il fissure les maisons, et
+qu'il déclenche depuis 2024 une obligation d'étude géotechnique et
+d'attestation RGA (§18). Un lecteur qui s'arrête aux conclusions — c'est-à-dire
+tout le monde — ne saura jamais que son bien est en aléa moyen ou fort.
+
+**Verrière le dit dans 42 cas sur 55.** C'est ce qu'elle fait de plus utile, et
+c'est mesurable. Il reste treize dossiers où elle se tait : c'est là qu'est la
+prochaine marge.
+
+### Deux vérifications faites en chemin
+
+Sur un bien de Bordeaux dont le tableau porte `PPRn Inondation approuvé
+05/12/2023 | **non** | non`, le produit **ne dit pas** l'inondation : la
+commune a un plan, le bien n'y est pas. La correction du formulaire (§32) tient
+donc dans les deux sens — elle n'a pas rendu le produit sourd.
+
+Et l'omission de l'argile en conclusion est confirmée **deux fois sur deux** sur
+les dossiers lus intégralement, avant même la mesure.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion
@@ -1499,3 +1539,5 @@ cette annonce partout où elle existe.
       la zone 3. À trancher au texte avant de changer quoi que ce soit.
 - [ ] Un dernier volet sur 63 annonce encore un risque technologique : trouver
       d'où il vient.
+- [ ] Treize dossiers déclarent l'argile au tableau sans que Verrière la dise :
+      trouver quelle écriture leur échappe.
