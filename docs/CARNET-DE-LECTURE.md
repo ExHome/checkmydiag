@@ -2348,6 +2348,62 @@ faut le relire avec la meme suspicion.
 
 ---
 
+## 56 · Sept logements se voyaient annoncer des termites qu'ils n'ont pas
+
+La plus grave fausse alerte depuis celle de l'amiante, et elle tenait a trois
+mots.
+
+Le tableau D du rapport termites porte **deux constats differents**, dans les
+memes colonnes :
+
+```
+Entree /Cuisine/Sejour  Sol - parquet   Absence d'indices d'infestation de termites
+Charpente               Bois            Presence d'indices d'infestation d'AUTRES
+                                        AGENTS de degradation biologique
+```
+
+Le moteur cherchait « presence d'indices d'infestation » sans regarder **de
+quoi**. Une vrillette dans une plinthe, un capricorne dans une charpente, de la
+merule derriere un mur : tous devenaient des termites.
+
+### La mesure
+
+| | |
+|---|---|
+| volets termites lus | 45 |
+| le produit annoncait une infestation de termites | **9** |
+| le tableau nomme vraiment des termites | **2** |
+| le volet parle d'autres agents | 6 |
+| **fausses alertes** | **7** |
+
+Sept logements sur neuf annonces. Apres correction : **deux annonces, zero
+fausse alerte** — exactement les deux dossiers ou le tableau nomme les termites.
+
+### Pourquoi ce n'est pas une nuance
+
+Les termites obligent a une **declaration en mairie** (articles L. 126-4 et
+L. 126-5 du code de la construction), ils engagent la valeur du bien, et leur
+presence se transmet a l'acquereur. Une vrillette dans une plinthe, non : c'est
+un desagrement, pas une procedure.
+
+Et le rapport lui-meme est formel — le dossier lu porte **vingt-sept lignes**
+« Absence d'indices d'infestation de termites », **zero** ligne de presence, et
+sa synthese conclut « il n'a pas ete repere d'indice d'infestation de termites ».
+Le produit annoncait pourtant une alerte.
+
+### Ce que cela apprend
+
+Le §5 notait que ce volet « se lit bien » et que « les rubriques sont
+explicites ». C'etait vrai — le tableau EST lisible. Mais lisible ne veut pas
+dire lu : le moteur y prenait un mot sur trois.
+
+**Une mesure de justesse ne se fait pas une fois pour toutes.** Les termites
+avaient ete mesures a 38 sur 38 — mais sur la conclusion GLOBALE du volet, pas
+sur le detail des zones. Le detail, lui, n'avait jamais ete confronte au
+rapport.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion
@@ -2448,3 +2504,6 @@ faut le relire avec la meme suspicion.
       trouve, le radon, qui n'avait aucune notion.
 - [x] ~~Le seuil plomb de 1 mg/cm².~~ → fait, §53, avec la strategie de
       mesurage et le sens de « non mesuree ».
+- [ ] Le volet « autres agents de dégradation biologique » a sa propre
+      conclusion, que le produit ne lit pas : la restituer, puisqu'elle existe
+      dans 6 dossiers sur 45.

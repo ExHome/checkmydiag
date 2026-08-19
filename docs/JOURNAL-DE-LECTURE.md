@@ -64,9 +64,11 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 - **Le filtre de sélection est corrigé** (§55) : il excluait tout dossier
   contenant un constat amiante de vente. La lecture ramène de nouveau des
   dossiers complets.
-- **Prochain chantier** : le premier cas de **termites infestés** du corpus a
-  été rencontré — vérifier que le produit dit tout ce qu'il faut (déclaration
-  en mairie, traitement, zones touchées).
+- **La confusion termites / autres agents est corrigée** (§56) : 7 fausses
+  alertes sur 9 annonces, ramenées à zéro.
+- **Prochain chantier** : le volet « autres agents de dégradation biologique » a
+  sa propre conclusion, que le produit ne lit pas — elle existe dans 6 dossiers
+  sur 45.
 
 ## Compteurs
 
@@ -76,8 +78,8 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 | Volets lus page à page | 24 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 6 majeures |
-| Corrections livrées | 29 |
-| Tests de non-régression ajoutés | 84 |
+| Corrections livrées | 30 |
+| Tests de non-régression ajoutés | 86 |
 | Fausses alertes de mes propres sondes, écartées avant annonce | 6 |
 | Sondes de justesse écrites | 2 |
 | Notions métier versées au produit | 6 |
@@ -96,7 +98,7 @@ Ce que « lu » veut dire ici : le volet a été lu page à page, pas survolé.
 | ERP | 9 | **1/63** faux risque techno (contre 49/63) ; argile rattrapée **55/55** | le formulaire vierge n'est plus lu comme un constat |
 | Plomb | 2 | **22/22** verdicts justes | le moteur est bon ; la validité du constat positif était fausse, corrigée |
 | Amiante | 2 | **19/19** verdicts justes (contre 2/19) | fausse alerte massive corrigée ; la découpe reste 15 pages trop courte |
-| Termites | 2 | **38/38** verdicts justes | le moteur est bon ; zone d'arrêté et mérule restent à restituer |
+| Termites | 3 | **38/38** verdicts justes | le moteur est bon ; zone d'arrêté et mérule restent à restituer |
 | Surface | 2 | — | Boutin et Carrez distingués |
 | **DTG** | **1** | — | structure, curatifs, rubriques vides et cinq points de vigilance ; notions versées au produit |
 | *(découpe)* | 20 volets amiante | **1/20** trop courts, contre 20/20 | le titre courant manquait aux marqueurs |
@@ -804,3 +806,27 @@ examinés sans en retenir un seul.
 C'est le piège du texte imprimé partout, sixième forme, et la première qui se
 retourne contre **l'instrument** plutôt que contre le produit. Un outil de mesure
 obéit aux mêmes règles que ce qu'il mesure.
+
+### 20 août 2026, nuit — sept logements, des termites qu'ils n'ont pas
+
+La plus grave fausse alerte depuis celle de l'amiante, et elle tenait à trois
+mots. Le tableau D porte deux constats dans les mêmes colonnes : celui des
+**termites**, et celui des **« autres agents de dégradation biologique »** —
+vrillettes, capricornes, mérule. Le moteur cherchait « présence d'indices
+d'infestation » sans regarder de quoi.
+
+**Mesure sur 45 volets** : le produit annonçait 9 infestations de termites, le
+tableau n'en nomme que **2**. Sept fausses alertes. Après correction : deux
+annonces, **zéro fausse alerte**.
+
+Ce n'est pas une nuance : les termites obligent à une déclaration en mairie et
+engagent la valeur du bien ; une vrillette dans une plinthe, non.
+
+Le dossier qui a servi de révélateur porte **27 lignes « Absence d'indices
+d'infestation de termites », zéro de présence**, et sa synthèse conclut qu'il
+n'a rien été repéré. Le produit annonçait une alerte.
+
+**Ce que cela apprend** : les termites avaient été mesurés à 38 sur 38 — mais sur
+la conclusion **globale** du volet, jamais sur le détail des zones. Une mesure de
+justesse ne se fait pas une fois pour toutes : elle ne vaut que pour ce qu'elle
+a regardé.

@@ -266,3 +266,41 @@ describe('l’arrêté préfectoral du termites', () => {
     expect(d.faits.find((f) => f.libelle === 'Arrêté préfectoral')?.valeur).toBe('33-2019-07-23-004');
   });
 });
+
+describe('les termites et les « autres agents »', () => {
+  /*
+   * Le même tableau porte deux constats : celui des TERMITES, et celui des
+   * « autres agents de dégradation biologique » — vrillettes, capricornes,
+   * mérule. Compter les seconds comme des termites annonçait une infestation à
+   * des logements qui n'en ont aucune : sept fausses alertes sur neuf annonces,
+   * mesurées sur quarante-cinq volets.
+   *
+   * Ce n'est pas une nuance : les termites obligent à une déclaration en mairie
+   * et engagent la valeur du bien ; une vrillette dans une plinthe, non.
+   */
+  const TABLEAU = (...suite: string[]) => [
+    'Etat relatif à la présence de termites n° 24/IMO/0154N',
+    'D. - Identification des bâtiments et des parties de bâtiments visités',
+    'Entrée /Cuisine/Séjour Sol - parquet flottant Absence d’indices d’infestation de termites',
+    'Plinthes - Bois Absence d’indices d’infestation de termites',
+    ...suite
+  ];
+
+  it('n’annonce pas de termites quand ce sont d’autres agents', () => {
+    const d = analyserTermites(
+      TABLEAU('Charpente Présence d’indices d’infestation d’autres agents de dégradation biologique'),
+      [1, 9]
+    );
+    expect(d.verdict).toMatch(/Aucun indice d’infestation de termites/);
+    expect(d.gravite).toBe('bon');
+  });
+
+  it('annonce bien les termites quand le tableau les nomme', () => {
+    const d = analyserTermites(
+      TABLEAU('Charpente Présence d’indices d’infestation de termites'),
+      [1, 9]
+    );
+    expect(d.verdict).toMatch(/indices d’infestation de termites ont été relevés/);
+    expect(d.gravite).toBe('alerte');
+  });
+});

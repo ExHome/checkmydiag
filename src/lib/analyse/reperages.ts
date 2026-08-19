@@ -22,7 +22,23 @@ function zonesTermites(lignes: string[]): { nom: string; etat: Gravite; detail?:
     if (piece?.[1]) pieceCourante = piece[1].trim();
 
     const nom = pieceCourante || 'Zone contrôlée';
-    const presence = colle.includes('presencedindices') || /pr[ée]sence d.indice/i.test(ligne);
+    /*
+     * « Presence d'indices d'infestation » — mais de QUOI ?
+     *
+     * Le meme tableau porte deux constats : celui des TERMITES, et celui des
+     * « autres agents de degradation biologique » — vrillettes, capricornes,
+     * merule. Compter les seconds comme des termites annoncait une infestation
+     * a des logements qui n'en ont aucune : sept fausses alertes sur neuf
+     * annonces, mesurees sur quarante-cinq volets.
+     *
+     * Ce n'est pas une nuance : les termites obligent a une declaration en
+     * mairie et engagent la valeur du bien ; une vrillette dans une plinthe,
+     * non. On exige donc que la ligne nomme les termites.
+     */
+    const parleDeTermites = /termites?/i.test(ligne);
+    const presence =
+      parleDeTermites &&
+      (colle.includes('presencedindices') || /pr[ée]sence d.indice/i.test(ligne));
     const existante = zones.find((z) => z.nom === nom);
 
     if (existante) {
