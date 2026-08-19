@@ -175,12 +175,25 @@
     ];
   });
 
-  /** La pastille d'état posée sur la tuile : une forme, puis une couleur. */
-  function pastille(d: Diagnostic): { signe: string; classe: string } | null {
-    if (d.gravite === 'alerte') return { signe: '▲', classe: 'alerte' };
-    if (d.gravite === 'attention') return { signe: '●', classe: 'attention' };
-    if (d.gravite === 'bon') return { signe: '✓', classe: 'bon' };
-    return null;
+  /**
+   * La pastille d'etat posee sur la tuile : une forme, puis une couleur.
+   *
+   * ── LE QUATRIEME ETAT N'AVAIT AUCUN RENDU ─────────────────────────────────
+   *
+   * Le moteur produit bel et bien quatre etats, et le quatrieme -- « neutre »,
+   * c'est-a-dire « ce rapport n'a pas pu etre lu » -- ressortait ici en `null`.
+   * Une tuile sans pastille. Exactement la meme qu'un diagnostic dont il n'y a
+   * rien a dire.
+   *
+   * C'est la fausse reassurance que ce produit passe son temps a combattre :
+   * « on n'a pas su lire » se presentait comme « rien a signaler ». Le point
+   * d'interrogation le dit, et il le dit sur la grille -- l'ecran le plus vu.
+   */
+  function pastille(d: Diagnostic): { signe: string; classe: string; quoi: string } | null {
+    if (d.gravite === 'alerte') return { signe: '▲', classe: 'alerte', quoi: 'à régler' };
+    if (d.gravite === 'attention') return { signe: '●', classe: 'attention', quoi: 'à vérifier' };
+    if (d.gravite === 'bon') return { signe: '✓', classe: 'bon', quoi: 'rien à signaler' };
+    return { signe: '?', classe: 'inconnu', quoi: 'non lu automatiquement' };
   }
 
   /**
@@ -1104,6 +1117,12 @@
 
   .pastille.bon {
     background: var(--petrole);
+  }
+
+  /* L'etat « non lu » : ni vert ni rouge, parce qu'il ne conclut rien. Un gris
+     franc, assez contraste pour se voir, assez neutre pour ne pas alarmer. */
+  .pastille.inconnu {
+    background: var(--gris);
   }
 
   .nom {
