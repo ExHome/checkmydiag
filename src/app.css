@@ -134,10 +134,25 @@
   --vert-300: #a6c39a;
   --vert-100: #e6ede4;
 
-  --or: #d6e66a;
-  --or-fonce: #6d7a2a;
-  --or-clair: #d6e66a;
-  --or-pale: rgb(214 230 106 / 18%);
+  /*
+   * ── LE CITRON QUITTE LES ROLES VISIBLES (19/08/2026) ──────────────────────
+   *
+   * « Je ne veux plus voir ce vert clair. »
+   *
+   * Ces quatre noms viennent de l'ancienne charte, quand ils portaient de l'or.
+   * L'or ayant ete refuse, ils avaient ete remappes sur le citron #d6e66a --
+   * et comme ils servent partout (filets, bordures, fonds de pastille, encre
+   * d'accent), ce vert-jaune acide ressortait dans 117 endroits de l'ecran.
+   *
+   * Ils reprennent le socle de la marque : le vert Verriere pour ce qui porte
+   * une encre ou un accent, un gris-vert tres doux pour ce qui ne fait que
+   * separer. Le citron reste defini plus haut comme couleur de charte, mais
+   * plus rien ne l'affiche.
+   */
+  --or: #12463b;
+  --or-fonce: #0a2b23;
+  --or-clair: #a6c39a;
+  --or-pale: rgb(18 70 59 / 10%);
 
   /*
    * L'ivoire est le fond, le vert profond est l'encre.
@@ -181,7 +196,7 @@
      plus doux — il ne porte aucune information. */
   --trait: #779576;
   --trait-fin: #dfe6db;
-  --trait-or: rgb(214 230 106 / 60%);
+  --trait-or: #dfe6db;
 
   /*
    * Les trois états, sur fond clair.
