@@ -18,7 +18,7 @@ import { reperer } from './reperes';
 import { conclusionDe, graviteDe, lireSynthese, type BlocSynthese } from './synthese';
 import { nombre, trouver } from './texte';
 import { dateDuRapport } from './dateRapport';
-import { lireTransaction, validite, type Transaction } from './transaction';
+import { lireTransaction, type Transaction } from './transaction';
 import type { PointDeControle } from '../modele';
 
 type Extracteur = (lignes: string[], plage: [number, number]) => Diagnostic;
@@ -393,7 +393,6 @@ function preciserValidite(diag: Diagnostic, transaction: Transaction | null): Di
         vente ? 'valable qu’un an, ce dossier étant un dossier de vente' : 'valable six ans, ce dossier étant un dossier de location'
       );
 
-    if (/valable qu[’']un an [àa] la vente, six ans [àa] la location/i.test(phrase)) return phrase;
     return phrase;
   });
 

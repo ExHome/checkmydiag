@@ -2507,3 +2507,59 @@ rapport.
 - [ ] Le volet « autres agents de dégradation biologique » a sa propre
       conclusion, que le produit ne lit pas : la restituer, puisqu'elle existe
       dans 6 dossiers sur 45.
+
+## 57 · Les autres agents du bois : le rapport dit lui-même ce que son constat vaut
+
+Le §56 les avait écartés du compte des termites — sept logements sur neuf se
+voyaient annoncer une infestation qu'ils n'avaient pas. Les écarter réparait le
+verdict, mais laissait le lecteur sans réponse : sa ligne « présence d'indices »
+existe, elle est dans son rapport, et le produit n'en disait plus rien.
+
+Ce qu'elle vaut, le rapport l'écrit, en note de bas de page — et c'est la seule
+fois du corpus où un document explique lui-même la portée de son propre constat :
+
+> **Note 1** : Les indices d'infestation des autres agents de dégradation
+> biologique du bois sont notés de manière générale **pour information** du
+> donneur d'ordre, il n'est donc **pas nécessaire d'en indiquer la nature, le
+> nombre et la localisation précise**. Si le donneur d'ordre le souhaite, il
+> fait réaliser une recherche de ces agents dont la méthodologie et les éléments
+> sont décrits dans la norme **NF P 03-200**.
+
+Trois choses en découlent, qui changent la façon de le restituer.
+
+**C'est un signalement, pas un diagnostic.** Le diagnostiqueur n'a pas cherché
+ces agents : il les a vus en cherchant les termites, et il le note. Détailler ce
+qu'il n'a pas relevé serait inventer.
+
+**Ni l'espèce, ni le nombre, ni le lieu ne sont dus.** Un produit qui promettrait
+« où » et « lesquels » promettrait ce que la norme n'exige pas — et le rapport ne
+le porte effectivement jamais.
+
+**Une prestation distincte existe** : la recherche NF P 03-200, à commander en
+plus. C'est la seule suite utile, et elle n'est écrite nulle part ailleurs que
+dans cette note que personne ne lit.
+
+### Ce que le produit dit maintenant
+
+Un fait, et deux phrases qui donnent la mesure :
+
+```
+Indices d’autres agents du bois : relevés
+  (insectes ou champignons — le rapport les signale pour information,
+   sans avoir à dire lesquels ni où)
+```
+
+**Mesuré sur 40 volets termites : 13 en portent, zéro écart avec le rapport,
+zéro passage en alerte à tort.** Un tiers des volets, donc — trois fois plus que
+l'estimation de départ, qui en donnait six sur quarante-cinq. Et un volet cumule
+les deux constats : de vrais termites *et* d'autres agents, ce qui confirme que
+les deux lignes du tableau sont bien indépendantes.
+
+### La leçon de méthode
+
+Corriger une fausse alerte laisse un trou. La ligne qui provoquait l'erreur ne
+disparaît pas du rapport : elle reste sous les yeux du lecteur, et si le produit
+se tait, c'est lui qui a l'air incomplet. **Une correction n'est finie que quand
+ce qu'on a cessé de dire à tort est dit juste.**
+
+---

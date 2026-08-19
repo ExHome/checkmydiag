@@ -48,6 +48,15 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 - **« Installation alimentée en gaz : NON » est dit** (§44) : 4 volets sur 17,
   avec la nuance selon qu'un DGI est constaté ou non.
 - **La contradiction interne du gaz est signalée** (§45) : 4 volets sur 18.
+- **Les autres agents du bois sont dits, avec leur réserve** (§57) : écartés du
+  compte des termites, ils ne sont plus tus pour autant — **13 volets sur 40**
+  en portent, et le rapport écrit lui-même que ce constat vaut « pour
+  information », sans nature ni lieu, une recherche NF P 03-200 existant à
+  part. Zéro écart, zéro alerte à tort.
+- **TypeScript strict est vert** : deux dettes soldées — un import mort laissé
+  par le chantier vente/location, une branche jamais atteinte dans
+  `preciserValidite`, et un littéral de test incomplet depuis l'ajout des
+  schémas.
 - **La couverture est mesurée** (§46) : 375 fiches sur 391 portent un verdict
   utile, soit **96 %**, sur cent dossiers analysés de bout en bout.
 - **Les huit fiches ERP muettes sont réglées** (§47) : elles étaient fabriquées
@@ -66,22 +75,26 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
   dossiers complets.
 - **La confusion termites / autres agents est corrigée** (§56) : 7 fausses
   alertes sur 9 annonces, ramenées à zéro.
-- **Prochain chantier** : le volet « autres agents de dégradation biologique » a
-  sa propre conclusion, que le produit ne lit pas — elle existe dans 6 dossiers
-  sur 45.
+
+> **Prochain chantier** : la **zone d'arrêté préfectoral** et le **risque
+> mérule**. Le volet termites porte « Situation du bien en regard d'un arrêté
+> préfectoral pris en application de l'article L 131-5 du CCH », et le même
+> arrêté délimite les zones de mérule (L. 131-3). Le produit ne dit ni l'un ni
+> l'autre. À mesurer d'abord : combien de volets portent ce champ, et combien
+> le renseignent autrement que par « Néant ».
 
 ## Compteurs
 
 | | Total |
 |---|---|
 | Rapports lus en entier | 9 |
-| Volets lus page à page | 24 |
+| Volets lus page à page | 25 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 6 majeures |
-| Corrections livrées | 30 |
-| Tests de non-régression ajoutés | 86 |
+| Corrections livrées | 33 |
+| Tests de non-régression ajoutés | 88 |
 | Fausses alertes de mes propres sondes, écartées avant annonce | 6 |
-| Sondes de justesse écrites | 2 |
+| Sondes de justesse écrites | 3 |
 | Notions métier versées au produit | 6 |
 | Fiches versées à la Dropbox | 2 |
 | Points ouverts au carnet | 15 |
@@ -98,7 +111,7 @@ Ce que « lu » veut dire ici : le volet a été lu page à page, pas survolé.
 | ERP | 9 | **1/63** faux risque techno (contre 49/63) ; argile rattrapée **55/55** | le formulaire vierge n'est plus lu comme un constat |
 | Plomb | 2 | **22/22** verdicts justes | le moteur est bon ; la validité du constat positif était fausse, corrigée |
 | Amiante | 2 | **19/19** verdicts justes (contre 2/19) | fausse alerte massive corrigée ; la découpe reste 15 pages trop courte |
-| Termites | 3 | **38/38** verdicts justes | le moteur est bon ; zone d'arrêté et mérule restent à restituer |
+| Termites | 4 | **38/38** verdicts justes, **40/40** sur les autres agents | les deux constats du tableau sont distingués et dits ; zone d'arrêté et mérule restent à restituer |
 | Surface | 2 | — | Boutin et Carrez distingués |
 | **DTG** | **1** | — | structure, curatifs, rubriques vides et cinq points de vigilance ; notions versées au produit |
 | *(découpe)* | 20 volets amiante | **1/20** trop courts, contre 20/20 | le titre courant manquait aux marqueurs |

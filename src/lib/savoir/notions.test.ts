@@ -202,7 +202,9 @@ describe('la notion du radon', () => {
         gravite: 'attention',
         faits: [],
         explication: [],
-        aFaire: []
+        aFaire: [],
+        schema: null,
+        pages: [1, 1] as [number, number]
       }
     ]);
     expect(chez?.etat).toBe('dit');

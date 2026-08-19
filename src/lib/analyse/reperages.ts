@@ -92,6 +92,38 @@ function voletsPresents(lignes: string[]): { cle: string; nom: string }[] {
   return VOLETS.filter((v) => v.motif.test(texte)).map(({ cle, nom }) => ({ cle, nom }));
 }
 
+/**
+ * Les « autres agents de degradation biologique » — et ce que le rapport en dit.
+ *
+ * Le tableau du termites porte deux constats dans les memes colonnes. Le second
+ * concerne les insectes du bois — vrillettes, capricornes, lyctus — et les
+ * champignons, merule comprise. Les compter comme des termites annoncait une
+ * infestation a sept logements sur neuf qui n'en avaient aucune ; ils sont
+ * desormais ecartes du compte des termites.
+ *
+ * Mais les ecarter ne veut pas dire les taire : six volets sur quarante-cinq en
+ * portent, et le lecteur qui voit « presence d'indices » dans son rapport veut
+ * savoir ce que cela vaut.
+ *
+ * Ce que cela vaut, le rapport l'ecrit lui-meme, en note de bas de page :
+ *
+ *   « Les indices d'infestation des autres agents de degradation biologique du
+ *   bois sont notes de maniere generale pour information du donneur d'ordre, il
+ *   n'est donc pas necessaire d'en indiquer la nature, le nombre et la
+ *   localisation precise. Si le donneur d'ordre le souhaite, il fait realiser
+ *   une recherche de ces agents dont la methodologie est decrite dans la norme
+ *   NF P 03-200. »
+ *
+ * Autrement dit : c'est un signalement, pas un diagnostic. Ni l'espece, ni
+ * l'etendue, ni le lieu ne sont dus — et une prestation distincte existe pour
+ * les etablir.
+ */
+export function indicesAutresAgents(lignes: string[]): boolean {
+  return lignes.some((l) =>
+    /pr[ée]sence d['’]indices? d['’]infestation d['’]autres agents de d[ée]gradation/i.test(l)
+  );
+}
+
 export function analyserTermites(lignes: string[], plage: [number, number]): Diagnostic {
   const zones = zonesTermites(lignes);
   const infestees = zones.filter((z) => z.etat === 'alerte');
@@ -182,6 +214,23 @@ export function analyserTermites(lignes: string[], plage: [number, number]): Dia
     });
   }
 
+  /*
+   * Les autres agents : dits, avec ce qu'ils valent.
+   *
+   * Ecartes du compte des termites, ils ne doivent pas disparaitre pour autant :
+   * six volets sur quarante-cinq en portent, et le lecteur qui lit « presence
+   * d'indices » dans son rapport a le droit de savoir ce que cela signifie.
+   */
+  const autresAgents = indicesAutresAgents(lignes);
+  if (autresAgents) {
+    faits.push({
+      libelle: 'Indices d’autres agents du bois',
+      valeur: 'relevés',
+      precision:
+        'insectes ou champignons — le rapport les signale pour information, sans avoir à dire lesquels ni où'
+    });
+  }
+
   return {
     type: 'termites',
     /* Le titre suit ce que le rapport couvre : « Termites » sur un état qui
@@ -200,6 +249,13 @@ export function analyserTermites(lignes: string[], plage: [number, number]): Dia
     analogie:
       'Les termites mangent le bois de l’intérieur et laissent la surface intacte. C’est la pomme véreuse : de l’extérieur, elle est parfaite.',
     explication: [
+      ...(autresAgents
+        ? [
+            'Votre rapport signale des indices d’autres agents du bois : insectes — vrillettes, capricornes, lyctus — ou champignons, dont la mérule. C’est un signalement, pas un diagnostic : la norme n’oblige le diagnostiqueur ni à dire lesquels, ni où, ni combien.',
+            'Si vous voulez le savoir, une recherche dédiée existe, avec sa propre méthode. Elle se commande en plus, et c’est elle qui identifie l’espèce et l’étendue.'
+          ]
+        : []),
+
       // « sans démontage » est au lexique : la réserve tient en deux mots.
       'Le diagnostiqueur cherche des traces : galeries dans le bois, cordons de terre le long des murs, bois qui sonne creux. Il regarde ce qui est visible, sans démontage.',
       'Il ne peut donc pas garantir qu’il n’y a aucun termite. Un mur fermé, une cave inaccessible, une charpente hors d’atteinte : tout cela reste invisible.',

@@ -303,4 +303,32 @@ describe('les termites et les « autres agents »', () => {
     expect(d.verdict).toMatch(/indices d’infestation de termites ont été relevés/);
     expect(d.gravite).toBe('alerte');
   });
+
+  /*
+   * Les écarter du compte des termites ne veut pas dire les taire.
+   *
+   * Six volets sur quarante-cinq portent ces indices, et le rapport dit
+   * lui-même en note de bas de page ce qu'ils valent : un signalement pour
+   * information, sans obligation d'en donner la nature, le nombre ni le lieu.
+   * C'est cette réserve que le produit doit restituer — pas un silence, pas
+   * une alerte.
+   */
+  it('signale les autres agents, avec la réserve que le rapport y met', () => {
+    const d = analyserTermites(
+      TABLEAU('Charpente Présence d’indices d’infestation d’autres agents de dégradation biologique'),
+      [1, 9]
+    );
+    const fait = d.faits.find((f) => /autres agents/i.test(f.libelle));
+    expect(fait?.valeur).toBe('relevés');
+    expect(fait?.precision).toMatch(/sans avoir à dire lesquels/);
+    expect(d.explication.join(' ')).toMatch(/recherche dédiée existe/);
+  });
+
+  it('ne parle pas des autres agents quand le rapport n’en relève aucun', () => {
+    const d = analyserTermites(
+      TABLEAU('Charpente Absence d’indices d’infestation d’autres agents de dégradation biologique'),
+      [1, 9]
+    );
+    expect(d.faits.some((f) => /autres agents/i.test(f.libelle))).toBe(false);
+  });
 });
