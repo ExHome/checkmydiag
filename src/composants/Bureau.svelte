@@ -210,12 +210,34 @@
   /** Dicodiag s'ouvre par-dessus ; « En clair » est un vrai lien de site. */
   let dicodiagOuvert = $state(false);
 
-  /** Les trois parties du dossier, en bas de l'écran comme sur un téléphone. */
-  const DOCK = [
-    { cle: 'point', picto: 'analyse', nom: 'L’analyse' },
-    { cle: 'rapport', picto: 'rapport', nom: 'Le rapport' },
-    { cle: 'conseil', picto: 'conseil', nom: 'Le conseil' }
+  /**
+   * LA BARRE DE NAVIGATION, à cinq entrées comme le visuel de référence.
+   *
+   * Elle en comptait trois, et c'étaient les trois VUES du dossier — un
+   * sélecteur de contenu, pas une navigation. Le visuel montre autre chose : une
+   * barre système, toujours présente, où l'on se repère.
+   *
+   * ── Le cinquième onglet, et pourquoi ce n'est pas « Profil » ─────────────
+   *
+   * Le visuel porte « Profil ». Verrière n'a pas de compte — « aucune création
+   * de compte obligatoire » est une promesse du kit publicitaire, pas un détail
+   * technique. Un onglet Profil s'ouvrirait donc sur rien, et l'ODM interdit
+   * d'inventer ce qui n'existe pas.
+   *
+   * La cinquième entrée est le RAPPORT d'origine : c'est ce que le produit a
+   * réellement, c'est ce que le lecteur cherche quand il doute d'une phrase, et
+   * c'est la promesse de la marque — le rapport reste la référence.
+   */
+  const NAVIGATION = [
+    { cle: 'accueil', picto: 'accueil', nom: 'Accueil' },
+    { cle: 'point', picto: 'diagnostics', nom: 'Diagnostics' },
+    { cle: 'alertes', picto: 'alertes', nom: 'Alertes' },
+    { cle: 'conseil', picto: 'conseil', nom: 'Conseils' },
+    { cle: 'rapport', picto: 'rapport', nom: 'Rapport' }
   ];
+
+  /** Ce qui demande une action avant de signer : le badge de l'onglet Alertes. */
+  const aRegler = $derived(compte.aRegler + compte.aVerifier);
 </script>
 
 <section class="bureau" aria-label="Votre dossier en un coup d’œil">
@@ -399,14 +421,25 @@
     {/each}
   </ul>
 
-  <nav class="dock" aria-label="Les parties du dossier">
-    {#each DOCK as d (d.cle)}
-      <button type="button" onclick={() => { auToucher(); surVue?.(d.cle); }}>
-        <span class="signe halo" aria-hidden="true">
+  <nav class="dock" aria-label="Navigation">
+    {#each NAVIGATION as d (d.cle)}
+      <button
+        type="button"
+        class:courant={d.cle === 'accueil'}
+        aria-current={d.cle === 'accueil' ? 'page' : undefined}
+        onclick={() => {
+          auToucher();
+          if (d.cle !== 'accueil') surVue?.(d.cle);
+        }}
+      >
+        <span class="signe" aria-hidden="true">
           <span
             class="picto"
             style="mask-image: url(./pictos/{d.picto}.svg); -webkit-mask-image: url(./pictos/{d.picto}.svg)"
           ></span>
+          {#if d.cle === 'alertes' && aRegler > 0}
+            <span class="badge">{aRegler}</span>
+          {/if}
         </span>
         <span class="nom">{d.nom}</span>
       </button>
@@ -864,9 +897,17 @@
   }
 
   .dock .picto {
-    width: 52%;
-    height: 52%;
+    width: 56%;
+    height: 56%;
     filter: none;
+  }
+
+  /* Cinq libellés sur la largeur d'un téléphone : le corps descend, sans quoi
+     « Diagnostics » passerait à la ligne. */
+  .dock .nom {
+    font-size: 10px;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
   }
 
   /*
@@ -1019,20 +1060,53 @@
    * du dessous. Ma sonde automatique n'avait rien vu — elle avait remonté la
    * chaîne jusqu'au pétrole et mesuré un couple qui n'existe pas à l'écran.
    */
+  /*
+   * La barre de navigation : cinq entrées de largeur égale, façon iOS.
+   *
+   * Elle en portait trois, espacées au centre — un sélecteur. Cinq entrées
+   * réparties sur toute la largeur se lisent comme une barre système : on sait
+   * où l'on est, et l'onglet courant se distingue sans qu'on ait à le chercher.
+   */
   .dock {
     margin-top: var(--e5);
-    display: flex;
-    justify-content: center;
-    gap: var(--e5);
-    padding: var(--e3);
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 2px;
+    padding: var(--e2) var(--e1);
     border-radius: 24px;
-    /* La barre du bas, façon iOS : un verre dépoli plutôt qu'un aplat. Elle
-       portait un voile de pétrole hérité de l'ancienne charte ; c'est le blanc
-       qui convient sur l'ivoire, comme dans le visuel de référence. */
-    background: rgb(255 255 255 / 72%);
+    background: rgb(255 255 255 / 82%);
     backdrop-filter: blur(20px);
     border: 1px solid var(--trait-fin);
     box-shadow: var(--ombre-lourde);
+  }
+
+  /* L'onglet courant : un aplat vert et son encre claire, comme le visuel. */
+  .dock button.courant .signe {
+    background: var(--vert-profond);
+    color: var(--ivoire);
+    box-shadow: none;
+  }
+
+  .dock button.courant .nom {
+    color: var(--vert-profond);
+    font-weight: 700;
+  }
+
+  /* Le badge : le nombre de points à régler, posé sur l'onglet Alertes. */
+  .badge {
+    position: absolute;
+    top: -4px;
+    right: -6px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: var(--alerte);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 18px;
+    text-align: center;
   }
 
   .dock button {
@@ -1047,9 +1121,10 @@
   }
 
   .dock .signe {
-    width: 56px;
-    height: 56px;
-    border-radius: 14px;
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
     display: grid;
     place-items: center;
     font-size: 24px;

@@ -148,10 +148,22 @@
    * visibles d'un coup : impossible de savoir où l'on est ni ce qui reste. On
    * la coupe donc en trois temps, dans l'ordre où on lit un dossier.
    */
+  /*
+   * Quatre vues depuis que la barre de navigation en compte cinq.
+   *
+   * « Alertes » n'ouvrait sur rien : l'onglet existait, la vue non. Elle porte
+   * ce que le lecteur cherche quand il clique sur un badge — ce qui demande une
+   * action avant de signer, et rien d'autre.
+   *
+   * Le verdict a donc quitté « L'analyse » pour venir ici. Ce n'est pas une
+   * duplication : c'est sa place. L'analyse montre les diagnostics un par un,
+   * les alertes montrent ce qui bloque. Deux questions, deux écrans.
+   */
   const VUES = [
-    { cle: 'point', nom: 'L’analyse', quoi: 'Chaque diagnostic, un par un' },
-    { cle: 'rapport', nom: 'Le rapport', quoi: 'Toutes les pages, expliquées' },
-    { cle: 'conseil', nom: 'Le conseil', quoi: 'Ce qu’il faut en faire' }
+    { cle: 'point', nom: 'Les diagnostics', quoi: 'Chacun, un par un' },
+    { cle: 'alertes', nom: 'Les alertes', quoi: 'Ce qui demande une action' },
+    { cle: 'conseil', nom: 'Le conseil', quoi: 'Ce qu’il faut en faire' },
+    { cle: 'rapport', nom: 'Le rapport', quoi: 'Toutes les pages, expliquées' }
   ];
 
   let vue = $state('point');
@@ -465,10 +477,13 @@
       {/each}
     </nav>
 
-    <div class="vue" class:cachee={vue !== 'point'} id="analyse-diags">
-      <!-- Ce qu'il faut retenir, avant le dossier lui-même : il ouvre l'analyse
-           plutôt que de s'étaler sur l'écran d'accueil. -->
+    <!-- Les alertes : ce qui demande une action avant de signer. C'est la vue
+         qu'ouvre le badge de la barre de navigation. -->
+    <div class="vue" class:cachee={vue !== 'alertes'} id="alertes">
       <Verdict {analyse} {photo} surOuvrirDiagnostic={ouvrirDansLAnalyse} />
+    </div>
+
+    <div class="vue" class:cachee={vue !== 'point'} id="analyse-diags">
 
       <!-- Le dossier diagnostic par diagnostic. On les feuillette : un volet à
            la fois, le bandeau dit lequel. La fiche donne le verdict, le rapport
