@@ -8,7 +8,7 @@
  */
 import type { Diagnostic, Fait, Gravite } from '../modele';
 import { trouver, trouverToutes } from './texte';
-import { releverTout } from './anomalies';
+import { domainesConstates, releverTout } from './anomalies';
 import { rubrique as rubriqueDe } from './rubriques';
 import { dateFrancaise, OU_REFAIRE, reformesElectricite } from './reformes';
 
@@ -85,7 +85,11 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
    * Quand rien ne constate, on se tait : la page de synthèse du dossier, elle,
    * écrit la conclusion en clair, et `depuisSynthese` la reprend.
    */
-  const etat = conclusion.etat === 'inconnu' && anomalies.length > 0 ? 'anomalies' : conclusion.etat;
+  const constates = domainesConstates(lignes);
+  const etat =
+    conclusion.etat === 'inconnu' && (anomalies.length > 0 || constates.length > 0)
+      ? 'anomalies'
+      : conclusion.etat;
   const total = conclusion.nombre ?? (anomalies.length > 0 ? anomalies.length : null);
 
   const groupes = THEMES_ELEC.map((t) => ({
@@ -144,6 +148,8 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
       verdict = `L’installation électrique présente ${conclusion.nombre} anomalie${conclusion.nombre > 1 ? 's' : ''}.`;
     } else if (anomalies.length > 0) {
       verdict = `L’installation électrique présente des anomalies : ${anomalies.length} point${anomalies.length > 1 ? 's' : ''} relevé${anomalies.length > 1 ? 's' : ''} dans le rapport.`;
+    } else if (constates.length > 0) {
+      verdict = `L’installation électrique présente des anomalies sur ${constates.length} des six domaines contrôlés.`;
     } else {
       verdict =
         'L’installation électrique présente des anomalies : le rapport recommande d’agir pour éliminer les dangers.';
@@ -151,6 +157,16 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
   }
 
   const faits: Fait[] = [];
+  if (constates.length > 0) {
+    /* « Lesquels » vaut mieux que « combien » : le lecteur sait alors si c'est
+       la coupure d'urgence — qu'on manœuvre en cas d'incendie — ou la salle
+       d'eau, et il peut demander le bon devis. */
+    faits.push({
+      libelle: 'Domaines en anomalie',
+      valeur: String(constates.length),
+      precision: constates.map((d) => d.nom).join(', ')
+    });
+  }
   if (conclusion.nombre !== null) {
     faits.push({ libelle: 'Anomalies relevées', valeur: String(conclusion.nombre) });
   } else if (anomalies.length > 0) {
@@ -190,7 +206,7 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
       ...reformesElectricite(dateFrancaise(date?.[1])).map((r) => r.texte)
     ],
     aFaire:
-      total && total > 0
+      (total && total > 0) || constates.length > 0
         ? [
             'Aucune obligation légale de faire les travaux pour vendre : le rapport est informatif. Mais l’acheteur les découvrira et pourra négocier.',
             'Traitez en priorité l’absence de dispositif différentiel 30 mA et les défauts de mise à la terre : ce sont les deux points qui protègent les personnes.',

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  domainesConstates,
   domainesEnAnomalie,
   domainesEnumeres,
   estCatalogueDomaines,
@@ -123,6 +124,76 @@ describe('les domaines énumérés', () => {
 
   it('ne dit rien quand le rapport ne liste aucun domaine', () => {
     expect(domainesEnumeres(['Rapport sans anomalie', 'Néant'])).toEqual([]);
+  });
+});
+
+/**
+ * La seconde forme, lue dans un rapport de 2024 : sous le catalogue vient un
+ * tableau où seuls les domaines CONSTATÉS figurent — et eux sont numérotés.
+ * Les deux colonnes du tableau s'entrelacent à l'extraction ; le numéro, lui,
+ * reste en tête de ligne. C'est par là qu'on lit ce que le rapport constate.
+ */
+const TABLEAU_2024 = [
+  'Anomalies avérées selon les domaines suivants :',
+  'L’appareil général de commande et de protection et de son accessibilité.',
+  'Dispositif de protection différentiel à l’origine de l’installation / Prise de terre et installation de mise à la terre.',
+  'Dispositif de protection contre les surintensités adapté à la section des conducteurs, sur chaque circuit.',
+  'La liaison équipotentielle et installation électrique adaptées aux conditions particulières des locaux contenant une douche ou une baignoire.',
+  'Matériels électriques présentant des risques de contacts directs avec des éléments sous tension.',
+  'Matériels électriques vétustes, inadaptés à l’usage.',
+  'Domaines Anomalies Photo',
+  '1. L’appareil général de Le dispositif assurant la coupure d’urgence n’est pas à coupure',
+  'commande et de omnipolaire et simultanée.',
+  'protection et de son Remarques : L’AGCP n’assure pas une coupure simultanée',
+  'accessibilité',
+  '2. Dispositif de protection Au moins un socle de prise de courant comporte une broche de',
+  'différentiel à l’origine de terre non reliée à la terre. (Cette anomalie fait l’objet d’une',
+  'l’installation - Installation mesure compensatoire pour limiter le risque de choc',
+  'de mise à la terre électrique)',
+  '4. La liaison Locaux contenant une baignoire ou une douche : la continuité',
+  'équipotentielle et électrique de la liaison équipotentielle supplémentaire',
+  '6. Matériels électriques L’installation comporte au moins un matériel électrique',
+  'vétustes, inadaptés à inadapté à l’usage.',
+  '6. – Avertissement particulier',
+  'Points de contrôle n’ayant pu être vérifiés'
+];
+
+describe('les domaines constatés, dans le tableau des anomalies', () => {
+  const constates = domainesConstates(TABLEAU_2024);
+
+  it('relève ceux que le tableau numérote, pas les six du catalogue', () => {
+    // Le catalogue au-dessus en énumère six et ne dit rien ; le tableau, lui,
+    // constate — ici quatre domaines sur six.
+    expect(constates.map((d) => d.numero)).toEqual([1, 2, 4, 6]);
+  });
+
+  it('les nomme en français courant', () => {
+    expect(constates[0]?.nom).toBe('Coupure d’urgence');
+    expect(constates[2]?.nom).toBe('Salle d’eau');
+  });
+
+  it('ne prend pas un titre de section pour un constat', () => {
+    // « 6. – Avertissement particulier » porte un numéro et n'est pas une
+    // anomalie : c'est le nom du domaine, pas le chiffre, qui décide.
+    expect(constates.every((d) => d.nom.length > 0)).toBe(true);
+  });
+
+  it('ne constate rien sur un rapport qui n’a que le catalogue', () => {
+    expect(domainesConstates(RAPPORT_ELEC_SANS_ANOMALIE)).toEqual([]);
+  });
+
+  it('ne confond pas le tableau qui DÉCRIT avec celui qui CONSTATE', () => {
+    // Vu sur deux rapports sans la moindre anomalie : le même tableau, la même
+    // numérotation, mais une colonne de droite qui dit où se trouve l'organe
+    // au lieu de dire ce qui cloche. Son en-tête ne parle pas d'anomalies.
+    expect(
+      domainesConstates([
+        'Domaines Informations complémentaires',
+        "1. L'appareil général de Coupure de l'ensemble de l'installation électrique",
+        '2. Dispositif de protection Emplacement',
+        '3. Dispositif de protection Emplacement'
+      ])
+    ).toEqual([]);
   });
 });
 

@@ -68,6 +68,49 @@ function estBruit(ligne: string): boolean {
  * constaté chez quelqu'un. C'est à cela qu'on les reconnaît, et c'est pour cela
  * qu'ils ne peuvent pas servir de verdict.
  */
+const NOMS_DOMAINES = [
+  'Coupure d’urgence',
+  'Protection différentielle et mise à la terre',
+  'Protection des circuits',
+  'Salle d’eau',
+  'Contacts directs',
+  'Matériel vétuste ou inadapté'
+];
+
+/**
+ * Le DÉBUT du libellé de chaque domaine, dans l'ordre où le rapport les
+ * numérote — celui du catalogue.
+ *
+ * On ne peut pas exiger le libellé entier : dans le tableau, la colonne de
+ * gauche est étroite et le nom du domaine y est coupé au bout de trois mots
+ * (« 2. Dispositif de protection » et rien de plus, la suite du texte
+ * appartenant déjà à la colonne d'à côté). Les domaines 2 et 3 commencent
+ * pareil ; c'est le numéro qui les sépare.
+ */
+/**
+ * L'en-tête du tableau des anomalies — et lui seul.
+ *
+ * Le rapport contient un second tableau, numéroté exactement pareil, qui
+ * décrit l'installation au lieu de la juger : « 1. L'appareil général de |
+ * Coupure de l'ensemble de l'installation électrique », « 2. Dispositif de
+ * protection | Emplacement ». Deux rapports sans la moindre anomalie s'y
+ * voyaient reprocher trois domaines en défaut. Ce qui les sépare est leur
+ * en-tête : « Domaines Anomalies Photo » d'un côté, « Domaines Informations
+ * complémentaires » de l'autre.
+ */
+const ENTETE_ANOMALIES = /^\s*Domaines\s+Anomalies/i;
+const FIN_TABLEAU_ANOMALIES =
+  /^\s*(?:Anomalies relatives|Informations compl[ée]mentaires|Domaines\s+Informations|\d\s*[.–-]\s*[–-]?\s*(?:Avertissement|Conclusion|Explications))/i;
+
+const AMORCES_DOMAINE: RegExp[] = [
+  /^L['’]appareil g[ée]n[ée]ral/i,
+  /^Dispositif de protection/i,
+  /^Dispositif de protection/i,
+  /^(?:La\s+)?[Ll]iaison/i,
+  /^Mat[ée]riels? [ée]lectriques?/i,
+  /^Mat[ée]riels? [ée]lectriques?/i
+];
+
 const DOMAINES_CATALOGUE: RegExp[] = [
   /appareil g[ée]n[ée]ral de commande et de protection/i,
   /protection diff[ée]rentiel.{0,60}(?:origine de l'installation|prise de terre)/i,
@@ -126,6 +169,45 @@ export function domainesEnumeres(lignes: string[]): string[] {
   // Un même domaine peut être répété par la mise en page (colonne reprise en
   // haut de page suivante).
   return [...new Set(domaines)].filter((d) => d.length > 12);
+}
+
+/**
+ * Les domaines que le rapport CONSTATE, dans son tableau d'anomalies.
+ *
+ * Sous le catalogue vient un tableau « Domaines | Anomalies | Photo » où seuls
+ * les domaines concernés figurent — et, eux, sont numérotés : « 2. Dispositif
+ * de protection différentiel… ». C'est la seule marque que la mise en page
+ * laisse passer : le texte des deux colonnes s'entrelace, mais le numéro reste
+ * en tête de ligne.
+ *
+ * Lu dans un rapport de 2024 qui relevait cinq domaines en anomalie là où le
+ * catalogue, imprimé juste au-dessus, en énumérait six sans rien dire.
+ */
+export function domainesConstates(lignes: string[]): { numero: number; nom: string }[] {
+  const vus = new Map<number, string>();
+  let dansLeTableau = false;
+
+  for (const ligne of lignes) {
+    if (ENTETE_ANOMALIES.test(ligne)) {
+      dansLeTableau = true;
+      continue;
+    }
+    if (dansLeTableau && FIN_TABLEAU_ANOMALIES.test(ligne)) dansLeTableau = false;
+    if (!dansLeTableau) continue;
+
+    const m = ligne.match(/^\s*([1-6])\s*[.)]\s+(.{6,})$/);
+    if (!m) continue;
+    const numero = Number(m[1]);
+    const attendu = AMORCES_DOMAINE[numero - 1];
+    // Le numéro seul ne suffirait pas — « 6. – Avertissement particulier » en
+    // porte un. C'est l'accord du numéro ET du début de libellé qui décide.
+    if (!attendu || !attendu.test(m[2] ?? '')) continue;
+    if (!vus.has(numero)) vus.set(numero, NOMS_DOMAINES[numero - 1] ?? '');
+  }
+
+  return [...vus.entries()]
+    .sort((a, b) => a[0] - b[0])
+    .map(([numero, nom]) => ({ numero, nom }));
 }
 
 /** Les domaines réellement constatés : rien, quand la liste est le catalogue. */
