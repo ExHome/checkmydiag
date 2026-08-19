@@ -222,3 +222,41 @@ describe('le DPE et ses annexes', () => {
     expect(sections.find((s) => s.type === 'dpe')?.plage).toEqual([1, 1]);
   });
 });
+
+/**
+ * Un générateur qui DÉCLARE son volet, page par page.
+ *
+ * Celui d'un réseau de diagnostiqueurs écrit en tête de chaque feuille
+ * « DIAGNOSTIC DPE : 2 sur 11 » et « DDT : 11 sur 33 » — le type, la position
+ * dans le volet, la position dans le dossier. Ses pages ne répètent pas le
+ * titre du diagnostic mais le nom du cabinet : la découpe ramenait un DPE de
+ * onze pages à une seule.
+ */
+describe('le rapport qui se déclare', () => {
+  const page = (numero: number, ...lignes: string[]) => ({ numero, lignes });
+  const entete = (n: number, quoi: string, total: number) => [
+    'DGLM EXPERTISES / LE MOINE Thibault membre du réseau BC2E',
+    'n° de rapport : 331000048',
+    `DIAGNOSTIC ${quoi} : ${n} sur ${total}`,
+    'DDT : 11 sur 33'
+  ];
+
+  it('suit la déclaration, même sans titre de diagnostic', () => {
+    const { sections } = decouper([
+      page(1, ...entete(1, 'DPE', 3), 'Consommation'),
+      page(2, ...entete(2, 'DPE', 3), 'Déperditions'),
+      page(3, ...entete(3, 'DPE', 3), 'Recommandations')
+    ]);
+    expect(sections.filter((s) => s.type === 'dpe')[0]?.plage).toEqual([1, 3]);
+  });
+
+  it('change de volet quand la déclaration change', () => {
+    const { sections } = decouper([
+      page(1, ...entete(1, 'DPE', 2), 'Consommation'),
+      page(2, ...entete(2, 'DPE', 2), 'Déperditions'),
+      page(3, 'ATTESTATION LOI CARREZ : 1 sur 1', 'Superficie privative')
+    ]);
+    expect(sections.find((s) => s.type === 'dpe')?.plage).toEqual([1, 2]);
+    expect(sections.find((s) => s.type === 'carrez')?.plage).toEqual([3, 3]);
+  });
+});

@@ -1527,6 +1527,49 @@ que le verdict, appliquée au même endroit.
 
 ---
 
+## 36 · Le rapport qui se declare, et un quatrieme generateur
+
+Un dossier de vente a revele un generateur inconnu — celui d'un reseau de
+diagnostiqueurs. Ses pages ne portent pas le titre du diagnostic mais le nom du
+cabinet, et la decoupe ramenait son DPE de **onze pages a une seule**.
+
+### Il dit pourtant tout ce qu'il faut
+
+En tete de chaque feuille :
+
+```
+DIAGNOSTIC DPE : 2 sur 11
+DDT : 11 sur 33
+```
+
+Le type du volet, la position de la page dans ce volet, et la position dans le
+dossier entier. C'est le document **le plus explicite du corpus** — et le seul
+que la decoupe ne savait pas lire, parce qu'elle cherchait un titre.
+
+Quand un rapport se declare ainsi, sa declaration l'emporte sur tout le reste :
+elle ne se deduit pas, elle se lit. Le DPE retrouve ses onze pages.
+
+### Il fallait aussi le sortir du sommaire
+
+Ses pages portent peu de texte — beaucoup de graphiques — et citent plusieurs
+diagnostics dans leur en-tete commercial. Le test du sommaire les interceptait
+donc **avant** qu'on regarde ce qu'elles disent d'elles-memes. Une page qui
+declare son volet n'est ni une page de garde ni un sommaire.
+
+### Quatre generateurs, quatre facons de se reperer
+
+| Generateur | Ce qui identifie ses pages |
+|---|---|
+| LICIEL | le titre du diagnostic, repete en en-tete |
+| Preventimmo / Kinaxia / Septeo (ERP) | « Mode EDITION » et l'adresse du bien |
+| celui du DTG | rien : ligatures eclatees, titre absent |
+| reseau BC2E | **une declaration explicite du volet et de sa pagination** |
+
+Aucun ne se lit comme les autres. C'est la meilleure raison de ne jamais
+generaliser une regle de lecture apres un seul editeur.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion
