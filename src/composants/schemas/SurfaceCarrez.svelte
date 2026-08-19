@@ -52,16 +52,78 @@
   <p class="invite muet petit">Touchez une zone.</p>
 
   <svg viewBox="0 0 460 230" role="group" aria-label="Coupe sous combles : au-dessus de 1,80 mètre la surface compte, en dessous elle ne compte pas.">
-    <!-- Le volume sous rampants -->
+    <defs>
+      <!--
+        UNE COUPE, PAS UN TRIANGLE.
+
+        Le dessin tenait en trois formes : un triangle plein, un triangle clair
+        au milieu, un trait. Rien n'y disait le comble -- ni charpente, ni
+        plancher, ni cote. Ce qui suit lui donne la matiere d'une coupe
+        d'architecte : c'est le meme propos, dessine pour de bon.
+      -->
+
+      <!-- Le volume qui COMPTE : un degrade dense en bas, comme un volume
+           eclaire par la lucarne du faitage. -->
+      <linearGradient id="sc-compte" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="currentColor" stop-opacity="0.42" />
+        <stop offset="1" stop-color="currentColor" stop-opacity="0.16" />
+      </linearGradient>
+
+      <!-- Les rampants qui ne comptent pas : hachures du dessin technique. -->
+      <pattern id="sc-hachure" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <line x1="0" y1="0" x2="0" y2="8" stroke="currentColor" stroke-width="1.1" stroke-opacity="0.24" />
+      </pattern>
+
+      <!-- Le plancher coupe. -->
+      <pattern id="sc-poche" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <line x1="0" y1="0" x2="0" y2="5" stroke="currentColor" stroke-width="1.7" stroke-opacity="0.5" />
+      </pattern>
+
+      <filter id="sc-relief" x="-20%" y="-20%" width="140%" height="150%">
+        <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#000" flood-opacity="0.35" />
+      </filter>
+    </defs>
+
+    <!-- ── LE COMBLE ─────────────────────────────────────────────────────── -->
+
+    <!-- Le volume sous rampants, hachure : bati, mais hors mesure. -->
     <path d="M40 186 L230 56 L420 186 Z" class="volume" />
+
+    <!-- La couverture : deux pans epais, poses sur la charpente. -->
+    <path d="M32 190 L230 50 L428 190" class="couverture" />
+    <path d="M40 186 L230 58 L420 186" class="couverture-mince" />
+
+    <!-- La charpente : faitage, pannes et entrait. Trois traits qui suffisent
+         a dire « comble » la ou un triangle ne disait rien. -->
+    <g class="charpente" aria-hidden="true">
+      <line x1="230" y1="58" x2="230" y2="186" class="poincon" />
+      <line x1="126" y1="132" x2="334" y2="132" class="entrait" />
+      <line x1="150" y1="186" x2="230" y2="132" class="arbaletrier" />
+      <line x1="310" y1="186" x2="230" y2="132" class="arbaletrier" />
+    </g>
+
+    <!-- Le plancher, en poche. -->
     <rect x="40" y="186" width="380" height="10" class="plancher" />
 
-    <!-- La zone qui compte -->
+    <!-- La zone qui compte, en volume plein. -->
     <path d="M126 132 L230 62 L334 132 Z" class="comptee" />
 
-    <!-- La ligne des 1,80 m -->
-    <line x1="40" y1="132" x2="420" y2="132" class="ligne-seuil" />
-    <text x="230" y="124" class="seuil">1,80 m</text>
+    <!-- ── LA COTE DES 1,80 M, DESSINEE COMME SUR UN PLAN ───────────────── -->
+    <g class="cotation" aria-hidden="true">
+      <!-- Les attaches, jusqu'aux points cotes. -->
+      <line x1="126" y1="132" x2="86" y2="132" class="attache" />
+      <line x1="126" y1="186" x2="86" y2="186" class="attache" />
+      <!-- La ligne de cote et ses fleches. -->
+      <line x1="96" y1="132" x2="96" y2="186" class="ligne-cote" />
+      <path d="M92 137 L96 130 L100 137 Z" class="fleche" />
+      <path d="M92 181 L96 188 L100 181 Z" class="fleche" />
+      <!-- Le trait de niveau, en pointille, qui court sous tout le comble. -->
+      <line x1="40" y1="132" x2="420" y2="132" class="ligne-seuil" />
+      <!-- La cote se lit CONTRE sa ligne de cote, a gauche, comme sur un plan.
+           Au centre, elle passait sous la pastille « Ça compte » : deux textes
+           au meme endroit, dont l'un devenait illisible. -->
+      <text x="80" y="163" class="seuil">1,80 m</text>
+    </g>
 
     <!-- Zones cliquables -->
     {#each PARTIES as partie (partie.id)}
@@ -132,34 +194,94 @@
     margin-inline: auto;
   }
 
+  /*
+   * Le comble hors mesure : bati, donc hachure -- pas un aplat gris qui le
+   * ferait passer pour vide. `color` porte l'encre du texte, dont les motifs
+   * heritent par `currentColor`.
+   */
   .volume {
-    fill: var(--surface-forte);
+    fill: url(#sc-hachure);
     stroke: var(--trait);
     stroke-width: 2;
     stroke-linejoin: round;
+    color: var(--sur-fond);
+  }
+
+  /* La couverture : un pan epais, puis un liseré fin dessous. Une toiture a
+     une epaisseur ; un trait n'en a pas. */
+  .couverture {
+    fill: none;
+    stroke: var(--action-forte);
+    stroke-width: 6;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+
+  .couverture-mince {
+    fill: none;
+    stroke: var(--surface);
+    stroke-width: 1.4;
+    stroke-opacity: 0.5;
+    stroke-linejoin: round;
+  }
+
+  /* La charpente : trois traits qui disent « comble » la ou un triangle nu ne
+     disait rien. Elle reste discrete -- elle situe, elle ne s'expose pas. */
+  .charpente line {
+    stroke: var(--sur-fond);
+    stroke-opacity: 0.3;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+  }
+
+  .charpente .poincon {
+    stroke-opacity: 0.22;
+    stroke-dasharray: 4 5;
+  }
+
+  /* La cotation d'architecte : attaches fines, ligne pleine, fleches pleines. */
+  .cotation .attache,
+  .cotation .ligne-cote {
+    stroke: var(--action-forte);
+    stroke-width: 1.2;
+  }
+
+  .cotation .attache {
+    stroke-opacity: 0.55;
+  }
+
+  .cotation .fleche {
+    fill: var(--action-forte);
   }
 
   .plancher {
     fill: var(--trait);
   }
 
+  /* Le volume qui compte : un degrade de la couleur de l'app, dense en bas,
+     et un relief porte. C'est le sujet du schema, il se leve. */
   .comptee {
-    fill: rgb(46 233 139 / 20%);
-    stroke: var(--ok);
-    stroke-width: 2;
+    fill: url(#sc-compte);
+    stroke: var(--action-forte);
+    stroke-width: 2.4;
+    stroke-linejoin: round;
+    color: var(--action-forte);
+    filter: url(#sc-relief);
   }
 
   .ligne-seuil {
-    stroke: var(--ok);
-    stroke-width: 2;
+    stroke: var(--action-forte);
+    stroke-width: 1.6;
     stroke-dasharray: 7 5;
+    stroke-opacity: 0.8;
   }
 
   .seuil {
     font-size: var(--t-petit);
-    fill: var(--ok);
-    text-anchor: middle;
+    fill: var(--sur-fond);
+    text-anchor: end;
     font-weight: 800;
+    letter-spacing: 0.02em;
   }
 
   .cible {

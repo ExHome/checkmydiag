@@ -170,8 +170,59 @@
   </div>
 
   <svg viewBox="0 0 218 208" class="coupe" role="img" aria-label={`Coupe d’un logement : ${comptees.map((p) => p.nom).join(', ')} comptent dans la mesure ${active.nom}`}>
-    <!-- Le sol, pour poser la coupe. -->
-    <line x1="6" y1="200" x2="212" y2="200" class="sol" />
+    <defs>
+      <!--
+        LA MATIERE DU BATI.
+
+        Le dessin etait fait de rectangles nus poses sur un trait : une coupe
+        d'architecte sans mur, sans dalle, sans toit. Ce qui suit lui rend son
+        epaisseur -- c'est ce qui separe un schema d'un croquis.
+      -->
+
+      <!-- Le remplissage d'une piece COMPTEE : un degrade de sa couleur, plus
+           dense en bas, comme un volume eclaire par le haut. -->
+      <linearGradient id="ts-dedans" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="currentColor" stop-opacity="0.30" />
+        <stop offset="1" stop-color="currentColor" stop-opacity="0.13" />
+      </linearGradient>
+
+      <!-- La hachure des volumes qui NE comptent pas : un vide bati, pas une
+           case grise. C'est la convention du dessin technique. -->
+      <pattern id="ts-hachure" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <line x1="0" y1="0" x2="0" y2="7" stroke="currentColor" stroke-width="1" stroke-opacity="0.22" />
+      </pattern>
+
+      <!-- La maconnerie coupee : le poche du mur et de la dalle. -->
+      <pattern id="ts-poche" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <line x1="0" y1="0" x2="0" y2="5" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.5" />
+      </pattern>
+
+      <!-- L'ombre portee sous les volumes : le relief, pas l'effet. -->
+      <filter id="ts-relief" x="-25%" y="-25%" width="150%" height="160%">
+        <feDropShadow dx="0" dy="2" stdDeviation="2.4" flood-color="#000" flood-opacity="0.34" />
+      </filter>
+    </defs>
+
+    <!-- ── L'ENVELOPPE DU BATIMENT ────────────────────────────────────────
+         Le toit d'abord, puis les murs, puis la dalle : on dessine le bati
+         avant d'y poser les pieces, comme sur une coupe. -->
+    <g class="bati" aria-hidden="true">
+      <!-- La toiture : deux pans et leur epaisseur. -->
+      <path class="toit" d="M4 40 L109 6 L214 40" />
+      <path class="toit-mince" d="M9 40 L109 12 L209 40" />
+
+      <!-- Les deux murs porteurs, en poche. -->
+      <rect class="poche" x="4" y="40" width="6" height="160" />
+      <rect class="poche" x="208" y="40" width="6" height="160" />
+
+      <!-- Le plancher haut, entre les niveaux. -->
+      <rect class="poche" x="4" y="90" width="210" height="5" />
+
+      <!-- La dalle basse et le terrain. -->
+      <rect class="poche" x="4" y="196" width="210" height="6" />
+      <line class="sol" x1="0" y1="204" x2="218" y2="204" />
+      <line class="terrain" x1="0" y1="204" x2="218" y2="204" />
+    </g>
 
     {#each PIECES as p (p.nom)}
       {@const dedans = p.dans[mesure]}
@@ -190,7 +241,11 @@
         tabindex="0"
         aria-label={`${p.nom} : ${dedans ? 'compte' : 'ne compte pas'}. Pourquoi ?`}
       >
-        <rect x={p.x} y={p.y} width={p.l} height={p.h} rx="3" />
+        <!-- Le volume : hachure quand il ne compte pas, degrade plein quand
+             il compte. La couleur vient de l'univers, jamais du dessin. -->
+        <rect class="volume" x={p.x} y={p.y} width={p.l} height={p.h} rx="3" />
+        <!-- Le liseré haut : la lumiere tombe d'en haut, l'arete la recoit. -->
+        <line class="arete" x1={p.x + 3} y1={p.y + 0.8} x2={p.x + p.l - 3} y2={p.y + 0.8} />
         <text x={p.x + p.l / 2} y={p.y + p.h / 2 + 4} class="nom-piece">{p.nom}</text>
       </g>
     {/each}
@@ -303,16 +358,86 @@
    * ne compte simplement pas. Elle reste donc dessinée, en creux — la faire
    * disparaître ferait croire qu'elle n'est pas là.
    */
-  .piece rect {
-    fill: var(--surface);
-    stroke: var(--trait);
-    stroke-width: 1.5;
-    transition: fill var(--duree) var(--courbe);
+  /*
+   * L'enveloppe : toit, murs porteurs, planchers.
+   *
+   * Le `color` de ce groupe porte la teinte de l'univers ; les motifs de
+   * hachure et de poche s'y rattachent par `currentColor`, si bien que le bati
+   * change de couleur avec l'app sans qu'un seul motif soit duplique.
+   */
+  .bati {
+    color: var(--action-forte);
   }
 
-  .piece.dedans rect {
-    fill: var(--action-forte);
+  .toit {
+    fill: none;
     stroke: var(--action-forte);
+    stroke-width: 3;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+
+  /* La seconde ligne de toiture donne son epaisseur au rampant : une couverture
+     a une epaisseur, un trait n'en a pas. */
+  .toit-mince {
+    fill: none;
+    stroke: var(--action-forte);
+    stroke-width: 1;
+    stroke-opacity: 0.45;
+    stroke-linejoin: round;
+  }
+
+  /* Le poche : la maconnerie coupee, hachuree comme sur un plan. */
+  .poche {
+    fill: url(#ts-poche);
+    stroke: var(--action-forte);
+    stroke-width: 0.8;
+    stroke-opacity: 0.55;
+  }
+
+  .terrain {
+    stroke: var(--action-forte);
+    stroke-width: 3;
+    stroke-opacity: 0.35;
+  }
+
+  /*
+   * Une piece hors mesure n'est pas absente : elle existe, on la visite, elle
+   * ne compte simplement pas. Elle reste donc dessinee, HACHUREE -- un volume
+   * bati qu'on ne compte pas, ce qui est la convention du dessin technique,
+   * plutot qu'une case grise qui la ferait passer pour vide.
+   */
+  .piece .volume {
+    fill: url(#ts-hachure);
+    stroke: var(--trait);
+    stroke-width: 1.5;
+    color: var(--sur-fond);
+    transition:
+      fill var(--duree) var(--courbe),
+      stroke var(--duree) var(--courbe);
+  }
+
+  /* Comptee : un degrade de la couleur de l'app, plus dense en bas, et un
+     relief porte. Le volume se leve au lieu de s'aplatir. */
+  .piece.dedans .volume {
+    fill: url(#ts-dedans);
+    stroke: var(--action-forte);
+    stroke-width: 2;
+    color: var(--action-forte);
+    filter: url(#ts-relief);
+  }
+
+  /* L'arete eclairee, sur les seules pieces comptees : c'est elle qui donne
+     le sens de la lumiere, et donc le volume. */
+  .arete {
+    stroke: transparent;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+  }
+
+  .piece.dedans .arete {
+    stroke: var(--surface);
+    stroke-opacity: 0.6;
   }
 
   .nom-piece {
@@ -323,16 +448,20 @@
     pointer-events: none;
   }
 
+  /* Le nom reste sur l'encre du texte : le degrade est translucide, le fond
+     de l'univers transparait dessous. Poser ici l'encre de l'accent plein
+     donnerait un mot sombre sur un fond sombre. */
   .piece.dedans .nom-piece {
-    fill: var(--sur-accent, #fff);
+    fill: var(--sur-fond);
+    font-weight: 700;
   }
 
   .piece[role='button'] {
     cursor: pointer;
   }
 
-  .piece[role='button']:hover rect,
-  .piece[role='button']:focus-visible rect {
+  .piece[role='button']:hover .volume,
+  .piece[role='button']:focus-visible .volume {
     stroke-width: 3;
   }
 
