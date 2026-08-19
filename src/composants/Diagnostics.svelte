@@ -32,7 +32,7 @@
   import type { Origine } from '../lib/bureau';
   import { APPS } from '../lib/apps';
   import { estSombre, styleUnivers } from '../lib/univers';
-  import { lumiereSur } from '../lib/lumiere';
+  import { lumiereSur, questionDe } from '../lib/lumiere';
   import { cubicOut } from 'svelte/easing';
   import { tick, untrack } from 'svelte';
 
@@ -886,10 +886,21 @@
       class:sombre={estSombre(diags[courant]?.type ?? 'dpe')}
       style={styleUnivers(diags[courant]?.type ?? 'dpe')}
     >
-      <!-- La promesse de la marque, appliquée à l'écran qu'on vient d'ouvrir.
-           Elle nomme le sujet du diagnostic, jamais son résultat : une accroche
-           qui inquiète avant d'avoir lu ne sert personne. -->
-      <p class="lumiere">{lumiereSur(diags[courant]?.type ?? 'dpe')}</p>
+      <!--
+        LA QUESTION D'ABORD, l'accroche de marque ensuite.
+
+        « Un écran = une question. » Le lecteur n'ouvre pas « le DPE » : il se
+        demande si son logement consomme beaucoup. Poser sa question en tête
+        change la lecture de tout ce qui suit — ce n'est plus une rubrique à
+        parcourir, c'est une réponse.
+
+        L'accroche de marque reste, en second et en petit : elle dit ce qu'on
+        regarde, la question dit ce qu'on cherche.
+      -->
+      <header class="entree">
+        <p class="lumiere">{lumiereSur(diags[courant]?.type ?? 'dpe')}</p>
+        <h2 class="question">{questionDe(diags[courant]?.type ?? 'dpe')}</h2>
+      </header>
 
       <section class="diagnostics">
         {@render dossier()}
@@ -1107,14 +1118,36 @@
    * concurrence pas le verdict qui vient juste dessous. C'est un seuil, pas un
    * titre — le titre du diagnostic est déjà dans la barre.
    */
-  .lumiere {
+  /* L'entree de l'ecran : l'accroche en surtitre, la question en titre. */
+  .entree {
     max-width: 900px;
-    margin: 0 auto var(--e3);
+    margin: 0 auto var(--e5);
+  }
+
+  .lumiere {
+    margin: 0 0 var(--e1);
     font-size: var(--t-micro);
     font-weight: 700;
     letter-spacing: var(--suivi);
     text-transform: uppercase;
     color: var(--action-texte);
+  }
+
+  /*
+   * LA QUESTION : c'est elle qui doit accrocher le regard en premier.
+   *
+   * Elle est en titre, dans la police de titre, a une taille qui la detache
+   * nettement de l'accroche au-dessus. Le lecteur sait alors, avant meme de
+   * lire la reponse, qu'il est au bon endroit.
+   */
+  .question {
+    margin: 0;
+    font-family: var(--police-titre);
+    font-size: var(--t-lead);
+    font-weight: 500;
+    line-height: 1.25;
+    color: var(--sur-fond);
+    text-wrap: balance;
   }
 
   /* À l'impression, le dossier se lit d'un bloc : l'accroche d'un écran qu'on

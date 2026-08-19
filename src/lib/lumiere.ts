@@ -49,3 +49,40 @@ export function lumiereSur(ecran: Ecran): string {
 
 /** La signature de la marque, telle que la charte l'écrit. */
 export const SIGNATURE = 'La lumière sur vos diagnostics';
+
+/**
+ * LA QUESTION À LAQUELLE L'ÉCRAN RÉPOND.
+ *
+ * « Un écran = une question. » L'accroche de marque dit ce qu'on regarde ;
+ * elle ne dit pas ce que le lecteur, lui, est venu savoir. Or il n'ouvre pas
+ * « le DPE » : il se demande si son logement consomme beaucoup.
+ *
+ * Poser la question en tête change la lecture de l'écran entier — ce qui suit
+ * n'est plus une rubrique à parcourir, c'est une réponse. Et le lecteur sait
+ * en un regard s'il est au bon endroit.
+ *
+ * ── Ce qu'elles ne font pas ────────────────────────────────────────────────
+ *
+ * Elles ne présument rien du résultat. « Y a-t-il de l'amiante ? » se pose
+ * aussi bien quand le rapport n'en trouve pas : c'est une question, pas une
+ * alerte. Une formule comme « Votre logement est-il dangereux ? » inquiéterait
+ * avant même d'avoir lu, ce que la même règle interdit à l'accroche.
+ */
+const QUESTIONS: Record<Ecran, string> = {
+  dpe: 'Mon logement consomme-t-il beaucoup ?',
+  electricite: 'Y a-t-il un risque électrique ?',
+  gaz: 'Mon installation de gaz présente-t-elle un danger ?',
+  amiante: 'Y a-t-il de l’amiante, et où ?',
+  plomb: 'Du plomb a-t-il été identifié, et où ?',
+  termites: 'Des termites ou des champignons ont-ils été détectés ?',
+  erp: 'À quels risques ce terrain est-il exposé ?',
+  carrez: 'Quelle surface sera écrite dans l’acte ?',
+  assainissement: 'Les eaux usées sont-elles correctement évacuées ?',
+  dicodiag: 'Que veut dire ce mot ?',
+  'en-clair': 'Que faut-il savoir avant d’acheter ?'
+};
+
+/** La question de l'écran. Les onze sont couverts. */
+export function questionDe(ecran: Ecran): string {
+  return QUESTIONS[ecran];
+}
