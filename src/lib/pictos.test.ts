@@ -35,8 +35,12 @@ const FICHIERS = readdirSync(DOSSIER).filter((f) => f.endsWith('.svg'));
  */
 
 describe('la famille des pictogrammes', () => {
-  it('en compte huit, un par mini-app', () => {
-    expect(FICHIERS.length).toBe(8);
+  it('couvre tout ce qui portait un émoji', () => {
+    /* Neuf diagnostics — l'assainissement compris, que l'ODM ne liste pas mais
+       que le produit traite —, deux outils, les trois vues du dossier, et le
+       repère de lieu du widget. Quinze en tout : c'est le compte exact de ce
+       qui affichait un émoji avant. */
+    expect(FICHIERS.length).toBe(15);
   });
 
   for (const f of FICHIERS) {
@@ -54,9 +58,17 @@ describe('la famille des pictogrammes', () => {
         expect(svg).toContain('stroke-linejoin="round"');
       });
 
-      it('n’emploie que le crème de la charte', () => {
-        const couleurs = [...svg.matchAll(/#[0-9A-Fa-f]{3,6}/g)].map((m) => m[0].toUpperCase());
-        expect([...new Set(couleurs)]).toEqual(['#F7F6F2']);
+      /*
+       * Aucune couleur figée : le pictogramme suit son contexte.
+       *
+       * Le même dessin sert sur un dégradé saturé — où il doit être crème — et
+       * sur une tuile claire, où il doit être vert profond. Une couleur écrite
+       * dans le fichier obligerait à deux bibliothèques, donc à deux familles :
+       * exactement ce que le § 4 interdit.
+       */
+      it('ne fige aucune couleur : il suit son contexte', () => {
+        expect([...svg.matchAll(/#[0-9A-Fa-f]{3,6}/g)].length, 'couleur en dur').toBe(0);
+        expect(svg).toContain('stroke="currentColor"');
       });
 
       /*
@@ -68,7 +80,7 @@ describe('la famille des pictogrammes', () => {
        * bouclier, et il devient une tache.
        */
       it('ne porte au plus qu’une seule masse pleine', () => {
-        const masses = [...svg.matchAll(/fill="#/g)].length;
+        const masses = [...svg.matchAll(/fill="currentColor"/g)].length;
         expect(masses).toBeLessThanOrEqual(1);
       });
 

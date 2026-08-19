@@ -1303,16 +1303,20 @@
      très long : on ne savait plus où l'on était. */
   .fiche-diag {
     padding: var(--e5);
-    /* La teinte de la gravité irrigue tout le volet, du haut vers le fond : le
-       diagnostic se reconnaît avant d'être lu. Elle reste un voile — huit pour
-       cent d'une couleur, pas un aplat. */
-    background:
-      linear-gradient(
-        180deg,
-        color-mix(in srgb, var(--gravite-fiche) 12%, transparent),
-        transparent 220px
-      ),
-      var(--surface-forte);
+    /*
+     * La gravité SIGNALE, elle ne teinte plus la carte.
+     *
+     * Un voile de la couleur d'état descendait sur 220 pixels : sur l'écran du
+     * DPE, dont l'univers est vert, une alerte étalait un rosé sur toute la
+     * fiche et deux couleurs se disputaient l'écran. L'ODM réserve la couleur
+     * vive aux mini-apps et aux données qui ont un sens métier, et proscrit
+     * l'arc-en-ciel décoratif.
+     *
+     * La gravité reste une donnée : elle garde son liseré, sa pastille et son
+     * mot — trois porteurs, dont deux ne dépendent pas de la couleur. Ce qui
+     * disparaît, c'est le décor.
+     */
+    background: var(--surface-forte);
     border: 1px solid var(--surface-forte);
     border-top-color: var(--surface-bord);
     border-left: 4px solid var(--gravite-fiche, var(--sur-fond-doux));

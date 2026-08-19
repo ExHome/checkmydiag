@@ -192,16 +192,18 @@
     {
       cle: 'dicodiag',
       nom: 'Dicodiag',
-      signe: '📖',
+      picto: 'dicodiag',
       dit: 'Le lexique',
-      degrade: 'linear-gradient(135deg, #8e9bb5, #5c6b8a)'
+      /* Les outils ne sont pas des diagnostics : leur dégradé reste dans le
+         vert du socle, quand les huit apps portent une couleur de métier. */
+      degrade: 'linear-gradient(145deg, #6f9a86, #2c5f4c)'
     },
     {
       cle: 'en-clair',
       nom: 'En clair',
-      signe: '❓',
+      picto: 'en-clair',
       dit: 'Les réponses',
-      degrade: 'linear-gradient(135deg, #b58ea9, #8a5c7d)'
+      degrade: 'linear-gradient(145deg, #86a45f, #4a6b30)'
     }
   ];
 
@@ -210,9 +212,9 @@
 
   /** Les trois parties du dossier, en bas de l'écran comme sur un téléphone. */
   const DOCK = [
-    { cle: 'point', signe: '📋', nom: 'L’analyse' },
-    { cle: 'rapport', signe: '📄', nom: 'Le rapport' },
-    { cle: 'conseil', signe: '💡', nom: 'Le conseil' }
+    { cle: 'point', picto: 'analyse', nom: 'L’analyse' },
+    { cle: 'rapport', picto: 'rapport', nom: 'Le rapport' },
+    { cle: 'conseil', picto: 'conseil', nom: 'Le conseil' }
   ];
 </script>
 
@@ -243,7 +245,14 @@
     </div>
 
     {#if analyse.bien.commune}
-      <p class="ville"><span aria-hidden="true">📍</span> {analyse.bien.commune}</p>
+      <p class="ville">
+        <span
+          class="picto-lieu"
+          style="mask-image: url(./pictos/lieu.svg); -webkit-mask-image: url(./pictos/lieu.svg)"
+          aria-hidden="true"
+        ></span>
+        {analyse.bien.commune}
+      </p>
     {/if}
 
     <button
@@ -321,7 +330,11 @@
         >
           <span class="icone halo" style="background: {t.degrade}">
             {#if t.picto}
-              <img class="picto" src="./pictos/{t.picto}.svg" alt="" aria-hidden="true" />
+              <span
+                class="picto"
+                style="mask-image: url(./pictos/{t.picto}.svg); -webkit-mask-image: url(./pictos/{t.picto}.svg)"
+                aria-hidden="true"
+              ></span>
             {:else}
               <span class="signe" aria-hidden="true">{t.signe}</span>
             {/if}
@@ -353,7 +366,11 @@
                s'ouvre comme un lien, pas comme un écran. -->
           <a class="tuile" href="./en-clair/">
             <span class="icone halo" style="background: {o.degrade}">
-              <span class="signe" aria-hidden="true">{o.signe}</span>
+              <span
+                class="picto"
+                style="mask-image: url(./pictos/{o.picto}.svg); -webkit-mask-image: url(./pictos/{o.picto}.svg)"
+                aria-hidden="true"
+              ></span>
             </span>
             <span class="nom">{o.nom}</span>
             <span class="dit">{o.dit}</span>
@@ -368,7 +385,11 @@
             }}
           >
             <span class="icone halo" style="background: {o.degrade}">
-              <span class="signe" aria-hidden="true">{o.signe}</span>
+              <span
+                class="picto"
+                style="mask-image: url(./pictos/{o.picto}.svg); -webkit-mask-image: url(./pictos/{o.picto}.svg)"
+                aria-hidden="true"
+              ></span>
             </span>
             <span class="nom">{o.nom}</span>
             <span class="dit">{o.dit}</span>
@@ -381,7 +402,12 @@
   <nav class="dock" aria-label="Les parties du dossier">
     {#each DOCK as d (d.cle)}
       <button type="button" onclick={() => { auToucher(); surVue?.(d.cle); }}>
-        <span class="signe halo" aria-hidden="true">{d.signe}</span>
+        <span class="signe halo" aria-hidden="true">
+          <span
+            class="picto"
+            style="mask-image: url(./pictos/{d.picto}.svg); -webkit-mask-image: url(./pictos/{d.picto}.svg)"
+          ></span>
+        </span>
         <span class="nom">{d.nom}</span>
       </button>
     {/each}
@@ -518,6 +544,21 @@
     inset: 0;
     z-index: -1;
     background: linear-gradient(to top, rgb(4 22 18 / 92%) 0%, rgb(4 22 18 / 55%) 34%, transparent 68%);
+  }
+
+  .picto-lieu {
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    vertical-align: -1px;
+    margin-right: 3px;
+    background: currentColor;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
   }
 
   .ville {
@@ -791,12 +832,41 @@
    * décolle du fond coloré, comme sur la planche du pack — sans elle, un trait
    * crème sur un jaune vif paraît collé.
    */
+  /*
+   * Le pictogramme est posé en MASQUE, pas en image.
+   *
+   * Un SVG chargé par `<img>` est un document isolé : son `currentColor` vaut
+   * noir, quel que soit l'élément qui l'entoure. Le masque ne garde que la
+   * forme et prend la couleur de fond de l'élément — le même fichier sert donc
+   * en crème sur un dégradé saturé et en vert profond sur une tuile claire.
+   * Une seule bibliothèque, deux usages, § 4 respecté.
+   */
   .picto {
     position: relative;
     z-index: 1;
     width: 54%;
     height: 54%;
+    background: currentColor;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
+    /* L'ombre décolle le trait du dégradé coloré. Sur la tuile claire du dock,
+       elle salirait : elle n'y est pas. */
     filter: drop-shadow(0 1px 2px rgb(4 22 18 / 28%));
+  }
+
+  /* Les mini-apps portent un dégradé saturé : le pictogramme y est crème. */
+  .grille .icone {
+    color: var(--ivoire);
+  }
+
+  .dock .picto {
+    width: 52%;
+    height: 52%;
+    filter: none;
   }
 
   /*
@@ -983,6 +1053,9 @@
     display: grid;
     place-items: center;
     font-size: 24px;
+    /* La tuile est claire : le pictogramme, qui suit son contexte, y prend le
+       vert profond du socle au lieu du crème des mini-apps. */
+    color: var(--vert-profond);
     background: linear-gradient(145deg, #ffffff, var(--ivoire));
     box-shadow: var(--ombre);
     transition: transform var(--duree) var(--courbe);

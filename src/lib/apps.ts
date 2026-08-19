@@ -123,6 +123,7 @@ export const APPS: Record<TypeDiag, IdentiteApp> = {
   assainissement: {
     nom: 'Assainissement',
     signe: '💧',
+    picto: 'assainissement',
     degrade: 'linear-gradient(145deg, #77b1d0, #245d7b)'
   }
 };
