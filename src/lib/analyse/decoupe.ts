@@ -212,7 +212,53 @@ function estSommaire(page: PageTexte): boolean {
   return touches.length >= 2;
 }
 
+/**
+ * Certains rapports DÉCLARENT leur volet, page par page.
+ *
+ * Un générateur rencontré dans le corpus — celui d'un réseau de
+ * diagnostiqueurs — écrit en tête de chaque feuille :
+ *
+ *     DIAGNOSTIC DPE : 2 sur 11
+ *     DDT : 11 sur 33
+ *
+ * Il donne le type du diagnostic, la position de la page dans son volet, et la
+ * position de la page dans le dossier. C'est le document le plus explicite du
+ * corpus — et le seul que la découpe ne savait pas lire, parce que ses pages ne
+ * répètent pas le TITRE du diagnostic mais le nom du cabinet. Résultat : un DPE
+ * de onze pages ramené à une seule.
+ *
+ * Quand un rapport se déclare ainsi, sa déclaration l'emporte sur tout le reste.
+ */
+const DECLARATION = /\b(?:DIAGNOSTIC|ATTESTATION|RAPPORT|[EÉ]TAT|CONSTAT)\s+([A-ZÉÈÊÀ'’\s-]{2,40}?)\s*:\s*\d+\s+sur\s+\d+/;
+
+const LIBELLES_DECLARES: { motif: RegExp; type: TypeDiag }[] = [
+  { motif: /DPE|PERFORMANCE\s+[EÉ]NERG/i, type: 'dpe' },
+  { motif: /CARREZ|SUPERFICIE/i, type: 'carrez' },
+  { motif: /TERMITES|PARASITAIRE/i, type: 'termites' },
+  { motif: /AMIANTE/i, type: 'amiante' },
+  { motif: /PLOMB|CREP/i, type: 'plomb' },
+  { motif: /[EÉ]LECTRI/i, type: 'electricite' },
+  { motif: /GAZ/i, type: 'gaz' },
+  { motif: /RISQUES|ERP/i, type: 'erp' },
+  { motif: /ASSAINISSEMENT/i, type: 'assainissement' }
+];
+
+/** Le volet qu'une page revendique elle-même, quand elle le fait. */
+function typeDeclare(page: PageTexte): TypeDiag | null {
+  for (const ligne of page.lignes.slice(0, 12)) {
+    const m = DECLARATION.exec(ligne);
+    if (!m?.[1]) continue;
+    const trouve = LIBELLES_DECLARES.find((x) => x.motif.test(m[1] ?? ''));
+    if (trouve) return trouve.type;
+  }
+  return null;
+}
+
 function typeDeLaPage(page: PageTexte): TypeDiag | null {
+  // La déclaration explicite l'emporte : elle ne se déduit pas, elle se lit.
+  const declare = typeDeclare(page);
+  if (declare) return declare;
+
   // Le titre courant tient dans les premières lignes (haut de page).
   const entete = compact(page.lignes.slice(0, 4).join(' '));
   if (!entete) return null;
@@ -272,13 +318,23 @@ export function decouper(pages: PageTexte[]): Decoupe {
       continue;
     }
 
-    if (estPageDeGarde(page) || estSommaire(page)) {
+    /*
+     * Une page qui DÉCLARE son volet n'est ni une page de garde ni un sommaire.
+     *
+     * Les pages de ce générateur portent peu de texte — beaucoup de graphiques —
+     * et citent plusieurs diagnostics dans leur en-tête commercial : le test du
+     * sommaire les interceptait avant même qu'on regarde ce qu'elles disent
+     * d'elles-mêmes. Un DPE de onze pages tombait à une seule.
+     */
+    const declare = typeDeclare(page);
+
+    if (!declare && (estPageDeGarde(page) || estSommaire(page))) {
       horsSection.push(...page.lignes);
       courante = null;
       continue;
     }
 
-    const type = typeDeLaPage(page);
+    const type = declare ?? typeDeLaPage(page);
 
     if (type && (!courante || courante.type !== type)) {
       courante = { type, pages: [], lignes: [], plage: [page.numero, page.numero] };
