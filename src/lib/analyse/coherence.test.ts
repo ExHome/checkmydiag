@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { analyser } from './index';
 import { controler } from './coherence';
 import type { Bien, Diagnostic } from '../modele';
 
@@ -116,12 +117,39 @@ describe('contrôle des diagnostics manquants', () => {
     expect(points.some((p) => p.type === 'gaz')).toBe(false);
   });
 
-  it('ne réclame rien pour un logement récent', () => {
-    expect(surDossier({ anneeConstruction: '2015' }, 'dpe', 'termites')).toHaveLength(0);
+  it('ne réclame rien qui tienne à l’âge, pour un logement récent', () => {
+    // L'état des risques, lui, est dû quel que soit le bâti : il est réclamé
+    // ici à juste titre, et ce test ne porte que sur les manques liés à l'âge.
+    const points = surDossier({ anneeConstruction: '2015' }, 'dpe', 'termites');
+    expect(points.filter((p) => p.type !== 'erp')).toHaveLength(0);
+  });
+
+  it('réclame l’état des risques, qui ne dépend pas de l’année', () => {
+    /*
+     * Huit dossiers sur cent n'en portent aucun. C'est le diagnostic qui périme
+     * le plus vite, et il dit si le bien est en zone inondable ou en zone
+     * d'argile : son absence vaut d'être signalée.
+     */
+    const points = surDossier({ anneeConstruction: '2015' }, 'dpe', 'termites');
+    const erp = points.find((p) => p.type === 'erp');
+    expect(erp?.genre).toBe('manque');
+    expect(erp?.quoiFaire).toMatch(/six mois/);
+  });
+
+  it('réclame le DPE quand il manque, quel que soit le bâti', () => {
+    const points = surDossier({ anneeConstruction: '2015' }, 'erp', 'termites');
+    expect(points.find((p) => p.type === 'dpe')?.genre).toBe('manque');
   });
 
   it('ne réclame pas ce qui est déjà au dossier', () => {
-    const points = surDossier({ anneeConstruction: '1930' }, 'dpe', 'amiante', 'plomb', 'electricite');
+    const points = surDossier(
+      { anneeConstruction: '1930' },
+      'dpe',
+      'erp',
+      'amiante',
+      'plomb',
+      'electricite'
+    );
     expect(points.filter((p) => p.genre === 'manque')).toHaveLength(0);
   });
 
@@ -187,5 +215,42 @@ describe('contrôle des surfaces', () => {
 
   it('ne compare rien s’il manque une des deux surfaces', () => {
     expect(controler({}, [carrez('82,14 m²')], AUJOURDHUI)).toHaveLength(0);
+  });
+});
+
+/**
+ * Réclamer un rapport qui est sous les yeux du lecteur est pire qu'un silence :
+ * il cesse de faire confiance à tout le reste. Mesuré avant ce garde-fou :
+ * quinze dossiers sur cent se voyaient réclamer un DPE dont le numéro ADEME
+ * figure pourtant dans leurs pages.
+ */
+describe('ne jamais réclamer ce qui est déjà dans le document', () => {
+  const page = (numero: number, ...lignes: string[]) => ({ numero, lignes });
+
+  it('ne réclame pas un DPE dont le numéro ADEME figure au dossier', () => {
+    const { controles } = analyser([
+      page(1, 'Dossier Technique Immobilier', 'Numéro de dossier : 24/IMO/0154N'),
+      page(2, 'Résumé de l’expertise n° 24/IMO/0154N', 'Prestations Conclusion'),
+      page(3, 'N°ADEME : 2233E0402728W', 'Etabli le : 30/06/2025'),
+      page(4, 'Etat des Risques et Pollutions', 'En application des articles L125-5 à 7')
+    ]);
+    expect(controles.some((c) => c.genre === 'manque' && c.type === 'dpe')).toBe(false);
+  });
+
+  it('réclame l’état des risques malgré son titre dans la grille des prestations', () => {
+    /*
+     * « Etat des Risques et Pollutions » figure dans la grille des quarante
+     * prestations de TOUS les dossiers, même ceux qui n'en portent aucun. Seule
+     * la mention légale prouve la présence du rapport.
+     */
+    const { controles } = analyser([
+      page(1, 'Dossier Technique Immobilier', 'Numéro de dossier : 24/IMO/0154N'),
+      page(2, 'Résumé de l’expertise n° 24/IMO/0154N', 'Prestations Conclusion'),
+      page(3, 'Etat des Risques et Pollutions Plomb dans l’eau Radon', 'Sécurité piscines Accessibilité Handicapés'),
+      page(4, 'N°ADEME : 2233E0402728W', 'Diagnostic de performance énergétique'),
+      page(5, 'Etat de l’Installation Intérieure d’Electricité n° 24/IMO/0154N', 'L’installation intérieure d’électricité ne comporte aucune anomalie.'),
+      page(6, 'Etat relatif à la présence de termites n° 24/IMO/0154N', 'Absence d’indices d’infestation de termites')
+    ]);
+    expect(controles.some((c) => c.genre === 'manque' && c.type === 'erp')).toBe(true);
   });
 });

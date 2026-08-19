@@ -2036,6 +2036,58 @@ plus utile, souvent, que le contenu d'un diagnostic present.
 
 ---
 
+## 48 · Dire ce qui MANQUE — et ne jamais reclamer ce qui est la
+
+Le §47 avait montre que huit dossiers sur cent n'ont aucun etat des risques. Le
+produit ne fabrique plus de fiche vide, mais il ne le disait pas encore.
+
+Il le dit desormais. Le controle des manques existait — il reclamait l'amiante
+avant 1997, le plomb avant 1949, l'electricite au-dela de quinze ans — mais
+**deux diagnostics y echappaient parce qu'ils ne dependent pas de l'age du
+logement**, et qu'ils etaient places derriere la garde qui exige de connaitre
+l'annee : l'etat des risques et le DPE.
+
+### Le garde-fou qui a failli tout annuler
+
+Premiere mesure : **quinze dossiers sur cent se voyaient reclamer un DPE dont le
+numero ADEME figure pourtant dans leurs pages**. La decoupe ne l'avait pas
+reconnu comme volet, mais le document est bien la.
+
+**Reclamer un rapport qui est sous les yeux du lecteur est pire qu'un silence**
+— il cesse de faire confiance a tout le reste. On ne reclame donc plus que ce
+qui ne se trouve NULLE PART, avec la marque la plus sure de chaque diagnostic.
+
+Sauf que la premiere marque choisie pour l'etat des risques etait son titre. Or
+« Etat des Risques et Pollutions » figure dans la **grille des prestations** de
+tous les dossiers, meme ceux qui n'en portent aucun : le garde-fou annulait
+purement et simplement le chantier — plus aucune reclamation, jamais.
+
+Cinquieme fois que cette grille trompe. **Seule la mention legale prouve la
+presence du rapport** : « en application des articles L. 125-5 ».
+
+### La mesure
+
+| Reclamation | dossiers sur 100 |
+|---|---|
+| etat des risques | 22 |
+| amiante | 15 |
+| DPE | 13 |
+| plomb | 10 |
+| electricite | 9 |
+
+Quarante-quatre dossiers sur cent portent au moins un manque — et la
+contre-epreuve donne **zero reclamation a tort** pour l'ERP comme pour le DPE.
+
+### Pourquoi c'est le chantier le plus utile de la nuit
+
+Tout ce qui precede ameliorait la lecture d'un document present. Celui-ci dit ce
+qui n'y est pas — et l'absence d'un diagnostic obligatoire est souvent plus
+lourde de consequences que le contenu d'un diagnostic present. Un acquereur qui
+signe sans etat des risques n'a pas ete informe d'un risque d'inondation ou
+d'argile ; il pourra le reprocher.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion
@@ -2128,8 +2180,7 @@ plus utile, souvent, que le contenu d'un diagnostic present.
       quatrième écriture trouvée, § 34 : le détail précède le libellé. 55/55.
 - [x] ~~Les huit fiches ERP muettes sur 82.~~ → §47 : elles etaient fabriquees
       a partir de la grille des prestations, et le vrai ERP etait absent.
-- [ ] **Dire ce qui MANQUE** : huit dossiers sur cent n'ont pas d'etat des
-      risques, obligatoire a la vente. Le produit ne fabrique plus de fiche
-      vide, mais il ne signale pas encore l'absence.
+- [x] ~~**Dire ce qui MANQUE**.~~ → fait, §48 : 44 dossiers sur 100 portent au
+      moins un manque, et zéro réclamation à tort.
 - [ ] L'assainissement : deux volets sur cent dossiers, aucun verdict. À
       traiter quand un cas se présentera.

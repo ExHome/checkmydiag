@@ -19,6 +19,7 @@ import { conclusionDe, graviteDe, lireSynthese, type BlocSynthese } from './synt
 import { nombre, trouver } from './texte';
 import { dateDuRapport } from './dateRapport';
 import { lireTransaction, validite, type Transaction } from './transaction';
+import type { PointDeControle } from '../modele';
 
 type Extracteur = (lignes: string[], plage: [number, number]) => Diagnostic;
 
@@ -300,7 +301,9 @@ export function analyser(brutes: PageTexte[]): Analyse {
        * rapport périmé le reste, deux chiffres qui se contredisent aussi.
        */
       ...controler(bien, diagnostics, new Date(), plageSynthese !== null).filter(
-        (c) => nature.genre === 'venteLocation' || c.genre !== 'manque'
+        (c) =>
+          (nature.genre === 'venteLocation' || c.genre !== 'manque') &&
+          !dejaDansLeDocument(c, toutesLesLignes)
       ),
       // Un document de copropriété se contrôle sur son propre cadre légal : ce
       // qui lui manque est un défaut du dossier, au même titre qu'un rapport
@@ -312,6 +315,40 @@ export function analyser(brutes: PageTexte[]): Analyse {
     nbPages: pages.length,
     confiance: confianceDuDossier(diagnostics)
   };
+}
+
+/**
+ * Ce diagnostic est-il quelque part dans le document, meme non decoupe ?
+ *
+ * Reclamer un rapport qui est sous les yeux du lecteur est pire qu'un silence :
+ * il cesse de faire confiance a tout le reste. Mesure avant ce garde-fou :
+ * quinze dossiers sur cent se voyaient reclamer un DPE dont le numero ADEME
+ * figure pourtant dans leurs pages — la decoupe ne l'avait pas reconnu comme
+ * volet, mais il est bien la.
+ *
+ * On ne reclame donc que ce qui ne se trouve NULLE PART, avec la marque la plus
+ * sure de chaque diagnostic : le numero ADEME pour le DPE, la mention legale
+ * pour l'etat des risques.
+ */
+const MARQUE_INDUBITABLE: Partial<Record<TypeDiag, RegExp>> = {
+  dpe: /N[°o]\s*ADEME|Diagnostic de performance\s*[ée]nerg[ée]tique/i,
+  /*
+   * Pour l'etat des risques, le TITRE ne prouve rien : « Etat des Risques et
+   * Pollutions » figure dans la grille des prestations de tous les dossiers,
+   * meme ceux qui n'en portent aucun. Retenir le titre revenait a ne plus
+   * jamais reclamer ce diagnostic. Seule la mention legale prouve sa presence.
+   */
+  erp: /En application des articles L\s*\.?\s*125-5/i,
+  plomb: /Constat de risque d'exposition au plomb|CREP/i,
+  amiante: /rep[ée]rage des mat[ée]riaux et produits contenant de l'amiante/i,
+  electricite: /Etat de l['’]Installation Int[ée]rieure d['’]Electricit[ée]/i,
+  termites: /[ée]tat relatif [àa] la pr[ée]sence de termites/i
+};
+
+function dejaDansLeDocument(controle: PointDeControle, lignes: string[]): boolean {
+  if (controle.genre !== 'manque' || !controle.type) return false;
+  const marque = MARQUE_INDUBITABLE[controle.type];
+  return marque ? lignes.some((l) => marque.test(l)) : false;
 }
 
 /**

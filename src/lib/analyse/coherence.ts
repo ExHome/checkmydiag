@@ -173,6 +173,41 @@ function manquants(
   const points: PointDeControle[] = [];
   if (!avecSynthese && presents.size < 3) return points;
 
+  /*
+   * Deux diagnostics ne dependent pas de l'age du logement — et ils etaient
+   * derriere la garde qui exige de connaitre l'annee.
+   *
+   * L'etat des risques et le DPE sont dus pour toute vente ou location, quel
+   * que soit le bati. Mesure : huit dossiers sur cent n'ont aucun etat des
+   * risques, et le produit ne le disait pas — il fabriquait meme une fiche vide
+   * a partir de la grille des prestations, jusqu'a ce que la decoupe soit
+   * corrigee. L'absence d'un diagnostic obligatoire est pourtant plus utile a
+   * un acheteur que le contenu d'un diagnostic present.
+   */
+  if (!presents.has('erp')) {
+    points.push({
+      genre: 'manque',
+      type: 'erp',
+      titre: 'Il n’y a pas d’état des risques dans ce dossier',
+      explication:
+        'L’état des risques et pollutions est dû pour toute vente et toute location dans les communes soumises à l’information acquéreur-locataire — ce qui est le cas de la quasi-totalité d’entre elles. Il indique si le bien est en zone inondable, en zone d’argile, ou près d’un site pollué.',
+      quoiFaire:
+        'Réclamez-le : il date de moins de six mois, c’est le diagnostic qui périme le plus vite, et il est souvent fourni dans un fichier séparé.'
+    });
+  }
+
+  if (!presents.has('dpe')) {
+    points.push({
+      genre: 'manque',
+      type: 'dpe',
+      titre: 'Il n’y a pas de diagnostic de performance énergétique dans ce dossier',
+      explication:
+        'Le DPE est dû pour toute vente et toute location d’un logement. Il donne la classe de A à G, l’estimation des coûts d’énergie, et il engage désormais le vendeur : depuis 2021, il n’est plus seulement informatif.',
+      quoiFaire:
+        'Réclamez-le. S’il s’agit d’un local sans chauffage fixe, demandez que cela soit écrit noir sur blanc : un DPE peut alors être vierge, et c’est régulier.'
+    });
+  }
+
   const annee = anneeDe(bien.anneeConstruction);
   if (annee === null) return points;
 

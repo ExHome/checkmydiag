@@ -53,9 +53,11 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 - **Les huit fiches ERP muettes sont réglées** (§47) : elles étaient fabriquées
   à partir de la grille des prestations, et le vrai rapport était absent.
   Couverture : **375/383, soit 98 %**.
-- **Prochain chantier, et il est plus important** : **dire ce qui MANQUE**. Huit
-  dossiers sur cent n'ont pas d'état des risques, obligatoire à la vente. Le
-  produit ne fabrique plus de fiche vide, mais il ne signale pas l'absence.
+- **Dire ce qui manque est fait** (§48) : 44 dossiers sur 100 portent au moins
+  un manque signalé, et zéro réclamation à tort.
+- **Prochain chantier** : les 15 amiante et 10 plomb réclamés — vérifier au cas
+  par cas que l'obligation s'applique vraiment (année de construction lue au
+  bon endroit), comme cela a été fait pour l'ERP et le DPE.
 
 ## Compteurs
 
@@ -65,8 +67,8 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 | Volets lus page à page | 24 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 6 majeures |
-| Corrections livrées | 21 |
-| Tests de non-régression ajoutés | 65 |
+| Corrections livrées | 22 |
+| Tests de non-régression ajoutés | 69 |
 | Fausses alertes de mes propres sondes, écartées avant annonce | 6 |
 | Sondes de justesse écrites | 2 |
 | Notions métier versées au produit | 5 |
@@ -650,3 +652,25 @@ fiche utile perdue.
 **Le vrai chantier apparaît là** : dire ce qui manque. L'absence d'un diagnostic
 obligatoire est souvent plus utile à un acheteur que le contenu d'un diagnostic
 présent.
+
+### 20 août 2026, nuit — dire ce qui manque
+
+Le contrôle des manques existait, mais **l'état des risques et le DPE y
+échappaient** : ils ne dépendent pas de l'âge du logement et se trouvaient
+derrière la garde qui exige de connaître l'année de construction.
+
+**Le garde-fou a failli tout annuler.** Première mesure : quinze dossiers sur
+cent se voyaient réclamer un DPE dont le numéro ADEME figure pourtant dans leurs
+pages. Réclamer un rapport qui est sous les yeux du lecteur est pire qu'un
+silence. On ne réclame donc plus que ce qui ne se trouve nulle part — mais la
+première marque choisie pour l'ERP était son titre, qui figure dans la grille
+des prestations de tous les dossiers. Le garde-fou supprimait alors toute
+réclamation. **Cinquième fois que cette grille trompe** : seule la mention
+légale prouve la présence du rapport.
+
+**Résultat : 44 dossiers sur 100 portent au moins un manque** — 22 états des
+risques, 15 amiante, 13 DPE, 10 plomb, 9 électricité — et **zéro réclamation à
+tort**, vérifié par contre-épreuve sur les deux diagnostics ajoutés.
+
+C'est le chantier le plus utile de la nuit : tout le reste améliorait la lecture
+d'un document présent, celui-ci dit ce qui n'y est pas.
