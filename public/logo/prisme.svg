@@ -1,29 +1,49 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 106" role="img" aria-label="Verrière">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 112" role="img" aria-label="Verrière">
   <title>Verrière</title>
   <defs>
-    <linearGradient id="vp" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#12463b"/>
-      <stop offset="1" stop-color="#06251d"/>
+    <linearGradient id="l0" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#1fb4b8"/><stop offset="1" stop-color="#3fc19f"/></linearGradient>
+    <linearGradient id="l1" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#43c58d"/><stop offset="1" stop-color="#4fc667"/></linearGradient>
+    <linearGradient id="l2" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#5bc562"/><stop offset="1" stop-color="#9ed352"/></linearGradient>
+    <linearGradient id="l3" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#c3dd3a"/><stop offset="1" stop-color="#f6dc3b"/></linearGradient>
+    <linearGradient id="l4" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#f9d227"/><stop offset="1" stop-color="#f88704"/></linearGradient>
+    <linearGradient id="l5" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#fb4a02"/><stop offset="1" stop-color="#e81c03"/></linearGradient>
+    <!-- La moitié pleine n'est pas un aplat : elle a une facette éclairée. -->
+    <linearGradient id="plein" x1="0.15" y1="0" x2="0.9" y2="0.85">
+      <stop offset="0" stop-color="#15503f"/>
+      <stop offset="0.55" stop-color="#0d3b2f"/>
+      <stop offset="1" stop-color="#05201a"/>
     </linearGradient>
+    <!-- Le fuseau : une tranche de verre, pas un trait. -->
+    <linearGradient id="tranche" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#cfd8d0"/>
+      <stop offset="0.45" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#eef2ec"/>
+    </linearGradient>
+    <filter id="ombre" x="-30%" y="-20%" width="170%" height="150%">
+      <feDropShadow dx="1.6" dy="2.4" stdDeviation="2.6" flood-color="#041914" flood-opacity=".45"/>
+    </filter>
   </defs>
-  <!-- La moitié pleine : l'information avant qu'on la regarde. -->
-  <path d="M50.0 3.0L3.0 53.0L50.0 103.0Z" fill="url(#vp)"/>
-  <!-- Les six lamelles : la lumière décomposée, convergeant vers la pointe. -->
-    <path d="M50.0 3.0L97.0 53.0L50.0 19.7Z" fill="#4bbfa0"/><!-- turquoise -->
-    <path d="M50.0 19.7L97.0 53.0L50.0 36.3Z" fill="#4ec67e"/><!-- vert -->
-    <path d="M50.0 36.3L97.0 53.0L50.0 53.0Z" fill="#95cf59"/><!-- chartreuse -->
-    <path d="M50.0 53.0L97.0 53.0L50.0 69.7Z" fill="#fbe768"/><!-- jaune -->
-    <path d="M50.0 69.7L97.0 53.0L50.0 86.3Z" fill="#f39513"/><!-- orange -->
-    <path d="M50.0 86.3L97.0 53.0L50.0 103.0Z" fill="#e52406"/><!-- rouge -->
-  <!-- Ce qui les fait LAMES et non dégradé : le joint sombre entre chacune. -->
-    <path d="M50.0 19.7L97.0 53.0" stroke="#06251d" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-    <path d="M50.0 36.3L97.0 53.0" stroke="#06251d" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-    <path d="M50.0 53.0L97.0 53.0" stroke="#06251d" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-    <path d="M50.0 69.7L97.0 53.0" stroke="#06251d" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-    <path d="M50.0 86.3L97.0 53.0" stroke="#06251d" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-  <!-- Le fuseau clair : la tranche du prisme, là où la lumière entre. -->
-  <path d="M50.0 3.0C46.8 33.0 46.8 73.0 50.0 103.0C53.2 73.0 53.2 33.0 50.0 3.0Z" fill="#f7f6f2"/>
-  <!-- Les arêtes, en filet clair très discret, des deux côtés. -->
-  <path d="M50.0 3.0L3.0 53.0L50.0 103.0" fill="none" stroke="#f7f6f2" stroke-width="1.1" stroke-linejoin="round" opacity=".34"/>
-  <path d="M50.0 3.0L97.0 53.0L50.0 103.0" fill="none" stroke="#f7f6f2" stroke-width="0.9" stroke-linejoin="round" opacity=".22"/>
+
+  <g filter="url(#ombre)">
+    <!-- L'information avant qu'on la regarde : opaque, dense. -->
+    <path d="M50.0 4.0L4.0 54.0L50.0 104.0Z" fill="url(#plein)"/>
+    <!-- La lumière décomposée : six lames convergeant vers la pointe. -->
+    <path d="M50.0 4.0L96.0 54.0L50.0 25.7Z" fill="url(#l0)"/><!-- turquoise -->
+    <path d="M50.0 25.7L96.0 54.0L50.0 41.0Z" fill="url(#l1)"/><!-- vert d’eau -->
+    <path d="M50.0 41.0L96.0 54.0L50.0 54.0Z" fill="url(#l2)"/><!-- vert -->
+    <path d="M50.0 54.0L96.0 54.0L50.0 67.0Z" fill="url(#l3)"/><!-- chartreuse -->
+    <path d="M50.0 67.0L96.0 54.0L50.0 82.3Z" fill="url(#l4)"/><!-- jaune -->
+    <path d="M50.0 82.3L96.0 54.0L50.0 104.0Z" fill="url(#l5)"/><!-- orange -->
+    <!-- Le joint sombre entre les lames : sans lui, c'est un dégradé, pas un prisme. -->
+    <path d="M50.0 25.7L96.0 54.0" stroke="#07231c" stroke-width="1.4" stroke-linecap="round" opacity=".85"/>
+    <path d="M50.0 41.0L96.0 54.0" stroke="#07231c" stroke-width="1.4" stroke-linecap="round" opacity=".85"/>
+    <path d="M50.0 54.0L96.0 54.0" stroke="#07231c" stroke-width="1.4" stroke-linecap="round" opacity=".85"/>
+    <path d="M50.0 67.0L96.0 54.0" stroke="#07231c" stroke-width="1.4" stroke-linecap="round" opacity=".85"/>
+    <path d="M50.0 82.3L96.0 54.0" stroke="#07231c" stroke-width="1.4" stroke-linecap="round" opacity=".85"/>
+    <!-- La tranche, là où la lumière entre. -->
+    <path d="M50.0 4.0C46.6 34.0 46.6 74.0 50.0 104.0C53.4 74.0 53.4 34.0 50.0 4.0Z" fill="url(#tranche)"/>
+    <!-- L'arête vive, en haut à gauche : c'est elle qui donne le volume. -->
+    <path d="M50.0 4.0L4.0 54.0" fill="none" stroke="#8fb9a4" stroke-width="1.3" stroke-linecap="round" opacity=".55"/>
+    <path d="M4.0 54.0L50.0 104.0" fill="none" stroke="#0a2b23" stroke-width="1.1" stroke-linecap="round" opacity=".5"/>
+  </g>
 </svg>

@@ -329,7 +329,7 @@
       Yvelines, et le référencement s'y perdrait.
     -->
     <a class="marque" href="./" onclick={(e) => { e.preventDefault(); recommencer(); }}>
-      <img class="tuile-logo" src="./logo/prisme.svg" alt="" width="38" height="40" />
+      <img class="tuile-logo" src="./logo/prisme.svg" alt="" width="38" height="43" />
       <span class="mot">
         Verrière
         <span class="signature">La lumière sur vos diagnostics</span>
@@ -503,7 +503,7 @@
   .tuile-logo {
     flex: none;
     width: 38px;
-    height: 40px;
+    height: 43px;
   }
 
   .mot {
