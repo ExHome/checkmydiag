@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 420" fill="none">
+<g stroke="#174D3E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M80 340V145L300 45l220 100v195"/><path d="M80 145h440M300 45v295M80 340h440"/>
+<path d="M125 340V165M175 340V142M230 340V118M370 340V118M425 340V142M475 340V165"/>
+<path d="M80 145 300 45l220 100M125 145 300 65l175 80M175 145 300 86l125 59M230 145 300 108l70 37" opacity=".55"/>
+<path d="M108 340c35-58 70-65 103-22 25-50 72-55 96 3 25-43 65-46 91 0 30-48 72-42 91 19" opacity=".65"/>
+<path d="M520 340c25-52 42-86 69-112M542 300c22-8 36-20 43-38M557 274c-4-20 0-37 13-51" opacity=".65"/>
+</g></svg>

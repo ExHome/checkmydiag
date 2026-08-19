@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 106" role="img" aria-label="Verrière">
+  <title>Verrière</title>
+  <defs>
+    <linearGradient id="vp" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#12463b"/>
+      <stop offset="1" stop-color="#06251d"/>
+    </linearGradient>
+  </defs>
+  <!-- La moitié pleine : l'information avant qu'on la regarde. -->
+  <path d="M50.0 3.0L3.0 53.0L50.0 103.0Z" fill="url(#vp)"/>
+  <!-- Les six lamelles : la lumière décomposée, convergeant vers la pointe. -->
+    <path d="M50.0 3.0L97.0 53.0L50.0 19.7Z" fill="#4bbfa0"/><!-- turquoise -->
+    <path d="M50.0 19.7L97.0 53.0L50.0 36.3Z" fill="#4ec67e"/><!-- vert -->
+    <path d="M50.0 36.3L97.0 53.0L50.0 53.0Z" fill="#95cf59"/><!-- chartreuse -->
+    <path d="M50.0 53.0L97.0 53.0L50.0 69.7Z" fill="#fbe768"/><!-- jaune -->
+    <path d="M50.0 69.7L97.0 53.0L50.0 86.3Z" fill="#f39513"/><!-- orange -->
+    <path d="M50.0 86.3L97.0 53.0L50.0 103.0Z" fill="#e52406"/><!-- rouge -->
+  <!-- Ce qui les fait LAMES et non dégradé : le joint sombre entre chacune. -->
+    <path d="M50.0 19.7L97.0 53.0" stroke="#06251d" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M50.0 36.3L97.0 53.0" stroke="#06251d" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M50.0 53.0L97.0 53.0" stroke="#06251d" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M50.0 69.7L97.0 53.0" stroke="#06251d" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M50.0 86.3L97.0 53.0" stroke="#06251d" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <!-- Le fuseau clair : la tranche du prisme, là où la lumière entre. -->
+  <path d="M50.0 3.0C46.8 33.0 46.8 73.0 50.0 103.0C53.2 73.0 53.2 33.0 50.0 3.0Z" fill="#f7f6f2"/>
+  <!-- Les arêtes, en filet clair très discret, des deux côtés. -->
+  <path d="M50.0 3.0L3.0 53.0L50.0 103.0" fill="none" stroke="#f7f6f2" stroke-width="1.1" stroke-linejoin="round" opacity=".34"/>
+  <path d="M50.0 3.0L97.0 53.0L50.0 103.0" fill="none" stroke="#f7f6f2" stroke-width="0.9" stroke-linejoin="round" opacity=".22"/>
+</svg>

@@ -329,10 +329,10 @@
       Yvelines, et le référencement s'y perdrait.
     -->
     <a class="marque" href="./" onclick={(e) => { e.preventDefault(); recommencer(); }}>
-      <img class="tuile-logo" src="./logo/logo.svg" alt="" width="40" height="40" />
+      <img class="tuile-logo" src="./logo/prisme.svg" alt="" width="38" height="40" />
       <span class="mot">
         Verrière
-        <span class="signature">Lumière sur vos diagnostics</span>
+        <span class="signature">La lumière sur vos diagnostics</span>
       </span>
     </a>
     <!--
@@ -471,23 +471,38 @@
   }
 
   /*
-   * La tuile du logo, telle qu'elle est fournie.
+   * LE PRISME, tel que le pack maître le fournit.
    *
-   * Elle n'est pas refaite en CSS. Je l'avais redessinée — six carreaux en
-   * grille, un montant par écart — et c'était contraire à la consigne : le
-   * logo est fourni, il ne se redessine pas. La reconstruction avait d'ailleurs
-   * déjà produit deux écarts : des carreaux remplis de sable au lieu du fond,
-   * et un rayon d'angle qui n'était pas celui du tracé.
+   * Les six carreaux sont abandonnés : l'ODM directeur nomme le prisme logo
+   * principal, et interdit de réintroduire un logo rejeté. Le prisme dit ce que
+   * fait le produit — une information complexe entre, la lumière la décompose
+   * et révèle l'essentiel.
    *
-   * Le seul argument qui la justifiait — « en CSS, elle s'imprime » — est faux :
-   * le bandeau entier est masqué à l'impression.
+   * Le fichier vient de `02_IDENTITE_LOGO/verriere_logo_prisme.svg`, et il n'est
+   * pas redessiné : on en extrait le seul symbole, chemins et couleurs
+   * inchangés, parce que le nom est déjà écrit à côté en HTML. Le logo complet,
+   * mot compris, reste disponible dans `prisme-complet.svg`.
    *
-   * 40 px est la taille minimale que la charte fixe à l'écran. En dessous, elle
-   * demande la version favicon, à quatre carreaux.
+   * ── Décalqué sur la PUBLICITÉ, pas sur le SVG du pack ────────────────────
+   *
+   * Le pack fournit deux versions du prisme, et elles diffèrent. Le SVG est une
+   * simplification : un dégradé continu barré de quatre rayons. La publicité
+   * — et c'est elle que la cliente désigne — montre un prisme à SIX LAMELLES
+   * distinctes, turquoise, vert, chartreuse, jaune, orange, rouge, qui
+   * convergent vers la pointe droite, séparées de la moitié pleine par un
+   * fuseau clair.
+   *
+   * C'est cette version-ci qui dit ce que fait le produit : une matière opaque
+   * d'un côté, la même décomposée de l'autre.
+   *
+   * Rien n'est inventé. La géométrie est relevée au pixel sur le master
+   * (losange de 90 × 95, axe au centre) et les six couleurs sont échantillonnées
+   * une à une dans l'image. Le logo complet, mot compris, reste disponible tel
+   * qu'il a été fourni dans `prisme-complet.svg`.
    */
   .tuile-logo {
     flex: none;
-    width: 40px;
+    width: 38px;
     height: 40px;
   }
 
