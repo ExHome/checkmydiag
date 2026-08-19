@@ -861,7 +861,7 @@
     background: transparent;
     border: none;
     border-radius: var(--rayon-badge);
-    color: var(--coral-texte);
+    color: var(--action-texte);
     font-size: var(--t-base);
     font-weight: 700;
     cursor: pointer;
@@ -896,7 +896,7 @@
    * abandonne la déclaration en silence.
    *
    * CE QUI NE CHANGE PAS, quel que soit l'univers :
-   *   `--coral` et les trois couleurs d'état. Elles disent la gravité. Les
+   *   `--action` et les trois couleurs d'état. Elles disent la gravité. Les
    *   teinter selon l'écran reviendrait à rendre une alerte moins visible ici
    *   que là — c'est la seule chose que ce chantier n'a pas le droit de faire.
    */
@@ -906,36 +906,36 @@
     -webkit-overflow-scrolling: touch;
     padding: var(--e4) var(--e4) var(--e7);
 
-    background: var(--u-fond, #0f3a47);
-    color: var(--u-texte, #1a4d5c);
+    background: var(--u-fond, #0a2b23);
+    color: var(--u-texte, #12463b);
 
-    --fond: var(--u-fond, #0f3a47);
+    --fond: var(--u-fond, #0a2b23);
     --fond-clair: var(--u-surface, #ffffff);
     --papier: var(--u-surface, #ffffff);
-    --papier-doux: color-mix(in srgb, var(--u-texte, #1a4d5c) 4%, var(--u-surface, #ffffff));
-    --sur-fond: var(--u-texte, #1a4d5c);
+    --papier-doux: color-mix(in srgb, var(--u-texte, #12463b) 4%, var(--u-surface, #ffffff));
+    --sur-fond: var(--u-texte, #12463b);
     --sur-fond-doux: var(--u-texte-doux, #555555);
-    --encre: var(--u-texte, #1a4d5c);
+    --encre: var(--u-texte, #12463b);
     --encre-doux: var(--u-texte-doux, #555555);
     --gris: var(--u-texte-doux, #888888);
     --trait: var(--u-trait, #e8dcc8);
     --trait-fin: color-mix(in srgb, var(--u-trait, #f0eae0) 55%, transparent);
     --trait-or: var(--u-trait, #e8dcc8);
-    --surface: color-mix(in srgb, var(--u-texte, #1a4d5c) 4%, transparent);
-    --surface-forte: color-mix(in srgb, var(--u-texte, #1a4d5c) 7%, transparent);
-    --surface-bord: color-mix(in srgb, var(--u-texte, #1a4d5c) 14%, transparent);
+    --surface: color-mix(in srgb, var(--u-texte, #12463b) 4%, transparent);
+    --surface-forte: color-mix(in srgb, var(--u-texte, #12463b) 7%, transparent);
+    --surface-bord: color-mix(in srgb, var(--u-texte, #12463b) 14%, transparent);
 
-    /* L'accent de l'univers prend la place du corail dans les rôles
+    /* L'accent de l'univers prend la place de l’ancien accent dans les rôles
        décoratifs — filets, bords actifs, boutons. Pas dans les rôles de
        gravité. */
-    --coral-fonce: var(--u-accent, #d0402c);
-    --coral-texte: var(--u-accent, #a33220);
+    --action-forte: var(--u-accent, #a3231a);
+    --action-texte: var(--u-accent, #a33220);
     --sur-accent: var(--u-sur-accent, #ffffff);
 
     /* La couleur vive de l'écran : elle remplit, elle n'écrit pas. C'est elle
        qui rend au produit la vivacité que l'assombrissement systématique lui
        avait retirée. */
-    --coral: var(--u-accent-vif, #ff6b5d);
+    --action: var(--u-accent-vif, #12463b);
 
     /*
      * Les noms historiques, qu'il fallait remapper aussi.
@@ -943,31 +943,31 @@
      * L'ossature du produit vient du vert nuit et de l'or : `--or-clair`,
      * `--vert-700`, `--petrole` portent encore une bonne part des couleurs,
      * dans 35 fichiers. Ils étaient absents de ce bloc, et c'est ce qui
-     * éteignait l'écran sombre — `--or-clair` vaut #1a4d5c, exactement la
+     * éteignait l'écran sombre — `--or-clair` vaut #12463b, exactement la
      * couleur relevée à 1,95:1 sous le verdict « 4 anomalies ».
      *
      * Les migrer un par un dans les composants aurait laissé passer ceux qu'on
      * n'aurait pas trouvés. Les rattacher ici les répare tous d'un coup, y
      * compris ceux qu'on écrira demain sans y penser.
      */
-    --petrole: var(--u-texte, #1a4d5c);
-    --petrole-fonce: var(--u-texte, #0f3a47);
-    --sable: var(--u-fond, #0f3a47);
+    --petrole: var(--u-texte, #12463b);
+    --petrole-fonce: var(--u-texte, #0a2b23);
+    --sable: var(--u-fond, #0a2b23);
     --sable-clair: var(--u-surface, #f5f1e8);
-    --vert-900: var(--u-texte, #0f3a47);
-    --vert-800: var(--u-texte, #14434f);
-    --vert-700: var(--u-texte, #1a4d5c);
-    --vert-500: var(--u-texte, #1a4d5c);
+    --vert-900: var(--u-texte, #0a2b23);
+    --vert-800: var(--u-texte, #12463b);
+    --vert-700: var(--u-texte, #12463b);
+    --vert-500: var(--u-texte, #12463b);
     --vert-300: var(--u-texte-doux, #7fa3ad);
-    --or: var(--u-accent, #ff6b5d);
+    --or: var(--u-accent, #12463b);
     --or-fonce: var(--u-accent, #a33220);
-    --or-clair: var(--u-texte, #1a4d5c);
+    --or-clair: var(--u-texte, #12463b);
 
     /* Les deux fonds de pastille. Ils se composent sur la surface de l'univers
        plutôt que sur du blanc : sur l'écran sombre, une pastille reste sombre
        et garde son texte clair, au lieu de devenir un pavé blanc. */
-    --vert-100: color-mix(in srgb, var(--u-texte, #1a4d5c) 8%, var(--u-surface, #ffffff));
-    --or-pale: color-mix(in srgb, var(--u-accent, #ff6b5d) 14%, var(--u-surface, #ffffff));
+    --vert-100: color-mix(in srgb, var(--u-texte, #12463b) 8%, var(--u-surface, #ffffff));
+    --or-pale: color-mix(in srgb, var(--u-accent, #12463b) 14%, var(--u-surface, #ffffff));
   }
 
   /*
@@ -981,13 +981,13 @@
    */
   .dedans.sombre {
     --alerte: #ff9084;
-    --alerte-fond: rgb(255 107 93 / 14%);
+    --alerte-fond: rgb(214 230 106 / 19%);
     --attention: #ffd54a;
     --attention-fond: rgb(255 213 74 / 14%);
     --ok: #cfe3ea;
     --ok-fond: rgb(207 227 234 / 10%);
-    --coral: #ff9084;
-    /* Le corail foncé qui signale ailleurs ne tient que 2,1 ici. */
+    --action: #ff9084;
+    /* Le vert profond qui signale ailleurs ne tient que 2,1 ici. */
     --alerte-vive: #ff9084;
   }
 
@@ -1011,7 +1011,7 @@
     font-weight: 700;
     letter-spacing: var(--suivi);
     text-transform: uppercase;
-    color: var(--coral-texte);
+    color: var(--action-texte);
   }
 
   /* À l'impression, le dossier se lit d'un bloc : l'accroche d'un écran qu'on
@@ -1339,7 +1339,7 @@
 
   /* ---- Le niveau de lecture ----------------------------------------------
      Deux boutons de même largeur, séparés du reste par un filet : c'est une
-     commande, pas un paragraphe. L'actif prend le corail plein — la seule
+     commande, pas un paragraphe. L'actif prend le vert plein — la seule
      couleur d'action du produit. */
   .modes {
     display: flex;
@@ -1364,19 +1364,19 @@
   }
 
   /* Le bord prend la couleur vive, le libellé prend celle qui s'écrit : depuis
-     que `--coral-fonce` est redevenu le corail exact, il ne tient plus que 2,8
+     que `--action-forte` porte le vert profond, l'encre claire y tient largement
      en texte. */
   .modes button:hover {
-    border-color: var(--coral-fonce);
-    color: var(--coral-texte);
+    border-color: var(--action-forte);
+    color: var(--action-texte);
   }
 
   /* L'encre du bouton actif suit l'accent : blanche sur un accent foncé, sombre
      sur le jaune de l'électricité. Écrire `#fff` en dur donnait un bouton
      illisible dans les univers clairs d'accent. */
   .modes button.actif {
-    background: var(--coral-fonce);
-    border-color: var(--coral-fonce);
+    background: var(--action-forte);
+    border-color: var(--action-forte);
     color: var(--sur-accent, #fff);
   }
 
@@ -1533,7 +1533,7 @@
   /*
    * Ce qui est propre à ce rapport-ci, distingué du fond commun.
    *
-   * Un filet corail sur le bord gauche, et un fond très légèrement teinté : ces
+   * Un filet citron sur le bord gauche, et un fond très légèrement teinté : ces
    * paragraphes parlent du logement du lecteur, pas des diagnostics en général.
    * La différence doit se voir sans qu'on ait à la lire.
    */
@@ -1541,7 +1541,7 @@
     margin: var(--e4) 0;
     padding: var(--e3) var(--e4);
     background: var(--surface);
-    border-left: 3px solid var(--coral-fonce);
+    border-left: 3px solid var(--action-forte);
     border-radius: 0 var(--rayon) var(--rayon) 0;
     display: grid;
     gap: var(--e3);
@@ -1571,7 +1571,7 @@
     gap: var(--e2);
     min-height: 44px;
     padding: 0 var(--e4);
-    background: var(--coral-fonce);
+    background: var(--action-forte);
     color: var(--sur-accent, #fff);
     border-radius: var(--rayon-badge);
     font-size: var(--t-petit);
@@ -1581,12 +1581,12 @@
   }
 
   /* Le survol se lit par un fondu vers l'encre de l'écran, pas par une seconde
-     couleur : dans un univers, l'accent et le corail-texte sont la même valeur,
+     couleur : dans un univers, l'accent et l'action-texte sont la même valeur,
      et le bouton ne réagissait plus. Le fondu marche dans les deux sens — il
      assombrit un accent posé sur fond clair, éclaircit celui de l'écran sombre —
      donc il préserve le contraste avec l'encre du bouton. */
   .demarche:hover {
-    background: color-mix(in srgb, var(--coral-fonce) 82%, var(--sur-fond));
+    background: color-mix(in srgb, var(--action-forte) 82%, var(--sur-fond));
     transform: translateY(-2px);
   }
 

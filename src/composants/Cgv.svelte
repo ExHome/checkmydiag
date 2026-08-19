@@ -115,7 +115,7 @@
     --encre: var(--petrole);
     --encre-doux: #555555;
     --gris: #888888;
-    --coral-texte: #a33220;
+    --action-texte: #a33220;
     --or-clair: var(--petrole);
     color: var(--petrole);
   }
@@ -132,8 +132,8 @@
   }
 
   .brouillon {
-    background: rgb(255 107 93 / 12%);
-    border: 1px solid rgb(255 107 93 / 55%);
+    background: rgb(214 230 106 / 17%);
+    border: 1px solid rgb(214 230 106 / 62%);
     border-radius: var(--rayon);
     padding: var(--e2) var(--e3);
     margin-bottom: var(--e4);

@@ -30,11 +30,11 @@
   /*
    * Le plan est à la charte, comme le reste de l'interface.
    *
-   * Il a pris un temps la couleur de l'application : le corail est la couleur
+   * Il a pris un temps la couleur de l'application : l'accent est la couleur
    * d'action du produit, et c'est elle qui doit désigner la zone qu'on vient
    * d'ouvrir. La couleur libre s'arrête à l'icône.
    */
-  const teinte = 'var(--coral-fonce)';
+  const teinte = 'var(--action-forte)';
 
   /** Le titre dit ce qu'on regarde, et d'où ça sort. */
   const TITRES: Partial<Record<Diagnostic['type'], string>> = {

@@ -45,7 +45,7 @@
     bon: '#319834',
     moyen: '#fc9935',
     mauvais: '#fc0205',
-    info: '#ff6b5d'
+    info: '#12463b'
   } as const;
 
   /**
@@ -923,7 +923,7 @@
     background: transparent;
     border: none;
     border-radius: var(--rayon-badge);
-    color: var(--coral-texte);
+    color: var(--action-texte);
     font-size: var(--t-base);
     font-weight: 700;
     cursor: pointer;
@@ -948,7 +948,7 @@
 
   /* ---- La barre des trois parties ---------------------------------------
      Une pilule, pas trois pavés. Le fond sable, l'onglet actif en bleu pétrole
-     plein, un liseré corail dessous : les trois couleurs de la charte, et rien
+     plein, un liseré citron dessous : les couleurs du socle, et rien
      d'autre. L'ancienne version empilait un dégradé, un filet or et une ombre
      verte — trois reliquats d'une charte abandonnée. */
   .vues {
@@ -988,9 +988,9 @@
   }
 
   .vues button.courante {
-    color: var(--sur-coral);
-    background: var(--coral);
-    box-shadow: 0 2px 0 var(--coral) inset;
+    color: var(--sur-action);
+    background: var(--action);
+    box-shadow: 0 2px 0 var(--action) inset;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -1154,7 +1154,7 @@
     padding: var(--e1) var(--e2);
     margin: var(--e1) 0;
     cursor: pointer;
-    color: #0f3a47;
+    color: #0a2b23;
     font: inherit;
     font-weight: 650;
     transition: background 0.15s ease, box-shadow 0.15s ease;
@@ -1420,7 +1420,7 @@
     gap: var(--e3);
     margin-top: var(--e4);
     padding-top: var(--e4);
-    border-top: 1px solid rgb(255 107 93 / 24%);
+    border-top: 1px solid rgb(214 230 106 / 30%);
   }
 
   .pas-a-pas .fleche {
@@ -1480,7 +1480,7 @@
     border-radius: var(--rayon-petit);
     font-size: var(--t-base);
     line-height: 1.5;
-    color: #0f3a47;
+    color: #0a2b23;
     quotes: '«\00a0' '\00a0»';
   }
 
@@ -1519,7 +1519,7 @@
 
   .creuser {
     background: none;
-    border: 1px solid rgb(255 107 93 / 40%);
+    border: 1px solid rgb(214 230 106 / 48%);
     border-radius: 0;
     padding: var(--e2) var(--e4);
     font-size: var(--t-petit);
@@ -1667,7 +1667,7 @@
     --teinte-legende: var(--attention);
   }
   .etiquette.mauvais {
-    --teinte-legende: var(--coral);
+    --teinte-legende: var(--action);
   }
 
   .etiquette:hover,
@@ -1689,7 +1689,7 @@
     --teinte-legende: var(--attention);
   }
   .reponse.mauvais {
-    --teinte-legende: var(--coral);
+    --teinte-legende: var(--action);
   }
 
   .reponse li {
@@ -1810,12 +1810,12 @@
     gap: var(--e2);
     margin-top: var(--e4);
     padding-top: var(--e3);
-    border-top: 1px solid rgb(255 107 93 / 24%);
+    border-top: 1px solid rgb(214 230 106 / 30%);
   }
 
   .passerelles button {
     background: none;
-    border: 1px solid rgb(255 107 93 / 45%);
+    border: 1px solid rgb(214 230 106 / 52%);
     color: var(--or-clair);
     border-radius: 0;
     padding: var(--e2) var(--e4);
@@ -1827,7 +1827,7 @@
 
   .passerelles button:hover {
     background: var(--or);
-    color: #0f3a47;
+    color: #0a2b23;
   }
 
   @media (max-width: 820px) {

@@ -258,7 +258,7 @@
     background: transparent;
     border: none;
     border-radius: var(--rayon-badge);
-    color: var(--coral-texte);
+    color: var(--action-texte);
     font-size: var(--t-base);
     font-weight: 700;
     cursor: pointer;
@@ -307,8 +307,8 @@
     --encre-doux: var(--u-texte-doux, #cbd8dd);
     --gris: var(--u-texte-doux, #cbd8dd);
     --trait: var(--u-trait, #839698);
-    --coral-fonce: var(--u-accent, #bfc5d1);
-    --coral-texte: var(--u-accent, #bfc5d1);
+    --action-forte: var(--u-accent, #bfc5d1);
+    --action-texte: var(--u-accent, #bfc5d1);
     --surface: color-mix(in srgb, var(--u-texte, #f5f1e8) 4%, transparent);
 
     /*
@@ -385,7 +385,7 @@
   }
 
   .chercher input:focus-visible {
-    outline: 2px solid var(--coral-fonce);
+    outline: 2px solid var(--action-forte);
     outline-offset: 1px;
   }
 
@@ -431,7 +431,7 @@
     font-size: 15px;
     font-weight: 700;
     letter-spacing: 0.06em;
-    color: var(--coral-texte);
+    color: var(--action-texte);
     margin: 0 0 var(--e2);
     padding-bottom: 5px;
     border-bottom: 1px solid var(--trait);
@@ -465,11 +465,11 @@
 
   .vedette:hover .mot,
   .vedette:focus-visible .mot {
-    color: var(--coral-texte);
+    color: var(--action-texte);
   }
 
   .vedette:focus-visible {
-    outline: 2px solid var(--coral-fonce);
+    outline: 2px solid var(--action-forte);
     outline-offset: 1px;
   }
 
@@ -493,7 +493,7 @@
   .signe-plus {
     flex: none;
     font-size: 16px;
-    color: var(--coral-texte);
+    color: var(--action-texte);
     line-height: 1;
   }
 
@@ -549,7 +549,7 @@
     border: none;
     padding: 0;
     font: inherit;
-    color: var(--coral-texte);
+    color: var(--action-texte);
     text-decoration: underline;
     text-underline-offset: 2px;
     cursor: pointer;
@@ -599,7 +599,7 @@
   }
 
   .gouttiere button {
-    color: var(--coral-texte);
+    color: var(--action-texte);
     cursor: pointer;
     border-radius: 2px;
   }

@@ -105,22 +105,26 @@
   --sable-clair: #ffffff;
 
   /*
-   * Le corail, en attente d'arbitrage.
+   * ── LE CORAIL EST PARTI ───────────────────────────────────────────────────
    *
-   * Il ne figure pas dans la palette du pack maître. Mais la demande « corail
-   * et non rouge » date du 19 août, soit APRÈS ce pack : on ne le supprime donc
-   * pas de son propre chef. Il reste la couleur de l'ACTION et de l'ALERTE —
-   * boutons, liserés d'alerte — le temps que la question soit tranchée, et il
-   * garde sa valeur exacte de marque.
+   * Il ne figurait pas dans la palette du pack maître, et la décision est
+   * tombée : « LE CORAIL PART ». Il ne reste ni dans les valeurs, ni dans les
+   * noms — un jeton qui s'appellerait encore `--action` en portant du vert
+   * finirait par ramener la couleur qu'il nomme, à la première main qui passe.
    *
-   * Mesuré : #FF6B5D tient 5,43 sur le vert profond et 2,58 seulement sur
-   * l'ivoire. Il s'écrit donc sur le vert, jamais sur l'ivoire ; sur fond clair
-   * il remplit un bouton dont l'encre est le vert profond (5,43 également).
+   * L'ACTION prend le vert Verrière en aplat plein, avec l'ivoire pour encre :
+   * 9,88 de contraste, là où le corail imposait de choisir entre une couleur
+   * juste et un texte lisible. C'est aussi ce que montre le visuel de référence
+   * — le bouton « Voir le bien » y est un aplat sobre, pas une tache vive.
+   *
+   * L'ACCENT est le citron doux, employé avec retenue comme l'ODM le demande :
+   * il tient 11,13 sur le vert profond, et ne s'écrit jamais sur l'ivoire, où
+   * il tombe à 1,26. Il souligne, il ne rédige pas.
    */
-  --coral: #ff6b5d;
-  --coral-fonce: #ff6b5d;
-  --sur-coral: #0a2b23;
-  --coral-texte: #a33220;
+  --action: #12463b;
+  --action-forte: #0a2b23;
+  --sur-action: #f7f6f2;
+  --action-texte: #12463b;
 
   /* Les noms historiques, remappés une dernière fois. */
   --vert-900: #0a2b23;
@@ -197,14 +201,14 @@
   /*
    * La couleur qui SIGNALE, distincte de celle qui décore.
    *
-   * Les liserés et pastilles de gravité portaient `--coral` : mesuré sur les
+   * Les liserés et pastilles de gravité portaient `--action` : mesuré sur les
    * fonds réels du produit, il ne tient que 2,31 sur le sable et 2,80 sur
    * blanc — sous le seuil de 3:1 des éléments non textuels. Pendant ce temps,
    * les filets décoratifs des écrans tiennent 6 et plus. Le décor était deux
    * fois plus visible que l'alerte.
    *
    * Cette variable existe pour une seule raison : elle ne suit JAMAIS l'univers
-   * d'un écran, là où `--coral-fonce` et `--coral-texte`, eux, deviennent
+   * d'un écran, là où `--action-forte` et `--action-texte`, eux, deviennent
    * l'accent local. Sans elle, un liseré d'alerte prendrait le brun du bois sur
    * l'écran termites et le jaune sur l'écran électrique — c'est-à-dire la
    * couleur de tout le reste de l'écran.
@@ -212,7 +216,7 @@
    * Mesures : 4,72 sur blanc · 3,90 sur le sable · 4,38 sur le vert du plomb ·
    * 4,45 sur le teal des risques · 4,48 sur le sable chaud du gaz.
    */
-  --alerte-vive: #d0402c;
+  --alerte-vive: #a3231a;
 
   /* Étiquettes réglementaires A→G : couleurs officielles de l'arrêté DPE. */
   --etq-a: #319834;
@@ -345,11 +349,11 @@
   opacity: 0;
   transform: scale(0.96);
   /* Deux couches : un liseré net qui dessine le contour, un voile large qui
-     fait la lueur. La couleur suit celle de l'écran — corail sur la coque,
+     fait la lueur. La couleur suit celle de l'écran — citron sur la coque,
      accent de l'univers à l'intérieur d'une application. */
   box-shadow:
-    0 0 0 2px var(--lueur, rgb(255 107 93 / 55%)),
-    0 0 16px 3px var(--lueur-large, rgb(255 107 93 / 32%));
+    0 0 0 2px var(--lueur, rgb(214 230 106 / 62%)),
+    0 0 16px 3px var(--lueur-large, rgb(214 230 106 / 38%));
   transition:
     opacity var(--duree) var(--courbe),
     transform var(--duree) var(--courbe);
@@ -507,7 +511,7 @@ button {
 }
 
 .carte:hover {
-  border-color: var(--coral);
+  border-color: var(--action);
   transform: translateY(-4px);
   box-shadow: var(--ombre-forte);
 }
@@ -523,7 +527,7 @@ button {
 /*
  * Le bouton principal de la charte.
  *
- * Il n'attend plus, il invite : fond corail plein, casse normale, et une ombre
+ * Il n'attend plus, il invite : fond vert plein, casse normale, et une ombre
  * de sa propre couleur. Au survol il se soulève de deux pixels ; à l'appui il
  * se tasse légèrement — c'est ce petit retour qui rend un clic satisfaisant.
  */
@@ -532,7 +536,7 @@ button {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: var(--coral);
+  background: var(--action);
   color: #fff;
   border: none;
   border-radius: var(--rayon);
@@ -541,7 +545,7 @@ button {
   font-size: 0.9375rem;
   letter-spacing: 0;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgb(255 107 93 / 15%);
+  box-shadow: 0 4px 12px rgb(214 230 106 / 20%);
   transition:
     background var(--duree) ease,
     transform var(--duree) ease,
@@ -549,9 +553,9 @@ button {
 }
 
 .bouton:hover {
-  background: #f05844;
+  background: #0a2b23;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgb(255 107 93 / 20%);
+  box-shadow: 0 6px 16px rgb(214 230 106 / 26%);
 }
 
 .bouton:active {
@@ -657,7 +661,7 @@ button {
 
   body {
     background: #fff;
-    color: #0f3a47;
+    color: #0a2b23;
     font-size: 10.5pt;
     line-height: 1.45;
   }
@@ -733,7 +737,7 @@ button {
   .descriptif,
   .quoi,
   .verdict {
-    color: #0f3a47 !important;
+    color: #0a2b23 !important;
   }
 
   h2,
@@ -741,7 +745,7 @@ button {
   .titre-conseil,
   dt,
   .source {
-    color: #0f3a47 !important;
+    color: #0a2b23 !important;
   }
 
   /* L'état descriptif sert de table des matières sur le papier : ce que chaque
@@ -763,7 +767,7 @@ button {
 
   .conclusion,
   .titre-famille {
-    color: #0f3a47 !important;
+    color: #0a2b23 !important;
   }
 
   .jusqua.perimee,
@@ -884,7 +888,7 @@ button {
 /* ---------------------------------------------------------------------------
    L'écran de démarrage
 
-   Bleu pétrole en grand, l'encadré de dépôt en corail, son intérieur en sable.
+   Bleu pétrole en grand, l'encadré de dépôt en citron, son intérieur en sable.
    C'est le premier écran : il doit dire la marque avant de dire quoi faire.
 
    L'inversion ne réécrit aucune règle de composant. Elle redéfinit les quatre
@@ -907,5 +911,5 @@ body.demarrage {
    bleu couperait l'écran en deux au lieu de le coiffer. */
 body.demarrage .entete {
   background: transparent;
-  border-bottom-color: rgb(244 232 216 / 18%);
+  border-bottom-color: rgb(247 246 242 / 18%);
 }

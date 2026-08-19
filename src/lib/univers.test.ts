@@ -40,13 +40,13 @@ describe('la mesure elle-même', () => {
   it('donne les valeurs connues', () => {
     expect(contraste('#000000', '#ffffff')).toBeCloseTo(21, 1);
     expect(contraste('#ffffff', '#ffffff')).toBeCloseTo(1, 5);
-    // Le corail de la marque sur blanc : c'est parce qu'il ne tient que 2,8
-    // qu'il ne porte jamais de texte, et que le corail foncé existe.
-    expect(contraste('#ff6b5d', '#ffffff')).toBeLessThan(3);
+    // Le vert profond du socle sur l'ivoire : 14,04, la mesure la plus haute du
+    // produit. C'est ce qui permet à l'ivoire d'être un fond et non un décor.
+    expect(contraste('#0a2b23', '#f7f6f2')).toBeGreaterThan(14);
   });
 
   it('ne dépend pas de l’ordre des deux couleurs', () => {
-    expect(contraste('#1a4d5c', '#f4e8d8')).toBeCloseTo(contraste('#f4e8d8', '#1a4d5c'), 10);
+    expect(contraste('#12463b', '#f7f6f2')).toBeCloseTo(contraste('#f7f6f2', '#12463b'), 10);
   });
 });
 
@@ -149,9 +149,9 @@ describe('chaque univers reste lisible', () => {
        * La couleur vive remplit, elle n'écrit pas — et elle se voit.
        *
        * Ce test a d'abord exigé les 3:1 de WCAG 1.4.11. Trois univers l'ont
-       * refusé : le corail du DPE (2,59), le violet de l'amiante (2,81),
-       * l'orange du gaz (2,78) — c'est-à-dire précisément les couleurs des
-       * maquettes, celles de la marque. Le test se trompait, pas elles.
+       * refusé : leurs couleurs de maquette tombaient entre 2,59 et 2,81 —
+       * c'est-à-dire précisément les teintes validées. Le test se trompait,
+       * pas elles.
        *
        * Le 3:1 vise les éléments dont la compréhension dépend de la
        * distinction de couleur : une jauge, une barre, un état. La couleur vive

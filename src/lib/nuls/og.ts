@@ -26,9 +26,9 @@ const FAMILLE = 'Fraunces';
 const LINEALE = "'Segoe UI', 'DejaVu Sans', 'Liberation Sans', Arial, sans-serif";
 
 const MARGE = 80;
-const FOND = '#0f3a47';
+const FOND = '#0a2b23';
 const CREME = '#f5f1e8';
-const OR = '#ff6b5d';
+const OR = '#12463b';
 const OR_CLAIR = '#ff9084';
 const DOUX = '#7fa3ad';
 

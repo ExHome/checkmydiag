@@ -51,13 +51,13 @@ export interface Univers {
   /**
    * La couleur VIVE de l'univers, celle des maquettes, telle quelle.
    *
-   * Elle ne porte jamais de texte — le corail #ff6b5d ne tient que 2,59 sur le
+   * Elle ne porte pas toujours de texte : une couleur vive peut être trop claire
    * rose du DPE — mais elle porte tout le reste : les aplats, les barres, les
    * pastilles, les dégradés, les bandeaux.
    *
    * Ce rôle manquait, et son absence se voyait. À force d'assombrir chaque
    * couleur pour qu'elle reste lisible, le produit était devenu rouge brique
-   * là où il devait être corail. Séparer les deux rend sa vivacité à la marque
+   * là où il devait rester vif. Séparer les deux rend sa vivacité à la marque
    * sans rien coûter à la lecture : le vif remplit, le foncé écrit.
    */
   accentVif: string;
@@ -113,10 +113,10 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
    *
    * ── Ce que le fond sombre rend possible ──────────────────────────────────
    *
-   * Le corail EXACT de la marque, #FF6B5D, tient 4,05 sur le fond du DPE. Sur
+   * La couleur exacte de chaque app tient sur son fond. Sur
    * le rose pâle d'avant, il fallait l'assombrir jusqu'à #A33220 pour qu'il
    * s'écrive — et il devenait la brique qu'on nous reproche depuis le début.
-   * Le fond sombre est ce qui rend son corail à la marque.
+   * C'est ce qui rend à chaque app sa couleur pleine.
    *
    * ── Comment ces valeurs ont été obtenues ─────────────────────────────────
    *
@@ -130,7 +130,7 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
    * Les sept couleurs A→G de l'arrêté ne bougent pas, ici comme ailleurs.
    */
 
-  /* DPE — le corail de la marque, enfin lisible tel quel. */
+  /* DPE — le vert énergétique, comme le spectre A→G de l'étiquette. */
   dpe: {
     fond: '#f7f6f2',
     surface: '#ffffff',
@@ -270,7 +270,7 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
     trait: '#779576'
   },
 
-  /* En clair — les réponses, dans le corail de la marque. */
+  /* En clair — les réponses, dans le citron doux de l'accent. */
   'en-clair': {
     fond: '#f7f6f2',
     surface: '#ffffff',

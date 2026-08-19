@@ -49,7 +49,7 @@
    * Les valeurs de repli sont celles de l'univers Électricité : rendu à plat —
    * page complète, impression — le conteneur `.dedans` n'est pas là, donc
    * `--u-*` non plus. Ce repli jouait autrefois contre le dessin, quand la
-   * charte était claire et que `--encre` valait le bleu pétrole #1a4d5c ; la
+   * charte était claire et que `--encre` valait le bleu pétrole #12463b ; la
    * charte étant sombre des deux côtés, il joue maintenant avec lui.
    *
    * Une seule couleur de la maquette reste refusée : le #5F7686 des repères, qui

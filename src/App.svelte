@@ -452,7 +452,7 @@
    * Il portait --fond-clair, qui était le blanc sur fond sable. Depuis que le
    * fond est pétrole, ce jeton vaut un second bleu : le bandeau formait une
    * bande d'une nuance à peine différente, ce qui se lit comme un défaut de
-   * rendu plutôt que comme une structure. Un filet corail dilué suffit à poser
+   * rendu plutôt que comme une structure. Un filet citron dilué suffit à poser
    * la limite, et l'écran gagne un aplat continu du haut jusqu'au dock.
    */
   .entete {
@@ -600,7 +600,7 @@
   }
 
   .dossier:hover {
-    border-color: rgb(255 107 93 / 45%);
+    border-color: rgb(214 230 106 / 52%);
     background: var(--surface-bord);
   }
 
@@ -626,8 +626,8 @@
   }
 
   .erreur {
-    background: rgb(255 107 93 / 12%);
-    border: 1px solid rgb(255 107 93 / 55%);
+    background: rgb(214 230 106 / 17%);
+    border: 1px solid rgb(214 230 106 / 62%);
     color: #ffd9d3;
     border-radius: var(--rayon-petit);
     padding: var(--e3) var(--e4);

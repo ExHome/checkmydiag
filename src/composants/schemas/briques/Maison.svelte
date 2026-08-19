@@ -110,7 +110,7 @@
   /* La maison est dessinée à l'encre du contexte : posée sur le vert elle est
      claire, posée sur du papier elle est sombre. Un seul dessin, deux fonds. */
   .toit {
-    fill: rgb(255 107 93 / 22%);
+    fill: rgb(214 230 106 / 28%);
     stroke: var(--or);
     stroke-width: 1.8;
     stroke-linejoin: round;
@@ -134,7 +134,7 @@
   }
 
   .vitre {
-    fill: rgb(255 107 93 / 16%);
+    fill: rgb(214 230 106 / 22%);
     stroke: var(--or);
     stroke-width: 1.4;
   }

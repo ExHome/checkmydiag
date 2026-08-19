@@ -549,7 +549,7 @@
   .nature {
     margin: 0 0 var(--e5);
     padding: var(--e4) var(--e5);
-    background: linear-gradient(180deg, rgb(255 107 93 / 16%), rgb(255 107 93 / 6%));
+    background: linear-gradient(180deg, rgb(214 230 106 / 22%), rgb(214 230 106 / 10%));
     border: 1px solid var(--trait-or);
     border-left: 4px solid var(--or);
     border-radius: var(--rayon);
@@ -606,7 +606,7 @@
   }
 
   .verdict.mauvais {
-    --ton: var(--coral);
+    --ton: var(--action);
   }
   .verdict.moyen {
     --ton: var(--attention);
@@ -702,7 +702,7 @@
     height: 44px;
     border-radius: var(--rayon);
     background: var(--teinte);
-    color: #0f3a47;
+    color: #0a2b23;
     font-family: var(--police-titre);
     font-size: var(--t-titre);
     font-weight: 600;
@@ -996,7 +996,7 @@
   /* La couleur porte le niveau, mais elle n'est pas seule à le faire : le mot
      le dit aussi. Personne ne dépend de la couleur pour comprendre. */
   .repartition .mauvais {
-    --teinte-niveau: var(--coral);
+    --teinte-niveau: var(--action);
   }
 
   .repartition .moyen {
@@ -1083,11 +1083,11 @@
     }
   }
 
-  /* Les trois états de la charte : corail pour ce qui bloque, ambre pour ce qui
+  /* Les trois états : le rouge d'alerte pour ce qui bloque, ambre pour ce qui
      se surveille, sage pour ce qui va. Chacun pose son filet et son voile. */
   li.mauvais .entree {
-    --marque: var(--coral);
-    --voile: rgb(255 107 93 / 8%);
+    --marque: var(--action);
+    --voile: rgb(214 230 106 / 12%);
   }
   li.moyen .entree {
     --marque: var(--attention);
@@ -1158,13 +1158,13 @@
      n'imprime pas des boutons refermés. */
   @media print {
     .verdict {
-      border-left-color: #0f3a47;
+      border-left-color: #0a2b23;
       margin-bottom: 14mm;
     }
 
     .dit h2,
     .mot {
-      color: #0f3a47 !important;
+      color: #0a2b23 !important;
     }
 
     .dit p,
@@ -1173,7 +1173,7 @@
     }
 
     .picto {
-      color: #0f3a47 !important;
+      color: #0a2b23 !important;
     }
 
     .entree {

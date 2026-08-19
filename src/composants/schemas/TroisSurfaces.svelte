@@ -274,8 +274,8 @@
   }
 
   .onglet.actif {
-    background: var(--coral-fonce);
-    border-color: var(--coral-fonce);
+    background: var(--action-forte);
+    border-color: var(--action-forte);
     color: var(--sur-accent, #fff);
   }
 
@@ -311,8 +311,8 @@
   }
 
   .piece.dedans rect {
-    fill: var(--coral-fonce);
-    stroke: var(--coral-fonce);
+    fill: var(--action-forte);
+    stroke: var(--action-forte);
   }
 
   .nom-piece {
@@ -337,7 +337,7 @@
   }
 
   .piece[role='button']:focus-visible {
-    outline: 2px solid var(--coral-fonce);
+    outline: 2px solid var(--action-forte);
     outline-offset: 2px;
   }
 
@@ -357,7 +357,7 @@
     margin: 0 0 var(--e2);
     padding: var(--e2) var(--e3);
     background: var(--surface);
-    border-left: 3px solid var(--coral-fonce);
+    border-left: 3px solid var(--action-forte);
     border-radius: 0 var(--rayon-petit) var(--rayon-petit) 0;
     font-size: var(--t-petit);
     line-height: 1.55;

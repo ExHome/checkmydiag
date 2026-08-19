@@ -399,15 +399,15 @@
     --surface-bord: rgb(10 43 35 / 12%);
     --trait: #779576;
     --trait-fin: #dfe6db;
-    --coral-texte: #a33220;
+    --action-texte: #a33220;
   }
 
   /* ---- Le cartouche ------------------------------------------------------
-     Blanc sur le pétrole, cerné de corail.
+     Blanc sur le pétrole, cerné de citron.
 
-     Le corail est au POURTOUR, pas au fond : l'encart reste une surface de
+     Le citron est au POURTOUR, pas au fond : l'encart reste une surface de
      lecture — trois chiffres, une phrase, deux boutons — et le filet suffit à
-     le désigner comme le bloc de la marque. Un aplat corail aurait obligé à
+     le désigner comme le bloc de la marque. Un aplat vert aurait obligé à
      réécrire toute son encre en pétrole foncé, seule couleur qui s'y lit
      (4,38 ; le blanc y tombe à 2,80), pour un gain d'attention qui n'était pas
      demandé.
@@ -415,9 +415,9 @@
      Il remet les jetons à l'endroit pour lui-même : sa surface est claire, et
      le texte sable de l'écran y tomberait à 1,07. */
   .cartouche {
-    --sur-fond: #1a4d5c;
+    --sur-fond: #12463b;
     --sur-fond-doux: #555555;
-    --encre: #1a4d5c;
+    --encre: #12463b;
     --encre-doux: #555555;
     --gris: #666666;
     --surface: rgb(26 77 92 / 3%);
@@ -425,11 +425,11 @@
     --surface-bord: rgb(26 77 92 / 10%);
     --trait: #e8dcc8;
     --trait-fin: #f0eae0;
-    --coral-texte: #a33220;
+    --action-texte: #a33220;
     color: var(--petrole);
 
     background: var(--papier);
-    border: 2px solid var(--coral);
+    border: 2px solid var(--action);
     border-radius: var(--rayon-large);
     padding: var(--e4);
     box-shadow: var(--ombre-forte);
@@ -447,7 +447,7 @@
     height: 40px;
     flex: none;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--coral), var(--coral-fonce));
+    background: linear-gradient(135deg, var(--action), var(--action-forte));
     display: grid;
     place-items: center;
     font-size: 20px;
@@ -546,23 +546,23 @@
     transition: transform var(--duree) var(--courbe), background var(--duree) var(--courbe);
   }
 
-  /* Le bouton reste corail, sur le blanc de l'encart : c'est l'action de la
-     marque, et le corail foncé y porte du blanc à 4,72. */
+  /* Le bouton reste vert, sur le blanc de l'encart : c'est l'action de la
+     marque, et le vert profond y porte du blanc à 4,72. */
   .principal {
-    background: var(--coral-fonce);
-    border: 1px solid var(--coral-fonce);
-    color: var(--sur-coral);
+    background: var(--action-forte);
+    border: 1px solid var(--action-forte);
+    color: var(--sur-action);
   }
 
   .principal:hover {
-    background: var(--coral-texte);
+    background: var(--action-texte);
     transform: translateY(-2px);
   }
 
   .second {
     background: transparent;
-    border: 1px solid var(--coral-fonce);
-    color: var(--coral-texte);
+    border: 1px solid var(--action-forte);
+    color: var(--action-texte);
   }
 
   .second:hover {
@@ -726,12 +726,12 @@
    * Sur le fond pétrole de l'accueil, la lueur se renforce.
    *
    * La valeur par défaut est réglée pour un fond clair. Sur du sombre, un voile
-   * corail à 32 % se perd — c'est le même piège que le dock blanc, une couleur
+   * citron à 32 % se perd — c'est le même piège que le dock blanc, une couleur
    * translucide ne vaut que par ce qu'il y a dessous.
    */
   .bureau {
-    --lueur: rgb(255 107 93 / 85%);
-    --lueur-large: rgb(255 107 93 / 45%);
+    --lueur: rgb(18 70 59 / 88%);
+    --lueur-large: rgb(214 230 106 / 52%);
   }
 
   /* La pastille d'état : une forme d'abord, une couleur ensuite. Elle relie la

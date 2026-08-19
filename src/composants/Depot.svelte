@@ -257,15 +257,15 @@
   /*
    * La zone de dépôt, au format de la charte : trois pixels de teal, un voile
    * de la même teinte, huit de rayon. Trois états, trois couleurs — au repos le
-   * teal, au survol le corail, et l'ambre au moment précis où le fichier est
+   * teal, au survol le citron, et l'ambre au moment précis où le fichier est
    * au-dessus. C'est cette troisième couleur qui dit « lâchez ».
    */
   /*
-   * L'encadré de l'écran de démarrage : un cadre corail, un intérieur sable.
+   * L'encadré de l'écran de démarrage : un cadre citron, un intérieur sable.
    *
    * Posé sur le bleu pétrole, il est la seule chose claire de l'écran — donc la
    * seule chose qu'on regarde, et c'est celle sur laquelle il faut cliquer. Le
-   * cadre corail redit la même chose une seconde fois.
+   * cadre citron redit la même chose une seconde fois.
    *
    * Le sable revient ici avec ses couleurs de texte : l'inversion générale de
    * l'écran s'arrête au bord du cadre. Sans cette remise à l'endroit, le texte
@@ -275,7 +275,7 @@
     display: block;
     width: 100%;
     font: inherit;
-    border: 3px solid var(--coral);
+    border: 3px solid var(--action);
     border-radius: var(--rayon-large);
     background: var(--sable);
     padding: var(--e7) var(--e6);
@@ -298,15 +298,15 @@
   }
 
   .depot:hover:not(:disabled) {
-    border-color: var(--coral-fonce);
+    border-color: var(--action-forte);
     background: var(--sable-clair);
     transform: translateY(-2px);
   }
 
   /* Le survol d'un fichier qu'on tient encore : la troisième couleur, celle qui
-     dit « lâchez ». Elle reste dans la charte — c'est le corail plein. */
+     dit « lâchez ». Elle reste dans la charte — c'est le vert plein. */
   .depot.survol {
-    border-color: var(--coral-fonce);
+    border-color: var(--action-forte);
     background: #fff;
     transform: translateY(-2px);
   }
@@ -387,7 +387,7 @@
   }
 
   /* La pastille de la charte : filet de teal, voile de la même teinte, et un
-     soulèvement au survol qui passe au corail. */
+     soulèvement au survol qui passe au citron. */
   .badges li {
     padding: var(--e4) var(--e3);
     background: rgb(26 77 92 / 8%);
@@ -403,8 +403,8 @@
   }
 
   .badges li:hover {
-    border-color: var(--coral);
-    background: rgb(255 107 93 / 8%);
+    border-color: var(--action);
+    background: rgb(214 230 106 / 12%);
     transform: translateY(-2px);
   }
 
@@ -513,7 +513,7 @@
     color: var(--encre-doux);
   }
 
-  /* L'appel principal de l'écran : le bouton de la charte, corail plein, avec
+  /* L'appel principal de l'écran : le bouton de la charte, vert plein, avec
      son ombre de la même couleur. Il était en navy à angles vifs — il attendait
      au lieu d'inviter. */
   /* La seconde voie, en retrait sous le bouton : elle se propose, elle ne se
@@ -524,25 +524,25 @@
     color: var(--sur-fond-doux);
   }
 
-  /* Le corail foncé, pas le corail vif : avec du texte blanc, le vif ne tient
+  /* Le vert profond, pas le vert vif : avec du texte blanc, le vif ne tient
      que 2,8 de contraste, et c'est le seul mot de l'écran sur lequel il faut
      cliquer. Mesuré. */
   .faux-bouton {
     display: inline-block;
     margin-top: var(--e5);
-    background: var(--coral-fonce);
-    color: var(--sur-coral);
+    background: var(--action-forte);
+    color: var(--sur-action);
     border-radius: var(--rayon);
     padding: 14px 40px;
     font-size: 0.9375rem;
     font-weight: 600;
-    box-shadow: 0 4px 12px rgb(255 107 93 / 15%);
+    box-shadow: 0 4px 12px rgb(214 230 106 / 20%);
     transition: background var(--duree) ease, box-shadow var(--duree) ease;
   }
 
   .depot:hover:not(:disabled) .faux-bouton {
-    background: #f05844;
-    box-shadow: 0 6px 16px rgb(255 107 93 / 20%);
+    background: #0a2b23;
+    box-shadow: 0 6px 16px rgb(214 230 106 / 26%);
   }
 
   .barre {

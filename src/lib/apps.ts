@@ -12,7 +12,7 @@
  * téléphone. Elles ne suivent pas la charte, et c'est voulu.
  *
  * **Tout le reste suit la charte** : bleu pétrole #1A4D5C, sable #F4E8D8,
- * corail #FF6B5D. La barre de l'écran, les boutons, les traits, les plans —
+ * vert du socle. La barre de l'écran, les boutons, les traits, les plans —
  * rien de tout cela ne prend la couleur de l'application. Une icône violette
  * ouvre donc un écran à la charte, avec sa propre icône en petit dans la barre.
  *
@@ -30,9 +30,16 @@ export interface IdentiteApp {
   /** Le signe de l'icône : il dit la matière qu'on cherche. */
   signe: string;
   /**
-   * Le dégradé de l'icône. Libre — c'est le seul endroit du produit où une
-   * couleur hors charte est admise, parce que c'est ce qui rend les neuf
-   * applications reconnaissables au premier regard.
+   * Le dégradé de l'icône, tel que le pack maître le fournit.
+   *
+   * Ce n'est plus un choix libre : l'ordre de mission directeur assigne une
+   * couleur à chacune des huit mini-apps — DPE vert énergétique, Électricité
+   * jaune chaud, Gaz bleu profond, Amiante violet minéral, Plomb terre,
+   * Termites orange chaud, ERP bleu gris, Mesurage turquoise — et le prototype
+   * du pack en donne les valeurs. Elles sont reprises telles quelles.
+   *
+   * C'est le seul endroit du produit où la couleur vive est chez elle. Partout
+   * ailleurs, l'ODM la réserve aux données qui ont un sens métier.
    */
   degrade: string;
 }
@@ -49,48 +56,48 @@ export const APPS: Record<TypeDiag, IdentiteApp> = {
   dpe: {
     nom: 'DPE',
     signe: '📊',
-    degrade: 'linear-gradient(135deg, #ff6b5d, #f05844)'
+    degrade: 'linear-gradient(145deg, #9dc65b, #357a3d)'
   },
   electricite: {
     nom: 'Électricité',
     signe: '⚡',
-    degrade: 'linear-gradient(135deg, #ffd54a, #f5a800)'
+    degrade: 'linear-gradient(145deg, #ffd45d, #e39b13)'
   },
   amiante: {
     nom: 'Amiante',
     signe: '🧱',
-    degrade: 'linear-gradient(135deg, #7b68ee, #5a4bc4)'
+    degrade: 'linear-gradient(145deg, #9a86ca, #5b477e)'
   },
   plomb: {
     nom: 'Plomb',
     signe: '🎨',
-    degrade: 'linear-gradient(135deg, #4caf50, #38913c)'
+    degrade: 'linear-gradient(145deg, #c58d68, #70462f)'
   },
   gaz: {
     nom: 'Gaz',
     signe: '🔥',
-    degrade: 'linear-gradient(135deg, #ff8c42, #ee6a17)'
+    degrade: 'linear-gradient(145deg, #77b1d0, #245d7b)'
   },
   termites: {
     nom: 'Termites',
     signe: '🪵',
-    degrade: 'linear-gradient(135deg, #a0522d, #7a3d1f)'
+    degrade: 'linear-gradient(145deg, #ff9c34, #b64a08)'
   },
   erp: {
     nom: 'Risques',
     signe: '🌍',
-    degrade: 'linear-gradient(135deg, #20b2aa, #00776f)'
+    degrade: 'linear-gradient(145deg, #7395aa, #354f60)'
   },
   /* Les deux dernières ne figurent pas au brief : elles prolongent la même
      logique — une couleur franche, distincte des sept autres. */
   carrez: {
     nom: 'Surface',
     signe: '📐',
-    degrade: 'linear-gradient(135deg, #5c6bc0, #3949ab)'
+    degrade: 'linear-gradient(145deg, #74c7b8, #287f75)'
   },
   assainissement: {
     nom: 'Assainissement',
     signe: '💧',
-    degrade: 'linear-gradient(135deg, #29b6f6, #0288d1)'
+    degrade: 'linear-gradient(145deg, #77b1d0, #245d7b)'
   }
 };

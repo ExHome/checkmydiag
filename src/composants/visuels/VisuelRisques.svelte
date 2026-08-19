@@ -384,7 +384,7 @@
    *
    * Les deux teintes sont celles de la maquette. `--or` est posé ici en dur
    * parce que c'est le jeton avec lequel la brique Maison trace son toit : hors
-   * de l'univers ERP il vaut le corail de la charte, qui ne tient que 2,27 sur
+   * de l'univers ERP il vaut l'accent de l'univers, qui ne tient que 2,27 sur
    * ce dégradé. Dans l'univers, c'est exactement la valeur qu'il a déjà.
    */
   .ciel {

@@ -213,7 +213,7 @@ function gabarit(page: Page): string {
     <meta name="description" content="${html(page.description)}" />
     <link rel="canonical" href="${html(url)}" />
     <meta name="robots" content="${EDITEUR_CONNU ? 'index, follow, max-image-preview:large, max-snippet:-1' : 'noindex, nofollow'}" />
-    <meta name="theme-color" content="#0f3a47" />
+    <meta name="theme-color" content="#0a2b23" />
     <meta property="og:type" content="article" />
     <meta property="og:site_name" content="${MARQUE}" />
     <meta property="og:locale" content="fr_FR" />
