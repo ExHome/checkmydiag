@@ -299,3 +299,48 @@ describe('l’état des risques sans « Mode EDITION »', () => {
     expect(sections.find((s) => s.type === 'erp')?.plage).toEqual([1, 1]);
   });
 });
+
+/**
+ * La grille des prestations déborde sur une seconde page, et celle-là passait.
+ *
+ * La page de garde énumère les quarante prestations du cabinet ; sa suite en
+ * porte la fin, et ne déclenche qu'un seul marqueur — « Etat des Risques et
+ * Pollutions ». Elle ouvrait donc une section d'une page. Mesure : huit
+ * dossiers sur quatre-vingt-deux se voyaient fabriquer une fiche d'état des
+ * risques à partir de cette ligne, et dans les huit le vrai rapport était
+ * absent du dossier.
+ */
+describe('la suite de la grille des prestations', () => {
+  const page = (numero: number, ...lignes: string[]) => ({ numero, lignes });
+
+  const SUITE_DE_GRILLE = page(
+    2,
+    'Etat parasitaire Etat des Installations gaz Etat des lieux (Loi Scellier)',
+    'Etat des Risques et Pollutions Plomb dans l’eau Radon',
+    'Etat des lieux Sécurité Incendie Accessibilité Handicapés',
+    'Amiante Examen Visuel APTVX Plomb avant travaux Performance numérique',
+    'Hôtel C Contrôle levage RT 2012 Avant travaux'
+  );
+
+  it('n’ouvre aucune section', () => {
+    const { sections } = decouper([
+      page(1, 'Dossier Technique Immobilier', 'Numéro de dossier : 24/IMO/0154N'),
+      SUITE_DE_GRILLE
+    ]);
+    expect(sections).toEqual([]);
+  });
+
+  it('laisse passer un vrai état des risques', () => {
+    const { sections } = decouper([
+      page(1, 'Dossier Technique Immobilier'),
+      SUITE_DE_GRILLE,
+      page(
+        3,
+        'Etat des Risques et Pollutions',
+        'En application des articles L125-5 à 7 et R125-26 du code de l’environnement.',
+        'Zonage du retrait-gonflement des argiles Oui Aléa Moyen'
+      )
+    ]);
+    expect(sections.find((s) => s.type === 'erp')?.plage).toEqual([3, 3]);
+  });
+});

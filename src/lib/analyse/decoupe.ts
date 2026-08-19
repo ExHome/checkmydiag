@@ -195,10 +195,44 @@ export interface Decoupe {
  * Une page de garde énumère toutes les prestations possibles sous forme de
  * cases à cocher : elle déclencherait tous les marqueurs à la fois. On l'écarte.
  */
+/*
+ * La grille des prestations DEBORDE sur une seconde page, et celle-la passait.
+ *
+ * La page de garde enumere les quarante prestations du cabinet ; sa suite en
+ * porte la fin — « Etat parasitaire · Etat des Installations gaz · Plomb dans
+ * l'eau · Radon · Securite piscines · Accessibilite Handicapes ». Elle ne
+ * declenche qu'UN marqueur, « Etat des Risques et Pollutions », et ouvrait donc
+ * une section d'une seule page.
+ *
+ * Mesure : huit dossiers sur quatre-vingt-deux se voyaient fabriquer une fiche
+ * d'etat des risques a partir de cette ligne — et dans les huit, le vrai
+ * rapport etait ABSENT du dossier. Le produit annoncait « nous n'avons pas
+ * reussi a lire la liste des risques » la ou il aurait fallu dire que le
+ * document manque.
+ *
+ * Ces intitules ne sont jamais des titres de rapport : aucun diagnostic ne
+ * s'appelle « Securite piscines » ou « Plomb dans l'eau ». Trois suffisent a
+ * reconnaitre le catalogue commercial.
+ */
+const CATALOGUE_PRESTATIONS = [
+  'plombdansleau',
+  'securitepiscines',
+  'accessibilitehandicapes',
+  'pretatauxzero',
+  'etatdeslieux',
+  'securiteincendie',
+  'risquesprofessionnels',
+  'performancenumerique',
+  'homeinspection',
+  'contrelevage',
+  'tantiemedecopropriete'
+];
+
 function estPageDeGarde(page: PageTexte): boolean {
   const colle = compact(page.lignes.join(' '));
   const touches = MARQUEURS.filter((m) => m.entetes.some((e) => colle.includes(e)));
-  return touches.length >= 4;
+  if (touches.length >= 4) return true;
+  return CATALOGUE_PRESTATIONS.filter((p) => colle.includes(p)).length >= 3;
 }
 
 /**

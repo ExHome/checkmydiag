@@ -50,8 +50,12 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 - **La contradiction interne du gaz est signalée** (§45) : 4 volets sur 18.
 - **La couverture est mesurée** (§46) : 375 fiches sur 391 portent un verdict
   utile, soit **96 %**, sur cent dossiers analysés de bout en bout.
-- **Prochain chantier** : les **huit fiches ERP muettes** sur 82 — c'est le
-  volet le moins bon des volets fréquents, et le plus dense du dossier.
+- **Les huit fiches ERP muettes sont réglées** (§47) : elles étaient fabriquées
+  à partir de la grille des prestations, et le vrai rapport était absent.
+  Couverture : **375/383, soit 98 %**.
+- **Prochain chantier, et il est plus important** : **dire ce qui MANQUE**. Huit
+  dossiers sur cent n'ont pas d'état des risques, obligatoire à la vente. Le
+  produit ne fabrique plus de fiche vide, mais il ne signale pas l'absence.
 
 ## Compteurs
 
@@ -61,8 +65,8 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 | Volets lus page à page | 24 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 6 majeures |
-| Corrections livrées | 20 |
-| Tests de non-régression ajoutés | 63 |
+| Corrections livrées | 21 |
+| Tests de non-régression ajoutés | 65 |
 | Fausses alertes de mes propres sondes, écartées avant annonce | 6 |
 | Sondes de justesse écrites | 2 |
 | Notions métier versées au produit | 5 |
@@ -623,3 +627,26 @@ marge.
 **Pourquoi cette mesure manquait** : on mesurait la justesse volet par volet
 sans jamais demander combien de fiches disent quelque chose. Un volet peut être
 juste à 100 % et muet neuf fois sur dix.
+
+### 20 août 2026, nuit — huit fiches fabriquées à partir d'une ligne
+
+Les huit ERP muets du §46, ouverts un par un : la section faisait **une seule
+page**, celle qui porte la fin de la grille des prestations du cabinet. La ligne
+« Etat des Risques et Pollutions   Plomb dans l'eau   Radon » suffisait à ouvrir
+un volet.
+
+Et **dans les huit dossiers, le vrai état des risques était absent**. Le produit
+affichait donc une fiche pour un document inexistant, en disant « nous n'avons
+pas réussi à lire la liste des risques » — le lecteur comprend « le produit n'a
+pas su lire » quand il faudrait comprendre « le document manque ».
+
+Ce qui trahit le catalogue commercial, ce sont les intitulés qui ne sont les
+titres d'aucun rapport : « Plomb dans l'eau », « Sécurité piscines »,
+« Accessibilité Handicapés ». Trois suffisent.
+
+**Fiches ERP : 82 → 74. Muettes : 8 → 0. Couverture : 96 % → 98 %.** Aucune
+fiche utile perdue.
+
+**Le vrai chantier apparaît là** : dire ce qui manque. L'absence d'un diagnostic
+obligatoire est souvent plus utile à un acheteur que le contenu d'un diagnostic
+présent.

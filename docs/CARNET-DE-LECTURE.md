@@ -1982,6 +1982,60 @@ differentes : un volet peut etre juste a 100 % et muet neuf fois sur dix.
 
 ---
 
+## 47 · Huit fiches d'etat des risques fabriquees a partir d'une ligne
+
+Les huit ERP muets du §46, ouverts un par un. La cause est la meme dans les
+huit, et elle est plus grave qu'un defaut de lecture.
+
+**La section ERP faisait une seule page — la page 2 du dossier**, celle qui
+porte la fin de la grille des prestations :
+
+```
+Etat parasitaire   Etat des Installations gaz   Etat des lieux (Loi Scellier)
+Etat des Risques et Pollutions   Plomb dans l'eau   Radon
+Etat des lieux   Securite Incendie   Accessibilite Handicapes
+```
+
+Cette ligne suffisait a ouvrir un volet. Et **dans les huit dossiers, le vrai
+etat des risques etait ABSENT** — aucune page ne porte « En application des
+articles L125-5 ».
+
+Le produit affichait donc une fiche pour un document qui n'existe pas, en
+disant « nous n'avons pas reussi a lire la liste des risques ». Le lecteur
+comprend « le produit n'a pas su lire » quand il faudrait comprendre **« le
+document manque a votre dossier »** — et l'etat des risques est obligatoire a la
+vente.
+
+### Pourquoi la page passait
+
+La page de garde etait ecartee parce qu'elle declenche quatre marqueurs ou plus.
+Sa SUITE n'en declenche qu'un seul : « Etat des Risques et Pollutions ». Les
+autres intitules de la grille — « Plomb dans l'eau », « Securite piscines »,
+« Accessibilite Handicapes » — ne sont les titres d'aucun rapport, donc aucun
+marqueur ne les connait.
+
+Ce sont justement eux qui trahissent le catalogue commercial. **Trois d'entre
+eux suffisent** : aucun diagnostic ne s'appelle « Securite piscines ».
+
+### La mesure
+
+| | avant | apres |
+|---|---|---|
+| fiches ERP | 82 | **74** |
+| ERP sans verdict utile | 8 | **0** |
+| couverture totale | 375/391 (96 %) | **375/383 (98 %)** |
+
+Aucune fiche utile n'a ete perdue : les huit supprimees ne decrivaient rien.
+
+### Ce qui reste a faire, et c'est plus important
+
+Ces huit dossiers **n'ont pas d'etat des risques**. Le produit ne fabrique plus
+de fiche vide, mais il ne dit pas encore ce qui manque. Or l'absence d'un
+diagnostic obligatoire est une information de premier ordre pour un acheteur —
+plus utile, souvent, que le contenu d'un diagnostic present.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion
@@ -2072,6 +2126,10 @@ differentes : un volet peut etre juste a 100 % et muet neuf fois sur dix.
       d'où il vient.
 - [x] ~~Treize dossiers déclarent l'argile sans que Verrière la dise.~~ →
       quatrième écriture trouvée, § 34 : le détail précède le libellé. 55/55.
-- [ ] Les huit fiches ERP muettes sur 82 : les ouvrir une par une.
+- [x] ~~Les huit fiches ERP muettes sur 82.~~ → §47 : elles etaient fabriquees
+      a partir de la grille des prestations, et le vrai ERP etait absent.
+- [ ] **Dire ce qui MANQUE** : huit dossiers sur cent n'ont pas d'etat des
+      risques, obligatoire a la vente. Le produit ne fabrique plus de fiche
+      vide, mais il ne signale pas encore l'absence.
 - [ ] L'assainissement : deux volets sur cent dossiers, aucun verdict. À
       traiter quand un cas se présentera.
