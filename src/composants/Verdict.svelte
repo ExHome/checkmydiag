@@ -16,7 +16,7 @@
   import type { Analyse, Diagnostic, PointDeControle, TypeDiag } from '../lib/modele';
   import type { Photo } from '../lib/pdf';
   import { FICHES } from '../lib/analyse/fiches';
-  import { FAMILLES, familleDe } from '../lib/familles';
+  import { FAMILLES } from '../lib/familles';
   import { descriptifDe } from '../lib/descriptif';
   import { libelleCourt } from '../lib/libelle';
   import { echeance } from '../lib/echeance';
@@ -45,8 +45,15 @@
     titre: string;
     explication: string;
     quoiFaire: string;
-    /** Le domaine auquel ce point se rattache, quand on peut le savoir. */
-    famille?: string;
+    /**
+     * Le diagnostic d'ou vient ce point, quand on peut le savoir.
+     *
+     * On nommait ici la famille -- « Securite », « Sante ». Mais le lecteur a
+     * son rapport sous les yeux, et ce rapport porte un nom : « Installation
+     * electrique », pas « Securite ». C'est ce nom-la qui lui permet de
+     * retrouver la page.
+     */
+    diagnostic?: string;
   }
 
   /**
@@ -190,6 +197,12 @@
   const lettre = $derived(dpe?.schema?.genre === 'dpe' ? dpe.schema.finale : null);
 
   /** « installation électrique et installation de gaz » : les noms du rapport. */
+  /** Le titre du diagnostic d'un type, tel que la fiche l'affiche. */
+  function nomDuDiag(type: TypeDiag | undefined): string | undefined {
+    if (!type) return undefined;
+    return analyse.diagnostics.find((d) => d.type === type)?.titre;
+  }
+
   function nomsDe(liste: Diagnostic[]): string {
     const noms = liste.map((d) => d.titre.toLowerCase());
     if (noms.length <= 1) return noms[0] ?? '';
@@ -204,26 +217,26 @@
     const liste: Ligne[] = [];
 
     for (const [i, c] of bloquants.entries()) {
-      const fam = familleDe(c.type)?.nom;
+      const nom = nomDuDiag(c.type);
       liste.push({
         cle: `b${i}`,
         ton: 'mauvais',
         titre: c.titre,
         explication: c.explication,
         quoiFaire: c.quoiFaire,
-        ...(fam ? { famille: fam } : {})
+        ...(nom ? { diagnostic: nom } : {})
       });
     }
 
     for (const d of dangers) {
-      const fam = familleDe(d.type)?.nom;
+      const nom = nomDuDiag(d.type);
       liste.push({
         cle: `d-${d.type}`,
         ton: 'mauvais',
         titre: `${d.titre} : le rapport a trouvé quelque chose`,
         explication: d.verdict,
         quoiFaire: FICHES[d.type].quoiFaire,
-        ...(fam ? { famille: fam } : {})
+        ...(nom ? { diagnostic: nom } : {})
       });
     }
 
@@ -236,7 +249,9 @@
           'Une anomalie n’est pas une panne : l’installation fonctionne, mais elle ne respecte pas un point de la norme de sécurité. Aucun texte n’oblige le vendeur à la réparer pour vendre.',
         quoiFaire:
           'Faites chiffrer les réparations par un artisan avant de faire une offre : ce devis est votre marge de discussion.',
-        famille: 'Sécurité'
+        /* Le titre dit deja sur quels diagnostics portent ces anomalies :
+           « Des anomalies sur l'installation electrique et le gaz ». Repeter
+           un domaine en dessous n'ajoutait rien. */
       });
     }
 
@@ -252,19 +267,19 @@
           'La loi interdit peu à peu la location des logements les plus consommateurs. Le loyer est déjà gelé : aucune révision, aucune réévaluation entre deux locataires.',
         quoiFaire:
           'Ce point pèse sur le prix, et il se discute. Faites chiffrer les travaux qui feraient remonter la classe.',
-        famille: 'Énergie'
+        ...(nomDuDiag('dpe') ? { diagnostic: nomDuDiag('dpe') as string } : {})
       });
     }
 
     for (const [i, c] of remarques.entries()) {
-      const fam = familleDe(c.type)?.nom;
+      const nom = nomDuDiag(c.type);
       liste.push({
         cle: `a${i}`,
         ton: 'moyen',
         titre: c.titre,
         explication: c.explication,
         quoiFaire: c.quoiFaire,
-        ...(fam ? { famille: fam } : {})
+        ...(nom ? { diagnostic: nom } : {})
       });
     }
 
@@ -409,28 +424,30 @@
     <div class="etat-descriptif">
       <p class="eyebrow">L’état descriptif</p>
 
-      {#each etatDescriptif as f (f.cle)}
-        <section class="famille">
-          <h3 class="titre-famille">
-            {f.nom}<span class="quoi-famille">{f.quoi}</span>
-          </h3>
-          <div class="tuiles">
-            {#each f.diags as d (d.type)}
-              {@const q = echeance(d)}
-              <button
-                type="button"
-                class="tuile {d.gravite}"
-                onclick={(e) =>
-                  surOuvrirDiagnostic?.(d.type, origineDe(e.currentTarget as HTMLElement))}
-              >
-                <span class="nom-diag">{d.titre}</span>
-                <span class="conclusion">{libelleCourt(d)}</span>
-                <span class="jusqua" class:perimee={q.perimee}>{q.texte}</span>
-              </button>
-            {/each}
-          </div>
-        </section>
-      {/each}
+      <!--
+           Les diagnostics se suivent, sans en-tete de famille.
+
+           « Securite », « Sante », « Energie » decoupaient la liste en cinq
+           blocs pour quinze tuiles : plus de titres que de rangees. Le lecteur
+           cherche son diagnostic par son nom -- c'est celui qui figure sur son
+           rapport -- et un intercalaire tous les deux elements l'oblige a
+           relire l'ecran au lieu de le parcourir.
+      -->
+      <div class="tuiles">
+        {#each etatDescriptif.flatMap((f) => f.diags) as d (d.type)}
+          {@const q = echeance(d)}
+          <button
+            type="button"
+            class="tuile {d.gravite}"
+            onclick={(e) =>
+              surOuvrirDiagnostic?.(d.type, origineDe(e.currentTarget as HTMLElement))}
+          >
+            <span class="nom-diag">{d.titre}</span>
+            <span class="conclusion">{libelleCourt(d)}</span>
+            <span class="jusqua" class:perimee={q.perimee}>{q.texte}</span>
+          </button>
+        {/each}
+      </div>
     </div>
   {/if}
 
@@ -518,9 +535,9 @@
             <span class="marque" aria-hidden="true"></span>
             <span class="mot">
               {ligne.titre}
-              <!-- Le domaine, en second : il relie ce point au dossier plus bas,
-                   sans disputer la vedette au constat lui-même. -->
-              {#if ligne.famille}<span class="domaine">{ligne.famille}</span>{/if}
+              <!-- Le diagnostic, en second : il dit dans quel rapport aller
+                   voir, sans disputer la vedette au constat lui-même. -->
+              {#if ligne.diagnostic}<span class="domaine">{ligne.diagnostic}</span>{/if}
             </span>
             <span class="signe" aria-hidden="true">{ouverte === ligne.cle ? '−' : '+'}</span>
           </button>
@@ -808,34 +825,10 @@
     border-bottom: 1px solid var(--trait-or);
   }
 
-  .etat-descriptif .famille + .famille {
-    margin-top: var(--e5);
-  }
-
-  .titre-famille {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: var(--e3);
-    margin: 0 0 var(--e3);
-    font-family: var(--police-titre);
-    font-size: var(--t-lead);
-    font-weight: 500;
-    color: var(--sur-fond);
-  }
-
-  .quoi-famille {
-    font-family: var(--police);
-    font-size: var(--t-petit);
-    font-weight: 400;
-    color: var(--sur-fond-doux);
-  }
-
   /* Les tuiles gardent une taille de tuile.
-     Étirées à `1fr`, une famille qui ne contient qu'un rapport donnait un pavé
-     de treize cents pixels de large pour y écrire trois mots — l'inverse d'une
-     tuile. Elles s'arrêtent donc de grandir et s'alignent à gauche : même
-     format d'une famille à l'autre, quelle qu'en soit la taille. */
+     Étirées à `1fr`, un rapport isolé donnait un pavé de treize cents pixels
+     de large pour y écrire trois mots — l'inverse d'une tuile. Elles
+     s'arrêtent donc de grandir et s'alignent à gauche. */
   .tuiles {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(230px, 340px));
