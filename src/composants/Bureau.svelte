@@ -569,7 +569,9 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    border-radius: 28px;
+    /* Les coins du bas appartiennent desormais a la barre de synthese, qui
+       ferme le widget juste dessous. */
+    border-radius: 28px 28px 0 0;
     overflow: hidden;
     box-shadow: var(--ombre-forte);
     color: #ffffff;
@@ -728,18 +730,29 @@
     transform: translateY(-2px);
   }
 
-  /* La barre de synthese : une carte blanche sous le widget, comme sur la
-     publicite. Elle porte de l'encre sombre, plus du blanc sur verre depoli. */
+  /*
+   * La barre de synthese : la fin du widget, pas un bloc de plus.
+   *
+   * Elle est blanche et distincte, comme sur la publicite -- mais ACCOLEE au
+   * cadre du bien, sans marge. Les priorites editoriales sont formelles :
+   * « aucune banniere ni synthese entre le widget photo et les mini-apps ».
+   * Detachee, elle rompait la relation MON BIEN -> MES DIAGNOSTICS que la
+   * hierarchie d'accueil protege. Collee, elle est l'etat d'analyse du bien,
+   * qui fait partie du widget par le point 1 de ces memes priorites.
+   */
   .etat {
     position: relative;
     width: 100%;
-    margin: var(--e3) 0 0;
+    margin: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
     padding: 14px 16px;
     display: flex;
     align-items: center;
     gap: 10px;
     border: 1px solid var(--trait-fin);
-    border-radius: 18px;
+    border-top: none;
+    border-radius: 0 0 28px 28px;
     background: #ffffff;
     color: var(--sur-fond);
     font-size: var(--t-petit);
