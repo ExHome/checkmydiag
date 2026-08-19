@@ -45,9 +45,11 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
   dossier est un dossier de vente, et son rapport l'écrit lui-même ».
 - **La rubrique G du gaz est remontée** (§43) : entretien de chaudière et
   ramonage non justifiés, conduit non visitable. 16 volets sur 18 en portent.
-- **Prochain chantier** : « Installation alimentée en gaz : NON » — quand
-  l'installation n'est pas alimentée, aucun essai n'a pu être fait, et la
-  conclusion n'a pas la même portée. Mesurer d'abord sa fréquence.
+- **« Installation alimentée en gaz : NON » est dit** (§44) : 4 volets sur 17,
+  avec la nuance selon qu'un DGI est constaté ou non.
+- **Prochain chantier** : la contradiction interne du gaz — rubrique F qui dit
+  « Néant » et rubrique G qui dit « certains points n'ont pu être contrôlés ».
+  La signaler sans trancher.
 
 ## Compteurs
 
@@ -57,8 +59,8 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 | Volets lus page à page | 24 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 6 majeures |
-| Corrections livrées | 18 |
-| Tests de non-régression ajoutés | 56 |
+| Corrections livrées | 19 |
+| Tests de non-régression ajoutés | 60 |
 | Fausses alertes de mes propres sondes, écartées avant annonce | 6 |
 | Sondes de justesse écrites | 2 |
 | Notions métier versées au produit | 5 |
@@ -560,3 +562,25 @@ visite.
 
 Première fois qu'une fréquence de 89 % survit à l'examen — et ce qui l'a sauvée
 n'est pas un raisonnement, ce sont les deux dossiers qui ne la portent pas.
+
+### 20 août 2026, nuit — le gaz coupé le jour de la visite
+
+Quatre volets sur dix-sept portent « Installation alimentée en gaz : NON ».
+Aucun essai n'a alors lieu — ni mesure du monoxyde, ni contrôle en
+fonctionnement — et « aucune anomalie » veut dire « rien constaté », pas
+« installation vérifiée ». Le produit le dit désormais, et descend la gravité à
+« attention ».
+
+**Deux causes opposées derrière le même « non »** : le gaz coupé depuis
+longtemps, où rien n'a pu être essayé ; ou fermé **par l'opérateur le jour même**
+après un danger grave et immédiat — et là, l'installation a bel et bien été
+examinée. Dire « aucun essai n'a pu être fait » y serait faux et minimiserait le
+danger. La précision change selon qu'un DGI est constaté.
+
+Troisième champ à recouvrir deux causes opposées, après « sans rapport / sans
+date » à l'amiante et « refus assumé / échec de lecture » au DPE. **Un champ ne
+se lit jamais seul.**
+
+Deux erreurs attrapées par les tests au passage : une constante utilisée avant
+sa déclaration — que la suite du corpus n'atteignait pas — et un fixture qui
+plaçait un constat hors de sa rubrique.

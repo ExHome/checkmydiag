@@ -1857,6 +1857,42 @@ partout : elle ne constate rien sur ce logement-la. Elle reste au rapport.
 
 ---
 
+## 44 · « Installation alimentee en gaz : NON »
+
+Quatre volets sur dix-sept portent ce champ a NON. Quand le gaz est coupe,
+**aucun essai n'a lieu** : ni mesure du monoxyde, ni controle en fonctionnement,
+ni declenchement des securites. Le rapport peut alors conclure « ne comporte
+aucune anomalie » — exact au sens du protocole, puisqu'on ne constate rien, mais
+ce n'est pas une installation verifiee.
+
+Le produit ne le disait jamais. Il l'annonce desormais, et descend la gravite a
+« attention » :
+
+> Aucune anomalie relevee — mais l'installation n'etait pas alimentee en gaz le
+> jour de la visite : aucun essai n'a pu etre fait.
+
+C'est le pendant exact du differentiel non essaye en electricite (§16).
+
+### Deux causes derriere le meme « non », et elles s'opposent
+
+Le gaz peut etre coupe **depuis longtemps** — logement vide, contrat resilie —
+et alors rien n'a pu etre essaye.
+
+Mais il peut aussi avoir ete ferme **par l'operateur le jour meme**, apres un
+danger grave et immediat : la rubrique I du rapport decrit cette procedure,
+fermeture totale et pose d'une etiquette de condamnation. Dans ce cas
+l'installation **a bel et bien ete examinee** — c'est le diagnostic qui a conduit
+a la coupure. Dire « aucun essai n'a pu etre fait » y serait faux, et
+minimiserait un danger grave.
+
+La precision change donc selon qu'un DGI est constate ou non. C'est la troisieme
+fois qu'un meme champ recouvre deux causes opposees — apres « sans rapport / sans
+date » a l'amiante et « refus assume / echec de lecture » au DPE.
+
+**Un champ ne se lit jamais seul : il se lit avec ce qui l'entoure.**
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion
@@ -1911,8 +1947,8 @@ partout : elle ne constate rien sur ce logement-la. Elle reste au rapport.
 - [x] ~~La rubrique G du gaz : l'entretien et le ramonage non justifiés.~~ →
       fait, §43. 16 volets sur 18 en portent, et 2 n'en portent aucune : ce
       sont bien des constats.
-- [ ] « Installation alimentée en gaz : NON » : le dire, comme le différentiel
-      non essayé. Mesurer d'abord sa fréquence sur le corpus.
+- [x] ~~« Installation alimentée en gaz : NON » : le dire.~~ → fait, §44.
+      4 volets sur 17, et la nuance selon qu'un DGI est constaté ou non.
 - [ ] La contradiction F « Néant » / G « certains points n'ont pu être
       contrôlés » : la signaler sans trancher.
 - [ ] Lire les croix du CREP (« X Avant la vente » / « Avant la mise en

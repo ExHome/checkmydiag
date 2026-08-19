@@ -329,6 +329,8 @@ export function analyserGaz(lignes: string[], plage: [number, number]): Diagnost
    * tableau de la page 2 que personne ne lit.
    */
   const essais = essaisGaz(lignes);
+  /* Le gaz etait-il ouvert ? Lu tot : le verdict en depend autant que les faits. */
+  const alimente = alimenteEnGaz(lignes);
 
   let gravite: Gravite = 'neutre';
   let verdict =
@@ -356,8 +358,11 @@ export function analyserGaz(lignes: string[], plage: [number, number]): Diagnost
         ? 'Aucune anomalie relevée — mais le monoxyde de carbone n’a pas été mesuré : l’appareil était à l’arrêt le jour de la visite.'
         : 'Aucune anomalie relevée — mais le monoxyde de carbone n’a pas été mesuré.';
     } else {
-      gravite = 'bon';
-      verdict = 'L’installation de gaz ne présente aucune anomalie.';
+      gravite = alimente === false ? 'attention' : 'bon';
+      verdict =
+        alimente === false
+          ? 'Aucune anomalie relevée — mais l’installation n’était pas alimentée en gaz le jour de la visite : aucun essai n’a pu être fait.'
+          : 'L’installation de gaz ne présente aucune anomalie.';
     }
   } else if (etat === 'anomalies' || a1 || a2) {
     gravite = 'attention';
@@ -400,6 +405,32 @@ export function analyserGaz(lignes: string[], plage: [number, number]): Diagnost
    * sans justificatif, l'assureur peut discuter sa garantie après un sinistre.
    * Le rapport le note, sous un titre qui n'annonce rien.
    */
+  /*
+   * Le gaz coupe : ce que la conclusion ne peut pas dire.
+   *
+   * Quand l'installation n'etait pas alimentee, aucun essai n'a eu lieu.
+   * « Aucune anomalie » signifie alors « rien constate », pas « installation
+   * verifiee » — et un acheteur doit le savoir avant de signer.
+   */
+  if (alimente === false) {
+    /*
+     * Deux causes derriere un meme « non », et elles s'opposent.
+     *
+     * Le gaz peut etre coupe DEPUIS LONGTEMPS — logement vide, contrat resilie —
+     * et alors rien n'a pu etre essaye. Mais il peut aussi avoir ete ferme PAR
+     * L'OPERATEUR le jour meme, apres un danger grave et immediat : dans ce cas
+     * l'installation a bel et bien ete examinee, et c'est le diagnostic qui a
+     * conduit a la coupure. Dire « aucun essai n'a pu etre fait » y serait faux.
+     */
+    faits.push({
+      libelle: 'Installation alimentée le jour de la visite',
+      valeur: 'non',
+      precision: dgi
+        ? 'l’opérateur a fermé l’alimentation après le danger grave et immédiat'
+        : 'aucun essai n’a pu être fait : ni mesure du monoxyde, ni contrôle en fonctionnement'
+    });
+  }
+
   const constatations = constatationsGaz(lignes);
   if (constatations.length) {
     faits.push({
@@ -563,6 +594,27 @@ const CONSTATATIONS_UTILES: { motif: RegExp; dit: string }[] = [
     dit: 'un raccord réalisé au ruban d’étanchéité'
   }
 ];
+
+/**
+ * L'installation etait-elle alimentee le jour de la visite ?
+ *
+ * La rubrique A du gaz porte « Installation alimentee en gaz : NON » — quatre
+ * volets sur dix-sept du corpus. Quand le gaz est coupe, AUCUN essai n'a pu
+ * etre fait : ni la mesure de monoxyde, ni le controle des raccordements en
+ * fonctionnement, ni le declenchement des securites.
+ *
+ * Le rapport peut alors conclure « ne comporte aucune anomalie » — et c'est
+ * exact au sens du protocole, puisqu'on ne constate rien. Mais ce n'est pas la
+ * meme chose qu'une installation verifiee. C'est le pendant du differentiel non
+ * essaye en electricite, et le produit ne le disait pas.
+ */
+export function alimenteEnGaz(lignes: string[]): boolean | null {
+  const ligne = lignes.find((l) => /Installation aliment[ée]e en gaz/i.test(l));
+  if (!ligne) return null;
+  if (/Installation aliment[ée]e en gaz\s*:?\s*\.*\s*NON\b/i.test(ligne)) return false;
+  if (/Installation aliment[ée]e en gaz\s*:?\s*\.*\s*OUI\b/i.test(ligne)) return true;
+  return null;
+}
 
 export function constatationsGaz(lignes: string[]): string[] {
   const r = rubriqueDe(lignes, 'gaz', 'constatations');

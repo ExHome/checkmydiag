@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { constatationsGaz, typesConstates } from './securite';
+import { alimenteEnGaz, analyserGaz, constatationsGaz, typesConstates } from './securite';
 
 /**
  * La rubrique « E. — Anomalies identifiées » d'un rapport gaz réel
@@ -96,5 +96,57 @@ describe('les constatations diverses du gaz', () => {
 
   it('ne rend rien quand la rubrique est absente', () => {
     expect(constatationsGaz(['Etat de l’installation intérieure de Gaz', 'H. - Conclusion'])).toEqual([]);
+  });
+});
+
+describe('l’installation qui n’était pas alimentée', () => {
+  /*
+   * Quatre volets sur dix-sept portent « Installation alimentée en gaz : NON ».
+   * Quand le gaz est coupé, aucun essai n'a lieu : ni mesure du monoxyde, ni
+   * contrôle en fonctionnement. « Aucune anomalie » veut alors dire « rien
+   * constaté », pas « installation vérifiée ».
+   */
+  const VOLET = (alimente: 'OUI' | 'NON', ...suite: string[]) => [
+    'Etat de l’Installation Intérieure de Gaz',
+    'A. - Désignation du ou des bâtiments',
+    'Nature du gaz distribué : ............. Gaz naturel',
+    `Installation alimentée en gaz : ...... ${alimente}`,
+    'E. - Anomalies identifiées',
+    // Les constats vivent DANS la rubrique E : c'est là que le type se lit.
+    ...suite,
+    'H. - Conclusion',
+    'L’installation ne comporte aucune anomalie.',
+    'L’installation comporte des anomalies de type A1 qui devront être réparées ultérieurement.',
+    'L’installation comporte des anomalies de type A2 qui devront être réparées dans les meilleurs délais.',
+    'L’installation comporte des anomalies de type DGI qui devront être réparées avant remise en service.'
+  ];
+
+  it('lit le champ dans les deux sens', () => {
+    expect(alimenteEnGaz(VOLET('NON'))).toBe(false);
+    expect(alimenteEnGaz(VOLET('OUI'))).toBe(true);
+    expect(alimenteEnGaz(['Etat de l’Installation Intérieure de Gaz'])).toBeNull();
+  });
+
+  it('nuance le « aucune anomalie » quand le gaz était coupé', () => {
+    const d = analyserGaz(VOLET('NON'), [1, 5]);
+    expect(d.verdict).toMatch(/n’était pas alimentée/i);
+    expect(d.gravite).toBe('attention');
+  });
+
+  it('ne nuance rien quand l’installation était alimentée', () => {
+    const d = analyserGaz(VOLET('OUI'), [1, 5]);
+    expect(d.verdict).not.toMatch(/n’était pas alimentée/i);
+  });
+
+  it('dit que c’est l’opérateur qui a coupé, en cas de danger grave', () => {
+    // Sinon on annoncerait « aucun essai n'a pu être fait » alors que
+    // l'installation a bel et bien été examinée : c'est le diagnostic qui a
+    // conduit à la coupure.
+    const d = analyserGaz(
+      VOLET('NON', 'C.7 - Organe de Coupure Générale DGI'),
+      [1, 5]
+    );
+    const fait = d.faits.find((f) => f.libelle === 'Installation alimentée le jour de la visite');
+    expect(fait?.precision).toMatch(/l’opérateur a fermé/i);
   });
 });
