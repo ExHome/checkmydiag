@@ -48,10 +48,10 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 - **« Installation alimentée en gaz : NON » est dit** (§44) : 4 volets sur 17,
   avec la nuance selon qu'un DGI est constaté ou non.
 - **La contradiction interne du gaz est signalée** (§45) : 4 volets sur 18.
-- **Prochain chantier** : le volet gaz est désormais riche — non alimentée,
-  contradiction, constatations, types. Reprendre la lecture large : le corpus
-  compte encore 3 978 dossiers non lus, et les états des risques isolés
-  n'apprennent plus rien. Chercher des dossiers complets.
+- **La couverture est mesurée** (§46) : 375 fiches sur 391 portent un verdict
+  utile, soit **96 %**, sur cent dossiers analysés de bout en bout.
+- **Prochain chantier** : les **huit fiches ERP muettes** sur 82 — c'est le
+  volet le moins bon des volets fréquents, et le plus dense du dossier.
 
 ## Compteurs
 
@@ -602,3 +602,24 @@ ni inquiéter : rendre visible ce qui ne colle pas.
 pas il y a vingt-quatre heures** : installation non alimentée, contradiction
 interne, entretien et ramonage non justifiés, anomalies de type A2. Le même
 document, lu autrement.
+
+### 20 août 2026, nuit — la couverture, enfin mesurée
+
+L'ordre de mission la demandait depuis le début. Cent dossiers analysés de bout
+en bout, 391 fiches produites : **375 portent un verdict utile, soit 96 %**.
+Aucun dossier ne ressort sans aucun diagnostic reconnu.
+
+Carrez, amiante et plomb sont à 100 % ; électricité, termites et DPE entre 97 et
+98 % ; **l'ERP à 90 %** et le gaz à 87 %. L'assainissement est à zéro sur deux
+volets — trop rare pour justifier un chantier, cherché en vain sur cent
+cinquante autres dossiers.
+
+**Ce que le tableau dit d'autre** : le DPE porte 8,4 faits par fiche, l'amiante
+0,9. L'écart n'est pas un défaut — un constat amiante négatif n'a presque rien à
+dire — mais il montre où le lecteur trouvera de la matière. L'ERP, lui, est le
+document le plus dense du dossier et n'en porte que 1,8 : c'est là qu'est la
+marge.
+
+**Pourquoi cette mesure manquait** : on mesurait la justesse volet par volet
+sans jamais demander combien de fiches disent quelque chose. Un volet peut être
+juste à 100 % et muet neuf fois sur dix.

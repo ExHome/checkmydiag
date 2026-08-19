@@ -1937,6 +1937,51 @@ Le meme document, lu autrement.
 
 ---
 
+## 46 · La couverture, enfin mesuree
+
+L'ordre de mission la demande depuis le debut : ou Verriere est-elle competente,
+et ou le corpus manque-t-il ? Cent dossiers analyses de bout en bout, 391 fiches
+produites :
+
+| volet | fiches | verdict utile | faits par fiche |
+|---|---|---|---|
+| carrez | 60 | **100 %** | 2,4 |
+| amiante | 40 | **100 %** | 0,9 |
+| plomb | 29 | **100 %** | 4,0 |
+| electricite | 54 | 98 % | 2,4 |
+| termites | 46 | 98 % | 3,4 |
+| dpe | 63 | 97 % | 8,4 |
+| erp | 82 | 90 % | 1,8 |
+| gaz | 15 | 87 % | 2,9 |
+| assainissement | 2 | **0 %** | 0,0 |
+
+**375 fiches sur 391 portent un verdict utile — 96 %.** Aucun dossier de
+l'echantillon ne ressort sans aucun diagnostic reconnu.
+
+### Ce que le tableau dit vraiment
+
+**Le DPE est le plus disert** : 8,4 faits par fiche, contre 0,9 pour l'amiante.
+L'ecart n'est pas un defaut — un DPE porte des chiffres a foison, un constat
+amiante negatif n'a presque rien a dire. Mais il montre ou le lecteur trouvera
+de la matiere, et ou il faudra la lui apporter autrement.
+
+**L'ERP est le moins bon des volets frequents** : 90 %, et 1,8 fait par fiche
+alors que c'est le document le plus dense du dossier. Les huit fiches muettes
+sont a ouvrir.
+
+**L'assainissement est un trou, et il restera ouvert** : deux volets sur cent
+dossiers, aucun verdict. Cherche sur cent cinquante autres dossiers, il n'en
+reste aucun. C'est trop rare pour justifier un chantier tant qu'un cas ne se
+presente pas — mais c'est note.
+
+### Pourquoi cette mesure manquait
+
+On mesurait la JUSTESSE volet par volet — l'electricite, le gaz, le plomb — sans
+jamais demander combien de fiches disent quelque chose. Les deux questions sont
+differentes : un volet peut etre juste a 100 % et muet neuf fois sur dix.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion
@@ -2027,3 +2072,6 @@ Le meme document, lu autrement.
       d'où il vient.
 - [x] ~~Treize dossiers déclarent l'argile sans que Verrière la dise.~~ →
       quatrième écriture trouvée, § 34 : le détail précède le libellé. 55/55.
+- [ ] Les huit fiches ERP muettes sur 82 : les ouvrir une par une.
+- [ ] L'assainissement : deux volets sur cent dossiers, aucun verdict. À
+      traiter quand un cas se présentera.
