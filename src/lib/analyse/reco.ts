@@ -214,6 +214,16 @@ export function travauxDuDpe(lignes: string[]): PackTravaux[] {
     const cout = coutDe(bloc);
     const recommandations = recommandationsDe(bloc);
     if (!recommandations.length && !cout) continue;
+    /*
+     * Un seul pack par rang, et c'est une garantie, pas une commodité.
+     *
+     * Le DPE en propose deux : les essentiels, puis ceux à envisager. Rien de
+     * plus. Or le titre peut reparaître ailleurs dans le document — renvoi,
+     * rappel en tête de page — et l'affichage boucle sur le rang : deux packs
+     * de rang 1 feraient une clé dupliquée, c'est-à-dire un écran blanc au
+     * lieu d'une fiche. On garde la première occurrence, celle du tableau.
+     */
+    if (packs.some((p) => p.rang === b.rang)) continue;
     packs.push({
       rang: b.rang,
       intitule: b.intitule,

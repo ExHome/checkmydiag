@@ -127,3 +127,31 @@ describe('le montant ne se lit qu’une fois', () => {
     expect(packs[0]?.cout?.de).toBe(4600);
   });
 });
+
+/**
+ * Deux packs, jamais plus — et jamais deux fois le même rang.
+ *
+ * L'affichage boucle sur le rang du pack. Un titre qui reparaît ailleurs dans
+ * la page produirait deux packs de rang 1, donc une clé dupliquée, donc un
+ * écran blanc à la place de la fiche. La garantie se tient ici, à la source.
+ */
+describe('un seul pack par rang', () => {
+  it('ignore un titre qui reparaît plus bas', () => {
+    const avecEcho = [
+      'Recommandations d’amélioration de la performance',
+      'Les travaux essentiels',
+      'Montant estimé : 4600 à 6800€',
+      'Toiture/plafond',
+      'Isolation des combles perdus.',
+      /* Le même titre, rappelé plus bas — un renvoi, pas un second pack. */
+      'Les travaux essentiels',
+      'Montant estimé : 9900 à 12000€',
+      'Chauffage',
+      'Remplacer la chaudière.'
+    ];
+    const packs = travauxDuDpe(avecEcho);
+    expect(packs.filter((p) => p.rang === 1).length).toBe(1);
+    /* C'est la première qui vaut : celle du tableau, avec son montant. */
+    expect(packs[0]?.cout?.de).toBe(4600);
+  });
+});
