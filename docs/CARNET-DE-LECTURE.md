@@ -1570,6 +1570,58 @@ generaliser une regle de lecture apres un seul editeur.
 
 ---
 
+## 37 · Les autres volets ne se ferment PAS trop tot — et c'est un resultat
+
+Le point de reprise designait un chantier : chercher les volets qui se ferment
+avant la fin, comme l'amiante et le DPE. Le controle de pagination generalise a
+tous les volets donne ceci :
+
+| volet | volets | annoncent leur pagination | plus courts |
+|---|---|---|---|
+| carrez | 33 | 33 | **0** |
+| dpe | 37 | 37 | **0** |
+| termites | 26 | 26 | **0** |
+| electricite | 33 | 33 | **0** |
+| plomb | 18 | 18 | **0** |
+| gaz | 6 | 6 | **0** |
+| amiante | 13 | 13 | 2 |
+| erp | 50 | 48 | 33 |
+
+**Tous les rapports annoncent leur pagination** — le controle est universel, et
+c'est une bonne nouvelle en soi. Sept volets sur huit sont decoupes juste.
+
+### Les trente-trois ERP « trop courts » n'en sont pas
+
+L'etat des risques compte **ses annexes** dans son total : l'arrete prefectoral,
+les fiches d'information sismicite et radon, parfois le reglement du PPR en
+quatre-vingt-trois pages. La decoupe les exclut a raison — ce sont des textes
+de l'Etat, pas le rapport.
+
+Reste a verifier que le CONTENU utile est dans la plage. Mesure : la conclusion
+redigee y figure 35 fois sur 50, elle est absente du document 6 fois, et 9 fois
+elle est ailleurs. Ces neuf-la ont ete ouverts un par un :
+
+> **la conclusion est en page 3, c'est-a-dire dans la page de synthese du
+> dossier — avant le volet.**
+
+Ce n'est donc pas un defaut de decoupe : ces rapports ne repetent pas leur
+conclusion dans leur volet, et le moteur lit la synthese separement. Rien n'est
+perdu, et la mesure le confirme : **45 dossiers sur 45 se voient dire l'argile**,
+zero fausse alerte technologique, zero pollution des sols inventee.
+
+### La lecon
+
+**Un ecart mesure n'est pas un defaut tant qu'on n'a pas ouvert un cas.** Trois
+sondes successives ont annonce ici un probleme qui n'existait pas — la
+pagination qui compte les annexes, puis la conclusion « hors plage » qui etait
+en realite en amont. La correction juste, cette fois, etait de **ne rien
+corriger**.
+
+C'est la sixieme sonde menteuse de la journee, et la premiere dont l'erreur
+aurait conduit a casser une decoupe qui marche.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion

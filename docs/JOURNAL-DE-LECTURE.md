@@ -32,9 +32,10 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
   — décision du 19/08. Faits : plomb (22/22), amiante (19/19), termites
   (38/38), ERP (PPR approuvé annoncé 7 fois sur 7). Les six diagnostics
   classiques sont désormais mesurés, et la découpe de l'amiante est corrigée
-  (1 volet trop court sur 20, contre 20). **Prochain chantier** : vérifier si
-  d'autres volets se ferment trop tôt, en cherchant les rapports qui annoncent
-  leur pagination.
+  (1 volet trop court sur 20, contre 20). ~~Prochain chantier : vérifier si d'autres volets
+  se ferment trop tôt.~~ → **fait, et clos par la mesure** (§37) : sept volets
+  sur huit sont découpés juste, et les trente-trois ERP « trop courts »
+  comptaient leurs annexes officielles. Rien à corriger.
 - **À vérifier au texte avant tout contrôle** : le calendrier du DPE collectif
   (L126-31 du CCH, article 158 de la loi n° 2021-1104), cité par le DTG mais
   pas encore relu à la source. Légifrance n'a pas répondu aux adresses
@@ -420,3 +421,27 @@ studio de 20 m² classé C, tous deux justes, avec leurs réformes correctement
 datées — dont celle du facteur de conversion de l'électricité, au 1ᵉʳ janvier
 2026. C'est le premier diagnostic sur lequel deux lectures d'affilée ne
 révèlent rien : signe que le DPE est solide.
+
+### 19 août 2026, nuit — le chantier des découpes, clos sans correction
+
+Le contrôle de pagination généralisé à tous les volets : **carrez, DPE,
+termites, électricité, plomb et gaz sont découpés juste** — zéro volet plus
+court que ce qu'il annonce. L'amiante en garde deux sur treize.
+
+Les **trente-trois ERP « trop courts » n'en sont pas** : l'état des risques
+compte ses annexes dans son total — arrêté préfectoral, fiches d'information,
+parfois le règlement du PPR en quatre-vingt-trois pages — et la découpe les
+exclut à raison.
+
+Restait à vérifier le contenu utile. La conclusion rédigée manque à la plage
+neuf fois sur cinquante ; les neuf cas ouverts un par un montrent qu'elle est
+**en page 3, dans la synthèse du dossier, avant le volet**. Le moteur lit la
+synthèse séparément : rien n'est perdu.
+
+**Contre-épreuve** : 45 dossiers sur 45 se voient dire l'argile, zéro fausse
+alerte technologique, zéro pollution des sols inventée, 19 inondations
+conservées.
+
+**La leçon** : un écart mesuré n'est pas un défaut tant qu'on n'a pas ouvert un
+cas. Trois sondes ont annoncé ici un problème inexistant, et la correction
+juste était de ne rien corriger.
