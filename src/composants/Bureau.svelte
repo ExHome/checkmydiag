@@ -14,7 +14,7 @@
    */
   import type { Analyse, Diagnostic, TypeDiag } from '../lib/modele';
   import { libelleCourt } from '../lib/libelle';
-  import { compterLeDossier, origineDe, phraseDuDossier, type Origine } from '../lib/bureau';
+  import { compterLeDossier, origineDe, type Origine } from '../lib/bureau';
   import { APPS } from '../lib/apps';
   import Dicodiag from './Dicodiag.svelte';
   import Propagation from './Propagation.svelte';
@@ -68,8 +68,13 @@
     return surface ? `${nature} · ${surface}` : nature;
   });
 
-  /** L'adresse, si le rapport la porte. Sinon la ligne disparaît. */
-  const lieu = $derived([analyse.bien.adresse, analyse.bien.commune].filter(Boolean).join(' · '));
+  /*
+   * L'adresse et la commune ne sont plus assemblées en une seule ligne.
+   *
+   * Le widget les sépare : l'adresse en titre, la commune dessous et en badge.
+   * C'est la composition du visuel de référence, et elle vaut mieux qu'une
+   * ligne unique — l'adresse est ce que le lecteur reconnaît d'abord.
+   */
 
   /** La lettre du DPE, telle que l'étiquette du rapport la donne. */
   const lettre = $derived.by(() => {
@@ -88,14 +93,16 @@
     G: '#fc0205'
   };
 
-  /**
-   * La phrase du cartouche.
+  /*
+   * La phrase de synthèse a quitté l'accueil.
    *
-   * Elle ne chiffre ni travaux ni délai : ces montants-là ne sont dans aucun
-   * rapport de diagnostic, et les afficher reviendrait à les inventer. Elle dit
-   * ce que le dossier établit, et laisse le devis à l'artisan.
+   * Elle disait ce que le dossier établit — « deux diagnostics demandent une
+   * action avant la signature ». Mais l'ODM directeur interdit tout bloc entre
+   * le widget du bien et les mini-apps, et une phrase de synthèse en est un.
+   *
+   * Elle n'est pas perdue : elle ouvre l'analyse, où elle a toute la place de
+   * s'expliquer. `phraseDuDossier` reste dans `lib/bureau.ts` avec ses tests.
    */
-  const phrase = $derived(phraseDuDossier(compte));
 
   /**
    * Le geste d'ouverture.
@@ -210,44 +217,87 @@
 </script>
 
 <section class="bureau" aria-label="Votre dossier en un coup d’œil">
-  <!-- Le cartouche : ce qu'on lit sans rien ouvrir. -->
-  <article class="cartouche">
-    <header class="tete">
-      <span class="sceau" aria-hidden="true">🏠</span>
-      <div class="qui">
-        <h2>{titre}</h2>
-        {#if lieu}<p class="lieu">{lieu}</p>{/if}
-      </div>
+  <!--
+    LE WIDGET DU BIEN — point 2 de la hiérarchie d'accueil, non négociable.
+
+    « Grand widget photo du bien : photo, adresse, type, surface, nombre de
+    diagnostics analysés et points à surveiller. » Puis, IMMÉDIATEMENT dessous,
+    les mini-apps : aucun bloc entre les deux.
+
+    Ce qui était là avant — trois compteurs, une phrase, deux boutons — n'a pas
+    disparu : les compteurs sont devenus le bandeau d'état, la phrase et le
+    détail se lisent en ouvrant l'analyse, et l'impression est passée dans le
+    menu du widget. C'est la hiérarchie qui change, pas le contenu.
+
+    ── La photo qu'on n'a pas ──────────────────────────────────────────────
+
+    Le produit lit un PDF : il n'a aucune photo du logement, et il n'en
+    inventera pas. Le prototype du pack prévoit ce cas — sa tuile de bien est un
+    dégradé — et l'ODM affecte l'illustration de verrière au trait aux « empty
+    states ». C'est donc elle qui occupe le cadre, en filigrane, jusqu'au jour
+    où une photo sera fournie.
+  -->
+  <article class="bien">
+    <div class="paysage" aria-hidden="true">
+      <img class="filigrane" src="./logo/verriere-line-art.svg" alt="" />
+    </div>
+
+    {#if analyse.bien.commune}
+      <p class="ville"><span aria-hidden="true">📍</span> {analyse.bien.commune}</p>
+    {/if}
+
+    <button
+      type="button"
+      class="menu"
+      onclick={() => window.print()}
+      aria-label="Imprimer le dossier"
+    >
+      <span aria-hidden="true">⋯</span>
+    </button>
+
+    <div class="dessous">
+      <h2>{analyse.bien.adresse ?? titre}</h2>
+      {#if analyse.bien.commune}<p class="commune">{analyse.bien.commune}</p>{/if}
+
+      <p class="traits">
+        {#if analyse.bien.typeBien}<span>{analyse.bien.typeBien}</span>{/if}
+        {#if analyse.bien.surface !== undefined}
+          <span>{analyse.bien.surface.toLocaleString('fr-FR')} m²</span>
+        {/if}
+        {#if analyse.bien.anneeConstruction}
+          <span>Construit {analyse.bien.anneeConstruction}</span>
+        {/if}
+      </p>
+
       {#if lettre}
-        <span class="lettre" style="background: {TEINTE_DPE[lettre] ?? 'var(--petrole)'}">
+        <span class="lettre" style="background: {TEINTE_DPE[lettre] ?? 'var(--action)'}">
           {lettre}
         </span>
       {/if}
-    </header>
 
-    <div class="compteurs">
-      <div class="compteur">
-        <strong>{compte.aRegler}</strong>
-        <span>À régler</span>
-      </div>
-      <div class="compteur">
-        <strong>{compte.aVerifier}</strong>
-        <span>À vérifier</span>
-      </div>
-      <div class="compteur">
-        <strong>{compte.pourInformation}</strong>
-        <span>Pour information</span>
-      </div>
-    </div>
-
-    <p class="phrase">{phrase}</p>
-
-    <div class="actions">
-      <button type="button" class="principal" onclick={() => surVue?.('point')}>
-        Voir le détail
+      <button type="button" class="voir" onclick={() => surVue?.('point')}>
+        Voir le bien <span aria-hidden="true">›</span>
       </button>
-      <button type="button" class="second" onclick={() => window.print()}>Imprimer</button>
     </div>
+
+    <!-- Les deux chiffres que l'ODM demande, et rien de plus : le détail
+         s'ouvre d'un geste, il n'encombre pas l'accueil. -->
+    <button type="button" class="etat" onclick={() => surVue?.('point')}>
+      <span class="lu">
+        <span class="rond bon" aria-hidden="true">✓</span>
+        {analyse.diagnostics.length} diagnostic{analyse.diagnostics.length > 1 ? 's' : ''} analysé{analyse
+          .diagnostics.length > 1
+          ? 's'
+          : ''}
+      </span>
+      <span class="separateur" aria-hidden="true"></span>
+      <span class="veiller">
+        <span class="rond veille" aria-hidden="true">●</span>
+        {compte.aRegler + compte.aVerifier} point{compte.aRegler + compte.aVerifier > 1 ? 's' : ''} à
+        surveiller
+      </span>
+      <span class="chevron" aria-hidden="true">›</span>
+    </button>
   </article>
 
   <!-- La grille. Un diagnostic absent du rapport n'a pas de tuile : le dossier
@@ -414,160 +464,232 @@
 
      Il remet les jetons à l'endroit pour lui-même : sa surface est claire, et
      le texte sable de l'écran y tomberait à 1,07. */
-  .cartouche {
-    --sur-fond: #12463b;
-    --sur-fond-doux: #555555;
-    --encre: #12463b;
-    --encre-doux: #555555;
-    --gris: #666666;
-    --surface: rgb(26 77 92 / 3%);
-    --surface-forte: rgb(26 77 92 / 6%);
-    --surface-bord: rgb(26 77 92 / 10%);
-    --trait: #e8dcc8;
-    --trait-fin: #f0eae0;
-    --action-texte: #a33220;
-    color: var(--petrole);
+  /* ---- Le widget du bien ------------------------------------------------ */
 
-    background: var(--papier);
-    border: 2px solid var(--action);
-    border-radius: var(--rayon-large);
-    padding: var(--e4);
-    box-shadow: var(--ombre-forte);
-  }
-
-  .tete {
+  /*
+   * Un cadre, une image, un dégradé qui rattrape le texte.
+   *
+   * C'est la grammaire du visuel de référence, et c'est celle de tous les
+   * widgets de ce genre : l'image occupe tout, le texte est posé dessus, et un
+   * dégradé sombre par le bas garantit qu'il reste lisible quelle que soit
+   * l'image. Ici l'image est un dégradé de la charte plus l'illustration de
+   * verrière — voir le commentaire du balisage.
+   */
+  .bien {
+    position: relative;
+    isolation: isolate;
+    min-height: 260px;
     display: flex;
-    align-items: center;
-    gap: var(--e2);
-    margin-bottom: var(--e3);
+    flex-direction: column;
+    justify-content: flex-end;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: var(--ombre-forte);
+    color: #ffffff;
   }
 
-  .sceau {
-    width: 40px;
-    height: 40px;
-    flex: none;
+  .paysage {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background: linear-gradient(150deg, #2f6b52 0%, #17493c 46%, #0a2b23 100%);
+  }
+
+  /* L'illustration de verrière, en filigrane : l'ODM la destine aux écrans
+     sans contenu propre, et c'en est un tant qu'aucune photo n'existe. */
+  .filigrane {
+    position: absolute;
+    right: -6%;
+    bottom: 8%;
+    width: 74%;
+    opacity: 0.17;
+    filter: brightness(0) invert(1);
+  }
+
+  /* Le dégradé qui rattrape le texte. Sans lui, la lisibilité dépendrait de
+     l'image — et le jour où une vraie photo arrivera, elle sera quelconque. */
+  .bien::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(to top, rgb(4 22 18 / 92%) 0%, rgb(4 22 18 / 55%) 34%, transparent 68%);
+  }
+
+  .ville {
+    position: absolute;
+    top: var(--e3);
+    left: var(--e3);
+    margin: 0;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgb(4 22 18 / 62%);
+    backdrop-filter: blur(8px);
+    font-size: var(--t-micro);
+    font-weight: 700;
+    letter-spacing: var(--suivi);
+    text-transform: uppercase;
+  }
+
+  .menu {
+    position: absolute;
+    top: var(--e3);
+    right: var(--e3);
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--action), var(--action-forte));
+    border: none;
+    background: rgb(255 255 255 / 88%);
+    color: var(--vert-profond);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
     display: grid;
     place-items: center;
-    font-size: 20px;
   }
 
-  .qui {
-    flex: 1;
-    min-width: 0;
+  .menu:hover {
+    background: #ffffff;
   }
 
-  .tete h2 {
+  .dessous {
+    position: relative;
+    padding: var(--e4);
+    display: grid;
+    gap: 4px;
+  }
+
+  .dessous h2 {
     margin: 0;
-    font-size: var(--t-lead);
+    font-family: var(--police-titre);
+    font-size: var(--t-titre);
     font-weight: 700;
-    color: var(--sur-fond);
-    line-height: 1.2;
+    line-height: 1.15;
+    letter-spacing: -0.022em;
   }
 
-  .lieu {
-    margin: 2px 0 0;
+  .commune {
+    margin: 0;
     font-size: var(--t-petit);
-    color: var(--sur-fond-doux);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    opacity: 0.92;
   }
 
-  /* La lettre du DPE : la couleur est celle de l'arrêté, l'encre reste noire
-     dessus — sur un jaune réglementaire, du blanc ne se lit pas. */
+  /* Type, surface, année : séparés par des points médians, comme le visuel. */
+  .traits {
+    margin: 6px 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    font-size: var(--t-micro);
+    opacity: 0.9;
+  }
+
+  .traits span + span::before {
+    content: '·';
+    margin-right: 10px;
+    opacity: 0.7;
+  }
+
+  /* La lettre du DPE : couleur de l'arrêté, encre noire — sur un jaune
+     réglementaire, du blanc ne se lit pas. */
   .lettre {
-    flex: none;
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
+    position: absolute;
+    right: var(--e4);
+    bottom: calc(var(--e4) + 46px);
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
     display: grid;
     place-items: center;
     font-weight: 700;
     font-size: var(--t-lead);
     color: #1c1c1c;
+    box-shadow: var(--ombre);
   }
 
-  /* ---- Les trois compteurs ---------------------------------------------- */
-  .compteurs {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--e2);
-    margin-bottom: var(--e3);
-  }
-
-  .compteur {
-    background: var(--papier);
-    border: 1px solid var(--trait-fin);
-    border-radius: var(--rayon-badge);
-    padding: var(--e2);
-    text-align: center;
-  }
-
-  .compteur strong {
-    display: block;
-    font-size: var(--t-titre);
-    font-weight: 700;
-    color: var(--sur-fond);
-    line-height: 1.1;
-  }
-
-  .compteur span {
-    display: block;
-    margin-top: 2px;
-    font-size: var(--t-micro);
-    color: var(--sur-fond-doux);
-    line-height: 1.2;
-  }
-
-  .phrase {
-    background: var(--surface);
-    border-radius: var(--rayon);
-    padding: var(--e3);
-    margin: 0 0 var(--e3);
-    font-size: var(--t-petit);
-    line-height: 1.5;
-    color: var(--sur-fond);
-  }
-
-  .actions {
-    display: flex;
-    gap: var(--e2);
-  }
-
-  .actions button {
-    flex: 1;
-    min-height: 44px;
-    border-radius: var(--rayon-badge);
+  .voir {
+    justify-self: start;
+    margin-top: var(--e2);
+    min-height: 40px;
+    padding: 0 18px;
+    border: none;
+    border-radius: 999px;
+    background: #ffffff;
+    color: var(--vert-profond);
     font-size: var(--t-petit);
     font-weight: 700;
     cursor: pointer;
-    transition: transform var(--duree) var(--courbe), background var(--duree) var(--courbe);
+    transition: transform var(--duree) var(--courbe);
   }
 
-  /* Le bouton reste vert, sur le blanc de l'encart : c'est l'action de la
-     marque, et le vert profond y porte du blanc à 4,72. */
-  .principal {
-    background: var(--action-forte);
-    border: 1px solid var(--action-forte);
-    color: var(--sur-action);
-  }
-
-  .principal:hover {
-    background: var(--action-texte);
+  .voir:hover {
     transform: translateY(-2px);
   }
 
-  .second {
-    background: transparent;
-    border: 1px solid var(--action-forte);
-    color: var(--action-texte);
+  /* Le bandeau d'état : les deux chiffres que l'ODM demande, posés sur un
+     verre dépoli à l'intérieur même du widget. */
+  .etat {
+    position: relative;
+    margin: 0 var(--e3) var(--e3);
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid rgb(255 255 255 / 18%);
+    border-radius: 16px;
+    background: rgb(4 22 18 / 55%);
+    backdrop-filter: blur(10px);
+    color: #ffffff;
+    font-size: var(--t-micro);
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
   }
 
-  .second:hover {
-    background: var(--or-pale);
-    transform: translateY(-2px);
+  .etat:hover {
+    background: rgb(4 22 18 / 70%);
+  }
+
+  .lu,
+  .veiller {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .separateur {
+    flex: 1;
+    height: 18px;
+    border-left: 1px solid rgb(255 255 255 / 22%);
+  }
+
+  .rond {
+    width: 16px;
+    height: 16px;
+    flex: none;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 10px;
+    line-height: 1;
+  }
+
+  .rond.bon {
+    background: #a6c39a;
+    color: var(--vert-profond);
+  }
+
+  /* L'ambre du socle est réglé pour le fond clair : posé sur le widget sombre,
+     il tombe à 2,8 et la pastille s'éteint. C'est la version claire qui
+     signale ici — mesuré à 10,4 sur son encre. */
+  .rond.veille {
+    background: #ffd54a;
+    color: #2a1c00;
+  }
+
+  .chevron {
+    opacity: 0.75;
+    font-size: 16px;
   }
 
   /* ---- La grille des tuiles --------------------------------------------- */
@@ -858,13 +980,13 @@
   @media (prefers-reduced-motion: reduce) {
     .icone,
     .dock .signe,
-    .actions button {
+    .voir {
       transition: none;
     }
 
     .tuile:hover .icone,
     .dock button:hover .signe,
-    .actions button:hover {
+    .voir:hover {
       transform: none;
     }
   }
