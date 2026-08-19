@@ -22,9 +22,9 @@ Dropbox.
 - Dernier document lu en entier : un **DTG** de mise en copropriété (35 pages)
   — le premier document d'immeuble du carnet. Avant lui, deux DDT complets
   (location et vente) pour le volet **électricité**.
-- **Reprendre par** : le **PPPT**, jamais ouvert, dans le même dossier client
-  que le DTG lu. Puis le DTA et le RAAT, dont le corpus contient plusieurs
-  exemplaires.
+- **Reprendre par** : les diagnostics classiques, la copropriété passant après
+  — décision du 19/08. Dans l'ordre : le **plomb** et l'**amiante**, dont la
+  justesse n'a jamais été mesurée, puis les **termites** et l'**ERP**.
 - **À vérifier au texte avant tout contrôle** : le calendrier du DPE collectif
   (L126-31 du CCH, article 158 de la loi n° 2021-1104), cité par le DTG mais
   pas encore relu à la source. Légifrance n'a pas répondu aux adresses
@@ -39,9 +39,9 @@ Dropbox.
 |---|---|
 | Rapports lus en entier | 3 |
 | Volets et documents lus page à page | 9 |
-| Erreurs de moteur trouvées par la lecture | 2 majeures |
-| Corrections livrées | 3 |
-| Tests de non-régression ajoutés | 10 |
+| Erreurs de moteur trouvées par la lecture | 3 majeures |
+| Corrections livrées | 5 |
+| Tests de non-régression ajoutés | 18 |
 | Sondes de justesse écrites | 2 |
 | Notions métier versées au produit | 4 |
 | Fiches versées à la Dropbox | 2 |
@@ -53,8 +53,8 @@ Ce que « lu » veut dire ici : le volet a été lu page à page, pas survolé.
 
 | Diagnostic | Volets lus | Justesse mesurée | État |
 |---|---|---|---|
-| Électricité | 2 | **30/31** verdicts justes (contre 17/31) | catalogue démasqué, deux variantes de constat lues |
-| Gaz | 2 (sessions antérieures) | non mesurable sur l'échantillon | rubrique E connue ; la synthèse ne le nomme pas comme attendu |
+| Électricité | 2 | **59/60** verdicts justes (contre 17/31) | catalogue démasqué, deux variantes de constat lues, anomalies compensées distinguées |
+| Gaz | 3 | **7/7** verdicts justes (contre 0/3) | rubrique E lue juste ; rubrique G et « installation non alimentée » restent à remonter |
 | DPE | 2 | 4 % de muets | cas du DPE vierge rencontré, pas encore traité |
 | ERP | 3 | argile 73/140 dossiers | trois écritures de l'argile connues ; l'imprimé officiel et ses croix restent à exploiter |
 | Plomb | 1 (session antérieure) | — | classes et cinq situations lues |
@@ -129,3 +129,30 @@ de la bible a été actualisé.
 différentes pour un même bien et un champ d'assurance vide sur les 34 pages —
 alors que l'attestation jointe en annexe est complète. Deuxième éditeur, même
 règle : **le pied de page ne dit rien, l'annexe fait foi.**
+
+### 19 août 2026 — le gaz, enfin mesuré
+
+Le volet gaz du dossier de vente lu page à page. Sa justesse n'avait jamais pu
+être mesurée : la sonde cherchait « L'installation intérieure de gaz » quand la
+page de synthèse écrit seulement « L'installation comporte des anomalies de
+type A2 ». Elle ne rendait pas un mauvais chiffre — elle ne rendait **rien**.
+
+Sonde corrigée, mesure faite : **0 juste sur 3**, et toujours dans le sens le
+plus dangereux — « aucune anomalie » là où le rapport demande une réparation
+dans les meilleurs délais.
+
+**Cause :** dans la rubrique « E. — Anomalies identifiées », trois sortes de
+lignes citent A1, A2 ou DGI — la légende de colonne, les notes de bas de
+tableau, et le constat. Une seule constate. La lecture les distingue désormais
+par leur forme, jamais par leur position.
+
+**Après : 7 sur 7 justes.**
+
+**Et l'échantillon élargi à 120 dossiers a montré autre chose** : quatre
+rapports d'électricité relèvent un point unique — une broche de terre non
+reliée — assorti d'une **mesure compensatoire**, et concluent en synthèse
+« aucune anomalie ». Les deux disent vrai. Le produit suivait le tableau et
+contredisait le rapport ; il suit maintenant sa conclusion et dit le point
+compensé dans les faits. **Électricité : 59 justes sur 60.**
+
+Huit tests supplémentaires, dont un tiré mot pour mot de la rubrique E lue.

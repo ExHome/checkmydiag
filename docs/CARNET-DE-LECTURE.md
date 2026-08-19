@@ -798,10 +798,148 @@ qu'une ligature se recolle à ses voisins. Ni « fi », ni « fl », ni « ff »
 
 ---
 
+## 23 · Le gaz, relu en entier — et le verdict qui rassurait à tort
+
+Le §6 avait lu deux volets gaz et compris la mécanique. Il manquait la mesure.
+Elle est faite, et elle était mauvaise : sur les rapports dont la synthèse
+écrit la conclusion en clair, le produit se trompait **trois fois sur trois** —
+et toujours dans le sens le plus dangereux, « aucune anomalie » là où le
+rapport demandait une réparation dans les meilleurs délais.
+
+Après correction : **sept sur sept justes**.
+
+### Pourquoi le gaz n'avait jamais été mesuré
+
+La sonde cherchait la conclusion de synthèse à la phrase
+« L'installation intérieure de gaz… ». Or la page de synthèse écrit seulement
+**« L'installation comporte des anomalies de type A2 »** — le mot « gaz » est
+dans la colonne d'à côté, celle du libellé de prestation. Zéro dossier
+mesurable sur soixante : la sonde ne rendait pas un mauvais chiffre, elle ne
+rendait rien, et personne ne s'en était étonné.
+
+### Trois sortes de lignes citent A1, A2 ou DGI — une seule constate
+
+```
+(selon la norme) (A1 , A2 ,        ← la légende de colonne, coupée en deux
+DGI , 32c )                          lignes par la mise en page
+Tuyauteries fixes - Espace A2 …    ← LE CONSTAT
+(4) A1 : L'installation présente…  ← les notes de bas de tableau,
+(5) A2 : L'installation présente…    une par type, chacune n'en citant qu'un
+```
+
+Les notes se reconnaissent à leur appel en tête de ligne — `(3)`, `(4)`… — et
+la légende à ce qu'elle cite plusieurs types d'un coup. Ce qui reste constate.
+
+Se tromper coûte dans les deux sens : lire les notes fait annoncer « A1 et A2
+et DGI » à tous les rapports du corpus ; les écarter trop largement fait
+annoncer « aucune anomalie » sur le seul diagnostic qui peut faire couper le
+gaz le jour même.
+
+### La rubrique G est un gisement, et personne ne la lit
+
+« G. — Constatations diverses » n'est pas un fourre-tout. Sur le rapport lu,
+elle porte quatre lignes que rien d'autre du dossier ne dit :
+
+- *Attestation de contrôle de moins d'un an de la vacuité des conduits de
+  fumées non présentée* ;
+- *Justificatif d'entretien de moins d'un an de la chaudière non présenté* ;
+- *Le conduit de raccordement n'est pas visitable* ;
+- *Au moins un assemblage par raccord mécanique est réalisé au moyen d'un ruban
+  d'étanchéité.*
+
+L'entretien annuel de la chaudière et le ramonage sont des obligations de
+l'occupant, et leur absence pèse en cas de sinistre. C'est le genre
+d'information qu'un acheteur voudrait connaître, et elle est en petits
+caractères sous un titre qui annonce des « constatations diverses ».
+
+### Une contradiction interne, dans le même volet
+
+La rubrique **F** — parties et points de contrôle n'ayant pu être contrôlés —
+porte « Néant ». La rubrique **G**, deux lignes plus bas, écrit : *« Certains
+points de contrôles n'ont pu être contrôlés. De ce fait la responsabilité du
+donneur d'ordre reste pleinement engagée. »*
+
+Les deux ne peuvent pas être vraies. À signaler comme telle : ni trancher, ni
+taire.
+
+### « Installation alimentée en gaz : NON »
+
+Écrit en rubrique A, et tout le volet en découle. La rubrique D — identification
+des appareils — porte « Néant », alors que la rubrique G parle d'une chaudière.
+Une installation non alimentée ne permet **aucun essai** : c'est le pendant gaz
+du différentiel non déclenché de l'électricité, et il change la portée de la
+conclusion.
+
+### Le quatrième type : 32c
+
+Au-delà d'A1, A2 et DGI, le rapport prévoit **32c** : chaudière de type VMC GAZ
+dont le dispositif de sécurité collective est en défaut. Elle ne se répare pas
+par le propriétaire mais par **le syndic ou le bailleur social**, sous contrôle
+du distributeur. Le produit la traite à part, et ne la compte pas parmi les
+anomalies du logement.
+
+### Un libellé de la norme qui dit le contraire de ce qu'il constate
+
+Relevé mot pour mot :
+
+> `5 : l'espace annulaire de la canalisation gaz à la pénétration dans le
+> logement est obturé. Si oui, il est obturé. (Nota: ce libellé comporte une
+> erreur et sera prochainement corrigé par l'AFNOR pour être remplacé par
+> "l'espace annulaire […] n'est pas obturée.")`
+
+Le libellé officiel affirme que le défaut *est* corrigé, alors qu'il constate
+l'inverse — et le rapport le signale lui-même. Un lecteur qui s'arrête à la
+première phrase comprend « tout va bien » sur une anomalie **A2**, dont le
+risque est écrit deux lignes plus bas : accumulation de gaz et explosion.
+
+C'est la démonstration que **la source d'un texte ne garantit pas sa
+justesse** : ici, c'est la norme elle-même qui se trompe, et le diagnostiqueur
+qui rattrape.
+
+### Ce que le volet dit encore, et qu'on gardera
+
+- La **norme employée est datée** : `AFNOR NF P 45-500 (juillet 2022)`, écrite
+  deux fois en tête de volet.
+- La **validité est de trois ans** à la vente, écrite dans le préambule —
+  comme l'électricité, et pour la même raison (§17).
+- Le **numéro de compteur** figure au dossier : c'est lui que le distributeur
+  demande en cas de DGI.
+- En cas de DGI, l'opérateur **ferme lui-même** l'installation, pose une
+  étiquette de condamnation, prévient le distributeur et remet au client une
+  « fiche informative distributeur de gaz ». Le rapport décrit cette procédure
+  qu'aucun particulier ne connaît.
+
+---
+
+## 24 · L'anomalie compensée : deux vérités, pas une contradiction
+
+Quatre rapports du corpus relèvent, dans le tableau d'anomalies de
+l'électricité, **un seul point** — « Au moins un socle de prise de courant
+comporte une broche de terre non reliée à la terre » — assorti de la mention :
+
+> *(Cette anomalie fait l'objet d'une mesure compensatoire pour limiter le
+> risque de choc électrique.)*
+
+Et leur page de synthèse conclut « ne comporte aucune anomalie ».
+
+Les deux disent vrai. La broche non reliée est bien une anomalie ; le
+différentiel 30 mA qui protège l'ensemble limite déjà le risque de choc, et
+c'est cela que la mesure compensatoire nomme.
+
+Le produit suivait le tableau et contredisait la synthèse : quatre logements
+sur soixante s'entendaient annoncer un défaut électrique que leur rapport
+n'annonçait pas. Il suit désormais la conclusion du rapport **et** dit le point
+compensé, dans les faits. Ni trancher, ni taire.
+
+La mesure le confirme : **59 verdicts justes sur 60**.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
-- [ ] Le tableau « E. — Anomalies identifiées » du gaz : c'est là qu'est la
-      conclusion réelle, puisque la case cochée est illisible.
+- [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion
+      réelle.~~ → vérifié et mesuré, §23 : trois sortes de lignes y citent les
+      types, une seule constate. De 0/3 à 7/7 justes.
 - [x] ~~Le volet électricité : mêmes rubriques que le gaz ?~~ -> voir §16 :
       même conclusion-formulaire, mais sa liste de domaines est un catalogue,
       et deux variantes de tableau constatent vraiment.
@@ -831,8 +969,8 @@ qu'une ligature se recolle à ses voisins. Ni « fi », ni « fl », ni « ff »
       déborde sur le volet voisin ? Un cas sur trente et un, à ouvrir.
 - [ ] `conclusionDe` ne rattache pas la conclusion électricité que la page de
       synthèse écrit pourtant en clair sur ce même dossier : gain à prendre.
-- [ ] Les mesures compensatoires de l'électricité : les dire, et expliquer ce
-      qu'elles changent au risque.
+- [x] ~~Les mesures compensatoires de l'électricité : les dire.~~ → fait, §24.
+      Reste à les expliquer au lecteur, dans les notions.
 - [ ] Vente ou location : le dossier le dit (Boutin/Carrez, 6 ans/3 ans). En
       déduire la nature de la transaction, et adapter toutes les validités.
 - [ ] Vérifier au texte officiel le calendrier du DPE collectif — article
@@ -842,3 +980,9 @@ qu'une ligature se recolle à ses voisins. Ni « fi », ni « fl », ni « ff »
 - [ ] Le PPPT, le DTA et le RAAT : jamais ouverts. Le corpus en contient.
 - [ ] Les ligatures : d'autres générateurs sont-ils concernés ? Mesurer sur le
       corpus combien de rapports en portent, plutôt que sur le seul DTG lu.
+- [ ] La rubrique G du gaz — constatations diverses — porte l'entretien de la
+      chaudière et le ramonage non justifiés. Rien ne les remonte encore.
+- [ ] « Installation alimentée en gaz : NON » : le dire, comme le différentiel
+      non essayé. Mesurer d'abord sa fréquence sur le corpus.
+- [ ] La contradiction F « Néant » / G « certains points n'ont pu être
+      contrôlés » : la signaler sans trancher.

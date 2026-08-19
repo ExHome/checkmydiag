@@ -86,8 +86,20 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
    * écrit la conclusion en clair, et `depuisSynthese` la reprend.
    */
   const constates = domainesConstates(lignes);
+  /*
+   * Un point unique, compensé, ne fait pas basculer le verdict.
+   *
+   * Quatre rapports du corpus relèvent une seule anomalie — une broche de terre
+   * non reliée — et précisent qu'elle « fait l'objet d'une mesure compensatoire
+   * pour limiter le risque de choc électrique » : un différentiel 30 mA protège
+   * l'ensemble. Leur page de synthèse conclut « ne comporte aucune anomalie ».
+   *
+   * Contredire le rapport serait présomptueux, le taire serait incomplet : on
+   * suit sa conclusion, et le point compensé est dit dans les faits.
+   */
+  const nonCompenses = constates.filter((d) => !d.compense);
   const etat =
-    conclusion.etat === 'inconnu' && (anomalies.length > 0 || constates.length > 0)
+    conclusion.etat === 'inconnu' && (anomalies.length > 0 || nonCompenses.length > 0)
       ? 'anomalies'
       : conclusion.etat;
   const total = conclusion.nombre ?? (anomalies.length > 0 ? anomalies.length : null);
@@ -148,8 +160,8 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
       verdict = `L’installation électrique présente ${conclusion.nombre} anomalie${conclusion.nombre > 1 ? 's' : ''}.`;
     } else if (anomalies.length > 0) {
       verdict = `L’installation électrique présente des anomalies : ${anomalies.length} point${anomalies.length > 1 ? 's' : ''} relevé${anomalies.length > 1 ? 's' : ''} dans le rapport.`;
-    } else if (constates.length > 0) {
-      verdict = `L’installation électrique présente des anomalies sur ${constates.length} des six domaines contrôlés.`;
+    } else if (nonCompenses.length > 0) {
+      verdict = `L’installation électrique présente des anomalies sur ${nonCompenses.length} des six domaines contrôlés.`;
     } else {
       verdict =
         'L’installation électrique présente des anomalies : le rapport recommande d’agir pour éliminer les dangers.';
@@ -157,14 +169,22 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
   }
 
   const faits: Fait[] = [];
-  if (constates.length > 0) {
+  if (nonCompenses.length > 0) {
     /* « Lesquels » vaut mieux que « combien » : le lecteur sait alors si c'est
        la coupure d'urgence — qu'on manœuvre en cas d'incendie — ou la salle
        d'eau, et il peut demander le bon devis. */
     faits.push({
       libelle: 'Domaines en anomalie',
-      valeur: String(constates.length),
-      precision: constates.map((d) => d.nom).join(', ')
+      valeur: String(nonCompenses.length),
+      precision: nonCompenses.map((d) => d.nom).join(', ')
+    });
+  }
+  const compenses = constates.filter((d) => d.compense);
+  if (compenses.length > 0) {
+    faits.push({
+      libelle: 'Point relevé, mais compensé',
+      valeur: compenses.map((d) => d.nom).join(', '),
+      precision: 'le rapport signale une mesure compensatoire qui limite le risque'
     });
   }
   if (conclusion.nombre !== null) {
@@ -206,7 +226,7 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
       ...reformesElectricite(dateFrancaise(date?.[1])).map((r) => r.texte)
     ],
     aFaire:
-      (total && total > 0) || constates.length > 0
+      (total && total > 0) || nonCompenses.length > 0
         ? [
             'Aucune obligation légale de faire les travaux pour vendre : le rapport est informatif. Mais l’acheteur les découvrira et pourra négocier.',
             'Traitez en priorité l’absence de dispositif différentiel 30 mA et les défauts de mise à la terre : ce sont les deux points qui protègent les personnes.',
@@ -447,37 +467,45 @@ function typesDuTableau(lignes: string[]): string {
  * jour même.
  */
 function sectionAnomalies(lignes: string[]): { types: string } | null {
-  /*
-   * La rubrique est trouvée par son INTITULÉ, plus par sa lettre.
-   *
-   * L'ancien repérage cherchait « ^E. - Anomalies identifiées » et bornait au
-   * premier F ou G venu. Mesuré sur le corpus, ce bornage ramassait les
-   * rappels réglementaires qui suivent le tableau — la légende des types A1,
-   * A2 et DGI — c'est-à-dire précisément les mots qu'on vient y chercher.
-   *
-   * Chercher dans la rubrique nommée supprime la classe entière de ces fautes :
-   * l'écart mesuré à l'entrée est désormais nul, et les six rapports où la
-   * rubrique débordait sur la suivante sont bornés juste.
-   */
   const r = rubriqueDe(lignes, 'gaz', 'anomalies');
   if (!r) return null;
+  return { types: typesConstates(r.lignes) };
+}
 
+/**
+ * Les types d'anomalie que le tableau CONSTATE — A1, A2, DGI.
+ *
+ * Trois sortes de lignes citent ces sigles, et une seule constate :
+ *
+ *  - la **légende de colonne** en cite plusieurs d'affilée
+ *    (« (selon la norme) (A1 , A2 , » puis « DGI , 32c ) ») ;
+ *  - les **notes de bas de tableau** en définissent un chacune, précédées de
+ *    leur appel — « (4) A1 : L'installation présente une anomalie… » ;
+ *  - le **constat**, enfin, qui porte le point de contrôle normé et son type :
+ *    « Tuyauteries fixes - Espace annulaire   A2 ».
+ *
+ * Confondre les trois se paie cher, et dans les deux sens : lire les notes fait
+ * annoncer « A1 et A2 et DGI » à tous les rapports ; les écarter trop largement
+ * fait annoncer « aucune anomalie » à une installation à réparer dans les
+ * meilleurs délais. C'est ce second cas que le corpus a montré — sur le seul
+ * diagnostic qui peut faire couper le gaz le jour même.
+ */
+export function typesConstates(lignes: string[]): string {
   const trouves = new Set<string>();
-  for (const ligne of r.lignes) {
-    /* Une ligne qui cite trois types ou plus est la légende de la colonne. */
-    const cites = ligne.match(/(?:A1|A2|DGI|32c)/gi) ?? [];
-    if (cites.length >= 3) continue;
-    for (const t of cites) trouves.add(t.toUpperCase());
+
+  for (const ligne of lignes) {
+    // Une note : son appel ouvre la ligne.
+    if (/^\s*\(\s*\d\s*\)/.test(ligne)) continue;
+    const cites = ligne.match(/(?:A1|A2|DGI|32c)/gi) ?? [];
+    // Une légende : plusieurs types sur la même ligne.
+    if (cites.length >= 2) continue;
+    for (const t of cites) trouves.add(t.toUpperCase().replace('32C', '32c'));
   }
 
-  /*
-   * « 32c » est l'anomalie de la ventilation collective : elle ne se répare pas
-   * par le propriétaire mais par le syndic, sous contrôle du distributeur. Elle
-   * n'est ni A1 ni A2 — le produit la traite à part, et ne la fait donc pas
-   * remonter ici.
-   */
-  trouves.delete('32C');
-  return { types: [...trouves].join(' ') };
+  // « 32c » relève du syndic et du distributeur, pas du propriétaire : le
+  // produit la traite à part et ne la compte pas parmi A1/A2/DGI.
+  trouves.delete('32c');
+  return [...trouves].join(' ');
 }
 
 /** Ce que les essais sur place ont donné — ou n'ont pas donné. */

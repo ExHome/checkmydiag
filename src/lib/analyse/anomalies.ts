@@ -183,9 +183,28 @@ export function domainesEnumeres(lignes: string[]): string[] {
  * Lu dans un rapport de 2024 qui relevait cinq domaines en anomalie là où le
  * catalogue, imprimé juste au-dessus, en énumérait six sans rien dire.
  */
-export function domainesConstates(lignes: string[]): { numero: number; nom: string }[] {
-  const vus = new Map<number, string>();
+export interface DomaineConstate {
+  numero: number;
+  nom: string;
+  /**
+   * Le rapport signale une **mesure compensatoire** sur ce domaine.
+   *
+   * Elle change tout : « Au moins un socle de prise de courant comporte une
+   * broche de terre non reliée à la terre » est une anomalie, mais si un
+   * différentiel 30 mA protège l'ensemble, le risque de choc est déjà limité.
+   * Quatre rapports du corpus relèvent ainsi un point unique, compensé, et
+   * concluent en synthèse « ne comporte aucune anomalie ». Les deux disent
+   * vrai : il n'y a pas à trancher, il y a à dire les deux.
+   */
+  compense: boolean;
+}
+
+const COMPENSATOIRE = /mesure compensatoire/i;
+
+export function domainesConstates(lignes: string[]): DomaineConstate[] {
+  const vus = new Map<number, DomaineConstate>();
   let dansLeTableau = false;
+  let dernier: DomaineConstate | undefined;
 
   for (const ligne of lignes) {
     if (ENTETE_ANOMALIES.test(ligne)) {
@@ -195,6 +214,10 @@ export function domainesConstates(lignes: string[]): { numero: number; nom: stri
     if (dansLeTableau && FIN_TABLEAU_ANOMALIES.test(ligne)) dansLeTableau = false;
     if (!dansLeTableau) continue;
 
+    // La mention de compensation déborde souvent sur les lignes suivantes,
+    // la colonne étant étroite : elle se rattache au dernier domaine ouvert.
+    if (COMPENSATOIRE.test(ligne) && dernier) dernier.compense = true;
+
     const m = ligne.match(/^\s*([1-6])\s*[.)]\s+(.{6,})$/);
     if (!m) continue;
     const numero = Number(m[1]);
@@ -202,12 +225,17 @@ export function domainesConstates(lignes: string[]): { numero: number; nom: stri
     // Le numéro seul ne suffirait pas — « 6. – Avertissement particulier » en
     // porte un. C'est l'accord du numéro ET du début de libellé qui décide.
     if (!attendu || !attendu.test(m[2] ?? '')) continue;
-    if (!vus.has(numero)) vus.set(numero, NOMS_DOMAINES[numero - 1] ?? '');
+    if (!vus.has(numero)) {
+      vus.set(numero, {
+        numero,
+        nom: NOMS_DOMAINES[numero - 1] ?? '',
+        compense: COMPENSATOIRE.test(m[2] ?? '')
+      });
+    }
+    dernier = vus.get(numero);
   }
 
-  return [...vus.entries()]
-    .sort((a, b) => a[0] - b[0])
-    .map(([numero, nom]) => ({ numero, nom }));
+  return [...vus.values()].sort((a, b) => a.numero - b.numero);
 }
 
 /** Les domaines réellement constatés : rien, quand la liste est le catalogue. */

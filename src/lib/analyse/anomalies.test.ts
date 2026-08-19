@@ -182,6 +182,34 @@ describe('les domaines constatés, dans le tableau des anomalies', () => {
     expect(domainesConstates(RAPPORT_ELEC_SANS_ANOMALIE)).toEqual([]);
   });
 
+  it('signale une anomalie compensée sans la confondre avec les autres', () => {
+    /*
+     * Quatre rapports du corpus relèvent ce seul point et concluent pourtant,
+     * en synthèse, « ne comporte aucune anomalie » : un différentiel 30 mA
+     * protège l'ensemble. Les deux disent vrai — le produit dit les deux.
+     */
+    const compense = domainesConstates([
+      'Domaines Anomalies Photo',
+      '2. Dispositif de protection Au moins un socle de prise de courant comporte une broche de',
+      "différentiel à l’origine de terre non reliée à la terre. (Cette anomalie fait l’objet d’une",
+      "l’installation - Installation mesure compensatoire pour limiter le risque de choc",
+      'de mise à la terre électrique)',
+      '6. – Avertissement particulier'
+    ]);
+    expect(compense).toHaveLength(1);
+    expect(compense[0]?.compense).toBe(true);
+  });
+
+  it('ne déclare pas compensé un domaine qui ne l’est pas', () => {
+    const brut = domainesConstates([
+      'Domaines Anomalies Photo',
+      '1. L’appareil général de Le dispositif assurant la coupure d’urgence n’est pas à coupure',
+      'commande et de omnipolaire et simultanée.',
+      '6. – Avertissement particulier'
+    ]);
+    expect(brut[0]?.compense).toBe(false);
+  });
+
   it('ne confond pas le tableau qui DÉCRIT avec celui qui CONSTATE', () => {
     // Vu sur deux rapports sans la moindre anomalie : le même tableau, la même
     // numérotation, mais une colonne de droite qui dit où se trouve l'organe
