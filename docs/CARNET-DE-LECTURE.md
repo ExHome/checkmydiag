@@ -2563,3 +2563,54 @@ se tait, c'est lui qui a l'air incomplet. **Une correction n'est finie que quand
 ce qu'on a cessé de dire à tort est dit juste.**
 
 ---
+
+## 58 · Le PDF était protégé, sa transcription ne l'était pas
+
+Cinquante et une pages de rapport se sont retrouvées **dans le dépôt public**,
+cette nuit, entre deux commits.
+
+Le script de lecture prend un chemin de sortie en second argument. Lancé sans,
+il retombe sur son défaut — `dossier.txt` — qui s'écrit dans le répertoire
+courant, c'est-à-dire dans le dépôt. Le fichier contenait le nom du
+propriétaire, l'adresse du bien, celle du cabinet, et tout le texte des
+cinquante et une pages.
+
+Le commit du cycle était parti deux minutes plus tôt. **C'est la seule raison
+pour laquelle rien n'est publié.**
+
+### Ce que la règle protégeait, et ce qu'elle ne protégeait pas
+
+Le `.gitignore` portait depuis longtemps :
+
+```
+# Jamais de rapports de diagnostic dans le dépôt : ils contiennent le nom et
+# l'adresse de vraies personnes.
+*.pdf
+```
+
+La règle était juste, et le raisonnement derrière était juste. Il lui manquait
+une marche : **ce n'est pas le format qui porte les données, c'est le contenu.**
+Un PDF exclu et sa transcription admise protègent exactement rien — la
+transcription est même pire, puisqu'elle est en clair et cherchable.
+
+### La garde
+
+Trois motifs ajoutés au `.gitignore`, et surtout un test qui ne lit pas le
+`.gitignore` : une règle peut être écrite puis contournée par un `add -f`. Le
+test regarde **ce que git suit réellement**, et refuse tout fichier ayant la
+forme d'une sortie de lecture — `.pdf`, `.encours.json`, `dossier*.txt`,
+`corpus-*.txt` — ainsi que toute sonde jetable du corpus.
+
+Vérifié qu'il mord : un fichier fautif ajouté de force le fait tomber.
+
+### La leçon
+
+**Une protection qui nomme un format ne protège qu'un format.** Les autres
+règles de ce carnet valent d'être relues sous cet angle : celles qui désignent
+un contenu tiennent, celles qui désignent un contenant ont un angle mort.
+
+Et une seconde, plus rude : cette faille n'a pas été trouvée en cherchant, mais
+en regardant par hasard le résultat d'une commande de routine. **Le hasard n'est
+pas une méthode.** D'où le test, qui tournera à chaque fois.
+
+---

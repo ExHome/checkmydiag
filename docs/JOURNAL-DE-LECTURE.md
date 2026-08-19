@@ -75,6 +75,10 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
   dossiers complets.
 - **La confusion termites / autres agents est corrigée** (§56) : 7 fausses
   alertes sur 9 annonces, ramenées à zéro.
+- **Le corpus ne peut plus entrer dans le dépôt** (§58) : cinquante et une pages
+  de rapport s'y sont écrites cette nuit, entre deux commits — le `.gitignore`
+  excluait les PDF, pas leur transcription. Bouché, et tenu par un test qui
+  regarde ce que git suit réellement, pas ce que le `.gitignore` déclare.
 
 > **Prochain chantier** : la **zone d'arrêté préfectoral** et le **risque
 > mérule**. Le volet termites porte « Situation du bien en regard d'un arrêté
@@ -91,8 +95,8 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 | Volets lus page à page | 25 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 6 majeures |
-| Corrections livrées | 33 |
-| Tests de non-régression ajoutés | 88 |
+| Corrections livrées | 34 |
+| Tests de non-régression ajoutés | 90 |
 | Fausses alertes de mes propres sondes, écartées avant annonce | 6 |
 | Sondes de justesse écrites | 3 |
 | Notions métier versées au produit | 6 |

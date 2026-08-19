@@ -13,6 +13,16 @@ dist/
 *.pdf
 rapports/
 
+# Et pas davantage le TEXTE extrait de ces rapports. Le PDF était protégé, sa
+# transcription ne l'était pas — alors qu'elle porte exactement les mêmes noms
+# et les mêmes adresses, en clair et cherchables. Une sortie de lecture écrite
+# par défaut dans le dépôt a failli partir ; le trou est bouché ici, et un test
+# vérifie qu'aucun fichier de cette forme n'est suivi.
+*.encours.json
+dossier.txt
+dossier*.txt
+corpus-*.txt
+
 # Ce dépôt est PUBLIC — GitHub Pages l'exige en offre gratuite. Le brief de
 # cadrage, lui, contient la grille tarifaire, les marges, la stratégie
 # d'amorçage et des points juridiques à instruire : rien de tout cela ne doit
