@@ -1155,7 +1155,7 @@
     background: linear-gradient(180deg, var(--surface-bord), var(--surface-forte));
     border-color: var(--gravite, var(--or));
     color: var(--sur-fond);
-    box-shadow: 0 8px 18px -12px rgb(15 58 71 / 100%);
+    box-shadow: 0 8px 18px -12px rgb(10 43 35 / 100%);
   }
 
   .pastille {
@@ -1326,7 +1326,7 @@
     border-top-color: var(--surface-bord);
     border-left: 4px solid var(--gravite-fiche, var(--sur-fond-doux));
     border-radius: var(--rayon);
-    box-shadow: 0 1px 0 var(--surface-forte) inset, 0 24px 48px -32px rgb(15 58 71 / 100%);
+    box-shadow: 0 1px 0 var(--surface-forte) inset, 0 24px 48px -32px rgb(10 43 35 / 100%);
     break-inside: avoid;
     /* La barre des vues est collante : sans cette marge, une ancre déposait le
        titre de la fiche juste derrière elle. */

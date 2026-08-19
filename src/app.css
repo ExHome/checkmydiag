@@ -281,9 +281,9 @@
 
   /* Trois profondeurs, toutes teintées de bleu pétrole : une ombre grise sur du
      sable vire au sale. */
-  --ombre: 0 2px 8px rgb(26 77 92 / 6%);
-  --ombre-forte: 0 4px 16px rgb(26 77 92 / 10%);
-  --ombre-lourde: 0 8px 32px rgb(26 77 92 / 12%);
+  --ombre: 0 2px 8px rgb(10 43 35 / 6%);
+  --ombre-forte: 0 4px 16px rgb(10 43 35 / 10%);
+  --ombre-lourde: 0 8px 32px rgb(10 43 35 / 12%);
 
   /* La courbe de la charte : un départ franc, une arrivée douce. */
   --duree: 0.2s;
@@ -573,7 +573,7 @@ button {
 }
 
 .bouton--fantome:hover {
-  background: rgb(26 77 92 / 6%);
+  background: rgb(10 43 35 / 6%);
   border-color: var(--petrole);
   color: var(--petrole);
   box-shadow: none;

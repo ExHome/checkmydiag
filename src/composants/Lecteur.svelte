@@ -1215,7 +1215,7 @@
     display: grid;
     place-items: center;
     padding: clamp(0px, 3vw, 32px);
-    background: rgb(15 58 71 / 62%);
+    background: rgb(10 43 35 / 62%);
     backdrop-filter: blur(6px);
   }
 
@@ -1243,7 +1243,7 @@
     border: 1px solid var(--surface-bord);
     border-top: 3px solid var(--teinte);
     border-radius: var(--rayon);
-    box-shadow: 0 40px 90px -30px rgb(15 58 71 / 100%);
+    box-shadow: 0 40px 90px -30px rgb(10 43 35 / 100%);
     color: var(--sur-fond);
     overflow: hidden;
   }
@@ -1589,7 +1589,7 @@
     position: fixed;
     inset: 0;
     z-index: 40;
-    background: rgb(15 58 71 / 72%);
+    background: rgb(10 43 35 / 72%);
     backdrop-filter: blur(4px);
     display: grid;
     place-items: center;

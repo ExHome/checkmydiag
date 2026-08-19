@@ -350,7 +350,7 @@
           title={d ? undefined : (tuile.manque?.titre ?? 'Ce diagnostic ne figure pas dans le dossier déposé.')}
           onclick={(e) => d && ouvrir(e, tuile.type)}
         >
-          <span class="icone halo" style="background: {t.degrade}">
+          <span class="icone" style="background: {t.degrade}">
             {#if t.picto}
               <span
                 class="picto"
@@ -387,7 +387,7 @@
           <!-- « En clair » est une vraie rubrique du site, en pages HTML : elle
                s'ouvre comme un lien, pas comme un écran. -->
           <a class="tuile" href="./en-clair/">
-            <span class="icone halo" style="background: {o.degrade}">
+            <span class="icone" style="background: {o.degrade}">
               <span
                 class="picto"
                 style="mask-image: url(./pictos/{o.picto}.svg); -webkit-mask-image: url(./pictos/{o.picto}.svg)"
@@ -406,7 +406,7 @@
               dicodiagOuvert = true;
             }}
           >
-            <span class="icone halo" style="background: {o.degrade}">
+            <span class="icone" style="background: {o.degrade}">
               <span
                 class="picto"
                 style="mask-image: url(./pictos/{o.picto}.svg); -webkit-mask-image: url(./pictos/{o.picto}.svg)"
@@ -834,20 +834,38 @@
     place-items: center;
     font-size: 32px;
     /*
-     * Un filet, puis l'ombre.
+     * L'ombre double du visuel de référence, et rien d'autre.
      *
-     * Mesuré sur le sable : les nuances claires de la palette n'atteignent que
-     * 1,5 à 2,2 de contraste avec le fond — l'icône bavait dans la page. Le
-     * filet intérieur lui rend une limite nette sans toucher à sa couleur.
-     * C'est exactement ce que fait iOS de ses icônes claires.
+     * Un liseré lumineux INTÉRIEUR sur l'arête haute, puis une ombre portée
+     * verte, franchement décalée. C'est cette paire qui donne le relief iOS :
+     * la lumière tombe d'en haut, l'objet la reçoit sur son bord supérieur et
+     * projette son ombre plus bas.
+     *
+     * Ce qui était là avant : un anneau sombre sur tout le pourtour et une
+     * ombre courte. Le commentaire le justifiait par un contraste « mesuré sur
+     * le sable » — or le sable a quitté la charte le 19 août, et cette mesure
+     * ne valait plus rien. Un anneau qui fait le tour aplatit l'icône au lieu
+     * de la lever.
      */
     box-shadow:
-      inset 0 0 0 1px rgb(15 58 71 / 22%),
-      0 4px 12px rgb(26 77 92 / 18%);
+      inset 0 1px rgb(255 255 255 / 53%),
+      0 10px 20px rgb(10 43 35 / 19%);
     transition: transform var(--duree) var(--courbe), box-shadow var(--duree) var(--courbe);
   }
 
-  /* Le voile iOS : une lumière en haut à gauche, qui donne le relief. */
+  /*
+   * Le voile iOS : une lumière en haut à gauche, qui donne le relief.
+   *
+   * Il était éteint, et personne ne pouvait le voir. L'icône portait aussi la
+   * classe `halo`, dont le `::after` global pose `opacity: 0` en attendant le
+   * survol. Un élément n'a qu'un seul `::after` : cette règle-ci redéfinissait
+   * le fond et la boîte, mais héritait de l'opacité nulle. Les icônes
+   * n'avaient donc AUCUN reflet au repos — le relief ne s'allumait qu'au
+   * passage de la souris, et jamais sur un téléphone.
+   *
+   * La classe `halo` est retirée : le visuel de référence ne demande aucune
+   * lueur au survol, seulement ce relief-là, permanent.
+   */
   .icone::after {
     content: '';
     position: absolute;
@@ -928,7 +946,7 @@
   .tuile.eteinte .icone {
     filter: grayscale(0.75);
     opacity: 0.4;
-    box-shadow: inset 0 0 0 1px rgb(15 58 71 / 14%);
+    box-shadow: inset 0 1px rgb(255 255 255 / 22%);
   }
 
   .tuile.eteinte .nom,
@@ -941,32 +959,14 @@
     opacity: 1;
   }
 
+  /* Au survol, l'objet se lève : l'ombre s'allonge et se fonce, le liseré
+     du haut reste. C'est le même relief, vu de plus près. */
   .tuile:not(.eteinte):hover .icone,
   .tuile:not(.eteinte):focus-visible .icone {
     transform: scale(1.05);
     box-shadow:
-      inset 0 0 0 1px rgb(15 58 71 / 30%),
-      0 6px 18px rgb(26 77 92 / 26%);
-  }
-
-  /*
-   * Le halo s'allume au survol de la TUILE, pas de l'icône seule.
-   *
-   * On vise le carré coloré, mais la zone qu'on touche est le bouton entier,
-   * nom compris. Une lueur qui n'apparaît qu'en passant exactement sur l'icône
-   * raterait la moitié des gestes — et sur un téléphone, il n'y a pas de survol
-   * du tout : c'est l'appui qui compte, et il porte sur le bouton.
-   */
-  .tuile:not(.eteinte):hover .icone::after,
-  .tuile:not(.eteinte):focus-visible .icone::after {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  .tuile:not(.eteinte):active .icone::after {
-    opacity: 1;
-    transform: scale(0.99);
-    transition-duration: 0.06s;
+      inset 0 1px rgb(255 255 255 / 60%),
+      0 14px 26px rgb(10 43 35 / 26%);
   }
 
   /* Une application absente ne s'éclaire pas : elle n'est pas là, et rien ne

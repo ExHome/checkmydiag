@@ -121,9 +121,23 @@ export const APPS: Record<TypeDiag, IdentiteApp> = {
     degrade: 'linear-gradient(145deg, #74c7b8, #287f75)'
   },
   assainissement: {
+    /*
+     * Un indigo, et non le bleu du gaz.
+     *
+     * Ces deux applications portaient exactement la meme chaine de degrade :
+     * sur la grille, deux tuiles etaient indiscernables, et le code couleur --
+     * qui sert precisement a retrouver son diagnostic d'un coup d'oeil --
+     * s'annulait. Le commentaire au-dessus promettait « une couleur franche,
+     * distincte des sept autres » ; elle avait ete recopiee.
+     *
+     * L'indigo est le seul creneau libre du cercle : le vert est au DPE, le
+     * jaune a l'electricite, le mauve a l'amiante, le brun au plomb, le bleu
+     * ciel au gaz, l'orange aux termites, l'ardoise a l'ERP, le turquoise aux
+     * surfaces.
+     */
     nom: 'Assainissement',
     signe: '💧',
     picto: 'assainissement',
-    degrade: 'linear-gradient(145deg, #77b1d0, #245d7b)'
+    degrade: 'linear-gradient(145deg, #8d9ae0, #303a86)'
   }
 };

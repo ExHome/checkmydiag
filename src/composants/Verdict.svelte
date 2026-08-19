@@ -859,7 +859,7 @@
     border-top-color: var(--surface-bord);
     border-left: 3px solid var(--gravite, var(--sur-fond-doux));
     border-radius: var(--rayon);
-    box-shadow: 0 1px 0 var(--surface-forte) inset, 0 10px 22px -18px rgb(15 58 71 / 90%);
+    box-shadow: 0 1px 0 var(--surface-forte) inset, 0 10px 22px -18px rgb(10 43 35 / 90%);
     color: var(--sur-fond);
     cursor: pointer;
     transition:
@@ -874,7 +874,7 @@
     border-color: var(--surface-bord);
     border-left-color: var(--gravite, var(--sur-fond-doux));
     transform: translateY(-2px);
-    box-shadow: 0 1px 0 var(--surface-forte) inset, 0 16px 28px -20px rgb(15 58 71 / 100%);
+    box-shadow: 0 1px 0 var(--surface-forte) inset, 0 16px 28px -20px rgb(10 43 35 / 100%);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -1088,7 +1088,7 @@
   }
   li.bon .entree {
     --marque: var(--petrole);
-    --voile: rgb(26 77 92 / 10%);
+    --voile: rgb(10 43 35 / 10%);
   }
 
   /* La pastille reprend la silhouette du voyant en miniature : carré pour ce

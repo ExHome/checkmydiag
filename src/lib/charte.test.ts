@@ -12,6 +12,7 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { APPS } from './apps';
 
 /** Tous les fichiers de source où une couleur peut s'écrire. */
 function sources(dossier = 'src', trouves: string[] = []): string[] {
@@ -43,9 +44,29 @@ const BANNIES = [
     motifs: [/#f4e8d8/i, /244\s+232\s+216/]
   },
   {
+    /*
+     * Le pétrole était revenu, et le test ne le voyait pas.
+     *
+     * Il ne surveillait que l'hexadécimal. Or une ombre CSS s'écrit en
+     * composantes : `rgb(26 77 92 / 6%)` est exactement #1a4d5c, et
+     * `rgb(15 58 71 / 22%)` exactement #0f3a47. Vingt et une occurrences
+     * étaient ainsi posées — dont les trois jetons `--ombre` d'app.css, donc
+     * l'application entière portait des ombres bleues sur un socle vert.
+     *
+     * La leçon vaut au-delà de cette couleur : un garde-fou qui ne connaît
+     * qu'une seule écriture de ce qu'il interdit ne garde rien. Le corail et
+     * le sable avaient déjà leur triplet ; le pétrole n'en avait pas.
+     */
     nom: 'le bleu pétrole',
     quand: 'pack maître du 18 août 2026 — socle vert profond + ivoire',
-    motifs: [/#1a4d5c/i, /#0f3a47/i, /#14434f/i]
+    motifs: [
+      /#1a4d5c/i,
+      /#0f3a47/i,
+      /#14434f/i,
+      /26\s+77\s+92/,
+      /15\s+58\s+71/,
+      /20\s+67\s+79/
+    ]
   }
 ];
 
@@ -87,5 +108,28 @@ describe('le socle du pack maître est bien celui-là', () => {
   it('garde l’ivoire comme fond et le vert profond comme encre', () => {
     expect(charte).toContain('--fond: #f7f6f2');
     expect(charte).toContain('--sur-fond: #0a2b23');
+  });
+});
+
+/**
+ * Chaque application a SA couleur.
+ *
+ * Le code couleur ne sert qu'à une chose : retrouver son diagnostic d'un coup
+ * d'œil sur la grille. Deux applications qui partagent un dégradé annulent
+ * cette fonction — et c'est arrivé, le gaz et l'assainissement portant la même
+ * chaîne au caractère près.
+ */
+describe('les applications ne se confondent pas', () => {
+  it('aucun dégradé n’est employé deux fois', () => {
+    const parDegrade = new Map<string, string[]>();
+    for (const [cle, app] of Object.entries(APPS)) {
+      const liste = parDegrade.get(app.degrade) ?? [];
+      liste.push(cle);
+      parDegrade.set(app.degrade, liste);
+    }
+    const collisions = [...parDegrade.entries()]
+      .filter(([, cles]) => cles.length > 1)
+      .map(([degrade, cles]) => `${cles.join(' et ')} partagent ${degrade}`);
+    expect(collisions, 'applications indiscernables sur la grille').toEqual([]);
   });
 });

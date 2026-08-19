@@ -290,7 +290,7 @@
     --vert-700: var(--petrole);
     color: var(--petrole);
 
-    box-shadow: 0 8px 32px rgb(15 58 71 / 45%);
+    box-shadow: 0 8px 32px rgb(10 43 35 / 45%);
     transition:
       border-color var(--duree) ease,
       background var(--duree) ease,
@@ -390,7 +390,7 @@
      soulèvement au survol qui passe au citron. */
   .badges li {
     padding: var(--e4) var(--e3);
-    background: rgb(26 77 92 / 8%);
+    background: rgb(10 43 35 / 8%);
     border: 2px solid var(--petrole);
     border-radius: var(--rayon-badge);
     font-size: var(--t-petit);

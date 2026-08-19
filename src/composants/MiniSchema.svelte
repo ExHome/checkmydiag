@@ -666,7 +666,7 @@
 
   .zone:hover,
   .zone.actif {
-    filter: drop-shadow(0 2px 4px rgb(15 58 71 / 25%));
+    filter: drop-shadow(0 2px 4px rgb(10 43 35 / 25%));
   }
 
   .zone:focus-visible {
