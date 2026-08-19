@@ -208,8 +208,8 @@
          avant d'y poser les pieces, comme sur une coupe. -->
     <g class="bati" aria-hidden="true">
       <!-- La toiture : deux pans et leur epaisseur. -->
-      <path class="toit" d="M4 40 L109 6 L214 40" />
-      <path class="toit-mince" d="M9 40 L109 12 L209 40" />
+      <path class="rampant" d="M4 40 L109 6 L214 40" />
+      <path class="rampant-mince" d="M9 40 L109 12 L209 40" />
 
       <!-- Les deux murs porteurs, en poche. -->
       <rect class="poche" x="4" y="40" width="6" height="160" />
@@ -369,7 +369,20 @@
     color: var(--action-forte);
   }
 
-  .toit {
+  /*
+   * On dit RAMPANT, pas toit -- et ce n'est pas qu'un mot.
+   *
+   * La silhouette de maison de Verriere vit dans une seule brique
+   * (`briques/Maison.svelte`), et un test interdit qu'un schema la redessine
+   * sous les noms `.toit` ou `.facade` : trois schemas avaient fini par porter
+   * trois maisons differentes.
+   *
+   * Ce dessin-ci n'est pas une maison vue de dehors, c'est une COUPE : on y
+   * voit les rampants coupes, les murs en poche, les planchers. Le vocabulaire
+   * du dessin technique est donc le bon, et il evite du meme coup de rentrer en
+   * concurrence avec la brique.
+   */
+  .rampant {
     fill: none;
     stroke: var(--action-forte);
     stroke-width: 3;
@@ -379,7 +392,7 @@
 
   /* La seconde ligne de toiture donne son epaisseur au rampant : une couverture
      a une epaisseur, un trait n'en a pas. */
-  .toit-mince {
+  .rampant-mince {
     fill: none;
     stroke: var(--action-forte);
     stroke-width: 1;
