@@ -422,7 +422,22 @@ export function analyserDpe(lignes: string[], plage: [number, number]): Diagnost
   const etabli = trouver(lignes, /[ÉEe]tabli le\s*:?\s*(\d{2}\/\d{2}\/\d{4})/);
   const valable = trouver(lignes, /[Vv]alable jusqu.{0,4}au\s*:?\s*(\d{2}\/\d{2}\/\d{4})/);
   const typeBien = trouver(lignes, /[Tt]ype de bien\s*:?[\s.]*([A-Za-zÀ-ÿ' -]{3,30})/);
-  const annee = trouver(lignes, /[Aa]nnée de construction\s*:?[\s.]*([A-Za-zÀ-ÿ0-9 ]{3,20})/);
+  /*
+   * L'année de construction, sans la colonne d'à côté.
+   *
+   * La page de garde de l'audit énergétique met deux colonnes sur la même
+   * ligne : « Année de construction : 1900   Altitude : inférieur à 400 m ».
+   * Le motif ramassait tout ce qui suivait et affichait « 1900 Altitude » —
+   * une valeur juste, salie par son voisinage.
+   *
+   * On accepte donc une année, une fourchette (« 2006 - 2012 ») ou une mention
+   * de seuil (« Avant 1948 », « > 1997 »), et rien de plus : le libellé de la
+   * colonne suivante commence par une majuscule et s'arrête là.
+   */
+  const annee = trouver(
+    lignes,
+    /[Aa]nnée de construction\s*:?[\s.]*((?:[Aa]vant |[Aa]près |[<>]\s*)?\d{4}(?:\s*[-–]\s*\d{4})?|[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ ]{2,18}?\s*\d{4})/
+  );
 
   if (m.surface !== null)
     faits.push({

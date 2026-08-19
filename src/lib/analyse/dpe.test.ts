@@ -270,3 +270,34 @@ describe('pièges des audits énergétiques', () => {
     expect(audit.verdict).toMatch(/pas lisibles automatiquement/i);
   });
 });
+
+describe('l’année de construction, et la colonne d’à côté', () => {
+  /*
+   * La page de garde de l'audit énergétique met deux colonnes sur la même
+   * ligne. Le produit affichait « 1900 Altitude » : une valeur juste, salie
+   * par son voisinage.
+   */
+  it('ne ramasse pas le libellé de la colonne voisine', () => {
+    const d = analyserDpe(
+      [
+        'Diagnostic de performance énergétique',
+        'Type de bien : Maison Individuelle N°cadastre :',
+        'Année de construction : 1900 Altitude : inférieur à 400 m',
+        'Surface de référence : 67,52 m²'
+      ],
+      [1, 10]
+    );
+    const annee = d.faits.find((f) => f.libelle === 'Année de construction');
+    expect(annee?.valeur).toBe('1900');
+  });
+
+  it('garde les fourchettes et les mentions de seuil', () => {
+    for (const [ligne, attendu] of [
+      ['Année de construction : 2006 - 2012', '2006 - 2012'],
+      ['Année de construction : Avant 1948', 'Avant 1948']
+    ] as const) {
+      const d = analyserDpe(['Diagnostic de performance énergétique', ligne], [1, 10]);
+      expect(d.faits.find((f) => f.libelle === 'Année de construction')?.valeur).toBe(attendu);
+    }
+  });
+});
