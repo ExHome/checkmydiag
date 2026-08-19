@@ -117,3 +117,38 @@ describe('la durée de validité, selon le résultat', () => {
     expect(d.aFaire.join(' ')).toMatch(/valable qu’un an à la vente/);
   });
 });
+
+describe('le vocabulaire des classes, celui de l’arrêté', () => {
+  /*
+   * L'arrêté du 19 août 2011 nomme trois états : non dégradé en classe 1, état
+   * d'usage en classe 2, dégradé en classe 3. Le produit écrivait « en état
+   * dégradé (classe 2) » — le mot de la classe 3. Ce n'est pas anodin : c'est
+   * la dégradation qui déclenche l'obligation de travaux de l'article
+   * L. 1334-9.
+   */
+  const CREP = (c1: number, c2: number, c3: number) => [
+    'Constat de risque d’exposition au plomb',
+    'Total Non mesurées Classe 0 Classe 1 Classe 2 Classe 3',
+    `20 2 ${18 - c1 - c2 - c3} ${c1} ${c2} ${c3}`
+  ];
+
+  it('dit « état d’usage » pour une classe 2, jamais « dégradé »', () => {
+    const d = analyserPlomb(CREP(0, 2, 0), [1, 12]);
+    expect(d.verdict).toMatch(/état d’usage \(classe 2\)/);
+    expect(d.verdict).not.toMatch(/dégradé/);
+    expect(d.verdict).toMatch(/sans travaux obligatoires/);
+  });
+
+  it('réserve « dégradé » à la classe 3, avec ses travaux', () => {
+    const d = analyserPlomb(CREP(0, 0, 3), [1, 12]);
+    expect(d.verdict).toMatch(/dégradés \(classe 3\)/);
+    expect(d.verdict).toMatch(/travaux sont obligatoires/);
+  });
+
+  it('nomme les faits comme la norme', () => {
+    const d = analyserPlomb(CREP(1, 2, 3), [1, 12]);
+    const libelles = d.faits.map((f) => f.libelle);
+    expect(libelles).toContain('Dégradés');
+    expect(libelles).toContain('En état d’usage');
+  });
+});

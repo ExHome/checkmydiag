@@ -57,9 +57,10 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
   un manque signalé, et zéro réclamation à tort.
 - **Les réclamations amiante et plomb sont vérifiées** (§49) : 19 sur 19
   reposent sur une année réellement écrite au document.
-- **Prochain chantier** : reprendre la lecture large. Le corpus compte encore
-  3 973 dossiers non lus, et les termites lus d'affilée n'apprennent plus rien —
-  chercher un dossier complet.
+- **Prochain chantier** : relire le code de chaque diagnostic **avec le carnet
+  en main**. Deux écarts trouvés sur le seul plomb — la validité du constat
+  positif (§25) et le vocabulaire des classes (§51) — étaient tous deux
+  consignés au carnet depuis longtemps, mais absents du code.
 
 ## Compteurs
 
@@ -69,8 +70,8 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 | Volets lus page à page | 24 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 6 majeures |
-| Corrections livrées | 24 |
-| Tests de non-régression ajoutés | 73 |
+| Corrections livrées | 25 |
+| Tests de non-régression ajoutés | 76 |
 | Fausses alertes de mes propres sondes, écartées avant annonce | 6 |
 | Sondes de justesse écrites | 2 |
 | Notions métier versées au produit | 5 |
@@ -714,3 +715,21 @@ périmé au 1ᵉʳ décembre, et ne l'est pas au 1ᵉʳ mai.
 **La rareté n'excuse rien** : aucun autre dossier de l'échantillon de cent ne
 porte cette forme. Mais c'est un cas où le produit se tait sur une péremption
 possible, et élargir un motif ne coûte rien.
+
+### 20 août 2026, nuit — le mot de la classe 3 sur une classe 2
+
+Un constat plomb affichait « 2 revêtements au plomb en **état dégradé** (classe
+2) ». L'arrêté du 19 août 2011 nomme pourtant trois états distincts : non
+dégradé en classe 1, **état d'usage** en classe 2, **dégradé** en classe 3.
+
+Ce n'est pas une nuance de style : **c'est la dégradation qui déclenche
+l'obligation de travaux** de l'article L. 1334-9. Annoncer « dégradé » sur une
+classe 2 fait croire à des travaux obligatoires qui ne le sont pas.
+
+Corrigé dans le verdict et dans les faits, qui portent désormais les mots de la
+norme — « Dégradés » et « En état d'usage ».
+
+**Ce que ce cas apprend** : le carnet porte ce tableau depuis le §9, relevé en
+lisant la norme, et il était juste. Le code ne l'avait pas suivi. C'est la
+deuxième fois après la validité du CREP positif. **Un savoir consigné n'est
+acquis que là où il est appliqué** — et le carnet ne se vérifie pas tout seul.

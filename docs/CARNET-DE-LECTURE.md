@@ -2158,6 +2158,48 @@ une information legale ne se traite pas comme une coquille.**
 
 ---
 
+## 51 · « Etat degrade (classe 2) » — le mot de la classe 3
+
+Un constat plomb lu en entier affichait :
+
+> 2 revetements au plomb en **etat degrade** (classe 2) : a surveiller et a
+> entretenir.
+
+L'arrete du 19 aout 2011 nomme pourtant trois etats, et ils ne se melangent pas :
+
+| Classe | Etat, selon l'arrete |
+|---|---|
+| 1 | non degrade, ou non visible |
+| 2 | **etat d'usage** |
+| 3 | **degrade** |
+
+Le produit employait le mot de la classe 3 pour decrire une classe 2. Et ce
+n'est pas une nuance de style : **c'est la degradation qui declenche
+l'obligation de travaux** de l'article L. 1334-9 du code de la sante publique.
+Annoncer « degrade » sur une classe 2, c'est faire croire a des travaux
+obligatoires qui ne le sont pas — inquieter sur une situation qui demande de
+l'entretien, pas des travaux.
+
+Le meme mot etait employe dans les faits : « En mauvais etat » pour la classe 3,
+« Uses ou erafles » pour la classe 2. Le premier est vague, le second n'est pas
+le terme de la norme.
+
+**Corrige** : « en etat d'usage (classe 2) : a surveiller et a entretenir, sans
+travaux obligatoires », et « degrades (classe 3) : des travaux sont
+obligatoires ». Les faits portent desormais « Degrades » et « En etat d'usage »,
+avec la precision « uses ou erafles, mais pas degrades ».
+
+### Ce que ce cas apprend
+
+Le carnet porte ce tableau depuis le §9 — il avait ete releve en lisant la
+norme, et il etait juste. **Le code, lui, ne l'avait pas suivi.** C'est la
+deuxieme fois : la validite du CREP positif (§25) etait dans le meme cas.
+
+Un savoir consigne n'est acquis que la ou il est applique. Le carnet ne se
+verifie pas tout seul — il faut, de temps en temps, relire le code AVEC lui.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion
@@ -2254,3 +2296,6 @@ une information legale ne se traite pas comme une coquille.**
       moins un manque, et zéro réclamation à tort.
 - [ ] L'assainissement : deux volets sur cent dossiers, aucun verdict. À
       traiter quand un cas se présentera.
+- [ ] Relire le code du plomb AVEC le §9 en main, et faire de meme pour chaque
+      diagnostic : deux ecarts trouves sur le seul plomb (validite, vocabulaire
+      des classes).

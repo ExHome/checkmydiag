@@ -170,10 +170,20 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
   if (chiffres) {
     if (c3 > 0) {
       gravite = 'alerte';
-      verdict = `${c3} revêtement${c3 > 1 ? 's' : ''} au plomb en mauvais état (classe 3) : des travaux sont obligatoires.`;
+      verdict = `${c3} revêtement${c3 > 1 ? 's' : ''} au plomb dégradé${c3 > 1 ? 's' : ''} (classe 3) : des travaux sont obligatoires.`;
     } else if (c2 > 0) {
       gravite = 'attention';
-      verdict = `${c2} revêtement${c2 > 1 ? 's' : ''} au plomb en état dégradé (classe 2) : à surveiller et à entretenir.`;
+      /*
+       * « Etat d'usage », et surtout pas « degrade ».
+       *
+       * L'arrete du 19 aout 2011 nomme trois etats : non degrade en classe 1,
+       * ETAT D'USAGE en classe 2, DEGRADE en classe 3. Le produit ecrivait
+       * « en etat degrade (classe 2) » — c'est le mot de la classe 3, et il
+       * n'est pas anodin : c'est la degradation qui declenche l'obligation de
+       * travaux de l'article L. 1334-9. Annoncer « degrade » sur une classe 2,
+       * c'est faire croire a des travaux obligatoires qui ne le sont pas.
+       */
+      verdict = `${c2} revêtement${c2 > 1 ? 's' : ''} au plomb en état d’usage (classe 2) : à surveiller et à entretenir, sans travaux obligatoires.`;
     } else if (chiffres.classes[1] > 0) {
       gravite = 'bon';
       verdict = 'Du plomb est présent, mais tous les revêtements concernés sont en bon état (classe 1).';
@@ -234,11 +244,17 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
           : 'murs, portes, plinthes, fenêtres…'
     });
     faits.push({
-      libelle: 'En mauvais état',
+      /* Le mot de la norme, en clair : « dégradé » est le terme de l'arrêté du
+         19 août 2011 pour la classe 3, et c'est lui qui déclenche les travaux. */
+      libelle: 'Dégradés',
       valeur: String(c3),
       precision: c3 > 0 ? 'travaux obligatoires' : 'classe 3'
     });
-    faits.push({ libelle: 'Usés ou éraflés', valeur: String(c2), precision: 'classe 2' });
+    faits.push({
+      libelle: 'En état d’usage',
+      valeur: String(c2),
+      precision: 'classe 2 — usés ou éraflés, mais pas dégradés'
+    });
     faits.push({
       libelle: 'Avec plomb, mais intacts',
       valeur: String(chiffres.classes[1]),
