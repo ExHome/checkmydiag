@@ -50,7 +50,7 @@ Dropbox.
 | Volets lus page à page | 15 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 6 majeures |
-| Corrections livrées | 11 |
+| Corrections livrées | 13 |
 | Tests de non-régression ajoutés | 34 |
 | Fausses alertes de mes propres sondes, écartées avant annonce | 6 |
 | Sondes de justesse écrites | 2 |
@@ -64,7 +64,7 @@ Ce que « lu » veut dire ici : le volet a été lu page à page, pas survolé.
 
 | Diagnostic | Volets lus | Justesse mesurée | État |
 |---|---|---|---|
-| Électricité | 2 | **59/60** verdicts justes (contre 17/31) | catalogue démasqué, deux variantes de constat lues, anomalies compensées distinguées |
+| Électricité | 3 | **60/60** verdicts justes (contre 17/31) | catalogue démasqué et rendu robuste aux libellés longs |
 | Gaz | 3 | **7/7** verdicts justes (contre 0/3) | rubrique E lue juste ; rubrique G et « installation non alimentée » restent à remonter |
 | DPE | 3 | **2 %** de muets (contre 4 %) | annexes rattachées : 7 volets courts sur 58, contre 58 |
 | ERP | 8 | **1/63** faux risque techno (contre 49/63) ; argile rattrapée **55/55** | le formulaire vierge n'est plus lu comme un constat |
@@ -376,3 +376,28 @@ fois lue, **55 sur 55**.
 **Contre-épreuve faite** : sur un bien dont le tableau porte « PPRn Inondation
 approuvé | non », le produit ne dit pas l'inondation. La correction du
 formulaire tient dans les deux sens.
+
+### 19 août 2026 — le catalogue échappait encore
+
+Un dossier complet de six volets a montré que `estCatalogueDomaines` laissait
+passer des catalogues entiers : il exigeait cinq intitulés sur six, et deux
+échouaient parce que les libellés **recollés** dépassent la distance tolérée par
+les motifs. Le produit annonçait alors six anomalies à une installation qui n'en
+avait aucune.
+
+Distances portées à cent quarante caractères, et seuil assoupli quand la liste
+est complète — six entrées dont quatre reconnues. **60 verdicts électricité
+justes sur 60**, 7 sur 7 au gaz.
+
+**Une classe de piège nouvelle** : l'extraction coupe les mots. « sur chaque
+circuit » sort en « sur ch aque circuit ». Ce n'est pas une ligature, c'est un
+espace inséré au milieu d'un mot par la justification. Les motifs longs doivent
+rester tolérants.
+
+Et le fait « Matériau repéré : QUALIXPERT 17 rue Borrel… » s'affichait encore
+sous un verdict « aucun matériau » : le détail ne paraît plus que si le rapport
+a repéré quelque chose.
+
+**Note d'atelier** : un test de la charte des schémas est rouge, sur un
+composant en cours de modification par une autre session. Il n'est pas de ce
+chantier et n'a pas été touché.

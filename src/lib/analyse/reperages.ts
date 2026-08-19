@@ -407,7 +407,17 @@ export function analyserAmiante(lignes: string[], plage: [number, number]): Diag
   const aSurveiller = materiaux.filter((m) => m.suite === 'evaluation');
   const aTraiter = materiaux.filter((m) => m.suite === 'action-1' || m.suite === 'action-2');
 
-  if (materiaux.length) {
+  /*
+   * Le détail ne s'affiche que si le rapport a repéré quelque chose.
+   *
+   * Même règle que pour le verdict (voir plus bas) : sans elle, un constat
+   * négatif affichait « Matériau repéré : QUALIXPERT 17 rue Borrel 81100
+   * CASTRES (détail sur www.info-certif.fr) » — l'adresse de l'organisme
+   * certificateur, qui a la forme d'un matériau localisé. Le verdict disait
+   * « aucun matériau », et la fiche listait un matériau : la carte se
+   * contredisait d'une ligne à l'autre.
+   */
+  if (amianteTrouvee && materiaux.length) {
     faits.push({
       libelle: materiaux.length > 1 ? 'Matériaux repérés' : 'Matériau repéré',
       valeur: materiaux.map((m) => m.quoi).slice(0, 3).join(' · '),

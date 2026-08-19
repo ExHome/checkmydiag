@@ -1468,6 +1468,65 @@ les dossiers lus intégralement, avant même la mesure.
 
 ---
 
+## 35 · Le catalogue échappait encore, et l'extraction coupe les mots
+
+Un dossier complet de six volets a montré deux choses d'un coup.
+
+### Le produit reprenait les six domaines comme six anomalies
+
+Alors que `estCatalogueDomaines` existe depuis le matin. Il exigeait que **cinq
+intitulés sur six** correspondent, et deux échouaient — non parce que le texte
+diffère, mais parce que les libellés **recollés** sont longs :
+
+```
+La liaison équipotentielle et installation électrique adaptées aux conditions
+particulières des locaux contenant une douche ou une baignoire
+```
+
+Entre « liaison équipotentielle » et « douche », il y a quatre-vingt-huit
+caractères ; le motif en tolérait quatre-vingts. Le catalogue n'était donc plus
+reconnu, et le produit annonçait six anomalies à une installation qui n'en avait
+aucune.
+
+Deux corrections : les distances passent à cent quarante caractères, et le
+seuil s'assouplit quand la liste est **complète** — six entrées dont quatre
+reconnues suffisent. La probabilité qu'un rapport constate exactement six
+domaines dont quatre correspondent mot pour mot à l'arrêté est nulle.
+
+**Mesuré après : 60 verdicts électricité justes sur 60**, et 7 sur 7 au gaz.
+
+### L'extraction coupe les mots en deux
+
+Relevé au passage, dans le même libellé :
+
+```
+… adapté à la section des conducteurs, sur ch aque circuit
+```
+
+« chaque » sort en « ch aque ». Ce n'est pas la ligature du §22 — c'est un
+espace inséré au milieu d'un mot par la mise en page justifiée. Aucun motif
+cherchant « chaque circuit » ne le trouvera.
+
+À retenir comme classe de piège : **entre deux caractères d'un même mot, il
+peut y avoir un espace**. Les motifs longs doivent donc rester tolérants, et
+c'est aussi pour cela que le seuil du catalogue a été assoupli plutôt que
+durci.
+
+### Et le certificateur n'est pas un matériau
+
+Le même dossier affichait, sous un verdict « aucun matériau contenant de
+l'amiante » :
+
+> Matériau repéré : QUALIXPERT 17 rue Borrel 81100 CASTRES (détail sur
+> www.info-certif.fr)
+
+Le filtre d'identité du §27 avait nettoyé le verdict, pas le **fait** affiché
+en dessous. La carte se contredisait donc encore d'une ligne à l'autre. Le
+détail ne s'affiche plus que si le rapport a repéré quelque chose — même règle
+que le verdict, appliquée au même endroit.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion

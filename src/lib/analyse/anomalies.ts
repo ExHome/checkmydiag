@@ -115,8 +115,8 @@ const DOMAINES_CATALOGUE: RegExp[] = [
   /appareil g[ée]n[ée]ral de commande et de protection/i,
   /protection diff[ée]rentiel.{0,60}(?:origine de l'installation|prise de terre)/i,
   /protection contre les surintensit[ée]s adapt[ée]/i,
-  /liaison [ée]quipotentielle.{0,80}(?:douche|baignoire)/i,
-  /risques? de contacts? directs?.{0,60}sous tension/i,
+  /liaison [ée]quipotentielle.{0,140}(?:douche|baignoire)/i,
+  /risques? de contacts? directs?.{0,140}sous tension/i,
   /mat[ée]riels? [ée]lectriques? v[ée]tustes?/i
 ];
 
@@ -134,7 +134,21 @@ const DOMAINES_CATALOGUE: RegExp[] = [
 export function estCatalogueDomaines(domaines: string[]): boolean {
   if (domaines.length < 5) return false;
   const texte = domaines.join(' | ');
-  return DOMAINES_CATALOGUE.filter((m) => m.test(texte)).length >= 5;
+  const reconnus = DOMAINES_CATALOGUE.filter((m) => m.test(texte)).length;
+
+  /*
+   * Le seuil s'assouplit quand la liste est complète.
+   *
+   * Les libellés recollés font parfois cent quarante caractères, et
+   * l'extraction y glisse des espaces au milieu des mots — « sur ch aque
+   * circuit ». Deux motifs pouvaient échouer sur un catalogue pourtant entier,
+   * et le produit reprenait alors les six domaines comme autant d'anomalies.
+   *
+   * Une liste de six entrées qui en reconnaît quatre est donc traitée comme le
+   * catalogue : la probabilité qu'un rapport constate exactement six domaines
+   * dont quatre correspondent mot pour mot aux intitulés de l'arrêté est nulle.
+   */
+  return domaines.length >= 6 ? reconnus >= 4 : reconnus >= 5;
 }
 
 /**

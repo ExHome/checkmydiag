@@ -256,9 +256,18 @@ describe('ce qui n’a pas pu être vu', () => {
 describe('le relevé complet', () => {
   const tout = releverTout(RAPPORT_ELEC);
 
-  it('restitue les cinq domaines, les deux libellés et la pièce fermée', () => {
-    expect(tout).toHaveLength(8);
-    expect(tout.filter((r) => r.genre === 'anomalie')).toHaveLength(7);
+  it('ne restitue QUE les deux libellés, et la pièce fermée', () => {
+    /*
+     * Ce test attendait huit relevés : les cinq domaines énumérés, les deux
+     * libellés précis et la pièce fermée. Il portait une croyance fausse — ces
+     * cinq domaines sont le catalogue de l'arrêté, imprimé dans tous les
+     * rapports, et non un constat (voir `estCatalogueDomaines`).
+     *
+     * Ne restent donc que ce qui constate vraiment : les deux libellés
+     * « B7.3 a » et « B7.3 d », et la pièce qui n'a pas pu être visitée.
+     */
+    expect(tout).toHaveLength(3);
+    expect(tout.filter((r) => r.genre === 'anomalie')).toHaveLength(2);
     expect(tout.filter((r) => r.genre === 'nonVisite')).toHaveLength(1);
   });
 
