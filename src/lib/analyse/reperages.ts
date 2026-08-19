@@ -107,8 +107,35 @@ export function analyserTermites(lignes: string[], plage: [number, number]): Dia
   if (infestees.length)
     faits.push({ libelle: 'Zones avec indices', valeur: String(infestees.length) });
 
-  const arrete = trouver(lignes, /arr[eê]t[ée] pr[ée]fectoral\s*n?°?\s*([\w .-]{6,40})/i);
-  if (arrete?.[1]) faits.push({ libelle: 'Arrêté préfectoral', valeur: arrete[1].trim() });
+  /*
+   * L'arrete prefectoral : sa REFERENCE, ou rien.
+   *
+   * Le rapport pose la question sur une ligne et repond sur la suivante :
+   *
+   *     Situation du bien en regard d'un arrete prefectoral pris en
+   *     application de l'article L 131-5 du CCH :
+   *     Neant
+   *
+   * Le motif attrapait la QUESTION et affichait « Arrete prefectoral : pris en
+   * application de l » — un fait tronque, qui ne dit rien a personne. On ne
+   * retient donc qu'un numero d'arrete veritable, de la forme « 33-2019-07-23-004 »
+   * ou « n° 2019-123 » ; et quand le rapport repond « Neant », on le dit en
+   * clair, parce que c'est une information : la commune n'est pas en zone
+   * delimitee, et l'etat termites n'y est pas exigible a la vente.
+   */
+  const numeroArrete = trouver(lignes, /arr[eê]t[ée] pr[ée]fectoral[^.]{0,40}?n[°o]\s*([\d][\w.-]{4,30})/i);
+  if (numeroArrete?.[1]) {
+    faits.push({ libelle: 'Arrêté préfectoral', valeur: numeroArrete[1].trim() });
+  } else {
+    const i = lignes.findIndex((l) => /Situation du bien en regard d['’]un arr[eê]t[ée] pr[ée]fectoral/i.test(l));
+    const reponse = i === -1 ? null : (lignes[i + 1] ?? '').trim();
+    if (reponse && /^n[ée]ant$/i.test(reponse))
+      faits.push({
+        libelle: 'Arrêté préfectoral',
+        valeur: 'aucun',
+        precision: 'la commune n’est pas en zone délimitée par arrêté'
+      });
+  }
   const niveau = trouver(lignes, /Niveau d'infestation\s*(\w+)/i);
   if (niveau?.[1]) faits.push({ libelle: 'Niveau d’infestation de la commune', valeur: niveau[1] });
   const date = trouver(lignes, /Date du rep[ée]rage\s*:?[\s.]*(\d{2}\/\d{2}\/\d{4})/i);

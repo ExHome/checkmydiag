@@ -52,8 +52,8 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 | Volets lus page à page | 24 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 6 majeures |
-| Corrections livrées | 13 |
-| Tests de non-régression ajoutés | 34 |
+| Corrections livrées | 14 |
+| Tests de non-régression ajoutés | 39 |
 | Fausses alertes de mes propres sondes, écartées avant annonce | 6 |
 | Sondes de justesse écrites | 2 |
 | Notions métier versées au produit | 4 |
@@ -445,3 +445,18 @@ conservées.
 **La leçon** : un écart mesuré n'est pas un défaut tant qu'on n'a pas ouvert un
 cas. Trois sondes ont annoncé ici un problème inexistant, et la correction
 juste était de ne rien corriger.
+
+### 19 août 2026, nuit — l'arrêté préfectoral du termites
+
+Un rapport termites de sept pages affichait « Arrêté préfectoral : pris en
+application de l » — un morceau de la question, pas la réponse. Le rapport
+interroge sur une ligne et répond « Néant » sur la suivante.
+
+Ce champ n'est pas un vide : l'état termites n'est exigible à la vente que dans
+les communes délimitées par arrêté, et un « Néant » dit que **la commune n'y est
+pas**. Le produit affiche désormais « aucun — la commune n'est pas en zone
+délimitée par arrêté », ou le numéro quand il y en a un.
+
+Le premier test a échoué sur une **apostrophe typographique** — la garde
+consignée le matin même. Une règle écrite ne se respecte pas toute seule ; le
+test l'a rattrapée en trois secondes.

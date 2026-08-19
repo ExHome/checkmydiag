@@ -1622,6 +1622,44 @@ aurait conduit a casser une decoupe qui marche.
 
 ---
 
+## 38 · « Arrete prefectoral : pris en application de l »
+
+Un rapport termites de sept pages, lu en entier, affichait ce fait dans la
+fiche du produit. Il ne dit rien a personne — c'est un morceau de la QUESTION,
+pas la reponse.
+
+Le rapport pose la question sur une ligne et repond sur la suivante :
+
+```
+Situation du bien en regard d'un arrete prefectoral pris en application de
+l'article L 131-5 du CCH :
+Neant
+```
+
+Le motif cherchait « arrete prefectoral » suivi de n'importe quoi, et ramassait
+la suite de la question.
+
+**Ce que le champ vaut vraiment.** L'etat termites n'est exigible a la vente
+que dans les communes delimitees par arrete prefectoral (article L. 126-24 du
+CCH). Un « Neant » n'est donc pas un vide : il dit que **la commune n'est pas
+en zone**, et que le diagnostic a ete fait sans y etre tenu. C'est une
+information pour l'acquereur, pas une case vide.
+
+Le produit affiche desormais « aucun — la commune n'est pas en zone delimitee
+par arrete », ou le numero de l'arrete quand il y en a un.
+
+### Et l'apostrophe, encore
+
+Le premier test ecrit pour cette correction a echoue : mon motif cherchait
+« d'un arrete » avec l'apostrophe droite, et le rapport ecrit « d'un » avec
+l'apostrophe typographique. C'est la garde n°4 du §29 — celle que j'avais
+consignee le matin meme.
+
+**Une regle ecrite ne se respecte pas toute seule.** Le test, lui, l'a
+rattrapee en trois secondes.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion
@@ -1685,8 +1723,8 @@ aurait conduit a casser une decoupe qui marche.
       n'est pas « aucun plomb ». Vu une fois, à retrouver et à traiter.
 - [ ] Vérifier au texte la validité du CREP en location (six ans) : le
       référentiel la donne, la lecture ne l'a pas encore confirmée sur pièce.
-- [ ] Restituer la « situation du bien au regard d'un arrêté préfectoral » du
-      volet termites : c'est elle qui dit si la commune est en zone.
+- [x] ~~Restituer la « situation du bien au regard d'un arrêté préfectoral ».~~
+      → fait, §38 : « aucun — la commune n'est pas en zone délimitée ».
 - [ ] La mérule : le même arrêté la délimite, le produit n'en parle jamais.
 - [ ] La déclaration en mairie obligatoire en cas de termites (L. 126-4 et
       L. 126-5) : à dire au propriétaire.

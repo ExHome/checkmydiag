@@ -222,3 +222,47 @@ describe('les listes citées sans conclusion', () => {
     expect(a[0]?.etat).toBe('bon');
   });
 });
+
+describe('l’arrêté préfectoral du termites', () => {
+  /*
+   * Le rapport pose la question sur une ligne et répond sur la suivante. Le
+   * motif attrapait la QUESTION et affichait « Arrêté préfectoral : pris en
+   * application de l » — un fait tronqué, qui ne dit rien à personne.
+   */
+  const ENTETE = [
+    'Etat relatif à la présence de termites n° 25/IMO/0470AM',
+    'A. - Désignation du ou des bâtiments',
+    'Département : .................. Gironde'
+  ];
+
+  it('dit « aucun » quand le rapport répond Néant', () => {
+    const d = analyserTermites(
+      [
+        ...ENTETE,
+        "Situation du bien en regard d’un arrêté préfectoral pris en application de l’article L 131 - 5 du CCH :",
+        'Néant'
+      ],
+      [1, 7]
+    );
+    const fait = d.faits.find((f) => f.libelle === 'Arrêté préfectoral');
+    expect(fait?.valeur).toBe('aucun');
+    expect(fait?.precision).toMatch(/zone délimitée/);
+  });
+
+  it('n’affiche jamais un morceau de la question', () => {
+    const d = analyserTermites(
+      [...ENTETE, "Situation du bien en regard d’un arrêté préfectoral pris en application de l’article L 131 - 5 du CCH :"],
+      [1, 7]
+    );
+    const fait = d.faits.find((f) => f.libelle === 'Arrêté préfectoral');
+    expect(fait?.valeur ?? '').not.toMatch(/pris en application/);
+  });
+
+  it('retient le numéro quand le rapport en donne un', () => {
+    const d = analyserTermites(
+      [...ENTETE, 'Le bien est concerné par l’arrêté préfectoral n° 33-2019-07-23-004 du 23 juillet 2019'],
+      [1, 7]
+    );
+    expect(d.faits.find((f) => f.libelle === 'Arrêté préfectoral')?.valeur).toBe('33-2019-07-23-004');
+  });
+});
