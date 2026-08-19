@@ -59,8 +59,10 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
   reposent sur une année réellement écrite au document.
 - **La revue « code contre carnet » est faite** (§52) : un seul manque, le
   radon, qui n'avait aucune notion alors que le produit l'annonce.
-- **Prochain chantier** : le seuil plomb de 1 mg/cm², absent du produit — c'est
-  lui qui définit une classe. Puis reprendre la lecture large.
+- **Le seuil plomb est écrit** (§53), avec la stratégie de mesurage et le sens
+  de « non mesurée ».
+- **Prochain chantier** : reprendre la lecture large — 3 970 dossiers non lus.
+  Chercher un dossier complet, à plusieurs volets.
 
 ## Compteurs
 
@@ -70,8 +72,8 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 | Volets lus page à page | 24 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 6 majeures |
-| Corrections livrées | 26 |
-| Tests de non-régression ajoutés | 79 |
+| Corrections livrées | 27 |
+| Tests de non-régression ajoutés | 82 |
 | Fausses alertes de mes propres sondes, écartées avant annonce | 6 |
 | Sondes de justesse écrites | 2 |
 | Notions métier versées au produit | 6 |
@@ -758,3 +760,21 @@ le verdict et adapte son propos.
 **La leçon** : relire le code avec le carnet prend une heure et trouve ce que la
 lecture de mille dossiers ne trouverait pas. Lire un rapport révèle ce que le
 produit lit mal ; relire le carnet révèle ce qu'il **ne dit pas du tout**.
+
+### 20 août 2026, nuit — le seuil qui manquait
+
+La notion des classes du plomb ouvrait sur « Classe 0 : **pas de plomb** ».
+C'est faux et cela rassure à tort : la classe 0 signifie **sous le seuil**, pas
+absence. L'arrêté du 19 août 2011 le fixe à **1 mg/cm²**, et il n'apparaissait
+nulle part dans le produit.
+
+Les quatre classes disent maintenant « sous le seuil » ou « au-dessus du seuil »,
+ce qui rend l'échelle lisible d'un coup.
+
+**Deux bribes ajoutées au rang 7** : la mesure ne casse rien — fluorescence X
+posée contre la paroi, une mesure si elle dépasse le seuil, deux ou trois sinon —
+et « non mesurée » n'est pas « non contrôlée », puisqu'il n'y a rien à mesurer
+là où il n'y a pas de revêtement.
+
+Cette seconde règle est au carnet depuis le §8, où elle avait coûté une erreur.
+Elle était dans le moteur ; elle n'était pas dans ce que le lecteur peut lire.

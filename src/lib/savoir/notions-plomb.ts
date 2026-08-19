@@ -91,10 +91,19 @@ export const NOTIONS_PLOMB: Notion[] = [
       {
         rang: 1,
         bribes: [
-          { texte: 'Classe 0 : pas de plomb.' },
-          { texte: 'Classe 1 : du plomb, peinture intacte.' },
-          { texte: 'Classe 2 : peinture usée, non dégradée.' },
-          { texte: 'Classe 3 : peinture dégradée — la seule qui oblige à agir.' }
+          {
+            /*
+             * « Pas de plomb » etait faux, et rassurait a tort : la classe 0
+             * signifie SOUS LE SEUIL, pas absence. L'arrete du 19 aout 2011
+             * fixe ce seuil a 1 mg/cm² — c'est lui qui separe la classe 0 des
+             * trois autres, et il n'apparaissait nulle part dans le produit.
+             */
+            texte:
+              'Classe 0 : sous le seuil réglementaire d’un milligramme par centimètre carré. Cela ne veut pas dire zéro plomb — cela veut dire trop peu pour compter.'
+          },
+          { texte: 'Classe 1 : au-dessus du seuil, peinture intacte.' },
+          { texte: 'Classe 2 : au-dessus du seuil, peinture en état d’usage — usée, mais pas dégradée.' },
+          { texte: 'Classe 3 : au-dessus du seuil, peinture dégradée — la seule qui oblige à agir.' }
         ]
       },
       {
@@ -104,6 +113,23 @@ export const NOTIONS_PLOMB: Notion[] = [
             texte:
               'Une seule unité en classe 3 déclenche l’obligation de travaux pour le propriétaire, et l’information de l’occupant.',
             clips: ['saturnisme']
+          },
+          {
+            texte:
+              'Le seuil d’un milligramme par centimètre carré est le même partout en France depuis 2011. En dessous, le diagnostiqueur écrit « classe 0 » et n’a rien à signaler ; au-dessus, c’est l’état de la peinture qui décide de la suite.'
+          }
+        ]
+      },
+      {
+        rang: 7,
+        bribes: [
+          {
+            texte:
+              'La mesure se fait sans rien abîmer, avec un appareil à fluorescence X posé contre la paroi : il excite les atomes du revêtement et lit ce qu’ils renvoient. Une mesure suffit si elle dépasse le seuil ; sinon le diagnostiqueur en fait une deuxième, parfois une troisième.'
+          },
+          {
+            texte:
+              'C’est pourquoi le rapport porte des unités « non mesurées » : là où il n’y a pas de revêtement — pierre nue, carrelage, métal — il n’y a rien à mesurer. Ce n’est pas une partie du logement qui aurait échappé au contrôle.'
           }
         ]
       },

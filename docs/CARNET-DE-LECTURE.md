@@ -2246,6 +2246,43 @@ carnet revele ce qu'il ne dit pas du tout.
 
 ---
 
+## 53 · « Classe 0 : pas de plomb » — le seuil qui manquait
+
+La notion des classes existait et les distinguait bien. Mais elle ouvrait sur :
+
+> Classe 0 : **pas de plomb**.
+
+C'est faux, et cela rassure a tort. La classe 0 signifie **sous le seuil**, pas
+absence : l'arrete du 19 aout 2011 fixe ce seuil a **1 mg/cm²**, et c'est lui
+qui separe la classe 0 des trois autres. Il n'apparaissait nulle part dans le
+produit — ni dans les verdicts, ni dans les notions.
+
+Un logement peut donc contenir du plomb en dessous du seuil et ressortir
+« classe 0 ». Dire « pas de plomb » est une simplification qui deforme.
+
+**Corrige** : « Classe 0 : sous le seuil reglementaire d'un milligramme par
+centimetre carre. Cela ne veut pas dire zero plomb — cela veut dire trop peu
+pour compter. » Les trois autres classes disent desormais « au-dessus du
+seuil », ce qui rend l'echelle lisible d'un coup.
+
+### Et la strategie de mesurage, enfin expliquee
+
+Deux bribes ajoutees au rang 7, celui du « comment le diagnostic l'evalue » :
+
+- **la mesure ne casse rien** — un appareil a fluorescence X pose contre la
+  paroi excite les atomes du revetement et lit ce qu'ils renvoient ; une mesure
+  suffit si elle depasse le seuil, sinon le diagnostiqueur en fait une
+  deuxieme, parfois une troisieme ;
+- **« non mesuree » n'est pas « non controlee »** — la ou il n'y a pas de
+  revetement, pierre nue, carrelage ou metal, il n'y a rien a mesurer.
+
+Cette seconde regle est au carnet depuis le §8, ou elle avait coute une erreur :
+j'y avais tempere une conclusion rassurante au motif que 19 % des unites
+n'etaient pas mesurees. Elle etait dans le moteur ; elle n'etait pas dans ce que
+le lecteur peut lire.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion
@@ -2344,5 +2381,5 @@ carnet revele ce qu'il ne dit pas du tout.
       traiter quand un cas se présentera.
 - [x] ~~Relire le code AVEC le carnet en main.~~ → fait, §52 : un seul manque
       trouve, le radon, qui n'avait aucune notion.
-- [ ] Le seuil plomb de 1 mg/cm² n'est nulle part dans le produit : l'ajouter
-      aux notions, c'est ce qui definit une classe.
+- [x] ~~Le seuil plomb de 1 mg/cm².~~ → fait, §53, avec la strategie de
+      mesurage et le sens de « non mesuree ».

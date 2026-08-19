@@ -209,3 +209,30 @@ describe('la notion du radon', () => {
     expect(chez && 'phrase' in chez ? chez.phrase : '').toMatch(/zone 3/);
   });
 });
+
+describe('le seuil du plomb', () => {
+  const classe3 = NOTIONS.find((n) => n.id === 'classe-3');
+  const texte = classe3?.niveaux.flatMap((n) => n.bribes.map((b) => b.texte)).join(' ') ?? '';
+
+  it('dit le seuil, qui définit les classes', () => {
+    // L'arrêté du 19 août 2011 le fixe à 1 mg/cm² : c'est lui qui sépare la
+    // classe 0 des trois autres, et il n'apparaissait nulle part.
+    expect(texte).toMatch(/milligramme par centimètre carré/);
+  });
+
+  it('ne dit plus « classe 0 : pas de plomb »', () => {
+    /*
+     * « Pas de plomb » rassurait à tort : la classe 0 signifie sous le seuil,
+     * pas absence.
+     */
+    expect(texte).not.toMatch(/Classe 0 : pas de plomb/);
+    expect(texte).toMatch(/Cela ne veut pas dire zéro plomb/);
+  });
+
+  it('explique ce que « non mesurée » veut dire', () => {
+    // La règle du carnet : « non mesurée » = pas de revêtement à mesurer, et
+    // non une partie du logement qui aurait échappé au contrôle.
+    expect(texte).toMatch(/rien à mesurer/);
+    expect(texte).toMatch(/n’est pas une partie du logement qui aurait échappé/);
+  });
+});
