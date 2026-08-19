@@ -283,3 +283,42 @@ describe('le relevé complet', () => {
     }
   });
 });
+
+describe('la même anomalie, répétée par le rapport', () => {
+  /*
+   * Un volet lu en entier portait trois fois « B7.3 d », avec les mêmes
+   * remarques, les mêmes localisations et la même photo. Ce ne sont pas trois
+   * constats : c'est le générateur qui répète la ligne pour chaque local cité.
+   * Huit volets sur vingt-six en portent, et le compte annoncé était gonflé
+   * d'un cinquième.
+   */
+  const REPETE = [
+    'Domaines Anomalies Photo',
+    "Libellé de l'anomalie : B3.3.6 a1 Au moins un socle de prise de courant ne",
+    'comporte pas de broche de terre.',
+    'Remarques : (1er étage - Entrée /Cuisine/Séjour, 2ème étage - mezzaninne)',
+    "Libellé de l'anomalie : B7.3 d L'installation électrique comporte au moins",
+    'une connexion avec une partie active nue sous tension accessible.',
+    'Photo PhEle002',
+    "Libellé de l'anomalie : B7.3 d L'installation électrique comporte au moins",
+    'une connexion avec une partie active nue sous tension accessible.',
+    'Photo PhEle002',
+    "Libellé de l'anomalie : B7.3 d L'installation électrique comporte au moins",
+    'une connexion avec une partie active nue sous tension accessible.'
+  ];
+
+  it('ne compte qu’une fois un libellé identique', () => {
+    const l = libellesPrecis(REPETE);
+    expect(l).toHaveLength(2);
+    expect(l.map((x) => x.code)).toEqual(['B3.3.6a1', 'B7.3d']);
+  });
+
+  it('garde deux anomalies de codes différents', () => {
+    const deux = [
+      'Domaines Anomalies Photo',
+      "Libellé de l'anomalie : B7.3 a L'Enveloppe d'au moins un matériel est détériorée.",
+      "Libellé de l'anomalie : B7.3 d L'installation électrique comporte au moins une connexion nue."
+    ];
+    expect(libellesPrecis(deux)).toHaveLength(2);
+  });
+});

@@ -271,7 +271,13 @@ export function libellesPrecis(lignes: string[]): Releve[] {
   const releves: Releve[] = [];
 
   for (const [i, ligne] of lignes.entries()) {
-    const m = ligne.match(/Libell[ée] de l'anomalie\s*:\s*(?:([A-Z]\s?\d+(?:\.\d+)*\s*[a-z]?)\s+)?(.*)$/i);
+    /*
+     * Le code de la norme se termine parfois par une lettre ET un chiffre :
+     * « B3.3.6 a1 », « B7.3 d ». Le motif ne prenait que la lettre, et le
+     * chiffre restait colle au libelle — la fiche affichait « a1 Au moins un
+     * socle de prise de courant… », ce qui n'est ni le code ni le texte.
+     */
+    const m = ligne.match(/Libell[ée] de l'anomalie\s*:\s*(?:([A-Z]\s?\d+(?:\.\d+)*\s*[a-z]?\d?)\s+)?(.*)$/i);
     if (!m) continue;
 
     // Le libellé déborde souvent sur la ligne suivante.
@@ -291,7 +297,31 @@ export function libellesPrecis(lignes: string[]): Releve[] {
     });
   }
 
-  return releves;
+  /*
+   * Le rapport repete la MEME anomalie, mot pour mot.
+   *
+   * Un volet lu en entier portait trois fois « B7.3 d — L'installation
+   * electrique comporte au moins une connexion avec une partie active nue sous
+   * tension accessible », avec les memes remarques, les memes localisations et
+   * la meme photo. Ce ne sont pas trois constats : c'est le generateur qui
+   * repete la ligne pour chaque local cite.
+   *
+   * Mesure : huit volets sur vingt-six en portent, et le compte annonce etait
+   * gonfle de treize anomalies sur soixante-six — un cinquieme de trop. Dire
+   * « neuf anomalies » la ou il y en a cinq inquiete sans raison, et fausse la
+   * gravite, qui bascule en alerte au-dela de cinq.
+   *
+   * On ne garde donc qu'une occurrence par couple code + libelle. Deux
+   * anomalies vraiment distinctes portent toujours un libelle different : la
+   * norme en compte plusieurs dizaines.
+   */
+  const vus = new Set<string>();
+  return releves.filter((r) => {
+    const cle = `${r.code ?? ''}|${r.libelle}`;
+    if (vus.has(cle)) return false;
+    vus.add(cle);
+    return true;
+  });
 }
 
 /**

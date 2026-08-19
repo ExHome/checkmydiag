@@ -2283,6 +2283,71 @@ le lecteur peut lire.
 
 ---
 
+## 54 · Neuf anomalies annoncees, quatre reelles
+
+Un dossier complet de soixante-dix-huit pages — six volets, le premier depuis
+longtemps — a montre deux choses.
+
+### Le rapport repete la meme anomalie, mot pour mot
+
+```
+Libelle de l'anomalie : B7.3 d  L'installation electrique comporte au moins
+une connexion avec une partie active nue sous tension accessible.
+Remarques : … (2eme etage - mezzaninne, 1er etage - Entree /Cuisine/Sejour)
+Photo PhEle002
+```
+
+Trois fois de suite. **Memes remarques, memes localisations, meme photo.** Ce ne
+sont pas trois constats : c'est le generateur qui repete la ligne pour chaque
+local cite.
+
+Mesure : **huit volets sur vingt-six** en portent, et le compte annonce etait
+gonfle de **treize anomalies sur soixante-six** — un cinquieme de trop.
+
+**Et le gonflement faussait la gravite**, pas seulement le chiffre : la fiche
+bascule en « alerte » au-dela de cinq points. Ce dossier passait donc en alerte
+avec neuf points annonces, alors qu'il en a quatre. Corrige, il redescend a
+« attention » — ce qui est le juste niveau.
+
+### Le code de la norme perdait son suffixe
+
+« B3.3.6 **a1** » etait capture comme « B3.3.6 », et le « a1 » restait colle au
+texte : la fiche affichait « a1 Au moins un socle de prise de courant… ». Ni le
+code, ni le libelle. Corrige.
+
+---
+
+## 55 · Mon propre filtre excluait un tiers du corpus
+
+Le point de reprise demandait depuis plusieurs cycles de trouver un dossier
+complet, et la lecture ne ramenait que des etats des risques isoles. La cause
+n'etait pas le corpus.
+
+L'outil de selection ecarte les reperages avant travaux, hors perimetre. Il
+cherchait « avant realisation de travaux » **dans le texte des six premieres
+pages**. Or le constat amiante AVANT-VENTE porte cet avertissement :
+
+> la presente mission de reperage ne repond pas aux exigences prevues pour les
+> missions de reperage des materiaux et produits contenant de l'amiante **avant
+> demolition d'immeuble ou avant realisation de travaux**
+
+**Tout dossier contenant un constat amiante de vente etait donc exclu.** Cinq
+cent soixante-huit candidats examines sans en retenir un seul.
+
+C'est le piege du texte imprime partout — celui du catalogue de l'electricite,
+de l'attestation d'assurance, des rubriques PPRt, de la grille des prestations —
+applique cette fois **a mon propre outil**. La sixieme forme, et la premiere qui
+se retourne contre l'instrument plutot que contre le produit.
+
+Corrige : on ne cherche plus que dans les deux premieres pages, en ecartant
+explicitement les lignes d'avertissement. Le premier essai a ramene un dossier
+de six volets.
+
+**La lecon** : un outil de mesure obeit aux memes regles que ce qu'il mesure. Il
+faut le relire avec la meme suspicion.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion

@@ -61,8 +61,12 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
   radon, qui n'avait aucune notion alors que le produit l'annonce.
 - **Le seuil plomb est écrit** (§53), avec la stratégie de mesurage et le sens
   de « non mesurée ».
-- **Prochain chantier** : reprendre la lecture large — 3 970 dossiers non lus.
-  Chercher un dossier complet, à plusieurs volets.
+- **Le filtre de sélection est corrigé** (§55) : il excluait tout dossier
+  contenant un constat amiante de vente. La lecture ramène de nouveau des
+  dossiers complets.
+- **Prochain chantier** : le premier cas de **termites infestés** du corpus a
+  été rencontré — vérifier que le produit dit tout ce qu'il faut (déclaration
+  en mairie, traitement, zones touchées).
 
 ## Compteurs
 
@@ -72,8 +76,8 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 | Volets lus page à page | 24 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 6 majeures |
-| Corrections livrées | 27 |
-| Tests de non-régression ajoutés | 82 |
+| Corrections livrées | 29 |
+| Tests de non-régression ajoutés | 84 |
 | Fausses alertes de mes propres sondes, écartées avant annonce | 6 |
 | Sondes de justesse écrites | 2 |
 | Notions métier versées au produit | 6 |
@@ -778,3 +782,25 @@ là où il n'y a pas de revêtement.
 
 Cette seconde règle est au carnet depuis le §8, où elle avait coûté une erreur.
 Elle était dans le moteur ; elle n'était pas dans ce que le lecteur peut lire.
+
+### 20 août 2026, nuit — neuf anomalies annoncées, quatre réelles
+
+Un dossier complet de 78 pages, six volets — le premier depuis longtemps.
+
+**Le rapport répète la même anomalie mot pour mot** : trois fois « B7.3 d »,
+mêmes remarques, mêmes localisations, même photo. Huit volets sur vingt-six en
+portent, et le compte était gonflé de **treize anomalies sur soixante-six**.
+
+Le gonflement faussait aussi **la gravité** : la fiche bascule en alerte au-delà
+de cinq points. Ce dossier y passait avec neuf points annoncés alors qu'il en a
+quatre ; il redescend à « attention ».
+
+**Et mon propre filtre excluait un tiers du corpus.** L'outil de sélection
+cherchait « avant réalisation de travaux » dans le texte — or le constat amiante
+avant-vente porte cet avertissement pour dire qu'il ne s'y substitue pas. Tout
+dossier contenant un constat amiante de vente était écarté : 568 candidats
+examinés sans en retenir un seul.
+
+C'est le piège du texte imprimé partout, sixième forme, et la première qui se
+retourne contre **l'instrument** plutôt que contre le produit. Un outil de mesure
+obéit aux mêmes règles que ce qu'il mesure.
