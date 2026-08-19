@@ -311,30 +311,54 @@
       </button>
     </div>
 
-    <!-- Les deux chiffres que l'ODM demande, et rien de plus : le détail
-         s'ouvre d'un geste, il n'encombre pas l'accueil. -->
-    <button type="button" class="etat" onclick={() => surVue?.('point')}>
-      <span class="lu">
-        <span class="rond bon" aria-hidden="true">✓</span>
-        {analyse.diagnostics.length} diagnostic{analyse.diagnostics.length > 1 ? 's' : ''} analysé{analyse
-          .diagnostics.length > 1
-          ? 's'
-          : ''}
-      </span>
-      <span class="separateur" aria-hidden="true"></span>
-      <span class="veiller">
-        <span class="rond veille" aria-hidden="true">●</span>
-        {compte.aRegler + compte.aVerifier} point{compte.aRegler + compte.aVerifier > 1 ? 's' : ''} à
-        surveiller
-      </span>
-      <span class="chevron" aria-hidden="true">›</span>
-    </button>
   </article>
+
+  <!--
+    LA BARRE DE SYNTHESE, HORS DU CADRE.
+
+    Sur la publicite, elle est blanche et posee SOUS le widget, comme une
+    seconde carte. Elle etait ici a l'interieur du cadre sombre, en verre
+    depoli : deux informations de nature differente -- le bien d'un cote, ce que
+    le dossier en dit de l'autre -- tenaient dans le meme objet.
+  -->
+  <button type="button" class="etat" onclick={() => surVue?.('point')}>
+    <span class="lu">
+      <span class="rond bon" aria-hidden="true">✓</span>
+      {analyse.diagnostics.length} diagnostic{analyse.diagnostics.length > 1 ? 's' : ''} analysé{analyse
+        .diagnostics.length > 1
+        ? 's'
+        : ''}
+    </span>
+    <span class="separateur" aria-hidden="true"></span>
+    <span class="veiller">
+      <span class="rond veille" aria-hidden="true">●</span>
+      {compte.aRegler + compte.aVerifier} point{compte.aRegler + compte.aVerifier > 1 ? 's' : ''} à
+      surveiller
+    </span>
+    <span class="chevron" aria-hidden="true">›</span>
+  </button>
 
   <!-- La grille. Un diagnostic absent du rapport n'a pas de tuile : le dossier
        montre ce qu'il contient, pas ce qu'il devrait contenir. Ce qui manque est
        signalé ailleurs, comme un manque, pas comme une case grise. -->
-  <h3 class="intitule">Vos diagnostics</h3>
+  <!--
+    « MES DIAGNOSTICS », et le chevron qui ouvre la suite.
+
+    La publicite ecrit ce titre en capitales espacees, avec un chevron a droite
+    aligne sur la meme ligne : c'est lui qui mene a la vue detaillee, et il
+    double le geste deja offert par la barre de synthese.
+  -->
+  <div class="ligne-titre">
+    <h3 class="intitule">Mes diagnostics</h3>
+    <button
+      type="button"
+      class="tout-voir"
+      onclick={() => surVue?.('point')}
+      aria-label="Voir tous les diagnostics en detail"
+    >
+      <span aria-hidden="true">›</span>
+    </button>
+  </div>
 
   <ul class="grille">
     {#each tuiles as tuile (tuile.type)}
@@ -704,28 +728,30 @@
     transform: translateY(-2px);
   }
 
-  /* Le bandeau d'état : les deux chiffres que l'ODM demande, posés sur un
-     verre dépoli à l'intérieur même du widget. */
+  /* La barre de synthese : une carte blanche sous le widget, comme sur la
+     publicite. Elle porte de l'encre sombre, plus du blanc sur verre depoli. */
   .etat {
     position: relative;
-    margin: 0 var(--e3) var(--e3);
-    padding: 12px 14px;
+    width: 100%;
+    margin: var(--e3) 0 0;
+    padding: 14px 16px;
     display: flex;
     align-items: center;
     gap: 10px;
-    border: 1px solid rgb(255 255 255 / 18%);
-    border-radius: 16px;
-    background: rgb(4 22 18 / 55%);
-    backdrop-filter: blur(10px);
-    color: #ffffff;
-    font-size: var(--t-micro);
+    border: 1px solid var(--trait-fin);
+    border-radius: 18px;
+    background: #ffffff;
+    color: var(--sur-fond);
+    font-size: var(--t-petit);
     font-weight: 600;
     cursor: pointer;
     text-align: left;
+    box-shadow: var(--ombre);
   }
 
   .etat:hover {
-    background: rgb(4 22 18 / 70%);
+    border-color: var(--trait);
+    box-shadow: var(--ombre-forte);
   }
 
   .lu,
@@ -738,7 +764,7 @@
   .separateur {
     flex: 1;
     height: 18px;
-    border-left: 1px solid rgb(255 255 255 / 22%);
+    border-left: 1px solid var(--trait-fin);
   }
 
   .rond {
@@ -777,6 +803,41 @@
     font-weight: 700;
     letter-spacing: var(--suivi);
     color: var(--sur-fond-doux);
+    /* Les capitales de la publicite. Elles sont posees par le style, pas
+       ecrites dans le texte : un lecteur d'ecran prononce alors « Mes
+       diagnostics » et non « M E S ». */
+    text-transform: uppercase;
+  }
+
+  .ligne-titre {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--e2);
+  }
+
+  .ligne-titre .intitule {
+    margin-bottom: var(--e3);
+  }
+
+  .tout-voir {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    margin-top: calc(var(--e5) - var(--e3));
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--sur-fond-doux);
+    font-size: var(--t-lead);
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .tout-voir:hover {
+    background: var(--trait-fin);
+    color: var(--sur-fond);
   }
 
   /*
