@@ -659,10 +659,34 @@
                 <p class="pratique"><MotsExpliques texte={pratique} /></p>
               {/if}
 
-              <!-- Replié par le style, pas retiré du document : ce qui n'est
-                   pas dans la page ne s'imprime pas, et le dossier remis doit
-                   être complet quel que soit le bouton laissé enfoncé. -->
-              <div class="detail" class:replie={modeDe(d.type) === 'succinct'}>
+              <!--
+                LE REPLI SE FAIT SECTION PAR SECTION, ET C'EST TOUT L'ENJEU.
+
+                Un conteneur unique enveloppait les six sections et les masquait
+                ensemble en mode « L'essentiel », qui est le mode par defaut.
+                Restaient alors visibles a l'ouverture : le verdict, les visuels,
+                et la phrase « en pratique » -- une explication de Verriere.
+
+                Autrement dit, le lecteur voyait notre commentaire AVANT le
+                moindre chiffre du rapport, puisque les faits sont en section 1.
+                C'est l'inversion que les documents interdisent trois fois :
+                « la donnee brute s'affiche AVANT toute explication »,
+                « qualification source visible avant l'explication », et
+                « LE DIAGNOSTIC DIT, VERRIERE RESTITUE, VERRIERE EXPLIQUE
+                ENSUITE. JAMAIS L'INVERSE. »
+
+                Deux sections ne se replient donc plus : les CHIFFRES du rapport
+                (1) et les LOCALISATIONS (3) -- ce que le rapport dit et ou il le
+                dit. Le repli ne porte plus que sur ce qui est de nous :
+                l'importance, le pourquoi, l'action et l'approfondissement.
+
+                L'ordre des six reste celui de l'ordre de mission directeur :
+                on replie sur place, on ne deplace rien.
+
+                Replie par le style, pas retire du document : ce qui n'est pas
+                dans la page ne s'imprime pas, et le dossier remis doit etre
+                complet quel que soit le bouton laisse enfonce.
+              -->
 
               <!-- 1 · CE QU'IL FAUT SAVOIR — les chiffres du rapport, avant
                    toute explication. Le résultat avant le commentaire. -->
@@ -686,7 +710,7 @@
               <!-- 2 · EST-CE IMPORTANT ? — ce qu'on risque, et ce que le dossier
                    en dit concrètement. C'est la question que tout le monde se
                    pose en premier, et à laquelle rien ne répondait directement. -->
-              <section class="etape" aria-labelledby="et-importance-{d.type}">
+              <section class="etape detail" class:replie={modeDe(d.type) === 'succinct'} aria-labelledby="et-importance-{d.type}">
                 <h4 id="et-importance-{d.type}" class="titre-etape">Est-ce important&nbsp;?</h4>
                 {#if pratique}
                   <p class="reponse-etape"><MotsExpliques texte={pratique} /></p>
@@ -715,7 +739,7 @@
                 Tout ce qui distingue un dossier d'un autre restait dans la
                 mémoire du programme.
               -->
-              <section class="etape" aria-labelledby="et-pourquoi-{d.type}">
+              <section class="etape detail" class:replie={modeDe(d.type) === 'succinct'} aria-labelledby="et-pourquoi-{d.type}">
                 <h4 id="et-pourquoi-{d.type}" class="titre-etape">Pourquoi&nbsp;?</h4>
                 {#if d.explication.length}
                   <div class="propre-au-rapport">
@@ -732,7 +756,7 @@
               <!-- 5 · QUE FAIRE ? — l'action possible, après la compréhension.
                    La démarche qu'on peut engager tout de suite y trouve enfin sa
                    place : elle était perdue au milieu de l'explication. -->
-              <section class="etape" aria-labelledby="et-faire-{d.type}">
+              <section class="etape detail" class:replie={modeDe(d.type) === 'succinct'} aria-labelledby="et-faire-{d.type}">
                 <h4 id="et-faire-{d.type}" class="titre-etape">Que faire&nbsp;?</h4>
                 {#each blocsDe('faire') as bloc (bloc.cle)}
                   <p class="reponse-etape"><MotsExpliques texte={FICHES[d.type][bloc.cle]} /></p>
@@ -760,7 +784,7 @@
 
               <!-- 6 · POUR ALLER PLUS LOIN — la profondeur technique reste
                    disponible, mais elle ne barre plus la route. -->
-              <section class="etape aller-plus-loin" aria-labelledby="et-loin-{d.type}">
+              <section class="etape aller-plus-loin detail" class:replie={modeDe(d.type) === 'succinct'} aria-labelledby="et-loin-{d.type}">
                 <h4 id="et-loin-{d.type}" class="titre-etape">Pour aller plus loin</h4>
                 <dl class="canevas">
                   {#each blocsDe('loin') as bloc (bloc.cle)}
@@ -771,7 +795,6 @@
                   {/each}
                 </dl>
               </section>
-              </div>
 
               <!-- Les réserves : ce que ce diagnostic-là ne couvre pas. Sans
                    elles, une conclusion rassurante se lit comme une garantie. -->
