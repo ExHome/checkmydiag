@@ -17,7 +17,8 @@ Dropbox.
 
 ## Point de reprise
 
-**Au 19 août 2026.**
+**Au 19 août 2026, nuit.** Travail de nuit demandé jusqu'à 8 h : lecture des
+diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 
 - Dernier document lu en entier : un **DTG** de mise en copropriété (35 pages)
   — le premier document d'immeuble du carnet. Avant lui, deux DDT complets
@@ -46,8 +47,8 @@ Dropbox.
 
 | | Total |
 |---|---|
-| Rapports lus en entier | 5 |
-| Volets lus page à page | 15 |
+| Rapports lus en entier | 9 |
+| Volets lus page à page | 24 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 6 majeures |
 | Corrections livrées | 13 |
@@ -401,3 +402,21 @@ a repéré quelque chose.
 **Note d'atelier** : un test de la charte des schémas est rouge, sur un
 composant en cours de modification par une autre session. Il n'est pas de ce
 chantier et n'a pas été touché.
+
+### 19 août 2026, nuit — mise en place du travail continu
+
+Cycle arrêté pour la nuit, une demi-heure : lire un dossier entier → vérifier ce
+que Verrière en dit → mesurer avant de conclure → corriger avec un test →
+consigner → inscrire au registre → commiter → entretenir la Dropbox une fois
+sur trois.
+
+**Sélection des dossiers améliorée** : le corpus est plein d'états des risques
+isolés qui n'apprennent plus rien après le troisième. Les candidats sont
+désormais filtrés sur leur pagination — un dossier complet compte au moins
+trente-cinq pages, et le nombre de pages se lit sans extraire une seule ligne.
+
+**Deux DPE lus sans rien trouver à corriger** : un logement classé D et un
+studio de 20 m² classé C, tous deux justes, avec leurs réformes correctement
+datées — dont celle du facteur de conversion de l'électricité, au 1ᵉʳ janvier
+2026. C'est le premier diagnostic sur lequel deux lectures d'affilée ne
+révèlent rien : signe que le DPE est solide.
