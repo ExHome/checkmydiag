@@ -50,8 +50,8 @@ Dropbox.
 | Volets lus page à page | 15 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 6 majeures |
-| Corrections livrées | 10 |
-| Tests de non-régression ajoutés | 32 |
+| Corrections livrées | 11 |
+| Tests de non-régression ajoutés | 34 |
 | Fausses alertes de mes propres sondes, écartées avant annonce | 6 |
 | Sondes de justesse écrites | 2 |
 | Notions métier versées au produit | 4 |
@@ -67,7 +67,7 @@ Ce que « lu » veut dire ici : le volet a été lu page à page, pas survolé.
 | Électricité | 2 | **59/60** verdicts justes (contre 17/31) | catalogue démasqué, deux variantes de constat lues, anomalies compensées distinguées |
 | Gaz | 3 | **7/7** verdicts justes (contre 0/3) | rubrique E lue juste ; rubrique G et « installation non alimentée » restent à remonter |
 | DPE | 3 | **2 %** de muets (contre 4 %) | annexes rattachées : 7 volets courts sur 58, contre 58 |
-| ERP | 8 | **1/63** faux risque techno (contre 49/63) ; argile rattrapée **42/55** | le formulaire vierge n'est plus lu comme un constat |
+| ERP | 8 | **1/63** faux risque techno (contre 49/63) ; argile rattrapée **55/55** | le formulaire vierge n'est plus lu comme un constat |
 | Plomb | 2 | **22/22** verdicts justes | le moteur est bon ; la validité du constat positif était fausse, corrigée |
 | Amiante | 2 | **19/19** verdicts justes (contre 2/19) | fausse alerte massive corrigée ; la découpe reste 15 pages trop courte |
 | Termites | 2 | **38/38** verdicts justes | le moteur est bon ; zone d'arrêté et mérule restent à restituer |
@@ -367,8 +367,11 @@ dans le tableau « donné à titre informatif ». Sauf que c'est le risque n°1 
 région, qu'il fissure les maisons, et qu'il déclenche depuis 2024 une obligation
 d'étude géotechnique.
 
-C'est l'argument produit le plus fort mesuré à ce jour — et il reste treize
-dossiers où Verrière se tait, ce qui donne la prochaine marge.
+C'est l'argument produit le plus fort mesuré à ce jour. Les treize dossiers où
+Verrière se taisait tenaient à une **quatrième écriture** — le tableau
+Géorisques sort le détail avant le nom de sa propre ligne : « Le bien se situe
+dans une zone d'aléa Moyen. » puis « Retrait / gonflement des argiles ». Une
+fois lue, **55 sur 55**.
 
 **Contre-épreuve faite** : sur un bien dont le tableau porte « PPRn Inondation
 approuvé | non », le produit ne dit pas l'inondation. La correction du

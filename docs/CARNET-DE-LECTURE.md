@@ -1437,9 +1437,24 @@ qu'il déclenche depuis 2024 une obligation d'étude géotechnique et
 d'attestation RGA (§18). Un lecteur qui s'arrête aux conclusions — c'est-à-dire
 tout le monde — ne saura jamais que son bien est en aléa moyen ou fort.
 
-**Verrière le dit dans 42 cas sur 55.** C'est ce qu'elle fait de plus utile, et
-c'est mesurable. Il reste treize dossiers où elle se tait : c'est là qu'est la
-prochaine marge.
+**Verrière le dit dans 42 cas sur 55** — puis, une heure plus tard, dans
+**55 sur 55**.
+
+Les treize manquants tenaient à une **quatrième écriture**, trouvée en lisant :
+le tableau Géorisques sort le détail AVANT le nom de sa propre ligne.
+
+```
+Le bien se situe dans une zone d'aléa Moyen.
+Retrait / gonflement des argiles
+```
+
+La phrase seule ne nomme pas l'argile ; le libellé seul n'affirme rien. Il
+fallait les lire ensemble — c'est le piège d'entrelacement du §11, appliqué à
+la ligne la plus importante du document.
+
+Quatre écritures pour une même réalité, désormais : ligne de tableau, phrase
+Géorisques, texte réglementaire (§18), et détail-avant-libellé. **Une notion
+canonique, ses variantes observées.**
 
 ### Deux vérifications faites en chemin
 
@@ -1539,5 +1554,5 @@ les dossiers lus intégralement, avant même la mesure.
       la zone 3. À trancher au texte avant de changer quoi que ce soit.
 - [ ] Un dernier volet sur 63 annonce encore un risque technologique : trouver
       d'où il vient.
-- [ ] Treize dossiers déclarent l'argile au tableau sans que Verrière la dise :
-      trouver quelle écriture leur échappe.
+- [x] ~~Treize dossiers déclarent l'argile sans que Verrière la dise.~~ →
+      quatrième écriture trouvée, § 34 : le détail précède le libellé. 55/55.

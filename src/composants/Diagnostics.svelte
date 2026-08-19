@@ -720,14 +720,35 @@
                 {/each}
               </section>
 
-              <!-- 3 · OÙ ? — tout ce que le rapport énumère, rattaché à sa pièce,
-                   sans en retirer un seul. Le constat précède la pédagogie. -->
-              {#if d.releves?.length}
-                <section class="etape" aria-labelledby="et-ou-{d.type}">
-                  <h4 id="et-ou-{d.type}" class="titre-etape">Où&nbsp;?</h4>
+              <!--
+                3 · OU ? — tout ce que le rapport enumere, rattache a sa piece,
+                sans en retirer un seul. Le constat precede la pedagogie.
+
+                ── LA SECTION NE DISPARAIT PLUS ────────────────────────────────
+
+                Elle ne s'affichait que si le rapport donnait des localisations.
+                Mesure a l'ecran sur le dossier de demonstration : « Ou ? »
+                manquait dans CINQ fiches sur sept. Chaque diagnostic avait donc
+                une structure differente, la ou l'ordre de mission directeur en
+                impose six, les memes partout -- « meme charte visuelle, seule la
+                couleur change ».
+
+                Et l'absence etait muette : rien ne distinguait « le rapport ne
+                localise rien » de « nous n'avons pas regarde ». Le meme ordre de
+                mission prescrit la phrase, mot pour mot : « Si une donnee
+                manque : Information non disponible dans le diagnostic. »
+              -->
+              <section class="etape" aria-labelledby="et-ou-{d.type}">
+                <h4 id="et-ou-{d.type}" class="titre-etape">Où&nbsp;?</h4>
+                {#if d.releves?.length}
                   <Releves releves={d.releves} page={d.pages[0]} type={d.type} />
-                </section>
-              {/if}
+                {:else}
+                  <p class="reponse-etape sans-donnee">
+                    Information non disponible dans le diagnostic&nbsp;: ce rapport
+                    ne rattache aucun constat à une pièce ou à un local.
+                  </p>
+                {/if}
+              </section>
 
               <!--
                 4 · POURQUOI ? — d'abord ce que CE rapport-ci raconte, ensuite
@@ -1710,6 +1731,13 @@
     letter-spacing: var(--suivi);
     text-transform: uppercase;
     color: var(--u-accent, var(--action-texte));
+  }
+
+  /* L'absence se dit, elle ne se cache pas -- mais elle ne crie pas non plus :
+     c'est une information, pas une alerte. */
+  .sans-donnee {
+    color: var(--sur-fond-doux);
+    font-style: italic;
   }
 
   .reponse-etape {

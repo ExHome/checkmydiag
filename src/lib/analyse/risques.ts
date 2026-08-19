@@ -40,15 +40,26 @@ const DETECTEURS: Detecteur[] = [
      *
      * Les trois formes sont ici, avec les deux apostrophes et le tiret libre.
      */
+    /*
+     * Quatrième écriture, trouvée en lisant : la phrase et le nom du risque
+     * sont sur deux lignes, et dans l'ordre inverse.
+     *
+     *     Le bien se situe dans une zone d'aléa Moyen.
+     *     Retrait / gonflement des argiles
+     *
+     * C'est le tableau Géorisques du § 11 : le détail sort avant le libellé de
+     * sa propre ligne. La phrase seule ne nomme pas l'argile, et le libellé
+     * seul n'affirme rien — il fallait les lire ensemble.
+     */
     positif:
-      /Zonage du retrait[\s-]*gonflement des argiles\s+Oui(?:\s+Al[ée]a\s+(Faible|Moyen|Fort))?|zone d['’]exposition (forte|moyenne)[^.]{0,60}retrait|zone r[ée]glement[ée]e du risque retrait[\s-]*gonflement/i,
+      /Zonage du retrait[\s-]*gonflement des argiles\s+Oui(?:\s+Al[ée]a\s+(Faible|Moyen|Fort))?|zone d['’]exposition (forte|moyenne)[^.]{0,60}retrait|zone r[ée]glement[ée]e du risque retrait[\s-]*gonflement|zone d['’]al[ée]a (Faible|Moyen|Fort)[^.]{0,20}\.?\s*Retrait\s*\/?\s*gonflement des argiles/i,
     negatif:
       /Zonage du retrait[\s-]*gonflement des argiles\s+Non|(?:pas|non) (?:concern[ée]|situ[ée])[^.]{0,40}retrait[\s-]*gonflement/i,
     niveau: 'attention',
     /* L'aléa, quand le tableau le donne : c'est lui qui décide de l'obligation
        d'étude de sol, à partir du niveau moyen. */
     detail: (m) => {
-      const alea = m[1] ?? m[2];
+      const alea = m[1] ?? m[2] ?? m[3];
       return alea ? `aléa ${alea.toLowerCase()}` : undefined;
     }
   },
@@ -159,7 +170,7 @@ export function analyserErp(lignes: string[], plage: [number, number]): Diagnost
   const affirmations = lignes.filter((l) =>
     !FORMULAIRE_PPR.test(l) &&
     !PROPOSE_AU_LIEU_D_AFFIRMER.test(l) &&
-    /(?:le bien|l['’]immeuble|la parcelle|le terrain|le logement) (?:se situe|ne se situe|est |n['’]est )|est ainsi concern[ée]|^\s*-\s*le risque|^le risque|la commune dans laquelle|zone de sismicit[ée]|potentiel radon|zone [àa] potentiel|Zonage du retrait[\s-]*gonflement|zone r[ée]glement[ée]e du risque/i.test(
+    /(?:le bien|l['’]immeuble|la parcelle|le terrain|le logement) (?:se situe|ne se situe|est |n['’]est )|est ainsi concern[ée]|^\s*-\s*le risque|^le risque|la commune dans laquelle|zone de sismicit[ée]|potentiel radon|zone [àa] potentiel|Zonage du retrait[\s-]*gonflement|zone r[ée]glement[ée]e du risque|^\s*Retrait\s*\/?\s*gonflement des argiles\s*$/i.test(
       l
     )
   );

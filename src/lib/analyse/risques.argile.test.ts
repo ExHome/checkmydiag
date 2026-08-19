@@ -70,3 +70,36 @@ describe('ce qui doit rester un non', () => {
     expect(d.verdict).not.toMatch(/argiles/i);
   });
 });
+
+describe('l’argile écrite en deux lignes, à l’envers', () => {
+  /*
+   * Quatrième écriture, trouvée en lisant un état des risques de 2023 : le
+   * tableau Géorisques sort le détail AVANT le nom de sa propre ligne.
+   *
+   *     Le bien se situe dans une zone d'aléa Moyen.
+   *     Retrait / gonflement des argiles
+   *
+   * La phrase seule ne nomme pas l'argile ; le libellé seul n'affirme rien.
+   * Treize dossiers sur cinquante-cinq échappaient ainsi au produit.
+   */
+  it('lit l’aléa quand le détail précède le libellé', () => {
+    const d = analyserErp(
+      [
+        'Etat des Risques et Pollutions',
+        "Le bien se situe dans une zone d'aléa Moyen.",
+        'Retrait / gonflement des argiles'
+      ],
+      [1, 12]
+    );
+    expect(d.verdict).toMatch(/argiles/i);
+    expect(d.verdict).toMatch(/aléa moyen/i);
+  });
+
+  it('reste muet quand rien ne nomme l’argile', () => {
+    const d = analyserErp(
+      ['Etat des Risques et Pollutions', "Le bien se situe dans une zone d'aléa Moyen."],
+      [1, 12]
+    );
+    expect(d.verdict).not.toMatch(/argiles/i);
+  });
+});
