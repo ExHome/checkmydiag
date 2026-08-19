@@ -1113,6 +1113,78 @@ et la pagination annoncée est la mesure qui le guidera.
 
 ---
 
+## 28 · Les termites : le moteur est juste, et le rapport dit plus qu'il n'en a l'air
+
+**Mesuré : 38 verdicts justes sur 38.** Avec le plomb et l'amiante corrigé, le
+troisième diagnostic à sortir sans faute.
+
+Le §5 avait déjà noté que ce volet se lit bien : le tableau D est linéaire —
+`Plateau  Sol - Béton  Absence d'indices d'infestation de termites` — et les
+rubriques F, G et H sont explicites, « Néant » quand il n'y a rien.
+
+### Ce que la lecture ajoute
+
+**Le rapport dit si le bien est en zone d'arrêté.** En tête du volet :
+
+> Situation du bien en regard d'un arrêté préfectoral pris en application de
+> l'article L 131-5 du CCH : **Néant**
+
+C'est déterminant : l'état termites n'est exigible à la vente que dans les
+zones délimitées par arrêté préfectoral (article L. 126-24 du CCH, cité par le
+rapport lui-même). Un champ à « Néant » ne veut pas dire que le diagnostic est
+inutile — il a été fait —, mais il dit quelque chose du risque local que le
+produit ne restitue pas.
+
+**Le même arrêté vaut pour la mérule.** L'article L. 131-3 délimite les zones
+de termites *et* les zones de risque mérule. Le rapport le cite ; le produit
+n'en parle jamais.
+
+**Une obligation que les propriétaires ignorent** : en cas de présence de
+termites, la loi impose une **déclaration en mairie** (articles L. 126-4 et
+L. 126-5 du CCH). C'est écrit en note de bas de page, sous « Nota 2 ».
+
+**Le périmètre va jusqu'à dix mètres** des extérieurs de l'habitation, dans la
+limite de la propriété — et le sondage des boiseries se fait au poinçon,
+systématiquement. Deux précisions qui expliquent ce que le diagnostic peut
+affirmer, et ce qu'il ne peut pas.
+
+### Et la confirmation d'un point ouvert
+
+- [x] ~~Les termites : les informations collectees aupres du donneur d'ordre~~
+antérieur, présence déclarée de termites, notice technique — sont bien des
+**cases dessinées**, sans autre trace dans le rapport. Le §10 le soupçonnait ;
+la lecture le confirme. Ces trois lignes ne seront jamais lisibles.
+
+---
+
+## 29 · Quatre sondes, quatre mensonges — la leçon de la journée
+
+En une séance, **quatre outils de mesure ont accusé le moteur à tort** :
+
+| Sonde | Ce qu'elle croyait mesurer | Ce qu'elle mesurait |
+|---|---|---|
+| plomb (1) | la conclusion de synthèse | la grille des 40 prestations de la page de garde |
+| plomb (2) | la présence de plomb | la couleur de la pastille |
+| termites (1) | une infestation | le mot « infestation » dans « aucun indice d'infestation » |
+| termites (2) | un verdict positif | rien : l'apostrophe typographique ne correspondait pas |
+
+Aucune n'a été publiée : chaque écart a été ouvert et regardé avant d'être
+annoncé. Mais le compte est net — **sur ce corpus, il est plus facile d'écrire
+une sonde fausse qu'un extracteur faux**, parce qu'une sonde ne casse rien : un
+zéro se lit comme un résultat.
+
+Les quatre gardes qui en sortent :
+
+1. **Ouvrir la ligne que la sonde a retenue**, toujours, avant de conclure quoi
+   que ce soit. Trois fois sur quatre, elle venait d'ailleurs que du volet.
+2. **La négation est en tête de phrase, jamais dans le mot.** Tester l'absence
+   avant la présence.
+3. **Mesurer ce que le produit DIT, pas la couleur qu'il affiche.**
+4. **Les apostrophes diffèrent** entre le produit et les rapports. Accepter les
+   deux, partout.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion
@@ -1176,3 +1248,8 @@ et la pagination annoncée est la mesure qui le guidera.
       n'est pas « aucun plomb ». Vu une fois, à retrouver et à traiter.
 - [ ] Vérifier au texte la validité du CREP en location (six ans) : le
       référentiel la donne, la lecture ne l'a pas encore confirmée sur pièce.
+- [ ] Restituer la situation du bien au regard d'un arrete prefectoral (volet
+      termites) : c'est elle qui dit si la commune est en zone.
+- [ ] La merule : le meme arrete la delimite, le produit n'en parle jamais.
+- [ ] La declaration en mairie obligatoire en cas de termites (L. 126-4 et
+      L. 126-5) : a dire au proprietaire.

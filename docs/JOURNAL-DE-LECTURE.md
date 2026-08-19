@@ -23,10 +23,9 @@ Dropbox.
   — le premier document d'immeuble du carnet. Avant lui, deux DDT complets
   (location et vente) pour le volet **électricité**.
 - **Reprendre par** : les diagnostics classiques, la copropriété passant après
-  — décision du 19/08. Faits : plomb (22/22), amiante (19/19). Restent les
-  **termites** et l'**ERP**, dont la justesse n'a jamais été mesurée. Puis
-  élargir la découpe de l'amiante, mesurée 15 pages trop courte sur 20 volets
-  sur 20.
+  — décision du 19/08. Faits : plomb (22/22), amiante (19/19), termites
+  (38/38). Reste l'**ERP**, seul diagnostic classique jamais mesuré. Puis
+  élargir la découpe de l'amiante, 15 pages trop courte sur 20 volets sur 20.
 - **À vérifier au texte avant tout contrôle** : le calendrier du DPE collectif
   (L126-31 du CCH, article 158 de la loi n° 2021-1104), cité par le DTG mais
   pas encore relu à la source. Légifrance n'a pas répondu aux adresses
@@ -44,7 +43,7 @@ Dropbox.
 | Erreurs de moteur trouvées par la lecture | 5 majeures |
 | Corrections livrées | 8 |
 | Tests de non-régression ajoutés | 24 |
-| Fausses alertes de mes propres sondes, écartées avant annonce | 3 |
+| Fausses alertes de mes propres sondes, écartées avant annonce | 6 |
 | Sondes de justesse écrites | 2 |
 | Notions métier versées au produit | 4 |
 | Fiches versées à la Dropbox | 2 |
@@ -62,7 +61,7 @@ Ce que « lu » veut dire ici : le volet a été lu page à page, pas survolé.
 | ERP | 3 | argile 73/140 dossiers | trois écritures de l'argile connues ; l'imprimé officiel et ses croix restent à exploiter |
 | Plomb | 2 | **22/22** verdicts justes | le moteur est bon ; la validité du constat positif était fausse, corrigée |
 | Amiante | 2 | **19/19** verdicts justes (contre 2/19) | fausse alerte massive corrigée ; la découpe reste 15 pages trop courte |
-| Termites | 1 (session antérieure) | — | tableau de repérage lu |
+| Termites | 2 | **38/38** verdicts justes | le moteur est bon ; zone d'arrêté et mérule restent à restituer |
 | Surface | 2 | — | Boutin et Carrez distingués |
 | **DTG** | **1** | — | structure, curatifs, rubriques vides et cinq points de vigilance ; notions versées au produit |
 | PPPT, DTA, RAAT, DPE collectif | 0 | — | **jamais ouverts** — le corpus en contient |
@@ -215,3 +214,19 @@ attribue moins de pages qu'ils n'en revendiquent, **15 en moyenne**. Le verdict
 reste juste puisqu'il vient de la conclusion, mais la liste détaillée des
 matériaux n'est jamais lue : quand il y a de l'amiante, le produit ne peut pas
 dire lequel.
+
+### 19 aout 2026 - les termites, et le compte des sondes
+
+**38 verdicts justes sur 38.** Troisieme diagnostic sans faute, apres le plomb
+et l'amiante corrige. Le tableau se lit en lineaire : ce volet ne piege pas.
+
+Ce que la lecture ajoute sans corriger : le rapport dit **si le bien est en
+zone d'arrete prefectoral** - l'etat termites n'est exigible que la -, le meme
+arrete delimite les zones de **merule**, et la presence de termites oblige a
+une **declaration en mairie**. Trois informations que Verriere ne restitue pas.
+
+**Le compte des sondes est severe** : quatre outils de mesure ont accuse le
+moteur a tort dans la meme seance. Aucune erreur n'a ete publiee, chaque ecart
+ayant ete ouvert avant d'etre annonce. La lecon : sur ce corpus, il est plus
+facile d'ecrire une sonde fausse qu'un extracteur faux, parce qu'une sonde ne
+casse rien - un zero se lit comme un resultat.
