@@ -274,7 +274,19 @@
     states ». C'est donc elle qui occupe le cadre, en filigrane, jusqu'au jour
     où une photo sera fournie.
   -->
-  <article class="bien">
+  <!--
+    Sans photo, le widget se serre.
+
+    Sa hauteur etait calibree pour une photo du logement. Le produit lit un
+    PDF : il n'en a pas, et n'en inventera pas. Mesure a l'ecran sur un
+    telephone de 844 px : 260 px pour un filigrane, soit 31 % de la hauteur, et
+    la moitie de l'ecran occupee avant d'atteindre les diagnostics.
+
+    Le test du silence l'a rendu evident -- textes masques, le plus gros bloc
+    de l'ecran ne montrait rien. Le jour ou une photo sera fournie, la classe
+    tombe et le grand cadre revient.
+  -->
+  <article class="bien" class:sans-photo={true}>
     <div class="paysage" aria-hidden="true">
       <img class="filigrane" src="./logo/verriere-line-art.svg" alt="" />
     </div>
@@ -622,6 +634,12 @@
        ferme le widget juste dessous. */
     border-radius: 28px 28px 0 0;
     overflow: hidden;
+  }
+
+  /* Le cadre reduit : de quoi porter le lieu et l'adresse, rien de plus. Il
+     rend a la grille des applications la place qu'un filigrane occupait. */
+  .bien.sans-photo {
+    min-height: 168px;
     box-shadow: var(--ombre-forte);
     color: #ffffff;
   }
