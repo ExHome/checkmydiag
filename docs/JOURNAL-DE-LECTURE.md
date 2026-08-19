@@ -43,10 +43,11 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 - **La déduction vente/location est faite et branchée** (§40, §42) : 50 dossiers
   sur 60 classés, et les fiches annoncent désormais « Validité : trois ans — ce
   dossier est un dossier de vente, et son rapport l'écrit lui-même ».
-- **Prochain chantier** : le gaz reste le volet le moins couvert (9 volets vus,
-  7/7 justes). Chercher un dossier qui en porte un, et lire la rubrique G —
-  entretien de chaudière et ramonage non justifiés n'y sont toujours pas
-  remontés.
+- **La rubrique G du gaz est remontée** (§43) : entretien de chaudière et
+  ramonage non justifiés, conduit non visitable. 16 volets sur 18 en portent.
+- **Prochain chantier** : « Installation alimentée en gaz : NON » — quand
+  l'installation n'est pas alimentée, aucun essai n'a pu être fait, et la
+  conclusion n'a pas la même portée. Mesurer d'abord sa fréquence.
 
 ## Compteurs
 
@@ -56,8 +57,8 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 | Volets lus page à page | 24 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 6 majeures |
-| Corrections livrées | 17 |
-| Tests de non-régression ajoutés | 52 |
+| Corrections livrées | 18 |
+| Tests de non-régression ajoutés | 56 |
 | Fausses alertes de mes propres sondes, écartées avant annonce | 6 |
 | Sondes de justesse écrites | 2 |
 | Notions métier versées au produit | 5 |
@@ -71,7 +72,7 @@ Ce que « lu » veut dire ici : le volet a été lu page à page, pas survolé.
 | Diagnostic | Volets lus | Justesse mesurée | État |
 |---|---|---|---|
 | Électricité | 3 | **60/60** verdicts justes (contre 17/31) | catalogue démasqué et rendu robuste aux libellés longs |
-| Gaz | 3 | **7/7** verdicts justes (contre 0/3) | rubrique E lue juste ; rubrique G et « installation non alimentée » restent à remonter |
+| Gaz | 4 | **7/7** verdicts justes (contre 0/3) | rubrique E lue juste ; rubrique G et « installation non alimentée » restent à remonter |
 | DPE | 3 | **2 %** de muets (contre 4 %) | annexes rattachées : 7 volets courts sur 58, contre 58 |
 | ERP | 9 | **1/63** faux risque techno (contre 49/63) ; argile rattrapée **55/55** | le formulaire vierge n'est plus lu comme un constat |
 | Plomb | 2 | **22/22** verdicts justes | le moteur est bon ; la validité du constat positif était fausse, corrigée |
@@ -541,3 +542,21 @@ plus calculer** : la phrase portait déjà le résultat.
 
 Recalculer ce qu'on a sous la main, c'est se donner une seconde chance de se
 tromper.
+
+### 19 août 2026, nuit — la rubrique G du gaz
+
+Repérée au §23 comme « un gisement que personne ne lit », elle est désormais
+remontée : **entretien annuel de la chaudière non justifié, ramonage des
+conduits non justifié, conduit de raccordement non visitable**. Ces obligations
+sont dues par l'occupant, et sans justificatif l'assureur peut discuter sa
+garantie après un sinistre.
+
+**La fréquence aurait pu tromper** : seize volets sur dix-huit en portent. C'est
+exactement le profil d'un formulaire — et c'est ce qui a induit en erreur quatre
+fois déjà. Mais **deux volets sur dix-huit n'en portent aucune** : la rubrique
+varie, ce sont bien des constats. Le taux s'explique simplement, les
+propriétaires ne fournissent presque jamais ces justificatifs le jour de la
+visite.
+
+Première fois qu'une fréquence de 89 % survit à l'examen — et ce qui l'a sauvée
+n'est pas un raisonnement, ce sont les deux dossiers qui ne la portent pas.

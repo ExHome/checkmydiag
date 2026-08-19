@@ -1814,6 +1814,49 @@ de se tromper.**
 
 ---
 
+## 43 · La rubrique G du gaz, enfin remontee
+
+Le §23 l'avait reperee comme « un gisement que personne ne lit ». Elle est
+desormais lue :
+
+> **Constatations du rapport** : entretien annuel de la chaudiere non justifie ·
+> ramonage des conduits non justifie · conduit de raccordement non visitable ·
+> un raccord realise au ruban d'etancheite
+
+L'entretien annuel de la chaudiere et le ramonage sont dus par l'occupant.
+**Sans justificatif, l'assureur peut discuter sa garantie apres un sinistre** —
+et c'est ecrit en petits caracteres sous un titre qui annonce des
+« constatations diverses ».
+
+### La frequence qui aurait pu tromper
+
+| Constatation | volets |
+|---|---|
+| entretien annuel de la chaudiere non justifie | 16 |
+| ramonage des conduits non justifie | 16 |
+| conduit de raccordement non visitable | 15 |
+| un raccord au ruban d'etancheite | 12 |
+
+**Seize volets sur dix-huit.** Une telle frequence est exactement ce qui a
+trompe quatre fois deja : un texte present partout est en general un
+formulaire, pas un constat.
+
+**Deux volets sur dix-huit n'en portent aucune.** La rubrique varie donc — ce
+sont bien des constats. Et le taux s'explique : les proprietaires ne
+fournissent presque jamais ces justificatifs au diagnostiqueur le jour de la
+visite.
+
+C'est la premiere fois qu'une frequence de quatre-vingt-neuf pour cent survit a
+l'examen. Ce qui l'a sauvee n'est pas un raisonnement : ce sont les deux
+dossiers qui ne la portent pas.
+
+### Ce qui reste au rapport
+
+« La responsabilite du donneur d'ordre reste pleinement engagee » est imprimee
+partout : elle ne constate rien sur ce logement-la. Elle reste au rapport.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion
@@ -1865,8 +1908,9 @@ de se tromper.**
 - [ ] Le PPPT, le DTA et le RAAT : jamais ouverts. Le corpus en contient.
 - [ ] Les ligatures : d'autres générateurs sont-ils concernés ? Mesurer sur le
       corpus combien de rapports en portent, plutôt que sur le seul DTG lu.
-- [ ] La rubrique G du gaz — constatations diverses — porte l'entretien de la
-      chaudière et le ramonage non justifiés. Rien ne les remonte encore.
+- [x] ~~La rubrique G du gaz : l'entretien et le ramonage non justifiés.~~ →
+      fait, §43. 16 volets sur 18 en portent, et 2 n'en portent aucune : ce
+      sont bien des constats.
 - [ ] « Installation alimentée en gaz : NON » : le dire, comme le différentiel
       non essayé. Mesurer d'abord sa fréquence sur le corpus.
 - [ ] La contradiction F « Néant » / G « certains points n'ont pu être

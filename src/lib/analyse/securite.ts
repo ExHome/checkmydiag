@@ -393,6 +393,22 @@ export function analyserGaz(lignes: string[], plage: [number, number]): Diagnost
     });
   }
 
+  /*
+   * Ce que la rubrique G a relevé, et que personne ne lit.
+   *
+   * L'entretien annuel de la chaudière et le ramonage sont dus par l'occupant ;
+   * sans justificatif, l'assureur peut discuter sa garantie après un sinistre.
+   * Le rapport le note, sous un titre qui n'annonce rien.
+   */
+  const constatations = constatationsGaz(lignes);
+  if (constatations.length) {
+    faits.push({
+      libelle: constatations.length > 1 ? 'Constatations du rapport' : 'Constatation du rapport',
+      valeur: constatations.join(' · '),
+      precision: 'relevé en rubrique G, « constatations diverses »'
+    });
+  }
+
   if (a1) faits.push({ libelle: 'Type A1', valeur: 'présent', precision: 'à corriger sans urgence' });
   if (a2) faits.push({ libelle: 'Type A2', valeur: 'présent', precision: 'à corriger rapidement' });
   if (dgi) faits.push({ libelle: 'DGI', valeur: 'oui', precision: 'mise hors service immédiate' });
@@ -506,6 +522,53 @@ export function typesConstates(lignes: string[]): string {
   // produit la traite à part et ne la compte pas parmi A1/A2/DGI.
   trouves.delete('32c');
   return [...trouves].join(' ');
+}
+
+/**
+ * La rubrique G du gaz — « Constatations diverses » — et ce qu'elle enterre.
+ *
+ * Ce n'est pas un fourre-tout. Sur un rapport lu en entier, elle portait quatre
+ * lignes que rien d'autre du dossier ne dit :
+ *
+ *     Attestation de contrôle de moins d'un an de la vacuité des conduits de
+ *     fumées non présentée
+ *     Justificatif d'entretien de moins d'un an de la chaudière non présenté
+ *     Le conduit de raccordement n'est pas visitable
+ *     Au moins un assemblage par raccord mécanique est réalisé au moyen d'un
+ *     ruban d'étanchéité
+ *
+ * L'entretien annuel de la chaudière et le ramonage sont des obligations de
+ * l'occupant, et leur absence pèse en cas de sinistre : l'assureur les demande.
+ * C'est le genre d'information qu'un acheteur voudrait connaître, et elle est
+ * en petits caractères sous un titre qui annonce des « constatations diverses ».
+ *
+ * On ne remonte que ce qui constate : les rappels de responsabilité et les
+ * mentions de forme restent au rapport.
+ */
+const CONSTATATIONS_UTILES: { motif: RegExp; dit: string }[] = [
+  {
+    motif: /entretien de moins d['’]un an de la chaudi[èe]re non pr[ée]sent/i,
+    dit: 'entretien annuel de la chaudière non justifié'
+  },
+  {
+    motif: /vacuit[ée] des conduits de fum[ée]es? non pr[ée]sent/i,
+    dit: 'ramonage des conduits non justifié'
+  },
+  {
+    motif: /conduit de raccordement n['’]est pas visitable/i,
+    dit: 'conduit de raccordement non visitable'
+  },
+  {
+    motif: /ruban d['’][ée]tanch[ée]it[ée]/i,
+    dit: 'un raccord réalisé au ruban d’étanchéité'
+  }
+];
+
+export function constatationsGaz(lignes: string[]): string[] {
+  const r = rubriqueDe(lignes, 'gaz', 'constatations');
+  if (!r) return [];
+  const texte = r.lignes.join(' ');
+  return CONSTATATIONS_UTILES.filter((c) => c.motif.test(texte)).map((c) => c.dit);
 }
 
 /** Ce que les essais sur place ont donné — ou n'ont pas donné. */

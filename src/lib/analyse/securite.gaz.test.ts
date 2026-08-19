@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { typesConstates } from './securite';
+import { constatationsGaz, typesConstates } from './securite';
 
 /**
  * La rubrique « E. — Anomalies identifiées » d'un rapport gaz réel
@@ -57,5 +57,44 @@ describe('les types d’anomalie constatés au gaz', () => {
 
   it('retient un DGI, qui fait couper le gaz le jour même', () => {
     expect(typesConstates(['B.3 - Robinet de commande d’appareil DGI'])).toBe('DGI');
+  });
+});
+
+/**
+ * La rubrique G, « Constatations diverses », telle qu'elle sort d'un rapport
+ * réel (octobre 2024). Ce n'est pas un fourre-tout : elle porte des obligations
+ * de l'occupant dont l'absence pèse en cas de sinistre.
+ */
+const RUBRIQUE_G = [
+  'G. - Constatations diverses',
+  'Commentaires :',
+  "Certains points de contrôles n'ont pu être contrôlés. De ce fait la responsabilité du donneur d'ordre reste",
+  "Attestation de contrôle de moins d'un an de la vacuité des conduits de fumées non présentée",
+  "Justificatif d'entretien de moins d'un an de la chaudière non présenté",
+  "Le conduit de raccordement n'est pas visitable",
+  "Au moins un assemblage par raccord mécanique est réalisé au moyen d'un ruban d'étanchéité",
+  'Documents remis par le donneur d’ordre à l’opérateur de repérage :',
+  'Néant'
+];
+
+describe('les constatations diverses du gaz', () => {
+  it('remonte l’entretien et le ramonage non justifiés', () => {
+    const c = constatationsGaz(RUBRIQUE_G);
+    expect(c).toContain('entretien annuel de la chaudière non justifié');
+    expect(c).toContain('ramonage des conduits non justifié');
+  });
+
+  it('relève aussi ce qui borne le contrôle', () => {
+    expect(constatationsGaz(RUBRIQUE_G)).toContain('conduit de raccordement non visitable');
+  });
+
+  it('laisse au rapport les rappels de responsabilité', () => {
+    // « la responsabilité du donneur d'ordre reste engagée » est une mention de
+    // forme, imprimée partout : elle ne constate rien sur ce logement.
+    for (const dit of constatationsGaz(RUBRIQUE_G)) expect(dit).not.toMatch(/responsabilité/i);
+  });
+
+  it('ne rend rien quand la rubrique est absente', () => {
+    expect(constatationsGaz(['Etat de l’installation intérieure de Gaz', 'H. - Conclusion'])).toEqual([]);
   });
 });
