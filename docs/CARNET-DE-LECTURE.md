@@ -681,6 +681,123 @@ texte, pas à l'observation.
 
 ---
 
+## 21 · Le premier document d'immeuble : un DTG, lu en entier
+
+Trente-cinq pages, juin 2026, mise en copropriété de quatre lots répartis en
+trois bâtiments. C'est le premier rapport de copropriété jamais lu ici, et il
+ne ressemble à rien de ce qui précède : autre éditeur, autre mise en page,
+autre logique.
+
+### Il ne conclut pas, il programme
+
+Un diagnostic de logement rend un verdict par diagnostic. Le DTG rend un
+**calendrier de dépenses sur dix ans**, réparti en trois périodes — 0 à 2 ans,
+3 à 5 ans, 6 à 10 ans — et son lecteur n'est pas un acheteur mais une
+assemblée générale qui vote.
+
+Sa structure, en onze sections : informations administratives · fiche
+d'identification de la copropriété · introduction (cadre, validité, périmètre,
+limites) · analyse de l'état apparent des parties communes · évaluation
+sommaire des coûts et calendrier · situation du syndicat au regard de ses
+obligations · améliorations de la gestion technique et patrimoniale · synthèse
+du bilan énergétique · conclusions · déclaration sur l'honneur et assurance ·
+annexe.
+
+### L'échelle des curatifs se lit à l'envers
+
+| Classement | Ce qu'il veut dire |
+|---|---|
+| **Curatif niveau 1** | **impact FORT** — risque pour les personnes |
+| Curatif niveau 2 | impact modéré — ouvrage affaibli |
+| Curatif niveau 3 | impact faible — à traiter tôt |
+| Entretien · Signalements · Énergie | pas des travaux ; jamais chiffrés pour les deux premiers |
+
+Le niveau 1 est le plus grave — l'intuition dit l'inverse.
+
+Et **le montant ne dit pas la gravité** : sur ce rapport, le seul niveau 1 —
+une balustrade d'escalier dégradée, donc un risque de chute — était le poste le
+**moins cher** du calendrier, très loin derrière une façade classée niveau 3.
+Trier par la colonne des euros revient à commencer par le mauvais bout.
+
+### Le rapport signale lui-même ce qui lui manque
+
+Son bilan porte « Bilan énergétique : Absent », et sa section 6 :
+« Aucun bilan énergétique n'a été réalisé à ce jour ». Or le DPE de l'immeuble
+est l'un des volets que le DTG doit comporter.
+
+Le rapport reproduit le calendrier d'obligation — 1ᵉʳ janvier 2026 pour les
+copropriétés d'au plus cinquante lots. Si ce calendrier se confirme au texte
+officiel (**il n'a pas encore pu être relu à la source**), un DTG de juin 2026
+sur quatre lots est postérieur à l'entrée en vigueur, et le manque est réel.
+C'est exactement le contrôle qu'un traqueur d'erreurs grossières doit savoir
+faire — à condition de vérifier le texte avant de l'affirmer.
+
+### Sept rubriques vides, et un état intermédiaire
+
+« Aucun élément. » revient sept fois : administration, contrats d'entretien,
+diagnostics obligatoires, ascenseur, porte automatique, améliorations
+générales, améliorations énergétiques. Et « Parties communes non visitées :
+Aucun élément. »
+
+Même règle qu'au gaz et à l'amiante : **présente et vide = un résultat**. Mais
+le DTG en ajoute une nuance que les diagnostics de logement n'ont pas : la
+sécurité incendie porte trois obligations commentées « Copropriété en cours de
+création » — ni présent, ni manquant, mais **sans objet pour l'instant**.
+
+### Ce qui cloche dans le dossier lu
+
+Cinq points, notés comme cas techniques :
+
+1. **deux adresses différentes** dans le même rapport — la localisation de
+   l'immeuble d'un côté, le propriétaire et le donneur d'ordre de l'autre, dans
+   une autre commune. Une seule des deux peut être le bien diagnostiqué ;
+2. le **numéro de rapport est un nom de société**, pas un numéro ;
+3. le **champ assurance est vide** partout — page d'administration et pied des
+   34 pages — alors que l'attestation jointe en annexe est complète et valide.
+   Deuxième éditeur, même conclusion qu'au §19 : le pied de page ne dit rien,
+   l'annexe fait foi ;
+4. **numéro d'immatriculation vide** — cohérent pour une mise en copropriété,
+   à ne pas confondre avec un oubli sur une copropriété existante ;
+5. le **projet de règlement de copropriété** est porté « Sans objet » alors que
+   la mission est précisément une mise en copropriété. À confronter au décret
+   du 28 décembre 2016.
+
+### Et l'attestation d'assurance est un catalogue de plus
+
+Elle énumère **toutes** les activités assurées — soixante lignes, du repérage
+sur navires à la qualité de l'air. Troisième forme du même piège, après
+l'en-tête commercial et l'attestation sur l'honneur : un texte imprimé dans
+tous les rapports ne dit rien de celui qu'on lit.
+
+---
+
+## 22 · Les ligatures, ou le défaut qui se lit comme une absence
+
+Le générateur du DTG code « fi », « fl » et « ffi » dans un glyphe de ligature
+que pdf.js rend en **fragment séparé**. Assemblés avec des espaces, ils
+éclatent un mot sur trois :
+
+```
+dé fi nition     identi fi ant     véri fi cation     in fl uence
+a fi n           su ffi t          quali fi é         modi fi cations
+```
+
+**Cinquante-deux mots** du seul rapport lu étaient dans ce cas. Aucun motif de
+recherche n'y survit : chercher « vérification » dans un DTG ne trouve rien.
+
+Et c'est là que le défaut est vicieux — il ne casse rien, il ne lève aucune
+erreur, il **renvoie zéro**. Une sonde qui mesure « combien de DTG mentionnent
+une vérification » aurait répondu « aucun », et on en aurait conclu que les DTG
+n'en parlent pas. C'est le §12 sous une autre forme, et la parenté avec les
+sondes qui mentent est directe.
+
+Corrigé à la source, dans la reconstruction des lignes : un fragment qui n'est
+qu'une ligature se recolle à ses voisins. Ni « fi », ni « fl », ni « ff », ni
+« ffi », ni « ffl » n'étant un mot français, la règle ne risque rien. Mesure :
+**52 → 0**, aucune régression sur les dossiers de logement, quatre tests.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [ ] Le tableau « E. — Anomalies identifiées » du gaz : c'est là qu'est la
@@ -690,7 +807,9 @@ texte, pas à l'observation.
       et deux variantes de tableau constatent vraiment.
 - [ ] Le CREP : comment les classes 0 à 3 sont-elles présentées ?
 - [ ] Le DPE : où sont les seuils des petites surfaces ?
-- [ ] Un dossier de copropriété (DTG, PPPT) : structure encore jamais lue.
+- [x] ~~Un dossier de copropriété (DTG, PPPT) : structure jamais lue.~~ → un DTG
+      lu en entier, voir §21. Restent le PPPT, le DTA, le RAAT et le DPE
+      collectif.
 - [ ] Les termites : « informations collectées auprès du donneur d'ordre »
       (traitement antérieur, présence déclarée) sont des cases dessinées, donc
       illisibles. Y a-t-il une autre trace de ces réponses dans le rapport ?
@@ -716,3 +835,10 @@ texte, pas à l'observation.
       qu'elles changent au risque.
 - [ ] Vente ou location : le dossier le dit (Boutin/Carrez, 6 ans/3 ans). En
       déduire la nature de la transaction, et adapter toutes les validités.
+- [ ] Vérifier au texte officiel le calendrier du DPE collectif — article
+      L126-31 du CCH et article 158 de la loi n° 2021-1104. Cité par un DTG,
+      pas encore relu à la source : tant que ce n'est pas fait, aucun contrôle
+      ne peut s'appuyer dessus.
+- [ ] Le PPPT, le DTA et le RAAT : jamais ouverts. Le corpus en contient.
+- [ ] Les ligatures : d'autres générateurs sont-ils concernés ? Mesurer sur le
+      corpus combien de rapports en portent, plutôt que sur le seul DTG lu.

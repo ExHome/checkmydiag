@@ -19,26 +19,33 @@ Dropbox.
 
 **Au 19 août 2026.**
 
-- Dernier volet lu en entier : **électricité**, deux dossiers (un sans anomalie,
-  un avec cinq), plus les volets DPE, surface et ERP qui les accompagnaient.
-- **Reprendre par** : les quatre points ouverts en fin de carnet — le rapport
-  dont la synthèse et le volet se contredisent, le rattachement de la synthèse
-  électricité, les mesures compensatoires, et la lecture vente/location.
-- **Jamais lu à ce jour** : un dossier de copropriété — **DTG, PPPT, DTA,
-  RAAT, DPE collectif**. C'est le cœur de métier DGLM et le plus grand trou du
-  corpus lu.
+- Dernier document lu en entier : un **DTG** de mise en copropriété (35 pages)
+  — le premier document d'immeuble du carnet. Avant lui, deux DDT complets
+  (location et vente) pour le volet **électricité**.
+- **Reprendre par** : le **PPPT**, jamais ouvert, dans le même dossier client
+  que le DTG lu. Puis le DTA et le RAAT, dont le corpus contient plusieurs
+  exemplaires.
+- **À vérifier au texte avant tout contrôle** : le calendrier du DPE collectif
+  (L126-31 du CCH, article 158 de la loi n° 2021-1104), cité par le DTG mais
+  pas encore relu à la source. Légifrance n'a pas répondu aux adresses
+  essayées le 19/08.
+- Restent ouverts sur l'électricité : la contradiction synthèse/volet d'un
+  rapport, le rattachement de la synthèse, les mesures compensatoires, et la
+  déduction vente/location.
 
 ## Compteurs
 
 | | Total |
 |---|---|
-| Rapports lus en entier | 2 |
-| Volets lus page à page | 8 |
-| Erreurs de moteur trouvées par la lecture | 1 majeure |
-| Corrections livrées | 2 |
-| Tests de non-régression ajoutés | 6 |
+| Rapports lus en entier | 3 |
+| Volets et documents lus page à page | 9 |
+| Erreurs de moteur trouvées par la lecture | 2 majeures |
+| Corrections livrées | 3 |
+| Tests de non-régression ajoutés | 10 |
 | Sondes de justesse écrites | 2 |
-| Points ouverts au carnet | 12 |
+| Notions métier versées au produit | 4 |
+| Fiches versées à la Dropbox | 2 |
+| Points ouverts au carnet | 15 |
 
 ## Couverture par diagnostic
 
@@ -54,7 +61,8 @@ Ce que « lu » veut dire ici : le volet a été lu page à page, pas survolé.
 | Amiante | 1 (session antérieure) | — | rubrique 1.2 lue |
 | Termites | 1 (session antérieure) | — | tableau de repérage lu |
 | Surface | 2 | — | Boutin et Carrez distingués |
-| **Copropriété** (DTG, PPPT, DTA, RAAT, DPE collectif) | **0** | — | **jamais ouvert** |
+| **DTG** | **1** | — | structure, curatifs, rubriques vides et cinq points de vigilance ; notions versées au produit |
+| PPPT, DTA, RAAT, DPE collectif | 0 | — | **jamais ouverts** — le corpus en contient |
 
 ## Ce que chaque séance a rapporté
 
@@ -90,3 +98,34 @@ seulement combien.
 
 **Six tests** verrouillent ces acquis, dont deux tirés mot pour mot des
 rapports lus.
+
+### 19 août 2026 — le premier document d'immeuble
+
+**Un DTG lu en entier** : 35 pages, mise en copropriété de quatre lots, trois
+bâtiments. Autre éditeur que les dossiers de logement, autre mise en page,
+autre logique — il ne rend pas un verdict mais un calendrier de dépenses sur
+dix ans, et son lecteur est une assemblée générale.
+
+**Ce que la lecture a trouvé :** un défaut d'extraction qui ne casse rien et
+renvoie zéro. Le générateur code les ligatures **fi, fl, ffi** en fragments
+isolés — « dé fi nition », « identi fi ant », « a fi n » — et **52 mots** du
+seul rapport lu en sortaient éclatés. Aucun motif de recherche n'y survit, et
+une sonde qui mesure ce que les DTG mentionnent aurait répondu « rien » sans
+que rien ne paraisse cassé.
+
+**Correction livrée :** les fragments qui ne sont qu'une ligature sont recollés
+à la reconstruction des lignes. Mesure **52 → 0**, aucune régression sur les
+dossiers de logement (électricité toujours à 30/31), quatre tests.
+
+**Versé au produit :** quatre notions de copropriété — DTG, curatifs, PPPT,
+DPE collectif — avec les deux pièges qui comptent : le **niveau 1 est le plus
+grave**, et le montant ne dit rien de la gravité.
+
+**Versé à la Dropbox** (`03_METIER_DIAGNOSTICS/`) : la fiche de lecture du DTG
+et un mémo de synthèse des pièges, document par document. L'état de référence
+de la bible a été actualisé.
+
+**Cinq points de vigilance** relevés dans le dossier lu, dont deux adresses
+différentes pour un même bien et un champ d'assurance vide sur les 34 pages —
+alors que l'attestation jointe en annexe est complète. Deuxième éditeur, même
+règle : **le pied de page ne dit rien, l'annexe fait foi.**
