@@ -329,7 +329,9 @@
       Yvelines, et le référencement s'y perdrait.
     -->
     <a class="marque" href="./" onclick={(e) => { e.preventDefault(); recommencer(); }}>
-      <img class="tuile-logo" src="./logo/prisme.svg" alt="" width="38" height="43" />
+      <span class="porte-logo" aria-hidden="true">
+        <img class="tuile-logo" src="./logo/prisme.svg" alt="" width="44" height="50" />
+      </span>
       <span class="mot">
         Verrière
         <span class="signature">La lumière sur vos diagnostics</span>
@@ -481,9 +483,28 @@
     color: var(--sur-fond);
   }
 
-  /* Le filet du brand board : discret, a la hauteur du bloc de texte. */
-  .marque::after {
-    content: none;
+  /*
+   * LA TUILE DU BRAND BOARD.
+   *
+   * Le pack montre trois usages « sur fond » : le prisme pose dans une tuile
+   * arrondie vert profond, dans une tuile ivoire, ou blanc sur un degrade. La
+   * tuile est ce qui le fait ressortir le plus -- c'est aussi la forme de
+   * l'icone d'application, celle qu'on verra sur l'ecran d'accueil d'un
+   * telephone.
+   *
+   * Elle vaut sur les deux fonds : plus sombre que le vert de l'ecran de
+   * depot, franchement contrastee sur l'ivoire du dossier. Le prisme a donc le
+   * meme support partout, et c'est ce que « systeme de marque » veut dire.
+   */
+  .porte-logo {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    background: var(--vert-profond);
+    box-shadow: var(--ombre-forte);
   }
 
   .mot {
@@ -523,17 +544,15 @@
    */
   .tuile-logo {
     flex: none;
-    width: 60px;
-    height: 68px;
+    width: 44px;
+    height: 50px;
     /*
      * Une ombre portee, et elle n'est pas cosmetique.
      *
-     * La moitie pleine du prisme est un vert tres sombre. Posee sur le vert de
-     * l'ecran d'accueil, elle a presque la meme valeur : le logo perdait sa
-     * silhouette et se diluait dans le fond. L'ombre lui rend son contour sans
-     * toucher a ses couleurs.
+     * La moitie pleine du prisme est un vert tres sombre : il lui faut un
+     * contour pour ne pas se diluer dans son support.
      */
-    filter: drop-shadow(0 4px 12px rgb(0 0 0 / 45%));
+    filter: drop-shadow(0 2px 6px rgb(0 0 0 / 35%));
   }
 
   /*
