@@ -50,8 +50,8 @@ Dropbox.
 | Volets lus page à page | 15 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 6 majeures |
-| Corrections livrées | 9 |
-| Tests de non-régression ajoutés | 30 |
+| Corrections livrées | 10 |
+| Tests de non-régression ajoutés | 32 |
 | Fausses alertes de mes propres sondes, écartées avant annonce | 6 |
 | Sondes de justesse écrites | 2 |
 | Notions métier versées au produit | 4 |
@@ -66,7 +66,7 @@ Ce que « lu » veut dire ici : le volet a été lu page à page, pas survolé.
 |---|---|---|---|
 | Électricité | 2 | **59/60** verdicts justes (contre 17/31) | catalogue démasqué, deux variantes de constat lues, anomalies compensées distinguées |
 | Gaz | 3 | **7/7** verdicts justes (contre 0/3) | rubrique E lue juste ; rubrique G et « installation non alimentée » restent à remonter |
-| DPE | 2 | 4 % de muets | cas du DPE vierge rencontré, pas encore traité |
+| DPE | 3 | **2 %** de muets (contre 4 %) | annexes rattachées : 7 volets courts sur 58, contre 58 |
 | ERP | 6 | **1/63** faux risque techno (contre 49/63) | le formulaire vierge n'est plus lu comme un constat ; inondation conservée 26 fois |
 | Plomb | 2 | **22/22** verdicts justes | le moteur est bon ; la validité du constat positif était fausse, corrigée |
 | Amiante | 2 | **19/19** verdicts justes (contre 2/19) | fausse alerte massive corrigée ; la découpe reste 15 pages trop courte |
@@ -333,3 +333,23 @@ la détection utile est intacte. Quatre tests le verrouillent.
 tableau déclare l'argile en **aléa fort**, et les conclusions rédigées du
 rapport ne citent que la sismicité. Un lecteur qui s'arrête aux conclusions ne
 saura jamais que son bien est en aléa fort. Verrière le dit.
+
+### 19 août 2026 — le DPE emportait sa fiche technique
+
+Le contrôle de pagination, appliqué au DPE : **58 volets sur 58** étaient plus
+courts que ce qu'ils annoncent, de près de sept pages. Ce qui se perdait est la
+**fiche technique du logement** — type de bien, année, surfaces, matériaux,
+systèmes.
+
+Le DPE ne répète pas son titre sur ses annexes : ses pages ne se reconnaissent
+qu'à leur pied, « Dossier : 22/IMO/0549  Page 8 / 11 », où le numéro change à
+chaque feuille. Aucun fragment fixe ne pouvait l'attraper — c'est une forme,
+pas un mot. La découpe sait désormais reconnaître une forme quand un rapport ne
+répète pas son titre.
+
+**Après : 7 volets courts sur 58**, et le DPE ne sort sans lettre que dans
+**2 %** des cas, contre 4 %. Deux tests de plus.
+
+Avec l'amiante, cela fait deux découpes corrigées par le même moyen : **le
+document se compte lui-même**. C'est le contrôle le plus rentable rencontré
+jusqu'ici, et il reste à le chercher partout où il existe.

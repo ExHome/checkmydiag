@@ -185,3 +185,40 @@ describe('le volet amiante et son titre courant', () => {
     expect(sections.find((s) => s.type === 'termites')?.plage).toEqual([3, 3]);
   });
 });
+
+/**
+ * Le DPE ne répète pas son titre sur ses annexes.
+ *
+ * La fiche technique du logement — type de bien, année, surfaces, matériaux —
+ * n'a pas d'en-tête : ses pages ne se reconnaissent qu'à leur pied,
+ * « Dossier : 22/IMO/0549  Page 8 / 11 ». Mesuré avant correction : les 58
+ * volets DPE de l'échantillon étaient tous plus courts que la pagination qu'ils
+ * annoncent, de près de sept pages. Après : sept.
+ */
+describe('le DPE et ses annexes', () => {
+  const page = (numero: number, ...lignes: string[]) => ({ numero, lignes });
+
+  it('garde la fiche technique, qui n’a pas de titre', () => {
+    const { sections } = decouper([
+      page(1, 'Diagnostic de performance énergétique (logement)', 'N°ADEME : 2233E0402728W'),
+      page(2, 'DPE Diagnostic de performance énergétique (logement) p. 2', 'Schéma des déperditions'),
+      page(3, 'DPE / ANNEXES p. 7', 'Fiche technique du logement'),
+      page(
+        4,
+        'Type de local adjacent Observé / mesuré l’extérieur',
+        'SARL DGLM EXPERTISES | Tél : 06.72.70.03.38 | Dossier : 22/IMO/0549 Page 8 / 11'
+      )
+    ]);
+    const dpe = sections.filter((s) => s.type === 'dpe');
+    expect(dpe).toHaveLength(1);
+    expect(dpe[0]?.plage).toEqual([1, 4]);
+  });
+
+  it('ne rattache pas une page qui ne porte plus rien du DPE', () => {
+    const { sections } = decouper([
+      page(1, 'Diagnostic de performance énergétique (logement)', 'N°ADEME : 2233E0402728W'),
+      page(2, 'ATTESTATION SUR L’HONNEUR réalisée pour le dossier n° 22/IMO/0549', 'Je soussigné…')
+    ]);
+    expect(sections.find((s) => s.type === 'dpe')?.plage).toEqual([1, 1]);
+  });
+});

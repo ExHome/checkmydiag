@@ -27,6 +27,20 @@ interface Marqueur {
    * zone d'argile se trouvait exactement une page après la fin de la plage.
    */
   traces?: string[];
+  /**
+   * La trace, quand elle n'est pas un fragment fixe mais une FORME.
+   *
+   * Le DPE ne répète pas son titre sur ses annexes : la fiche technique du
+   * logement n'a pas d'en-tête, et ses pages ne se reconnaissent qu'à leur
+   * pied — « Dossier : 22/IMO/0549  Page 8 / 11 ». Le numéro change à chaque
+   * page ; aucun fragment fixe ne peut l'attraper.
+   *
+   * Mesuré avant correction : les 58 volets DPE de l'échantillon étaient tous
+   * plus courts que la pagination qu'ils annoncent, de près de sept pages. Ce
+   * qui se perdait, c'est la fiche technique — c'est-à-dire le type de bien,
+   * l'année de construction, les surfaces et les matériaux.
+   */
+  traceMotif?: RegExp;
 }
 
 const MARQUEURS: Marqueur[] = [
@@ -34,7 +48,10 @@ const MARQUEURS: Marqueur[] = [
     type: 'dpe',
     // « Diagnostic de performance » suffit : sur la première page du DPE, le mot
     // « énergétique » est rejeté sur une autre ligne par la mise en page.
-    entetes: ['diagnosticdeperformance', 'auditenergetique']
+    // « DPE / ANNEXES » ouvre la fiche technique du logement, qui n'a pas
+    // d'autre titre.
+    entetes: ['diagnosticdeperformance', 'auditenergetique', 'dpeannexes'],
+    traceMotif: /Dossier\s*:[^|]{0,30}Page\s*\d+\s*\/\s*\d+/i
   },
   {
     type: 'plomb',
@@ -231,9 +248,11 @@ function typeDeLaPage(page: PageTexte): TypeDiag | null {
  * nulle part n'appartient plus au rapport.
  */
 function porteLaTrace(page: PageTexte, type: TypeDiag): boolean {
-  const colle = compact(page.lignes.join(' '));
   const marqueur = MARQUEURS.find((m) => m.type === type);
   if (!marqueur) return false;
+  // La forme du pied de page, quand le rapport ne répète pas son titre.
+  if (marqueur.traceMotif?.test(page.lignes.join(' '))) return true;
+  const colle = compact(page.lignes.join(' '));
   return (marqueur.traces ?? marqueur.entetes).some((e) => colle.includes(e));
 }
 

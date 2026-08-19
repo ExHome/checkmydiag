@@ -1373,6 +1373,46 @@ c'est le premier cas où on peut le montrer aussi nettement.
 
 ---
 
+## 33 · Le DPE aussi se fermait trop tôt — et il emportait sa fiche technique
+
+Le contrôle de pagination, appliqué au DPE : **58 volets sur 58 étaient plus
+courts que ce qu'ils annoncent**, de près de sept pages en moyenne.
+
+Ce qui se perdait n'est pas accessoire. Les pages manquantes sont la **fiche
+technique du logement** — celle qui porte le type de bien, l'année de
+construction, les surfaces, les matériaux de chaque mur, les systèmes. C'est
+exactement ce que le §« calibrer sur corpus » avait identifié comme la source
+du type, de la surface et de l'année.
+
+### Pourquoi elle échappait
+
+Le DPE **ne répète pas son titre** sur ses annexes. La page qui les ouvre porte
+« DPE / ANNEXES p. 7 », et les suivantes n'ont aucun en-tête : elles ne se
+reconnaissent qu'à leur **pied de page**, où le numéro change à chaque feuille :
+
+```
+SARL DGLM EXPERTISES | Tél : 06.72.70.03.38 | Dossier : 22/IMO/0549   Page 8 / 11
+```
+
+Aucun fragment fixe ne peut attraper ça — c'est une **forme**, pas un mot. La
+découpe ne savait reconnaître que des fragments ; elle sait désormais
+reconnaître une forme quand un rapport ne répète pas son titre.
+
+**Mesuré après : 7 volets sur 58 restent courts**, et le DPE ne sort sans
+lettre que dans **2 %** des cas, contre 4 % auparavant.
+
+### Ce que ces deux corrections ont en commun
+
+L'amiante (§27) et le DPE se fermaient tôt pour la même raison de fond : la
+découpe cherchait un titre là où le rapport n'en met pas. Et dans les deux cas,
+**c'est le document qui a dénoncé le défaut en se comptant** — « constitué de
+11 pages » pour l'un, « Page 8 / 11 » pour l'autre.
+
+Un rapport qui se compte est un rapport qui se vérifie. Il reste à chercher
+cette annonce partout où elle existe.
+
+---
+
 ## 10 · À vérifier lors des prochaines lectures
 
 - [x] ~~Le tableau « E. — Anomalies identifiées » du gaz est la conclusion
