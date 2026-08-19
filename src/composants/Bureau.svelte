@@ -320,7 +320,11 @@
           onclick={(e) => d && ouvrir(e, tuile.type)}
         >
           <span class="icone halo" style="background: {t.degrade}">
-            <span class="signe" aria-hidden="true">{t.signe}</span>
+            {#if t.picto}
+              <img class="picto" src="./pictos/{t.picto}.svg" alt="" aria-hidden="true" />
+            {:else}
+              <span class="signe" aria-hidden="true">{t.signe}</span>
+            {/if}
             {#if p}
               <span class="pastille {p.classe}" aria-hidden="true">{p.signe}</span>
             {:else if tuile.manque}
@@ -777,6 +781,22 @@
     border-radius: inherit;
     background: linear-gradient(135deg, rgb(255 255 255 / 20%) 0%, transparent 60%);
     pointer-events: none;
+  }
+
+  /*
+   * Le pictogramme dessiné, à la place de l'émoji.
+   *
+   * Il occupe 54 % de l'icône : c'est la proportion du visuel de référence, et
+   * elle laisse au dégradé la place de se voir. L'ombre portée très douce le
+   * décolle du fond coloré, comme sur la planche du pack — sans elle, un trait
+   * crème sur un jaune vif paraît collé.
+   */
+  .picto {
+    position: relative;
+    z-index: 1;
+    width: 54%;
+    height: 54%;
+    filter: drop-shadow(0 1px 2px rgb(4 22 18 / 28%));
   }
 
   /*
