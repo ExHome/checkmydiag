@@ -3543,3 +3543,77 @@ en dessous. Chercher la conclusion suffit à ne pas mentir ; il faut lire la
 rubrique entière pour ne pas rassurer à tort.
 
 ---
+
+## 73 · Le dossier qui donne son propre bornage — et qu'on lisait à moitié
+
+*Suite de l'implémentation du 20/08/2026.*
+
+Un éditeur du corpus fait ce qu'aucun autre ne fait : il porte **deux compteurs
+en pied de chaque feuille**, celui du volet et celui du dossier.
+
+```
+DIAGNOSTIC DPE : 2 sur 11        ← position dans le VOLET
+DDT : 11 sur 33                  ← position dans le DOSSIER
+```
+
+C'est le bornage exact que la découpe passe son temps à deviner ailleurs. Il
+était déjà lu — et il l'était de travers.
+
+### Ce que la lecture du vrai dossier a montré
+
+Un DDT complet de trente-trois pages porte **six libellés**, et quatre d'entre
+eux ne ressemblent pas à ce que la lecture attendait :
+
+```
+DIAGNOSTIC TERMITES 1 sur 4      ← pas de deux-points
+DIAGNOSTIC PLOMB 1 sur 8         ← pas de deux-points
+DIAGNOSTIC DPE : 2 sur 11
+ATTESTATION LOI CARREZ : 1 sur 2
+AMIANTE (DTA) : 3 sur 10         ← pas de mot d'ouverture, et des parenthèses
+ERP : 12 sur 12                  ← trois lettres, rien d'autre
+```
+
+Le motif en place exigeait **un deux-points** et **un mot d'ouverture** —
+DIAGNOSTIC, ATTESTATION, RAPPORT, ÉTAT, CONSTAT. Il ne laissait passer que le
+DPE et l'attestation Carrez.
+
+**Quatre volets sur six restaient invisibles dans le document qui les borne le
+mieux du corpus.**
+
+Et il y avait un second défaut, plus discret : la déclaration n'était cherchée
+que dans **les douze premières lignes** de la feuille. La double pagination est
+en **pied de page**, collée à la ligne de contact du cabinet. Sur une page
+dense, elle était écrite noir sur blanc et hors de portée.
+
+### Le commentaire disait « en tête de chaque feuille »
+
+Il disait faux. Le code avait été écrit sur une idée du document, pas sur le
+document — et le commentaire répétait l'idée avec assez d'aplomb pour qu'on ne
+la vérifie pas.
+
+C'est le même défaut que celui du CREP le matin même : chercher **la même ligne**
+pour la situation et sa réponse, alors qu'elles ne s'y trouvent jamais.
+
+**Écrire de mémoire produit un code qui a l'air juste et un commentaire qui le
+confirme.** Seul le fichier tranche.
+
+### La correction
+
+On lit la **forme**, plus le vocabulaire : un libellé en capitales suivi de
+« n sur m », **en fin de ligne**, en haut **ou en bas** de la feuille.
+
+Mesuré sur 127 documents avec le motif exact : **sept libellés** ressortent, tous
+de cet éditeur, **aucun bruit**. Six ouvrent un volet ; le septième est `DDT`,
+le compteur du dossier, écarté — le prendre pour une déclaration rouvrirait une
+section à chaque page.
+
+### La leçon
+
+**Un motif qui décrit un vocabulaire ne survit pas au deuxième document.** Celui
+qui décrit une forme — capitales, « n sur m », fin de ligne — a tenu sur six
+libellés qui n'ont pas deux mots en commun.
+
+Et l'ancrage vaut mieux que l'énumération : `$` en fin de ligne a fait plus pour
+la justesse que la liste des cinq mots d'ouverture, qui en manquait deux.
+
+---

@@ -6,7 +6,12 @@ intégrale de **56 rapports, 2 548 pages** — ERP 45 volets, DPE 30, surface 27
 
 **Ce document n'est pas une règle d'extraction.** La structure ne se valide qu'au
 centième rapport ; ce qui suit est la carte de ce qui a été vu, avec pour chaque
-encart s'il s'est montré **constant** ou **variable**. Rien n'en est implémenté.
+encart s'il s'est montré **constant** ou **variable**.
+
+Les cent lectures faites, l'implémentation a commencé : les encarts marqués
+**✅ *implémenté*** sont lus par Verrière, chacun avec sa mesure sur le corpus et
+un test qui vérifie qu'on ne trouve rien hors de la rubrique. Les autres restent
+des observations.
 
 ---
 
@@ -772,7 +777,7 @@ volet.
 *Format des plus anciens dossiers DGLM, produit par les cabinets du réseau
 BC2E. Trouvé dans les dossiers clients, pas dans le corpus hors Liciel.*
 
-### La double pagination — le bornage offert par le document
+### La double pagination — le bornage offert par le document ✅ *implémenté*
 
 Chaque pied de page porte **deux compteurs à la fois** :
 
@@ -789,7 +794,32 @@ découpe cherche à deviner ailleurs** — et de quoi repérer une page manquant
 (« le présent rapport est constitué de 11 pages »), et à AnalysImmo, qui écrit
 `ELEC 2 / 11` — la pagination du volet seul.
 
-### L'avertissement sur l'incomplétude du dossier
+**Les six libellés du dossier réel**, et ils ne se ressemblent pas :
+
+```
+DIAGNOSTIC TERMITES 1 sur 4      ← pas de deux-points
+DIAGNOSTIC PLOMB 1 sur 8         ← pas de deux-points
+DIAGNOSTIC DPE : 2 sur 11
+ATTESTATION LOI CARREZ : 1 sur 2
+AMIANTE (DTA) : 3 sur 10         ← pas de mot d'ouverture, et des parenthèses
+ERP : 12 sur 12                  ← trois lettres, rien d'autre
+```
+
+**Ce qui a failli être perdu** : la première lecture exigeait un deux-points et
+un mot d'ouverture — DIAGNOSTIC, ATTESTATION, RAPPORT. Elle ne laissait passer
+que le DPE et l'attestation Carrez : **quatre volets sur six restaient invisibles
+dans le document qui les borne le mieux**. Et elle ne regardait que les douze
+premières lignes de la feuille, alors que la double pagination est en **pied de
+page**, collée à la ligne de contact du cabinet.
+
+On lit donc la **forme** et non le vocabulaire : un libellé en capitales suivi de
+« n sur m », **en fin de ligne**, en haut ou en bas de la feuille. Mesuré sur
+127 documents : sept libellés ressortent, tous de cet éditeur, **aucun bruit**.
+
+**`DDT` n'est pas un volet** : c'est le compteur du dossier. Le prendre pour une
+déclaration rouvrirait une section à chaque page.
+
+### L'avertissement sur l'incomplétude du dossier ✅ *implémenté*
 
 En page 1, et nulle part ailleurs dans le corpus :
 
@@ -804,6 +834,14 @@ Le diagnostiqueur déclare d'emblée que **le dossier peut être incomplet**, et
 que la charge de le compléter revient au vendeur. C'est la base explicite du
 contrôle de complétude : ce que Verrière signale comme manquant, le rapport
 lui-même prévient qu'il peut l'être.
+
+**L'endroit** : la page de garde, et elle seule. Bornée aux soixante premières
+lignes, pour ne pas confondre cette clause avec les réserves de responsabilité
+qui closent chaque volet, et qui disent tout autre chose. Mesuré : 2 documents
+sur 127 la portent, tous deux en page de garde, aucun manqué ailleurs.
+
+**Et elle ne met personne en cause** : la clause est exacte et régulière. Un test
+vérifie que Verrière la remonte sans parler de faute ni de manquement.
 
 ### Autres traits
 

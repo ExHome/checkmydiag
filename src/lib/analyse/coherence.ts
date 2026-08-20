@@ -416,6 +416,56 @@ function attestationAssurance(
   ];
 }
 
+/**
+ * Le dossier qui prévient lui-même qu'il peut être incomplet.
+ *
+ * En page de garde, avant même le nom du propriétaire, un éditeur écrit :
+ *
+ *     Seuls les rapports de diagnostics demandés par le vendeur ou un
+ *     mandataire figurent dans le présent dossier. L'existence et le contenu de
+ *     diagnostics réalisés antérieurement ou par un autre opérateur de
+ *     diagnostic ne sont pas connus. […] Il appartient au vendeur de compléter
+ *     le présent dossier autant que de besoin.
+ *
+ * Ce n'est pas une clause de style, et ce n'est pas non plus un reproche à
+ * faire au diagnostiqueur : c'est exact, et c'est même la seule mention du
+ * corpus qui dise au lecteur ce qu'il tient entre les mains. Un dossier de
+ * diagnostic technique n'est pas un dossier complet par nature — c'est la liste
+ * de ce qu'on a commandé.
+ *
+ * Verrière contrôle déjà la complétude. Cette phrase lui donne l'appui du
+ * rapport lui-même : ce que le produit signale comme manquant, le document
+ * prévient qu'il peut l'être.
+ *
+ * ## L'endroit
+ *
+ * La page de garde, et elle seule. On borne à la première page pour ne pas
+ * confondre cette clause avec les réserves de responsabilité qui closent chaque
+ * volet, et qui disent tout autre chose.
+ */
+export function dossierDeclareIncomplet(lignes: string[]): PointDeControle[] {
+  /* La page de garde tient en une quarantaine de lignes chez cet éditeur ; on
+     laisse de la marge sans aller jusqu'au premier volet. */
+  const garde = lignes.slice(0, 60).join(' ').replace(/\s+/g, ' ');
+
+  const annonce =
+    /Seuls les rapports de diagnostics? demand[ée]s par le vendeur|Il appartient au vendeur de compl[ée]ter le pr[ée]sent dossier/i.test(
+      garde
+    );
+  if (!annonce) return [];
+
+  return [
+    {
+      titre: 'Ce dossier ne contient que les diagnostics qui ont été commandés',
+      explication:
+        'Le dossier le dit lui-même en première page : seuls y figurent les rapports demandés par le vendeur ou son mandataire, et le diagnostiqueur ne sait pas ce qui a pu être fait avant lui ou par quelqu’un d’autre. Autrement dit, ce n’est pas parce qu’un diagnostic n’est pas là qu’il n’était pas dû — c’est peut-être simplement qu’il n’a pas été commandé.',
+      quoiFaire:
+        'Comparez la liste des rapports présents avec ceux que votre bien exige, et réclamez au vendeur ceux qui manquent : le dossier précise que c’est à lui de le compléter.',
+      genre: 'attention'
+    }
+  ];
+}
+
 export function controler(
   bien: Bien,
   diagnostics: Diagnostic[],
@@ -433,6 +483,7 @@ export function controler(
     ...surfaces(bien, diagnostics),
     ...datesEparpillees(diagnostics),
     ...illisibles(diagnostics),
-    ...attestationAssurance(lignes, diagnostics.find((d) => d.date)?.date)
+    ...attestationAssurance(lignes, diagnostics.find((d) => d.date)?.date),
+    ...dossierDeclareIncomplet(lignes)
   ];
 }

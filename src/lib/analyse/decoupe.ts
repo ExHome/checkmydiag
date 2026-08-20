@@ -264,10 +264,11 @@ function estSommaire(page: PageTexte): boolean {
  * Certains rapports DÉCLARENT leur volet, page par page.
  *
  * Un générateur rencontré dans le corpus — celui d'un réseau de
- * diagnostiqueurs — écrit en tête de chaque feuille :
+ * diagnostiqueurs — porte **deux compteurs à la fois** en pied de chaque
+ * feuille :
  *
- *     DIAGNOSTIC DPE : 2 sur 11
- *     DDT : 11 sur 33
+ *     DIAGNOSTIC DPE : 2 sur 11        ← position dans le VOLET
+ *     DDT : 11 sur 33                  ← position dans le DOSSIER
  *
  * Il donne le type du diagnostic, la position de la page dans son volet, et la
  * position de la page dans le dossier. C'est le document le plus explicite du
@@ -276,8 +277,38 @@ function estSommaire(page: PageTexte): boolean {
  * de onze pages ramené à une seule.
  *
  * Quand un rapport se déclare ainsi, sa déclaration l'emporte sur tout le reste.
+ *
+ * ## Ce que le dossier réel dit, et que la première version supposait
+ *
+ * Un DDT complet de trente-trois pages a montré les six libellés, et quatre
+ * d'entre eux ne ressemblaient pas à ce qu'on attendait :
+ *
+ *     DIAGNOSTIC TERMITES 1 sur 4      ← pas de deux-points
+ *     DIAGNOSTIC PLOMB 1 sur 8         ← pas de deux-points
+ *     AMIANTE (DTA) : 3 sur 10         ← pas de mot d'ouverture, et des parenthèses
+ *     ERP : 12 sur 12                  ← trois lettres, rien d'autre
+ *
+ * Exiger le deux-points et un mot d'ouverture — « DIAGNOSTIC », « ATTESTATION »,
+ * « RAPPORT » — ne laissait passer que le DPE et l'attestation Carrez. Quatre
+ * volets sur six restaient invisibles à la découpe, dans le document qui les
+ * borne le mieux.
+ *
+ * On lit donc la forme, et non le vocabulaire : un libellé en capitales, suivi
+ * de « n sur m », **en fin de ligne**. Mesuré sur 127 documents : sept libellés
+ * ressortent, tous de ce générateur, et aucun bruit. L'ancrage en fin de ligne
+ * est ce qui tient — le pied de page est collé à la ligne de contact du
+ * cabinet, et c'est toujours lui qui la termine.
  */
-const DECLARATION = /\b(?:DIAGNOSTIC|ATTESTATION|RAPPORT|[EÉ]TAT|CONSTAT)\s+([A-ZÉÈÊÀ'’\s-]{2,40}?)\s*:\s*\d+\s+sur\s+\d+/;
+const DECLARATION =
+  /([A-ZÉÈÊÀÂÎÔÛÇ][A-ZÉÈÊÀÂÎÔÛÇ'’().\s-]{1,44}?)\s*:?\s*\d{1,3}\s+sur\s+\d{1,3}\s*$/;
+
+/**
+ * Le compteur du DOSSIER, qui n'est pas un volet.
+ *
+ * « DDT : 11 sur 33 » dit où en est la feuille dans le dossier entier. Le
+ * prendre pour un volet reviendrait à rouvrir une section à chaque page.
+ */
+const COMPTEUR_DU_DOSSIER = /^(?:DDT|DOSSIER(?:\s+DE\s+DIAGNOSTICS?\s+TECHNIQUES?)?)$/i;
 
 const LIBELLES_DECLARES: { motif: RegExp; type: TypeDiag }[] = [
   { motif: /DPE|PERFORMANCE\s+[EÉ]NERG/i, type: 'dpe' },
@@ -291,12 +322,30 @@ const LIBELLES_DECLARES: { motif: RegExp; type: TypeDiag }[] = [
   { motif: /ASSAINISSEMENT/i, type: 'assainissement' }
 ];
 
-/** Le volet qu'une page revendique elle-même, quand elle le fait. */
+/**
+ * Le volet qu'une page revendique elle-même, quand elle le fait.
+ *
+ * On regarde le haut ET le bas de la feuille. La première version ne lisait que
+ * les douze premières lignes, alors que ce générateur imprime sa double
+ * pagination en **pied de page**, collée à la ligne de contact du cabinet :
+ *
+ *     Tel : 06… - Mail : …@… - Web : … DIAGNOSTIC PLOMB 1 sur 8
+ *
+ * Sur une page dense, elle tombe bien au-delà de la douzième ligne, et la
+ * déclaration passait inaperçue là même où elle était écrite.
+ */
 function typeDeclare(page: PageTexte): TypeDiag | null {
-  for (const ligne of page.lignes.slice(0, 12)) {
-    const m = DECLARATION.exec(ligne);
-    if (!m?.[1]) continue;
-    const trouve = LIBELLES_DECLARES.find((x) => x.motif.test(m[1] ?? ''));
+  const bords = [...page.lignes.slice(0, 12), ...page.lignes.slice(-6)];
+
+  for (const ligne of bords) {
+    const m = DECLARATION.exec(ligne.trimEnd());
+    const libelle = m?.[1]?.trim();
+    if (!libelle) continue;
+    /* Le compteur du dossier n'annonce aucun volet : on l'écarte avant de
+       chercher un type, sinon « DDT » irait chercher « DPE » nulle part et
+       ferait perdre du temps à chaque page. */
+    if (COMPTEUR_DU_DOSSIER.test(libelle)) continue;
+    const trouve = LIBELLES_DECLARES.find((x) => x.motif.test(libelle));
     if (trouve) return trouve.type;
   }
   return null;
