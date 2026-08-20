@@ -89,13 +89,17 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
   termites, en portant encore la définition que le moteur venait d'abandonner.
   Quand une correction change une définition, chercher qui d'autre porte
   l'ancienne.
+- **La zone d'arrêté préfectoral est dite** (§61) : 32 volets sur 39 portent le
+  champ, **17 en zone délimitée** et 15 « Néant ». Le produit ne lisait que la
+  réponse négative, et seulement quand elle tenait seule sur sa ligne. 32/32,
+  zéro écart. La fiche dit maintenant de quel côté tombe CE bien, et rappelle la
+  déclaration en mairie quand des termites sont constatés.
 
-> **Prochain chantier** : la **zone d'arrêté préfectoral** et le **risque
-> mérule**. Le volet termites porte « Situation du bien en regard d'un arrêté
-> préfectoral pris en application de l'article L 131-5 du CCH », et le même
-> arrêté délimite les zones de mérule (L. 131-3). Le produit ne dit ni l'un ni
-> l'autre. À mesurer d'abord : combien de volets portent ce champ, et combien
-> le renseignent autrement que par « Néant ».
+> **Prochain chantier** : la **mérule**. Le volet termites la cite — le même
+> arrêté préfectoral délimite les zones de risque mérule — et plusieurs rapports
+> ouvrent un volet « Mérule et champignons du bois » avec sa propre conclusion,
+> que le produit compte sans la lire. À mesurer : combien de volets portent ce
+> sous-rapport, et ce que dit sa conclusion.
 
 ## Compteurs
 
@@ -105,13 +109,13 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 | Volets lus page à page | 29 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 6 majeures |
-| Corrections livrées | 36 |
-| Tests de non-régression ajoutés | 95 |
+| Corrections livrées | 37 |
+| Tests de non-régression ajoutés | 100 |
 | Fausses alertes de mes propres sondes, écartées avant annonce | 7 |
 | Sondes de justesse écrites | 3 |
 | Notions métier versées au produit | 6 |
 | Fiches versées à la Dropbox | 2 |
-| Points ouverts au carnet | 15 |
+| Points ouverts au carnet | 16 |
 
 ## Couverture par diagnostic
 
@@ -125,7 +129,7 @@ Ce que « lu » veut dire ici : le volet a été lu page à page, pas survolé.
 | ERP | 9 | **1/63** faux risque techno (contre 49/63) ; argile rattrapée **55/55** | le formulaire vierge n'est plus lu comme un constat |
 | Plomb | 2 | **22/22** verdicts justes | le moteur est bon ; la validité du constat positif était fausse, corrigée |
 | Amiante | 2 | **19/19** verdicts justes (contre 2/19) | fausse alerte massive corrigée ; la découpe reste 15 pages trop courte |
-| Termites | 4 | **38/38** verdicts justes, **40/40** sur les autres agents | les deux constats du tableau sont distingués et dits ; zone d'arrêté et mérule restent à restituer |
+| Termites | 4 | **38/38** verdicts justes, **40/40** autres agents, **32/32** zone d'arrêté | les deux constats sont distingués ; la zone d'arrêté et la déclaration en mairie sont dites ; la mérule reste à restituer |
 | Surface | 2 | — | Boutin et Carrez distingués |
 | **DTG** | **1** | — | structure, curatifs, rubriques vides et cinq points de vigilance ; notions versées au produit |
 | *(découpe)* | 20 volets amiante | **1/20** trop courts, contre 20/20 | le titre courant manquait aux marqueurs |

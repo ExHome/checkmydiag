@@ -156,6 +156,12 @@ export function analyserTermites(lignes: string[], plage: [number, number]): Dia
     faits.push({ libelle: 'Zones avec indices', valeur: String(infestees.length) });
 
   /*
+   * Le bien est-il en zone delimitee ? On le retient : la reponse change ce
+   * qu'il y a a dire au lecteur, plus bas.
+   */
+  let enZone: boolean | null = null;
+
+  /*
    * L'arrete prefectoral : sa REFERENCE, ou rien.
    *
    * Le rapport pose la question sur une ligne et repond sur la suivante :
@@ -175,14 +181,41 @@ export function analyserTermites(lignes: string[], plage: [number, number]): Dia
   if (numeroArrete?.[1]) {
     faits.push({ libelle: 'Arrêté préfectoral', valeur: numeroArrete[1].trim() });
   } else {
-    const i = lignes.findIndex((l) => /Situation du bien en regard d['’]un arr[eê]t[ée] pr[ée]fectoral/i.test(l));
-    const reponse = i === -1 ? null : (lignes[i + 1] ?? '').trim();
-    if (reponse && /^n[ée]ant$/i.test(reponse))
+    /*
+     * Sans numero, le rapport repond quand meme — et il repond deux choses.
+     *
+     * La reponse ne tient pas toujours sur la ligne suivante, ni toute seule :
+     * elle suit parfois la question sur la meme ligne, apres une trainee de
+     * points de conduite, et le generateur coupe les mots au hasard
+     * (« N eant », « situ e »). Un motif ancre sur une ligne entiere ne voyait
+     * qu'un cas sur trois.
+     *
+     * Surtout, il ne voyait pas le cas MAJORITAIRE. Sur quarante volets, vingt-
+     * huit portent ce champ : dix-neuf disent que le bien EST en zone d'arrete,
+     * huit disent « Neant ». Le produit ne connaissait que les huit.
+     */
+    const i = lignes.findIndex((l) =>
+      /Situation du bien en regard d['’]un arr[eê]t[ée] pr[ée]fectoral/i.test(l)
+    );
+    const reponse =
+      i === -1 ? '' : `${lignes[i]} ${lignes[i + 1] ?? ''}`.split(/CCH\s*:/i).slice(1).join(' ');
+    const propre = reponse.replace(/\.{2,}/g, ' ').replace(/\s+/g, ' ').trim();
+
+    if (/zone soumise [àa] un arr[eê]t[ée]|est situ\s*[ée]\s+dans une zone/i.test(propre)) {
+      enZone = true;
+      faits.push({
+        libelle: 'Arrêté préfectoral',
+        valeur: 'le bien est en zone délimitée',
+        precision: 'le préfet a classé ce secteur en zone de risque termites'
+      });
+    } else if (/N ?[ée]ant/i.test(propre)) {
+      enZone = false;
       faits.push({
         libelle: 'Arrêté préfectoral',
         valeur: 'aucun',
         precision: 'la commune n’est pas en zone délimitée par arrêté'
       });
+    }
   }
   const niveau = trouver(lignes, /Niveau d'infestation\s*(\w+)/i);
   if (niveau?.[1]) faits.push({ libelle: 'Niveau d’infestation de la commune', valeur: niveau[1] });
@@ -259,7 +292,24 @@ export function analyserTermites(lignes: string[], plage: [number, number]): Dia
       // « sans démontage » est au lexique : la réserve tient en deux mots.
       'Le diagnostiqueur cherche des traces : galeries dans le bois, cordons de terre le long des murs, bois qui sonne creux. Il regarde ce qui est visible, sans démontage.',
       'Il ne peut donc pas garantir qu’il n’y a aucun termite. Un mur fermé, une cave inaccessible, une charpente hors d’atteinte : tout cela reste invisible.',
-      'Ce diagnostic n’est demandé que dans les communes où le préfet a signalé la présence de termites. Il ne vaut que six mois.',
+      /*
+     * On sait desormais si CE bien est concerne : le rapport le dit, et il le
+     * disait deja dans trente-deux volets sur trente-neuf. La phrase generale
+     * — « ce diagnostic n'est demande que dans certaines communes » — laissait
+     * le lecteur deviner de quel cote il tombait.
+     */
+    enZone === true
+      ? 'Votre commune est classée en zone de risque termites par arrêté du préfet : c’est ce qui explique la présence de ce diagnostic au dossier. Il ne vaut que six mois.'
+      : enZone === false
+        ? 'Le rapport indique que votre commune n’est pas classée en zone de risque termites par arrêté du préfet. Le diagnostic a tout de même été fait. Il ne vaut que six mois.'
+        : 'Ce diagnostic n’est demandé que dans les communes où le préfet a signalé la présence de termites. Il ne vaut que six mois.',
+    ...(infeste
+      ? [
+          // Le rapport le rappelle lui-meme, en note de bas de page, et c'est
+          // une obligation que les proprietaires ignorent.
+          'Le rapport rappelle qu’en cas de présence de termites, l’infestation doit être déclarée en mairie.'
+        ]
+      : []),
       ...(volets.length
         ? [
             /*

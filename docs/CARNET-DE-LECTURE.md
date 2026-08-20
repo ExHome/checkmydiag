@@ -2708,3 +2708,66 @@ cran : quand une correction change une définition, **chercher qui d'autre porte
 l'ancienne**.
 
 ---
+
+## 61 · « Votre commune est-elle concernée ? » — la réponse était dans le rapport
+
+Le §28 l'avait signalé sans le traiter : le volet termites porte, en tête, un
+champ qui dit si le bien est en zone d'arrêté préfectoral.
+
+```
+Situation du bien en regard d'un arrêté préfectoral pris en application
+de l'article L 131 - 5 du CCH :
+............................ ...... Le bien est situé dans une zone
+                                    soumise à un arrêté préfectoral.
+```
+
+**Mesuré sur 39 volets : 32 portent ce champ. Dix-sept disent que le bien EST en
+zone délimitée, quinze disent « Néant ».** Le produit n'en restituait presque
+rien — son motif exigeait « Néant » seul sur sa ligne, et **ne connaissait pas
+du tout la réponse positive**, qui est pourtant la majoritaire.
+
+Il butait sur trois formes du même champ :
+
+| Forme rencontrée | Ce que voyait l'ancien motif |
+|---|---|
+| `Néant` seul sur la ligne suivante | lu |
+| `.......... ...... Néant` (points de conduite) | rien |
+| `N éant` (mot coupé par le générateur) | rien |
+| `Le bien est situé dans une zone soumise…` | rien |
+
+**Corrigé : 32 volets sur 32, zéro écart avec le rapport.**
+
+### Ce que cela change pour le lecteur
+
+La fiche disait une généralité :
+
+> Ce diagnostic n'est demandé que dans les communes où le préfet a signalé la
+> présence de termites.
+
+Vraie, et inutile : elle laissait chacun deviner de quel côté il tombait. Elle
+dit maintenant, quand le rapport le dit :
+
+> Votre commune est classée en zone de risque termites par arrêté du préfet :
+> c'est ce qui explique la présence de ce diagnostic au dossier.
+
+### Et l'obligation que les propriétaires ignorent
+
+En cas de présence de termites, l'infestation **doit être déclarée en mairie**.
+Ce n'est pas une déduction : le rapport l'écrit, en note de bas de page.
+
+> **NOTE 2** : Dans le cas de la présence de termites, il est rappelé
+> l'obligation de déclaration en mairie de l'infestation prévue aux articles
+> L 133-4 et R 133-3 du code de la construction et de l'habitation.
+
+La phrase n'apparaît que si le rapport constate des termites — sinon elle
+alarmerait sans objet.
+
+**Point ouvert, à vérifier au texte** : les millésimes ne citent pas les mêmes
+articles. Celui-ci dit **L 133-4 et R 133-3** ; un autre volet lu citait
+**L 126-4 et L 126-5**. Le CCH a été recodifié, et l'un des deux jeux est
+probablement périmé — mais tant que Légifrance n'a pas répondu, le produit se
+contente de dire *que* l'obligation existe, sans citer d'article. C'est la règle
+de la hiérarchie des sources : le rapport dit le fait, le texte officiel seul
+tranche la référence.
+
+---

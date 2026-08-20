@@ -332,3 +332,59 @@ describe('les termites et les « autres agents »', () => {
     expect(d.faits.some((f) => /autres agents/i.test(f.libelle))).toBe(false);
   });
 });
+
+/**
+ * Le champ « Situation du bien en regard d'un arrêté préfectoral ».
+ *
+ * Trois formes relevées sur le corpus, reproduites telles quelles. La réponse
+ * suit tantôt la question sur la même ligne, après une traînée de points de
+ * conduite, tantôt sur la ligne d'après ; et le générateur coupe les mots au
+ * hasard — « N éant », « situ é ».
+ *
+ * Sur trente-neuf volets, trente-deux portent ce champ : dix-sept disent que le
+ * bien EST en zone délimitée, quinze disent « Néant ». Le produit ne lisait que
+ * les seconds, et seulement quand la réponse tenait seule sur sa ligne.
+ */
+describe('la zone d’arrêté préfectoral', () => {
+  const AVEC = (reponse: string[]) => [
+    'A. - Désignation du ou des bâtiments',
+    'Situation du bien en regard d’un arrêté préfectoral pris en application de l’article L 131 - 5 du CCH :',
+    ...reponse,
+    'B. - Désignation du client',
+    'Plateau Sol - Béton Absence d’indices d’infestation de termites'
+  ];
+  const arrete = (lignes: string[]) =>
+    analyserTermites(lignes, [1, 9]).faits.find((f) => /Arrêté préfectoral/i.test(f.libelle));
+
+  it('lit la zone quand la réponse est sur la ligne suivante', () => {
+    expect(arrete(AVEC(['Le bien est situé dans une zone soumise à un arrêté préfectoral.']))?.valeur).toBe(
+      'le bien est en zone délimitée'
+    );
+  });
+
+  it('lit la zone malgré les points de conduite', () => {
+    expect(
+      arrete(AVEC(['................................ ...... Le bien est situé dans une zone soumise à un arrêté préfectoral.']))
+        ?.valeur
+    ).toBe('le bien est en zone délimitée');
+  });
+
+  it('lit « Néant » même coupé en deux par le générateur', () => {
+    expect(arrete(AVEC(['................................ ...... N éant']))?.valeur).toBe('aucun');
+  });
+
+  it('dit au lecteur de quel côté il tombe', () => {
+    const enZone = analyserTermites(
+      AVEC(['Le bien est situé dans une zone soumise à un arrêté préfectoral.']),
+      [1, 9]
+    );
+    expect(enZone.explication.join(' ')).toMatch(/classée en zone de risque termites/);
+
+    const hors = analyserTermites(AVEC(['Néant']), [1, 9]);
+    expect(hors.explication.join(' ')).toMatch(/n’est pas classée en zone/);
+  });
+
+  it('ne dit rien quand le rapport ne porte pas le champ', () => {
+    expect(arrete(['Plateau Sol - Béton Absence d’indices d’infestation de termites'])).toBeUndefined();
+  });
+});
