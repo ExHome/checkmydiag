@@ -560,8 +560,44 @@
    * conformes. Dessiner six modules dont quatre verts affirmerait un contrôle
    * que personne n'a lu.
    */
+  /**
+   * ─────────────────────────────────────────────────────────────────────────
+   * ON FABRIQUAIT UNE MAUVAISE NOUVELLE SUR PRESQUE LA MOITIÉ DES DOSSIERS.
+   * ─────────────────────────────────────────────────────────────────────────
+   *
+   * `schema.groupes` n'est pas un compte d'anomalies : c'est un compte
+   * d'OCCURRENCES D'UN MOT dans le volet électricité. Or les six domaines de
+   * l'arrêté du 28 septembre 2017 — coupure d'urgence, différentiel, mise à la
+   * terre, protection des circuits, salle d'eau, matériel vétuste — sont
+   * imprimés dans TOUS les rapports, y compris ceux qui ne relèvent rien.
+   *
+   * MESURE SUR LE CORPUS, 60 dossiers échantillonnés :
+   *
+   *   33 volets électricité
+   *   15 SANS aucune anomalie — et les 15 affichaient six groupes d'anomalies
+   *   33 sur 33 avec un écart entre le total annoncé et la somme des groupes
+   *
+   * Le lecteur d'un logement sain voyait donc six manettes orange, chacune
+   * légendée « 3 anomalies », sous la phrase « le rapport ne relève aucune
+   * anomalie ». Le glossaire enfonçait le clou : « Votre rapport relève une
+   * anomalie sur ce point ».
+   *
+   * C'est l'inverse exact de la règle : on ne transforme jamais une information
+   * — et transformer une bonne nouvelle en mauvaise est le pire sens.
+   *
+   * GARDE D'AFFICHAGE, pas correctif de fond. La vraie réparation est dans
+   * `analyse/securite.ts`, qui doit cesser de compter des mots ; elle relève
+   * d'une autre session. Ici on refuse simplement de dessiner des anomalies
+   * quand le rapport n'en annonce aucune : mieux vaut un coffret muet qu'un
+   * coffret qui ment.
+   */
   function pointsDe(d: Diagnostic) {
     if (d.schema?.genre !== 'anomalies') return null;
+
+    const aDesAnomalies =
+      (d.schema.total ?? 0) > 0 || (d.releves ?? []).some((r) => r.genre === 'anomalie');
+    if (!aDesAnomalies) return null;
+
     return d.schema.groupes.map((g) => ({
       nom: g.nom,
       etat: 'anomalie' as const,

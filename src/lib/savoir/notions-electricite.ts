@@ -122,12 +122,33 @@ export const NOTIONS_ELECTRICITE: Notion[] = [
 
       // On ne conclut pas sur la terre à partir d'un verdict global : on renvoie
       // le lecteur à la ligne du rapport plutôt que d'affirmer à sa place.
-      if (elec.schema?.genre === 'anomalies') {
-        const groupe = elec.schema.groupes.find((g) => /terre|liaison/i.test(g.nom));
-        if (groupe)
-          return { etat: 'dit', phrase: `Votre rapport relève une anomalie sur ce point : ${groupe.nom}.` };
+      /*
+       * LES GROUPES NE SONT PAS DES ANOMALIES.
+       *
+       * `schema.groupes` compte les OCCURRENCES DU MOT dans le volet, et les
+       * six domaines de l'arrêté sont imprimés dans tous les rapports. Mesure
+       * sur 60 dossiers du corpus : 15 volets sur 33 ne relèvent AUCUNE
+       * anomalie, et les 15 portaient malgré tout leurs six groupes.
+       *
+       * Cette phrase annonçait donc « votre rapport relève une anomalie sur ce
+       * point » à des lecteurs dont le rapport ne relève rien. On s'appuie
+       * désormais sur les relevés, qui sont les vraies lignes d'anomalie.
+       */
+      const anomalies = (elec.releves ?? []).filter((r) => r.genre === 'anomalie');
+      const surLaTerre = anomalies.filter((r) =>
+        /terre|liaison[s]? [ée]quipotentielle/i.test(r.libelle)
+      );
+
+      if (surLaTerre.length)
+        return {
+          etat: 'dit',
+          phrase: `Votre rapport relève ${surLaTerre.length > 1 ? `${surLaTerre.length} anomalies` : 'une anomalie'} sur la mise à la terre.`
+        };
+
+      /* Aucune anomalie de terre relevée. Ce n'est « aucune anomalie » que si le
+         rapport a bien listé ses anomalies : sinon on ne sait pas, et on le dit. */
+      if (anomalies.length || elec.gravite === 'bon')
         return { etat: 'dit', phrase: 'Votre rapport ne classe aucune anomalie sur la mise à la terre.' };
-      }
       return {
         etat: 'muet',
         phrase: 'Le rapport électrique est là, mais le détail par point de contrôle n’a pas pu être lu.'
