@@ -12,8 +12,9 @@
    * dans le dossier ne s'affiche pas ; un chiffre que le rapport ne donne pas ne
    * s'invente pas.
    */
-  import type { Analyse, Diagnostic, TypeDiag } from '../lib/modele';
+  import type { Analyse, Diagnostic, TypeDiag, PointDeControle } from '../lib/modele';
   import { libelleCourt } from '../lib/libelle';
+  import ModuleAbsent from './ModuleAbsent.svelte';
   import { compterLeDossier, origineDe, type Origine } from '../lib/bureau';
   import { APPS } from '../lib/apps';
   import Dicodiag from './Dicodiag.svelte';
@@ -133,6 +134,20 @@
 
     propagation = { carre, couleur: APPS[type].degrade, type };
   }
+
+  /**
+   * L'EMPTY STATE D'UN DIAGNOSTIC ABSENT.
+   *
+   * La tuile éteinte était `disabled` : on la voyait, on la touchait, rien ne
+   * se passait. Sa seule explication vivait dans un attribut `title` — un
+   * tooltip natif, qui ne s'affiche jamais au toucher. Sur téléphone,
+   * l'information n'existait pas.
+   *
+   * Elle s'ouvre donc, comme les autres, mais sur une bottom sheet plutôt que
+   * sur un écran plein : ce n'est pas un diagnostic à lire, c'est une réponse à
+   * une question — « et le gaz, alors ? ».
+   */
+  let absent = $state<{ type: TypeDiag; manque: PointDeControle | null } | null>(null);
 
   /** La couleur en train d'envahir l'écran, le temps d'un geste. */
   let propagation = $state<{
@@ -431,9 +446,8 @@
           type="button"
           class="tuile"
           class:eteinte={!d}
-          disabled={!d}
-          title={d ? undefined : (tuile.manque?.titre ?? 'Ce diagnostic ne figure pas dans le dossier déposé.')}
-          onclick={(e) => d && ouvrir(e, tuile.type)}
+          onclick={(e) =>
+            d ? ouvrir(e, tuile.type) : (absent = { type: tuile.type, manque: tuile.manque })}
         >
           <span class="icone" style="background: {t.degrade}">
             {#if t.picto}
@@ -461,6 +475,48 @@
       </li>
     {/each}
   </ul>
+
+  <!--
+    LA BOTTOM SHEET DU DIAGNOSTIC ABSENT.
+
+    `<dialog>` natif : il gère seul le piège de focus, la touche Échap et
+    l'inertie de l'arrière-plan — trois choses qu'une `div` en `position: fixed`
+    oblige à réécrire, et généralement mal.
+  -->
+  {#if absent}
+    <dialog
+      class="feuille-absent"
+      aria-label="Diagnostic absent du dossier"
+      {@attach (noeud) => {
+        (noeud as HTMLDialogElement).showModal();
+      }}
+      oncancel={(e: Event) => {
+        /*
+         * ÉCHAP : ON REMET L'ÉTAT À ZÉRO NOUS-MÊMES.
+         *
+         * `close` n'est pas parvenu jusqu'à nous — vérifié à l'écran, même un
+         * `addEventListener('close')` posé à la main ne le reçoit pas dans ce
+         * navigateur. En s'y fiant, Échap laissait le `<dialog>` en `open:
+         * false` avec `absent` toujours défini : le nœud restait dans le DOM,
+         * `showModal()` n'était jamais rappelé, et la tuile ne rouvrait plus
+         * rien.
+         *
+         * `cancel` précède la fermeture et se laisse annuler : on l'intercepte,
+         * et c'est notre état qui commande la disparition du nœud.
+         */
+        e.preventDefault();
+        absent = null;
+      }}
+      onclick={(e) => {
+        /* Un clic sur le fond ferme. `::backdrop` n'est pas un enfant : le clic
+           arrive donc sur le `<dialog>` lui-même, et c'est ainsi qu'on les
+           distingue. */
+        if (e.target === e.currentTarget) absent = null;
+      }}
+    >
+      <ModuleAbsent type={absent.type} manque={absent.manque} fermer={() => (absent = null)} />
+    </dialog>
+  {/if}
 
   <!-- Les outils : ils ne lisent pas le rapport, ils aident à le lire. -->
   <h3 class="intitule">Pour comprendre</h3>
@@ -1218,8 +1274,69 @@
    * obligatoire absent. C'est l'information la plus importante de la grille, et
    * elle ne doit pas s'éteindre avec le reste.
    */
+  /* Elle s'ouvre, donc elle se touche : le curseur ne dit plus le contraire. */
   .tuile.eteinte {
-    cursor: default;
+    cursor: pointer;
+  }
+
+  /*
+   * LA BOTTOM SHEET DU DIAGNOSTIC ABSENT.
+   *
+   * Elle remonte du bas, s'arrête avant le haut de l'écran et laisse voir la
+   * grille derrière : on n'a pas quitté l'accueil, on a ouvert un tiroir. Un
+   * écran plein aurait fait croire à un huitième diagnostic.
+   */
+  .feuille-absent {
+    position: fixed;
+    z-index: 41;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: auto;
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+    border: none;
+    max-height: 86vh;
+    overflow-y: auto;
+    background: var(--fond);
+    border-radius: var(--rayon-grand, 20px) var(--rayon-grand, 20px) 0 0;
+    box-shadow: 0 -8px 40px rgb(0 0 0 / 34%);
+    animation: remonte 0.26s var(--courbe);
+
+    /* La barre système d'un téléphone mange le bas de l'écran : sans cette
+       réserve, le bouton de fermeture passe dessous. */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Une poignée, comme sur toutes les feuilles d'iOS : elle dit « ça se tire »
+     avant qu'on ait lu quoi que ce soit. */
+  .feuille-absent::before {
+    content: '';
+    display: block;
+    width: 38px;
+    height: 4px;
+    margin: 8px auto 0;
+    border-radius: 2px;
+    background: var(--trait);
+  }
+
+  @keyframes remonte {
+    from {
+      transform: translateY(14%);
+      opacity: 0;
+    }
+  }
+
+  /* Le fond du `<dialog>` : c'est `::backdrop`, pas un element a nous. */
+  .feuille-absent::backdrop {
+    background: rgb(0 0 0 / 46%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .feuille-absent {
+      animation: none;
+    }
   }
 
   .tuile.eteinte .icone {
