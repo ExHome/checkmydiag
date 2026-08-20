@@ -248,7 +248,31 @@ La **Note 1** dit que les autres agents sont signalés « pour information », s
 obligation d'en donner la nature ni le lieu. La **Note 2** rappelle
 l'obligation de **déclaration en mairie** en cas de présence de termites.
 
-### F et G · Non visités, non examinés — **constant**
+### G · Ouvrages non examinés — **constant, et il nuance la rubrique D**
+
+Trouvé en lisant par endroit, ce que la recherche par mot n'aurait jamais donné.
+Un volet déclare ici :
+
+```
+Localisation : 2ème étage - Entrée/Séjour, Cuisine, Chambre, Salle de bain/Wc
+Ouvrages     : Mur
+Motif        : Revêtement fixé
+```
+
+Les **murs de quatre pièces n'ont pas été examinés** — pendant que la rubrique D,
+juste au-dessus, porte « Mur - Plâtre et Peinture : Absence d'indices » pour ces
+mêmes pièces.
+
+Ce n'est pas une contradiction, c'est la **portée réelle du constat** : l'absence
+d'indices vaut pour ce qui est visible, pas pour ce que le revêtement fixé
+cache. La rubrique D seule fait croire à un contrôle complet ; la rubrique G dit
+ce qu'il valait.
+
+Le rapport ajoute son engagement : « notre cabinet s'engage à retourner sur les
+lieux afin de compléter le constat aux parties d'immeubles non visitées, dès
+lors que les dispositions permettant un contrôle auront été prises ».
+
+### F · Parties non visitées — **constant**
 
 ---
 
