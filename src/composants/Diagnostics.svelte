@@ -654,7 +654,11 @@
               qui est sa famille -- ce qu'il faut savoir sur le document, non
               sur le logement.
             -->
-            <p class="verdict">{d.verdict}</p>
+            <!-- Le verdict est LA phrase de l'écran. Il vient du moteur, en
+                 espaces ordinaires ; sans traitement, « … une « passoire
+                 thermique / ». La loi limite… » — guillemet fermant seul en
+                 tête de ligne, sur la conclusion la plus lue de l'app. -->
+            <p class="verdict">{espacesFrancaises(d.verdict)}</p>
 
             <!-- D'où sort cette phrase. Discret, en bas de l'en-tête : c'est le
                  niveau expert, celui qu'on ne cherche que si on doute. Mais il

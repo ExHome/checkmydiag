@@ -148,6 +148,55 @@
     G: { valeur: '2025', libelle: 'nouveau bail interdit depuis', datee: true }
   };
 
+  /**
+   * LA MARCHE QU'ON TOUCHE.
+   *
+   * « Le schéma n'est pas une illustration : c'est une interface de
+   * compréhension. Cliquable : on ne l'annote pas entièrement d'un coup,
+   * l'utilisateur touche un élément et l'information paraît. »
+   *
+   * L'escalier portait sept couleurs et sept lettres, et n'en expliquait
+   * aucune. Tout annoter aurait donné sept légendes illisibles ; n'annoter que
+   * la classe du logement aurait laissé les six autres muettes — or c'est
+   * précisément la comparaison qui fait comprendre une échelle.
+   *
+   * On touche donc, et la marche répond : une seule ligne à la fois, sous
+   * l'escalier, à une place fixe.
+   */
+  let touchee = $state<Lettre | null>(null);
+
+  /**
+   * Ce que dit une marche.
+   *
+   * Rien d'inventé : l'échéance est celle de la loi, déjà énoncée par le
+   * moteur, et la position du logement n'est affirmée que si la lettre est
+   * connue. Quand elle ne l'est pas, la marche parle d'elle-même — l'échelle
+   * A→G est réglementaire, elle reste vraie sans ce logement-ci.
+   */
+  /** Majuscule en tête, point final : un fragment de cartouche devient phrase. */
+  const enPhrase = (t: string): string =>
+    `${t.charAt(0).toUpperCase()}${t.slice(1)}${/[.!?]$/.test(t) ? '' : '.'}`;
+
+  /** La teinte d'une lettre. `find` peut rendre `undefined` ; l'échelle, non. */
+  const teinteDe = (l: Lettre): string =>
+    ECHELONS.find((e) => e.lettre === l)?.teinte ?? 'var(--etq-d)';
+
+  const ditDeLaMarche = $derived.by(() => {
+    if (!touchee) return null;
+    const e = ECHEANCE[touchee];
+    return {
+      lettre: touchee,
+      ici: touchee === finale,
+      /* Les libellés du calendrier sont écrits pour tenir SOUS un cartouche
+         (« location interdite à partir de » + « 2028 » en gros). Ici ils
+         deviennent une phrase : majuscule en tête et point final, sinon on lit
+         « C'est la classe de ce logement. location interdite… ». */
+      loi: e.datee ? enPhrase(`${e.libelle} ${e.valeur}`) : 'Aucune échéance de location connue à ce jour.',
+      position:
+        finale !== null && touchee === finale ? 'C’est la classe de ce logement.' : null
+    };
+  });
+
   const petiteSurface = $derived(surface !== null && surface <= SEUIL_PETITE_SURFACE);
 
   /**
@@ -204,25 +253,64 @@
 
   <!-- L'escalier et ses lettres forment une seule image. Le détail est redit
        plus bas en texte : les barres n'ont rien à annoncer deux fois. -->
-  <div class="echelle" role="img" aria-label={resume}>
-    <div class="marches">
+  <!--
+    L'ESCALIER EST UNE INTERFACE, PAS UNE IMAGE.
+
+    Il était `role="img"` avec une étiquette résumée : sept couleurs, sept
+    lettres, et rien de cliquable. Chaque marche devient un bouton — une marche,
+    sa lettre et sa zone de touche ne font qu'un seul contrôle, sinon on aurait
+    quatorze cibles pour sept objets.
+
+    La hauteur des barres reste ce qu'elle était : la grammaire de l'étiquette
+    officielle, pas une quantité lue dans le rapport.
+  -->
+  <div class="echelle">
+    <div class="marches" role="group" aria-label={resume}>
       {#each ECHELONS as echelon, i (echelon.lettre)}
-        <span
+        <button
+          type="button"
           class="barre"
           class:ici={echelon.lettre === finale}
-          style:height="{echelon.hauteur}%"
-          style:background={echelon.teinte}
+          class:touchee={echelon.lettre === touchee}
+          style:--haut="{echelon.hauteur}%"
+          style:--teinte={echelon.teinte}
           style:animation-delay="{i * 80}ms"
-        ></span>
-      {/each}
-    </div>
-
-    <div class="lettres">
-      {#each ECHELONS as echelon (echelon.lettre)}
-        <span class:ici={echelon.lettre === finale}>{echelon.lettre}</span>
+          aria-pressed={echelon.lettre === touchee}
+          onclick={() => (touchee = touchee === echelon.lettre ? null : echelon.lettre)}
+        >
+          <span class="fut"></span>
+          <span class="lettre">{echelon.lettre}</span>
+          <span class="sr">
+            Classe {echelon.lettre}{echelon.lettre === finale
+              ? ', la classe de ce logement'
+              : ''}
+          </span>
+        </button>
       {/each}
     </div>
   </div>
+
+  <!--
+    LA RÉPONSE, À UNE PLACE FIXE.
+
+    Une seule ligne à la fois, toujours au même endroit : le lecteur apprend en
+    deux touches où regarder. Tant que rien n'est touché, l'invite occupe la
+    place — sans elle, la zone se remplirait d'un coup et pousserait le reste de
+    l'écran vers le bas à chaque clic.
+  -->
+  <p class="dit-marche" aria-live="polite">
+    {#if ditDeLaMarche}
+      <span class="pastille-lettre" style:--teinte={teinteDe(ditDeLaMarche.lettre)}>
+        {ditDeLaMarche.lettre}
+      </span>
+      <span class="propos">
+        {#if ditDeLaMarche.position}<b>{ditDeLaMarche.position}</b>{/if}
+        {ditDeLaMarche.loi}
+      </span>
+    {:else}
+      <span class="invite">Touchez une marche pour savoir ce qu’elle impose.</span>
+    {/if}
+  </p>
 
   <dl class="cartouches">
     {#each cartouches as cartouche, i (i)}
@@ -323,7 +411,6 @@
     display: flex;
     align-items: flex-end;
     gap: 6px;
-    height: 132px;
     margin-bottom: var(--e3);
   }
 
@@ -347,14 +434,77 @@
    *
    * Il suit `--u-texte`, donc il suivra le prochain changement de charte.
    */
+  /* La marche est un BOUTON : le fût coloré, la lettre dessous et la zone de
+     touche ne font qu'une seule cible. Deux cibles par classe donneraient
+     quatorze contrôles pour sept objets. */
   .barre {
     flex: 1;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    height: 158px;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Le fût : c'est lui qui monte, qui porte la teinte et le filet. */
+  .fut {
+    display: block;
+    height: var(--haut);
+    margin-top: auto;
+    background: var(--teinte);
     border-radius: 6px 6px 3px 3px;
     position: relative;
     transform-origin: bottom;
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--u-texte, #f5f1e8) 70%, transparent);
     animation: monte 0.5s var(--courbe) backwards;
+    animation-delay: inherit;
+    transition: filter var(--duree) var(--courbe);
+  }
+
+  .barre:hover .fut,
+  .barre.touchee .fut {
+    filter: brightness(1.12);
+  }
+
+  /* La lettre, sous son fût. */
+  .lettre {
+    text-align: center;
+    font-size: var(--t-petit);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--encre-doux);
+    transition: color var(--duree) var(--courbe);
+  }
+
+  /* Sans classe établie, aucune lettre ne passe en encre pleine. C'est le
+     second signal d'absence, après l'anneau manquant. */
+  .barre.ici .lettre,
+  .barre.touchee .lettre {
+    color: var(--encre);
+  }
+
+  /* Le focus clavier doit se voir : sept boutons se parcourent à la tabulation. */
+  .barre:focus-visible {
+    outline: 2px solid var(--encre);
+    outline-offset: 3px;
+    border-radius: 8px;
+  }
+
+  /* Ce que seuls les lecteurs d'écran entendent : la lettre est déjà à l'image,
+     mais « C » seul ne dit pas que c'est une classe. */
+  .sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 
   @keyframes monte {
@@ -368,7 +518,7 @@
      là qu'il se mesure (9,36 dans l'univers, 9,29 hors univers), et pas contre
      la teinte de la marche. Il bat, comme dans la maquette : c'est ce qui fait
      « application » plutôt que « graphique ». */
-  .barre.ici::after {
+  .barre.ici .fut::after {
     content: '';
     position: absolute;
     inset: 0;
@@ -387,25 +537,52 @@
     }
   }
 
-  .lettres {
+  /*
+   * LA LIGNE DE RÉPONSE.
+   *
+   * Une place fixe, réservée d'avance : `min-height` retient la hauteur de deux
+   * lignes de texte, sinon chaque touche pousserait les trois cartouches et le
+   * reste de l'écran vers le bas — le lecteur perdrait des yeux ce qu'il vient
+   * de toucher.
+   */
+  .dit-marche {
     display: flex;
-    gap: 6px;
-  }
-
-  .lettres span {
-    flex: 1;
-    min-width: 0;
-    text-align: center;
+    align-items: flex-start;
+    gap: var(--e3);
+    min-height: 46px;
+    margin: 0;
+    padding: var(--e3);
+    background: color-mix(in srgb, var(--encre) 6%, transparent);
+    border-radius: var(--rayon-petit);
     font-size: var(--t-petit);
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-    color: var(--encre-doux);
+    line-height: 1.45;
+    color: var(--encre);
   }
 
-  /* Sans classe établie, aucune lettre ne passe en encre pleine. C'est le
-     second signal d'absence, après l'anneau manquant. */
-  .lettres span.ici {
-    color: var(--encre);
+  /* La pastille reprend la couleur de la marche touchée : c'est le fil qui
+     relie la réponse à l'endroit qu'on vient de toucher. */
+  .pastille-lettre {
+    flex: none;
+    width: 26px;
+    height: 26px;
+    display: grid;
+    place-items: center;
+    border-radius: 7px;
+    background: var(--teinte);
+    color: #16240f;
+    font-weight: 700;
+    font-size: var(--t-petit);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--u-texte, #f5f1e8) 55%, transparent);
+  }
+
+  .propos b {
+    font-weight: 700;
+  }
+
+  /* L'invite s'efface : elle indique un geste, elle ne dit rien du logement. */
+  .invite {
+    color: var(--encre-doux);
+    font-style: italic;
   }
 
   /* Les trois cartouches de la maquette. En grille plutôt qu'en flex : à trois
@@ -516,8 +693,8 @@
      `backwards` : l'état naturel des barres et des cartouches est déjà l'état
      visible, il n'y a rien à restaurer. */
   @media (prefers-reduced-motion: reduce) {
-    .barre,
-    .barre.ici::after,
+    .fut,
+    .barre.ici .fut::after,
     .cartouche {
       animation: none;
     }
@@ -525,8 +702,8 @@
 
   /* Le dossier s'imprime, et une animation ne se joue pas sur du papier. */
   @media print {
-    .barre,
-    .barre.ici::after,
+    .fut,
+    .barre.ici .fut::after,
     .cartouche {
       animation: none;
     }
