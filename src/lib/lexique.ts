@@ -138,6 +138,75 @@ export const LEXIQUE: Mot[] = [
     definition:
       'Un champignon qui dévore le bois humide, dans le noir. Il se propage vite et peut atteindre la charpente : c’est le plus redouté des parasites du bâtiment.'
   },
+  /*
+   * ─────────────────────────────────────────────────────────────────────────
+   * LES HUIT MOTS QUE LE LECTEUR DOIT FINIR PAR MAÎTRISER.
+   * ─────────────────────────────────────────────────────────────────────────
+   *
+   * « Verrière ne descend pas au niveau de l'utilisateur pour y rester. Elle
+   * l'accompagne vers la compréhension. » L'ordre de mission éditorial nomme
+   * douze termes qu'on doit finir par comprendre en se servant du produit —
+   * huit manquaient au lexique, dont les plus employés de tous.
+   *
+   * Ils ne remplacent RIEN : le terme exact reste écrit dans la phrase, et
+   * c'est lui qui se souligne. « Liaison équipotentielle supplémentaire » ne
+   * devient jamais « fil de sécurité » — ce serait plus simple, et faux
+   * pédagogiquement.
+   */
+  {
+    nom: 'DPE',
+    motif: /DPE|diagnostic de performance [ée]nerg[ée]tique/i,
+    definition:
+      'Le diagnostic de performance énergétique. Il classe le logement de A à G sur deux notes — ce qu’il consomme et ce qu’il émet — et la plus mauvaise des deux l’emporte.'
+  },
+  {
+    nom: 'Enveloppe',
+    motif: /enveloppes? (?:du |thermique)/i,
+    definition:
+      'Tout ce qui sépare l’intérieur chauffé de l’extérieur : toiture, murs, fenêtres, plancher bas. C’est par elle que la chaleur s’échappe, avant même qu’il soit question de chauffage.'
+  },
+  {
+    nom: 'Ventilation',
+    motif: /ventilations?/i,
+    definition:
+      'Le renouvellement de l’air. Un logement trop étanche garde son humidité et ses polluants ; un logement trop ouvert perd sa chaleur. Le diagnostic regarde si les entrées et les sorties d’air existent.'
+  },
+  {
+    nom: 'GES',
+    motif: /GES|gaz [àa] effet de serre/i,
+    definition:
+      'Les gaz à effet de serre émis pour chauffer et alimenter le logement, comptés en kilos de CO₂ par mètre carré et par an. C’est la seconde note du DPE, à côté de la consommation.'
+  },
+  {
+    nom: 'Dispositif différentiel',
+    motif: /dispositifs? (?:de protection )?diff[ée]rentiels?|diff[ée]rentiel/i,
+    definition:
+      'L’appareil qui coupe le courant quand il fuit — vers la terre, ou vers quelqu’un. Il ne protège pas les fils, il protège les personnes : c’est ce qui le distingue d’un disjoncteur ordinaire.'
+  },
+  {
+    nom: 'Mise à la terre',
+    motif: /mise [àa] la terre|prise de terre/i,
+    definition:
+      'Un conducteur qui relie l’installation au sol. Il donne au courant de fuite un chemin plus facile que le corps humain — et c’est lui qui permet au différentiel de détecter la fuite.'
+  },
+  {
+    nom: 'Matériau contenant de l’amiante',
+    motif: /mat[ée]riaux? contenant de l[’']amiante|MCA/i,
+    definition:
+      'Un matériau dans lequel de l’amiante a été incorporé à la fabrication : dalle, colle, plaque, calorifugeage. Tant qu’il est intact et qu’on n’y touche pas, il ne libère rien.'
+  },
+  {
+    nom: 'État de conservation',
+    motif: /[ée]tats? de conservation/i,
+    definition:
+      'La cotation que le diagnostiqueur donne à un matériau amianté qu’il a repéré. Elle décide de la suite : une simple surveillance, une évaluation périodique, ou des travaux.'
+  },
+  {
+    nom: 'Concentration en plomb',
+    motif: /concentrations? (?:en|de) plomb/i,
+    definition:
+      'La quantité de plomb mesurée dans un revêtement, en milligrammes par centimètre carré. Le seuil réglementaire est de 1 mg/cm² ; au-dessous, l’unité est classée 0.'
+  },
   {
     nom: 'Liaison équipotentielle',
     motif: /liaisons? [ée]quipotentielles?/i,
