@@ -3617,3 +3617,109 @@ Et l'ancrage vaut mieux que l'énumération : `$` en fin de ligne a fait plus po
 la justesse que la liste des cinq mots d'ouverture, qui en manquait deux.
 
 ---
+
+## 74 · La première norme lue en entier — NF X 46-030, et quatre défauts
+
+*20/08/2026. 28 pages, 1 124 lignes, lues de bout en bout, sans sonde,
+bibliographie comprise. Norme AFNOR : elle reste hors du dépôt.*
+
+La norme du CREP corrige quatre choses dans le produit. Trois d'entre elles
+étaient invisibles depuis les rapports : il fallait le texte qui les gouverne.
+
+### 1 · « Classe 1 = en bon état » était faux
+
+Le tableau 1 du § 11 donne la classe 1 à **deux** états, que le § 10 sépare :
+« non dégradé », et **« non visible »**.
+
+« Non visible » veut dire que le revêtement au plomb est sous un autre
+revêtement — papier peint, toile de verre — et que son état **ne peut pas être
+décrit**. L'annexe B de la norme le montre en clair : un mur à **12,45 mg/cm²**,
+douze fois le seuil, classé **1**, parce que sa toile de verre empêche de voir
+dans quel état il est.
+
+Le produit écrivait : « tous les revêtements concernés sont en bon état
+(classe 1) », et le relevé disait « Avec plomb, mais **intacts** ».
+
+C'est une affirmation que le rapport n'a jamais faite, sur des surfaces que
+personne n'a regardées. Exactement la faute que ce produit combat.
+
+### 2 · Les facteurs de dégradation du bâti sont CINQ, et la liste est fermée
+
+Le § 12 les énumère :
+
+1. un local à au moins **50 %** d'unités de classe 3 ;
+2. l'ensemble des locaux à au moins **20 %** ;
+3. un plancher ou plafond menaçant de s'effondrer, ou effondré ;
+4. des traces importantes de coulure, ruissellement ou écoulement d'eau ;
+5. des unités recouvertes de moisissures ou de taches d'humidité.
+
+Le produit cherchait trois familles de mots — humidité, effondrement,
+« revêtements dégradés » — dans les six cents caractères suivant le titre. Deux
+erreurs :
+
+- **les deux seuils manquaient**, et ce sont les facteurs n° 1 et n° 2 : ils se
+  calculent, aucun mot-clé ne peut les trouver ;
+- **« revêtements dégradés » n'est pas un facteur.** Écaillage, cloquage,
+  faïençage, pulvérulence sont la définition de la **classe 3** au § 10 : l'état
+  d'un revêtement, pas un désordre du bâti.
+
+**Mesuré, et c'est plus embarrassant qu'un faux positif** : sur les douze
+documents du corpus qui portent un CREP, l'ancienne lecture aurait affiché un
+facteur sur **zéro**. Elle n'était pas fausse en pratique — elle était **inerte**.
+Elle ne vivait que dans ses propres tests.
+
+La nouvelle lit la rubrique : **8 CREP sur 8** la rendent, et un seul coche un
+facteur — le vrai. Les quatre documents restants ne contiennent pas de CREP ; la
+phrase y figure dans la liste des prestations du dossier.
+
+### 3 · La norme transmet au PRÉFET, le code transmet à l'ARS
+
+Le § 13 et la rubrique 6.5 du modèle envoient le constat « à la Préfecture du
+département d'implantation du bien expertisé ». La norme date d'**avril 2008** —
+deux ans avant la création des agences régionales de santé.
+
+L'article L. 1334-10 du code de la santé publique, lui, désigne aujourd'hui le
+directeur général de l'ARS.
+
+Les deux formulations circulent selon le millésime du modèle que l'éditeur a
+recopié, et elles disent la même chose. Le motif ne connaissait que l'ARS.
+
+### 4 · « DE classe 3 » ou « EN classe 3 », et la norme se contredit elle-même
+
+Le § 12 et l'annexe C écrivent « d'unités de diagnostic **de** classe 3 ». Un
+éditeur du corpus écrit « **en** classe 3 ».
+
+Pire, la norme n'est pas d'accord avec elle-même : son § 12 dit « de nombreuses
+taches d'humidité », son **annexe C** — celle que les éditeurs recopient — dit
+« de tâches d'humidité », sans « nombreuses » et avec l'accent circonflexe.
+
+Le test l'a trouvé en tombant : ma rubrique de test, recopiée de l'annexe C,
+ramenait un facteur au lieu de deux.
+
+### Ce que la norme donne encore, et qui n'est pas lu
+
+- **Les enfants de moins de six ans.** Le § 4 impose de consigner leur présence
+  et leur nombre ; l'annexe C en fait un champ de la page de garde. C'est la
+  raison d'être du CREP, et le produit ne la lit pas.
+- **Le doublage** : en cas de doublage des murs ou plafonds, l'auteur ne peut pas
+  conclure et doit le mentionner. Une non-conclusion de plus à repérer.
+- **Le résumé est interdit.** Le § 13 dit qu'en aucun cas il ne peut être rédigé
+  un résumé du rapport ni une attestation de présence ou d'absence de plomb.
+- **Le seuil a un jumeau** : 1 mg/cm² en fluorescence X, mais une mesure est
+  déclarée négative si l'analyse chimique donne moins de **1,5 mg/g**.
+- **Les zones** : A pour l'accès au local, puis B, C, D dans le sens des aiguilles
+  d'une montre ; le plafond en clair ; **le sol n'est pas une zone**.
+- **La cage d'escalier** se découpe en locaux distincts — chaque palier, chaque
+  volée — et marches, contremarches, balustres, limon, crémaillère et main
+  courante y sont des unités distinctes.
+
+### La leçon
+
+**Les rapports ne disent pas ce qu'ils taisent.** Cent lectures de rapports
+n'avaient pas montré qu'une classe 1 peut être une surface que personne n'a vue :
+les rapports impriment « 1 » sans commentaire, et la colonne « non visible » se
+lit comme un détail. Il a fallu le texte qui définit la classe.
+
+Un corpus enseigne les formes. Seule la norme enseigne le sens.
+
+---

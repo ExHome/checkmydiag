@@ -871,6 +871,7 @@
                     surface={surfaceDe(d)}
                   />
                 {/if}
+
               {:else if d.type === 'electricite'}
                 <!--
                   LA CHAÎNE DES BARRIÈRES REMPLACE LE COFFRET.

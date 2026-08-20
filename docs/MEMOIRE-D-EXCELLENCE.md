@@ -117,6 +117,41 @@ jamais au commentaire.
 
 ---
 
+### A8 — Dessiner sans avoir regardé l'écran fini
+
+**Ce que j'ai fait, le 20/08.** J'ai mesuré 58 volets DPE, constaté que les
+quatre parois sont nommées sur 93 à 100 % des dossiers, et construit une coupe
+d'architecte où l'isolant a une épaisseur. Le dessin était juste, la mesure
+était juste, les types passaient, les cibles faisaient 52 px.
+
+Et il était déjà là. `Deperditions.svelte` dessine les parois du DPE depuis
+longtemps, et le fait MIEUX : six postes au lieu de mes quatre — il ajoute
+l'air renouvelé et les jonctions, que `Isolation` ne porte pas —, l'état écrit
+en toutes lettres et pas seulement en couleur, des cibles de 44 px, et les
+clips qui descendent jusqu'à « et chez moi ? ».
+
+**Comment je l'ai su :** en comptant les `.pastille-paroi` dans le DOM de la
+fiche DPE. 12 présentes, 6 visibles. Pas en lisant le code — je l'avais lu, et
+j'avais conclu que `Deperditions` n'était monté que pour l'impression parce que
+`Notaire.svelte` était le seul à l'importer nommément. Il arrive à l'écran par
+`Explicatif`.
+
+**La règle :** avant de dessiner une information, la CHERCHER DANS L'ÉCRAN
+RENDU, pas dans les imports. Un `grep` sur un nom de composant ne dit pas ce que
+le lecteur voit. Un `querySelectorAll` sur la page, si.
+
+**Ce qui a été retiré :** la coupe, entièrement. Deux dessins concurrents des
+mêmes parois dans la même fiche, avec deux vocabulaires, c'est précisément
+l'anti-pattern que `Diagnostics.svelte:1301-1320` documente et corrige.
+
+**Ce qui reste à faire, et qui vaut :** l'idée d'épaisseur — en coupe, l'isolant
+se hachure et se mesure, une paroi nue est un trait fin — est plus forte qu'une
+pastille de 9 px, et elle survit au noir et blanc. Elle doit être portée DANS
+`Deperditions`, pas à côté. Elle ne peut pas passer par `briques/Maison.svelte`,
+partagé avec Argiles, Assainissement, TroisSurfaces et VisuelRisques : une
+épaisseur d'isolant n'a aucun sens sur un schéma d'assainissement.
+
+
 ## DESIGN_PRINCIPLES — les principes validés par la mesure
 
 ### P1. La distinction rapport / explication tient sans la couleur
@@ -174,6 +209,22 @@ et sont à taille de lecture au lieu d'être calées en unités de viewBox.
 - DPE → **la règle à deux aiguilles** (le seul verdict qui soit un point sur une graduation)
 
 ---
+
+### Ce que les DPE donnent de l'enveloppe — 58 volets, 20/08
+
+| Poste | Nommé | État d'isolation lisible |
+|---|---|---|
+| Murs | 58/58 | 18 (31 %) |
+| Portes et fenêtres | 58/58 | 24 (41 %) |
+| Plancher bas | 57/58 | 32 (55 %) |
+| Toiture/plafond | 54/58 | 22 (38 %) |
+| Chauffage, eau chaude, ventilation | 58/58 | sans objet |
+
+Les parois sont donc nommées presque partout, mais leur état n'est conclu
+qu'une fois sur trois. Tout dessin de l'enveloppe doit distinguer « paroi
+nommée » de « état connu », et ne jamais peindre en vert un silence. Le corps
+du DPE, lui, ne situe rien dans une pièce — 0 localisation sur 38 volets — et
+ce n'est pas un manque : il raisonne en parois, pas en chambres.
 
 ## READING_RULES — ce que les rapports font vraiment
 

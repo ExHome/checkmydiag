@@ -2,43 +2,78 @@ import { describe, expect, it } from 'vitest';
 import { analyserPlomb } from './plomb';
 
 /**
- * Les facteurs de dégradation du bâti.
+ * Les facteurs de dégradation du bâti — ils sont cinq, et la liste est fermée.
  *
  * Le constat ne classe pas que des revêtements : il « dresse un relevé sommaire
  * des facteurs de dégradation du bâti » (L. 1334-5 du code de la santé
  * publique). Quand ils apparaissent, l'auteur transmet immédiatement copie à
- * l'agence régionale de santé, qui informe le préfet (L. 1334-10) — les deux
- * articles lus à la source le 15/08/2026.
+ * l'autorité sanitaire (L. 1334-10) — articles lus à la source le 15/08/2026.
  *
  * C'est la conséquence la plus lourde du constat, et elle ne dépend pas de la
  * classe : un logement peut être signalé sans qu'aucune unité ne soit classée 3.
+ *
+ * ## Ce que la lecture intégrale de NF X 46-030 a corrigé, le 20/08/2026
+ *
+ * Ces tests validaient une lecture par mots-clés — « humidité », « écaillage »,
+ * « effondrement » — cherchés autour du titre de la rubrique. Le § 12 de la
+ * norme montre qu'elle se trompait deux fois :
+ *
+ * 1. **Les deux premiers facteurs sont des SEUILS** — un local à 50 % de
+ *    classe 3, l'ensemble à 20 % — et aucun mot-clé ne pouvait les trouver.
+ * 2. **« Revêtements dégradés » n'est pas un facteur.** Écaillage, cloquage,
+ *    faïençage, pulvérulence sont la définition de la **classe 3** au § 10 :
+ *    l'état d'un revêtement, pas un désordre du bâti.
+ *
+ * La rubrique est un formulaire à cinq lignes et deux colonnes OUI/NON. On la
+ * lit comme un formulaire, et les tests portent désormais là-dessus.
  */
 const ENTETE = ['CONSTAT DE RISQUE D’EXPOSITION AU PLOMB', 'Rédigé par le cabinet le 12/03/2024'];
 
+/** La rubrique telle que le modèle de l'annexe C de la norme la fait imprimer. */
+const RUBRIQUE = (r: [string, string, string, string, string]) => [
+  'Situations de dégradation du bâti mis en évidence :',
+  `Au moins un local présente au moins 50 % d’unités de diagnostic de classe 3 ${r[0]}`,
+  `L’ensemble des locaux présente au moins 20 % d’unités de diagnostic de classe 3 ${r[1]}`,
+  `Plancher ou plafond menaçant de s’effondrer ou en tout ou partie effondré ${r[2]}`,
+  `Traces importantes de coulure ou de ruissellement d’eau sur plusieurs unités ${r[3]}`,
+  `Plusieurs unités d’un même local recouvertes de moisissures ou de tâches d’humidité ${r[4]}`,
+  'Rappel du cadre réglementaire et des objectifs du CREP :'
+];
+
 describe('les facteurs de dégradation du bâti', () => {
-  it('relève l’humidité quand la rubrique la mentionne', () => {
-    const d = analyserPlomb(
-      [...ENTETE, 'Facteurs de dégradation du bâti relevés : traces d’humidité en cave.'],
-      [4, 9]
-    );
+  it('compte les facteurs cochés sur les cinq de la norme', () => {
+    const d = analyserPlomb([...ENTETE, ...RUBRIQUE(['NON', 'NON', 'OUI', 'NON', 'OUI'])], [4, 9]);
 
     const fait = d.faits.find((f) => f.libelle === 'Facteurs de dégradation du bâti');
-    expect(fait?.valeur).toBe('1');
-    expect(fait?.precision).toBe('Humidité');
+    expect(fait?.valeur).toBe('2 sur 5');
   });
 
-  it('relève l’effondrement et les revêtements dégradés', () => {
+  it('relève les deux seuils, que les mots-clés ne pouvaient pas voir', () => {
+    const d = analyserPlomb([...ENTETE, ...RUBRIQUE(['OUI', 'OUI', 'NON', 'NON', 'NON'])], [4, 9]);
+
+    const dit = d.faits.map((f) => `${f.libelle} ${f.valeur}`).join(' | ');
+    expect(dit).toMatch(/moitié de ses surfaces/);
+    expect(dit).toMatch(/cinquième de ses surfaces/);
+  });
+
+  it('ne prend pas un revêtement écaillé pour un désordre du bâti', () => {
+    /*
+     * L'écaillage définit la classe 3 (§ 10 de la norme). L'ancienne lecture en
+     * faisait un « facteur de dégradation du bâti », et affichait donc un
+     * facteur sur un constat dont la rubrique répond NON aux cinq — en
+     * annonçant au passage un signalement qui n'a pas eu lieu.
+     */
     const d = analyserPlomb(
       [
         ...ENTETE,
-        'Facteurs de dégradation du bâti : plancher menaçant effondrement, écaillage des peintures.'
+        'Nature de la dégradation : écaillage, cloquage et faïençage des peintures.',
+        ...RUBRIQUE(['NON', 'NON', 'NON', 'NON', 'NON'])
       ],
       [4, 9]
     );
 
-    const fait = d.faits.find((f) => f.libelle === 'Facteurs de dégradation du bâti');
-    expect(fait?.precision).toMatch(/Effondrement/);
-    expect(fait?.precision).toMatch(/Revêtements dégradés/);
+    expect(d.faits.find((f) => f.libelle === 'Facteurs de dégradation du bâti')).toBeUndefined();
+    expect(JSON.stringify(d.faits)).not.toMatch(/Revêtements dégradés/);
   });
 
   /*
@@ -62,8 +97,8 @@ describe('les facteurs de dégradation du bâti', () => {
     expect(d.faits.find((f) => f.libelle === 'Facteurs de dégradation du bâti')).toBeUndefined();
   });
 
-  it('n’en relève aucun quand le constat n’en signale pas', () => {
-    const d = analyserPlomb([...ENTETE, 'Facteurs de dégradation du bâti : néant.'], [4, 9]);
+  it('n’en relève aucun quand le constat répond NON aux cinq', () => {
+    const d = analyserPlomb([...ENTETE, ...RUBRIQUE(['NON', 'NON', 'NON', 'NON', 'NON'])], [4, 9]);
     expect(d.faits.find((f) => f.libelle === 'Facteurs de dégradation du bâti')).toBeUndefined();
   });
 });

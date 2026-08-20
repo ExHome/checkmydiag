@@ -101,8 +101,9 @@ function emplacements(lignes: string[]): { zone: string; element: string; classe
   return trouves;
 }
 
-/**
- * Les facteurs de dégradation du bâti, relevés dans le constat.
+/*
+ * Les facteurs de dégradation du bâti se lisaient au mot-clé. La norme dit
+ * qu'ils sont cinq, et lesquels.
  *
  * Le constat ne fait pas que classer des revêtements : il « dresse un relevé
  * sommaire des facteurs de dégradation du bâti » (article L. 1334-5 du code de
@@ -110,42 +111,30 @@ function emplacements(lignes: string[]): { zone: string; element: string; classe
  * R. 1334-10).
  *
  * Ce n'est pas une rubrique de plus. Quand ces facteurs apparaissent, l'auteur
- * du constat « transmet immédiatement une copie de ce document au directeur
- * général de l'agence régionale de santé, qui en informe le représentant de
- * l'État dans le département » (article L. 1334-10, lu le 15/08/2026). Le
- * logement est signalé — et cela ne dépend pas de la classe des revêtements :
- * un bien peut partir à l'agence régionale de santé sans qu'aucune unité ne
- * soit classée 3.
+ * du constat transmet immédiatement une copie du rapport à l'autorité — et cela
+ * ne dépend pas de la classe des revêtements.
  *
- * On cherche donc la mention, on ne devine pas la liste : le code ne l'énumère
- * pas, il renvoie à un arrêté. Le rapport, lui, la dresse quand il en relève.
+ * ## Ce que la lecture de NF X 46-030 a corrigé
+ *
+ * Une version antérieure cherchait trois familles de mots — humidité, effondre-
+ * ment, revêtements dégradés — dans les six cents caractères qui suivent le
+ * titre de la rubrique. Elle se trompait deux fois.
+ *
+ * Le § 12 de la norme (avril 2008, lue en entier le 20/08/2026) **énumère cinq
+ * facteurs, et la liste est fermée** : les deux seuils de classe 3 (50 % dans un
+ * local, 20 % sur l'ensemble), le plancher ou plafond menaçant, les coulures et
+ * ruissellements, les moisissures et taches d'humidité.
+ *
+ * 1. **Les deux seuils manquaient.** Ce sont pourtant les facteurs n° 1 et n° 2,
+ *    et ils sont les seuls qui se calculent au lieu de s'observer.
+ * 2. **« Revêtements dégradés » n'existe pas.** Écaillage, cloquage, faïençage,
+ *    pulvérulence sont la définition de la **classe 3** au § 10 — l'état d'un
+ *    revêtement, pas un facteur de dégradation du bâti. Les compter ici faisait
+ *    afficher un facteur sur un constat dont la rubrique répond NON aux cinq.
+ *
+ * La rubrique est un formulaire à cinq lignes et deux colonnes OUI/NON. On la
+ * lit donc comme un formulaire — voir `alertesDuCrep`.
  */
-const DEGRADATION: { cle: string; nom: string; motif: RegExp }[] = [
-  { cle: 'humidite', nom: 'Humidité', motif: /humidit[ée]|infiltration|moisissure|condensation/i },
-  {
-    cle: 'effondrement',
-    nom: 'Effondrement ou affaissement',
-    motif: /effondrement|affaissement|plancher menaçant|plafond menaçant|fissuration/i
-  },
-  {
-    cle: 'revetement',
-    nom: 'Revêtements dégradés',
-    motif: /[ée]caillage|cloquage|coulure|fa[iï]en[çc]age|[ée]clat|pulv[ée]rulen/i
-  }
-];
-
-function facteursDeDegradation(lignes: string[]): { cle: string; nom: string }[] {
-  /*
-   * On ne cherche que dans le voisinage de la rubrique : le mot « humidité »
-   * traîne dans toutes les notices d'information annexées au constat, et le
-   * relever là ferait signaler un facteur de dégradation à chaque rapport.
-   */
-  const texte = lignes.join(' ');
-  const rubrique = texte.match(/facteurs? de d[ée]gradation[\s\S]{0,600}/i);
-  if (!rubrique) return [];
-
-  return DEGRADATION.filter((f) => f.motif.test(rubrique[0])).map(({ cle, nom }) => ({ cle, nom }));
-}
 
 /**
  * Ce que le constat conclut sur l'enfant et sur l'insalubrité.
@@ -207,14 +196,22 @@ export interface AlerteCrep {
  * sur une ligne de continuation.
  */
 const SITUATIONS: { cle: string; motif: RegExp; libelle: string }[] = [
+  /*
+   * « DE classe 3 » ou « EN classe 3 » — les deux circulent.
+   *
+   * Le § 12 de NF X 46-030 et son modèle de rapport écrivent « d'unités de
+   * diagnostic DE classe 3 ». Un éditeur du corpus écrit « EN classe 3 ». Le
+   * motif ne connaissait que le second : un rapport resté fidèle au modèle de la
+   * norme aurait vu ses deux seuils ignorés.
+   */
   {
     cle: 'piece50',
-    motif: /au moins 50\s*%\s*d['’]unit[ée]s de diagnostic en classe 3/i,
+    motif: /au moins 50\s*%\s*d['’]unit[ée]s de diagnostic (?:de|en) classe 3/i,
     libelle: 'une pièce au moins a la moitié de ses surfaces en plomb dégradé'
   },
   {
     cle: 'locaux20',
-    motif: /moins 20\s*%\s*d['’]unit[ée]s de diagnostic en classe 3/i,
+    motif: /moins 20\s*%\s*d['’]unit[ée]s de diagnostic (?:de|en) classe 3/i,
     libelle: 'l’ensemble du logement a un cinquième de ses surfaces en plomb dégradé'
   },
   {
@@ -228,8 +225,19 @@ const SITUATIONS: { cle: string; motif: RegExp; libelle: string }[] = [
     libelle: 'des traces importantes de coulure, de ruissellement ou d’écoulement'
   },
   {
+    /*
+     * Le mot seul suffit, et il vaut mieux que la phrase.
+     *
+     * La norme se contredit elle-même : son § 12 écrit « de nombreuses taches
+     * d'humidité », son annexe C — celle que les éditeurs recopient — écrit
+     * « de tâches d'humidité », sans « nombreuses » et avec l'accent circonflexe.
+     * Exiger la phrase revenait à ne reconnaître qu'une des deux versions.
+     *
+     * Dans une rubrique bornée à ses cinq lignes, « moisissures » n'apparaît que
+     * sur celle-ci.
+     */
     cle: 'moisissures',
-    motif: /moisissures ou de nombreuses t[âa]ches d['’]humidit/i,
+    motif: /moisissures/i,
     libelle: 'des moisissures ou de nombreuses taches d’humidité'
   }
 ];
@@ -320,7 +328,6 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
    * sans limite de durée (article R. 1334-11 du code de la santé publique).
    */
   const positif = c1 + c2 + c3 > 0;
-  const degradation = facteursDeDegradation(lignes);
   const alertes = alertesDuCrep(lignes);
   /*
    * Le signalement à l'ARS : une information que personne ne voit.
@@ -354,7 +361,26 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
       verdict = `${c2} revêtement${c2 > 1 ? 's' : ''} au plomb en état d’usage (classe 2) : à surveiller et à entretenir, sans travaux obligatoires.`;
     } else if (chiffres.classes[1] > 0) {
       gravite = 'bon';
-      verdict = 'Du plomb est présent, mais tous les revêtements concernés sont en bon état (classe 1).';
+      /*
+       * « Non dégradé OU NON VISIBLE » — et le produit ne disait que la moitié.
+       *
+       * Le tableau 1 de NF X 46-030 (§ 11, lu en entier le 20/08/2026) donne la
+       * classe 1 à deux états que le § 10 sépare : « non dégradé », et « non
+       * visible » — le revêtement au plomb est sous un autre revêtement, un
+       * papier peint ou une toile de verre, et son état **ne peut pas être
+       * décrit**.
+       *
+       * L'annexe B de la norme le montre en clair : un mur à 12,45 mg/cm², douze
+       * fois le seuil, classé 1 parce que sa toile de verre empêche de voir dans
+       * quel état il est.
+       *
+       * Écrire « tous les revêtements concernés sont en bon état » était donc
+       * une affirmation que le rapport n'a jamais faite, sur des surfaces que
+       * personne n'a regardées. C'est exactement la faute que ce produit
+       * combat : rassurer au-delà de ce qui a été constaté.
+       */
+      verdict =
+        'Du plomb est présent, mais aucun revêtement n’a été trouvé dégradé : ils sont soit en bon état, soit recouverts par un autre revêtement qui empêche d’en juger (classe 1).';
     } else {
       gravite = 'bon';
       verdict = 'Aucun revêtement contenant du plomb au-delà du seuil réglementaire.';
@@ -444,16 +470,20 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
       precision: 'classe 2 — usés ou éraflés, mais pas dégradés'
     });
     faits.push({
-      libelle: 'Avec plomb, mais intacts',
+      /* « intacts » était faux : la classe 1 couvre aussi les revêtements dont
+         l'état n'a pas pu être vu. Voir le verdict, et le § 10 de la norme. */
+      libelle: 'Avec plomb, non dégradés',
       valeur: String(chiffres.classes[1]),
-      precision: 'classe 1'
+      precision: 'classe 1 — en bon état, ou masqués par un autre revêtement'
     });
   }
-  if (degradation.length) {
+  /* Le § 12 de la norme en compte cinq, et la liste est fermée : on annonce
+     donc combien sur cinq, et non un total qui ne dit pas sur quoi il porte. */
+  if (alertes.length) {
     faits.push({
       libelle: 'Facteurs de dégradation du bâti',
-      valeur: String(degradation.length),
-      precision: degradation.map((f) => f.nom).join(' · ')
+      valeur: `${alertes.length} sur 5`,
+      precision: 'ce sont eux qui déclenchent le signalement du logement'
     });
   }
 
@@ -756,8 +786,24 @@ export function transmisALArs(lignes: string[]): boolean {
    * Le verbe change d'un éditeur à l'autre : « transmis » chez celui de DGLM,
    * « Le rapport a été ENVOYÉ à l'agence régionale de santé » chez un second.
    * Le motif ne connaissait que le premier, et laissait passer le second.
+   *
+   * ## Et le destinataire change avec l'année
+   *
+   * NF X 46-030 date d'avril 2008 — deux ans avant la création des agences
+   * régionales de santé. Son § 13 et sa rubrique 6.5 envoient donc le constat
+   * « à la Préfecture du département d'implantation du bien expertisé », et son
+   * modèle de rapport, que les éditeurs recopient, porte l'intitulé
+   * « Transmission du constat au Préfet ».
+   *
+   * L'article L. 1334-10 du code de la santé publique, lui, désigne aujourd'hui
+   * le directeur général de l'ARS, qui informe le représentant de l'État.
+   *
+   * Les deux formulations circulent donc dans les rapports selon le millésime du
+   * modèle, et elles disent la même chose : le logement est signalé. Ne
+   * reconnaître que l'ARS revenait à manquer tous les rapports restés sur le
+   * modèle de la norme.
    */
-  return /nous avons donc[^.]{0,120}?transmis|avons transmis imm[ée]diatement|a [ée]t[ée] (?:transmis|envoy[ée])[^.]{0,60}?agence r[ée]gionale/i.test(
+  return /nous avons donc[^.]{0,120}?transmis|avons transmis imm[ée]diatement|a [ée]t[ée] (?:transmis|envoy[ée])[^.]{0,60}?(?:agence r[ée]gionale|pr[ée]fecture|pr[ée]fet)/i.test(
     texte
   );
 }
