@@ -250,13 +250,16 @@
             {/if}
           </g>
 
+          <!-- L'ECART SUIT LA TAILLE. 52 puis 69, soit 17 unites, etait cale
+               pour une police de 12 ; a 16,5 les deux lignes se recouvraient de
+               4 px, mesure a l'ecran. 52 puis 74 : 22 unites. -->
           <text class="nom" x={p.x} y={p.y + 52}>{c.court}</text>
           <text
             class="mot"
             class:absente={c.etat === 'absente'}
             class:reperee={c.etat === 'reperee'}
             x={p.x}
-            y={p.y + 69}>{MOT[c.etat]}</text
+            y={p.y + 74}>{MOT[c.etat]}</text
           >
         </g>
       {/each}
@@ -403,21 +406,32 @@
 
   .marque-vide {
     fill: var(--scope-encre); /* 12,47 sur le cristal évidé */
-    font-size: var(--t-lead);
+    font-size: 18px;
     font-weight: 800;
     text-anchor: middle;
   }
 
+  /*
+   * LE NOM ET L'ETAT DU CRISTAL, EN UNITES DE viewBox.
+   *
+   * `--t-micro` vaut 12px, et dans un SVG ces 12 sont 12 unites du viewBox. Le
+   * dessin declare `viewBox="0 0 336 …"` pour 234 px affiches, soit un facteur
+   * 0,7 : les deux textes sortaient a 8,4 px a l'ecran -- les plus petits de
+   * toute l'application.
+   *
+   * 16,5 unites donnent 11,6 px. Le rapport entre les deux tailles est
+   * conserve : elles etaient egales, elles le restent.
+   */
   .nom {
     fill: var(--scope-encre);
-    font-size: var(--t-micro);
+    font-size: 16.5px;
     font-weight: 700;
     text-anchor: middle;
   }
 
   .mot {
     fill: var(--scope-doux);
-    font-size: var(--t-micro);
+    font-size: 16.5px;
     font-weight: 600;
     text-anchor: middle;
   }

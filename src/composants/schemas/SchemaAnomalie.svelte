@@ -482,7 +482,7 @@
   /* ---- Les mots du dessin ---------------------------------------------- */
   .titre {
     font-family: var(--police);
-    font-size: 10px;
+    font-size: 14px;
     font-weight: 700;
     letter-spacing: 0.06em;
     text-anchor: middle;
@@ -492,13 +492,13 @@
   .etiquette,
   .mention {
     font-family: var(--police);
-    font-size: 9px;
+    font-size: 12.5px;
     text-anchor: middle;
     fill: var(--encre-doux);
   }
 
   .mention {
-    font-size: 8.5px;
+    font-size: 11.5px;
     fill: var(--gris);
   }
 

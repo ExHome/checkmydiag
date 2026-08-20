@@ -172,7 +172,24 @@
   }
 
   .etiquette {
-    font-size: var(--t-petit);
+    /*
+     * LA TAILLE EST EN UNITES DE viewBox, PAS EN PIXELS.
+     *
+     * `var(--t-petit)` vaut 14px, et dans un SVG ces 14 sont 14 unites du
+     * viewBox. Ce clip est partage par des schemas en viewBox 460 et 500,
+     * affiches sur 291 px : l'etiquette sortait a 8,8 px a l'ecran. Sous tout
+     * seuil de lisibilite -- c'est la, plus que dans les couleurs, que se joue
+     * le « trop admin ».
+     *
+     * 20 unites donnent 12,7 px sur les 460 et 11,6 px sur les 500. Le jeton du
+     * design system ne peut pas servir ici : il est juste pour du HTML, faux
+     * pour du SVG mis a l'echelle.
+     *
+     * La valeur se regle par `--t-clip` : c'est le viewBox de l'hote qui decide
+     * de la taille apparente, donc c'est a l'hote de la donner quand il sort de
+     * la famille des 460/500. Deperditions, en 562, la remonte.
+     */
+    font-size: var(--t-clip, 20px);
     font-weight: 700;
     fill: var(--encre);
     paint-order: stroke;

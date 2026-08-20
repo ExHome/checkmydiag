@@ -277,7 +277,7 @@
   }
 
   .seuil {
-    font-size: var(--t-petit);
+    font-size: 18px;
     fill: var(--sur-fond);
     text-anchor: end;
     font-weight: 800;

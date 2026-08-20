@@ -193,7 +193,7 @@
   }
 
   .titre-cas {
-    font-size: var(--t-petit);
+    font-size: 18px;
     font-weight: 700;
     fill: var(--encre);
     text-anchor: middle;

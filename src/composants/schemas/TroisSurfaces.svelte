@@ -454,7 +454,7 @@
   }
 
   .nom-piece {
-    font-size: 8px;
+    font-size: 10px;
     font-weight: 600;
     text-anchor: middle;
     fill: var(--sur-fond);

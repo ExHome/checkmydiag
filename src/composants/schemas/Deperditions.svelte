@@ -144,7 +144,21 @@
 
   <!-- Le cadre déborde à gauche et à droite du dessin : les libellés des clips
        font partie du schéma, pas de sa marge. -->
-  <svg viewBox="-8 0 522 420" role="group" aria-label="La maison du dossier : les endroits par où la chaleur s’échappe, et les deux équipements qui la produisent.">
+  <!--
+    LE CADRE S'ELARGIT POUR LES DEUX CLIPS DU BAS.
+
+    « Chauffage » part vers la gauche depuis x=96, « Eau chaude » vers la droite
+    depuis x=404. A 20 unites de police, les deux sortaient du cadre — de 3 et
+    6 px, mesures a l'ecran. Ce ne sont pas les points d'ancrage qu'il faut
+    bouger : ils designent les equipements dessines, et les deplacer ferait
+    montrer autre chose.
+
+    Vingt unites de chaque cote, donc. Le cadre passe a 562, ce qui rapetisse
+    tout d'autant : `--t-clip` remonte a 22. Reglee sur la mesure, pas sur le
+    calcul -- a 23, « Eau chaude » ressortait du cadre. C'est la valeur la plus
+    grande qui tienne.
+  -->
+  <svg style="--t-clip: 22px" viewBox="-28 0 562 420" role="group" aria-label="La maison du dossier : les endroits par où la chaleur s’échappe, et les deux équipements qui la produisent.">
     <!-- Le terrain : un filet et ses hachures, comme sur une coupe. -->
     <path d="M40 344 H460" class="sol" />
     {#each Array.from({ length: 22 }, (_, i) => 44 + i * 19) as x}
@@ -308,7 +322,7 @@
   }
 
   .cotation {
-    font-size: var(--t-micro);
+    font-size: 20.5px;
     letter-spacing: 0.12em;
     fill: var(--or-fonce);
     text-anchor: middle;

@@ -75,7 +75,7 @@
   }
 
   .titre {
-    font-size: var(--t-petit);
+    font-size: 21px;
     font-weight: 600;
     fill: var(--encre);
     text-anchor: middle;
@@ -133,7 +133,7 @@
   }
 
   .mention {
-    font-size: var(--t-micro);
+    font-size: 18px;
     fill: var(--vert-700);
     text-anchor: middle;
     font-weight: 600;
@@ -159,7 +159,7 @@
   }
 
   .sous-conclusion {
-    font-size: var(--t-micro);
+    font-size: 18px;
     fill: var(--encre-doux);
     text-anchor: middle;
   }

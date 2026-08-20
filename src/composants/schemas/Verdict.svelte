@@ -45,7 +45,8 @@
   }
 
   text {
-    font-size: var(--t-petit);
+    /* En unites de viewBox : voir ClipDessin. 14 donnait 8,8 px a l'ecran. */
+    font-size: 20px;
     font-weight: 800;
     fill: var(--encre);
     text-anchor: middle;

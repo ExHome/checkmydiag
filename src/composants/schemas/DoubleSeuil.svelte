@@ -159,7 +159,7 @@
 
   .titre {
     font-family: var(--police-titre);
-    font-size: 13px;
+    font-size: 19.5px;
     font-weight: 500;
     text-anchor: middle;
     fill: var(--vert-700);
@@ -167,14 +167,14 @@
 
   .quoi {
     font-family: var(--police);
-    font-size: 8.5px;
+    font-size: 12.5px;
     text-anchor: middle;
     fill: var(--gris);
   }
 
   .lettre {
     font-family: var(--police);
-    font-size: 12px;
+    font-size: 18px;
     font-weight: 700;
     fill: #fff;
   }
@@ -185,7 +185,7 @@
 
   .unite {
     font-family: var(--police);
-    font-size: 8px;
+    font-size: 12px;
     text-anchor: middle;
     fill: var(--gris);
   }
@@ -198,7 +198,7 @@
 
   .valeur {
     font-family: var(--mono);
-    font-size: 10px;
+    font-size: 15px;
     font-weight: 700;
     fill: var(--encre);
   }
@@ -211,7 +211,7 @@
 
   .retenue-lettre {
     font-family: var(--police-titre);
-    font-size: 15px;
+    font-size: 22px;
     font-weight: 600;
     text-anchor: middle;
     fill: #fff;

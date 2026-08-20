@@ -888,8 +888,23 @@ button {
   stroke-width: 3;
 }
 
+/*
+ * L'ETIQUETTE DES PLANS — ET LE PIEGE DE L'UNITE SVG.
+ *
+ * Elle etait a 8px, et « 8px » dans un SVG ne veut pas dire 8 pixels a
+ * l'ecran : c'est 8 UNITES DU viewBox. Les plans declarent `viewBox="0 0 220 …"`
+ * et s'affichent sur 257 px de large, soit un facteur 1,18 — le texte sortait
+ * donc a 9,4 px. Mesure faite a l'ecran, sur mobile.
+ *
+ * 9,4 px, c'est en dessous de tout seuil de lisibilite : Apple ne descend pas
+ * sous 11 pt pour du texte secondaire. C'est la, et pas dans les couleurs, que
+ * se joue le « trop admin » : un schema couvert de micro-texte se lit comme un
+ * plan technique, pas comme une interface.
+ *
+ * 10,5 unites × 1,18 = 12,4 px apparents. Le plancher retenu est 12 px.
+ */
 .plan-svg .etiquette {
-  font-size: 8px;
+  font-size: 10.5px;
   fill: var(--sur-fond-doux);
   pointer-events: none;
 }
