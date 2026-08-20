@@ -4045,3 +4045,77 @@ existent, ils sont au code, ils sont exacts — et les appliquer à la liste B l
 rendait faux. Ce n'est pas la valeur qu'il faut vérifier, c'est son champ.
 
 ---
+
+## 79 · Les lettres du volet termites ne veulent rien dire
+
+*20/08/2026. Arrêtés du 29 mars 2007 et du 7 mars 2012, 4 pages, lus en entier.*
+
+L'annexe 1 de l'arrêté de 2007 **est** le modèle du rapport termites. Ses
+rubriques vont de A à H :
+
+| | Rubrique du modèle réglementaire |
+|---|---|
+| A | Désignation du ou des bâtiments |
+| B | Désignation du client |
+| C | Désignation de l'opérateur |
+| D | Parties visitées · éléments infestés ou non |
+| E | Parties **n'ayant pu être visitées** |
+| F | Ouvrages **non examinés** |
+| G | Moyens d'investigation |
+| H | Constatations diverses |
+
+Ma carte des encarts rangeait « parties non visitées » en **F**, « ouvrages non
+examinés » en **G**, et le § A en « situation en regard d'un arrêté préfectoral ».
+Tout était décalé d'un cran par rapport au modèle.
+
+### Sauf que le modèle non plus n'est pas suivi
+
+Avant de corriger, j'ai compté sur le corpus :
+
+```
+11  H. - Constatations diverses          11  I. - Moyens d'investigation utilisés
+ 3  G. - Constatations diverses           1  H. - Moyens d'investigation utilisés
+ 1  I. - Constatations diverses
+```
+
+**La même rubrique sort en G, en H et en I.** Les éditeurs insèrent des rubriques
+que le modèle n'a pas — la situation au regard de l'arrêté préfectoral, par
+exemple — et tout ce qui suit se décale.
+
+Donc ni ma carte ni le modèle ne donnent une position fiable. C'est la règle de
+`ODM_LISEUSE_TOUS_EDITEURS.md`, rencontrée en vrai : **un endroit se nomme — il
+ne se repère ni par sa page, ni par son numéro, ni par sa lettre.**
+
+### Le code était juste, la documentation ne l'était pas
+
+Vérifié : **aucun motif du code n'est ancré sur une lettre.** Tout est lu par
+intitulé. C'était la carte qui donnait le mauvais exemple, en présentant des
+lettres comme si elles étaient des adresses.
+
+Corrigée : les lettres y sont désormais présentées comme ce qu'elles sont — ce
+qu'un rapport donné portait, et rien de plus.
+
+### Et la norme désignée n'est pas celle qui est publiée
+
+L'arrêté du 7 mars 2012 a remplacé « XP P 03-201 » par « **NF P 03-201 de mars
+2012** ». Version consolidée lue sur Légifrance le 20/08/2026 : c'est toujours
+la phrase en vigueur, dernière mise à jour au 1er juillet 2012.
+
+Or la norme que j'ai lue est celle de **février 2016**, qui « remplace la norme
+homologuée NF P 03-201, de mars 2012 ».
+
+**La référence réglementaire a quatorze ans de retard sur l'étagère.** Pas de
+vide juridique — l'article 1er admet « toutes autres normes ou spécifications
+techniques équivalentes », et la révision de 2016 s'annonce elle-même comme une
+homogénéisation avec l'arrêté. Mais qui cite « la norme applicable » sans
+préciser laquelle dit une chose imprécise.
+
+### La leçon
+
+**Avant de mettre un trait au compte d'un éditeur, vérifier qu'il n'est pas dans
+le texte.** Deux fois aujourd'hui : les six domaines de l'électricité, que je
+donnais pour une habitude de Liciel alors qu'ils sont l'annexe III de l'arrêté ;
+et les lettres du volet termites, que je croyais propres aux rapports alors
+qu'un modèle réglementaire existe — sans être suivi.
+
+---

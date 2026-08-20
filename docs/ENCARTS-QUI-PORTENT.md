@@ -49,11 +49,19 @@ Le rapport **déclare lui-même le générateur qui l'a produit**, et souvent la
 version de la méthode de calcul qui va avec — « 3CL-DPE2021 (Moteur V1.4.25.1) »
 contre « 3CL-DPE, version 1.3 ».
 
-C'est décisif, parce que **presque tout le reste dépend du générateur** : le
-catalogue des six domaines n'existe que chez Liciel, le tableau à colonnes
-entrelacées aussi, les caractères doublés sont propres à Expertec Pro, les
-en-têtes quadruplés à DPEWIN V5, et les DPE d'avant 2021 n'ont ni schéma des
-déperditions ni « description isolation ».
+C'est décisif, parce que **beaucoup dépend du générateur** : le tableau à
+colonnes entrelacées n'existe que chez Liciel, les caractères doublés sont
+propres à Expertec Pro, les en-têtes quadruplés à DPEWIN V5, et les DPE d'avant
+2021 n'ont ni schéma des déperditions ni « description isolation ».
+
+⚠️ **Ce que le générateur ne commande PAS** — corrigé le 20/08/2026, après
+lecture de l'arrêté du 28 septembre 2017. J'avais rangé ici le **catalogue des
+six domaines** de l'électricité comme une habitude de Liciel. C'est le **modèle
+imposé par l'arrêté**, § 5 de son annexe III. Ce qui est propre à cet éditeur,
+c'est de les imprimer tous les six même sans résultat.
+
+**Avant de mettre un trait au compte d'un éditeur, vérifier qu'il n'est pas dans
+le texte.**
 
 **On lit donc cet encart d'abord, et il dit comment lire les autres.**
 
@@ -332,6 +340,44 @@ existe.
 ---
 
 ## TERMITES — 12 volets lus
+
+> ⚠️ **Les lettres de ce volet ne sont pas fiables — correction du 20/08/2026,
+> après lecture de l'arrêté du 29 mars 2007.**
+>
+> L'annexe 1 de l'arrêté fixe le modèle du rapport, et ses rubriques vont de
+> **A à H** :
+>
+> | | Rubrique du modèle réglementaire |
+> |---|---|
+> | A | Désignation du ou des bâtiments |
+> | B | Désignation du client |
+> | C | Désignation de l'opérateur de diagnostic |
+> | D | Bâtiments et parties visités · éléments infestés ou non |
+> | E | Parties **n'ayant pu être visitées** et justification |
+> | F | Ouvrages et éléments **qui n'ont pas été examinés** et justification |
+> | G | Moyens d'investigation utilisés |
+> | H | Constatations diverses |
+>
+> **Mais les rapports ne suivent pas ces lettres.** Mesuré sur le corpus :
+> « Constatations diverses » sort en **H onze fois**, en **G trois fois**, en
+> **I une fois** ; « Moyens d'investigation » en **I onze fois** et en **H une
+> fois**. Les éditeurs insèrent des rubriques que le modèle n'a pas, et tout ce
+> qui suit se décale.
+>
+> Les lettres ci-dessous décrivent donc ce qu'un rapport donné portait, **pas une
+> position stable**. C'est la règle de `ODM_LISEUSE_TOUS_EDITEURS.md`, rencontrée
+> en vrai : *un endroit se nomme — il ne se repère ni par sa page, ni par son
+> numéro, ni par sa lettre.*
+>
+> Le code, lui, lit les **intitulés** : aucun motif n'est ancré sur une lettre.
+> C'était cette carte qui donnait le mauvais exemple.
+>
+> **Et la norme que l'arrêté désigne n'est pas celle qui est publiée.** Version
+> consolidée lue le 20/08/2026 : l'article 1er vise « NF P 03-201 **de mars
+> 2012** », dernière mise à jour au 1er juillet 2012. La norme publiée est celle
+> de **février 2016**, qui remplace celle de 2012. Pas de vide — l'article admet
+> « toutes autres normes ou spécifications techniques équivalentes » — mais la
+> référence réglementaire a quatorze ans de retard sur l'étagère.
 
 **Les lettres de rubriques ne sont pas fixes.** Vérifié sur quatre volets :
 
