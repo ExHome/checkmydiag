@@ -3976,3 +3976,72 @@ un numéro d'article est ce qui se vérifie le plus vite chez le notaire : c'est
 donc lui qu'il faut le moins inventer.
 
 ---
+
+## 78 · Les arrêtés amiante — trois suites, et le produit n'en disait qu'une
+
+*20/08/2026. Arrêtés du 12 décembre 2012 (listes A et B) et du 26 juin 2013
+(liste C et modificatif), 20 pages, lus de bout en bout.*
+
+### Ce que le produit fondait, et que l'arrêté sépare
+
+Verrière classait les suites en deux : « une évaluation périodique est
+recommandée » ou « des travaux sont recommandés ». L'**article 5** de l'arrêté
+liste B en distingue **trois**, et l'écart entre les deux dernières est immense.
+
+| Recommandation | Ce que l'arrêté en dit |
+|---|---|
+| **Évaluation périodique** | contrôler que l'état ne s'aggrave pas, chercher les causes de dégradation |
+| **Action corrective de 1er niveau** | remise en état « limitée au remplacement, au recouvrement ou à la protection des **seuls éléments dégradés** » |
+| **Action corrective de 2nd niveau** | « concerne **l'ensemble d'une zone** » ; mesures conservatoires pouvant « consister à adapter, voire **condamner l'usage** des locaux » ; mesure d'empoussièrement ; analyse de risque complémentaire avant travaux |
+
+Annoncer « des travaux sont recommandés » dans les deux derniers cas mettait sur
+le même plan **le remplacement d'une dalle abîmée et la condamnation d'une
+pièce**.
+
+### Le délai de trois ans que j'appliquais partout
+
+Le produit écrivait « on revient contrôler l'état tous les trois ans » dès qu'une
+évaluation périodique était recommandée, quelle que soit la liste.
+
+**Ce délai ne vient pas de là.** Il est à l'article **R. 1334-27** du code de la
+santé publique, vérifié à la source, et il vise l'évaluation périodique de la
+**liste A** — flocages, calorifugeages, faux plafonds. Pour la **liste B**, celle
+qu'on trouve réellement dans les logements (dalles de sol, conduits, toitures),
+l'arrêté écrit « périodiquement » et ne donne aucun chiffre.
+
+Un délai réglementaire appliqué à un texte qui ne le prévoit pas est
+exactement le genre de citation qu'un notaire relève. Il a été retiré, et un test
+vérifie qu'il ne revienne pas sur une liste B.
+
+### Les délais qui existent vraiment, et où ils sont écrits
+
+Pour la **liste A** — arrêté du 12 décembre 2012, annexes I à III, et articles
+R. 1334-27 à R. 1334-29 du code de la santé publique :
+
+| Score de la grille | Conclusion imposée | Délai |
+|---|---|---|
+| **1** | faire réaliser une évaluation périodique | **trois ans** au plus |
+| **2** | faire réaliser une **surveillance du niveau d'empoussièrement** | **trois mois** |
+| **3** | faire réaliser des travaux de retrait ou de confinement | travaux achevés sous **36 mois** |
+
+Et le seuil qui tranche après la mesure, à l'article R. 1334-28 : **au-delà de
+cinq fibres par litre d'air, les travaux deviennent obligatoires** ; en deçà, une
+nouvelle évaluation sous trois ans.
+
+Le score 2 n'est donc pas « des travaux » : c'est **une mesure d'air**, et c'est
+son résultat qui décide.
+
+### Ce que l'arrêté confirme, et que le produit lisait déjà bien
+
+L'**article 6, 5°** impose la liste des parties non visitées avec leurs motifs,
+**et** la mention que les obligations des articles R. 1334-15 à R. 1334-18 « ne
+sont pas remplies ». C'est exactement la phrase que Verrière remonte déjà, et sa
+lecture est confirmée par le texte qui l'impose.
+
+### La leçon
+
+**Un chiffre juste au mauvais endroit reste un chiffre faux.** Les trois ans
+existent, ils sont au code, ils sont exacts — et les appliquer à la liste B les
+rendait faux. Ce n'est pas la valeur qu'il faut vérifier, c'est son champ.
+
+---

@@ -8,9 +8,27 @@ import { analyserAmiante, materiauxAmiantes } from './reperages';
  * sans jamais dire lesquels ni où. Le rapport les nomme, les situe, et indique
  * la suite.
  *
- * Trois suites existent pour la liste B, et elles n'engagent pas au même point :
- * l'évaluation périodique est une surveillance — on revient tous les trois ans ;
- * les actions correctives de premier et second niveau sont des travaux.
+ * Trois suites existent pour la liste B, et elles n'engagent pas au même point.
+ * L'arrêté du 12 décembre 2012 qui les définit a été lu en entier le 20/08/2026,
+ * et son article 5 les sépare bien plus nettement que le produit ne le faisait :
+ *
+ * — l'**évaluation périodique** consiste à revenir vérifier que l'état ne
+ *   s'aggrave pas, et à chercher les causes de dégradation ;
+ * — l'**action corrective de premier niveau** est une remise en état « limitée
+ *   au remplacement, au recouvrement ou à la protection des SEULS ÉLÉMENTS
+ *   DÉGRADÉS » ;
+ * — l'**action corrective de second niveau** « concerne l'ENSEMBLE D'UNE ZONE »,
+ *   et ses mesures conservatoires « peuvent consister à adapter, voire
+ *   CONDAMNER L'USAGE des locaux concernés » en attendant les travaux.
+ *
+ * Le produit annonçait « des travaux sont recommandés » pour les deux dernières,
+ * mettant sur le même plan le remplacement d'une dalle et la condamnation d'une
+ * pièce.
+ *
+ * ⚠️ Le délai de trois ans ne vaut PAS ici. Il est à l'article R. 1334-27 du
+ * code de la santé publique, et il ne concerne que l'évaluation périodique de la
+ * **liste A** — flocages, calorifugeages, faux plafonds. Pour la liste B,
+ * l'arrêté dit « périodiquement » sans chiffre : on n'en invente pas.
  *
  * Fragments anonymisés, calqués sur la conclusion d'un rapport réel.
  */
@@ -74,7 +92,19 @@ describe('ce que la fiche en dit', () => {
     expect(diag.verdict).toMatch(/1er étage - Terrasse/);
   });
 
-  it('explique ce qu’est une évaluation périodique', () => {
-    expect(diag.verdict).toMatch(/tous les trois ans/);
+  it('explique ce qu’est une évaluation périodique, sans inventer de délai', () => {
+    expect(diag.verdict).toMatch(/évaluation périodique/);
+    expect(diag.verdict).toMatch(/ne s’aggrave pas/);
+    /* Le délai de trois ans est celui de la liste A (R. 1334-27) : l'appliquer à
+       une liste B serait citer un texte qui ne la vise pas. */
+    expect(diag.verdict).not.toMatch(/trois ans/);
+  });
+
+  it('ne met pas sur le même plan une dalle abîmée et une pièce condamnée', () => {
+    const dit = `${diag.verdict} ${diag.aFaire.join(' ')}`;
+    expect(dit).toMatch(/premier niveau/);
+    expect(dit).toMatch(/second niveau/);
+    expect(dit).toMatch(/seuls éléments dégradés|éléments dégradés/);
+    expect(dit).toMatch(/condamner/);
   });
 });

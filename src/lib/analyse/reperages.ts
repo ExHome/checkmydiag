@@ -687,7 +687,28 @@ export function analyserAmiante(lignes: string[], plage: [number, number]): Diag
    */
   const materiaux = materiauxAmiantes(lignes);
   const aSurveiller = materiaux.filter((m) => m.suite === 'evaluation');
-  const aTraiter = materiaux.filter((m) => m.suite === 'action-1' || m.suite === 'action-2');
+  /*
+   * Les deux actions correctives ne sont pas la même chose, et les fondre était
+   * une perte sèche pour le lecteur.
+   *
+   * Arrêté du 12 décembre 2012 relatif à la liste B, article 5, lu en entier le
+   * 20/08/2026 :
+   *
+   * — l'**action corrective de premier niveau** est « une action de remise en
+   *   état limitée au remplacement, au recouvrement ou à la protection des
+   *   SEULS ÉLÉMENTS DÉGRADÉS » ;
+   *
+   * — l'**action corrective de second niveau** « concerne l'ENSEMBLE D'UNE
+   *   ZONE », impose des mesures conservatoires en attendant — qui « peuvent
+   *   consister à adapter, voire CONDAMNER L'USAGE des locaux concernés » —,
+   *   une mesure d'empoussièrement pour vérifier qu'elles suffisent, puis une
+   *   analyse de risque complémentaire avant les travaux.
+   *
+   * Annoncer « des travaux sont recommandés » dans les deux cas mettait sur le
+   * même plan le remplacement d'une dalle abîmée et la condamnation d'une pièce.
+   */
+  const remiseEnEtat = materiaux.filter((m) => m.suite === 'action-1');
+  const zoneEntiere = materiaux.filter((m) => m.suite === 'action-2');
 
   /*
    * Le détail ne s'affiche que si le rapport a repéré quelque chose.
@@ -805,11 +826,13 @@ export function analyserAmiante(lignes: string[], plage: [number, number]): Diag
         ? `Amiante repérée : ${materiaux[0]?.quoi}${materiaux[0]?.ou ? ` (${materiaux[0]?.ou})` : ''}${
             materiaux.length > 1 ? `, et ${materiaux.length - 1} autre${materiaux.length > 2 ? 's' : ''}` : ''
           }.${
-            aTraiter.length
-              ? ' Des travaux sont recommandés.'
-              : aSurveiller.length
-                ? ' Une évaluation périodique est recommandée : on revient contrôler l’état tous les trois ans.'
-                : ''
+            zoneEntiere.length
+              ? ' Le rapport demande une action corrective de second niveau : elle porte sur toute une zone, et non sur le seul matériau abîmé.'
+              : remiseEnEtat.length
+                ? ' Le rapport demande une action corrective de premier niveau : remplacer, recouvrir ou protéger les seuls éléments dégradés.'
+                : aSurveiller.length
+                  ? ' Une évaluation périodique est recommandée : on revient contrôler que l’état ne s’aggrave pas.'
+                  : ''
           }`
           : amianteTrouvee
             ? 'Des matériaux contenant de l’amiante ont été repérés dans le bien.'
@@ -854,7 +877,24 @@ export function analyserAmiante(lignes: string[], plage: [number, number]): Diag
     aFaire: amianteTrouvee
       ? [
           'Ne percez, ne poncez, ne découpez jamais un matériau amianté vous-même : faites appel à une entreprise certifiée.',
-          'Selon le matériau et son état, le rapport impose soit une simple surveillance périodique (contrôle tous les trois ans), soit des travaux.',
+          /*
+           * Les trois suites, dans les mots des textes — et les délais où ils
+           * les donnent, nulle part ailleurs.
+           *
+           * Liste A (flocages, calorifugeages, faux plafonds), arrêté du
+           * 12 décembre 2012 et article R. 1334-27 du code de la santé publique,
+           * lus le 20/08/2026 : score 1 → évaluation périodique dans un délai
+           * maximal de trois ans ; score 2 → mesure d'empoussièrement dans l'air
+           * sous trois mois ; score 3 → travaux de retrait ou de confinement.
+           * L'article R. 1334-28 ajoute le seuil qui tranche après la mesure :
+           * au-delà de 5 fibres par litre, les travaux deviennent obligatoires.
+           *
+           * Liste B, même arrêté, article 5 : évaluation périodique, action
+           * corrective de premier niveau, action corrective de second niveau —
+           * et le texte n'y attache aucun délai chiffré. On n'en invente pas.
+           */
+          'Trois suites possibles, et elles n’engagent pas au même point : une évaluation périodique, qui consiste à revenir vérifier que l’état ne s’aggrave pas ; une action corrective de premier niveau, limitée aux éléments dégradés ; une action corrective de second niveau, qui porte sur toute une zone et peut imposer d’en condamner l’usage en attendant les travaux.',
+          'Pour les flocages, calorifugeages et faux plafonds — la liste A —, les délais sont écrits dans le code : trois ans au plus pour l’évaluation périodique, trois mois pour la mesure d’empoussièrement, et au-delà de cinq fibres par litre d’air, les travaux deviennent obligatoires.',
           'Conservez le rapport : il devra être remis à toute entreprise intervenant dans le logement, et au futur acquéreur.'
         ]
       : [
