@@ -10,6 +10,7 @@
   const { texte }: { texte: string } = $props();
 
   import { LEXIQUE } from '../lib/lexique';
+  import { espacesFrancaises } from '../lib/typographie';
 
   interface Bout {
     texte: string;
@@ -64,10 +65,22 @@
       class:ouvert={ouvert === bout.texte}
       onclick={() => (ouvert = ouvert === bout.texte ? null : bout.texte)}
     >
-      {bout.texte}
+      {espacesFrancaises(bout.texte)}
     </button>
   {:else}
-    {bout.texte}
+    <!--
+      Les espaces françaises se posent ICI, au dernier moment.
+
+      Le texte a déjà été découpé et ses termes reconnus : y glisser des
+      insécables plus tôt ferait échouer des correspondances qui, elles,
+      travaillent sur des espaces ordinaires. Le morceau qui part à l'écran est
+      le seul endroit sûr.
+
+      Sans cela, le navigateur coupe où il veut, et la fiche du DPE affichait
+      « … une « passoire thermique / ». La loi limite… », guillemet fermant
+      seul en tête de ligne.
+    -->
+    {espacesFrancaises(bout.texte)}
   {/if}
 {/each}
 

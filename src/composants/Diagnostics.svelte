@@ -12,6 +12,7 @@
    * rien avoir à cliquer.
    */
   import type { Analyse, Diagnostic, Fait, TypeDiag } from '../lib/modele';
+  import { espacesFrancaises } from '../lib/typographie';
   import Explicatif from './schemas/Explicatif.svelte';
   import VisuelDpe from './visuels/VisuelDpe.svelte';
   import TableauElectrique from './visuels/TableauElectrique.svelte';
@@ -561,7 +562,20 @@
         onkeydown={auClavier}
       >
         <span class="pastille" aria-hidden="true"></span>
-        <span class="nom-onglet">{d.titre}</span>
+        <!--
+          LE NOM DE L'APPLICATION, PAS CELUI DU RAPPORT.
+
+          Les onglets portaient le titre reglementaire complet : « Performance
+          energetique (DPE) », « Plomb dans les peintures (CREP) », « Risques et
+          pollutions (ERP) ». Du vocabulaire de dossier, qui remplit la barre
+          sans rien apprendre — on n'ecrit pas « Reglages du systeme » sur une
+          icone d'application.
+
+          Le nom court existait deja dans `apps.ts`, et c'est celui de la tuile
+          d'accueil : le lecteur retrouve donc le meme mot d'un ecran a l'autre.
+          Le titre complet reste dans la fiche et dans la barre de l'app.
+        -->
+        <span class="nom-onglet">{APPS[d.type]?.nom ?? d.titre}</span>
       </button>
     {/each}
   </nav>
@@ -664,27 +678,6 @@
               {/if}
             </p>
 
-            <!-- Le niveau de lecture. Deux boutons, jamais un interrupteur : on
-                 doit voir d'un coup d'œil où l'on est, sans avoir à interpréter
-                 la position d'un curseur. -->
-            <div class="modes" role="group" aria-label="Niveau de détail">
-              <button
-                type="button"
-                class:actif={modeDe(d.type) === 'succinct'}
-                aria-pressed={modeDe(d.type) === 'succinct'}
-                onclick={() => choisirMode(d.type, 'succinct')}
-              >
-                L’essentiel
-              </button>
-              <button
-                type="button"
-                class:actif={modeDe(d.type) === 'detaille'}
-                aria-pressed={modeDe(d.type) === 'detaille'}
-                onclick={() => choisirMode(d.type, 'detaille')}
-              >
-                Tout le détail
-              </button>
-            </div>
           </header>
 
           <div class="corps">
@@ -731,12 +724,22 @@
                 <VisuelRisques risques={risquesDe(d)} />
               {/if}
 
-              <!-- Deux dessins, deux questions. Le premier explique pourquoi ce
-                   contrôle existe ; le second dit ce qu'on a trouvé chez vous,
-                   zone par zone. Le second n'apparaît que si le rapport permet
-                   de le remplir. -->
-              <Explicatif type={d.type} isolation={isolationDe(d)} lettre={lettreDe(d)} />
-              <PlanDuLogement diagnostic={d} />
+              <!--
+                DEUX DESSINS DESCENDENT À LEUR QUESTION.
+
+                La scène empilait trois schémas d'affilée — 1 808 px de haut sur
+                le DPE — et on les recevait tous les trois avant d'avoir lu quoi
+                que ce soit. « Moins mais mieux » : ce n'est pas la quantité de
+                dessin qui fait comprendre, c'est le dessin au bon endroit.
+
+                Chacun répond en fait à une question différente, et ces questions
+                ont déjà leur section plus bas :
+                  · l'explicatif (« par où la chaleur part ») → POURQUOI,
+                  · le plan des parois (« ce qu'on a trouvé chez vous ») → OÙ.
+
+                Ne reste ici que le schéma d'identité, celui qui dit dans quel
+                diagnostic on est entré avant tout mot.
+              -->
             </div>
 
             <div class="dit">
@@ -862,6 +865,11 @@
                   <OuEstLePlomb emplacements={d.schema.emplacements} />
                 {/if}
 
+                <!-- Le plan des parois : ce que le rapport dit de chez vous,
+                     paroi par paroi. Il descend de la scène jusqu'ici — c'est
+                     une réponse à « où ? », pas une illustration d'en-tête. -->
+                <PlanDuLogement diagnostic={d} />
+
                 {#if d.releves?.length}
                   <Releves releves={d.releves} page={d.pages[0]} type={d.type} />
                 {:else if !(d.schema?.genre === 'plomb' && d.schema.emplacements.length)}
@@ -884,6 +892,11 @@
               -->
               <section class="etape detail" class:replie={modeDe(d.type) === 'succinct'} aria-labelledby="et-pourquoi-{d.type}">
                 <h4 id="et-pourquoi-{d.type}" class="titre-etape">Pourquoi&nbsp;?</h4>
+
+                <!-- Le dessin qui explique le mécanisme du contrôle. Il ouvre la
+                     réponse plutôt que de la précéder de trois écrans. -->
+                <Explicatif type={d.type} isolation={isolationDe(d)} lettre={lettreDe(d)} />
+
                 {#if d.explication.length}
                   <div class="propre-au-rapport">
                     {#each d.explication as paragraphe (paragraphe)}
@@ -938,6 +951,43 @@
                   {/each}
                 </dl>
               </section>
+
+              <!--
+                UNE SEULE ACTION, ET ELLE EST LÀ OÙ ÇA S'OUVRE.
+
+                C'étaient deux boutons de même largeur et de même graisse, en
+                haut de la fiche : « L'essentiel » | « Tout le détail ». Un
+                partage 50/50 qui présente deux choix égaux — alors qu'ils ne le
+                sont pas. L'essentiel est l'état par défaut ; le détail est une
+                profondeur qu'on demande. Une seule action, donc, et discrète.
+
+                Et elle descend en bas de fiche : le contrôle vivait dans
+                l'en-tête, loin des sections qu'il commande. On met l'interrupteur
+                dans la pièce qu'il éclaire.
+              -->
+              <button
+                type="button"
+                class="plus-de-detail"
+                aria-expanded={modeDe(d.type) === 'detaille'}
+                onclick={() =>
+                  choisirMode(d.type, modeDe(d.type) === 'detaille' ? 'succinct' : 'detaille')}
+              >
+                <span
+                  >{modeDe(d.type) === 'detaille'
+                    ? 'Masquer le détail'
+                    : 'Tout le détail'}</span
+                >
+                <svg viewBox="0 0 24 24" aria-hidden="true" class="chevron">
+                  <path
+                    d="M6 9 L12 15 L18 9"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
 
               <!-- Les réserves : ce que ce diagnostic-là ne couvre pas. Sans
                    elles, une conclusion rassurante se lit comme une garantie. -->
@@ -1021,7 +1071,12 @@
       -->
       <header class="entree">
         <p class="lumiere">{lumiereSur(diags[courant]?.type ?? 'dpe')}</p>
-        <h2 class="question">{questionDe(diags[courant]?.type ?? 'dpe')}</h2>
+        <!-- La grande question de l'écran. Elle finit par « ? » : sans espace
+             insécable, le point d'interrogation part seul à la ligne dès que le
+             titre passe sur deux lignes — ce qui est le cas sur mobile. -->
+        <h2 class="question">
+          {espacesFrancaises(questionDe(diags[courant]?.type ?? 'dpe'))}
+        </h2>
       </header>
 
       <section class="diagnostics">
@@ -1644,43 +1699,48 @@
      Deux boutons de même largeur, séparés du reste par un filet : c'est une
      commande, pas un paragraphe. L'actif prend le vert plein — la seule
      couleur d'action du produit. */
-  .modes {
+  /* Le geste iOS pour « en voir plus » : pleine largeur, encre d'accent,
+     chevron qui pivote. Pas de fond plein — ce n'est pas l'action principale
+     de l'écran, c'est celle qui approfondit. */
+  .plus-de-detail {
     display: flex;
-    gap: var(--e2);
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    min-height: 44px;
     margin-top: var(--e4);
-    padding-top: var(--e3);
-    border-top: 1px solid var(--trait);
-  }
-
-  .modes button {
-    flex: 1;
-    min-height: 40px;
+    padding: 0 var(--e4);
     background: transparent;
-    border: 1px solid var(--trait);
-    border-radius: var(--rayon-badge);
-    color: var(--sur-fond-doux);
+    border: none;
+    border-top: 1px solid var(--trait);
+    color: var(--action-forte);
     font-size: var(--t-petit);
     font-weight: 700;
     cursor: pointer;
-    transition: background var(--duree) var(--courbe), color var(--duree) var(--courbe),
-      border-color var(--duree) var(--courbe);
   }
 
-  /* Le bord prend la couleur vive, le libellé prend celle qui s'écrit : depuis
-     que `--action-forte` porte le vert profond, l'encre claire y tient largement
-     en texte. */
-  .modes button:hover {
-    border-color: var(--action-forte);
-    color: var(--action-texte);
+  .plus-de-detail:hover {
+    color: var(--action-forte);
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
-  /* L'encre du bouton actif suit l'accent : blanche sur un accent foncé, sombre
-     sur le jaune de l'électricité. Écrire `#fff` en dur donnait un bouton
-     illisible dans les univers clairs d'accent. */
-  .modes button.actif {
-    background: var(--action-forte);
-    border-color: var(--action-forte);
-    color: var(--sur-accent, #fff);
+  .plus-de-detail .chevron {
+    width: 15px;
+    height: 15px;
+    flex: none;
+    transition: transform var(--duree) var(--courbe);
+  }
+
+  .plus-de-detail[aria-expanded='true'] .chevron {
+    transform: rotate(180deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .plus-de-detail .chevron {
+      transition: none;
+    }
   }
 
   /* Le détail arrive par le haut, sans fondu.
@@ -1725,11 +1785,16 @@
   /* La provenance se lit après le verdict, jamais avant : elle répond à une
      question qu'on ne se pose qu'ensuite. D'où le retrait et la teinte
      assourdie — présente, mais qui ne dispute rien à la phrase du dessus. */
+  /* Quatre mentions sur une ligne flexible — et qui PASSE À LA LIGNE.
+     Sans `wrap`, les quatre se partageaient la largeur de force : sur un volet
+     étroit, la première tombait à 62 px de large pour 246 px de haut, un mot
+     par ligne. Une colonne de mots n'est pas une ligne de provenance. */
   .provenance {
     margin: var(--e2) 0 0;
     font-size: var(--t-petit);
     color: var(--sur-fond-doux);
     display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
     gap: var(--e2);
   }
@@ -1772,25 +1837,53 @@
     color: var(--sur-fond-doux);
   }
 
-  /* Le dessin d'un côté, ce qu'on en dit de l'autre. */
+  /*
+   * LE SCHÉMA DOMINE. IL N'ACCOMPAGNE PAS.
+   *
+   * C'était deux colonnes côte à côte, et le partage disait le contraire de ce
+   * qu'on voulait : 0.9fr pour le dessin, 1.1fr pour le texte. Le schéma était
+   * la plus étroite des deux — une vignette posée à côté d'un article.
+   *
+   * L'ordre de mission est explicite : le schéma « n'est pas une illustration,
+   * c'est une interface de compréhension ». Et l'ordre de perception le place
+   * en 3, juste après la conclusion et le risque — donc AVANT le commentaire,
+   * pas à sa gauche.
+   *
+   * Une seule colonne, donc. Le schéma prend toute la largeur, en scène ; le
+   * texte descend dessous. C'est le geste des cartes iOS : le graphique en
+   * grand d'abord, les lignes de détail ensuite.
+   */
   .corps {
     display: grid;
-    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    grid-template-columns: 1fr;
     gap: var(--e5);
     align-items: start;
   }
 
-  @media (max-width: 860px) {
-    .corps {
-      grid-template-columns: 1fr;
+  /* La scène. Elle respire plus qu'une vignette : c'est elle qu'on regarde en
+     premier, et le premier regard ne doit pas tomber sur un bord. */
+  .dessin {
+    background: var(--papier);
+    border-radius: var(--rayon);
+    padding: var(--e5) var(--e5);
+    color: var(--encre);
+    display: grid;
+    gap: var(--e5);
+  }
+
+  @media (max-width: 560px) {
+    .dessin {
+      padding: var(--e4) var(--e3);
+      gap: var(--e4);
+      border-radius: var(--rayon-petit);
     }
   }
 
-  .dessin {
-    background: var(--papier);
-    border-radius: var(--rayon-petit);
-    padding: var(--e4) var(--e4);
-    color: var(--encre);
+  /* Le texte ne s'étire pas à la largeur de la scène : une ligne de 120
+     caractères ne se lit pas. Il garde sa mesure et s'aligne à gauche, sous le
+     dessin. */
+  .dit {
+    max-width: var(--mesure);
   }
 
   .pratique {
