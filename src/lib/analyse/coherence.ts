@@ -366,12 +366,64 @@ function illisibles(diagnostics: Diagnostic[]): PointDeControle[] {
   ];
 }
 
+/**
+ * Contrôle 6 — l'attestation d'assurance jointe est-elle à jour ?
+ *
+ * Le rapport porte « Numéro de police et date de validité : X - 30/09/2023 ».
+ * Quand cette date précède le rapport lui-même, la pièce jointe au dossier
+ * n'est plus la bonne.
+ *
+ * **Le mot compte, et ce n'est pas « défaut d'assurance ».** Mesuré sur
+ * soixante-dix rapports : vingt-quatre sur cinquante-neuf portent une date
+ * dépassée — mais seules **cinq dates distinctes** apparaissent, les millésimes
+ * successifs d'une même attestation, et l'écart médian est de **deux mois**.
+ * C'est la signature d'un champ figé dans le modèle de document, pas d'un
+ * cabinet qui travaillerait sans couverture. Conclure au défaut d'assurance
+ * serait une accusation — fausse dans la quasi-totalité des cas.
+ *
+ * Ce qu'on signale est une **pièce à actualiser**, qui se demande et se
+ * remplace avant la signature.
+ *
+ * Le contrôle est silencieux : quand la date couvre la mission — le cas normal
+ * — la fiche n'en dit rien. Pas de ligne « assurance : valide », pas de coche
+ * verte. Ni l'assureur ni le numéro de police ne sont montrés : ils ne
+ * regardent pas le lecteur, et les afficher mettrait en cause le confrère.
+ */
+function attestationAssurance(
+  lignes: string[],
+  dateRapport: string | undefined
+): PointDeControle[] {
+  if (!dateRapport) return [];
+
+  const ligne = lignes
+    .map((l) => /Num[ée]ro de police et date de validit[ée]\s*:?[\s.]*(\S[^\n]{0,60})/i.exec(l))
+    .find(Boolean);
+  const fin = ligne?.[1] ? /(\d{1,2}\/\d{1,2}\/\d{4})\s*$/.exec(ligne[1].trim()) : null;
+  if (!fin?.[1]) return [];
+
+  const finValidite = enDate(fin[1]);
+  const duRapport = enDate(dateRapport);
+  if (!finValidite || !duRapport || finValidite >= duRapport) return [];
+
+  return [
+    {
+      titre: 'L’attestation d’assurance jointe n’est plus à jour',
+      explication: `L’attestation reproduite dans le rapport était valable jusqu’au ${fin[1]}, alors que le rapport est daté du ${dateRapport}. C’est presque toujours la pièce du dossier qui n’a pas été actualisée, et non la couverture elle-même — mais un dossier qui arrive chez le notaire avec une attestation périmée peut être renvoyé.`,
+      quoiFaire:
+        'Demandez au diagnostiqueur l’attestation d’assurance en cours de validité, et faites-la joindre au dossier.',
+      genre: 'attention'
+    }
+  ];
+}
+
 export function controler(
   bien: Bien,
   diagnostics: Diagnostic[],
   aujourdhui: Date = new Date(),
   /** Le document porte une page « résumé de l'expertise » : c'est un dossier. */
-  avecSynthese = false
+  avecSynthese = false,
+  /** Les lignes du dossier, pour les contrôles qui lisent hors des volets. */
+  lignes: string[] = []
 ): PointDeControle[] {
   const presents = new Set(diagnostics.map((d) => d.type));
 
@@ -380,6 +432,7 @@ export function controler(
     ...manquants(bien, presents, aujourdhui, avecSynthese),
     ...surfaces(bien, diagnostics),
     ...datesEparpillees(diagnostics),
-    ...illisibles(diagnostics)
+    ...illisibles(diagnostics),
+    ...attestationAssurance(lignes, diagnostics.find((d) => d.date)?.date)
   ];
 }

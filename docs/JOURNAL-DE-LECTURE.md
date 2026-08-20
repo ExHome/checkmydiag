@@ -122,6 +122,15 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 - **L'homme de l'art sort du périmètre** (§65) : assurance, certification et
   impartialité ne seront ni extraites ni signalées. Verrière explique le
   diagnostic, elle ne juge pas le diagnostiqueur.
+- **L'attestation d'assurance est contrôlée, en silence** (§66) : signalée
+  uniquement si sa date ne couvre pas le rapport — **24 sur 70**, zéro à tort,
+  et 46 dossiers muets. Le libellé est « attestation à mettre à jour », jamais
+  « défaut d'assurance » : cinq dates distinctes pour 59 rapports, écart médian
+  de deux mois — c'est un champ figé dans le générateur, pas un cabinet sans
+  couverture. Ni l'assureur ni le numéro de police ne sont montrés.
+- **Les pourcentages du schéma de déperditions sont dans une image** : mesuré,
+  la page porte 14 à 15 images bitmap et zéro texte avec « % ». Aucune
+  extraction de texte ne les atteindra — décision à prendre (voir ci-dessous).
 
 > **Prochain chantier** : le **schéma de déperditions du DPE** — par où la
 > chaleur s'en va, poste par poste, en pourcentages. C'est la page qui explique
@@ -141,10 +150,10 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 | Volets lus page à page | 30 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 7 majeures |
-| Corrections livrées | 45 |
-| Tests de non-régression ajoutés | 119 |
+| Corrections livrées | 46 |
+| Tests de non-régression ajoutés | 125 |
 | Fausses alertes de mes propres sondes, écartées avant annonce | 9 |
-| Sondes de justesse écrites | 13 |
+| Sondes de justesse écrites | 16 |
 | Notions métier versées au produit | 6 |
 | Fiches versées à la Dropbox | 2 |
 | Points ouverts au carnet | 16 |

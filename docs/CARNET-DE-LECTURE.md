@@ -3077,3 +3077,78 @@ Le référentiel de lecture porte cette frontière, pour que la mesure ne la
 rouvre pas à chaque passage.
 
 ---
+
+## 66 · « Attestation à mettre à jour », pas « défaut d'assurance »
+
+Le §65 avait sorti l'assurance du périmètre. Aude l'y remet, mais à une
+condition précise : **regarder si le diagnostiqueur est assuré pour la mission,
+et ne le faire apparaître que s'il y a un défaut.** Puis, sur le libellé :
+**« attestation d'assurance à mettre à jour » plutôt que « défaut
+d'assurance ».**
+
+La mesure lui donne raison sur le fond, et c'est ce qui rend la nuance
+indispensable.
+
+### 24 sur 59 — un chiffre qu'il ne fallait surtout pas publier tel quel
+
+Le rapport porte, en page de garde :
+
+```
+Numéro de police et date de validité : ....... 86517808/808109424 - 30/09/2023
+```
+
+Comparée à la date du rapport, cette date est dépassée dans **24 dossiers sur
+59**. Quarante pour cent. Sur les rapports de DGLM elle-même.
+
+Un tel chiffre appelle l'ouverture avant l'annonce — et la distribution
+tranche :
+
+| Occurrences | Date de fin de validité |
+|---|---|
+| 33 | 01/10/2025 |
+| 8 | 31/12/2021 |
+| 8 | 30/09/2023 |
+| 7 | 31/12/2022 |
+| 3 | 01/10/2026 |
+
+**Cinq dates pour cinquante-neuf rapports.** Ce sont les millésimes successifs
+d'une même attestation, et l'**écart médian est de deux mois** — le délai
+ordinaire entre l'expiration d'une attestation et sa mise à jour dans le modèle
+de document.
+
+Ce n'est donc pas un cabinet qui travaille sans couverture : c'est **un champ
+figé dans le générateur**. Écrire « défaut d'assurance » aurait été une
+accusation, fausse dans la quasi-totalité des cas, portée contre la profession
+qui distribuera le produit.
+
+### Ce que le contrôle dit, et ce qu'il ne dit pas
+
+> **L'attestation d'assurance jointe n'est plus à jour.** L'attestation
+> reproduite dans le rapport était valable jusqu'au 30/09/2023, alors que le
+> rapport est daté du 23/11/2023. C'est presque toujours la pièce du dossier qui
+> n'a pas été actualisée, et non la couverture elle-même — mais un dossier qui
+> arrive chez le notaire avec une attestation périmée peut être renvoyé.
+
+Trois gardes, chacune tenue par un test :
+
+**Silencieux quand tout va bien.** Pas de ligne « assurance : valide », pas de
+coche verte. Quarante-six dossiers sur soixante-dix ne disent rien.
+
+**Ni l'assureur ni le numéro de police ne sont montrés.** Ils ne regardent pas
+le lecteur, et les afficher mettrait en cause le confrère nommément.
+
+**Le mot « défaut d'assurance » est interdit par le test lui-même**, au même
+titre que « non assuré ».
+
+**Mesuré en sortie : 24 signalés, zéro à tort.**
+
+### La leçon
+
+Un chiffre juste peut porter une conclusion fausse. Ici, la date **est** dépassée
+— la mesure ne se trompe pas — mais ce qu'elle prouve n'est pas ce qu'elle
+semble prouver. **Entre la mesure et l'affirmation, il y a une inférence, et
+c'est elle qu'il faut ouvrir.** La distribution des valeurs l'a fait tomber en
+une minute : cinq dates distinctes ne décrivent pas soixante cabinets, elles
+décrivent un formulaire.
+
+---

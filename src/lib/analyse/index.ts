@@ -380,7 +380,7 @@ export function analyser(brutes: PageTexte[]): Analyse {
        * dossier de vente, que ce qui vaut pour n'importe quel document : un
        * rapport périmé le reste, deux chiffres qui se contredisent aussi.
        */
-      ...controler(bien, diagnostics, new Date(), plageSynthese !== null).filter(
+      ...controler(bien, diagnostics, new Date(), plageSynthese !== null, toutesLesLignes).filter(
         (c) =>
           (nature.genre === 'venteLocation' || c.genre !== 'manque') &&
           !dejaDansLeDocument(c, toutesLesLignes)
