@@ -209,6 +209,19 @@ intelligente, pas l'inverse.
 
 **Sous 18 : ne pas présenter. 18–19 : chercher encore. 20 : présenter.**
 
+### La boucle est automatique
+
+Consigne du 20 août 2026 : *« tant que pas 18, tu continues — tant que pas digne
+d'une application haut de gamme. »*
+
+On ne demande pas l'autorisation de recommencer, et on n'attend pas d'être
+relancé. Tant qu'une proposition est sous 18, elle repart en conception. Tant
+qu'un écran ne serait pas digne d'une application haut de gamme, il n'est pas
+fini — même si la note passe.
+
+Et la note ne s'auto-attribue pas : elle est donnée par une critique
+indépendante qui cherche à démolir le travail, pas par son auteur.
+
 ---
 
 ## Règle de non-régression
