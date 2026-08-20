@@ -566,9 +566,52 @@ description description description description isolation isolation isolation is
 Chercher la ligne « description isolation » pour borner l'encart ne la trouve
 pas sous cette forme.
 
-### Une réserve juridique que Liciel n'a pas
+### Le CREP d'Expertec Pro : la pièce comme unité, et la mesure comme ligne
 
-La note de synthèse d'AnalysImmo porte : « **Document ne pouvant en aucun cas
-être annexé à un acte authentique** ». Chez Liciel, le résumé de l'expertise
-dit seulement qu'il « ne peut être utilisé indépendamment du rapport complet ».
-La portée n'est pas la même, et un notaire s'en soucie.
+Le tableau le plus détaillé de tout le corpus, tous éditeurs confondus. Il est
+organisé **par pièce**, en titres majuscules — `SOUS SOL CHAUFFERIE`,
+`RDC SALLE D'EAU`, `COMBLES GRENIER` — et chaque ligne est **une mesure** :
+
+```
+RDC SALLE D'EAU
+N° Mes | Zone | Unité de diagnostic | Substrat | Revêt. apparent | Localisa mesure | Rés | mg/cm² | Classe
+2042   |  A   | porte1              | Bois     | Peinture        |                 | NEG |  0,1   |   0
+2046   |  A   | mur bas             | Plâtre   | Papier peint    | <1m.            | NEG |  0,5   |   0
+2047   |  A   | mur haut            | Plâtre   | Papier peint    | >1m.            | NEG |  0,4   |   0
+…
+Nombre total d'UD 8 · Nbre d'unités de classe 3 : 0 · Pourcentage de classe 3 : 0%
+```
+
+La **zone** (A/B/C/D) désigne les quatre murs de la pièce, la **localisation de
+mesure** distingue le bas et le haut du mur (`<1m.` / `>1m.`), et un
+**récapitulatif par pièce** clôt chaque tableau.
+
+Chez Liciel, le CREP donne un récapitulatif global — Total, Non mesurées,
+Classes 0 à 3 — mais le détail par pièce n'apparaît pas de cette façon.
+
+### Un piège d'extraction propre à Expertec Pro : les caractères doublés
+
+Ses titres sortent avec **chaque caractère répété** :
+
+```
+D O S S I E R  D E  D I A G N O S T I C S  T E C H N I Q U E S
+C C O O N N C C L L U U S S I I O O N N
+D D a a t t e e   d d e e   m m i i s s s s i i o o n n
+```
+
+Aucun motif texte ne fonctionne sur ces lignes. En revanche le **sommaire
+paginé** de la page 2 donne les rubriques et leurs pages : c'est par là qu'on
+entre dans ce document.
+
+### La réserve sur la synthèse : Liciel est l'exception
+
+| Éditeur | Ce que dit sa synthèse |
+|---|---|
+| AnalysImmo | « Document ne pouvant en aucun cas être annexé à un acte authentique » |
+| Expertec Pro | « Seuls les rapports réglementaires complets, annexes comprises, pourront être annexés à l'acte authentique » |
+| Liciel | « ne peut être utilisée indépendamment du rapport d'expertise complet » |
+
+Deux éditeurs sur trois excluent explicitement la synthèse de l'acte. Liciel se
+contente de dire qu'elle ne s'utilise pas seule. **La synthèse est une aide à la
+lecture, pas une pièce du dossier** — et c'est une raison de plus d'aller lire le
+volet.
