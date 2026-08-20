@@ -467,3 +467,67 @@ trois entrées ou plus alignées sur une ligne.
   obligation (L.126-4/L.126-5 contre L.133-4/R.133-3).
 - Un rapport de 2025 écrit ses **apostrophes entourées d'espaces** (« l '
   installation ») ; un autre porte une **entité HTML non décodée** (`&gt;`).
+
+---
+
+## ÉPREUVE HORS LICIEL — ce qui tient, ce qui était une habitude
+
+*Douze rapports de cinq éditeurs différents — AnalysImmo, DPEWIN V4 et V5,
+Imm'PACT, Expertec Pro — 436 pages. Tout ce qui précède venait d'un seul
+générateur ; voici ce qui y résiste.*
+
+### Ce qui n'était PAS une constante du métier
+
+**Le catalogue des six domaines est propre à Liciel.** Chez lui, la liste des
+six domaines réglementaires est imprimée sans résultat, et un tableau séparé
+donne les anomalies — d'où la confusion qui faisait annoncer neuf anomalies pour
+quatre. **Chez AnalysImmo, chaque domaine porte son propre verdict** :
+
+```
+1. L'appareil général de commande et de protection et son accessibilité.
+   Néant
+2. Dispositif de protection différentiel / Prise de terre.
+   [tableau d'anomalie]
+3. Dispositif de protection contre les surintensités.
+   Néant
+```
+
+Il n'y a rien à démasquer : le document répond domaine par domaine.
+
+**Le tableau à deux colonnes entrelacées est propre à Liciel.** La synthèse
+d'AnalysImmo est faite de **titres en majuscules suivis de leur texte** —
+`CONSTAT AMIANTE`, `CERTIFICAT DE SUPERFICIE`, `DIAGNOSTIC ELECTRICITE` — donc
+sans entrelacement. Le charabia des colonnes mélangées ne peut pas s'y produire.
+
+### Ce qu'un autre éditeur donne et que Liciel tait
+
+Le tableau d'anomalies électriques d'AnalysImmo a **six colonnes** là où Liciel
+en a trois :
+
+| | |
+|---|---|
+| **N° article de l'anomalie** | `B.3.3.6 a1)` |
+| Libellé | « Au moins un socle de prise de courant ne comporte pas de broche de terre » |
+| **N° article de la mesure compensatoire** | `B.3.3.6.1` |
+| Localisation | « Notamment aux chambres » |
+| **Libellé de la mesure compensatoire** | « protection du circuit par au moins un dispositif différentiel ≤ 30 mA » |
+| **Observation** libre | « Présence de prises 2 pôles vétustes » |
+
+Deux informations que Liciel ne donne **jamais** en électricité : le **code de
+norme de l'anomalie** — chez lui il n'apparaît qu'en annexe photos, et
+rarement — et le **détail de la mesure compensatoire**, réduite chez Liciel à
+une parenthèse sans contenu.
+
+### Le catalogue existe quand même, ailleurs
+
+AnalysImmo répète en **en-tête de chaque page** : « MG DIAG vous permet de gérer
+l'ensemble des diagnostics obligatoires : Amiante, Termite… ». Même piège que le
+catalogue des prestations de Liciel, à un autre endroit — et cette fois sur
+soixante-quatorze pages au lieu de deux.
+
+### Une réserve juridique que Liciel n'a pas
+
+La note de synthèse d'AnalysImmo porte : « **Document ne pouvant en aucun cas
+être annexé à un acte authentique** ». Chez Liciel, le résumé de l'expertise
+dit seulement qu'il « ne peut être utilisé indépendamment du rapport complet ».
+La portée n'est pas la même, et un notaire s'en soucie.
