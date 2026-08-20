@@ -98,10 +98,12 @@
     margin: 0;
   }
 
+  /* L'accroche du schéma passait au même corps que la question de l'écran, en
+     plus gras : deux titres de même poids se disputaient le premier regard. */
   h3 {
     font-family: var(--police-titre);
     font-style: italic;
-    font-size: var(--t-lead);
+    font-size: var(--t-base);
     font-weight: 700;
     letter-spacing: -0.01em;
     text-transform: none;

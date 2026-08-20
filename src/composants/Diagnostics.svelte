@@ -20,7 +20,6 @@
   import TableauElectrique from './visuels/TableauElectrique.svelte';
   import VisuelAmiante from './visuels/VisuelAmiante.svelte';
   import VisuelPlomb from './visuels/VisuelPlomb.svelte';
-  import VisuelGaz from './visuels/VisuelGaz.svelte';
   import VisuelTermites from './visuels/VisuelTermites.svelte';
   import VisuelRisques from './visuels/VisuelRisques.svelte';
   import PlanDuLogement from './plans/PlanDuLogement.svelte';
@@ -512,13 +511,23 @@
    * Descendre l'explicatif à « Pourquoi ? » sans cette distinction a vidé la
    * scène de la Carrez : 32 px de haut pour 3 552 px de texte, un écran sans
    * dessin. Un schéma qui domine, c'est bien ; une scène vide, non.
+   *
+   * LE GAZ EN EST SORTI. Son visuel était monté sans une seule donnée — le
+   * moteur ne relève ni l'année d'installation, ni l'appareil — et affichait
+   * donc invariablement « année non indiquée », un afficheur vide et un
+   * paragraphe expliquant que l'âge ne peut pas être calculé. Le premier écran
+   * du gaz était un aveu d'ignorance.
+   *
+   * Son explicatif remonte en scène à la place : il montre ce qui se passe
+   * quand la grille d'air est bouchée — un mécanisme vrai, que ce diagnostic
+   * contrôle vraiment. Le visuel reviendra le jour où le moteur relèvera ces
+   * données ; ce jour-là, il aura quelque chose à dire.
    */
   const A_UN_VISUEL: readonly TypeDiag[] = [
     'dpe',
     'electricite',
     'amiante',
     'plomb',
-    'gaz',
     'termites',
     'erp'
   ];
@@ -568,6 +577,29 @@
    * nationaux là où le rapport donne les kWh de CE logement. Mesuré sur 50
    * dossiers : 29 DPE sur 31 les portent, 115 postes dont 111 chiffrés en euros.
    */
+  /**
+   * CET ÉCRAN A-T-IL DÉJÀ MONTRÉ SES LOCALISATIONS ?
+   *
+   * Deux choses en dépendaient, et elles se contredisaient : le plan du
+   * logement se montait par-dessus une liste identique, et la phrase
+   * « ce rapport ne rattache aucun constat à une pièce » s'affichait juste
+   * après des localisations parfaitement affichées — sur 100 % des DPE, dont
+   * l'analyseur ne pose jamais `releves`.
+   *
+   * Un seul accesseur pour les deux : ce qui décide de l'un doit décider de
+   * l'autre, sinon ils divergent au premier changement.
+   */
+  function aDejaSesLieux(d: Diagnostic): boolean {
+    const s = d.schema;
+    if (!s) return false;
+    if (s.genre === 'dpe') return true; // les six puces de parois
+    if (s.genre === 'plomb') return s.emplacements.length > 0;
+    if (s.genre === 'surfaces') return s.pieces.length > 0;
+    if (s.genre === 'anomalies') return s.groupes.length > 0;
+    if (s.genre === 'risques') return s.risques.length > 0;
+    return false; // amiante et termites : leur visuel ne situe rien
+  }
+
   function postesDe(d: Diagnostic) {
     return d.schema?.genre === 'dpe' ? d.schema.postes : null;
   }
@@ -758,12 +790,7 @@
                     total={s.total}
                   />
                 {/if}
-              {:else if d.type === 'gaz'}
-                <!-- L'année de la chaudière n'est pas relevée par le moteur : le
-                     visuel s'en passe et le dit, plutôt que d'afficher celle de
-                     la maquette. -->
-                <VisuelGaz />
-              {:else if d.type === 'termites'}
+                            {:else if d.type === 'termites'}
                 <VisuelTermites
                   conclusion={d.gravite === 'bon' ? 'sain' : d.gravite === 'alerte' ? 'indices' : null}
                   zones={zonesDe(d)}
@@ -790,7 +817,28 @@
                 diagnostic on est entré avant tout mot — et pour les écrans qui
                 n'en ont pas, l'explicatif reste ici : il est alors LE schéma.
               -->
-              {#if !A_UN_VISUEL.includes(d.type)}
+              <!--
+                LA CARREZ OUVRE SUR SES PROPRES PIÈCES.
+
+                Sa scène montrait deux schémas de pédagogie générale — ce qui
+                compte dans une surface, et les trois mesurages — dont aucun ne
+                parle d'un logement précis. Le tableau de SES pièces, avec SES
+                mètres carrés, n'arrivait que bien plus bas.
+
+                Or c'est lui, le visuel d'identité de cet écran : un certificat
+                de superficie, c'est une liste de pièces. Il monte en scène, et
+                l'explicatif redescend à « Pourquoi ? » comme partout ailleurs.
+
+                Quand aucune pièce n'est mesurée, l'explicatif reste : une scène
+                vide serait pire que générique.
+              -->
+              {#if d.schema?.genre === 'surfaces' && d.schema.pieces.length}
+                <LesSurfaces
+                  pieces={d.schema.pieces}
+                  totalPrivative={d.schema.totalPrivative}
+                  totalAuSol={d.schema.totalAuSol}
+                />
+              {:else if !A_UN_VISUEL.includes(d.type)}
                 <Explicatif
                   type={d.type}
                   isolation={isolationDe(d)}
@@ -801,9 +849,19 @@
             </div>
 
             <div class="dit">
-              {#if pratique}
-                <p class="pratique"><MotsExpliques texte={pratique} /></p>
-              {/if}
+              <!--
+                « EN PRATIQUE » NE S'ÉCRIT PLUS ICI.
+
+                La même phrase était imprimée deux fois sur la fiche : une fois
+                à cet endroit, une fois dans la section « Est-ce important ? ».
+                Et celle-ci passait AVANT le premier chiffre du rapport — donc
+                notre commentaire arrivait avant la donnée qu'il commente, ce
+                que le socle interdit trois fois.
+
+                Elle n'existait que pour compenser le repli de la section 2. La
+                bonne correction n'est pas de la répéter : c'est de déplier la
+                section, qui est courte et vient APRÈS les chiffres.
+              -->
 
               <!--
                 LE REPLI SE FAIT SECTION PAR SECTION, ET C'EST TOUT L'ENJEU.
@@ -891,7 +949,18 @@
               <!-- 2 · EST-CE IMPORTANT ? — ce qu'on risque, et ce que le dossier
                    en dit concrètement. C'est la question que tout le monde se
                    pose en premier, et à laquelle rien ne répondait directement. -->
-              <section class="etape detail" class:replie={modeDe(d.type) === 'succinct'} aria-labelledby="et-importance-{d.type}">
+              <!--
+                ELLE NE SE REPLIE PLUS.
+
+                « Est-ce important ? » est l'une des quatre questions auxquelles
+                un écran doit répondre en trois secondes. Repliée par défaut,
+                elle n'avait aucune réponse à l'ouverture — d'où la phrase
+                dupliquée plus haut pour compenser.
+
+                Elle est courte, et elle vient après les chiffres du rapport :
+                l'ordre « le diagnostic dit, Verrière explique ensuite » tient.
+              -->
+              <section class="etape" aria-labelledby="et-importance-{d.type}">
                 <h4 id="et-importance-{d.type}" class="titre-etape">Est-ce important&nbsp;?</h4>
                 {#if pratique}
                   <p class="reponse-etape"><MotsExpliques texte={pratique} /></p>
@@ -942,13 +1011,8 @@
                   l'écran n'en montrait qu'un total : le lecteur voyait « 42 m² »
                   sans savoir d'où venaient ces mètres.
                 -->
-                {#if d.schema?.genre === 'surfaces' && d.schema.pieces.length}
-                  <LesSurfaces
-                    pieces={d.schema.pieces}
-                    totalPrivative={d.schema.totalPrivative}
-                    totalAuSol={d.schema.totalAuSol}
-                  />
-                {/if}
+                <!-- Le tableau des surfaces est monté en scène : il EST le visuel
+                     d'identité de cet écran, et ne se répète pas ici. -->
 
                 <!--
                   « PAR OÙ LA CHALEUR PART DE CHEZ VOUS » EST UNE QUESTION DE LIEU.
@@ -988,14 +1052,35 @@
                   <SchemaDuRapport schema={schemaDeperditions} />
                 {/if}
 
-                <!-- Le plan des parois : ce que le rapport dit de chez vous,
-                     paroi par paroi. Il descend de la scène jusqu'ici — c'est
-                     une réponse à « où ? », pas une illustration d'en-tête. -->
-                <PlanDuLogement diagnostic={d} />
+                <!--
+                  LE PLAN NE REDIT PAS CE QUI VIENT D'ÊTRE DIT.
+
+                  Il était monté sans condition, et sur quatre écrans il
+                  reprenait intégralement la liste que le visuel venait
+                  d'afficher — depuis la MÊME source, mais avec un autre
+                  vocabulaire :
+
+                    DPE     Deperditions dit « Isolé / Sans isolant », le plan
+                            dit « Rien de signalé ici / À vérifier » ;
+                    élec    le tableau liste les groupes, le plan les relit ;
+                    ERP     le visuel couvre tous les risques, le plan aussi ;
+                    plomb   OuEstLePlomb groupe par pièce, le plan aussi.
+
+                  Le lecteur lisait donc deux fois l'état de son toit avec deux
+                  mots qui ne se ressemblent pas, et cherchait laquelle des deux
+                  listes dit vrai.
+
+                  Il reste monté pour l'amiante et les termites, dont le visuel
+                  ne porte aucune localisation. Rien du rapport ne se perd : la
+                  phrase du plan est écrite par nous, pas lue dans le PDF.
+                -->
+                {#if !aDejaSesLieux(d)}
+                  <PlanDuLogement diagnostic={d} />
+                {/if}
 
                 {#if d.releves?.length}
                   <Releves releves={d.releves} page={d.pages[0]} type={d.type} />
-                {:else if !(d.schema?.genre === 'plomb' && d.schema.emplacements.length) && !(d.schema?.genre === 'surfaces' && d.schema.pieces.length)}
+                {:else if !aDejaSesLieux(d)}
                   <p class="reponse-etape sans-donnee">
                     Information non disponible dans le diagnostic&nbsp;: ce rapport
                     ne rattache aucun constat à une pièce ou à un local.
@@ -1515,11 +1600,21 @@
    * nettement de l'accroche au-dessus. Le lecteur sait alors, avant meme de
    * lire la reponse, qu'il est au bon endroit.
    */
+  /*
+   * « UN ÉCRAN = UNE QUESTION » — ENCORE FAUT-IL QU'ELLE SE VOIE.
+   *
+   * Elle n'était que le QUATRIÈME texte de l'écran par la taille : la classe
+   * DPE (30 px), le titre court, le chiffre-chef et jusqu'à la légende d'un
+   * schéma passaient devant elle. Le lecteur devait donc lire quatre titres
+   * plus gros avant de savoir à quelle question l'écran répond.
+   *
+   * Elle passe au corps de titre, et l'accroche de l'explicatif redescend.
+   */
   .question {
     margin: 0;
     font-family: var(--police-titre);
-    font-size: var(--t-lead);
-    font-weight: 500;
+    font-size: var(--t-titre);
+    font-weight: 600;
     line-height: 1.25;
     color: var(--sur-fond);
     text-wrap: balance;

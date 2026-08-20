@@ -17,6 +17,7 @@
    */
   import type { EtatIsolation, Isolation, Lettre } from '../../lib/modele';
   import Maison from './briques/Maison.svelte';
+  import { exploration } from '../../lib/savoir/pile.svelte';
 
   const {
     isolation = null,
@@ -147,6 +148,29 @@
   let paroiTouchee = $state<string | null>(null);
 
   /**
+   * L'ACCÈS AU SAVOIR, RENDU AUX PUCES.
+   *
+   * Les huit notions du DPE — toiture, ventilation, murs, fenêtres, ponts
+   * thermiques, plancher bas, chauffage, eau chaude — ne s'ouvraient que depuis
+   * les étiquettes posées sur le dessin. En les retirant pour supprimer la
+   * liste affichée deux fois, j'ai supprimé du même coup le SEUL chemin vers
+   * ce savoir : il est devenu inatteignable.
+   *
+   * Il revient sur les puces, qui sont désormais les contrôles. Un premier
+   * appui désigne la paroi sur le dessin — c'est le niveau 2, « où ». Un second
+   * ouvre la notion — c'est le niveau 3, « comprendre ». Le geste est le même,
+   * la profondeur augmente : c'est exactement la progressive disclosure
+   * demandée, et ça évite un second contrôle par paroi.
+   */
+  function toucher(notion: string): void {
+    if (paroiTouchee === notion) {
+      exploration.ouvrir(notion);
+      return;
+    }
+    paroiTouchee = notion;
+  }
+
+  /**
    * Le relevé : tous les postes du rapport, dans son ordre.
    *
    * Ils étaient destinés au dessin ; ils n'y tenaient pas. Ici ils sont à
@@ -222,7 +246,7 @@
 
 <figure class:papier>
   {#if !papier}
-    <p class="invite">Touchez une paroi pour la retrouver sur le dessin.</p>
+    <p class="invite">Touchez une paroi pour la situer, une seconde fois pour comprendre.</p>
   {/if}
 
   <!-- Le cadre déborde à gauche et à droite du dessin : les libellés des clips
@@ -391,8 +415,7 @@
           class="paroi {cle}"
           class:touchee={paroiTouchee === sortie.notion}
           aria-pressed={paroiTouchee === sortie.notion}
-          onclick={() =>
-            (paroiTouchee = paroiTouchee === sortie.notion ? null : sortie.notion)}
+          onclick={() => toucher(sortie.notion)}
         >
           <span class="pastille-paroi" aria-hidden="true"></span>
           <span class="nom-paroi">{NOM_SORTIE[sortie.notion]}</span>
