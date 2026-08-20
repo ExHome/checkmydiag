@@ -11,7 +11,7 @@
    * C'est ce qui permet de tout comprendre sur un seul document imprimé, sans
    * rien avoir à cliquer.
    */
-  import type { Analyse, Diagnostic, TypeDiag } from '../lib/modele';
+  import type { Analyse, Diagnostic, Fait, TypeDiag } from '../lib/modele';
   import Explicatif from './schemas/Explicatif.svelte';
   import VisuelDpe from './visuels/VisuelDpe.svelte';
   import TableauElectrique from './visuels/TableauElectrique.svelte';
@@ -33,6 +33,36 @@
   import { APPS } from '../lib/apps';
   import { estSombre, styleUnivers } from '../lib/univers';
   import { lumiereSur, questionDe } from '../lib/lumiere';
+
+  /**
+   * LE CHIFFRE QUI PARLE, par diagnostic.
+   *
+   * Prendre le premier fait venu ne marche pas : sur le DPE, l'analyseur donne
+   * la surface de reference en tete, et c'est elle qui se retrouvait en grand.
+   * Or personne n'ouvre son DPE pour connaitre sa surface -- il l'ouvre pour
+   * savoir ce que son logement consomme.
+   *
+   * Cette table nomme, pour chaque diagnostic, le fait qui repond a la
+   * question de l'ecran. A defaut, on retombe sur le premier : mieux vaut un
+   * chiffre en grand qu'aucun.
+   */
+  const CHIFFRE_CLE: Partial<Record<TypeDiag, RegExp>> = {
+    dpe: /consommation/i,
+    electricite: /anomalies|points relev/i,
+    gaz: /anomalies/i,
+    plomb: /unit[ée]s|class[ée]|mesures/i,
+    amiante: /mat[ée]riaux|rep[ée]r/i,
+    termites: /zones|indices/i,
+    erp: /risques/i,
+    carrez: /superficie|surface/i,
+    assainissement: /installation|conformit/i
+  };
+
+  /** Le fait a poser en grand : celui qui repond a la question, sinon le premier. */
+  function chiffreChef(d: Diagnostic): Fait | undefined {
+    const motif = CHIFFRE_CLE[d.type];
+    return (motif && d.faits.find((f) => motif.test(f.libelle))) ?? d.faits[0];
+  }
 
   /* Les sept couleurs de l'arrete du 31 mars 2021. Elles ne s'inventent pas et
      ne se reinterpretent pas : ce sont celles de l'etiquette officielle. */
@@ -584,9 +614,31 @@
                 style="background: {TEINTE_ARRETE[d.schema.finale]}"
                 aria-hidden="true">{d.schema.finale}</span>
             {/if}
-            <p class="quoi">{d.titre}</p>
+            <!--
+              LE NOM DU DIAGNOSTIC NE S'ECRIT PAS DEUX FOIS.
+
+              Il est deja dans la barre de l'application, en haut de l'ecran,
+              et une seconde fois dans l'onglet actif juste au-dessus. Le
+              repeter en surtitre faisait trois fois le meme mot administratif
+              -- « Performance energetique (DPE) » -- avant d'arriver au
+              verdict.
+
+              En plein ecran on l'enleve donc. Dans la liste imprimee, ou il
+              n'y a ni barre ni onglet, il reste : c'est la qu'il sert.
+            -->
+            {#if !pleinEcran}
+              <p class="quoi">{d.titre}</p>
+            {/if}
             <h3>{libelleCourt(d)}</h3>
-            <p class="jusqua-fiche" class:perimee={quand.perimee}>{quand.texte}</p>
+            <!--
+              La validite descend avec la provenance.
+
+              « Valable jusqu'au 12/03/2035 » entre le verdict et son
+              explication coupait la lecture par une mention de gestion. Elle
+              n'a pas disparu : elle rejoint la ligne d'ou-vient-cette-phrase,
+              qui est sa famille -- ce qu'il faut savoir sur le document, non
+              sur le logement.
+            -->
             <p class="verdict">{d.verdict}</p>
 
             <!-- D'où sort cette phrase. Discret, en bas de l'en-tête : c'est le
@@ -596,6 +648,7 @@
             <p class="provenance">
               <span class="marque" aria-hidden="true"></span>
               <span>{etiquetteDe(d.origine ?? 'rapport')}</span>
+              <span class="validite" class:perimee={quand.perimee}>· {quand.texte}</span>
               {#if d.pages}
                 {#if surVoirDansLeRapport}
                   <!-- La page n'est plus une mention, c'est un chemin : un clic
@@ -722,19 +775,43 @@
               <!-- 1 · CE QU'IL FAUT SAVOIR — les chiffres du rapport, avant
                    toute explication. Le résultat avant le commentaire. -->
               {#if d.faits.length}
+                <!--
+                  UN CHIFFRE DOMINE, LES AUTRES SUIVENT.
+
+                  C'etait quatre paires libelle/valeur alignees comme un
+                  formulaire : « Surface de reference · 48,5 m² », « Annee de
+                  construction · Avant 1948 »… Toutes du meme poids, donc
+                  aucune hierarchie -- exactement le « tableau reglementaire
+                  ameliore » que l'ordre de mission interdit.
+
+                  Le premier fait est celui que l'analyseur juge le plus
+                  parlant : il passe en grand, avec son unite detachee. Les
+                  suivants restent, en une ligne discrete -- on hierarchise,
+                  on n'ampute pas.
+                -->
+                {@const chef = chiffreChef(d)}
+                {@const suite = d.faits.filter((f) => f !== chef).slice(0, 3)}
                 <section class="etape" aria-labelledby="et-savoir-{d.type}">
                   <h4 id="et-savoir-{d.type}" class="titre-etape">Ce qu’il faut savoir</h4>
-                  <dl class="chiffres">
-                    {#each d.faits.slice(0, 4) as fait (fait.libelle)}
-                      <div>
-                        <dt>{fait.libelle}</dt>
-                        <dd>
-                          {fait.valeur}
-                          {#if fait.precision}<span class="precision">{fait.precision}</span>{/if}
-                        </dd>
-                      </div>
-                    {/each}
-                  </dl>
+
+                  {#if chef}
+                    <p class="chiffre-chef">
+                      <span class="valeur-chef">{chef.valeur}</span>
+                      <span class="quoi-chef">{chef.libelle}</span>
+                      {#if chef.precision}<span class="precision-chef">{chef.precision}</span>{/if}
+                    </p>
+                  {/if}
+
+                  {#if suite.length}
+                    <ul class="chiffres-suite">
+                      {#each suite as fait (fait.libelle)}
+                        <li>
+                          <b>{fait.valeur}</b>
+                          <span>{fait.libelle}</span>
+                        </li>
+                      {/each}
+                    </ul>
+                  {/if}
                 </section>
               {/if}
 
@@ -1432,6 +1509,18 @@
   }
 
   /* Un rapport périmé fait repousser une signature : il se voit. */
+  /* La validite, dans la ligne de provenance : meme famille, meme discretion.
+     Perimee, elle reprend le rouge d'alerte -- c'est justement ce qu'il ne
+     faut pas rater. */
+  .validite {
+    color: var(--sur-fond-doux);
+  }
+
+  .validite.perimee {
+    color: var(--alerte);
+    font-weight: 650;
+  }
+
   .jusqua-fiche.perimee {
     /* Mesuré sur le fond réel de la ligne : #f0907c n'y tenait que 4,39. */
     /* Ce rouge clair était lisible sur le vert nuit ; sur fond clair il tombe à
@@ -1696,6 +1785,65 @@
     font-size: var(--t-base);
     line-height: 1.5;
     color: var(--or-clair);
+  }
+
+  /*
+   * LE CHIFFRE QUI PARLE.
+   *
+   * « Ne pas simplement afficher 238 kWh/m²/an. » Le chiffre le plus parlant
+   * du rapport prend la taille qui lui revient, son libelle passe dessous en
+   * petit -- l'inverse d'un formulaire, ou l'etiquette precede toujours la
+   * valeur et ou les deux ont le meme poids.
+   */
+  .chiffre-chef {
+    display: grid;
+    gap: 2px;
+    margin: 0 0 var(--e4);
+  }
+
+  .valeur-chef {
+    font-family: var(--police-titre);
+    font-size: var(--t-titre);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--sur-fond);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .quoi-chef {
+    font-size: var(--t-petit);
+    color: var(--sur-fond-doux);
+  }
+
+  .precision-chef {
+    font-size: var(--t-micro);
+    color: var(--sur-fond-doux);
+    max-width: var(--mesure);
+  }
+
+  /* Les autres chiffres : une ligne, en retrait. Ils restent lisibles et
+     accessibles — on hierarchise, on n'ampute pas. */
+  .chiffres-suite {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e2) var(--e5);
+  }
+
+  .chiffres-suite li {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    font-size: var(--t-petit);
+    color: var(--sur-fond-doux);
+  }
+
+  .chiffres-suite b {
+    font-weight: 700;
+    color: var(--sur-fond);
+    font-variant-numeric: tabular-nums;
   }
 
   .chiffres {
