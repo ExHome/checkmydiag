@@ -569,7 +569,21 @@
     place-items: center;
     border-radius: 7px;
     background: var(--teinte);
-    color: #16240f;
+
+    /*
+     * L'ENCRE DE LA PASTILLE, MESURÉE SUR LES SEPT TEINTES.
+     *
+     * Elle était à #16240f, et deux classes échouaient : le A (#319834) à 4,39
+     * et le G (#fc0205) à 3,98, sous le seuil de 4,5. Les couleurs de l'arrêté
+     * ne se retouchent pas — c'est l'encre qui doit tenir sur les sept.
+     *
+     * Mesures avec #071008 : A 5,22 · B 9,04 · C 13,9 · D 15,3 · E 10,9 ·
+     * F 8,97 · G 4,74. L'ivoire, lui, échoue partout (1,01 sur le D).
+     *
+     * Une teinte verte plutôt qu'un noir pur : elle reste dans la charte, et le
+     * gain du noir (5,67 / 5,15) n'était pas nécessaire.
+     */
+    color: #071008;
     font-weight: 700;
     font-size: var(--t-petit);
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--u-texte, #f5f1e8) 55%, transparent);
