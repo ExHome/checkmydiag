@@ -154,6 +154,29 @@ export const LEXIQUE: Mot[] = [
    * pédagogiquement.
    */
   {
+    /*
+     * LA NUANCE QUE PERSONNE NE FAIT, ET QUI CHANGE TOUT.
+     *
+     * « Indice d'infestation » ne veut pas dire « il y a des termites chez
+     * vous ». Il veut dire : le diagnostiqueur a vu des TRACES — galeries,
+     * cordonnets, bois qui sonne creux — sans constater d'insecte vivant le
+     * jour de sa visite.
+     *
+     * Le rapport distingue les deux en toutes lettres, dans deux lignes
+     * différentes de son formulaire : « Présence de termites vivants » et
+     * « Présence de galeries-tunnels (cordonnets) ou concrétions ».
+     *
+     * Ce que la définition NE DIT PAS : que l'insecte est parti. Une trace peut
+     * être ancienne ou active, et le diagnostic ne tranche pas — c'est
+     * précisément pour cela que le rapport recommande un examen plus poussé.
+     * On explique le terme ; on n'en tire pas de conclusion à sa place.
+     */
+    nom: 'Indice d’infestation',
+    motif: /indices? d[’']infestation/i,
+    definition:
+      'Des traces — galeries, cordonnets, bois attaqué — repérées sans qu’un termite vivant ait été vu le jour de la visite. Une trace ne dit pas si l’insecte est encore là.'
+  },
+  {
     nom: 'DPE',
     motif: /DPE|diagnostic de performance [ée]nerg[ée]tique/i,
     definition:

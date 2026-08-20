@@ -800,7 +800,19 @@
                  espaces ordinaires ; sans traitement, « … une « passoire
                  thermique / ». La loi limite… » — guillemet fermant seul en
                  tête de ligne, sur la conclusion la plus lue de l'app. -->
-            <p class="verdict">{espacesFrancaises(d.verdict)}</p>
+            <!--
+              LE VERDICT PASSE PAR LE LEXIQUE.
+
+              C'est la phrase la plus lue de l'écran, et c'est celle qui portait
+              le plus de mots de métier — « indices d'infestation », « passoire
+              thermique », « unité de diagnostic » — sans qu'aucun ne soit
+              explicable au toucher. Le lexique existait, la phrase principale
+              ne s'en servait pas.
+
+              `MotsExpliques` pose déjà les espaces françaises : le rendu ne
+              change pas, les mots deviennent cliquables.
+            -->
+            <p class="verdict"><MotsExpliques texte={d.verdict} /></p>
 
             <!-- D'où sort cette phrase. Discret, en bas de l'en-tête : c'est le
                  niveau expert, celui qu'on ne cherche que si on doute. Mais il
@@ -1147,12 +1159,29 @@
               -->
               <section class="etape" aria-labelledby="et-importance-{d.type}">
                 <h4 id="et-importance-{d.type}" class="titre-etape">Est-ce important&nbsp;?</h4>
+                <!--
+                  UNE SEULE PHRASE, LA CONTEXTUELLE.
+
+                  Les deux se suivaient et disaient la même chose :
+
+                    « Bientôt interdit à la location. Se vend moins cher qu'un
+                      logement mieux noté. »          ← enPratique, qui suit la
+                                                        gravité du dossier
+                    « Mauvaise note → chauffage cher, vente plus difficile,
+                      location parfois interdite. »   ← FICHES.risque, identique
+                                                        pour tous les dossiers
+
+                  La générique cède devant la contextuelle : elle ne dit rien de
+                  plus, et elle dit moins bien puisqu'elle ignore le dossier.
+                  Elle reste affichée quand la contextuelle n'existe pas.
+                -->
                 {#if pratique}
                   <p class="reponse-etape"><MotsExpliques texte={pratique} /></p>
+                {:else}
+                  {#each blocsDe('importance') as bloc (bloc.cle)}
+                    <p class="reponse-etape"><MotsExpliques texte={FICHES[d.type][bloc.cle]} /></p>
+                  {/each}
                 {/if}
-                {#each blocsDe('importance') as bloc (bloc.cle)}
-                  <p class="reponse-etape"><MotsExpliques texte={FICHES[d.type][bloc.cle]} /></p>
-                {/each}
               </section>
 
               <!--

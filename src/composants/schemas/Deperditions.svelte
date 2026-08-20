@@ -185,63 +185,7 @@
     return etat === 'inconnu' ? null : etat;
   }
 
-  /**
-   * Le nom d'une paroi, ET LA MARQUE QUE L'ADJECTIF DOIT PORTER.
-   *
-   * La phrase se termine par « comme isolé », et l'accord se déduisait de la
-   * seule longueur de la liste : « les fenêtres » commençant par « les », on
-   * ajoutait un « s ». D'où, à l'écran : « Le rapport donne les fenêtres comme
-   * isolés ».
-   *
-   * Le nombre ne suffit pas, il faut aussi le genre. On le range à côté du nom
-   * plutôt que de le deviner d'une terminaison : « le plancher » et « les
-   * fenêtres » ne se distinguent par aucune règle sûre.
-   */
-  const NOM_PAROI: Record<string, { nom: string; marque: string }> = {
-    toit: { nom: 'le toit', marque: '' },
-    murs: { nom: 'les murs', marque: 's' },
-    fenetres: { nom: 'les fenêtres', marque: 'es' },
-    plancher: { nom: 'le plancher', marque: '' }
-  };
 
-  /**
-   * Le constat, tiré du rapport et pas d'une moyenne nationale : la classe du
-   * logement, puis ce que le diagnostiqueur a noté paroi par paroi.
-   */
-  const constat = $derived.by(() => {
-    const debut = lettre ? `Votre logement est classé ${lettre}.` : 'Votre logement.';
-    if (!isolation) return `${debut} Le rapport ne dit pas ce qui est isolé.`;
-
-    const nommees = (cherche: EtatIsolation): { nom: string; marque: string }[] =>
-      Object.entries(isolation)
-        .filter(([, etat]) => etat === cherche)
-        .map(([paroi]) => NOM_PAROI[paroi])
-        .filter((p): p is { nom: string; marque: string } => p !== undefined);
-
-    const nues = nommees('nonIsole');
-    const faites = nommees('isole');
-
-    if (!nues.length && !faites.length) return `${debut} Le rapport ne dit pas ce qui est isolé.`;
-
-    /*
-     * « le plancher comme non isolé », « les murs comme non isolés », « les
-     * fenêtres comme non isolées ».
-     *
-     * Plusieurs parois ensemble : le masculin l'emporte dès qu'il y en a une,
-     * et le pluriel s'impose de toute façon.
-     */
-    const accord = (liste: { nom: string; marque: string }[]): string => {
-      if (liste.length > 1) return liste.every((p) => p.marque === 'es') ? 'es' : 's';
-      return liste[0]?.marque ?? '';
-    };
-
-    const lister = (liste: { nom: string; marque: string }[]): string =>
-      liste.map((p) => p.nom).join(', ');
-
-    if (!nues.length)
-      return `${debut} Le rapport donne ${lister(faites)} comme isolé${accord(faites)}.`;
-    return `${debut} Le rapport donne ${lister(nues)} comme non isolé${accord(nues)} — c’est par là que ça part.`;
-  });
 </script>
 
 <figure class:papier>
@@ -426,7 +370,16 @@
   </ul>
 
   <figcaption class="constat">
-    {constat}
+    <!--
+      LE CONSTAT DISAIT CE QUE LE DESSIN MONTRE DEJA.
+
+      « Votre logement est classé F. Le rapport donne les fenêtres comme
+      isolées. » — la classe est sur la règle, segment retenu en encre pleine ;
+      « fenêtres isolées » est écrit sur sa puce, avec le mot ISOLÉ.
+
+      « Si le texte répète simplement le visuel : SUPPRIMER. » Rien ne se perd :
+      les deux informations restent, montrées au lieu d'être dites.
+    -->
 
     <!--
       LES POSTES QUE LE DESSIN NE PEUT PAS PLACER.
