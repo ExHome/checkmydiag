@@ -719,6 +719,42 @@ LICIEL elle est en dernière page, après les annexes.
 **« PAS D'ACCOMPAGNATEUR » est coupé en deux** par la mise en page : « PAS » sur
 la ligne du champ, « D'ACCOMPAGNATEUR » deux lignes plus bas.
 
+### BC2E — l'amiante, et un état que personne d'autre ne déclare
+
+**Un constat peut n'être pas définitif, et le dire.** En tête des conclusions :
+
+> **PRÉLÈVEMENT(S) AMIANTE EN COURS D'ANALYSE.**
+> […] il a été repéré des matériaux susceptibles de contenir de l'amiante **pour
+> lesquels des sondages et/ou des prélèvements doivent être effectués** dans :
+> Cage d'escalier (Dalle de sol), Dégagement (Dalle de sol).
+
+Le rapport annonce que ses conclusions **attendent le laboratoire**. Aucun autre
+éditeur du corpus ne porte cet état. Le lire « aucune amiante repérée » serait
+un contresens : rien n'est encore tranché.
+
+**Trois rubriques nommées** au lieu d'une conclusion unique :
+
+| | |
+|---|---|
+| **A** | conclusions du repérage effectif |
+| **B** | obligations et recommandations réglementaires, séparées liste A / liste B |
+| **C** | parties pour lesquelles des investigations complémentaires sont nécessaires |
+
+**Et trois tableaux distincts dans la rubrique C**, là où LICIEL n'en a qu'un :
+
+```
+LOCAUX NON VISITÉS         Etage | Local | Motif                              → RDC | Cour | Absence de clé
+ÉLÉMENTS NON EXAMINÉS      Etage | Local | Éléments et motif                  → Néant
+MATÉRIAUX À INVESTIGUER    Etage | Local | Localisation | Composant | Motif
+```
+
+Trois natures d'empêchement séparées : le local fermé, l'élément non examiné, le
+matériau qui attend son prélèvement. LICIEL les mélange en un seul tableau
+`Localisation / Parties du local / Raison`.
+
+La conséquence est écrite en clair : « les obligations réglementaires prévues
+aux articles R.1334-15 à R.1334-18 **ne sont pas remplies** ».
+
 ### La réserve sur la synthèse : le compte s'établit
 
 | Éditeur | Ce que dit sa synthèse |
