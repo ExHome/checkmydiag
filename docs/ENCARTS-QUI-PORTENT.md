@@ -107,8 +107,17 @@ des anomalies**, et elles ne sont **pas toujours favorables** :
 
 - « **L'ensemble** de l'installation électrique est protégé par au moins un
   dispositif différentiel à haute sensibilité ≤ 30 mA » → rassurant ;
-- « **Une partie seulement** de l'installation… » → défavorable, et c'est écrit
-  au même endroit, dans les mêmes termes.
+- « **Une partie seulement** de l'installation… » → défavorable ;
+- « **Il n'y a aucun dispositif différentiel** à haute sensibilité 30 mA » →
+  aucune protection des personnes contre l'électrocution.
+
+Les trois sont écrits au même endroit, dans les mêmes termes, à une négation
+près. Le volet qui porte le troisième porte aussi, dans son tableau
+d'anomalies : « **Présence de fusible(s) entouré papier d'aluminium** × 2
+fusible 20 A type gF à remplacer » — des fusibles shuntés, qui ne fondront plus.
+Aucune protection différentielle, et les protections contre les surintensités
+neutralisées : c'est l'installation la plus dangereuse du corpus, et les deux
+moitiés de ce constat vivent dans deux encarts différents.
 
 **Et cet encart ne se lit jamais seul.** Un volet affirme ici « l'ensemble de
 l'installation est protégé par au moins un dispositif différentiel », pendant
