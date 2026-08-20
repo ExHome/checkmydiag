@@ -636,10 +636,17 @@
     overflow: hidden;
   }
 
-  /* Le cadre reduit : de quoi porter le lieu et l'adresse, rien de plus. Il
-     rend a la grille des applications la place qu'un filigrane occupait. */
+  /*
+   * Le cadre reduit : de quoi porter le lieu et l'adresse, rien de plus. Il
+   * rend a la grille des applications la place qu'un filigrane occupait.
+   *
+   * 168 px etait trop court, et cela s'est vu : le badge de ville, pose en
+   * absolu en haut, chevauchait l'adresse de 26 pixels mesures. Le contenu
+   * commande la hauteur -- badge, adresse, commune, traits, bouton -- et 206
+   * est la valeur ou plus rien ne se telescope, verifiee a l'ecran.
+   */
   .bien.sans-photo {
-    min-height: 168px;
+    min-height: 206px;
     box-shadow: var(--ombre-forte);
     color: #ffffff;
   }
