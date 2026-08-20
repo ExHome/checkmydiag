@@ -77,6 +77,22 @@ export type Schema =
       zones: { nom: string; etat: Gravite; detail?: string }[];
     }
   | {
+      /**
+       * Le tableau pièce par pièce du certificat de superficie.
+       *
+       * `piecesMesurees()` le relevait déjà — nom, surface privative, surface
+       * au sol — et l'analyse n'en gardait qu'un total (« Pièces hors
+       * superficie »). Le détail était extrait puis jeté, alors que c'est la
+       * seule partie du rapport qui explique l'écart entre les deux chiffres
+       * annoncés.
+       */
+      genre: 'surfaces';
+      pieces: { nom: string; privative: number; auSol: number }[];
+      /** Les totaux du rapport, pour que la somme affichée soit vérifiable. */
+      totalPrivative: number | null;
+      totalAuSol: number | null;
+    }
+  | {
       genre: 'risques';
       risques: { nom: string; niveau: Gravite; detail?: string }[];
     }

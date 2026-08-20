@@ -25,6 +25,7 @@
   import MotsExpliques from './MotsExpliques.svelte';
   import Releves from './Releves.svelte';
   import OuEstLePlomb from './OuEstLePlomb.svelte';
+  import LesSurfaces from './LesSurfaces.svelte';
   import AVerifier from './AVerifier.svelte';
   import Travaux from './Travaux.svelte';
   import { libelleCourt } from '../lib/libelle';
@@ -869,6 +870,22 @@
                   <OuEstLePlomb emplacements={d.schema.emplacements} />
                 {/if}
 
+                <!--
+                  La Carrez savait dire ses pièces, et ne le disait pas.
+
+                  « On veut connaître toutes les surfaces. » Le certificat les
+                  détaille ligne par ligne, `piecesMesurees()` les relevait, et
+                  l'écran n'en montrait qu'un total : le lecteur voyait « 42 m² »
+                  sans savoir d'où venaient ces mètres.
+                -->
+                {#if d.schema?.genre === 'surfaces' && d.schema.pieces.length}
+                  <LesSurfaces
+                    pieces={d.schema.pieces}
+                    totalPrivative={d.schema.totalPrivative}
+                    totalAuSol={d.schema.totalAuSol}
+                  />
+                {/if}
+
                 <!-- Le plan des parois : ce que le rapport dit de chez vous,
                      paroi par paroi. Il descend de la scène jusqu'ici — c'est
                      une réponse à « où ? », pas une illustration d'en-tête. -->
@@ -876,7 +893,7 @@
 
                 {#if d.releves?.length}
                   <Releves releves={d.releves} page={d.pages[0]} type={d.type} />
-                {:else if !(d.schema?.genre === 'plomb' && d.schema.emplacements.length)}
+                {:else if !(d.schema?.genre === 'plomb' && d.schema.emplacements.length) && !(d.schema?.genre === 'surfaces' && d.schema.pieces.length)}
                   <p class="reponse-etape sans-donnee">
                     Information non disponible dans le diagnostic&nbsp;: ce rapport
                     ne rattache aucun constat à une pièce ou à un local.

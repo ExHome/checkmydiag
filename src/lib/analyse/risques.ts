@@ -457,7 +457,26 @@ export function analyserCarrez(lignes: string[], plage: [number, number]): Diagn
           'Si la superficie réelle est inférieure de plus de 5 % à celle annoncée à l’acte, l’acquéreur peut demander une réduction du prix au prorata, dans l’année qui suit la vente.',
           'Le mesurage n’a pas de durée de validité tant que le logement n’est pas modifié.'
         ],
-    schema: null,
+    /*
+     * LE TABLEAU PIÈCE PAR PIÈCE, ENFIN AFFICHÉ.
+     *
+     * `piecesMesurees()` était déjà appelé quinze lignes plus haut, et son
+     * résultat ne servait qu'à compter les mètres perdus. Le détail — chaque
+     * pièce, sa superficie privative et sa surface au sol — repartait à la
+     * poubelle, alors que c'est la seule partie du rapport qui explique
+     * l'écart entre les deux chiffres affichés.
+     *
+     * Rien n'est calculé ici : ce sont les lignes du certificat, et les totaux
+     * qui les accompagnent, pour que la somme reste vérifiable par le lecteur.
+     */
+    schema: pieces.length
+      ? {
+          genre: 'surfaces',
+          pieces,
+          totalPrivative: surface,
+          totalAuSol: auSol
+        }
+      : null,
     pages: plage,
     ...(date ? { date } : {})
   };

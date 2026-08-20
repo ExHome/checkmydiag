@@ -199,6 +199,27 @@ export function pagesExemple(): PageTexte[] {
         'Certificat de superficie de la partie privative',
         // 42 m² face aux 48,5 m² du DPE : l'écart dépasse la tolérance et doit
         // déclencher une question.
+        /*
+         * LE TABLEAU PIECE PAR PIECE.
+         *
+         * Un certificat de superficie porte toujours ce tableau — deux nombres
+         * en fin de ligne, le privatif puis le sol. L'exemple n'avait que les
+         * deux totaux, si bien que l'ecran ne pouvait pas montrer d'ou venaient
+         * les metres carres.
+         *
+         * Les cinq lignes tombent juste sur les totaux deja ecrits :
+         * 18,20 + 11,40 + 7,90 + 4,50 = 42,00 au sens Carrez, et la cave ajoute
+         * ses 2,80 m² au sol pour faire 44,80. Une vitrine qui ne s'additionne
+         * pas serait la premiere incoherence que l'app devrait signaler.
+         *
+         * La cave a 0 en privatif : c'est la ligne la plus utile du tableau —
+         * une piece qui existe, se visite, et ne se vend pas.
+         */
+        'Rez de chaussée - Séjour            18.20      18.20',
+        'Rez de chaussée - Chambre 01        11.40      11.40',
+        'Rez de chaussée - Cuisine            7.90       7.90',
+        'Rez de chaussée - Salle de bain      4.50       4.50',
+        'Sous-sol - Cave                      0.00       2.80',
         'Superficie Loi Carrez totale : 42,00 m²',
         'Surface au sol totale : 44,80 m²'
       ]
