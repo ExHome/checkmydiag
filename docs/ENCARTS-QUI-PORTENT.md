@@ -525,6 +525,47 @@ l'ensemble des diagnostics obligatoires : Amiante, Termite… ». Même piège q
 catalogue des prestations de Liciel, à un autre endroit — et cette fois sur
 soixante-quatorze pages au lieu de deux.
 
+### Le DPE d'avant 2021 : même information, autre encart, parfois plus précis
+
+**Ni « schéma des déperditions », ni « description isolation »** dans les DPE
+d'ancienne génération — modèles **6.A** (DPEWIN V4) et **6.1** (Imm'PACT). La
+carte du DPE ne vaut que pour le modèle réglementaire de 2021.
+
+L'information existe pourtant, sous l'intitulé **« Descriptif du logement et de
+ses équipements »**, en **trois colonnes thématiques** et en listes à puces :
+
+```
+Logement                    | Chauffage et refroidissement | Eau chaude sanitaire, ventilation
+Murs :                      | Système de chauffage :       | Système de production d'ECS :
+- Mur en béton banché Ep <=20cm avec isolant (ITI) Ep=10 cm
+- Mur en briques pleines simples Ep <=9cm avec isolant (ITI) Ep=7 cm
+- Mur en béton banché Ep <=20cm non isolé
+```
+
+**Et il est parfois plus riche que le modèle 2021.** Imm'PACT numérote les
+parois et donne l'épaisseur d'isolant : « Mur 1 : blocs de béton creux, ép.
+20 cm ou moins, isolation par l'intérieur (ITI), **épaisseur d'isolation :
+10 cm** ». Le DPE 2021 dit « avec isolation intérieure » sans le chiffre.
+
+Le vocabulaire de l'isolation change aussi : « **avec isolant (ITI)** » et
+« **non isolé** » ici, « avec isolation intérieure » là. Un motif ancré sur la
+formulation de 2021 ne trouve rien dans un rapport de 2019.
+
+**Autre encart propre à l'ancien modèle** : « Rapport d'entretien ou
+d'inspection des chaudières joint : **Non requis** ».
+
+### Un piège d'extraction propre à DPEWIN V5
+
+Ses en-têtes de colonnes sont **répétés autant de fois qu'il y a de colonnes**,
+sur une seule ligne :
+
+```
+description description description description isolation isolation isolation isolation
+```
+
+Chercher la ligne « description isolation » pour borner l'encart ne la trouve
+pas sous cette forme.
+
 ### Une réserve juridique que Liciel n'a pas
 
 La note de synthèse d'AnalysImmo porte : « **Document ne pouvant en aucun cas
