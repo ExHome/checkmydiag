@@ -423,7 +423,13 @@ vide** : c'est au vendeur de la remplir, et elle ne l'est jamais.
 ### Résumé de l'expertise — **constant en existence, VARIABLE en position**
 
 Une conclusion par prestation, **en clair**. C'est la source la plus fiable pour
-les conclusions que le formulaire n'arrive pas à trancher.
+les conclusions que le formulaire n'arrive pas à trancher — quand elle la porte.
+
+**Piège 0 — une ligne peut être vide.** Un dossier de 2021 liste « Amiante »
+sans aucune conclusion en face, alors qu'il contient bien un volet amiante de
+douze pages. La prestation est nommée, la conclusion manque. Il faut alors la
+chercher dans le volet lui-même, et l'absence de conclusion en synthèse ne dit
+rien du résultat.
 
 **Piège 1 — sa position bouge.** Page 3 sur la plupart des dossiers, **page 2**
 sur d'autres. Le chercher à une page fixe le manque ; il se cherche par son
