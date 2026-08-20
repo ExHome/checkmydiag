@@ -129,7 +129,9 @@ export function pagesExemple(): PageTexte[] {
         'Libellé de l’anomalie : B7.3 a L’enveloppe d’au moins un matériel est',
         'détériorée.',
         'Parties du bien (pièces et emplacements) n’ayant pu être visitées et justification :',
-        '2ème étage - Combles (Absence de trappe de visite)'
+        /* Le certificat de superficie decrit un rez-de-chaussee et un sous-sol :
+           un « 2eme etage » designait un niveau que ce logement n'a pas. */
+        'Sous-sol - Cave (Absence de trappe de visite)'
       ]
     },
     {
@@ -164,10 +166,25 @@ export function pagesExemple(): PageTexte[] {
         'Date du repérage : 02/09/2025',
         'Le bien est situé dans une zone soumise à un arrêté préfectoral:',
         "Niveau d'infestation moyen",
-        'Piece 1 Sol - Carrelage Absence d’indices d’infestation de termites',
-        'Piece 1 Plinthes - A, B - Bois Absence d’indices d’infestation de termites',
-        'Piece 2 Sol - Parquet Absence d’indices d’infestation de termites',
-        'Piece 3 Charpente - Bois Absence d’indices d’infestation de termites',
+        /*
+         * DE VRAIS NOMS DE PIECES.
+         *
+         * L'exemple ecrivait « Piece 1 », « Piece 2 », « Piece 3 ». Mesure sur
+         * 50 dossiers du corpus : 148 zones sur 149 portent un VRAI nom --
+         * « Salle d'eau », « Chambre 1 », « Sejour / Cuisine », « Degagement ».
+         * Une seule etait generique.
+         *
+         * La vitrine montrait donc le cas que le reel ne produit presque
+         * jamais, et l'ecran « Ou ? » y perdait tout son sens.
+         *
+         * Les pieces reprennent celles du certificat de superficie, page 9 :
+         * c'est le meme logement, et un dossier qui se contredit d'un
+         * diagnostic a l'autre est precisement ce que l'app doit signaler.
+         */
+        'Séjour Sol - Carrelage Absence d’indices d’infestation de termites',
+        'Séjour Plinthes - A, B - Bois Absence d’indices d’infestation de termites',
+        'Chambre 01 Sol - Parquet Absence d’indices d’infestation de termites',
+        'Cave Charpente - Bois Absence d’indices d’infestation de termites',
         "Il n'a pas été repéré d'indice d'infestation de termites."
       ]
     },
