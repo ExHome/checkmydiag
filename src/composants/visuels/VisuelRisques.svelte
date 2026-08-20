@@ -406,9 +406,13 @@
     height: auto;
   }
 
+  /* Le ciel est une surface claire posee au milieu d'un ecran sombre : le texte
+     pose dessus doit changer d'encre, sinon il herite de celle de l'univers --
+     mesure a 1,09 de contraste, soit invisible. */
   .ici {
     font-size: var(--t-micro);
     font-weight: 600;
+    color: var(--encre-sur-clair);
   }
 
   .couches {

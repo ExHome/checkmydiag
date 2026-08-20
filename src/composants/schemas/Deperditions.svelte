@@ -224,12 +224,24 @@
     {#if lettre}
       <g transform="translate(196 152)">
         <rect x="-22" y="-16" width="44" height="32" rx="8" fill={TEINTE_LETTRE[lettre]} />
-        <text
-          x="0"
-          y="7"
-          class="classe"
-          fill={lettre === 'C' || lettre === 'D' || lettre === 'E' ? 'var(--encre)' : '#fff'}
-        >
+        <!--
+          UNE SEULE ENCRE, ET ELLE TIENT SUR LES SEPT.
+          
+          La lettre basculait entre `var(--encre)` pour C, D, E et `#fff` pour
+          les quatre autres. Mesure a l'ecran des quatre au blanc : B 2,14 ·
+          F 2,15 · A 3,70 · G 4,08 — toutes sous le seuil de 4,5, et deux
+          franchement illisibles.
+          
+          Les couleurs de l'arrete ne se retouchent pas : c'est l'encre qui doit
+          tenir partout. `--encre-etiquette` est calculee pour cela -- ses sept
+          mesures sont ecrites au jeton, dans app.css -- et la pastille de
+          l'escalier A→G emploie la meme, choisie sur la meme mesure.
+
+          La valeur ne se recopie pas ici : un test de la charte interdit les
+          couleurs en dur dans un schema, et il a raison meme pour un
+          commentaire -- une valeur citee a deux endroits finit par diverger.
+        -->
+        <text x="0" y="7" class="classe" fill="var(--encre-etiquette)">
           {lettre}
         </text>
       </g>

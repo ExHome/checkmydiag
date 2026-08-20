@@ -856,23 +856,34 @@
                 <section class="etape" aria-labelledby="et-savoir-{d.type}">
                   <h4 id="et-savoir-{d.type}" class="titre-etape">Ce qu’il faut savoir</h4>
 
-                  {#if chef}
-                    <p class="chiffre-chef">
-                      <span class="valeur-chef">{chef.valeur}</span>
-                      <span class="quoi-chef">{chef.libelle}</span>
-                      {#if chef.precision}<span class="precision-chef">{chef.precision}</span>{/if}
-                    </p>
-                  {/if}
+                  <!--
+                    LES CHIFFRES DU RAPPORT, SUR LEUR CARTE.
 
-                  {#if suite.length}
-                    <ul class="chiffres-suite">
-                      {#each suite as fait (fait.libelle)}
-                        <li>
-                          <b>{fait.valeur}</b>
-                          <span>{fait.libelle}</span>
-                        </li>
-                      {/each}
-                    </ul>
+                    C'est ici que la matière change de camp : ce bloc porte des
+                    valeurs lues dans le PDF, il prend donc la carte opaque. La
+                    prose de Verrière, plus bas, n'en a aucune.
+                  -->
+                  {#if chef || suite.length}
+                    <div class="du-rapport">
+                      {#if chef}
+                        <p class="chiffre-chef">
+                          <span class="valeur-chef">{chef.valeur}</span>
+                          <span class="quoi-chef">{chef.libelle}</span>
+                          {#if chef.precision}<span class="precision-chef">{chef.precision}</span>{/if}
+                        </p>
+                      {/if}
+
+                      {#if suite.length}
+                        <ul class="chiffres-suite">
+                          {#each suite as fait (fait.libelle)}
+                            <li>
+                              <b>{fait.valeur}</b>
+                              <span>{fait.libelle}</span>
+                            </li>
+                          {/each}
+                        </ul>
+                      {/if}
+                    </div>
                   {/if}
                 </section>
               {/if}
@@ -1315,15 +1326,54 @@
     background: var(--u-fond, #0a2b23);
     color: var(--u-texte, #12463b);
 
+    /*
+     * ─────────────────────────────────────────────────────────────────────
+     * SIX NIVEAUX DE TEXTE, ET DEUX FAMILLES.
+     * ─────────────────────────────────────────────────────────────────────
+     *
+     * « Les infos importantes doivent être plus visibles que les autres ; on
+     * doit voir une différence entre les infos du rapport et le blabla. »
+     *
+     * Les deux étaient impossibles, et pour la même raison : en mini-app, NEUF
+     * noms de jetons s'effondraient sur une seule valeur (#f7f6f2) et QUATRE
+     * autres sur une seconde. Il n'existait donc que deux niveaux de texte
+     * réels, séparés d'un facteur 1,5 de contraste. Aucune hiérarchie n'est
+     * exprimable avec deux valeurs.
+     *
+     * D'où six niveaux nommés. Ils ne remplacent pas les jetons historiques —
+     * `--papier`, `--encre`, `--or`, `--ok` sont consommés par les `fill` de
+     * tous les schémas — ils les RÉPARENT : les noms cessent de pointer tous
+     * au même endroit.
+     *
+     * LA FAMILLE COMPTE AUTANT QUE LE NIVEAU. n1 à n3 sont le RAPPORT : encre
+     * pleine, graisse forte, chiffres tabulaires. n4 et n5 sont VERRIÈRE :
+     * encre adoucie, graisse normale, italique autorisée. n6 est la structure.
+     * La distinction se lit sans la couleur — c'est la condition pour qu'elle
+     * survive à une capture en noir et blanc, et à un daltonien.
+     *
+     * Contrastes calculés contre le fond de fiche de chaque univers ; les plus
+     * bas sont mesurés sur l'électricité, l'univers le plus clair.
+     */
+    --n1: #ffffff;
+    --n2: var(--u-texte, #f7f6f2);
+    --n3: var(--u-texte-doux, #c6cac3);
+    --n4: color-mix(in srgb, var(--u-texte, #f7f6f2) 88%, var(--u-fond, #192e1b));
+    --n5: color-mix(in srgb, var(--u-texte, #f7f6f2) 68%, var(--u-fond, #192e1b));
+    --n6: var(--u-accent, #99be88);
+
     --fond: var(--u-fond, #0a2b23);
     --fond-clair: var(--u-surface, #ffffff);
     --papier: var(--u-surface, #ffffff);
     --papier-doux: color-mix(in srgb, var(--u-texte, #12463b) 4%, var(--u-surface, #ffffff));
-    --sur-fond: var(--u-texte, #12463b);
-    --sur-fond-doux: var(--u-texte-doux, #555555);
-    --encre: var(--u-texte, #12463b);
-    --encre-doux: var(--u-texte-doux, #555555);
-    --gris: var(--u-texte-doux, #888888);
+    /* Les noms hérités pointent maintenant vers des niveaux DISTINCTS. Avant,
+       `--sur-fond-doux`, `--encre-doux` et `--gris` valaient tous la même
+       chose, et `--or-clair` valait `--sur-fond` : quatre noms pour une seule
+       nuance. */
+    --sur-fond: var(--n2);
+    --sur-fond-doux: var(--n5);
+    --encre: var(--n2);
+    --encre-doux: var(--n5);
+    --gris: var(--n5);
     --trait: var(--u-trait, #e8dcc8);
     --trait-fin: color-mix(in srgb, var(--u-trait, #f0eae0) 55%, transparent);
     --trait-or: var(--u-trait, #e8dcc8);
@@ -1367,7 +1417,11 @@
     --vert-300: var(--u-texte-doux, #7fa3ad);
     --or: var(--u-accent, #12463b);
     --or-fonce: var(--u-accent, #a33220);
-    --or-clair: var(--u-texte, #12463b);
+    /* `--or-clair` habille 27 textes dans l'app — le titre court du diagnostic,
+       la phrase « en pratique », le renvoi de page, la puce de lieu. Il valait
+       exactement `--sur-fond` : ces textes-là ne se distinguaient donc en rien
+       du corps de texte. Il prend n3, le niveau des mentions du rapport. */
+    --or-clair: var(--n3);
 
     /* Les deux fonds de pastille. Ils se composent sur la surface de l'univers
        plutôt que sur du blanc : sur l'écran sombre, une pastille reste sombre
@@ -1803,11 +1857,12 @@
     color: var(--or-clair);
   }
 
+  /* n2 — les mots du rapport. */
   .verdict {
     margin: 0;
     font-size: var(--t-base);
     line-height: 1.5;
-    color: var(--sur-fond);
+    color: var(--n2);
   }
 
   /* ---- Le niveau de lecture ----------------------------------------------
@@ -2001,12 +2056,13 @@
     max-width: var(--mesure);
   }
 
+  /* n4 — « en pratique » est écrit par Verrière, pas lu dans le rapport. */
   .pratique {
     margin: 0 0 var(--e4);
     font-style: italic;
     font-size: var(--t-base);
     line-height: 1.5;
-    color: var(--or-clair);
+    color: var(--n4);
   }
 
   /*
@@ -2017,18 +2073,98 @@
    * petit -- l'inverse d'un formulaire, ou l'etiquette precede toujours la
    * valeur et ou les deux ont le meme poids.
    */
+  /*
+   * ─────────────────────────────────────────────────────────────────────────
+   * LA MATIÈRE CHANGE DE CAMP.
+   * ─────────────────────────────────────────────────────────────────────────
+   *
+   * Le signal de provenance était posé À L'ENVERS. Le seul bloc encadré de la
+   * fiche — `.propre-au-rapport`, filet de 3 px et fond plein — habillait de la
+   * PROSE DE VERRIÈRE, pendant que le chiffre du rapport et les relevés
+   * n'avaient aucune marque. Le lecteur voyait donc notre commentaire mis en
+   * évidence, et la donnée de son rapport posée à plat.
+   *
+   * On retourne le signal : ce qui vient du rapport est posé sur une carte
+   * opaque ; ce que Verrière explique est du texte nu, décroché. C'est le geste
+   * iOS — le contenu vit dans des cartes, le commentaire vit sur la page.
+   *
+   * QUATRE SIGNAUX, UN SEUL CHROMATIQUE. La matière (carte / pas de carte), le
+   * bord gauche (bord à bord / en retrait), les chiffres (tabulaires /
+   * proportionnels), l'italique (interdite au rapport, réservée à Verrière).
+   * Passez la fiche en noir et blanc et floutez-la : les quatre tiennent.
+   */
+  .du-rapport {
+    background: var(--papier);
+    border-radius: 18px;
+    padding: var(--e3) var(--e4) var(--e4);
+    margin: 0 0 var(--e4);
+
+    /* L'arête haute éclairée et l'ombre portée : le relief vient de la lumière,
+       pas d'un cadre. Jamais animées — une carte qui bouge se lit comme un
+       bouton. */
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 8%),
+      0 10px 24px -14px rgb(0 0 0 / 65%);
+
+    color: var(--n2);
+    font-variant-numeric: tabular-nums lining-nums;
+    font-style: normal;
+  }
+
+  /* Un liseré d'accent, court : il signe la carte sans l'encadrer. */
+  .du-rapport::before {
+    content: '';
+    display: block;
+    width: 22px;
+    height: 2px;
+    margin-bottom: var(--e2);
+    border-radius: 2px;
+    background: var(--action, var(--n6));
+  }
+
+  /* Jamais de carte dans une carte — la charte interdit les cartes empilées. */
+  .du-rapport .du-rapport {
+    background: none;
+    box-shadow: none;
+    padding: 0;
+    border-radius: 0;
+  }
+
+  .du-rapport .du-rapport::before {
+    display: none;
+  }
+
+  /* En contraste forcé et à l'impression, l'ombre ne dit plus rien : c'est un
+     trait qui prend le relais. La distinction ne repose jamais sur l'ombre
+     seule. */
+  @media (forced-colors: active) {
+    .du-rapport {
+      box-shadow: none;
+      border: 1px solid CanvasText;
+    }
+  }
+
+  @media print {
+    .du-rapport {
+      box-shadow: none;
+      border: 1px solid #999;
+    }
+  }
+
   .chiffre-chef {
     display: grid;
     gap: 2px;
-    margin: 0 0 var(--e4);
+    margin: 0;
   }
 
+  /* n1 — le chiffre du rapport. Le seul texte de la fiche en blanc pur : il
+     n'y a qu'un chiffre-chef par écran, et c'est le premier regard. */
   .valeur-chef {
     font-family: var(--police-titre);
     font-size: var(--t-titre);
     font-weight: 700;
     line-height: 1;
-    color: var(--sur-fond);
+    color: var(--n1);
     font-variant-numeric: tabular-nums;
   }
 
@@ -2107,14 +2243,29 @@
    * paragraphes parlent du logement du lecteur, pas des diagnostics en général.
    * La différence doit se voir sans qu'on ait à la lire.
    */
+  /*
+   * L'EXPLICATION DE VERRIÈRE : PLUS AUCUNE CARTE.
+   *
+   * Ce bloc portait un fond plein et un filet de 3 px — la marque la plus forte
+   * de toute la fiche — pour de la prose que nous écrivons. Il devient du texte
+   * nu, décroché de la carte : les deux ne partagent jamais le même bord
+   * gauche, et c'est ce décalage qui se voit même sans lire.
+   *
+   * Le nom du bloc reste `propre-au-rapport` : il désigne bien ce qui est
+   * PROPRE À CE RAPPORT-CI, par opposition aux fiches génériques. C'est de
+   * l'explication sur mesure, mais c'est de l'explication.
+   */
   .propre-au-rapport {
     margin: var(--e4) 0;
-    padding: var(--e3) var(--e4);
-    background: var(--surface);
-    border-left: 3px solid var(--action-forte);
-    border-radius: 0 var(--rayon) var(--rayon) 0;
+    margin-inline-start: 14px;
+    padding: 0;
+    background: none;
+    border: 0;
     display: grid;
     gap: var(--e3);
+    max-width: var(--mesure);
+    color: var(--n4);
+    font-variant-numeric: proportional-nums;
   }
 
   .propre-au-rapport p {
@@ -2203,11 +2354,21 @@
     font-style: italic;
   }
 
+  /* n4 — l'explication de Verrière. Elle était à la même encre que le verdict
+     du rapport : deux familles, une seule couleur. */
   .reponse-etape {
+    /* LE DÉCROCHEMENT. Quatrième signal de la distinction, et le seul qui se
+       voie sans couleur ET sans matière : le texte de Verrière ne partage
+       jamais le bord gauche des cartes du rapport. Sur une capture floutée en
+       noir et blanc, c'est ce décalage qui reste lisible. */
+    /* Le raccourci `margin` vient d'abord : posé après, il remettait
+       `margin-inline-start` à zéro et le décrochement ne se voyait pas. */
     margin: 0 0 var(--e2);
+    margin-inline-start: 14px;
+    font-variant-numeric: proportional-nums;
     font-size: var(--t-petit);
     line-height: 1.55;
-    color: var(--u-texte, var(--sur-fond));
+    color: var(--n4);
   }
 
   .reponse-etape:last-child {
@@ -2230,19 +2391,21 @@
     break-inside: avoid;
   }
 
+  /* n6 — étiquette de structure, comme les titres d'étape. */
   .canevas dt {
     font-size: var(--t-micro);
     font-weight: 700;
     letter-spacing: 0.13em;
-    color: var(--or-fonce);
+    color: var(--n6);
     margin-bottom: var(--e1);
   }
 
+  /* n5 — même inversion corrigée : le glossaire générique passait devant. */
   .canevas dd {
     margin: 0;
-    font-size: var(--t-base);
+    font-size: var(--t-petit);
     line-height: 1.5;
-    color: var(--sur-fond-doux);
+    color: var(--n5);
   }
 
   /* Les réserves ferment la fiche : c'est la limite de ce qui vient d'être dit. */
@@ -2269,12 +2432,14 @@
     gap: var(--e1);
   }
 
+  /* n5 — la réserve s'efface. Elle était à 16 px, soit PLUS GROSSE qu'une
+     explication ciblée à 14 px : la hiérarchie marchait à l'envers. */
   .reserves li {
     position: relative;
     padding-left: var(--e4);
-    font-size: var(--t-base);
+    font-size: var(--t-petit);
     line-height: 1.45;
-    color: var(--sur-fond-doux);
+    color: var(--n5);
   }
 
   .reserves li::before {

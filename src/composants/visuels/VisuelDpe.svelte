@@ -583,7 +583,7 @@
      * Une teinte verte plutôt qu'un noir pur : elle reste dans la charte, et le
      * gain du noir (5,67 / 5,15) n'était pas nécessaire.
      */
-    color: #071008;
+    color: var(--encre-etiquette);
     font-weight: 700;
     font-size: var(--t-petit);
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--u-texte, #f5f1e8) 55%, transparent);

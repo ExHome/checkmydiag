@@ -44,21 +44,35 @@ const ETIQUETTES: Record<string, string> = {
   G: '#fc0205'
 };
 
-describe('la pastille de la ligne de réponse', () => {
-  const source = readFileSync(
-    new URL('./VisuelDpe.svelte', import.meta.url),
-    'utf8'
-  );
+describe('l’encre posée sur une étiquette A→G', () => {
+  /*
+   * La valeur ne vit plus dans le composant : elle est devenue le jeton
+   * `--encre-etiquette` de la charte, parce que deux dessins l'emploient — la
+   * pastille de l'escalier et le badge de classe du schéma des déperditions —
+   * et qu'une valeur écrite deux fois finit par diverger.
+   *
+   * Le test lit donc le jeton à sa source, et vérifie que les deux dessins s'en
+   * servent au lieu de recopier une couleur.
+   */
+  const charte = readFileSync(new URL('../../app.css', import.meta.url), 'utf8');
 
-  /** L'encre déclarée dans `.pastille-lettre`. */
   const encre = (() => {
-    const bloc = source.slice(source.indexOf('.pastille-lettre'));
-    const m = /color:\s*(#[0-9a-fA-F]{6})/.exec(bloc);
-    return m?.[1] ?? '';
+    const i = charte.indexOf('--encre-etiquette:');
+    if (i === -1) return '';
+    const j = charte.indexOf(';', i);
+    return j === -1 ? '' : charte.slice(i + '--encre-etiquette:'.length, j).trim();
   })();
 
-  it('déclare bien une encre en dur', () => {
+  it('est déclarée une fois, dans la charte', () => {
     expect(encre).toMatch(/^#[0-9a-fA-F]{6}$/);
+  });
+
+  it.each([
+    ['la pastille de l’escalier', './VisuelDpe.svelte'],
+    ['le badge du schéma des déperditions', '../schemas/Deperditions.svelte']
+  ])('%s emploie le jeton, pas une couleur', (_quoi, chemin) => {
+    const source = readFileSync(new URL(chemin, import.meta.url), 'utf8');
+    expect(source).toMatch(/var\(--encre-etiquette\)/);
   });
 
   it.each(Object.entries(ETIQUETTES))(

@@ -242,6 +242,42 @@
   --etq-f: #fc9935;
   --etq-g: #fc0205;
 
+  /*
+   * L'ENCRE QUI S'ECRIT SUR UNE ETIQUETTE A→G.
+   *
+   * Les sept couleurs ci-dessus sont celles de l'arrete : elles ne se
+   * retouchent pas. C'est donc l'encre posee dessus qui doit tenir sur les
+   * sept, et une seule valeur y parvient sans virer au noir pur.
+   *
+   * Mesures WCAG contre chaque etiquette :
+   *   A 5,22 · B 9,04 · C 16,12 · D 17,74 · E 12,65 · F 8,97 · G 4,74
+   *
+   * Toutes au-dessus de 4,5. A titre de comparaison, le blanc echoue sur
+   * quatre etiquettes -- B 2,14 · F 2,15 · A 3,70 · G 4,08 -- et c'est
+   * exactement ce que le badge de classe et la pastille de l'escalier
+   * faisaient avant.
+   *
+   * Elle garde une pointe de vert plutot que d'etre un noir pur : elle reste
+   * dans la charte, et le gain du noir (5,67 au pire) ne le justifiait pas.
+   */
+  --encre-etiquette: #071008;
+
+  /*
+   * L'ENCRE QUI S'ECRIT SUR UNE SURFACE CLAIRE DU DESSIN.
+   *
+   * Certains schemas posent leur propre surface claire au milieu d'un ecran
+   * sombre : le ciel de la coupe de terrain, par exemple, est un degrade opaque
+   * bleu pale. Le texte pose dessus HERITE de l'encre de l'univers, qui est
+   * claire -- « Le logement » sortait a 1,09 de contraste, soit invisible.
+   *
+   * C'est le vert profond de la charte. Mesures sur les surfaces claires des
+   * dessins : 13,4 sur le ciel #e0f7fa, 12,7 sur son bas #d3eceb.
+   *
+   * A ne pas confondre avec `--encre-etiquette`, calee sur les sept couleurs
+   * VIVES de l'arrete : ici les fonds sont pales, et le vert de marque suffit.
+   */
+  --encre-sur-clair: #0a2b23;
+
   /* Une échelle d'espacement, pas des valeurs au jugé. Tout ce qui respire
      dans la page prend une de ces huit valeurs — c'est ce qui donne à un
      document son rythme, et à une interface sa tenue. */
