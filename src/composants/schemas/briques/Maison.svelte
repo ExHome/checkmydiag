@@ -47,6 +47,19 @@
     porte?: boolean;
   } = $props();
 
+  /**
+   * Un identifiant propre a chaque maison.
+   *
+   * Les degrades du relief sont references par `url(#id)`, et cinq schemas
+   * peuvent coexister dans une meme page : sans prefixe unique, la premiere
+   * maison montee imposerait ses degrades a toutes les autres -- et une
+   * disparition de la premiere emporterait le relief des suivantes.
+   *
+   * `$props.id()` donne un identifiant stable par instance, cote client comme
+   * au rendu serveur.
+   */
+  const uid = $props.id();
+
   const h = $derived(l * PROPORTIONS.facade);
   const debord = $derived(l * PROPORTIONS.debordToit);
   const hToit = $derived(l * PROPORTIONS.hauteurToit);
@@ -75,13 +88,79 @@
   );
 </script>
 
+<!--
+  LE RELIEF : DE LA LUMIERE EN HAUT, DE L'OMBRE EN BAS.
+
+  La maison etait en aplats plats cernes d'un trait -- lisible, mais plate. Le
+  relief demande ne vient pas d'un effet : c'est celui d'iOS, une source de
+  lumiere unique et zenithale, et rien d'autre.
+
+  Trois procedes, pas un de plus :
+
+    · un degrade sur la facade, deux arrets, qui donne son volume au bati ;
+    · deux aretes d'un pixel -- claire en haut, sombre en bas -- qui detachent
+      les plans ;
+    · une ombre de contact au sol, qui pose la maison au lieu de la faire
+      flotter.
+
+  Ils sont ecrits en blanc et noir TRANSLUCIDES : cette brique sert cinq
+  schemas, sur fond sombre comme sur papier clair, et une couleur pleine aurait
+  fonctionne d'un cote seulement.
+
+  Ni neon, ni halo, ni glassmorphism, ni creux : la charte les refuse, et ils
+  feraient exactement le « trop joli » qui trahit un dessin technique.
+-->
 <g class="maison">
+  <defs>
+    <!--
+      `stop-color` et `stop-opacity` SEPARES, jamais la couleur moderne.
+
+      Ecrit `stop-color="rgb(255 255 255 / 9%)"`, le degrade sortait NOIR OPAQUE
+      au rendu : la syntaxe CSS Color 4 n'est pas comprise dans un attribut de
+      presentation SVG, et l'alpha etait purement ignore. La facade devenait un
+      aplat noir, l'ombre de contact une tache.
+
+      Vu seulement en rendant le dessin en image -- aucune mesure de contraste
+      ne l'aurait revele, puisque le fautif n'ecrit aucun texte.
+
+      L'INTENSITE, elle aussi, s'est reglee a l'oeil : trois maisons rendues
+      cote a cote. A 9/16 le volume se devinait a peine, a 14/26 le bas de
+      facade s'assombrissait au point d'avaler ses fenetres. 12/22 se voit sans
+      ecraser.
+    -->
+    <linearGradient id="{uid}-paroi" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.12" />
+      <stop offset="1" stop-color="#000000" stop-opacity="0.22" />
+    </linearGradient>
+    <radialGradient id="{uid}-contact">
+      <stop offset="0" stop-color="#000000" stop-opacity="0.38" />
+      <stop offset="1" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <!-- L'ombre de contact vient EN PREMIER : elle passe sous tout le reste. -->
+  <ellipse
+    cx={x + l / 2}
+    cy={y + h + (fondation ? h * 0.098 : 0) + 3}
+    rx={l * 0.58}
+    ry={h * 0.045}
+    fill="url(#{uid}-contact)"
+  />
+
   {#if cheminee}
     <rect x={xCheminee} y={yCheminee} width={lCheminee} height={hToit * 0.6} class="cheminee" />
   {/if}
 
   <path d={toit} class="toit" />
   <rect {x} {y} width={l} height={h} class="facade" />
+
+  <!-- Le volume du bati : un seul degrade, pose par-dessus la facade sans
+       toucher a sa couleur — il ne fait qu'y ajouter la lumiere. -->
+  <rect {x} {y} width={l} height={h} fill="url(#{uid}-paroi)" />
+
+  <!-- Les deux aretes. Un pixel chacune, c'est tout le procede. -->
+  <path d="M{x} {y} h{l}" class="arete-haute" />
+  <path d="M{x} {y + h} h{l}" class="arete-basse" />
 
   {#if fondation}
     <rect {x} y={y + h} width={l} height={h * 0.098} class="fondation" />
@@ -131,6 +210,35 @@
   .fondation {
     fill: currentColor;
     opacity: 0.18;
+  }
+
+  /*
+   * LES DEUX ARETES.
+   *
+   * Une lumiere zenithale eclaire le haut d'un volume et laisse son bas dans
+   * l'ombre : deux traits d'un pixel suffisent a le dire, et c'est tout ce que
+   * fait iOS. En blanc et noir translucides, elles fonctionnent aussi bien sur
+   * le fond sombre d'une mini-app que sur le papier d'une impression.
+   */
+  .arete-haute {
+    stroke: rgb(255 255 255 / 16%);
+    stroke-width: 1;
+    fill: none;
+  }
+
+  .arete-basse {
+    stroke: rgb(0 0 0 / 40%);
+    stroke-width: 1;
+    fill: none;
+  }
+
+  /* A l'impression et en contraste force, le relief ne dit plus rien et brouille
+     le trait : il s'efface, la silhouette suffit. */
+  @media print, (forced-colors: active) {
+    .arete-haute,
+    .arete-basse {
+      display: none;
+    }
   }
 
   .vitre {
