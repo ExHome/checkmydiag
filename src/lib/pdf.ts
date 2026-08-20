@@ -33,6 +33,20 @@ export interface Document {
    * Renvoie l'image et ses proportions, ou `null`.
    */
   photoDuBien: () => Promise<Photo | null>;
+  /**
+   * Le schéma des déperditions de chaleur du DPE, découpé dans sa page.
+   *
+   * Cette page dit par où la chaleur s'en va, poste par poste, en pourcentages
+   * — et **elle est en image**. Mesuré : trente et un volets DPE sur trente et
+   * un la nomment, aucun ne porte le moindre « % » dans son texte, et la page
+   * compte quatorze à quinze images bitmap. Aucune extraction de texte ne les
+   * atteindra jamais.
+   *
+   * Plutôt que de recopier des chiffres qu'on ne peut pas lire, on montre le
+   * schéma tel qu'il est. Le lecteur voit ses pourcentages ; le produit n'en
+   * invente aucun.
+   */
+  schemaDeperditions: () => Promise<Photo | null>;
   fermer: () => Promise<void>;
 }
 
@@ -271,6 +285,154 @@ export async function ouvrirPdf(
         return null;
       } catch {
         // Une photo manquante n'empêche pas de lire un dossier.
+        return null;
+      }
+    },
+
+    /**
+     * Le schéma des déperditions du DPE, découpé dans sa page.
+     *
+     * La page dit par où la chaleur s'en va, poste par poste, en pourcentages —
+     * et elle est en image. Mesuré : trente et un volets DPE sur trente et un
+     * la nomment, aucun ne porte le moindre « % » dans son texte, et la page
+     * compte quatorze à quinze images bitmap. Aucune extraction de texte ne les
+     * atteindra.
+     *
+     * On montre donc le schéma tel qu'il est, plutôt que de recopier des
+     * chiffres illisibles. Le lecteur voit ses pourcentages ; le produit n'en
+     * invente aucun — et la fiche dit par ailleurs, en mots, quelles parois le
+     * descriptif décrit non isolées.
+     *
+     * Le repère est le titre : le schéma est **sous** lui, en haut à gauche.
+     * Mesuré sur sept pages, le rectangle est identique au point près — 237 sur
+     * 210 points — parce que la maquette du DPE est réglementaire et ne varie
+     * pas. Les bornes restent larges malgré tout : un jour un générateur
+     * décalera cette maquette, et mieux vaut ne rien trouver que découper à
+     * côté.
+     */
+    async schemaDeperditions() {
+      try {
+        const doc = await documentDeDessin();
+
+        for (let n = 1; n <= doc.numPages; n++) {
+          const page = await doc.getPage(n);
+          const contenu = await page.getTextContent();
+          const items = contenu.items.filter((i) => 'str' in i) as {
+            str: string;
+            transform: number[];
+          }[];
+          const titre = items.find((i) => /Sch[ée]ma des d[ée]perditions/i.test(i.str));
+          if (!titre) {
+            page.cleanup();
+            continue;
+          }
+
+          const base = page.getViewport({ scale: 1 });
+          const yTitre = Number(titre.transform?.[5] ?? base.height);
+          const ops = await page.getOperatorList();
+
+          let ctm: Matrice = [1, 0, 0, 1, 0, 0];
+          const pile: Matrice[] = [];
+          let cible: { x: number; y: number; largeur: number; hauteur: number } | null = null;
+
+          for (let i = 0; i < ops.fnArray.length; i++) {
+            const op = ops.fnArray[i];
+            if (op === pdfjs.OPS.save) {
+              pile.push([...ctm] as Matrice);
+              continue;
+            }
+            if (op === pdfjs.OPS.restore) {
+              ctm = pile.pop() ?? [1, 0, 0, 1, 0, 0];
+              continue;
+            }
+            if (op === pdfjs.OPS.transform) {
+              ctm = multiplier(ctm, ops.argsArray[i] as Matrice);
+              continue;
+            }
+            if (op !== pdfjs.OPS.paintImageXObject) continue;
+
+            const [a, b, c, d, e, f] = ctm;
+            const xs = [e, a + e, c + e, a + c + e];
+            const ys = [f, b + f, d + f, b + d + f];
+            const x = Math.min(...xs);
+            const y = Math.min(...ys);
+            const largeur = Math.max(...xs) - x;
+            const hauteur = Math.max(...ys) - y;
+
+            // Ni le fond de page, ni les pictogrammes du confort d'été.
+            if (largeur < base.width * 0.18 || largeur > base.width * 0.75) continue;
+            if (hauteur < base.height * 0.08) continue;
+            const forme = hauteur > 0 ? largeur / hauteur : 0;
+            if (forme < 0.55 || forme > 2.2) continue;
+            // Sous le titre : au-dessus, c'est l'en-tête de la page.
+            if (y + hauteur > yTitre + 6) continue;
+
+            if (!cible || largeur * hauteur > cible.largeur * cible.hauteur) {
+              cible = { x, y, largeur, hauteur };
+            }
+          }
+
+          if (!cible) {
+            page.cleanup();
+            continue;
+          }
+
+          const echelle = Math.min(4, Math.max(2, 720 / cible.largeur));
+          const viewport = page.getViewport({ scale: echelle });
+
+          const feuille = document.createElement('canvas');
+          feuille.width = Math.floor(viewport.width);
+          feuille.height = Math.floor(viewport.height);
+          feuille.style.cssText = 'position:fixed;left:-10000px;top:0;';
+          document.body.append(feuille);
+
+          try {
+            const ctx = feuille.getContext('2d');
+            if (!ctx) continue;
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, feuille.width, feuille.height);
+            await page.render({ canvasContext: ctx, viewport }).promise;
+
+            const c1 = viewport.convertToViewportPoint(cible.x, cible.y);
+            const c2 = viewport.convertToViewportPoint(
+              cible.x + cible.largeur,
+              cible.y + cible.hauteur
+            );
+            const gauche = Math.round(Math.min(c1[0] ?? 0, c2[0] ?? 0));
+            const haut = Math.round(Math.min(c1[1] ?? 0, c2[1] ?? 0));
+            const large = Math.round(Math.abs((c2[0] ?? 0) - (c1[0] ?? 0)));
+            const haute = Math.round(Math.abs((c2[1] ?? 0) - (c1[1] ?? 0)));
+
+            if (
+              large < 60 ||
+              haute < 60 ||
+              gauche < -2 ||
+              haut < -2 ||
+              gauche + large > feuille.width + 2 ||
+              haut + haute > feuille.height + 2
+            ) {
+              continue;
+            }
+
+            const decoupe = document.createElement('canvas');
+            decoupe.width = large;
+            decoupe.height = haute;
+            const ctx2 = decoupe.getContext('2d');
+            if (!ctx2) continue;
+            ctx2.drawImage(feuille, gauche, haut, large, haute, 0, 0, large, haute);
+
+            // Le PNG plutôt que le JPEG : ce sont des traits fins et des
+            // chiffres, que la compression JPEG rend flous.
+            return { image: decoupe.toDataURL('image/png'), largeur: large, hauteur: haute };
+          } finally {
+            feuille.remove();
+            page.cleanup();
+          }
+        }
+
+        return null;
+      } catch {
+        // Un schéma manquant n'empêche pas de lire un dossier.
         return null;
       }
     },

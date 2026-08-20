@@ -3152,3 +3152,64 @@ une minute : cinq dates distinctes ne décrivent pas soixante cabinets, elles
 décrivent un formulaire.
 
 ---
+
+## 67 · Les vrais pourcentages sont dans l'image — on la découpe
+
+Aude : *sur l'image tu as les pourcentages de déperdition.* Elle a raison, et
+c'est tout le problème.
+
+### Ce que la mesure établit
+
+La page du DPE porte « Schéma des déperditions de chaleur ». Mesuré :
+
+- **31 volets DPE sur 31** la nomment ;
+- **aucun** ne porte le moindre caractère « % » dans son texte ;
+- la page compte **14 à 15 images bitmap**, dont une pleine page 1240×1754.
+
+Aucune extraction de texte ne les atteindra jamais. C'est le même mur que
+l'étiquette A→G.
+
+### Et ce que le produit affichait à la place
+
+Le schéma dessiné de Verrière — le schéma-mère, six souffles — porte des parts
+qui viennent d'une **table codée en dur** : « toiture 25-30 % », « murs
+20-25 % ». Ce sont les **ordres de grandeur nationaux de l'ADEME**, identiques
+pour tous les dossiers. Le dessin explique le mécanisme, et il le fait bien ;
+mais il ne portait aucun chiffre du logement.
+
+Les deux constats se rejoignent : les chiffres du logement existent, ils sont
+dans l'image, et nulle part ailleurs.
+
+### La décision : montrer, ne pas recopier
+
+Plutôt qu'un OCR — dix mégaoctets de données de reconnaissance au chargement,
+un taux d'erreur à mesurer avant d'oser afficher un chiffre —, on **découpe le
+schéma dans la page et on le montre tel quel**. Le lecteur voit ses
+pourcentages ; le produit n'en invente aucun.
+
+Le mécanisme existait déjà : `photoDuBien` rejoue la pile graphique du PDF pour
+retrouver le rectangle exact d'une image, dessine la page, puis y découpe ce
+rectangle. Il suffisait d'un autre critère de choix.
+
+**Le repère est le titre** : le schéma est sous lui, en haut à gauche. Mesuré
+sur sept pages, le rectangle retenu est **identique au point près — x=43, y=541,
+237×210** —, parce que la maquette du DPE est réglementaire et ne varie pas. Les
+bornes restent larges malgré tout : un jour un générateur décalera cette
+maquette, et mieux vaut ne rien trouver que découper à côté.
+
+Le PNG plutôt que le JPEG, aussi : ce sont des traits fins et des chiffres, que
+la compression JPEG rend flous.
+
+### Ce qui reste ouvert, et qui n'est pas de moi
+
+L'extraction est faite et validée sur sept pages. **L'affichage ne l'est pas** :
+il touche `Deperditions.svelte` et `Diagnostics.svelte`, que travaille une autre
+session en ce moment. Poser deux schémas de déperditions côte à côte serait
+aussi une question de mise en page, pas seulement de code — le dessin explique
+le mécanisme, l'image donne les chiffres, et leur articulation se décide.
+
+Le découpage lui-même n'a pas pu être vérifié à l'œil : il exige un canevas,
+donc un navigateur. La sélection du rectangle, elle, l'a été — sept fois sur
+sept.
+
+---

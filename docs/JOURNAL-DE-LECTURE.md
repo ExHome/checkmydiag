@@ -128,9 +128,14 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
   « défaut d'assurance » : cinq dates distinctes pour 59 rapports, écart médian
   de deux mois — c'est un champ figé dans le générateur, pas un cabinet sans
   couverture. Ni l'assureur ni le numéro de police ne sont montrés.
-- **Les pourcentages du schéma de déperditions sont dans une image** : mesuré,
-  la page porte 14 à 15 images bitmap et zéro texte avec « % ». Aucune
-  extraction de texte ne les atteindra — décision à prendre (voir ci-dessous).
+- **Le schéma de déperditions du DPE se découpe dans la page** (§67) : ses
+  pourcentages sont dans une image — 14 à 15 bitmaps par page, zéro « % » en
+  texte — et le schéma dessiné de Verrière affichait, lui, les ordres de
+  grandeur **nationaux** de l'ADEME, identiques pour tous les dossiers. On
+  découpe donc le vrai schéma et on le montre : le lecteur voit ses chiffres,
+  le produit n'en invente aucun. Rectangle identique sur 7 pages sur 7.
+  **L'affichage reste à brancher** — il touche des composants qu'une autre
+  session modifie.
 
 > **Prochain chantier** : le **schéma de déperditions du DPE** — par où la
 > chaleur s'en va, poste par poste, en pourcentages. C'est la page qui explique
