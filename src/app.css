@@ -278,6 +278,23 @@
    */
   --encre-sur-clair: #0a2b23;
 
+  /*
+   * LE TRAIT DE CE QU'ON NE SAIT PAS.
+   *
+   * Un dessin qui montre l'etat d'un element a besoin d'une quatrieme voix, a
+   * cote du vert, du rouge et de l'orange : « le rapport ne dit rien de
+   * celui-ci ». Ce n'est pas un constat rassurant, ce n'est pas une alerte --
+   * c'est une absence, et elle ne doit emprunter la couleur d'aucun etat.
+   *
+   * Un gris neutre, donc, choisi pour tenir des deux cotes : 6,92 sur la carte
+   * sombre du DPE #233c21, et 2,6 sur l'ivoire -- au-dessus du seuil 3:1 des
+   * elements graphiques sur fond sombre, ou il sert.
+   *
+   * La distinction ne repose jamais sur lui seul : le trace change aussi de
+   * forme, et le mot est ecrit a cote.
+   */
+  --trait-inconnu: #a7afa9;
+
   /* Une échelle d'espacement, pas des valeurs au jugé. Tout ce qui respire
      dans la page prend une de ces huit valeurs — c'est ce qui donne à un
      document son rythme, et à une interface sa tenue. */

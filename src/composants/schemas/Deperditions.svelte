@@ -73,24 +73,38 @@
     /** Le souffle de chaleur : départ, arrivée. L'arrivée porte le clip. */
     de: [number, number];
     vers: [number, number];
-    /** L'épaisseur du souffle dit le poids du poste, sans écrire un chiffre. */
-    poids: number;
-    /** L'ordre de grandeur ADEME, écrit seulement sur le document remis. */
-    part: string;
     cote: 'gauche' | 'droite';
   }
 
   /**
-   * Les six chemins par où la chaleur s'en va. Les épaisseurs suivent les ordres
-   * de grandeur de l'ADEME — toiture d'abord, plancher bas en dernier.
+   * Les six chemins par où la chaleur s'en va.
+   *
+   * ── CE QUE CE DESSIN NE DIT PLUS ──────────────────────────────────────────
+   *
+   * Il portait deux chiffres, et aucun ne venait du rapport lu.
+   *
+   * `poids` donnait à chaque souffle une épaisseur différente — toiture 7,
+   * ventilation 6, murs 6, fenêtres 4,5, jonctions 3,5, plancher 4 — et `part`
+   * écrivait « 25-30 % », « 20-25 % »… Ce sont les ordres de grandeur NATIONAUX
+   * de l'ADEME, codés en dur, rigoureusement identiques pour les 12 000
+   * dossiers du corpus.
+   *
+   * Une épaisseur qui varie énonce une hiérarchie des pertes. Le lecteur
+   * comprend « chez moi, c'est surtout le toit » — et son rapport ne dit pas
+   * cela. Il ne le dit nulle part : mesuré sur le corpus, aucun texte de volet
+   * DPE ne porte ces pourcentages, ils vivent dans une IMAGE du rapport.
+   *
+   * Un dessin ne se lit pas, il se croit : c'est ce qui le rend dangereux quand
+   * il affirme. Les six souffles ont donc la même épaisseur. Le dessin dit OÙ
+   * la chaleur passe — vrai des six — et se tait sur les proportions.
    */
   const SORTIES: Sortie[] = [
-    { notion: 'toiture', paroi: 'toit', de: [250, 96], vers: [250, 44], poids: 7, part: '25-30 %', cote: 'droite' },
-    { notion: 'ventilation', de: [186, 176], vers: [110, 128], poids: 6, part: '20-25 %', cote: 'gauche' },
-    { notion: 'murs', paroi: 'murs', de: [156, 244], vers: [92, 244], poids: 6, part: '20-25 %', cote: 'gauche' },
-    { notion: 'fenetres', paroi: 'fenetres', de: [344, 200], vers: [412, 200], poids: 4.5, part: '10-15 %', cote: 'droite' },
-    { notion: 'pont-thermique', libelle: 'Jonctions', de: [344, 282], vers: [396, 282], poids: 3.5, part: '5-10 %', cote: 'droite' },
-    { notion: 'plancher-bas', libelle: 'Plancher', paroi: 'plancher', de: [250, 306], vers: [250, 372], poids: 4, part: '7-10 %', cote: 'droite' }
+    { notion: 'toiture', paroi: 'toit', de: [250, 96], vers: [250, 44], cote: 'droite' },
+    { notion: 'ventilation', de: [186, 176], vers: [110, 128], cote: 'gauche' },
+    { notion: 'murs', paroi: 'murs', de: [156, 244], vers: [92, 244], cote: 'gauche' },
+    { notion: 'fenetres', paroi: 'fenetres', de: [344, 200], vers: [412, 200], cote: 'droite' },
+    { notion: 'pont-thermique', libelle: 'Jonctions', de: [344, 282], vers: [396, 282], cote: 'droite' },
+    { notion: 'plancher-bas', libelle: 'Plancher', paroi: 'plancher', de: [250, 306], vers: [250, 372], cote: 'droite' }
   ];
 
   /** Le libellé lisible d'une sortie, pour le relevé du document remis. */
@@ -112,6 +126,35 @@
     { notion: 'chauffage', depuis: [201, 268] as [number, number], point: [96, 320] as [number, number], cote: 'gauche' as const },
     { notion: 'eau-chaude', libelle: 'Eau chaude', depuis: [308, 268] as [number, number], point: [404, 320] as [number, number], cote: 'droite' as const }
   ];
+
+  /**
+   * CE QUE LE RAPPORT DIT DE CHAQUE PAROI — EN TOUTES LETTRES.
+   *
+   * Le mot « Isolé / Sans isolant / Non renseigné » n'existait que dans le
+   * tableau d'impression, en `display: none` à l'écran. À l'écran, l'état d'une
+   * paroi n'était donc porté QUE par la couleur d'un point sur le dessin.
+   *
+   * C'est une infraction au principe le plus simple de l'accessibilité — la
+   * couleur ne porte jamais seule une information — et elle touchait la donnée
+   * la plus utile du schéma. Un daltonien, une capture en noir et blanc, un
+   * écran au soleil : trois façons de perdre l'information.
+   */
+  const MOT_ETAT: Record<string, string> = {
+    isole: 'Isolé',
+    nonIsole: 'Sans isolant',
+    inconnu: 'Non renseigné',
+    sansParoi: 'Rien à isoler'
+  };
+
+  /** L'état d'une sortie, sous forme de clé — les quatre cas sont distincts. */
+  function cleEtat(sortie: Sortie): keyof typeof MOT_ETAT {
+    if (!sortie.paroi) return 'sansParoi';
+    const e = etatDe(sortie);
+    return e === 'isole' ? 'isole' : e === 'nonIsole' ? 'nonIsole' : 'inconnu';
+  }
+
+  /** La paroi qu'on vient de toucher, s'il y en a une. */
+  let paroiTouchee = $state<string | null>(null);
 
   /**
    * Le relevé : tous les postes du rapport, dans son ordre.
@@ -255,7 +298,9 @@
         class="souffle"
         class:isole={etat === 'isole'}
         class:non-isole={etat === 'nonIsole'}
-        style:stroke-width={sortie.poids}
+        class:sans-paroi={!sortie.paroi}
+        class:inconnu={!!sortie.paroi && etat === null}
+        class:promu={paroiTouchee === sortie.notion}
       />
     {/each}
 
@@ -304,8 +349,11 @@
       <thead>
         <tr>
           <th>Par où</th>
+          <!-- La colonne « Part des pertes » a disparu : elle imprimait les
+               ordres de grandeur nationaux de l'ADEME comme s'ils venaient du
+               dossier remis. -->
           <th>Ce que dit le rapport</th>
-          <th>Part des pertes</th>
+
         </tr>
       </thead>
       <tbody>
@@ -319,7 +367,6 @@
               {:else if sortie.paroi}Non renseigné
               {:else}—{/if}
             </td>
-            <td class="part">{sortie.part}</td>
           </tr>
         {/each}
       </tbody>
@@ -328,6 +375,37 @@
 
   <!-- On ne pose pas une question au lecteur : on lui dit ce que son rapport
        raconte. Le détail se prend sur le dessin. -->
+  <!--
+    LES SIX PAROIS, EN TOUTES LETTRES ET SOUS LE DOIGT.
+
+    Chaque bouton nomme une paroi et dit son état avec un MOT, pas seulement
+    avec la couleur d'un point sur le dessin. Le toucher met son souffle en
+    évidence : c'est le lien entre la liste et le dessin, dans les deux sens.
+
+    Ils sont en HTML et non dans le SVG : une cible de 44 px y est triviale,
+    alors que dans un viewBox de 562 rendu sur 306 px, chaque unité vaut 0,54
+    pixel et la même cible demanderait 81 unités de calcul à la main.
+  -->
+  <ul class="parois">
+    {#each SORTIES as sortie (sortie.notion)}
+      {@const cle = cleEtat(sortie)}
+      <li>
+        <button
+          type="button"
+          class="paroi {cle}"
+          class:touchee={paroiTouchee === sortie.notion}
+          aria-pressed={paroiTouchee === sortie.notion}
+          onclick={() =>
+            (paroiTouchee = paroiTouchee === sortie.notion ? null : sortie.notion)}
+        >
+          <span class="pastille-paroi" aria-hidden="true"></span>
+          <span class="nom-paroi">{NOM_SORTIE[sortie.notion]}</span>
+          <span class="etat-paroi">{MOT_ETAT[cle]}</span>
+        </button>
+      </li>
+    {/each}
+  </ul>
+
   <figcaption class="constat">
     {constat}
 
@@ -479,22 +557,146 @@
     opacity: 0.55;
   }
 
-  /* Le souffle : la seule chose qui doit se comprendre sans un mot. Son
-     épaisseur dit le poids du poste ; sa couleur, ce que le rapport en sait. */
+  /*
+   * LES SIX PAROIS, SOUS LE DOIGT.
+   *
+   * Une grille de boutons plutôt qu'une liste de lignes : la cible fait 44 px
+   * de haut, ce qu'un pouce vise, et les six tiennent sur deux colonnes même à
+   * 320 px de large.
+   */
+  .parois {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(136px, 1fr));
+    gap: 6px;
+    margin: var(--e3) 0 0;
+    padding: 0;
+  }
+
+  .paroi {
+    width: 100%;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2px 7px;
+    padding: 6px 10px;
+    background: var(--papier-doux, color-mix(in srgb, var(--encre) 5%, transparent));
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--encre) 18%, transparent);
+    color: var(--n2, var(--encre));
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: box-shadow var(--duree) var(--courbe);
+  }
+
+  .nom-paroi {
+    font-size: var(--t-petit);
+    font-weight: 700;
+  }
+
+  /* LE MOT, et pas seulement la pastille : c'est lui qui porte l'état quand la
+     couleur ne peut pas — daltonisme, noir et blanc, plein soleil. */
+  .etat-paroi {
+    flex: 1 0 100%;
+    font-size: var(--t-micro);
+    font-weight: 700;
+    letter-spacing: var(--suivi);
+    text-transform: uppercase;
+    color: var(--n3, var(--encre-doux));
+  }
+
+  /* La pastille répète l'état en couleur. Elle ne le dit jamais seule. */
+  .pastille-paroi {
+    width: 9px;
+    height: 9px;
+    flex: none;
+    border-radius: 50%;
+    background: var(--trait-inconnu);
+  }
+
+  .paroi.nonIsole .pastille-paroi {
+    background: var(--alerte);
+  }
+
+  .paroi.isole .pastille-paroi {
+    background: var(--ok);
+  }
+
+  /* La promotion : la paroi touchée s'entoure, son souffle s'épaissit. Rien
+     d'autre ne bouge — atténuer les cinq autres les ferait passer sous le seuil
+     de contraste des éléments graphiques. */
+  .paroi.touchee {
+    box-shadow: 0 0 0 2px var(--action, var(--n6));
+  }
+
+  .paroi:focus-visible {
+    outline: 2px solid var(--n2, var(--encre));
+    outline-offset: 2px;
+  }
+
+  .souffle.promu {
+    stroke-width: 8;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .paroi {
+      transition: none;
+    }
+  }
+
+  /*
+   * LE SOUFFLE — UNE SEULE ÉPAISSEUR, ET LA FORME PORTE L'ÉTAT.
+   *
+   * L'épaisseur variait pour dire le poids du poste : elle affirmait une
+   * hiérarchie des pertes que le rapport ne donne pas. Les six sont désormais
+   * identiques.
+   *
+   * Ce qui varie, c'est le TRACÉ — et c'est un signal qui survit au noir et
+   * blanc, contrairement à la couleur seule :
+   *
+   *   trait plein        la paroi n'est pas isolée
+   *   pointillé serré    elle est isolée
+   *   pointillé fin      le rapport ne dit rien de cette paroi
+   *   tirets longs       il n'y a pas de paroi à isoler (l'air renouvelé,
+   *                      les jonctions : ils ne s'isolent pas)
+   *
+   * Les deux derniers cas étaient rendus À L'IDENTIQUE : rien ne distinguait
+   * « le rapport se tait sur le toit » de « la ventilation n'a pas de paroi ».
+   */
   .souffle {
-    stroke: var(--or-fonce);
+    stroke: var(--alerte);
+    stroke-width: 5;
     stroke-linecap: round;
     fill: none;
-    opacity: 0.9;
   }
 
+  /* Isolée : le trait se rompt — la chaleur passe moins. */
   .souffle.isole {
     stroke: var(--ok);
-    opacity: 0.55;
+    stroke-dasharray: 3 7;
   }
 
+  /* Non isolée : trait plein, le seul qui ne se rompt jamais. */
   .souffle.non-isole {
-    stroke: var(--alerte);
+    stroke-dasharray: none;
+  }
+
+  /* Le rapport ne dit rien de cette paroi : gris, presque pointillé. Ce n'est
+     pas un constat rassurant, c'est une absence — elle ne prend donc ni le vert
+     ni le rouge. */
+  .souffle.inconnu {
+    stroke: var(--trait-inconnu);
+    stroke-dasharray: 1 6;
+  }
+
+  /* Rien à isoler ici. L'opacité seule ne suffirait pas — un trait pâle se lit
+     comme un trait pâle, pas comme une catégorie : les tirets longs le disent. */
+  .souffle.sans-paroi {
+    stroke: var(--trait-inconnu);
+    stroke-dasharray: 14 10;
   }
 
   .classe {
