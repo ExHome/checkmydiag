@@ -29,3 +29,6 @@ corpus-*.txt
 # être lisible par un concurrent. Le fichier reste sur le poste, à portée de
 # main, et ne part jamais.
 docs/BRIEF.md
+
+# Les sondes locales pointent vers la Dropbox : leur chemin est prive.
+*.local.mjs
