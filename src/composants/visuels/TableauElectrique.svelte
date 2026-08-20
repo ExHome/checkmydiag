@@ -73,6 +73,22 @@
    * manettes jaunes, ça se voit — mais « ça se voit » ne vaut que pour ceux qui
    * voient, et une capture d'écran envoyée à un artisan ne se lit pas en couleur.
    */
+  /**
+   * LE MODULE QU'ON TOUCHE.
+   *
+   * Le coffret et la liste disaient la même chose sans jamais se le dire : le
+   * numéro était le seul fil entre une manette rouge du dessin et la ligne qui
+   * la nomme, et il fallait le suivre des yeux. Sur six points, ça se fait ;
+   * sur les quatorze d'un rapport ordinaire, non.
+   *
+   * Toucher un module désigne donc sa ligne, et toucher une ligne rallume son
+   * module. Le schéma cesse d'être une vignette au-dessus d'une liste : c'est
+   * le même objet, vu de deux façons.
+   */
+  let choisi = $state<number | null>(null);
+
+  const basculer = (i: number) => (choisi = choisi === i ? null : i);
+
   const MOT: Record<EtatPoint, string> = {
     anomalie: 'anomalie',
     sansAnomalie: 'rien à signaler',
@@ -148,30 +164,47 @@
 <figure class="tableau">
   <p class="intitule">Le coffret, point de contrôle par point de contrôle</p>
 
-  <!-- Le dessin ne porte aucune information qui ne soit pas écrite juste en
-       dessous : il est donc retiré de l'arbre d'accessibilité en entier. -->
-  <div class="coffret" aria-hidden="true">
-    <div class="rail"></div>
+  <!--
+    LE COFFRET N'EST PLUS UNE IMAGE MUETTE.
+
+    Il était `aria-hidden` en entier, et c'était juste tant qu'il ne portait
+    rien : le dessin ne disait pas un mot de plus que la liste. Ses modules
+    devenant des contrôles, ils rentrent dans l'arbre — un bouton masqué aux
+    lecteurs d'écran serait une fonction réservée à la souris.
+
+    Ce qui reste décoratif le reste : le rail et le courant qui court dessus
+    n'affirment rien et gardent leur `aria-hidden`.
+  -->
+  <div class="coffret">
+    <div class="rail" aria-hidden="true"></div>
 
     {#if points.length}
-      <div class="modules">
+      <div class="modules" role="group" aria-label="Les points contrôlés, dans le tableau">
         {#each points as p, i (p.nom)}
-          <div class="module {p.etat}" style="--i: {i}">
+          <button
+            type="button"
+            class="module {p.etat}"
+            class:choisi={choisi === i}
+            style="--i: {i}"
+            aria-pressed={choisi === i}
+            aria-label="Point {i + 1} : {p.nom} — {MOT[p.etat]}"
+            onclick={() => basculer(i)}
+          >
             <span class="manette"></span>
             <em class="repere">{i + 1}</em>
-          </div>
+          </button>
         {/each}
       </div>
     {:else}
       <!-- Porte fermée : on sait qu'il y a un tableau, on ne sait pas ce qu'il y
            a dedans. C'est plus juste qu'une rangée de manettes grises, qui
            laisserait croire à un nombre de points. -->
-      <div class="porte"><span class="porte-mot">?</span></div>
+      <div class="porte" aria-hidden="true"><span class="porte-mot">?</span></div>
     {/if}
 
     <!-- Le courant. Décoratif, et c'est assumé : c'est le seul endroit du
          composant qui bouge sans rien affirmer. -->
-    <div class="fil">
+    <div class="fil" aria-hidden="true">
       {#each [0, 1, 2] as k (k)}
         <span class="course" style="--retard: {k * 0.85}s"><i class="etincelle"></i></span>
       {/each}
@@ -184,16 +217,20 @@
     {#if points.length}
       <ol class="liste">
         {#each points as p, i (p.nom)}
-          <li class={p.etat}>
-            <!-- Le numéro ne sert qu'à retrouver le module dans le dessin ;
-                 le dessin étant masqué aux lecteurs d'écran, il n'a rien à leur
-                 dire — et la liste ordonnée les numérote déjà. -->
-            <span class="num" aria-hidden="true">{i + 1}</span>
-            <span class="texte">
-              <span class="nom">{p.nom}</span>
-              <span class="etat">{MOT[p.etat]}</span>
-              {#if p.detail}<span class="detail">{p.detail}</span>{/if}
-            </span>
+          <li class={p.etat} class:choisi={choisi === i}>
+            <!-- La ligne rallume son module, et le module rallume sa ligne : le
+                 numéro reste le fil, mais on n'a plus à le suivre des yeux.
+                 C'est un `button` et non la ligne entière — un `li` cliquable
+                 ne s'annonce pas, ne se focalise pas et ne s'active pas au
+                 clavier. -->
+            <button type="button" class="ligne" aria-pressed={choisi === i} onclick={() => basculer(i)}>
+              <span class="num">{i + 1}</span>
+              <span class="texte">
+                <span class="nom">{p.nom}</span>
+                <span class="etat">{MOT[p.etat]}</span>
+                {#if p.detail}<span class="detail">{p.detail}</span>{/if}
+              </span>
+            </button>
           </li>
         {/each}
       </ol>
@@ -294,6 +331,14 @@
   }
 
   .module {
+    /* Un `button` arrive avec un fond, une bordure et une police qui lui sont
+       propres. Le dessin les remplace tous : on repart de zéro. */
+    appearance: none;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+
     position: relative;
     flex: 0 1 54px;
     display: flex;
@@ -444,10 +489,70 @@
     gap: var(--e2);
   }
 
+  /*
+   * LA MARQUE DE SÉLECTION.
+   *
+   * Elle se pose des deux côtés en même temps : l'anneau sur le module, le fond
+   * sur la ligne. Un seul des deux suffirait à savoir OÙ l'on est, mais pas à
+   * comprendre que les deux objets n'en font qu'un — c'est justement ce que le
+   * geste doit apprendre.
+   *
+   * L'anneau se trace à l'extérieur du module, donc sur le fond du coffret : il
+   * ne dépend pas de la teinte de l'état, et reste visible sur les cinq.
+   */
+  .module.choisi {
+    box-shadow: 0 0 0 2.5px var(--u-texte, #f5f1e8), 0 6px 16px rgb(0 0 0 / 34%);
+    z-index: 1;
+  }
+
+  .module:focus-visible {
+    outline: 2px solid var(--u-texte, #f5f1e8);
+    outline-offset: 3px;
+  }
+
   .liste li {
     display: flex;
     gap: var(--e3);
     align-items: baseline;
+  }
+
+  /* La ligne entière est le bouton : la cible fait toute la largeur, ce qui est
+     ce qu'un pouce vise. */
+  .ligne {
+    appearance: none;
+    width: 100%;
+    display: flex;
+    gap: var(--e3);
+    align-items: baseline;
+    padding: 6px 8px;
+    margin: -6px -8px;
+    background: none;
+    border: none;
+    border-radius: var(--rayon-petit);
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background var(--duree) var(--courbe);
+  }
+
+  .ligne:hover {
+    background: rgb(255 255 255 / 6%);
+  }
+
+  .liste li.choisi .ligne {
+    background: rgb(255 255 255 / 11%);
+  }
+
+  .ligne:focus-visible {
+    outline: 2px solid var(--u-texte, #f5f1e8);
+    outline-offset: 1px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ligne {
+      transition: none;
+    }
   }
 
   /* Le numéro fait le lien avec le module du dessin. Il porte la couleur de
