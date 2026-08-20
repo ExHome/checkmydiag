@@ -420,6 +420,88 @@ export function nonVisitesAmiante(lignes: string[]): Releve[] {
   return releves;
 }
 
+/**
+ * Un repérage amiante qui n'a pas encore sa réponse.
+ *
+ * La rubrique « A – CONCLUSIONS DU REPÉRAGE EFFECTIF » ne dit pas toujours oui
+ * ou non. Elle peut dire : pas encore. Un rapport du corpus l'annonce en tête
+ * de ses conclusions, en capitales —
+ *
+ *     A - CONCLUSIONS DU REPÉRAGE EFFECTIF :
+ *     PRÉLÈVEMENT(S) AMIANTE EN COURS D'ANALYSE.
+ *
+ * — puis énumère, plus bas dans la même rubrique, les endroits laissés en
+ * suspens :
+ *
+ *     …il a été repéré des matériaux ou produits susceptibles de contenir de
+ *     l'amiante pour lesquels des sondages et/ou des prélèvements doivent être
+ *     effectués dans :
+ *     Cage d'escalier (Dalle de sol) : Sol
+ *     Dégagement (Dalle de sol) : sol
+ *
+ * C'est la différence entre « il n'y a pas d'amiante » et « on ne sait pas
+ * encore ». Un acquéreur qui lit la conclusion sans ces deux lignes croit tenir
+ * un constat définitif, alors que le laboratoire n'a pas rendu son résultat et
+ * que deux surfaces restent à sonder.
+ *
+ * Les deux se lisent DANS la rubrique des conclusions, et nulle part ailleurs :
+ * la même phrase sur les sondages figure au paragraphe 2.2 de chaque rapport,
+ * comme description de la méthode.
+ */
+export interface ConstatEnSuspens {
+  /** Le laboratoire n'a pas encore rendu ses résultats. */
+  enCoursDAnalyse: boolean;
+  /** Les endroits qui restent à sonder ou à prélever. */
+  aSonder: Releve[];
+}
+
+/** Où commencent et où finissent les conclusions du repérage. */
+const CONCLUSIONS_REPERAGE = /CONCLUSIONS? DU REP[ÉE]RAGE/i;
+const FIN_DES_CONCLUSIONS =
+  /^\s*B\s*[-–]|OBLIGATIONS ET RECOMMANDATIONS|^\s*2\s*[.–-]\s|laboratoire\(s\) d['’]analyses/i;
+
+export function constatEnSuspens(lignes: string[]): ConstatEnSuspens {
+  const vide: ConstatEnSuspens = { enCoursDAnalyse: false, aSonder: [] };
+
+  const debut = lignes.findIndex((l) => CONCLUSIONS_REPERAGE.test(l));
+  if (debut < 0) return vide;
+
+  const apres = lignes.slice(debut + 1).findIndex((l) => FIN_DES_CONCLUSIONS.test(l));
+  const zone = lignes.slice(debut, apres < 0 ? lignes.length : debut + 1 + apres);
+
+  const enCoursDAnalyse = zone.some((l) =>
+    /pr[ée]l[èe]vement\(?s?\)?\s+amiante\s+en cours d['’]analyse/i.test(l)
+  );
+
+  const aSonder: Releve[] = [];
+  const dejaVus = new Set<string>();
+
+  for (let i = 0; i < zone.length; i++) {
+    if (!/doivent [êe]tre effectu[ée]s dans\s*:/i.test(zone[i] ?? '')) continue;
+
+    /* La phrase court sur trois lignes : on vérifie sur les précédentes qu'il
+       s'agit bien des sondages, et non d'une autre obligation. */
+    const amont = zone.slice(Math.max(0, i - 3), i).join(' ');
+    if (!/sondages|pr[ée]l[èe]vements/i.test(amont)) continue;
+
+    for (let j = i + 1; j < zone.length; j++) {
+      const ligne = (zone[j] ?? '').trim();
+      /* La liste se referme sur la phrase suivante de la rubrique. */
+      if (!ligne || /^(Il est rappel|Dans le cadre r[ée]glementaire|N[ée]ant)/i.test(ligne)) break;
+
+      const m = /^(.{2,60}?)\s*\(([^)]{2,60})\)\s*:\s*(.+)$/.exec(ligne);
+      if (!m) break;
+
+      const ou = `${m[1]?.trim()} (${m[2]?.trim()})`;
+      if (dejaVus.has(ou.toLowerCase())) continue;
+      dejaVus.add(ou.toLowerCase());
+      aSonder.push({ genre: 'nonVerifie', libelle: (m[3] ?? '').trim(), ou });
+    }
+  }
+
+  return { enCoursDAnalyse, aSonder };
+}
+
 export function analyserAmiante(lignes: string[], plage: [number, number]): Diagnostic {
   // Piège : le titre du rapport contient « repérage des matériaux et produits
   // contenant de l'amiante », et le corps explique longuement ce qu'est
@@ -603,6 +685,25 @@ export function analyserAmiante(lignes: string[], plage: [number, number]): Diag
   }
 
   /*
+   * Le cas où la conclusion n'en est pas encore une.
+   *
+   * « PRÉLÈVEMENT(S) AMIANTE EN COURS D'ANALYSE » est écrit en tête des
+   * conclusions, et un lecteur qui poursuit lit ensuite, dans la même rubrique,
+   * « il a été repéré des matériaux […] ils ne contiennent pas d'amiante ». Les
+   * deux phrases se suivent : la seconde rassure, la première dit que le
+   * laboratoire n'a pas fini.
+   */
+  const suspens = constatEnSuspens(lignes);
+  if (suspens.enCoursDAnalyse) {
+    nonVus.push({
+      genre: 'complement',
+      libelle:
+        'Le rapport annonce lui-même des prélèvements encore en cours d’analyse : sa conclusion n’est pas définitive. Réclamez le rapport complété par les résultats du laboratoire avant de vous engager.'
+    });
+  }
+  nonVus.push(...suspens.aSonder);
+
+  /*
    * L'état de conservation : la seule chose qui distingue une amiante stable
    * d'une amiante qui se dégrade.
    *
@@ -643,9 +744,13 @@ export function analyserAmiante(lignes: string[], plage: [number, number]): Diag
      * raison sociale du cabinet. La gravité, elle, restait « bon » : le produit
      * se contredisait dans la même carte.
      */
-    verdict: !conclusionLue
-      ? 'Un repérage amiante figure au dossier ; sa conclusion n’a pas pu être lue automatiquement.'
-      : amianteTrouvee && materiaux.length
+    verdict:
+      (suspens.enCoursDAnalyse
+        ? 'Cette conclusion n’est pas définitive : des prélèvements sont encore en cours d’analyse. '
+        : '') +
+      (!conclusionLue
+        ? 'Un repérage amiante figure au dossier ; sa conclusion n’a pas pu être lue automatiquement.'
+        : amianteTrouvee && materiaux.length
         ? `Amiante repérée : ${materiaux[0]?.quoi}${materiaux[0]?.ou ? ` (${materiaux[0]?.ou})` : ''}${
             materiaux.length > 1 ? `, et ${materiaux.length - 1} autre${materiaux.length > 2 ? 's' : ''}` : ''
           }.${
@@ -655,10 +760,19 @@ export function analyserAmiante(lignes: string[], plage: [number, number]): Diag
                 ? ' Une évaluation périodique est recommandée : on revient contrôler l’état tous les trois ans.'
                 : ''
           }`
-        : amianteTrouvee
-          ? 'Des matériaux contenant de l’amiante ont été repérés dans le bien.'
-          : 'Aucun matériau contenant de l’amiante n’a été repéré dans les parties accessibles.',
-    gravite: !conclusionLue ? 'neutre' : amianteTrouvee ? 'attention' : 'bon',
+          : amianteTrouvee
+            ? 'Des matériaux contenant de l’amiante ont été repérés dans le bien.'
+            : 'Aucun matériau contenant de l’amiante n’a été repéré dans les parties accessibles.'),
+    /* Un repérage dont le laboratoire n'a pas rendu ses résultats ne peut pas
+       s'afficher en vert : ce n'est pas une absence d'amiante, c'est une
+       absence de réponse. */
+    gravite: !conclusionLue
+      ? 'neutre'
+      : amianteTrouvee
+        ? 'attention'
+        : suspens.enCoursDAnalyse || suspens.aSonder.length
+          ? 'attention'
+          : 'bon',
     faits,
     analogie:
       'L’amiante, ce sont des fibres minuscules emprisonnées dans du ciment, de la colle ou une dalle. Tant que le bloc tient, elles restent prisonnières. C’est la perceuse qui les libère, pas le temps qui passe.',

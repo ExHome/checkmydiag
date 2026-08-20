@@ -147,6 +147,164 @@ function facteursDeDegradation(lignes: string[]): { cle: string; nom: string }[]
   return DEGRADATION.filter((f) => f.motif.test(rubrique[0])).map(({ cle, nom }) => ({ cle, nom }));
 }
 
+/**
+ * Ce que le constat conclut sur l'enfant et sur l'insalubrité.
+ *
+ * Le CREP ne sert pas qu'à mesurer du plomb. Son propre rappel réglementaire le
+ * dit : il mesure les revêtements **et** « repère les facteurs de dégradation du
+ * bâti permettant d'identifier les situations d'insalubrité ».
+ *
+ * Certains rapports répondent donc à deux questions que les autres laissent au
+ * lecteur, et ce sont les deux qui comptent vraiment.
+ *
+ * **Le saturnisme infantile**, avec ses deux seuils réglementaires :
+ *
+ *     Au moins une pièce présente au moins 50 % d'unités en classe 3    NON
+ *     L'ensemble des locaux présente au moins 20 % d'unités en classe 3 NON
+ *
+ * **La dégradation du bâti**, avec ses trois situations, la pièce concernée, et
+ * la suite qui lui a été donnée :
+ *
+ *     …au moins un plancher ou plafond menaçant de s'effondrer          OUI
+ *     Liste des pièces concernées : Cave
+ *     Le rapport a été envoyé à l'agence régionale de santé.
+ *
+ * Un plafond qui menace de tomber, et un signalement aux autorités sanitaires —
+ * dans un volet qu'on croit consacré au plomb.
+ *
+ * ## Où la réponse se trouve, et pourquoi ce n'est pas là qu'on la croit
+ *
+ * Ces deux encarts occupent la colonne de droite d'un tableau à deux colonnes,
+ * dont la gauche porte le décompte des classes. L'extraction les entrelace, et
+ * la réponse termine la **première** ligne du libellé — celle où il commence,
+ * pas celle où il se reconnaît :
+ *
+ *     Unités de diagnostic en classe 2 : 0 0.0 % Les locaux … au moins un   OUI
+ *     plancher ou plafond menaçant de s'effondrer ou en
+ *     Unités de diagnostic en classe 3 : 0 0.0 %
+ *     partie ou tout effondré
+ *
+ * Le mot qui identifie la situation — « plancher », « coulure », « 50 % » — est
+ * donc sur une ligne qui ne porte jamais la réponse. On repère la situation à
+ * son mot, puis on **remonte** de trois lignes au plus jusqu'à la première qui
+ * se termine par OUI ou NON.
+ *
+ * Chercher les deux sur la même ligne ne trouve rien ; les chercher dans le
+ * bloc recollé confond la réponse d'une situation avec celle de sa voisine.
+ */
+export interface AlerteCrep {
+  /** Ce que le rapport affirme, dans nos mots. */
+  libelle: string;
+  /** La pièce, quand le rapport la nomme. */
+  ou?: string;
+}
+
+/**
+ * Le mot par lequel chaque situation se reconnaît.
+ *
+ * Jamais le début du libellé — les cinq commencent pareil, « Les locaux objets
+ * du constat présentent… » — mais ce qui les distingue, et qui tombe toujours
+ * sur une ligne de continuation.
+ */
+const SITUATIONS: { cle: string; motif: RegExp; libelle: string }[] = [
+  {
+    cle: 'piece50',
+    motif: /au moins 50\s*%\s*d['’]unit[ée]s de diagnostic en classe 3/i,
+    libelle: 'une pièce au moins a la moitié de ses surfaces en plomb dégradé'
+  },
+  {
+    cle: 'locaux20',
+    motif: /moins 20\s*%\s*d['’]unit[ée]s de diagnostic en classe 3/i,
+    libelle: 'l’ensemble du logement a un cinquième de ses surfaces en plomb dégradé'
+  },
+  {
+    cle: 'effondrement',
+    motif: /plancher ou plafond mena[çc]ant de s['’]effondrer/i,
+    libelle: 'un plancher ou un plafond menace de s’effondrer'
+  },
+  {
+    cle: 'coulure',
+    motif: /importantes de coulure/i,
+    libelle: 'des traces importantes de coulure, de ruissellement ou d’écoulement'
+  },
+  {
+    cle: 'moisissures',
+    motif: /moisissures ou de nombreuses t[âa]ches d['’]humidit/i,
+    libelle: 'des moisissures ou de nombreuses taches d’humidité'
+  }
+];
+
+/** L'intitulé des deux rubriques. Hors d'elles, on ne lit rien. */
+const RUBRIQUES_SITUATIONS =
+  /Situations? de risque de saturnisme infantile|Situations? de d[ée]gradation du b[âa]ti/i;
+
+/** Ce qui referme les rubriques : le rappel réglementaire qui les suit. */
+const FIN_DES_SITUATIONS =
+  /Rappel du cadre r[ée]glementaire|atteste que le pr[ée]sent constat|Dur[ée]e du?e? validit[ée]/i;
+
+/**
+ * La réponse doit être en capitales.
+ *
+ * En minuscules, « non » termine une phrase ordinaire sur deux — « ce qui n'est
+ * pas le cas ici, ou non ». Le formulaire, lui, coche en capitales.
+ */
+const REPONSE = /\b(OUI|NON)\s*$/;
+
+export function alertesDuCrep(lignes: string[]): AlerteCrep[] {
+  const debut = lignes.findIndex((l) => RUBRIQUES_SITUATIONS.test(l));
+  if (debut < 0) return [];
+
+  const apres = lignes.slice(debut + 1).findIndex((l) => FIN_DES_SITUATIONS.test(l));
+  const fin = apres < 0 ? Math.min(debut + 40, lignes.length) : debut + 1 + apres;
+  const zone = lignes.slice(debut, fin);
+
+  const alertes: AlerteCrep[] = [];
+  const vues = new Set<string>();
+
+  for (let i = 0; i < zone.length; i++) {
+    const situation = SITUATIONS.find((s) => s.motif.test(zone[i] ?? ''));
+    if (!situation || vues.has(situation.cle)) continue;
+
+    /* On remonte à la première ligne qui porte une réponse. Trois lignes au
+       plus : au-delà, on serait dans la situation précédente. */
+    let reponse: string | undefined;
+    for (let j = i; j >= 0 && j > i - 3; j--) {
+      const m = REPONSE.exec((zone[j] ?? '').trimEnd());
+      if (m?.[1]) {
+        reponse = m[1];
+        break;
+      }
+    }
+
+    /* Sans réponse lisible, on ne conclut pas : le libellé seul est un intitulé
+       de formulaire, imprimé que la réponse soit oui ou non. */
+    if (reponse === undefined) continue;
+    vues.add(situation.cle);
+    if (reponse !== 'OUI') continue;
+
+    /*
+     * La pièce est nommée plus bas, et le rapport laisse traîner devant elle la
+     * virgule d'une liste vide — « Liste des pièces concernées : , Cave ». On
+     * s'arrête à la situation suivante pour ne pas lui emprunter la sienne.
+     */
+    let ou: string | undefined;
+    for (let j = i + 1; j < Math.min(i + 7, zone.length); j++) {
+      const ligne = zone[j] ?? '';
+      const m = /Liste des pi[èe]ces concern[ée]es\s*:\s*(.+)/i.exec(ligne);
+      if (m?.[1]) {
+        const propre = m[1].replace(/^[,;\s]+/, '').replace(/\s+/g, ' ').trim();
+        if (propre) ou = propre;
+        break;
+      }
+      if (SITUATIONS.some((s) => s.motif.test(ligne))) break;
+    }
+
+    alertes.push(ou ? { libelle: situation.libelle, ou } : { libelle: situation.libelle });
+  }
+
+  return alertes;
+}
+
 export function analyserPlomb(lignes: string[], plage: [number, number]): Diagnostic {
   const chiffres = compter(lignes);
   const c1 = chiffres?.classes[1] ?? 0;
@@ -163,6 +321,16 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
    */
   const positif = c1 + c2 + c3 > 0;
   const degradation = facteursDeDegradation(lignes);
+  const alertes = alertesDuCrep(lignes);
+  /*
+   * Le signalement à l'ARS : une information que personne ne voit.
+   *
+   * Elle est en page 15 sur 19 chez un éditeur, en page 2 sur 8 chez un autre,
+   * et elle dit que le logement a été signalé à l'administration sanitaire. Ce
+   * n'est ni une sanction ni une interdiction, mais un vendeur l'ignore souvent
+   * et un acquéreur ne la trouve jamais.
+   */
+  const signale = transmisALArs(lignes);
 
   let gravite: Gravite = 'neutre';
   let verdict = "Un constat plomb est présent, mais son tableau de conclusion n'a pas pu être lu.";
@@ -223,6 +391,26 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
    * Ces lignes sont en page 4 d'un rapport de dix-neuf pages : personne ne les
    * regarde.
    */
+  /*
+   * Un constat plomb rassurant peut porter une alerte qui n'a rien à voir avec
+   * le plomb.
+   *
+   * Le cas est réel : aucune unité classée 3 — donc un volet « bon », en vert —
+   * dans un rapport qui coche « au moins un plancher ou plafond menaçant de
+   * s'effondrer : OUI », nomme la cave, et se termine par « le rapport a été
+   * envoyé à l'agence régionale de santé ».
+   *
+   * Laisser le vert seul serait exact sur le plomb et faux sur le logement. On
+   * ne réécrit donc pas le verdict du plomb — il est juste —, on lui ajoute ce
+   * que le constat dit d'autre, et on retire le vert.
+   */
+  if (gravite === 'bon' && (alertes.length > 0 || signale)) {
+    gravite = 'attention';
+    verdict += signale
+      ? ' En revanche, le constat relève une dégradation du bâti, et le rapport a été transmis à l’agence régionale de santé.'
+      : ' En revanche, le constat relève une dégradation du bâti.';
+  }
+
   const appareil = appareilPlomb(lignes);
 
   const faits: Fait[] = [];
@@ -266,6 +454,26 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
       libelle: 'Facteurs de dégradation du bâti',
       valeur: String(degradation.length),
       precision: degradation.map((f) => f.nom).join(' · ')
+    });
+  }
+
+  /*
+   * Ce que le constat a coché, dans ses mots — un fait par situation, parce
+   * qu'un plafond qui menace de tomber ne se compte pas, il se nomme, et la
+   * pièce concernée avec lui.
+   */
+  for (const alerte of alertes) {
+    faits.push(
+      alerte.ou
+        ? { libelle: 'Le constat signale', valeur: alerte.libelle, precision: alerte.ou }
+        : { libelle: 'Le constat signale', valeur: alerte.libelle }
+    );
+  }
+  if (signale) {
+    faits.push({
+      libelle: 'Suite donnée',
+      valeur: 'Rapport transmis à l’agence régionale de santé',
+      precision: 'le logement est signalé aux autorités sanitaires'
     });
   }
 
@@ -358,6 +566,21 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
           ];
 
   /*
+   * Ce qui se lit dans le constat plomb, et qui ne parle pas de plomb.
+   *
+   * Le lecteur qui voit « aucun revêtement au-dessus des seuils » referme le
+   * volet. La phrase qui suit le retient, et elle vise une pièce nommée.
+   */
+  if (alertes.length) {
+    aFaire.unshift(
+      ...alertes.map(
+        (a) =>
+          `Le constat relève ${a.libelle}${a.ou ? ` — ${a.ou}` : ''}. Ce n’est pas une question de plomb : c’est l’état du bâti, et c’est à faire vérifier avant de s’engager.`
+      )
+    );
+  }
+
+  /*
    * Deux conditions de validité, signalées au lecteur.
    *
    * On les met dans les relevés plutôt que dans le verdict : ce sont des
@@ -366,15 +589,6 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
    * vaut simplement pas ce qu'il prétend valoir, et c'est au lecteur d'en
    * tirer les conséquences avec son notaire.
    */
-  /*
-   * Le signalement à l'ARS : une information que personne ne voit.
-   *
-   * Elle est en page 15 sur 19, et elle dit que le logement a été signalé à
-   * l'administration sanitaire. Ce n'est ni une sanction ni une interdiction,
-   * mais un vendeur l'ignore souvent et un acquéreur ne la trouve jamais.
-   */
-  const signale = transmisALArs(lignes);
-
   const surLAppareil = [
     ...(autorisationPerimee
       ? [
@@ -538,8 +752,12 @@ export function transmisALArs(lignes: string[]): boolean {
    * identifie au moins l'une de ces cinq situations, son auteur transmet… » —
    * qui figure dans tous les rapports, y compris ceux qui n'ont rien transmis.
    * Seule la phrase au passé composé dit que ça a été fait.
+   *
+   * Le verbe change d'un éditeur à l'autre : « transmis » chez celui de DGLM,
+   * « Le rapport a été ENVOYÉ à l'agence régionale de santé » chez un second.
+   * Le motif ne connaissait que le premier, et laissait passer le second.
    */
-  return /nous avons donc[^.]{0,120}?transmis|avons transmis imm[ée]diatement|a [ée]t[ée] transmis[^.]{0,60}?agence r[ée]gionale/i.test(
+  return /nous avons donc[^.]{0,120}?transmis|avons transmis imm[ée]diatement|a [ée]t[ée] (?:transmis|envoy[ée])[^.]{0,60}?agence r[ée]gionale/i.test(
     texte
   );
 }

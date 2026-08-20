@@ -434,6 +434,100 @@ parties.
 L'**état de conservation** : « Matériau dégradé », « (étendue ponctuelle) ». La
 seule chose qui distingue une amiante stable d'une amiante qui s'abîme.
 
+### A · Conclusions du repérage effectif — **un seul éditeur, et il fallait le lire** ✅ *implémenté*
+
+Cette rubrique ne dit pas toujours oui ou non. Elle peut dire **pas encore** :
+
+```
+A - CONCLUSIONS DU REPÉRAGE EFFECTIF :
+PRÉLÈVEMENT(S) AMIANTE EN COURS D'ANALYSE.
+Dans le cadre réglementaire de la mission décrit au paragraphe 2.2, il a été repéré des matériaux et
+produits susceptibles de contenir de l'amiante : marquage des matériaux, ils ne contiennent pas
+d'amiante dans :
+SOUS-SOL - Cave (Conduits) : Plafond
+Dans le cadre réglementaire de la mission décrit au paragraphe 2.2, il a été repéré des matériaux ou
+produits susceptibles de contenir de l'amiante pour lesquels des sondages et/ou des prélèvements
+doivent être effectués dans :
+Cage d'escalier (Dalle de sol) : Sol
+Dégagement (Dalle de sol) : sol
+```
+
+**Deux informations, et elles se contredisent en apparence.** La ligne en
+capitales dit que le laboratoire n'a pas rendu ses résultats ; la phrase qui la
+suit rassure — « ils ne contiennent pas d'amiante ». Un lecteur qui s'arrête à
+la seconde croit tenir un constat définitif.
+
+**Deux listes de même forme, de sens opposé.** `Local (Composant) : détail`
+apparaît deux fois : sous la phrase qui *conclut*, et sous celle qui dit qu'il
+reste à *sonder*. Les confondre transforme une réponse en non-réponse, ou
+l'inverse. Ce sont les phrases d'introduction qui les séparent, jamais leur forme.
+
+**Le piège d'endroit** : la phrase sur les sondages figure aussi au § 2.2, comme
+description de la méthode, dans **tous** les rapports. Hors rubrique, elle ferait
+annoncer des prélèvements en attente à chaque repérage.
+
+*Vu chez un seul éditeur — non confirmé ailleurs.*
+
+---
+
+## PLOMB — 2 encarts qui ne parlent pas de plomb
+
+### Situations de risque de saturnisme infantile — **variable** ✅ *implémenté*
+
+Deux seuils réglementaires, répondus par OUI ou NON :
+
+```
+Au moins une pièce du local objet du constat présente        NON
+au moins 50% d'unités de diagnostic en classe 3
+L'ensemble des locaux objets du constat présente au          NON
+moins 20% d'unités de diagnostic en classe 3
+```
+
+### Situations de dégradation du bâti — **variable, et c'est le plus lourd** ✅ *implémenté*
+
+```
+Les locaux objets du constat présentent au moins un          OUI
+plancher ou plafond menaçant de s'effondrer ou en
+partie ou tout effondré
+Liste des pièces concernées : , Cave
+…des traces importantes de coulure, de ruissellement…        NON
+…des moisissures ou de nombreuses tâches d'humidité          NON
+Le rapport a été envoyé à l'agence régionale de santé.
+```
+
+**Un constat sans une seule unité classée 3 — donc vert — qui porte un plafond
+menaçant de s'effondrer, la cave nommée, et un signalement aux autorités
+sanitaires.** Le CREP le dit lui-même dans son rappel : il repère « les facteurs
+de dégradation du bâti permettant d'identifier les situations d'insalubrité ».
+
+**Le piège de forme, et il est sévère.** Ces deux encarts occupent la colonne de
+droite d'un tableau à deux colonnes, dont la gauche porte le décompte des
+classes. La réponse termine la ligne où le libellé **commence** ; le mot qui
+identifie la situation — « plancher », « coulure », « 50 % » — tombe sur une
+ligne de continuation. **Ils ne sont jamais sur la même ligne :**
+
+```
+Unités de diagnostic en classe 2 : 0 0.0 % Les locaux … au moins un   OUI
+plancher ou plafond menaçant de s'effondrer ou en
+Unités de diagnostic en classe 3 : 0 0.0 %
+partie ou tout effondré
+```
+
+On repère la situation à son mot, puis on **remonte** de trois lignes au plus
+jusqu'à la première qui se termine par OUI ou NON — en capitales, car en
+minuscules « non » termine une phrase sur deux.
+
+**« Liste des pièces concernées »** suit la situation qu'elle concerne, et le
+rapport laisse traîner devant elle la virgule d'une liste vide.
+
+**Le verbe change d'un éditeur à l'autre** : « nous avons donc **transmis** » chez
+LICIEL, « le rapport a été **envoyé** » ici. Le motif ne connaissait que le
+premier, et laissait passer le second.
+
+**Le piège d'endroit** : le rappel réglementaire du CREP énumère les cinq mêmes
+situations, dans les mêmes mots, dans **tous** les rapports — y compris ceux qui
+n'en constatent aucune.
+
 ---
 
 ## SURFACE — 27 volets lus

@@ -3438,3 +3438,108 @@ générateur imprime ses propres en-têtes. Il a fallu douze rapports d'ailleurs
 pour voir que la garde ne gardait pas.
 
 ---
+
+## 72 · Deux encarts qui ne parlent pas de leur volet
+
+*Implémentation du 20/08/2026, après l'épreuve hors Liciel.*
+
+Les deux encarts implémentés ce jour ont un point commun qui ne s'invente pas :
+**ils portent l'information la plus lourde du volet, et cette information ne
+concerne pas le sujet du volet.**
+
+### Le CREP qui signale un plafond, pas du plomb
+
+Un constat plomb du corpus n'a **aucune unité classée 3**. Ni classe 2, ni
+classe 1. Trente-deux unités en classe 0, quatorze non mesurées. En l'état,
+Verrière l'affichait en vert : « Aucun revêtement contenant du plomb au-delà du
+seuil réglementaire. »
+
+C'était exact. Et c'était passer à côté du rapport.
+
+Deux lignes plus bas, dans la colonne de droite d'un tableau à deux colonnes :
+
+```
+Les locaux objets du constat présentent au moins un          OUI
+plancher ou plafond menaçant de s'effondrer
+Liste des pièces concernées : , Cave
+Le rapport a été envoyé à l'agence régionale de santé.
+```
+
+Un plafond qui menace de tomber, la pièce nommée, et un signalement à
+l'administration sanitaire — dans le volet qu'on croit consacré aux peintures.
+
+Le CREP le dit pourtant lui-même, dans son propre rappel réglementaire : il
+mesure les revêtements **et** « repère les facteurs de dégradation du bâti
+permettant d'identifier les situations d'insalubrité ».
+
+### Ce que j'ai failli écrire, et pourquoi c'était faux
+
+Ma première version cherchait la situation et sa réponse **sur la même ligne** :
+
+```
+motif: /plancher ou plafond menaçant de s'effondrer/  puis  /\bOUI\s*$/
+```
+
+Elle n'aurait jamais rien trouvé. Le rapport, lu :
+
+```
+Unités de diagnostic en classe 2 : 0 0.0 % Les locaux … au moins un   OUI
+plancher ou plafond menaçant de s'effondrer ou en
+```
+
+**La réponse termine la ligne où le libellé commence.** Le mot qui identifie la
+situation tombe sur une ligne de continuation. Les deux ne sont jamais
+ensemble — et les cinq situations commencent toutes par les mêmes mots, « Les
+locaux objets du constat présentent… », donc le début du libellé ne distingue
+rien.
+
+Il a fallu **ouvrir le rapport** pour le voir. Le code écrit de mémoire était
+faux, et il aurait passé le test que j'aurais écrit de mémoire avec.
+
+### La lecture qui tient
+
+On repère la situation à son mot distinctif, puis on **remonte** de trois lignes
+au plus jusqu'à la première qui se termine par OUI ou NON. En capitales : en
+minuscules, « non » termine une phrase sur deux.
+
+Et sans réponse lisible, **on se tait**. Le libellé seul est un intitulé de
+formulaire, imprimé que la réponse soit oui ou non.
+
+### Le repérage amiante qui n'a pas encore sa réponse
+
+Même forme, autre volet. La rubrique « A – CONCLUSIONS DU REPÉRAGE EFFECTIF »
+d'un DTA ouvre ainsi :
+
+```
+PRÉLÈVEMENT(S) AMIANTE EN COURS D'ANALYSE.
+Dans le cadre réglementaire de la mission […] ils ne contiennent pas d'amiante dans :
+SOUS-SOL - Cave (Conduits) : Plafond
+```
+
+Deux phrases qui se suivent : la seconde rassure, la première dit que le
+laboratoire n'a pas fini. Plus bas, deux endroits restent à sonder.
+
+**Ce n'est ni une présence ni une absence : c'est une absence de réponse.** Le
+volet ne peut donc pas s'afficher en vert.
+
+Et le piège d'endroit est le même que partout : la phrase sur les sondages
+figure au § 2.2 de **tous** les rapports, comme description de la méthode.
+
+### La mesure
+
+Deux encarts, quatre motifs, **zéro faux positif** sur 118 rapports : la
+rubrique du saturnisme n'existe que dans quatre d'entre eux, une seule situation
+y est cochée OUI — la vraie ; la rubrique des conclusions de repérage n'existe
+que dans un, et il est celui qui attend son laboratoire.
+
+Seize tests ajoutés, dont quatre qui vérifient qu'on ne trouve **rien** hors de
+la rubrique.
+
+### La leçon
+
+**Un volet vert n'est pas un volet lu.** Les deux cas de ce jour affichaient une
+conclusion exacte sur leur sujet, et taisaient ce que le rapport disait d'autre
+en dessous. Chercher la conclusion suffit à ne pas mentir ; il faut lire la
+rubrique entière pour ne pas rassurer à tort.
+
+---
