@@ -63,9 +63,13 @@ C'est là que vit l'anomalie. Trois choses y sont toujours réunies :
 - le **libellé normalisé** (« L'Enveloppe d'au moins un matériel est manquante ou
   détériorée », « L'installation électrique comporte au moins une connexion avec
   une partie active nue sous tension accessible ») ;
-- une ligne **Remarques** qui reprend le constat, ajoute parfois une précision
-  concrète (« PRISE ECS », « Ampoule située dans la zone 2 »), et donne le
-  **geste** (« Faire intervenir un électricien qualifié afin de… ») ;
+- une ligne **Remarques** qui mêle **deux natures de texte** : le constat
+  normalisé du formulaire, puis une **précision libre du diagnostiqueur** —
+  « PRISE ECS », « Ampoule située dans la zone 2 », « Luminaire plafond
+  conducteurs apparents », « Douille type chantier ». Cette précision-là est
+  écrite à la main, dans ses mots ; c'est la plus parlante du volet et la moins
+  prévisible. Puis le **geste** (« Faire intervenir un électricien qualifié afin
+  de… ») ;
 - la **localisation** entre parenthèses — mais voir le piège.
 
 **Piège 1 — les deux colonnes s'entrelacent.** Le libellé du domaine est à
@@ -105,6 +109,18 @@ des anomalies**, et elles ne sont **pas toujours favorables** :
   dispositif différentiel à haute sensibilité ≤ 30 mA » → rassurant ;
 - « **Une partie seulement** de l'installation… » → défavorable, et c'est écrit
   au même endroit, dans les mêmes termes.
+
+**Et cet encart ne se lit jamais seul.** Un volet affirme ici « l'ensemble de
+l'installation est protégé par au moins un dispositif différentiel », pendant
+que son tableau d'anomalies, quinze lignes plus haut, porte :
+
+> La manœuvre du bouton test du (des) dispositif(s) de protection
+> différentielle **n'entraîne pas leur déclenchement**.
+
+Les deux sont vrais : le dispositif existe, et il ne fonctionne pas. Lire
+l'information complémentaire sans le tableau fait conclure à une installation
+protégée alors que l'organe qui protège les personnes de l'électrocution ne
+répond pas. **Deux endroits, une seule réalité — il faut les deux.**
 
 ### § 6 · Avertissement particulier — **constant, et le plus sous-estimé**
 
