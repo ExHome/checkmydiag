@@ -16,7 +16,6 @@
    * gros là où l'on perd le plus.
    */
   import type { EtatIsolation, Isolation, Lettre } from '../../lib/modele';
-  import ClipDessin from '../savoir/ClipDessin.svelte';
   import Maison from './briques/Maison.svelte';
 
   const {
@@ -117,15 +116,6 @@
     'plancher-bas': 'Plancher bas'
   };
 
-  /**
-   * Les deux équipements. Ils ne laissent pas partir la chaleur : ils la
-   * produisent. D'où le filet fin plutôt qu'un souffle — le dessin ne doit pas
-   * dire d'eux ce qui est faux.
-   */
-  const EQUIPEMENTS = [
-    { notion: 'chauffage', depuis: [201, 268] as [number, number], point: [96, 320] as [number, number], cote: 'gauche' as const },
-    { notion: 'eau-chaude', libelle: 'Eau chaude', depuis: [308, 268] as [number, number], point: [404, 320] as [number, number], cote: 'droite' as const }
-  ];
 
   /**
    * CE QUE LE RAPPORT DIT DE CHAQUE PAROI — EN TOUTES LETTRES.
@@ -171,11 +161,23 @@
     return etat === 'inconnu' ? null : etat;
   }
 
-  const NOM_PAROI: Record<string, string> = {
-    toit: 'le toit',
-    murs: 'les murs',
-    fenetres: 'les fenêtres',
-    plancher: 'le plancher'
+  /**
+   * Le nom d'une paroi, ET LA MARQUE QUE L'ADJECTIF DOIT PORTER.
+   *
+   * La phrase se termine par « comme isolé », et l'accord se déduisait de la
+   * seule longueur de la liste : « les fenêtres » commençant par « les », on
+   * ajoutait un « s ». D'où, à l'écran : « Le rapport donne les fenêtres comme
+   * isolés ».
+   *
+   * Le nombre ne suffit pas, il faut aussi le genre. On le range à côté du nom
+   * plutôt que de le deviner d'une terminaison : « le plancher » et « les
+   * fenêtres » ne se distinguent par aucune règle sûre.
+   */
+  const NOM_PAROI: Record<string, { nom: string; marque: string }> = {
+    toit: { nom: 'le toit', marque: '' },
+    murs: { nom: 'les murs', marque: 's' },
+    fenetres: { nom: 'les fenêtres', marque: 'es' },
+    plancher: { nom: 'le plancher', marque: '' }
   };
 
   /**
@@ -186,30 +188,41 @@
     const debut = lettre ? `Votre logement est classé ${lettre}.` : 'Votre logement.';
     if (!isolation) return `${debut} Le rapport ne dit pas ce qui est isolé.`;
 
-    const nommees = (cherche: EtatIsolation): string[] =>
+    const nommees = (cherche: EtatIsolation): { nom: string; marque: string }[] =>
       Object.entries(isolation)
         .filter(([, etat]) => etat === cherche)
         .map(([paroi]) => NOM_PAROI[paroi])
-        .filter((nom): nom is string => nom !== undefined);
+        .filter((p): p is { nom: string; marque: string } => p !== undefined);
 
     const nues = nommees('nonIsole');
     const faites = nommees('isole');
 
     if (!nues.length && !faites.length) return `${debut} Le rapport ne dit pas ce qui est isolé.`;
 
-    // « le plancher comme non isolé », mais « les murs et le toit comme non isolés ».
-    const accord = (liste: string[]): string =>
-      liste.length > 1 || liste[0]?.startsWith('les') ? 's' : '';
+    /*
+     * « le plancher comme non isolé », « les murs comme non isolés », « les
+     * fenêtres comme non isolées ».
+     *
+     * Plusieurs parois ensemble : le masculin l'emporte dès qu'il y en a une,
+     * et le pluriel s'impose de toute façon.
+     */
+    const accord = (liste: { nom: string; marque: string }[]): string => {
+      if (liste.length > 1) return liste.every((p) => p.marque === 'es') ? 'es' : 's';
+      return liste[0]?.marque ?? '';
+    };
+
+    const lister = (liste: { nom: string; marque: string }[]): string =>
+      liste.map((p) => p.nom).join(', ');
 
     if (!nues.length)
-      return `${debut} Le rapport donne ${faites.join(', ')} comme isolé${accord(faites)}.`;
-    return `${debut} Le rapport donne ${nues.join(', ')} comme non isolé${accord(nues)} — c’est par là que ça part.`;
+      return `${debut} Le rapport donne ${lister(faites)} comme isolé${accord(faites)}.`;
+    return `${debut} Le rapport donne ${lister(nues)} comme non isolé${accord(nues)} — c’est par là que ça part.`;
   });
 </script>
 
 <figure class:papier>
   {#if !papier}
-    <p class="invite">Touchez un point de la maison.</p>
+    <p class="invite">Touchez une paroi pour la retrouver sur le dessin.</p>
   {/if}
 
   <!-- Le cadre déborde à gauche et à droite du dessin : les libellés des clips
@@ -304,42 +317,25 @@
       />
     {/each}
 
-    <!-- Les filets des équipements : fins, ils ne disent pas une fuite. -->
-    {#each EQUIPEMENTS as equipement (equipement.notion)}
-      <!--
-        LES CHIFFRES NE TIENNENT PAS DANS LE CADRE — ILS DESCENDENT.
+    <!--
+      LES ÉTIQUETTES ONT QUITTÉ LE DESSIN.
 
-        Premier essai : « 13 400 kWh/an » écrit sous « Chauffage », dans le
-        dessin. Mesuré à l'écran, il sortait du cadre de 35 unités, et « 4 100
-        kWh/an » de 17. Élargir le viewBox rapetissait tout le reste sous le
-        seuil de lisibilité ; rétrécir le chiffre le rendait illisible — le SVG
-        n'a que 306 px de large, chaque unité vaut 0,54 pixel.
+      Elles y étaient toutes les huit — Toiture, Ventilation, Murs, Fenêtres,
+      Jonctions, Plancher, Chauffage, Eau chaude — et TOUTES sont répétées
+      juste dessous : les six parois dans leurs puces, les deux équipements
+      dans le relevé. On lisait donc deux fois la même liste, avec en prime des
+      noms qui différaient d'une fois à l'autre (« Ventilation » sur le dessin,
+      « Air renouvelé » dans la puce).
 
-        Les chiffres vont donc dans le relevé, sous le dessin, en HTML : à
-        taille normale, alignés, comparables, et sans contrainte de cadre. Le
-        dessin garde ses libellés et ses couleurs — il montre OÙ, le relevé dit
-        COMBIEN.
-      -->
-      <ClipDessin
-        id={equipement.notion}
-        libelle={equipement.libelle}
-        x={equipement.point[0]}
-        y={equipement.point[1]}
-        depuis={equipement.depuis}
-        cote={equipement.cote}
-      />
-    {/each}
+      « Moins mais mieux » : quand la même chose est dite deux fois, on garde
+      celle qui la dit le mieux. Les puces gagnent — elles portent le mot
+      d'état, elles font 44 px de haut, et elles sont à taille de lecture au
+      lieu d'être calées à la main en unités de viewBox.
 
-    {#each SORTIES as sortie (sortie.notion)}
-      <ClipDessin
-        id={sortie.notion}
-        libelle={sortie.libelle}
-        x={sortie.vers[0]}
-        y={sortie.vers[1]}
-        cote={sortie.cote}
-        etat={etatDe(sortie)}
-      />
-    {/each}
+      Le dessin garde ce que lui seul sait dire : la silhouette, les six
+      souffles et leur tracé, le badge de classe. Il montre OÙ, il ne nomme
+      plus.
+    -->
   </svg>
 
   <!-- Le relevé, sur le document remis seulement : le lecteur qui tient une
@@ -451,11 +447,20 @@
     gap: 4px;
   }
 
+  /*
+   * UNE GRILLE, PAS UNE LIGNE QUI S'ETIRE.
+   *
+   * En flex, le nom prenait toute la place restante et le chiffre commencait
+   * pile a sa suite : on lisait « Chauffage13 400 kWh/an », le mot colle au
+   * nombre. Trois colonnes reglees d'avance, et les chiffres s'alignent d'une
+   * ligne a l'autre -- ce qui est le propre d'un releve.
+   */
   .autres-postes li {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 1fr auto;
     align-items: baseline;
-    gap: var(--e2);
+    column-gap: var(--e4);
+    row-gap: 2px;
     font-size: var(--t-petit);
     color: var(--encre);
   }
@@ -475,12 +480,17 @@
   .poste-kwh {
     font-weight: 700;
     font-variant-numeric: tabular-nums;
+    text-align: right;
   }
 
+  /* Le cout passe sous le chiffre, aligne a droite avec lui : c'est la meme
+     mesure vue autrement, pas une troisieme colonne. */
   .poste-cout {
+    grid-column: 2;
     font-size: var(--t-micro);
     color: var(--encre-doux);
     font-variant-numeric: tabular-nums;
+    text-align: right;
   }
 
   .invite {
