@@ -3723,3 +3723,98 @@ lit comme un détail. Il a fallu le texte qui définit la classe.
 Un corpus enseigne les formes. Seule la norme enseigne le sens.
 
 ---
+
+## 75 · NF P 03-201, et la lecture que je n'ai pas livrée
+
+*20/08/2026. 22 pages, 729 lignes, de bout en bout, annexes et bibliographie
+comprises. Norme AFNOR : hors du dépôt.*
+
+La norme termites donne trois règles que le lecteur d'un état termites ne trouve
+nulle part, et un piège qui m'aurait fait annoncer des termites des DOM à
+Bordeaux.
+
+### Le piège, et il était à deux doigts
+
+Le § 5 f) impose au rapport d'indiquer la **catégorie de termites en cause** :
+souterrain, de bois sec, ou arboricole. Information de première importance quand
+il y a infestation — le souterrain monte du sol et menace tout le bâtiment, celui
+de bois sec reste localisé.
+
+J'allais l'extraire. J'ai regardé le corpus d'abord.
+
+```
+20  - Les termites de bois sec , regroupant les kalotermes flavicolis…
+16  - Les termites arboricoles , appartiennent au genre Nasutitermes…
+12  …bois sec ou termites arboricole et est effectuée jusqu'à 10 mètres…
+```
+
+**Les trois catégories sont écrites dans chaque rapport** — dans la notice
+explicative qui décrit ce que sont les termites, et dans le paragraphe de
+méthode. Un motif au mot-clé aurait annoncé des **termites arboricoles**, espèce
+des DROM, sur des appartements bordelais.
+
+Et je n'ai pas livré la lecture par rubrique non plus. Raison : **le corpus ne
+contient aucune infestation.** 92 états termites, et pas un seul « indice
+d'infestation » — que des « absence d'indices », quarante-quatre fois pour les
+seuls plafonds. Une extraction que je ne peux confronter à aucun cas réel serait
+du code inerte : exactement le défaut diagnostiqué le matin même sur le CREP.
+
+**On ne livre pas une lecture qu'on ne peut pas mesurer.**
+
+### Ce que la norme donne, et qui se dit sans rien extraire
+
+**Les dix mètres** (§ 4.2.2 et annexe B.1). L'opérateur doit inspecter le
+périmètre externe sur **dix mètres** autour du bâtiment, dans la limite de la
+propriété. Et le § C.2.1 dit pourquoi : les termites souterrains partent des
+assises, caves et vides sanitaires, puis montent. « Il est rare que la charpente
+d'un immeuble isolé soit attaquée s'il n'y a pas d'infestation ailleurs. »
+
+**La résistance mécanique** (§ 5 k). Le rapport doit porter la mention que
+l'intervention n'avait pas pour but de diagnostiquer la résistance mécanique des
+bois. C'est ce que le mot « infesté » fait mal comprendre : le diagnostic dit
+**où** sont les termites, pas si la charpente tient.
+
+Mesuré : **19 états termites sur 92** portent cette mention pourtant obligatoire.
+
+**Ni prescriptions ni offres de service** (§ 3.1). L'activité de diagnostic est
+incompatible avec celle d'entreprise de traitement du bois, et le rapport ne peut
+contenir ni prescription ni offre. Le silence du rapport sur les travaux n'est
+pas une négligence : **c'est la règle**, et c'est elle qui garantit que le constat
+n'est pas un devis déguisé.
+
+### La frontière que j'ai tenue
+
+73 rapports sur 92 ne portent pas une mention que la norme rend obligatoire.
+C'est un fait, et il ne sera pas affiché : « Verrière explique le diagnostic,
+elle ne juge pas le diagnostiqueur. »
+
+Ce qui est affiché, c'est la **substance** — vraie pour tout état termites,
+énoncée comme une règle du diagnostic et non comme un manque de ce rapport-ci. Un
+test vérifie qu'aucune des trois phrases ne contient « manque », « omission »,
+« aurait dû » ou « non conforme ».
+
+### Autres points relevés, non implémentés
+
+- **§ 5 g) et h) sont DEUX rubriques**, pas une : les parties du bâtiment non
+  visitées d'un côté, les ouvrages et éléments non examinés de l'autre. Une pièce
+  fermée à clé et une poutre non sondée ne sont pas la même réserve.
+- **§ 5 i) constatations diverses** : la norme y range les autres agents de
+  dégradation, les indices aux abords, et les signes de traitement antérieur. Et
+  elle précise que pour ces autres agents, **nature et nombre ne sont pas
+  requis** — mais leur **localisation** l'est. C'est l'endroit exact du piège des
+  « autres agents de dégradation » qui m'avait fait annoncer des termites à sept
+  logements sur neuf.
+- **Annexe D, note c** : pour les termites, en revanche, nature **et**
+  localisation sont exigées.
+- **Déclaration en mairie** : la norme cite L 133-4 et R 133-3 du CCH. Le code a
+  été recodifié depuis 2021 — la correspondance reste à vérifier à la source.
+
+### La leçon
+
+**Regarder le corpus avant d'écrire le motif, et renoncer quand il ne prouve
+rien.** La norme donnait une information de premier ordre ; le corpus a montré
+qu'elle est imprimée partout sans rien signifier, puis qu'aucun cas réel ne
+permettrait de vérifier la bonne lecture. Deux raisons de ne pas livrer, et une
+seule aurait suffi.
+
+---

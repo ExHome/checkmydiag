@@ -310,6 +310,42 @@ export function analyserTermites(lignes: string[], plage: [number, number]): Dia
           'Le rapport rappelle qu’en cas de présence de termites, l’infestation doit être déclarée en mairie.'
         ]
       : []),
+
+    /*
+     * Deux choses que la norme impose au diagnostic, et que le lecteur ne
+     * trouve pas toujours écrites.
+     *
+     * NF P 03-201 (février 2016), lue en entier le 20/08/2026.
+     *
+     * **Les dix mètres** — § 4.2.2 et annexe B.1 : l'opérateur doit inspecter le
+     * périmètre externe sur une zone de dix mètres autour du bâtiment, dans la
+     * limite de la propriété. Ce n'est pas un détail de méthode : les termites
+     * souterrains arrivent par le sol, et la norme explique au § C.2.1 que
+     * l'infestation part des assises, caves et vides sanitaires puis monte.
+     *
+     * **La résistance mécanique** — § 5 k) : le rapport doit porter la mention
+     * « L'intervention n'a pas eu pour but de donner un diagnostic de la
+     * résistance mécanique des bois et matériaux ». Mesuré sur le corpus :
+     * 19 états termites sur 92 la portent.
+     *
+     * On énonce ces deux points comme ce qu'ils sont — des règles du diagnostic,
+     * vraies pour tout état termites — et jamais comme un manque du rapport
+     * qu'on lit. Verrière explique le diagnostic ; elle ne juge pas celui qui
+     * l'a fait.
+     */
+    'La recherche ne s’arrête pas aux murs : elle porte aussi sur les abords, jusqu’à dix mètres autour du bâtiment et dans la limite de la propriété. C’est logique — les termites souterrains viennent du sol, et une infestation commence presque toujours par les caves, les vides sanitaires et les assises avant de monter.',
+    'Un point que le mot « infesté » fait mal comprendre : ce diagnostic dit où sont les termites, pas si la charpente tient encore. Il n’a pas pour but d’évaluer la résistance mécanique des bois. Une poutre attaquée peut être saine ou près de céder — seul un homme de l’art peut le dire, et c’est une autre mission.',
+
+    /*
+     * Pourquoi le rapport ne dit pas quoi faire — et ce n'est pas un oubli.
+     *
+     * § 3.1 de la norme : l'activité de diagnostic est incompatible avec celle
+     * d'entreprise de traitement du bois, et le rapport « ne doit comporter ni
+     * prescriptions ni offres de service ». Le silence est la règle, pas une
+     * négligence — et c'est ce qui garantit que le constat n'est pas un devis
+     * déguisé.
+     */
+    'Vous remarquerez que le rapport ne recommande aucun traitement, et ne cite aucune entreprise. C’est voulu : la norme lui interdit de contenir des prescriptions ou des offres de service, et interdit à une entreprise de traitement de faire ce diagnostic. C’est ce qui garantit que le constat n’est pas un devis déguisé.',
       ...(volets.length
         ? [
             /*
