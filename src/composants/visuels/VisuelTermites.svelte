@@ -110,11 +110,40 @@
   const pluriel = $derived(sondees.length > 1 ? 's' : '');
 
   /** L'équivalent en texte d'une case : c'est lui que lit une synthèse vocale. */
+  /**
+   * LES TROIS ÉTATS DE LA NORME, ET RIEN D'AUTRE.
+   *
+   * NF P 03-201 ne connaît pas « à vérifier » ni « pas terrible ». Elle connaît
+   * trois conclusions, et elles se disent dans ses mots :
+   *
+   *   PRÉSENCE D'INFESTATION      des termites vivants ont été constatés
+   *   PRÉSENCE D'INDICES          des traces, sans insecte vivant vu ce jour-là
+   *   ABSENCE D'INDICES           rien de relevé dans les parties visitées
+   *
+   * L'écart entre les deux premiers n'est pas une nuance de vocabulaire : une
+   * infestation avérée oblige à une déclaration en mairie et engage la valeur du
+   * bien. Des traces anciennes, non.
+   *
+   * ── CE QUE LE MOTEUR NE SAIT PAS ENCORE DIRE ──────────────────────────────
+   *
+   * `zonesTermites()` ne distingue que DEUX cas : « présence d'indices »
+   * (`alerte`) et le reste (`bon`). Le premier état — le plus grave — n'est pas
+   * détecté. Un logement où des termites vivants seraient constatés
+   * s'afficherait au mieux comme portant des indices.
+   *
+   * Mesuré sur 26 volets du corpus : 7 constatent des indices, 0 constatent des
+   * vivants. Le risque n'est donc pas observé — mais il est ouvert, et il porte
+   * sur le pire cas du diagnostic. C'est un report d'extraction, signalé dans
+   * `docs/MEMOIRE-D-EXCELLENCE.md`.
+   *
+   * L'état `infestation` est écrit ici et attend sa donnée. Le jour où
+   * l'analyseur le produira, l'écran saura déjà le dire.
+   */
   function ditZone(z: ZoneSondee): string {
-    if (z.etat === 'alerte') return `${z.nom} — indices d’infestation relevés`;
-    if (z.etat === 'attention') return `${z.nom} — à vérifier`;
+    if (z.etat === 'alerte') return `${z.nom} — présence d’indices`;
+    if (z.etat === 'attention') return `${z.nom} — présence d’infestation`;
     if (z.etat === 'neutre') return `${z.nom} — le rapport ne conclut pas`;
-    return `${z.nom} — aucun indice relevé`;
+    return `${z.nom} — absence d’indices`;
   }
 </script>
 

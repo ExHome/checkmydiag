@@ -353,34 +353,55 @@ maillon — ce qui part à l'écran — est le seul endroit sûr.
 
 Le §25 de la Constitution rend ce chapitre obligatoire.
 
-1. **L'électricité ne situe rien, alors que la donnée existe.**
+1. **TERMITES : le pire des trois états de la norme n'est pas détecté.**
+
+   NF P 03-201 connaît **trois** conclusions, et pas deux :
+
+   | État | Ce qu'il dit | Détecté ? |
+   |---|---|---|
+   | **Présence d'infestation** | des termites **vivants** constatés | **non** |
+   | **Présence d'indices** | des traces, sans insecte vivant vu ce jour-là | oui |
+   | **Absence d'indices** | rien dans les parties visitées | oui |
+
+   `zonesTermites()` ne teste que « présence d'indices » : un logement où des
+   termites vivants seraient constatés s'afficherait au mieux comme portant des
+   traces. L'écart n'est pas de vocabulaire — une infestation avérée oblige à
+   une déclaration en mairie et engage la valeur du bien.
+
+   Mesuré : 26 volets, 7 avec indices, 0 avec vivants. Le risque n'est pas
+   observé sur l'échantillon, mais il porte sur le cas le plus grave.
+
+   *L'affichage est prêt* : `VisuelTermites` écrit déjà les trois libellés de la
+   norme et attend la donnée.
+
+2. **L'électricité ne situe rien, alors que la donnée existe.**
    `anomaliesDetaillees()` produit la localisation **par anomalie** ;
    l'analyseur l'aplatit dans un fait global avant qu'elle atteigne l'écran.
    Le champ `ou` du modèle reste vide pour l'électricité. C'est de la plomberie,
    pas de la lecture — et son arrivée débloquerait la couche la plus attendue.
 
-2. **`schema.groupes` est faux à la source.** L'affichage est gardé, mais
+3. **`schema.groupes` est faux à la source.** L'affichage est gardé, mais
    l'analyseur compte toujours des mots : l'écart total/groupes subsiste sur
    13 dossiers sur 33.
 
-3. **L'amiante extrait tout et n'affiche rien.** Matériau nommé, localisation,
+4. **L'amiante extrait tout et n'affiche rien.** Matériau nommé, localisation,
    état de conservation avec la **citation exacte** du rapport, suite prescrite,
    composant non sondé et motif de l'empêchement — le modèle n'a pas de case pour
    les recevoir, et la citation est jetée.
 
-4. **Le gaz n'a pas de schéma dans le modèle.** `analyserGaz` rend `schema: null` :
+5. **Le gaz n'a pas de schéma dans le modèle.** `analyserGaz` rend `schema: null` :
    CO mesuré ou non, appareil à l'arrêt, gaz fermé, types A1/A2/DGI meurent
    aplatis en chaînes. Or le gaz est le seul diagnostic qui gradue par **délai**,
    et le seul qui teste un système **vivant** — « aucune anomalie » sur des tuyaux
    froids ne veut pas dire la même chose.
 
-5. **L'image du schéma de déperditions n'est pas branchée.**
+6. **L'image du schéma de déperditions n'est pas branchée.**
    `Document.schemaDeperditions()` découpe le rectangle officiel dans la page du
    DPE ; **31 volets sur 31** le nomment, et aucun ne porte de pourcentage dans
    son texte — ils vivent dans cette image. C'est la seule façon d'afficher les
    vrais pourcentages sans en inventer un seul.
 
-6. **Un constat de termites vivants pourrait passer inaperçu.**
+7. **Un constat de termites vivants pourrait passer inaperçu.**
    `zonesTermites()` ne cherche que « présence d'indices ». Le formulaire des
    rapports énumère pourtant « Présence de termites vivants » comme premier
    constat possible. Aucun dossier de l'échantillon (26 volets) n'en constate,
@@ -392,7 +413,7 @@ Le §25 de la Constitution rend ce chapitre obligatoire.
    termites à tous les logements, exactement comme les six domaines de l'arrêté
    annonçaient six anomalies aux installations saines.
 
-7. **La capture d'écran du volet est intermittente**, ce qui a laissé passer le
+8. **La capture d'écran du volet est intermittente**, ce qui a laissé passer le
    dégradé noir et la liste affichée deux fois. Le contournement — rendre le SVG
    en PNG hors navigateur — ne couvre pas le HTML.
 
