@@ -139,15 +139,17 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
   la part. Chaîne validée dans le navigateur sur un rapport de 51 pages ; le
   découpage lui-même reste à voir à l'œil, un onglet masqué ne dessinant pas.
 
-> **Prochain chantier** : le **schéma de déperditions du DPE** — par où la
-> chaleur s'en va, poste par poste, en pourcentages. C'est la page qui explique
-> le classement énergétique et qui oriente les travaux ; le lecteur ne la lit
-> pas. Ensuite : le corps du plomb (798 lignes par volet, 4,1 faits), puis la
-> mérule.
+> **Ce qui est en cours** : lecture intégrale des 100 premiers rapports, un par
+> un, annexes comprises, **sans sonde** — règle du 20/08. La structure ne se
+> valide qu'au centième. Rien n'est implémenté d'ici là ; les observations vont
+> au registre et à la carte des encarts.
 >
-> **Hors périmètre, décidé le 20/08** : l'assurance du diagnostiqueur, sa
-> certification et sa mention d'impartialité. Verrière explique le diagnostic,
-> elle ne juge pas le diagnostiqueur.
+> **APRÈS LES 100** — demandé le 20/08 : la Dropbox VERRIÈRE contient
+> `VERRIERE_Corpus_Formats_Diagnostics_Hors_Liciel_v1.zip`, des rapports faits
+> par **d'autres éditeurs** que celui de DGLM. Les lire de la même façon, et
+> s'entraîner à y retrouver les encarts qui portent. C'est l'épreuve de la
+> carte : un encart qui ne se retrouve que chez un seul éditeur n'est pas un
+> repère, c'est une habitude de générateur.
 
 ## Compteurs
 
