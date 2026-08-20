@@ -235,6 +235,27 @@ auxiliaires — en kWh primaire et final, avec la fourchette en euros.
 Les deux packs de travaux, et le **montant estimé** (« 8 500 à 12 700 € »), avec
 la performance visée (SCOP = 4, COP = 3).
 
+### p. 2 · Confort d'été — **constant, et ce n'est PAS un catalogue**
+
+Deux encarts voisins occupent cette page, et ils sont de natures opposées :
+
+- « **Diverses solutions existent** : chauffe-eau thermodynamique, pompe à
+  chaleur, panneaux solaires, réseau de chaleur, géothermie, chauffage au
+  bois » → c'est un **catalogue**, identique sur tous les rapports ;
+- « **Les caractéristiques de votre logement améliorant le confort d'été** » →
+  c'est un **constat**, et il varie : « toiture isolée » seule sur un dossier,
+  « bonne inertie du logement, logement traversant » sur un autre, « fenêtres
+  équipées de volets extérieurs » sur un troisième.
+
+Les deux colonnes s'entrelacent à l'extraction, ce qui les fait passer pour une
+seule liste — et j'ai d'abord classé l'ensemble comme un catalogue. C'était
+faux : la moitié droite décrit vraiment le logement.
+
+**Conséquence pratique** : le garde-fou qui écarte ces lignes du descriptif
+d'isolation a raison de le faire — « toiture isolée » du confort d'été n'est pas
+la ligne du descriptif — mais il fait perdre du même coup une information qui
+existe.
+
 ### p. 2 · Schéma des déperditions — **constant, et en image**
 
 31 volets sur 31 le nomment, **aucun ne porte de « % » dans son texte**.

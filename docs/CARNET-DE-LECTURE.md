@@ -3335,3 +3335,48 @@ catalogue de problèmes.
 soixante-trois lectures avant de conclure quoi que ce soit sur la structure.
 
 ---
+
+## 70 · Le confort d'été n'est pas un catalogue — je l'avais mal classé
+
+Au §64, j'avais rangé l'encart « confort d'été » du DPE parmi les pièges du
+catalogue : *« cette page liste "toiture isolée" et "fenêtres équipées de volets"
+comme des icônes, cochées ou non, on ne peut pas le savoir »*.
+
+**C'est faux, et la lecture de plusieurs dossiers le montre.** Les listes
+diffèrent réellement d'un logement à l'autre :
+
+| Dossier | Ce que l'encart liste |
+|---|---|
+| 22/IMO/0036 | toiture isolée |
+| 24/IMO/0905N | bonne inertie du logement, logement traversant |
+| 23/IMO/0836 | fenêtres équipées de volets extérieurs |
+
+Ce sont des **constats**, pas des icônes génériques.
+
+### Ce qui m'avait trompé : deux colonnes de natures opposées
+
+La page en porte deux, côte à côte, et l'extraction les entrelace :
+
+- à gauche, « **Diverses solutions existent** » — chauffe-eau thermodynamique,
+  pompe à chaleur, panneaux solaires, géothermie, chauffage au bois. Celle-là
+  **est** un catalogue, identique partout ;
+- à droite, « **Les caractéristiques de votre logement améliorant le confort
+  d'été** ». Celle-là décrit le logement.
+
+Mélangées, elles ressemblent à une seule liste d'options. Séparées, l'une ne dit
+rien et l'autre dit quelque chose.
+
+### La leçon
+
+**Deux encarts voisins peuvent être de natures opposées**, et l'entrelacement
+des colonnes efface la différence. Avant de classer un encart « catalogue », il
+faut le comparer sur plusieurs dossiers : un catalogue ne varie pas, un constat
+varie. C'est la seule preuve qui vaille, et elle demande de lire plusieurs
+rapports — pas un.
+
+Le garde-fou du moteur, lui, reste juste : il écarte ces lignes du descriptif
+d'isolation, et « toiture isolée » du confort d'été n'est effectivement pas la
+ligne du descriptif. Mais il fait perdre du même coup une information qui
+existe.
+
+---
