@@ -490,43 +490,17 @@
   .voile {
     fill: #ffffff;
     opacity: 0;
-    animation: scintiller 2.6s ease-in-out infinite;
+    /* Animation retiree : elle tournait en boucle sans rien demontrer */
     animation-delay: var(--retard);
     pointer-events: none;
   }
 
-  @keyframes scintiller {
-    0%,
-    100% {
-      opacity: 0.02;
-    }
-
-    50% {
-      opacity: 0.18;
-    }
-  }
 
   .balayage {
     opacity: 0;
-    animation: balayer 3.2s ease-in-out infinite;
+    /* Animation retiree : elle tournait en boucle sans rien demontrer */
   }
 
-  @keyframes balayer {
-    0%,
-    100% {
-      opacity: 0;
-      transform: translateY(0);
-    }
-
-    12%,
-    88% {
-      opacity: 1;
-    }
-
-    50% {
-      transform: translateY(var(--course, 90px));
-    }
-  }
 
   /*
    * Aucune animation quand l'utilisateur les refuse. Svelte ne l'applique pas

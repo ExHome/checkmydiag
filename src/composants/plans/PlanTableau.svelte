@@ -82,23 +82,9 @@
 </svg>
 
 <style>
-  /* Le courant passe, en boucle : deux points décalés suffisent à le dire. */
-  .flux {
-    animation: court 3s linear infinite;
-  }
+  /* Les deux points du flux ne courent plus : l'animation tournait en boucle
+     sans rien démontrer, et le décalage qui la nuançait n'a plus d'objet. */
 
-  .flux.retard {
-    animation-delay: 1.5s;
-  }
-
-  @keyframes court {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(184px);
-    }
-  }
 
   @media (prefers-reduced-motion: reduce) {
     .flux {

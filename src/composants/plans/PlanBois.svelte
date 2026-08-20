@@ -73,20 +73,9 @@
 <style>
   .coeur {
     transform-origin: 110px 42px;
-    animation: bat 2.4s ease-in-out infinite;
+    /* Animation retiree : elle tournait en boucle sans rien demontrer */
   }
 
-  @keyframes bat {
-    0%,
-    100% {
-      transform: scale(1);
-      opacity: 0.7;
-    }
-    50% {
-      transform: scale(1.25);
-      opacity: 1;
-    }
-  }
 
   @media (prefers-reduced-motion: reduce) {
     .coeur {

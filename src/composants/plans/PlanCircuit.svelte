@@ -77,20 +77,9 @@
 <style>
   .flamme {
     transform-origin: 34px calc(100% - 30px);
-    animation: vacille 1.6s ease-in-out infinite;
+    /* Animation retiree : elle tournait en boucle sans rien demontrer */
   }
 
-  @keyframes vacille {
-    0%,
-    100% {
-      transform: scaleY(1);
-      opacity: 0.85;
-    }
-    50% {
-      transform: scaleY(1.18);
-      opacity: 1;
-    }
-  }
 
   @media (prefers-reduced-motion: reduce) {
     .flamme {

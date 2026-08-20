@@ -160,7 +160,7 @@
     opacity: 0;
     transform-origin: center;
     transform-box: fill-box;
-    animation: respire 3.2s ease-in-out infinite;
+    /* Animation retiree : elle tournait en boucle sans rien demontrer */
   }
 
   .clip.actif .halo {
@@ -168,18 +168,6 @@
     opacity: 0.22;
   }
 
-  @keyframes respire {
-    0%,
-    72%,
-    100% {
-      opacity: 0;
-      scale: 0.7;
-    }
-    86% {
-      opacity: 0.2;
-      scale: 1;
-    }
-  }
 
   .clip:hover .halo,
   .clip:focus-visible .halo {

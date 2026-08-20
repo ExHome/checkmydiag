@@ -122,37 +122,17 @@
   <p class="etiquette">Sondage de la charpente</p>
 
   <!--
-    Le tronc. Entièrement décoratif : tout ce qu'il montre est écrit dessous,
-    d'où l'aria-hidden sur le dessin.
+    LE TRONC A DISPARU.
 
-    Le dégradé est celui de la maquette, sur un div pleine largeur. Le disque de
-    cernes est un SVG de 120 px de côté, jamais étiré : 1 unité = 1 pixel, donc
-    des cernes de 104 / 72 / 38 px sur tous les écrans, comme au gabarit.
+    Son propre commentaire le déclarait « entièrement décoratif : tout ce qu'il
+    montre est écrit dessous ». Un disque de cernes, un dégradé hors charte, une
+    ombre portée, un halo et trois animations d'éclosion — pour ne rien dire de
+    plus que la ligne suivante.
+
+    « Pas de schéma décoratif », et « aucune animation pour simplement faire
+    joli » : les deux règles visaient exactement cela. Ce qui reste — les zones
+    sondées, leur état, la conclusion — est ce que le rapport dit vraiment.
   -->
-  <div class="tronc" class:doute={etat === 'inconnu'}>
-    <svg class="coupe" width="120" height="120" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
-      <!-- r + moitié du trait = rayon extérieur : 50,5 + 1,5 = 52 (soit 104 px
-           de diamètre), 35 + 1 = 36 (72 px), cœur plein 19 (38 px). -->
-      <circle class="cerne c1" cx="60" cy="60" r="50.5" />
-      <circle class="cerne c2" cx="60" cy="60" r="35" />
-      <circle class="coeur" cx="60" cy="60" r="19" />
-
-      {#if etat === 'indices'}
-        <!-- Ce que le rapport a trouvé : des galeries, et les trous par où ils
-             sortent. Elles traversent les cernes — le bois est mangé dedans.
-             Toutes bornées à 40 px du centre, là où le bois est clair : c'est là
-             qu'elles tiennent leurs 3:1, et c'est là qu'elles se lisent. -->
-        <g class="galeries">
-          <path d="M24 52C36 44 46 60 58 52s22-8 38 2" />
-          <path d="M28 72c14 10 24-6 38 2s20 6 28-6" />
-          <path d="M52 26c8 14-4 24 4 38s6 18 2 30" />
-          <circle cx="86" cy="42" r="3" />
-          <circle cx="40" cy="84" r="2.4" />
-          <circle cx="34" cy="38" r="2.2" />
-        </g>
-      {/if}
-    </svg>
-  </div>
 
   {#if sondees.length}
     <!-- Une case par zone réellement lue. Jamais douze cases de principe : la
@@ -241,43 +221,12 @@
    * couleurs de sujet, pas des couleurs de charte, et elles n'ont pas à passer
    * par un jeton.
    */
-  .tronc {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 158px;
-    border-radius: var(--rayon);
-    background: radial-gradient(circle at 50% 50%, #d9a063 0%, #a0522d 48%, #6e3a1a 100%);
-    overflow: hidden;
-    animation: monte 0.5s var(--courbe);
-  }
 
-  .coupe {
-    flex: none;
-    display: block;
-  }
 
   /* Les opacités sont celles de la maquette : .26 pour le cerne extérieur, .2
      pour l'intérieur. C'est ce qui donne au bois sa profondeur. */
-  .cerne {
-    fill: none;
-    stroke: #fff;
-    transform-box: fill-box;
-    transform-origin: center;
-  }
 
-  .c1 {
-    stroke-width: 3;
-    stroke-opacity: 0.26;
-    animation: eclot 0.74s var(--courbe);
-  }
 
-  .c2 {
-    stroke-width: 2;
-    stroke-opacity: 0.2;
-    animation: eclot 0.62s var(--courbe);
-  }
 
   /*
    * Trois durées différentes plutôt que trois délais : sans `fill-mode`, un
@@ -288,30 +237,9 @@
    * drop-shadow floute sur la moitié du rayon, d'où les 11 px. Statique — un
    * flou ne s'anime jamais.
    */
-  .coeur {
-    fill: #d9a063;
-    filter: drop-shadow(0 0 11px rgb(255 255 255 / 28%));
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: eclot 0.5s var(--courbe);
-  }
 
-  .galeries {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: eclot 0.7s var(--courbe);
-  }
 
-  .galeries path {
-    fill: none;
-    stroke: #2b1206;
-    stroke-width: 4.5;
-    stroke-linecap: round;
-  }
 
-  .galeries circle {
-    fill: #2b1206;
-  }
 
   /*
    * Le doute se dessine, il ne se colore pas.
@@ -320,17 +248,6 @@
    * bord brûlé — c'est ce qui décidait des valeurs : 6,42 au point le plus
    * défavorable, 8,61 au plus favorable.
    */
-  .tronc.doute::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      45deg,
-      rgb(43 18 6 / 62%) 0 7px,
-      rgb(255 253 250 / 72%) 7px 14px
-    );
-    animation: parait 0.6s var(--courbe);
-  }
 
   /* ---- Les points sondés --------------------------------------------------- */
 
@@ -419,8 +336,9 @@
     background: color-mix(in srgb, var(--u-accent, #8b4513) 22%, transparent);
     opacity: 0.6;
     transform: scale(0.93);
-    animation: respire 1.9s ease-in-out infinite;
-    animation-delay: calc(var(--r, 0) * 110ms);
+    /* `respire 1.9s infinite` battait en boucle au-dessus d'un constat de
+       parasites. Une animation qui ne démontre rien n'a pas sa place, et
+       celle-ci attirait l'œil sans rien apprendre. */
   }
 
   /*
@@ -569,12 +487,8 @@
    * mouvement se retrouverait avec une grille figée à 60 % et un bord à 2,9.
    */
   @media (prefers-reduced-motion: reduce) {
-    .tronc,
-    .tronc.doute::after,
-    .c1,
-    .c2,
-    .coeur,
-    .galeries,
+    /* Le tronc et ses cernes ont disparu avec le décor : ne restent que les
+       cases, dont l'animation d'entrée s'arrête ici. */
     .cases li {
       animation: none;
     }

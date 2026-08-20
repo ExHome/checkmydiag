@@ -478,22 +478,10 @@
     background: var(--u-fond, #134247);
     border-radius: 50%;
     opacity: 0;
-    animation: monter 2.8s ease-in var(--retard) infinite;
+    /* Animation retiree : des bulles qui montent en boucle dans un tube ne
+       demontrent rien -- elles attirent l'oeil sans rien apprendre. */
   }
 
-  @keyframes monter {
-    0% {
-      transform: translateY(0);
-      opacity: 0;
-    }
-    22% {
-      opacity: 0.9;
-    }
-    100% {
-      transform: translateY(calc(-1 * var(--montee)));
-      opacity: 0;
-    }
-  }
 
   /* Nom puis résultat en gras, dans l'ordre de la maquette (`.tw-l` + `<b>`). */
   .nom {
