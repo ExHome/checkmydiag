@@ -755,6 +755,50 @@ matériau qui attend son prélèvement. LICIEL les mélange en un seul tableau
 La conséquence est écrite en clair : « les obligations réglementaires prévues
 aux articles R.1334-15 à R.1334-18 **ne sont pas remplies** ».
 
+### BC2E — le CREP dit si le logement est dangereux pour un enfant, et s'il est insalubre
+
+Deux encarts que LICIEL ne porte pas, et qui sont l'enjeu même du constat.
+
+**Les deux seuils du saturnisme infantile, évalués explicitement :**
+
+```
+Situations de risque de saturnisme infantile :
+  Au moins une pièce présente au moins 50 % d'unités de diagnostic en classe 3   → NON
+  L'ensemble des locaux présente au moins 20 % d'unités en classe 3              → NON
+```
+
+Ce sont les deux critères réglementaires qui déclenchent l'obligation de travaux
+et le signalement. LICIEL donne le décompte par classe et laisse le lecteur
+faire le calcul ; BC2E répond à la question.
+
+**Les trois situations de dégradation du bâti, et l'envoi à l'ARS :**
+
+```
+Situations de dégradation du bâti mises en évidence :
+  au moins un plancher ou plafond menaçant de s'effondrer, ou effondré   → OUI
+  Liste des pièces concernées : Cave
+  traces importantes de coulure, ruissellement ou écoulement             → NON
+  moisissures ou nombreuses taches d'humidité                            → NON
+
+Le rapport a été envoyé à l'agence régionale de santé.
+```
+
+**Un plafond menaçant de s'effondrer, et le rapport transmis à l'ARS** : un
+signalement d'insalubrité aux autorités sanitaires, dans un volet qu'on croit
+consacré au plomb.
+
+Le rappel réglementaire du même document l'explique : le CREP sert à mesurer les
+revêtements **et** à « repérer les facteurs de dégradation du bâti permettant
+d'identifier les **situations d'insalubrité** ». Le plomb n'est pas son seul
+objet.
+
+**Deux autres précisions du même encart** : le CREP **parties communes** relève
+d'un arrêté distinct — celui du 19 août 2011 relatif aux *travaux* en parties
+communes — et « la recherche de canalisations en plomb **ne fait pas partie** du
+champ d'application du CREP », ce qu'un acquéreur suppose souvent l'inverse.
+
+Sur ce dossier, **14 unités sur 46 sont non mesurées** — 30 %.
+
 ### La réserve sur la synthèse : le compte s'établit
 
 | Éditeur | Ce que dit sa synthèse |
