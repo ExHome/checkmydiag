@@ -74,7 +74,34 @@
       <li class={r.genre}>
         <span class="rang">{String(i + 1).padStart(2, '0')}</span>
         <div class="quoi">
-          {#if r.ou}<p class="ou">{r.ou}</p>{/if}
+          <!--
+            LE LIEU EST UNE RÉPONSE, PAS UNE LÉGENDE.
+
+            Il s'écrivait en petit et en retrait au-dessus du libellé : moins
+            visible que la phrase de la norme, alors que « où ? » est la première
+            question qu'on se pose devant une anomalie. Il devient un repère —
+            une puce, un pictogramme de lieu, la graisse d'un titre.
+
+            Il n'apparaît que si le rapport le donne : mesuré sur le corpus, 6
+            relevés sur 37 portent une localisation. On n'en invente pas pour
+            les 31 autres, et on n'écrit pas « lieu non précisé » à chaque ligne
+            — la réserve se dit une fois, en pied de liste.
+          -->
+          {#if r.ou}
+            <p class="ou">
+              <svg viewBox="0 0 24 24" aria-hidden="true" class="epingle">
+                <path
+                  d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linejoin="round"
+                />
+                <circle cx="12" cy="10" r="2.6" fill="currentColor" />
+              </svg>
+              <span>{r.ou}</span>
+            </p>
+          {/if}
           <p class="libelle"><MotsExpliques texte={r.libelle} /></p>
           {#if r.code}<p class="code">{r.code}</p>{/if}
         </div>
@@ -218,11 +245,27 @@
     min-width: 0;
   }
 
+  /* La puce de lieu : elle se voit avant qu'on lise, et le pictogramme dit
+     « endroit » sans un mot. Le fond la détache du libellé sans en faire une
+     alerte — ce n'est pas une gravité, c'est une adresse. */
   .ou {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin: 0 0 6px;
+    padding: 3px 9px 3px 6px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--or-clair) 16%, transparent);
     font-size: var(--t-petit);
+    font-weight: 700;
     letter-spacing: var(--suivi-serre);
     color: var(--or-clair);
-    margin: 0 0 2px;
+  }
+
+  .epingle {
+    width: 13px;
+    height: 13px;
+    flex: none;
   }
 
   .libelle {

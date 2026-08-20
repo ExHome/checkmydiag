@@ -87,6 +87,7 @@
    */
   let choisi = $state<number | null>(null);
 
+
   const basculer = (i: number) => (choisi = choisi === i ? null : i);
 
   const MOT: Record<EtatPoint, string> = {
@@ -117,6 +118,23 @@
     nombreAnnonce: number | null;
     gravite: Gravite;
   } = $props();
+
+  /**
+   * L'ÉTAT NE S'ÉCRIT QUE S'IL DISTINGUE QUELQUE CHOSE.
+   *
+   * Chaque ligne affichait « Coupure d'urgence · anomalie · 1 anomalie ». Le
+   * mot « anomalie » deux fois, dont une pour rien : quand les points affichés
+   * sont TOUS en anomalie — ce qui est le cas de tous les rapports, puisque la
+   * liste est construite depuis les groupes d'anomalies —, le dire à chaque
+   * ligne ne distingue aucune ligne d'une autre. C'est du remplissage, et c'est
+   * exactement ce qui fait « administratif ».
+   *
+   * La règle d'accessibilité ne dit pas « écrire l'état partout » : elle dit que
+   * la couleur ne doit jamais porter seule une information. Quand tous les
+   * points partagent le même état, il n'y a rien à désambiguïser, et le titre de
+   * la section le dit déjà. Dès que les états se mélangent, le mot revient.
+   */
+  const etatsMelanges = $derived(new Set(points.map((p) => p.etat)).size > 1);
 
   /** Les points auxquels le rapport rattache nommément une anomalie. */
   const rattachees = $derived(points.filter((p) => p.etat === 'anomalie').length);
@@ -227,7 +245,7 @@
               <span class="num">{i + 1}</span>
               <span class="texte">
                 <span class="nom">{p.nom}</span>
-                <span class="etat">{MOT[p.etat]}</span>
+                {#if etatsMelanges}<span class="etat">{MOT[p.etat]}</span>{/if}
                 {#if p.detail}<span class="detail">{p.detail}</span>{/if}
               </span>
             </button>
