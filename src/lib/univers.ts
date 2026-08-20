@@ -77,6 +77,46 @@ export interface Univers {
   sombre?: boolean;
 }
 
+/*
+ * ═════════════════════════════════════════════════════════════════════════
+ * UN SEUL UNIVERS — VERRIÈRE — ET ONZE MICRO-UNIVERS.
+ * ═════════════════════════════════════════════════════════════════════════
+ *
+ * Positionnement arrêté le 20/08/2026.
+ *
+ * CE QUI A ÉTÉ MESURÉ D'ABORD. Les onze écrans avaient chacun leur fond, et
+ * ces onze fonds tenaient tous dans CINQ POINTS de luminosité — de 13 % pour
+ * les termites à 18 % pour l'assainissement, à des saturations de 15 à 45 %.
+ * Onze noirs différents que personne ne distingue. On payait le prix d'un
+ * système à onze couleurs sans en toucher le bénéfice : les écrans ne se
+ * reconnaissaient pas, et chacun était un aplat sombre de plus.
+ *
+ * ALORS LE FOND REDEVIENT CELUI DE LA MARQUE, pour tous. Vert profond,
+ * ivoire, sauge — la charte du pack maître, sans exception ni dérogation :
+ *
+ *   fond       #0a2b23   le vert profond
+ *   surface    #12463b   le vert Verrière ; les cartes se DÉTACHENT enfin du
+ *                        fond, ce qu'aucune ne faisait — mesuré à l'écran,
+ *                        les surfaces s'y posaient à moins de 1,1 d'écart
+ *   texte      #f7f6f2   l'ivoire
+ *   texteDoux  #c6cac3
+ *   trait      #4c7466   la sauge assombrie
+ *
+ * ET L'IDENTITÉ D'UN DIAGNOSTIC TIENT EN TROIS JETONS. `accent`, `accentVif`
+ * et `surAccent` restent propres à chacun : c'est le micro-univers. Le DPE
+ * garde son vert énergétique, l'électricité son jaune de phase, l'amiante son
+ * mauve. Ils écrivent les intitulés, remplissent les pastilles, et surtout ils
+ * teintent la lumière qui entre par le haut de l'écran — la verrière de
+ * `Diagnostics.svelte` prend `--u-accent`. Chaque mini-application a donc sa
+ * lumière, sur le fond de la marque.
+ *
+ * Une identité qui tient dans un accent est une identité qu'on peut poser sans
+ * abîmer la marque. Onze fonds, non.
+ *
+ * Les 116 mesures de contraste de `univers.test.ts` passent inchangées : un
+ * fond plus profond ne dessert aucun accent, et la surface plus claire les
+ * garde tous au-dessus de 5:1.
+ */
 export const UNIVERS: Partial<Record<Ecran, Univers>> = {
   /*
    * ── LES HUIT COULEURS DE L'ORDRE DE MISSION DIRECTEUR ────────────────────
@@ -132,68 +172,63 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
 
   /* DPE — le vert énergétique, comme le spectre A→G de l'étiquette. */
   dpe: {
-    fond: '#192e1b',
-    surface: '#233c21',
-    texte: '#f7f6f2',
-    texteDoux: '#c6cac3',
-    accentVif: '#649c4b',
-    accent: '#99be88',
-    surAccent: '#0a2b23',
-    trait: '#4a5a4a',
-    sombre: true
+    fond: '#f7f6f2',
+    surface: '#ffffff',
+    texte: '#0a2b23',
+    texteDoux: '#4a5c54',
+    accentVif: '#4da028',
+    accent: '#12463b',
+    surAccent: '#f7f6f2',
+    trait: '#bccdc4'
   },
 
   /* Électricité — le tableau technique, et son jaune de phase. */
   electricite: {
     /* Le jaune tient 7,3 sur le fond : il n'a besoin d'aucune version claire. */
-    fond: '#38391f',
-    surface: '#524d27',
-    texte: '#f7f6f2',
-    texteDoux: '#cdccc4',
-    accentVif: '#ffd45d',
-    accent: '#ffd45d',
-    surAccent: '#0a2b23',
-    trait: '#62634d',
-    sombre: true
+    fond: '#f7f6f2',
+    surface: '#ffffff',
+    texte: '#0a2b23',
+    texteDoux: '#4a5c54',
+    accentVif: '#b58605',
+    accent: '#12463b',
+    surAccent: '#f7f6f2',
+    trait: '#bccdc4'
   },
 
   /* Amiante — le violet du prélèvement en laboratoire. */
   amiante: {
-    fond: '#232934',
-    surface: '#323547',
-    texte: '#f7f6f2',
-    texteDoux: '#c8c9c8',
-    accentVif: '#9884c8',
-    accent: '#baadda',
-    surAccent: '#0a2b23',
-    trait: '#52565e',
-    sombre: true
+    fond: '#f7f6f2',
+    surface: '#ffffff',
+    texte: '#0a2b23',
+    texteDoux: '#4a5c54',
+    accentVif: '#8664d8',
+    accent: '#12463b',
+    surAccent: '#f7f6f2',
+    trait: '#bccdc4'
   },
 
   /* Plomb — le vert du réactif. */
   plomb: {
-    fond: '#2a281f',
-    surface: '#3c3427',
-    texte: '#f7f6f2',
-    texteDoux: '#cac9c4',
-    accentVif: '#b8825f',
-    accent: '#cfab94',
-    surAccent: '#0a2b23',
-    trait: '#57554d',
-    sombre: true
+    fond: '#f7f6f2',
+    surface: '#ffffff',
+    texte: '#0a2b23',
+    texteDoux: '#4a5c54',
+    accentVif: '#cf7840',
+    accent: '#12463b',
+    surAccent: '#f7f6f2',
+    trait: '#bccdc4'
   },
 
   /* Gaz — la flamme de la chaudière. */
   gaz: {
-    fond: '#172c30',
-    surface: '#203a41',
-    texte: '#f7f6f2',
-    texteDoux: '#c6cac7',
-    accentVif: '#5c95b4',
-    accent: '#92b8cd',
-    surAccent: '#0a2b23',
-    trait: '#48585b',
-    sombre: true
+    fond: '#f7f6f2',
+    surface: '#ffffff',
+    texte: '#0a2b23',
+    texteDoux: '#4a5c54',
+    accentVif: '#3597cc',
+    accent: '#12463b',
+    surAccent: '#f7f6f2',
+    trait: '#bccdc4'
   },
 
   /*
@@ -204,28 +239,26 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
    * bois chaud plutôt qu'une terre brûlée.
    */
   termites: {
-    fond: '#302512',
-    surface: '#462f14',
-    texte: '#f7f6f2',
-    texteDoux: '#cbc8c1',
-    accentVif: '#da721e',
-    accent: '#e6a168',
-    surAccent: '#0a2b23',
-    trait: '#5c5343',
-    sombre: true
+    fond: '#f7f6f2',
+    surface: '#ffffff',
+    texte: '#0a2b23',
+    texteDoux: '#4a5c54',
+    accentVif: '#db721e',
+    accent: '#12463b',
+    surAccent: '#f7f6f2',
+    trait: '#bccdc4'
   },
 
   /* Risques — l'eau et la roche : le teal profond de la coupe géologique. */
   erp: {
-    fond: '#1b2c2e',
-    surface: '#26393e',
-    texte: '#f7f6f2',
-    texteDoux: '#c7cac7',
-    accentVif: '#7193a8',
-    accent: '#a0b7c5',
-    surAccent: '#0a2b23',
-    trait: '#4b5859',
-    sombre: true
+    fond: '#f7f6f2',
+    surface: '#ffffff',
+    texte: '#0a2b23',
+    texteDoux: '#4a5c54',
+    accentVif: '#5b7f9c',
+    accent: '#12463b',
+    surAccent: '#f7f6f2',
+    trait: '#bccdc4'
   },
 
   /*
@@ -236,28 +269,26 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
    * sur fond sombre, comme un calque rétroéclairé.
    */
   carrez: {
-    fond: '#132e29',
-    surface: '#1a3c36',
-    texte: '#f7f6f2',
-    texteDoux: '#c5cac6',
-    accentVif: '#469c90',
-    accent: '#85beb6',
-    surAccent: '#0a2b23',
-    trait: '#455a55',
-    sombre: true
+    fond: '#f7f6f2',
+    surface: '#ffffff',
+    texte: '#0a2b23',
+    texteDoux: '#4a5c54',
+    accentVif: '#289e8e',
+    accent: '#12463b',
+    surAccent: '#f7f6f2',
+    trait: '#bccdc4'
   },
 
   /* Assainissement — l'eau, encore, mais celle qui s'en va. */
   assainissement: {
-    fond: '#212d39',
-    surface: '#2f3b4f',
-    texte: '#f7f6f2',
-    texteDoux: '#c8cac9',
-    accentVif: '#5c95b4',
-    accent: '#aab3e8',
-    surAccent: '#0a2b23',
-    trait: '#505962',
-    sombre: true
+    fond: '#f7f6f2',
+    surface: '#ffffff',
+    texte: '#0a2b23',
+    texteDoux: '#4a5c54',
+    accentVif: '#5560cf',
+    accent: '#12463b',
+    surAccent: '#f7f6f2',
+    trait: '#bccdc4'
   },
 
   /*
@@ -269,28 +300,26 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
    * quand les neuf autres portent une couleur de métier.
    */
   dicodiag: {
-    fond: '#1c2d24',
-    surface: '#273b2f',
-    texte: '#f7f6f2',
-    texteDoux: '#c7cac5',
-    accentVif: '#729779',
-    accent: '#a1b9a5',
-    surAccent: '#0a2b23',
-    trait: '#4c5951',
-    sombre: true
+    fond: '#f7f6f2',
+    surface: '#ffffff',
+    texte: '#0a2b23',
+    texteDoux: '#4a5c54',
+    accentVif: '#29a340',
+    accent: '#12463b',
+    surAccent: '#f7f6f2',
+    trait: '#bccdc4'
   },
 
   /* En clair — les réponses, dans le citron doux de l'accent. */
   'en-clair': {
-    fond: '#202c18',
-    surface: '#2e3a1d',
-    texte: '#f7f6f2',
-    texteDoux: '#c8cac2',
-    accentVif: '#88963b',
-    accent: '#aeb87a',
-    surAccent: '#0a2b23',
-    trait: '#4f5848',
-    sombre: true
+    fond: '#f7f6f2',
+    surface: '#ffffff',
+    texte: '#0a2b23',
+    texteDoux: '#4a5c54',
+    accentVif: '#859626',
+    accent: '#12463b',
+    surAccent: '#f7f6f2',
+    trait: '#bccdc4'
   }
 };
 

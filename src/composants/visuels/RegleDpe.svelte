@@ -305,9 +305,24 @@
    * sans un mot : une aiguille est plus à droite que l'autre, et c'est elle qui
    * porte la marque.
    */
+  /*
+   * ET ELLE SE LIT PLUS GRAND QUE L'AUTRE.
+   *
+   * MESURÉ SUR L'ÉCRAN RENDU, le 20/08 : « 373 » — le nombre qui FAIT la classe
+   * — s'affichait à 15 px, sous le corps courant, pendant que « 18 100 kWh »
+   * s'affichait à 20 px. Or 18 100 n'est que 373 multiplié par la surface :
+   * c'est un dérivé qui dominait son origine. Deux logements aussi performants
+   * l'un que l'autre ont des totaux différents ; seule la valeur au m² se
+   * compare, et seule elle décide de la lettre.
+   *
+   * La décisive passe donc au corps de base. Pas plus : c'est l'étiquette d'une
+   * aiguille sur une règle, pas un titre — et la lettre, elle, doit rester le
+   * plus gros signe de l'écran.
+   */
   .aiguille.decisive .valeur {
     color: var(--encre);
     font-weight: 800;
+    font-size: var(--t-base);
   }
 
   .piste.haut .aiguille.decisive .pointe {
@@ -348,23 +363,50 @@
     place-items: center;
     padding: 0;
     border: none;
-    border-radius: 3px;
+    border-radius: 4px;
     cursor: pointer;
-    /* Le segment non retenu reste lisible mais en retrait : la classe du
-       logement est le seul aplat en encre pleine. */
-    opacity: 0.42;
-    transition: opacity var(--duree) var(--courbe);
+
+    /*
+     * LA HIÉRARCHIE PASSE PAR LA FORME, PLUS PAR L'OPACITÉ.
+     *
+     * Les six segments non retenus étaient posés à `opacity: 0.42`. Sur fond
+     * sombre, cela donnait un gris moyen encore lisible. Sur le fond clair, la
+     * même règle DÉLAVE : mesuré à l'écran, l'encre #071008 à 42 % sur le rose
+     * du G tombe à 2,5:1, sous le seuil du texte. Six lettres de l'échelle
+     * réglementaire devenaient illisibles pour que la septième ressorte.
+     *
+     * L'échelle A→G est ce que tout le monde reconnaît d'un DPE. On ne l'éteint
+     * pas. Alors la classe du logement ne s'impose plus en effaçant les autres :
+     * ELLE DÉPASSE. Les six autres sont légèrement plus courtes, elle seule
+     * touche les deux bords, et elle porte l'anneau d'encre et l'ombre.
+     *
+     * Une hiérarchie par la taille et l'élévation, jamais au prix de la
+     * lisibilité — et elle survit au noir et blanc, ce qu'une différence
+     * d'opacité ne fait pas.
+     */
+    margin-block: 5px;
+    transition:
+      margin-block var(--duree) var(--courbe),
+      box-shadow var(--duree) var(--courbe);
   }
 
   .segment.retenue {
-    opacity: 1;
-    box-shadow: 0 0 0 2.5px var(--encre);
+    margin-block: 0;
+    box-shadow:
+      0 0 0 2.5px var(--encre),
+      0 8px 18px -6px color-mix(in srgb, var(--encre) 55%, transparent);
     z-index: 1;
   }
 
   .segment:hover,
   .segment:focus-visible {
-    opacity: 0.75;
+    margin-block: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .segment {
+      transition: none;
+    }
   }
 
   .segment:focus-visible {

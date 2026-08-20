@@ -1623,7 +1623,64 @@
     -webkit-overflow-scrolling: touch;
     padding: var(--e4) var(--e4) var(--e7);
 
-    background: var(--u-fond, #0a2b23);
+    /*
+     * ─────────────────────────────────────────────────────────────────────
+     * LE FOND N'EST PLUS UN APLAT : IL A UNE VERRIÈRE.
+     * ─────────────────────────────────────────────────────────────────────
+     *
+     * MESURÉ SUR LES 11 UNIVERS, le 20/08 : leurs fonds tiennent tous dans
+     * CINQ POINTS de luminosité — de 13 % (termites, carrez, en-clair) à 18 %
+     * (assainissement). Onze aplats sombres presque identiques, posés à plat,
+     * sans profondeur. C'est ça qui faisait « administratif » : pas le manque
+     * de contraste — il est excellent, de 10,9 à 13,9 — mais l'absence de
+     * lumière. Un écran plat se lit comme un formulaire quelle que soit sa
+     * teinte.
+     *
+     * Le fond est donc passé au CLAIR — l'ivoire de la charte —, et la lumière
+     * entre par le haut. C'est le nom du produit, et c'est la seule métaphore
+     * que cette interface a le droit de prendre au mot : une verrière éclaire
+     * par le dessus, la clarté descend et s'atténue.
+     *
+     * ET LA LUMIÈRE NE SALIT RIEN. Première version : une lueur teintée par
+     * l'accent en haut, et un bas obtenu en mélangeant l'ivoire au vert du
+     * texte. Résultat à l'écran — un gris verdâtre. Mélanger un ivoire chaud
+     * avec un vert profond ne donne pas un ivoire plus dense : ça donne de la
+     * boue, et ça se voit au premier coup d'œil.
+     *
+     * La lumière ne se compose donc qu'avec du BLANC. Elle éclaircit, elle ne
+     * teinte pas, elle ne fonce pas. L'ivoire de la charte reste l'ivoire de la
+     * charte sur les deux tiers bas de l'écran.
+     *
+     * Le micro-univers ne passe plus par le fond — il passe par `accentVif`,
+     * qui remplit les pastilles et les aplats, et par rien d'autre. Une couleur
+     * d'identité se pose SUR un fond ; elle ne s'y dissout pas.
+     *
+     * Trois couches, dans l'ordre où le navigateur les empile :
+     *
+     *   1. la LUEUR, teintée par l'accent de l'univers — le DPE reçoit une
+     *      lumière verte, l'électricité une lumière d'ambre, l'amiante une
+     *      lumière mauve. C'est ce qui rend enfin les onze écrans
+     *      reconnaissables sans changer un seul jeton de couleur, donc sans
+     *      toucher aux contrastes que les tests garantissent ;
+     *
+     *   2. le CIEL, qui éclaircit très légèrement le haut ;
+     *
+     *   3. le SOL, qui l'assombrit d'autant en bas, pour que le regard
+     *      trouve un appui et que le défilement ait un sens.
+     *
+     * Aucune couche ne dépasse 14 % : au point le plus clair, le texte garde
+     * plus de 8:1 — mesuré dans l'écran rendu, pas estimé. Et le jeton
+     * `--u-fond` reste la couleur de référence : tout ce qui se compose
+     * ailleurs (`color-mix`, voiles, cartes) continue de partir de lui.
+     */
+    background:
+      linear-gradient(
+        180deg,
+        #ffffff 0%,
+        var(--u-fond, #f7f6f2) 46%,
+        var(--u-fond, #f7f6f2) 100%
+      );
+    background-attachment: local;
     color: var(--u-texte, #12463b);
 
     /*
@@ -1654,7 +1711,10 @@
      * Contrastes calculés contre le fond de fiche de chaque univers ; les plus
      * bas sont mesurés sur l'électricité, l'univers le plus clair.
      */
-    --n1: #ffffff;
+    /* Le niveau le plus fort. Il etait en blanc en dur — ce qui n'avait de
+       sens que sur un fond sombre. Il se derive maintenant du texte de
+       l'univers, en plus dense : la regle vaut sur clair comme sur sombre. */
+    --n1: color-mix(in srgb, var(--u-texte, #0a2b23) 82%, #000000);
     --n2: var(--u-texte, #f7f6f2);
     --n3: var(--u-texte-doux, #c6cac3);
     --n4: color-mix(in srgb, var(--u-texte, #f7f6f2) 88%, var(--u-fond, #192e1b));
@@ -1667,7 +1727,7 @@
     --fond: var(--u-fond, #0a2b23);
     --fond-clair: var(--u-surface, #ffffff);
     --papier: var(--u-surface, #ffffff);
-    --papier-doux: color-mix(in srgb, var(--u-texte, #12463b) 4%, var(--u-surface, #ffffff));
+    --papier-doux: var(--u-fond, #f7f6f2);
     /* Les noms hérités pointent maintenant vers des niveaux DISTINCTS. Avant,
        `--sur-fond-doux`, `--encre-doux` et `--gris` valaient tous la même
        chose, et `--or-clair` valait `--sur-fond` : quatre noms pour une seule
@@ -1680,9 +1740,25 @@
     --trait: var(--u-trait, #e8dcc8);
     --trait-fin: color-mix(in srgb, var(--u-trait, #f0eae0) 55%, transparent);
     --trait-or: var(--u-trait, #e8dcc8);
-    --surface: color-mix(in srgb, var(--u-texte, #12463b) 4%, transparent);
-    --surface-forte: color-mix(in srgb, var(--u-texte, #12463b) 7%, transparent);
-    --surface-bord: color-mix(in srgb, var(--u-texte, #12463b) 14%, transparent);
+    /*
+     * UNE CARTE EST BLANCHE. ELLE N'EST PAS UN VOILE SOMBRE.
+     *
+     * Ces trois surfaces étaient des voiles de `--u-texte` — 4, 7 et 14 % —
+     * posés sur le fond. Sur fond sombre, un voile clair éclaircit et le procédé
+     * marche. Sur le fond clair, le même voile pose du VERT PROFOND sur de
+     * l'ivoire : mesuré à l'écran, `.fiche-diag` rendait rgb(230,232,228), un
+     * gris verdâtre. C'était le fond de presque toutes les cartes de l'écran.
+     *
+     * Sur clair, une surface ne se creuse pas : elle se POSE. Elle est blanche,
+     * plus claire que l'ivoire qui l'entoure, et c'est l'ombre qui la détache —
+     * la grammaire de toutes les interfaces qui se tiennent. Le filet reprend la
+     * sauge de la charte au lieu d'un gris obtenu par salissure.
+     */
+    --surface: var(--u-surface, #ffffff);
+    --surface-forte: var(--u-surface, #ffffff);
+    --surface-bord: color-mix(in srgb, var(--u-trait, #bccdc4) 72%, transparent);
+    --ombre-carte: 0 1px 2px color-mix(in srgb, var(--u-texte, #0a2b23) 6%, transparent),
+      0 6px 16px -8px color-mix(in srgb, var(--u-texte, #0a2b23) 18%, transparent);
 
     /* L'accent de l'univers prend la place de l’ancien accent dans les rôles
        décoratifs — filets, bords actifs, boutons. Pas dans les rôles de
