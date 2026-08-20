@@ -110,14 +110,14 @@
     margin: 0 auto;
     text-align: left;
 
-    --sur-fond: var(--petrole);
+    --sur-fond: var(--verriere-vert);
     --sur-fond-doux: #555555;
-    --encre: var(--petrole);
+    --encre: var(--verriere-vert);
     --encre-doux: #555555;
     --gris: #888888;
     --action-texte: #a33220;
-    --or-clair: var(--petrole);
-    color: var(--petrole);
+    --or-clair: var(--verriere-vert);
+    color: var(--verriere-vert);
   }
 
   h2 {

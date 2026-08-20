@@ -83,7 +83,7 @@
     font-size: var(--t-micro);
     font-weight: 700;
     letter-spacing: var(--suivi);
-    color: var(--or-fonce);
+    color: var(--verriere-vert-profond);
   }
 
   .chapeau {
@@ -157,7 +157,7 @@
     font-weight: 700;
     letter-spacing: var(--suivi);
     text-transform: uppercase;
-    color: var(--or-fonce);
+    color: var(--verriere-vert-profond);
   }
 
   .quoi {

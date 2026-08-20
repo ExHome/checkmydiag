@@ -109,13 +109,13 @@
     color: inherit;
     cursor: help;
     text-decoration: underline dotted;
-    text-decoration-color: var(--or);
+    text-decoration-color: var(--verriere-sable-or);
     text-underline-offset: 3px;
   }
 
   .terme:hover,
   .terme.ouvert {
-    color: var(--or-clair);
+    color: var(--verriere-vert);
     text-decoration-style: solid;
   }
 
@@ -123,7 +123,7 @@
     display: block;
     margin: var(--e2) 0 var(--e1);
     padding: var(--e2) var(--e3);
-    border-left: 2px solid var(--or);
+    border-left: 2px solid var(--verriere-sable-or);
     background: var(--surface-forte);
     border-radius: 0 var(--rayon-petit) var(--rayon-petit) 0;
     font-size: var(--t-base);

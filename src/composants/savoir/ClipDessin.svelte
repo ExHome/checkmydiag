@@ -137,26 +137,26 @@
   .valeur {
     font-size: var(--t-clip, 20px);
     font-weight: 500;
-    fill: var(--or);
+    fill: var(--verriere-sable-or);
     opacity: 0.92;
   }
 
   .filet {
-    stroke: var(--or);
+    stroke: var(--verriere-sable-or);
     stroke-width: 1.1;
     fill: none;
     opacity: 0.75;
   }
 
   .point {
-    fill: var(--or-fonce);
+    fill: var(--verriere-vert-profond);
     transition: fill 0.18s ease;
   }
 
   /* Le halo respire tant que la notion n'a pas été ouverte : l'invitation
      s'éteint d'elle-même une fois qu'on a compris le geste. */
   .halo {
-    fill: var(--or-fonce);
+    fill: var(--verriere-vert-profond);
     opacity: 0;
     transform-origin: center;
     transform-box: fill-box;
@@ -178,7 +178,7 @@
 
   .clip:hover .point,
   .clip.actif .point {
-    fill: var(--or-fonce);
+    fill: var(--verriere-vert-profond);
   }
 
   /* Quand le rapport a parlé, le point prend sa couleur — et cesse d'appeler :
@@ -230,7 +230,7 @@
 
   .clip:hover .etiquette,
   .clip.actif .etiquette {
-    fill: var(--or-fonce);
+    fill: var(--verriere-vert-profond);
   }
 
   .clip:focus-visible {

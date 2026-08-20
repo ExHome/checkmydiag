@@ -658,7 +658,7 @@
     background: none;
     border: none;
     padding: 0;
-    color: var(--or-clair);
+    color: var(--verriere-vert);
     font-weight: 700;
     text-decoration: underline;
     text-underline-offset: 3px;

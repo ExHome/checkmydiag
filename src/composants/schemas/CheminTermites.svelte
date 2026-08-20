@@ -104,13 +104,13 @@
   /* La coupe reprend la palette de la maison : or pour la terre et le bois,
      encre pour le bâti. Plus de couleurs propres à ce dessin. */
   .terre {
-    fill: var(--or-fonce);
+    fill: var(--verriere-vert-profond);
     opacity: 0.14;
   }
 
   .ligne-sol {
     fill: none;
-    stroke: var(--or-fonce);
+    stroke: var(--verriere-vert-profond);
     stroke-width: 2.5;
     opacity: 0.55;
   }
@@ -123,7 +123,7 @@
 
   .bois {
     fill: rgb(214 230 106 / 36%);
-    stroke: var(--or);
+    stroke: var(--verriere-sable-or);
     stroke-width: 1.4;
   }
 
@@ -135,7 +135,7 @@
   /* Les galeries : creusées dedans, invisibles dehors. D'où le trait interrompu. */
   .galeries path {
     fill: none;
-    stroke: var(--or-fonce);
+    stroke: var(--verriere-vert-profond);
     stroke-width: 3;
     stroke-linecap: round;
     opacity: 0.8;
@@ -143,7 +143,7 @@
 
   .cordonnet {
     fill: none;
-    stroke: var(--or-fonce);
+    stroke: var(--verriere-vert-profond);
     stroke-width: 7;
     stroke-linecap: round;
     stroke-dasharray: 1 11;
@@ -152,16 +152,16 @@
   /* Les termites gardent leur dessin, mais dans la palette : le détail servait
      à les reconnaître, pas à faire joli. */
   .termite .corps {
-    fill: var(--or-pale);
+    fill: var(--verriere-sable-voile);
   }
 
   .termite .tete {
-    fill: var(--or-fonce);
+    fill: var(--verriere-vert-profond);
   }
 
   .termite .antennes,
   .termite .pattes {
-    stroke: var(--or-fonce);
+    stroke: var(--verriere-vert-profond);
     stroke-width: 1.2;
     stroke-linecap: round;
     fill: none;

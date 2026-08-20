@@ -190,14 +190,14 @@
      claire, posée sur du papier elle est sombre. Un seul dessin, deux fonds. */
   .toit {
     fill: rgb(214 230 106 / 28%);
-    stroke: var(--or);
+    stroke: var(--verriere-sable-or);
     stroke-width: 1.8;
     stroke-linejoin: round;
   }
 
   .cheminee {
     fill: none;
-    stroke: var(--or);
+    stroke: var(--verriere-sable-or);
     stroke-width: 1.8;
   }
 
@@ -243,12 +243,12 @@
 
   .vitre {
     fill: rgb(214 230 106 / 22%);
-    stroke: var(--or);
+    stroke: var(--verriere-sable-or);
     stroke-width: 1.4;
   }
 
   .croisillon {
-    stroke: var(--or);
+    stroke: var(--verriere-sable-or);
     stroke-width: 1;
     fill: none;
     opacity: 0.7;

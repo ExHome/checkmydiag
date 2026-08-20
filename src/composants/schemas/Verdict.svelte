@@ -83,7 +83,7 @@
      variante évidée sert quand deux verdicts neutres doivent se distinguer. */
   .neutre rect {
     fill: var(--papier-doux);
-    stroke: var(--or);
+    stroke: var(--verriere-sable-or);
   }
 
   .neutre text {

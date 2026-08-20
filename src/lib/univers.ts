@@ -179,7 +179,7 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
     accentVif: '#4da028',
     accent: '#12463b',
     surAccent: '#f7f6f2',
-    trait: '#bccdc4'
+    trait: '#d8c199'
   },
 
   /* Électricité — le tableau technique, et son jaune de phase. */
@@ -192,7 +192,7 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
     accentVif: '#b58605',
     accent: '#12463b',
     surAccent: '#f7f6f2',
-    trait: '#bccdc4'
+    trait: '#d8c199'
   },
 
   /* Amiante — le violet du prélèvement en laboratoire. */
@@ -204,7 +204,7 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
     accentVif: '#8664d8',
     accent: '#12463b',
     surAccent: '#f7f6f2',
-    trait: '#bccdc4'
+    trait: '#d8c199'
   },
 
   /* Plomb — le vert du réactif. */
@@ -216,7 +216,7 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
     accentVif: '#cf7840',
     accent: '#12463b',
     surAccent: '#f7f6f2',
-    trait: '#bccdc4'
+    trait: '#d8c199'
   },
 
   /* Gaz — la flamme de la chaudière. */
@@ -228,7 +228,7 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
     accentVif: '#3597cc',
     accent: '#12463b',
     surAccent: '#f7f6f2',
-    trait: '#bccdc4'
+    trait: '#d8c199'
   },
 
   /*
@@ -246,7 +246,7 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
     accentVif: '#db721e',
     accent: '#12463b',
     surAccent: '#f7f6f2',
-    trait: '#bccdc4'
+    trait: '#d8c199'
   },
 
   /* Risques — l'eau et la roche : le teal profond de la coupe géologique. */
@@ -258,7 +258,7 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
     accentVif: '#5b7f9c',
     accent: '#12463b',
     surAccent: '#f7f6f2',
-    trait: '#bccdc4'
+    trait: '#d8c199'
   },
 
   /*
@@ -276,7 +276,7 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
     accentVif: '#289e8e',
     accent: '#12463b',
     surAccent: '#f7f6f2',
-    trait: '#bccdc4'
+    trait: '#d8c199'
   },
 
   /* Assainissement — l'eau, encore, mais celle qui s'en va. */
@@ -288,7 +288,7 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
     accentVif: '#5560cf',
     accent: '#12463b',
     surAccent: '#f7f6f2',
-    trait: '#bccdc4'
+    trait: '#d8c199'
   },
 
   /*
@@ -307,7 +307,7 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
     accentVif: '#29a340',
     accent: '#12463b',
     surAccent: '#f7f6f2',
-    trait: '#bccdc4'
+    trait: '#d8c199'
   },
 
   /* En clair — les réponses, dans le citron doux de l'accent. */
@@ -319,7 +319,7 @@ export const UNIVERS: Partial<Record<Ecran, Univers>> = {
     accentVif: '#859626',
     accent: '#12463b',
     surAccent: '#f7f6f2',
-    trait: '#bccdc4'
+    trait: '#d8c199'
   }
 };
 

@@ -67,8 +67,8 @@
         <stop offset="100%" stop-color="var(--gris)" />
       </linearGradient>
       <linearGradient id="plaqueCassee" x1="0" y1="0" x2="0.3" y2="1">
-        <stop offset="0%" stop-color="var(--or-pale)" />
-        <stop offset="100%" stop-color="var(--or)" />
+        <stop offset="0%" stop-color="var(--verriere-sable-voile)" />
+        <stop offset="100%" stop-color="var(--verriere-sable-or)" />
       </linearGradient>
     </defs>
 

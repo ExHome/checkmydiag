@@ -97,16 +97,16 @@
 
   li.action .icone {
     background: rgb(255 200 87 / 16%);
-    color: var(--or-fonce);
+    color: var(--verriere-vert-profond);
   }
 
   li.vente .icone {
     background: rgb(210 163 88 / 18%);
-    color: var(--or-fonce);
+    color: var(--verriere-vert-profond);
   }
 
   li.vente {
-    border-color: var(--or);
+    border-color: var(--verriere-sable-or);
   }
 
   .mot {
@@ -122,11 +122,11 @@
   }
 
   li.action .mot {
-    color: var(--or-fonce);
+    color: var(--verriere-vert-profond);
   }
 
   li.vente .mot {
-    color: var(--or-fonce);
+    color: var(--verriere-vert-profond);
   }
 
   .texte {

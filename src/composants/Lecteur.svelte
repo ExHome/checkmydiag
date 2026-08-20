@@ -944,7 +944,7 @@
     padding: var(--e2) var(--e3);
     background: rgb(255 255 255 / 82%);
     backdrop-filter: blur(20px);
-    border-bottom: 2px solid var(--petrole);
+    border-bottom: 2px solid var(--verriere-vert);
   }
 
   .sortie-vue {
@@ -1162,7 +1162,7 @@
     margin: var(--e4) -var(--e4) var(--e2);
     padding: var(--e1) var(--e4);
     background: var(--papier-doux);
-    color: var(--or-fonce);
+    color: var(--verriere-vert-profond);
     font-size: var(--t-micro);
     font-weight: 800;
     letter-spacing: 0.12em;
@@ -1311,7 +1311,7 @@
     line-height: 1.15;
     letter-spacing: -0.022em;
     margin: 0;
-    color: var(--or-clair);
+    color: var(--verriere-vert);
   }
 
   .fermer-fenetre {
@@ -1334,8 +1334,8 @@
   }
 
   .fermer-fenetre:hover {
-    background: var(--or);
-    border-color: var(--or);
+    background: var(--verriere-sable-or);
+    border-color: var(--verriere-sable-or);
     color: var(--vert-900);
   }
 
@@ -1356,7 +1356,7 @@
     font-size: var(--t-micro);
     font-weight: 700;
     letter-spacing: var(--suivi);
-    color: var(--or-fonce);
+    color: var(--verriere-vert-profond);
   }
 
   .bloc.deux {
@@ -1384,7 +1384,7 @@
   }
 
   .bloc .faire {
-    color: var(--or-clair);
+    color: var(--verriere-vert);
   }
 
   .bloc .pratique {
@@ -1431,8 +1431,8 @@
   }
 
   .commencer:hover {
-    background: var(--or);
-    border-color: var(--or);
+    background: var(--verriere-sable-or);
+    border-color: var(--verriere-sable-or);
     color: var(--vert-900);
   }
 
@@ -1463,7 +1463,7 @@
     border-radius: 0;
     border: 1px solid var(--trait-or);
     background: none;
-    color: var(--or-clair);
+    color: var(--verriere-vert);
     font-size: var(--t-base);
     cursor: pointer;
   }
@@ -1481,7 +1481,7 @@
     border: 1px solid var(--trait-or);
     border-radius: 0;
     padding: var(--e3) var(--e4);
-    color: var(--or-clair);
+    color: var(--verriere-vert);
     font-weight: 500;
     font-size: var(--t-petit);
     letter-spacing: 0.14em;
@@ -1490,8 +1490,8 @@
   }
 
   .pas-a-pas .suivant:hover:not(:disabled) {
-    background: var(--or);
-    border-color: var(--or);
+    background: var(--verriere-sable-or);
+    border-color: var(--verriere-sable-or);
     color: var(--vert-900);
   }
 
@@ -1509,8 +1509,8 @@
   .extrait {
     margin: 0;
     padding: var(--e3) var(--e4);
-    background: var(--or);
-    border-left: 3px solid var(--or-fonce);
+    background: var(--verriere-sable-or);
+    border-left: 3px solid var(--verriere-vert-profond);
     border-radius: var(--rayon-petit);
     font-size: var(--t-base);
     line-height: 1.5;
@@ -1541,7 +1541,7 @@
     font-style: italic;
     font-size: var(--t-base);
     line-height: 1.5;
-    color: var(--or-clair);
+    color: var(--verriere-vert);
   }
 
   .ouvertures {
@@ -1558,7 +1558,7 @@
     padding: var(--e2) var(--e4);
     font-size: var(--t-petit);
     font-weight: 700;
-    color: var(--or-clair);
+    color: var(--verriere-vert);
     cursor: pointer;
     transition: background 0.18s ease, border-color 0.18s ease;
   }
@@ -1566,7 +1566,7 @@
   .creuser:hover,
   .creuser.ouvert {
     background: var(--surface-bord);
-    border-color: var(--or);
+    border-color: var(--verriere-sable-or);
   }
 
   .detail {
@@ -1695,7 +1695,7 @@
   }
 
   .etiquette.bon {
-    --teinte-legende: var(--petrole);
+    --teinte-legende: var(--verriere-vert);
   }
   .etiquette.moyen {
     --teinte-legende: var(--attention);
@@ -1717,7 +1717,7 @@
   }
 
   .reponse.bon {
-    --teinte-legende: var(--petrole);
+    --teinte-legende: var(--verriere-vert);
   }
   .reponse.moyen {
     --teinte-legende: var(--attention);
@@ -1850,7 +1850,7 @@
   .passerelles button {
     background: none;
     border: 1px solid rgb(214 230 106 / 52%);
-    color: var(--or-clair);
+    color: var(--verriere-vert);
     border-radius: 0;
     padding: var(--e2) var(--e4);
     font-size: var(--t-petit);
@@ -1860,7 +1860,7 @@
   }
 
   .passerelles button:hover {
-    background: var(--or);
+    background: var(--verriere-sable-or);
     color: #0a2b23;
   }
 

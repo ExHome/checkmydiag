@@ -552,7 +552,7 @@
     align-items: baseline;
     gap: var(--e4);
     font-size: var(--t-titre);
-    color: var(--or-clair);
+    color: var(--verriere-vert);
     margin-bottom: var(--e4);
   }
 
@@ -566,7 +566,7 @@
     letter-spacing: var(--suivi);
     /* --or ne tient que 4,15 de contraste sur le vert : le numéro d'article
        passe en or clair, comme les autres petits textes de la charte. */
-    color: var(--or-clair);
+    color: var(--verriere-vert);
     /* Aligné sur la ligne de base du titre, pas sur son haut. */
     align-self: baseline;
   }
@@ -603,7 +603,7 @@
     width: 6px;
     height: 6px;
     border-radius: 1px;
-    background: var(--or);
+    background: var(--verriere-sable-or);
   }
 
 
@@ -651,7 +651,7 @@
   .conseil:first-child {
     grid-column: 1 / -1;
     padding-left: var(--e4);
-    border-left: 3px solid var(--or);
+    border-left: 3px solid var(--verriere-sable-or);
   }
 
   @media print {
@@ -669,7 +669,7 @@
     font-weight: 700;
     font-size: var(--t-petit);
     letter-spacing: 0.14em;
-    color: var(--or-fonce);
+    color: var(--verriere-vert-profond);
   }
 
 
@@ -723,7 +723,7 @@
   /* Le filet de garde est double : un trait or plein, un cheveu blanc dessous.
      C'est la signature d'un document imprimé. */
   .garde {
-    border-top: 2px solid var(--or);
+    border-top: 2px solid var(--verriere-sable-or);
     box-shadow: 0 3px 0 -2px var(--surface-bord);
     padding-top: var(--e5);
     margin-bottom: var(--e7);
@@ -742,7 +742,7 @@
     font-size: var(--t-micro);
     font-weight: 500;
     letter-spacing: 0.2em;
-    color: var(--or-fonce);
+    color: var(--verriere-vert-profond);
   }
 
   .adresse {
@@ -820,14 +820,14 @@
     font-size: var(--t-petit);
     font-weight: 500;
     letter-spacing: 0.14em;
-    color: var(--or-clair);
+    color: var(--verriere-vert);
     cursor: pointer;
     transition: background 0.22s ease, color 0.22s ease, border-color 0.22s ease;
   }
 
   .editer:hover {
-    background: var(--or);
-    border-color: var(--or);
+    background: var(--verriere-sable-or);
+    border-color: var(--verriere-sable-or);
     color: var(--vert-900);
   }
 
@@ -853,7 +853,7 @@
     font-size: var(--t-micro);
     font-weight: 700;
     letter-spacing: 0.12em;
-    color: var(--or-fonce);
+    color: var(--verriere-vert-profond);
     margin-bottom: var(--e1);
   }
 

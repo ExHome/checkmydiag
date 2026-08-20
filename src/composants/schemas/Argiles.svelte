@@ -194,11 +194,11 @@
   }
 
   .sol.sec {
-    fill: var(--or-fonce);
+    fill: var(--verriere-vert-profond);
   }
 
   .craquelures {
-    stroke: var(--or);
+    stroke: var(--verriere-sable-or);
     stroke-width: 2.4;
     stroke-linecap: round;
   }

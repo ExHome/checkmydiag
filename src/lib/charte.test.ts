@@ -90,6 +90,68 @@ describe('les couleurs retirées ne reviennent pas', () => {
   }
 });
 
+/**
+ * UN JETON PORTE LE NOM DE CE QU'IL CONTIENT.
+ *
+ * Charte maître du 20 août 2026, §22 et §23 : « Ne jamais conserver
+ * `--or: #12463B`. C'est sémantiquement faux et cela créera forcément une
+ * nouvelle dérive. »
+ *
+ * Ce n'était pas une crainte de principe, c'était un constat. `--or` valait
+ * #12463b, `--or-fonce` #0a2b23, `--or-clair` #a6c39a — trois jetons nommés
+ * « or » qui ne portaient que du vert et du sauge, sur 119 usages. Et le
+ * mensonge cassait l'écran : `background: var(--or)` allait toujours avec
+ * `color: var(--vert-900)`, soit du vert #12463b sous du vert #0a2b23 —
+ * 1,42:1. Tous les boutons du produit étaient illisibles au survol.
+ */
+describe('aucun jeton ne ment sur ce qu’il contient', () => {
+  const charte = readFileSync('src/app.css', 'utf8');
+
+  for (const mort of ['--or', '--or-fonce', '--or-clair', '--or-pale', '--petrole', '--petrole-fonce']) {
+    it(`${mort} n’existe plus`, () => {
+      expect(charte, `${mort} est redéclaré dans app.css`).not.toMatch(
+        new RegExp('^\s*' + mort.replace(/-/g, '\-') + ':', 'm')
+      );
+      const usages = FICHIERS.filter((f) => readFileSync(f, 'utf8').includes(`var(${mort})`));
+      expect(usages, `${mort} est encore utilisé dans : ${usages.join(', ')}`).toEqual([]);
+    });
+  }
+
+  it('pose le socle vert × ivoire × doré sable', () => {
+    for (const [nom, valeur] of [
+      ['--verriere-vert-profond', '#0a2b23'],
+      ['--verriere-vert', '#12463b'],
+      ['--verriere-ivoire', '#f7f6f2'],
+      ['--verriere-sable-or', '#c8a96b'],
+      ['--verriere-sable-clair', '#e4d4b2'],
+      ['--verriere-champagne', '#f2e9d8']
+    ]) {
+      expect(charte, nom).toContain(`${nom}: ${valeur}`);
+    }
+  });
+
+  /*
+   * Le sauge n'est plus une couleur identitaire (§2). Il peut rester dans une
+   * illustration où il a un sens ; il ne peut plus être le fond, la carte, la
+   * bordure dominante ni la pastille de qui que ce soit.
+   */
+  it('n’utilise plus le sauge comme couleur de structure', () => {
+    const fautifs: string[] = [];
+    for (const f of FICHIERS) {
+      readFileSync(f, 'utf8')
+        .split(String.fromCharCode(10))
+        .forEach((ligne, i) => {
+          if (/^\s*(\*|\/\/|\/\*)/.test(ligne)) return;
+          if (!/#a6c39a/i.test(ligne)) return;
+          if (/background|border|--u-trait|--trait|fill:/.test(ligne)) {
+            fautifs.push(`${f}:${i + 1}: ${ligne.trim().slice(0, 70)}`);
+          }
+        });
+    }
+    expect(fautifs, `le sauge redevient structurel dans : ${fautifs.join(', ')}`).toEqual([]);
+  });
+});
+
 describe('le socle du pack maître est bien celui-là', () => {
   const charte = readFileSync('src/app.css', 'utf8');
 

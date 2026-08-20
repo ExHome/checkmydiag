@@ -245,7 +245,7 @@
     padding: var(--e2) var(--e3);
     background: rgb(255 255 255 / 82%);
     backdrop-filter: blur(20px);
-    border-bottom: 2px solid var(--petrole);
+    border-bottom: 2px solid var(--verriere-vert);
   }
 
   .retour {

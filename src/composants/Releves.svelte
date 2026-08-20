@@ -151,7 +151,7 @@
   .compte strong {
     font-family: var(--police-titre);
     font-size: var(--t-lead);
-    color: var(--or-clair);
+    color: var(--verriere-vert);
     font-weight: 500;
   }
 
@@ -184,8 +184,8 @@
   }
 
   .filtres button.actif {
-    color: var(--or-clair);
-    border-bottom-color: var(--or);
+    color: var(--verriere-vert);
+    border-bottom-color: var(--verriere-sable-or);
   }
 
   .filtres .n {
@@ -236,7 +236,7 @@
   .rang {
     font-family: var(--mono);
     font-size: var(--t-petit);
-    color: var(--or-fonce);
+    color: var(--verriere-vert-profond);
     padding-top: 0.15em;
     font-variant-numeric: tabular-nums;
   }
@@ -255,7 +255,7 @@
     margin: 0 0 6px;
     padding: 3px 9px 3px 6px;
     border-radius: 999px;
-    background: color-mix(in srgb, var(--or-clair) 16%, transparent);
+    background: color-mix(in srgb, var(--verriere-vert) 16%, transparent);
     font-size: var(--t-petit);
     font-weight: 700;
     letter-spacing: var(--suivi-serre);

@@ -568,7 +568,7 @@
     padding: var(--e4) var(--e5);
     background: linear-gradient(180deg, rgb(214 230 106 / 22%), rgb(214 230 106 / 10%));
     border: 1px solid var(--trait-or);
-    border-left: 4px solid var(--or);
+    border-left: 4px solid var(--verriere-sable-or);
     border-radius: var(--rayon);
   }
 
@@ -582,7 +582,7 @@
     font-size: var(--t-micro);
     font-weight: 700;
     letter-spacing: var(--suivi);
-    color: var(--or-clair);
+    color: var(--verriere-vert);
   }
 
   .nom-nature {
@@ -610,7 +610,7 @@
     border-top: 1px solid var(--trait-or);
     font-size: var(--t-base);
     line-height: 1.5;
-    color: var(--or-clair);
+    color: var(--verriere-vert);
     max-width: var(--mesure);
   }
 
@@ -629,7 +629,7 @@
     --ton: var(--attention);
   }
   .verdict.bon {
-    --ton: var(--petrole);
+    --ton: var(--verriere-vert);
   }
 
   .tete {
@@ -700,7 +700,7 @@
   .titre-vitrine {
     font-size: var(--t-petit);
     letter-spacing: var(--suivi);
-    color: var(--or-clair);
+    color: var(--verriere-vert);
     margin-bottom: var(--e2) !important;
   }
 
@@ -765,7 +765,7 @@
   .commune {
     font-size: var(--t-base);
     letter-spacing: var(--suivi-serre);
-    color: var(--or-clair);
+    color: var(--verriere-vert);
     margin-top: 2px !important;
   }
 
@@ -786,7 +786,7 @@
   }
 
   .traits .sep {
-    color: var(--or-fonce);
+    color: var(--verriere-vert-profond);
     opacity: 0.55;
   }
 
@@ -884,7 +884,7 @@
   }
 
   .tuile.bon {
-    --gravite: var(--petrole);
+    --gravite: var(--verriere-vert);
   }
   .tuile.attention {
     --gravite: var(--attention);
@@ -910,7 +910,7 @@
     font-weight: 500;
     line-height: 1.15;
     letter-spacing: -0.022em;
-    color: var(--or-clair);
+    color: var(--verriere-vert);
   }
 
   .jusqua {
@@ -997,7 +997,7 @@
   }
 
   .repartition .bon {
-    --teinte-niveau: var(--petrole);
+    --teinte-niveau: var(--verriere-vert);
   }
 
   .repartition div dt {
@@ -1087,7 +1087,7 @@
     --voile: rgb(138 90 5 / 10%);
   }
   li.bon .entree {
-    --marque: var(--petrole);
+    --marque: var(--verriere-vert);
     --voile: rgb(10 43 35 / 10%);
   }
 
@@ -1113,7 +1113,7 @@
     flex: none;
     font-family: var(--mono);
     font-size: var(--t-lead);
-    color: var(--or-clair);
+    color: var(--verriere-vert);
   }
 
   .detail {
@@ -1134,7 +1134,7 @@
     margin-top: var(--e3) !important;
     padding-top: var(--e3);
     border-top: 1px solid var(--trait-or);
-    color: var(--or-clair) !important;
+    color: var(--verriere-vert) !important;
   }
 
   @media (max-width: 620px) {

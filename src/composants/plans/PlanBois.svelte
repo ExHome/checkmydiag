@@ -37,7 +37,7 @@
     <circle cx="110" cy="42" r="30" fill="var(--surface)" stroke="var(--trait)" stroke-width="1.5" />
     <circle cx="110" cy="42" r="22" fill="none" stroke="var(--trait)" stroke-width="1.5" />
     <circle cx="110" cy="42" r="14" fill="none" stroke="var(--trait)" stroke-width="1.5" />
-    <circle class="coeur" cx="110" cy="42" r="6" fill="var(--teinte, var(--petrole))" opacity="0.7" />
+    <circle class="coeur" cx="110" cy="42" r="6" fill="var(--teinte, var(--verriere-vert))" opacity="0.7" />
   </g>
 
   {#each zones as z, i (z.id)}

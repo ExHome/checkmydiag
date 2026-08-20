@@ -96,11 +96,50 @@
   --vert-verriere: #12463b;
   --vert-sauge: #a6c39a;
   --ivoire: #f7f6f2;
+
+  /*
+   * ═══════════════════════════════════════════════════════════════════════
+   * LE SOCLE VERRIÈRE — VERT × IVOIRE × DORÉ SABLE
+   * ═══════════════════════════════════════════════════════════════════════
+   *
+   * Charte maître du 20 août 2026. Elle remplace toute lecture antérieure.
+   *
+   * Ces jetons portent le nom de ce qu'ils CONTIENNENT. C'est la règle, et
+   * elle vient d'un dégât mesuré : `--or` valait #12463b, `--or-fonce`
+   * #0a2b23, `--or-clair` #a6c39a. Trois jetons nommés « or » qui ne
+   * contenaient que du vert et du sauge — 119 usages. Le contrepoint
+   * chaleureux de la marque avait disparu sans qu'une seule ligne le dise.
+   *
+   * Et ça se voyait à l'écran : `background: var(--verriere-sable-or)` va toujours avec
+   * `color: var(--vert-900)`. Du vert #12463b sous du vert #0a2b23 — 1,42:1.
+   * Tous les boutons du produit étaient illisibles au survol. Un jeton qui
+   * ment ne fait pas qu'embrouiller la lecture du code : il casse l'écran.
+   *
+   * CE QUE LES MESURES DISENT DU DORÉ, et qui fixe son emploi :
+   *
+   *   #c8a96b sur ivoire  2,08   sur vert Verrière  4,76   sur vert profond  6,76
+   *   #e4d4b2 sur ivoire  1,35   sur vert Verrière  7,31   sur vert profond 10,38
+   *   #f2e9d8 sur ivoire  1,11   sur vert Verrière  8,87   sur vert profond 12,60
+   *
+   * Le doré ne peut pas écrire sur l'ivoire. IL BRILLE SUR LE VERT. Ce n'est
+   * pas une limite, c'est sa place : l'ivoire respire, le vert porte, le doré
+   * signe. Pour les rares fois où il doit écrire sur clair, `--verriere-sable-encre`
+   * tient 4,56.
+   */
+  --verriere-vert-profond: #0a2b23;
+  --verriere-vert: #12463b;
+  --verriere-ivoire: #f7f6f2;
+  --verriere-blanc: #ffffff;
+  --verriere-sable-or: #c8a96b;
+  --verriere-sable-clair: #e4d4b2;
+  --verriere-champagne: #f2e9d8;
+  --verriere-sable-encre: #896c33;
+  --verriere-sable-filet: #d8c199;
+  --verriere-sable-voile: rgb(200 169 107 / 16%);
+  --verriere-encre: #0a2b23;
   --citron-doux: #d6e66a;
 
   /* Les noms de l'ancienne charte, remappés sur le socle actuel. */
-  --petrole: #12463b;
-  --petrole-fonce: #0a2b23;
   --sable: #f7f6f2;
   --sable-clair: #ffffff;
 
@@ -149,10 +188,6 @@
    * separer. Le citron reste defini plus haut comme couleur de charte, mais
    * plus rien ne l'affiche.
    */
-  --or: #12463b;
-  --or-fonce: #0a2b23;
-  --or-clair: #a6c39a;
-  --or-pale: rgb(18 70 59 / 10%);
 
   /*
    * L'ivoire est le fond, le vert profond est l'encre.
@@ -634,16 +669,16 @@ button {
    le principal sans lui disputer l'attention. */
 .bouton--fantome {
   background: none;
-  color: var(--petrole);
-  border: 2px solid var(--petrole);
+  color: var(--verriere-vert);
+  border: 2px solid var(--verriere-vert);
   padding: 12px 36px;
   box-shadow: none;
 }
 
 .bouton--fantome:hover {
   background: rgb(10 43 35 / 6%);
-  border-color: var(--petrole);
-  color: var(--petrole);
+  border-color: var(--verriere-vert);
+  color: var(--verriere-vert);
   box-shadow: none;
 }
 
@@ -664,7 +699,7 @@ button {
    contour de focus reste perceptible sur un écran ordinaire. Celui qui navigue
    au clavier doit voir où il est sans le chercher. */
 :focus-visible {
-  outline: 2px solid var(--or);
+  outline: 2px solid var(--verriere-sable-or);
   outline-offset: 3px;
   border-radius: 2px;
 }
@@ -937,7 +972,7 @@ button {
 }
 
 .plan-svg .z.choisie > * {
-  stroke: var(--teinte, var(--petrole));
+  stroke: var(--teinte, var(--verriere-vert));
   stroke-width: 3;
 }
 
@@ -998,7 +1033,7 @@ body.demarrage {
    * couleur du texte sur le fond » obtient la bonne sans savoir que le fond a
    * changé de camp.
    */
-  background: var(--petrole);
+  background: var(--verriere-vert);
 
   --sur-fond: var(--ivoire);
   --sur-fond-doux: rgb(247 246 242 / 82%);

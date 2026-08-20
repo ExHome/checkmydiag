@@ -67,7 +67,7 @@
   <g class="flamme">
     <path
       d="M34 {hauteur - 30} q-9 -12 0 -22 q9 10 0 22"
-      fill="var(--teinte, var(--petrole))"
+      fill="var(--teinte, var(--verriere-vert))"
       opacity="0.85"
       stroke="none"
     />

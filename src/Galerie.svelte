@@ -187,7 +187,7 @@
     font-size: var(--t-micro);
     letter-spacing: var(--suivi);
     font-weight: 700;
-    color: var(--or-fonce);
+    color: var(--verriere-vert-profond);
     margin: 0 0 var(--e2);
   }
 

@@ -282,13 +282,13 @@
     text-align: center;
     cursor: pointer;
 
-    --sur-fond: var(--petrole);
+    --sur-fond: var(--verriere-vert);
     --sur-fond-doux: #555555;
-    --encre: var(--petrole);
+    --encre: var(--verriere-vert);
     --encre-doux: #555555;
-    --vert-500: var(--petrole);
-    --vert-700: var(--petrole);
-    color: var(--petrole);
+    --vert-500: var(--verriere-vert);
+    --vert-700: var(--verriere-vert);
+    color: var(--verriere-vert);
 
     box-shadow: 0 8px 32px rgb(10 43 35 / 45%);
     transition:
@@ -391,7 +391,7 @@
   .badges li {
     padding: var(--e4) var(--e3);
     background: rgb(10 43 35 / 8%);
-    border: 2px solid var(--petrole);
+    border: 2px solid var(--verriere-vert);
     border-radius: var(--rayon-badge);
     font-size: var(--t-petit);
     font-weight: 600;

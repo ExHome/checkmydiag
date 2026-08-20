@@ -984,9 +984,13 @@
     line-height: 1;
   }
 
+  /* La pastille « tout va bien » portait le sauge en dur, avec une encre vert
+     profond dessus — 2,6:1. Le sauge n'est plus une couleur de structure
+     (charte du 20/08, §2), et un signal doit d'abord se lire : vert Verrière
+     plein, encre ivoire, mesuré à 10,7. */
   .rond.bon {
-    background: #a6c39a;
-    color: var(--vert-profond);
+    background: var(--ok);
+    color: var(--verriere-ivoire);
   }
 
   /* L'ambre du socle est réglé pour le fond clair : posé sur le widget sombre,
@@ -1425,7 +1429,7 @@
   }
 
   .pastille.bon {
-    background: var(--petrole);
+    background: var(--verriere-vert);
   }
 
   /* L'etat « non lu » : ni vert ni rouge, parce qu'il ne conclut rien. Un gris

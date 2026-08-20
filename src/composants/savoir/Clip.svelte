@@ -51,7 +51,7 @@
     color: inherit;
     cursor: pointer;
     text-decoration: underline dotted;
-    text-decoration-color: var(--or);
+    text-decoration-color: var(--verriere-sable-or);
     text-underline-offset: 3px;
     transition: color 0.18s ease;
   }
@@ -62,20 +62,20 @@
     height: 6px;
     margin-left: var(--e1);
     border-radius: 50%;
-    background: var(--or);
+    background: var(--verriere-sable-or);
     vertical-align: 2px;
     transition: box-shadow 0.25s ease, background 0.18s ease;
   }
 
   .clip:hover,
   .clip:focus-visible {
-    color: var(--or-fonce);
+    color: var(--verriere-vert-profond);
     text-decoration-style: solid;
   }
 
   .clip:hover .point,
   .clip:focus-visible .point {
-    background: var(--or-fonce);
+    background: var(--verriere-vert-profond);
     box-shadow: 0 0 0 4px rgb(214 230 106 / 28%);
   }
 

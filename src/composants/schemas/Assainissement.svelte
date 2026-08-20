@@ -80,7 +80,7 @@
     font-size: var(--t-micro);
     letter-spacing: 0.14em;
     font-weight: 600;
-    color: var(--or-fonce);
+    color: var(--verriere-vert-profond);
   }
 
   svg {
@@ -91,7 +91,7 @@
 
   /* La terre : un aplat très léger, pour qu'on lise « coupe » sans y penser. */
   .terre {
-    fill: var(--or-fonce);
+    fill: var(--verriere-vert-profond);
     opacity: 0.07;
   }
 
@@ -153,7 +153,7 @@
   }
 
   .graisses {
-    fill: var(--or-fonce);
+    fill: var(--verriere-vert-profond);
     opacity: 0.5;
   }
 

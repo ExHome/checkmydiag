@@ -1555,7 +1555,7 @@
     padding: var(--e2) var(--e3);
     background: rgb(255 255 255 / 82%);
     backdrop-filter: blur(20px);
-    border-bottom: 2px solid var(--petrole);
+    border-bottom: 2px solid var(--verriere-vert);
   }
 
   .signe-app {
@@ -1674,6 +1674,26 @@
      * ailleurs (`color-mix`, voiles, cartes) continue de partir de lui.
      */
     background:
+      /* LA GRILLE D'ARCHITECTE — 5 % de présence, et tout change.
+         Le fond cesse d'être une couleur pour devenir un ESPACE : celui d'une
+         feuille de calque posée sur une table à dessin. On ne la lit pas, on la
+         sent. C'est ce qui sépare un papier d'architecte d'un aplat de SaaS. */
+      repeating-linear-gradient(
+        0deg,
+        transparent 0 27px,
+        color-mix(in srgb, var(--verriere-vert) 5%, transparent) 27px 28px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent 0 27px,
+        color-mix(in srgb, var(--verriere-vert) 5%, transparent) 27px 28px
+      ),
+      /* et tous les cinq carreaux, le trait fort du calque */
+      repeating-linear-gradient(
+        0deg,
+        transparent 0 139px,
+        color-mix(in srgb, var(--verriere-vert) 8%, transparent) 139px 140px
+      ),
       linear-gradient(
         180deg,
         #ffffff 0%,
@@ -1737,9 +1757,13 @@
     --encre: var(--n2);
     --encre-doux: var(--n5);
     --gris: var(--n5);
-    --trait: var(--u-trait, #e8dcc8);
-    --trait-fin: color-mix(in srgb, var(--u-trait, #f0eae0) 55%, transparent);
-    --trait-or: var(--u-trait, #e8dcc8);
+    /* Le filet courant reste discret ; `--trait-or` porte enfin de l'or —
+       il en portait le nom depuis longtemps et contenait du sauge. C'est le
+       trait des séparations qui comptent, et le seul endroit de l'écran où le
+       doré a le droit de faire une ligne. */
+    --trait: var(--u-trait, #d8c199);
+    --trait-fin: color-mix(in srgb, var(--u-trait, #d8c199) 55%, transparent);
+    --trait-or: var(--verriere-sable-or);
     /*
      * UNE CARTE EST BLANCHE. ELLE N'EST PAS UN VOILE SOMBRE.
      *
@@ -1994,7 +2018,7 @@
      une ombre portée qui le décolle de la ligne. */
   .onglet-diag.courant {
     background: linear-gradient(180deg, var(--surface-bord), var(--surface-forte));
-    border-color: var(--gravite, var(--or));
+    border-color: var(--gravite, var(--verriere-sable-or));
     color: var(--sur-fond);
     box-shadow: 0 8px 18px -12px rgb(10 43 35 / 100%);
   }
@@ -2008,7 +2032,7 @@
   }
 
   .onglet-diag.bon {
-    --gravite: var(--petrole);
+    --gravite: var(--verriere-vert);
   }
   .onglet-diag.attention {
     --gravite: var(--attention);
@@ -2097,8 +2121,8 @@
   }
 
   .pas-a-pas button:hover:not(:disabled) {
-    background: var(--or);
-    border-color: var(--or);
+    background: var(--verriere-sable-or);
+    border-color: var(--verriere-sable-or);
     color: var(--vert-900);
   }
 
@@ -2190,7 +2214,7 @@
   }
 
   .fiche-diag.bon {
-    --gravite-fiche: var(--petrole);
+    --gravite-fiche: var(--verriere-vert);
   }
   .fiche-diag.attention {
     --gravite-fiche: var(--attention);
@@ -2221,7 +2245,7 @@
   }
 
   .fiche-diag.bon {
-    --gravite: var(--petrole);
+    --gravite: var(--verriere-vert);
   }
   .fiche-diag.attention {
     --gravite: var(--attention);
@@ -2246,7 +2270,7 @@
     font-size: clamp(1.2rem, 2.6vw, 1.5rem);
     letter-spacing: -0.022em;
     margin: 0 0 var(--e1);
-    color: var(--or-clair);
+    color: var(--verriere-vert);
   }
 
   /* n2 — les mots du rapport. */
@@ -2372,7 +2396,7 @@
   /* La page se détache : c'est la seule information du lot sur laquelle le
      lecteur peut agir — ouvrir son rapport et vérifier. */
   .provenance .page {
-    color: var(--or-clair);
+    color: var(--verriere-vert);
     white-space: nowrap;
   }
 
@@ -2391,7 +2415,7 @@
 
   button.page:hover,
   button.page:focus-visible {
-    border-bottom-color: var(--or);
+    border-bottom-color: var(--verriere-sable-or);
   }
 
   .provenance .page::before {

@@ -55,8 +55,8 @@
 
   <!-- L'arrivée, et le courant qui y passe. -->
   <line x1="18" y1="28" x2="202" y2="28" stroke="var(--sur-fond)" stroke-width="2" />
-  <circle class="flux" cx="18" cy="28" r="3" fill="var(--teinte, var(--petrole))" />
-  <circle class="flux retard" cx="18" cy="28" r="3" fill="var(--teinte, var(--petrole))" />
+  <circle class="flux" cx="18" cy="28" r="3" fill="var(--teinte, var(--verriere-vert))" />
+  <circle class="flux retard" cx="18" cy="28" r="3" fill="var(--teinte, var(--verriere-vert))" />
 
   {#each zones as z, i (z.id)}
     {@const p = place(i)}

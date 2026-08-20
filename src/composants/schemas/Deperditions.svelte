@@ -474,7 +474,7 @@
     font-size: var(--t-micro);
     letter-spacing: 0.14em;
     font-weight: 600;
-    color: var(--or-fonce);
+    color: var(--verriere-vert-profond);
   }
 
   svg {
@@ -501,7 +501,7 @@
 
   /* Les cotes : le trait de la planche d'exécution, en or, très fin. */
   .cote path {
-    stroke: var(--or);
+    stroke: var(--verriere-sable-or);
     stroke-width: 0.9;
     fill: none;
     opacity: 0.75;
@@ -510,7 +510,7 @@
   .cotation {
     font-size: 20.5px;
     letter-spacing: 0.12em;
-    fill: var(--or-fonce);
+    fill: var(--verriere-vert-profond);
     text-anchor: middle;
     opacity: 0.85;
   }
@@ -523,7 +523,7 @@
 
 
   .poignee {
-    fill: var(--or-fonce);
+    fill: var(--verriere-vert-profond);
   }
 
   /* Les équipements : même trait que la maison, en plus discret. Ils sont là

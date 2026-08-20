@@ -146,7 +146,7 @@
     font-size: var(--t-micro);
     font-weight: 600;
     letter-spacing: 0.14em;
-    color: var(--or-fonce);
+    color: var(--verriere-vert-profond);
   }
 
   .echelle {
@@ -214,7 +214,7 @@
 
   .jalon::before {
     content: '→ ';
-    color: var(--or-fonce);
+    color: var(--verriere-vert-profond);
   }
 
   .jalon.passe::before {
@@ -226,7 +226,7 @@
     margin-top: var(--e3);
     padding: var(--e3) var(--e3);
     background: var(--papier-doux);
-    border-left: 3px solid var(--or);
+    border-left: 3px solid var(--verriere-sable-or);
     border-radius: var(--rayon-petit);
   }
 
@@ -261,7 +261,7 @@
     width: 6px;
     height: 6px;
     border-radius: 2px;
-    background: var(--or);
+    background: var(--verriere-sable-or);
   }
 
   /* La position dans le parc ferme le panneau : elle répond à la question qui

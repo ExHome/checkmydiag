@@ -87,10 +87,21 @@ formats doivent donc être lus, même hors validation.
 ### LICIEL — 100 rapports, 5 066 pages
 
 Le corpus de référence, et celui qui a enseigné le plus de fausses règles.
-Quatre traits que je croyais du métier lui sont propres : le **catalogue des six
-domaines sans résultat**, le **tableau à deux colonnes entrelacées**, la
-faiblesse de sa réserve juridique sur la synthèse, et l'absence du numéro
-d'article de l'anomalie électrique.
+Trois traits que je croyais du métier lui sont propres : le **tableau à deux
+colonnes entrelacées**, la faiblesse de sa réserve juridique sur la synthèse, et
+l'absence du numéro d'article de l'anomalie électrique.
+
+⚠️ **Correction du 20/08/2026, après lecture de l'arrêté du 28 septembre 2017.**
+J'avais compté un quatrième trait : le « catalogue des six domaines sans
+résultat ». **Les six domaines ne sont pas une habitude de cet éditeur — ils sont
+le modèle imposé par l'arrêté**, § 5 de son annexe III : « Anomalies avérées
+selon les domaines suivants », suivis des installations particulières P1/P2/P3 et
+des informations complémentaires IC. Ce qui lui est propre, c'est de les imprimer
+tous les six même sans résultat ; leur existence, elle, est réglementaire.
+
+C'est l'erreur inverse de celle que l'épreuve hors Liciel corrigeait : j'ai pris
+pour une habitude d'éditeur ce qui était la loi. **Un corpus enseigne les formes ;
+seul le texte dit lesquelles sont obligatoires.**
 
 ### ANALYSIMMO (ATLIBITUM) — 3 rapports
 

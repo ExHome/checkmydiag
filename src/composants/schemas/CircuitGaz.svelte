@@ -245,7 +245,7 @@
   }
 
   .obstacle {
-    fill: var(--or-fonce);
+    fill: var(--verriere-vert-profond);
     opacity: 0.9;
   }
 

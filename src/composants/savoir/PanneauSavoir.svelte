@@ -158,7 +158,7 @@
     overflow-y: auto;
     background: var(--papier);
     color: var(--encre);
-    border-top: 3px solid var(--or);
+    border-top: 3px solid var(--verriere-sable-or);
     border-radius: var(--rayon) var(--rayon) 0 0;
     padding: var(--e4) var(--e4) var(--e5);
     box-shadow: var(--ombre-forte);
@@ -170,7 +170,7 @@
       width: min(430px, 92vw);
       max-height: none;
       border-top: none;
-      border-left: 3px solid var(--or);
+      border-left: 3px solid var(--verriere-sable-or);
       border-radius: 0;
     }
   }
@@ -193,7 +193,7 @@
     background: none;
     border: none;
     padding: 0;
-    color: var(--or-fonce);
+    color: var(--verriere-vert-profond);
     text-decoration: underline;
     cursor: pointer;
   }
@@ -262,7 +262,7 @@
   }
 
   .question:hover {
-    color: var(--or-fonce);
+    color: var(--verriere-vert-profond);
   }
 
   .chevron {
@@ -279,8 +279,8 @@
   }
 
   .question.chez-moi .chevron {
-    background: var(--or-pale);
-    color: var(--or-fonce);
+    background: var(--verriere-sable-voile);
+    color: var(--verriere-vert-profond);
   }
 
   /* Les quatre registres se distinguent au trait, pas au ton (§ 15). */
@@ -296,7 +296,7 @@
   }
 
   .reponse.explication {
-    border-left-color: var(--or);
+    border-left-color: var(--verriere-sable-or);
   }
 
   .reponse.hypothese {

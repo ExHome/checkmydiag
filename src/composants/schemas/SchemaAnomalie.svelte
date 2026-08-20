@@ -408,7 +408,7 @@
   }
 
   .flamme {
-    fill: var(--or-fonce);
+    fill: var(--verriere-vert-profond);
     stroke: none;
   }
 
@@ -442,20 +442,20 @@
   }
 
   .couche {
-    stroke: var(--or);
+    stroke: var(--verriere-sable-or);
     fill: none;
   }
 
   .galerie {
     fill: none;
-    stroke: var(--or-fonce);
+    stroke: var(--verriere-vert-profond);
     stroke-width: 2.4;
     stroke-linecap: round;
   }
 
   .cordonnet {
     fill: none;
-    stroke: var(--or-fonce);
+    stroke: var(--verriere-vert-profond);
     stroke-width: 2;
     stroke-linecap: round;
   }

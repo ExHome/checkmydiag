@@ -100,7 +100,7 @@
     font-size: var(--t-micro);
     font-weight: 700;
     letter-spacing: var(--suivi);
-    color: var(--or-fonce);
+    color: var(--verriere-vert-profond);
   }
 
   .chapeau-officiel {
@@ -132,7 +132,7 @@
   .rang {
     font-family: var(--mono);
     font-size: var(--t-petit);
-    color: var(--or-fonce);
+    color: var(--verriere-vert-profond);
     font-variant-numeric: tabular-nums;
   }
 
@@ -159,7 +159,7 @@
     font-size: var(--t-lead);
     font-weight: 500;
     letter-spacing: -0.022em;
-    color: var(--or-clair);
+    color: var(--verriere-vert);
   }
 
   .absent {
@@ -190,7 +190,7 @@
   }
 
   .vers a {
-    color: var(--or-clair);
+    color: var(--verriere-vert);
     font-size: var(--t-petit);
     font-weight: 600;
   }
@@ -210,7 +210,7 @@
   }
 
   .ouvrir-recours:hover {
-    background: var(--or);
+    background: var(--verriere-sable-or);
     color: var(--vert-900);
   }
 
