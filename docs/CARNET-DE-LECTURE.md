@@ -3818,3 +3818,103 @@ permettrait de vérifier la bonne lecture. Deux raisons de ne pas livrer, et une
 seule aurait suffi.
 
 ---
+
+## 76 · Les deux arrêtés — et l'un d'eux dit que j'avais tort
+
+*20/08/2026. Arrêté du 19 août 2011 (CREP, 8 p.) et arrêté du 28 septembre 2017
+(électricité, 20 p.), lus de bout en bout, annexes comprises.*
+
+Ceux-là ne sont pas des normes : ce sont des textes du Journal officiel. Ils
+n'ont pas le même rang, et cela s'est vu deux fois.
+
+### 1 · L'arrêté CREP sépare ce que la norme confondait
+
+NF X 46-030 range ses cinq situations sous un seul titre : « facteurs de
+dégradation du bâti ». L'**article 8** de l'arrêté en fait **deux listes
+nommées** :
+
+- **situations de risque de saturnisme infantile** — un local à 50 % de classe 3,
+  l'ensemble à 20 % ;
+- **situations de dégradation du bâti** — plancher menaçant, coulures,
+  moisissures.
+
+Les deux ne parlent pas de la même chose : la première du plomb et de l'enfant,
+la seconde de l'état du logement. Annoncer « dégradation du bâti » quand le
+rapport a coché un seuil de plomb envoie le lecteur chercher une fissure qui
+n'existe pas.
+
+**Et c'est l'arrêté qui gagne** : il est de 2011, il abroge celui du 25 avril 2006
+sur lequel la norme de 2008 était bâtie. C'est aussi lui que les éditeurs
+suivent — le rapport lu ce matin imprime ses deux encarts, sous ses deux
+intitulés exacts.
+
+L'arrêté donne en plus ce que la norme taisait : la transmission se fait **dans
+un délai de cinq jours ouvrables**, au **directeur général de l'ARS** — et non au
+préfet comme l'écrit la norme de 2008, antérieure à la création des agences.
+
+Il confirme aussi la correction du matin, en toutes lettres : si le revêtement au
+plomb est sous un revêtement sans plomb, l'état de conservation **est qualifié de
+non visible**, et le tableau 1 le classe 1.
+
+### 2 · L'arrêté électricité dit que j'avais tort
+
+Le carnet et la carte des éditeurs affirmaient depuis l'épreuve hors Liciel que
+le **catalogue des six domaines** était une habitude de LICIEL, une des quatre
+fausses règles qu'un corpus d'un seul éditeur m'avait enseignées.
+
+**C'est faux.** Le § 5 de l'annexe III de l'arrêté impose au rapport sa
+conclusion : « Anomalies avérées selon les domaines suivants », puis les six,
+puis les installations particulières P1/P2/P3, puis les informations
+complémentaires IC.
+
+**Les six domaines sont la loi.** Ce qui est propre à cet éditeur, c'est de les
+imprimer tous même sans résultat.
+
+C'est l'erreur exactement inverse de celle que l'épreuve hors Liciel corrigeait :
+j'avais pris pour une habitude d'éditeur ce qui était le modèle réglementaire. Un
+corpus enseigne les formes ; **seul le texte dit lesquelles sont obligatoires.**
+
+### 3 · Ce que l'arrêté électricité donne au lecteur, et qu'il n'avait pas
+
+Le § 4 de l'annexe III — « Rappel des limites du champ de réalisation » — est la
+rubrique la plus utile du volet, et personne ne l'ouvre. L'arrêté impose au
+rapport d'écrire que **des éléments dangereux peuvent ne pas être repérés**, puis
+les énumère : parties incorporées au gros ou au second œuvre, parties masquées
+par du mobilier, boîtes de connexion, conduits, plinthes, goulottes, huisseries,
+éléments chauffants noyés dans la maçonnerie, luminaires de piscine, parties non
+visibles des tableaux même capot démonté, et l'inadéquation entre le calibre des
+protections et la section des conducteurs sur toute la longueur des circuits.
+
+Et il liste ce qui est **hors champ** : matériels amovibles, circuits internes des
+appareils fixes, production et stockage par batteries, et tout ce qui vit sous
+50 V alternatif ou 120 V continu — téléphone, télévision, informatique,
+vidéophonie, alarme.
+
+**Un état électrique sans anomalie n'est pas un certificat d'installation sûre**,
+et c'est le rapport lui-même qui le dit.
+
+### Autres points relevés
+
+- **Annexe IV** : « Anomalie : disposition portant atteinte à la sécurité des
+  personnes. » Définition officielle, et l'article 1er distingue les anomalies de
+  sécurité des **défauts de fonctionnement** — deux choses que le volet mélange.
+- **Mesure compensatoire** : définie comme ce qui limite le risque de choc quand
+  les règles fondamentales ne peuvent s'appliquer pour des raisons économiques,
+  techniques ou administratives.
+- **Article 3 de l'arrêté CREP** : l'opérateur doit détenir une attestation du
+  fabricant donnant la **durée de vie maximale de la source** — ce n'est pas
+  l'autorisation ASN, que le produit lit déjà, mais une seconde pièce.
+- **Article 6** : si une unité est classée 3, l'article L. 1334-9 doit être
+  **reproduit en première page**. Vérifiable.
+- Les zones A/B/C/D dans le sens des aiguilles d'une montre sont une exigence de
+  la **norme** seule : l'arrêté se contente de « généralement les différentes
+  faces du local ».
+
+### La leçon
+
+**Le texte prime la norme, et la norme prime le souvenir.** En un jour, la norme
+a corrigé quatre choses que cent rapports n'avaient pas montrées, puis l'arrêté a
+corrigé deux choses que la norme disait — dont une que j'avais consignée comme
+acquise dans deux documents.
+
+---

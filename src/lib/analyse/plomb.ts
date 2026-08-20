@@ -182,6 +182,28 @@ function emplacements(lignes: string[]): { zone: string; element: string; classe
  * bloc recollé confond la réponse d'une situation avec celle de sa voisine.
  */
 export interface AlerteCrep {
+  /**
+   * Laquelle des deux listes de l'article 8.
+   *
+   * L'arrêté du 19 août 2011 (lu en entier le 20/08/2026) ne fait pas un tas
+   * des cinq situations : il en nomme **deux groupes**, et ils ne parlent pas de
+   * la même chose.
+   *
+   * Les deux premières — un local à 50 % de classe 3, l'ensemble à 20 % — sont
+   * les **situations de risque de saturnisme infantile** : elles portent sur le
+   * plomb, et sur l'enfant.
+   *
+   * Les trois autres — plancher menaçant, coulures, moisissures — sont les
+   * **situations de dégradation du bâti** : elles ne parlent plus de plomb du
+   * tout, mais de l'état du logement.
+   *
+   * NF X 46-030 les rangeait toutes sous « facteurs de dégradation du bâti » —
+   * mais elle date de 2008 et s'appuie sur l'arrêté du 25 avril 2006, que celui
+   * de 2011 a **abrogé**. C'est l'arrêté qui fait foi, et c'est lui que les
+   * éditeurs suivent : un rapport du corpus imprime exactement ses deux encarts,
+   * sous leurs deux intitulés.
+   */
+  groupe: 'saturnisme' | 'bati';
   /** Ce que le rapport affirme, dans nos mots. */
   libelle: string;
   /** La pièce, quand le rapport la nomme. */
@@ -195,7 +217,7 @@ export interface AlerteCrep {
  * du constat présentent… » — mais ce qui les distingue, et qui tombe toujours
  * sur une ligne de continuation.
  */
-const SITUATIONS: { cle: string; motif: RegExp; libelle: string }[] = [
+const SITUATIONS: { cle: string; groupe: 'saturnisme' | 'bati'; motif: RegExp; libelle: string }[] = [
   /*
    * « DE classe 3 » ou « EN classe 3 » — les deux circulent.
    *
@@ -206,21 +228,25 @@ const SITUATIONS: { cle: string; motif: RegExp; libelle: string }[] = [
    */
   {
     cle: 'piece50',
+    groupe: 'saturnisme' as const,
     motif: /au moins 50\s*%\s*d['’]unit[ée]s de diagnostic (?:de|en) classe 3/i,
     libelle: 'une pièce au moins a la moitié de ses surfaces en plomb dégradé'
   },
   {
     cle: 'locaux20',
+    groupe: 'saturnisme' as const,
     motif: /moins 20\s*%\s*d['’]unit[ée]s de diagnostic (?:de|en) classe 3/i,
     libelle: 'l’ensemble du logement a un cinquième de ses surfaces en plomb dégradé'
   },
   {
     cle: 'effondrement',
+    groupe: 'bati' as const,
     motif: /plancher ou plafond mena[çc]ant de s['’]effondrer/i,
     libelle: 'un plancher ou un plafond menace de s’effondrer'
   },
   {
     cle: 'coulure',
+    groupe: 'bati' as const,
     motif: /importantes de coulure/i,
     libelle: 'des traces importantes de coulure, de ruissellement ou d’écoulement'
   },
@@ -237,6 +263,7 @@ const SITUATIONS: { cle: string; motif: RegExp; libelle: string }[] = [
      * sur celle-ci.
      */
     cle: 'moisissures',
+    groupe: 'bati' as const,
     motif: /moisissures/i,
     libelle: 'des moisissures ou de nombreuses taches d’humidité'
   }
@@ -307,7 +334,8 @@ export function alertesDuCrep(lignes: string[]): AlerteCrep[] {
       if (SITUATIONS.some((s) => s.motif.test(ligne))) break;
     }
 
-    alertes.push(ou ? { libelle: situation.libelle, ou } : { libelle: situation.libelle });
+    const base = { groupe: situation.groupe, libelle: situation.libelle };
+    alertes.push(ou ? { ...base, ou } : base);
   }
 
   return alertes;
@@ -477,13 +505,29 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
       precision: 'classe 1 — en bon état, ou masqués par un autre revêtement'
     });
   }
-  /* Le § 12 de la norme en compte cinq, et la liste est fermée : on annonce
-     donc combien sur cinq, et non un total qui ne dit pas sur quoi il porte. */
-  if (alertes.length) {
+  /*
+   * Deux listes, deux intitulés — ceux de l'article 8 de l'arrêté.
+   *
+   * Les compter ensemble ferait dire « 2 situations sur 5 » sans dire lesquelles,
+   * alors que les deux groupes ne parlent pas de la même chose : le premier du
+   * plomb et de l'enfant, le second de l'état du logement. Un lecteur à qui l'on
+   * annonce « dégradation du bâti » quand le rapport a coché un seuil de plomb
+   * cherchera une fissure qui n'existe pas.
+   */
+  const saturnisme = alertes.filter((a) => a.groupe === 'saturnisme');
+  const bati = alertes.filter((a) => a.groupe === 'bati');
+  if (saturnisme.length) {
     faits.push({
-      libelle: 'Facteurs de dégradation du bâti',
-      valeur: `${alertes.length} sur 5`,
-      precision: 'ce sont eux qui déclenchent le signalement du logement'
+      libelle: 'Situations de risque de saturnisme infantile',
+      valeur: `${saturnisme.length} sur 2`,
+      precision: 'la part du logement dont les peintures au plomb sont dégradées'
+    });
+  }
+  if (bati.length) {
+    faits.push({
+      libelle: 'Situations de dégradation du bâti',
+      valeur: `${bati.length} sur 3`,
+      precision: 'elles ne parlent pas de plomb, mais de l’état du logement'
     });
   }
 
@@ -503,7 +547,10 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
     faits.push({
       libelle: 'Suite donnée',
       valeur: 'Rapport transmis à l’agence régionale de santé',
-      precision: 'le logement est signalé aux autorités sanitaires'
+      /* Le délai est à l'article 8 de l'arrêté du 19 août 2011, et la norme de
+         2008 ne le donnait pas : cinq jours ouvrables, le propriétaire informé,
+         et la transmission écrite dans le rapport. */
+      precision: 'sous cinq jours ouvrables — le logement est signalé aux autorités sanitaires'
     });
   }
 

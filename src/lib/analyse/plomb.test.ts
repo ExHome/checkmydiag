@@ -41,11 +41,27 @@ const RUBRIQUE = (r: [string, string, string, string, string]) => [
 ];
 
 describe('les facteurs de dégradation du bâti', () => {
-  it('compte les facteurs cochés sur les cinq de la norme', () => {
-    const d = analyserPlomb([...ENTETE, ...RUBRIQUE(['NON', 'NON', 'OUI', 'NON', 'OUI'])], [4, 9]);
+  it('sépare les deux listes de l’article 8, et ne les additionne pas', () => {
+    /*
+     * L'arrêté du 19 août 2011, lu en entier le 20/08/2026, nomme DEUX groupes :
+     * les deux seuils sont des « situations de risque de saturnisme infantile »,
+     * les trois autres des « situations de dégradation du bâti ». Les compter
+     * ensemble ferait chercher au lecteur une fissure quand le rapport a coché
+     * un seuil de plomb.
+     */
+    const d = analyserPlomb([...ENTETE, ...RUBRIQUE(['NON', 'OUI', 'OUI', 'NON', 'OUI'])], [4, 9]);
 
-    const fait = d.faits.find((f) => f.libelle === 'Facteurs de dégradation du bâti');
-    expect(fait?.valeur).toBe('2 sur 5');
+    const sat = d.faits.find((f) => f.libelle === 'Situations de risque de saturnisme infantile');
+    const bati = d.faits.find((f) => f.libelle === 'Situations de dégradation du bâti');
+    expect(sat?.valeur).toBe('1 sur 2');
+    expect(bati?.valeur).toBe('2 sur 3');
+  });
+
+  it('ne parle pas de bâti quand seul un seuil de plomb est coché', () => {
+    const d = analyserPlomb([...ENTETE, ...RUBRIQUE(['OUI', 'NON', 'NON', 'NON', 'NON'])], [4, 9]);
+
+    expect(d.faits.find((f) => f.libelle === 'Situations de risque de saturnisme infantile')).toBeDefined();
+    expect(d.faits.find((f) => f.libelle === 'Situations de dégradation du bâti')).toBeUndefined();
   });
 
   it('relève les deux seuils, que les mots-clés ne pouvaient pas voir', () => {
@@ -72,7 +88,7 @@ describe('les facteurs de dégradation du bâti', () => {
       [4, 9]
     );
 
-    expect(d.faits.find((f) => f.libelle === 'Facteurs de dégradation du bâti')).toBeUndefined();
+    expect(d.faits.find((f) => f.libelle === 'Situations de dégradation du bâti')).toBeUndefined();
     expect(JSON.stringify(d.faits)).not.toMatch(/Revêtements dégradés/);
   });
 
@@ -94,12 +110,12 @@ describe('les facteurs de dégradation du bâti', () => {
       [4, 9]
     );
 
-    expect(d.faits.find((f) => f.libelle === 'Facteurs de dégradation du bâti')).toBeUndefined();
+    expect(JSON.stringify(d.faits)).not.toMatch(/Situations de (risque|dégradation)/);
   });
 
   it('n’en relève aucun quand le constat répond NON aux cinq', () => {
     const d = analyserPlomb([...ENTETE, ...RUBRIQUE(['NON', 'NON', 'NON', 'NON', 'NON'])], [4, 9]);
-    expect(d.faits.find((f) => f.libelle === 'Facteurs de dégradation du bâti')).toBeUndefined();
+    expect(JSON.stringify(d.faits)).not.toMatch(/Situations de (risque|dégradation)/);
   });
 });
 

@@ -250,6 +250,31 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
       'Ce diagnostic ne dit pas si l’installation est aux normes d’aujourd’hui. Il contrôle six points de sécurité, sur les installations qui ont plus de quinze ans.',
       'Une anomalie ne rend pas le logement inhabitable : elle signale un risque, décharge ou incendie. Les deux plus fréquentes : pas de différentiel, mise à la terre inefficace.',
       'Le diagnostiqueur ne démonte rien. Il ne peut donc rien dire de l’état des fils à l’intérieur des murs.',
+
+      /*
+       * Ce que l'arrêté dit lui-même du champ de ce diagnostic — § 4 de son
+       * annexe III, « Rappel des limites du champ de réalisation ».
+       *
+       * Arrêté du 28 septembre 2017, lu en entier le 20/08/2026. Il abroge celui
+       * du 8 juillet 2008, et c'est lui qui fait foi ici : NF C 16-600 n'est pas
+       * d'application obligatoire, donc pas consultable gratuitement, et nous ne
+       * l'avons pas.
+       *
+       * Le texte impose au rapport d'écrire que des éléments dangereux « peuvent
+       * ne pas être repérés », puis les énumère : parties incorporées au gros ou
+       * au second œuvre, parties masquées par du mobilier, boîtes de connexion,
+       * conduits, plinthes, goulottes, huisseries, éléments chauffants noyés dans
+       * la maçonnerie, luminaires de piscine, parties non visibles des tableaux
+       * même capot démonté, et l'inadéquation entre le calibre des protections et
+       * la section des conducteurs sur toute la longueur des circuits.
+       *
+       * C'est la phrase qui manque le plus au lecteur : un état sans anomalie
+       * n'est pas un certificat d'installation sûre. Elle est écrite noir sur
+       * blanc dans son rapport, dans une rubrique que personne n'ouvre.
+       */
+      'Le rapport le dit lui-même, et c’est l’arrêté qui l’y oblige : des éléments dangereux peuvent ne pas avoir été repérés. Tout ce qui est noyé dans les murs, caché derrière un meuble, ou logé dans une boîte de connexion, une goulotte, une plinthe ou une huisserie échappe au contrôle — de même que le fond du tableau électrique, capot démonté.',
+      'Et il y a ce que ce diagnostic ne regarde pas du tout : ce qui est branché plutôt qu’installé, les circuits internes des appareils fixes, la production solaire et ses batteries, et tout ce qui vit en basse tension — téléphone, télévision, informatique, vidéophone, alarme.',
+
       /* La réforme de 2017, quand la date du rapport la déclenche. */
       ...reformesElectricite(dateFrancaise(date?.[1])).map((r) => r.texte)
     ],
