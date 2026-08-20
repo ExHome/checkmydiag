@@ -309,6 +309,27 @@ Le rapport ajoute son engagement : « notre cabinet s'engage à retourner sur le
 lieux afin de compléter le constat aux parties d'immeubles non visitées, dès
 lors que les dispositions permettant un contrôle auront été prises ».
 
+### H · Constatations diverses — **constant, et il double parfois la rubrique G**
+
+Une information peut changer d'encart d'un rapport à l'autre. La restriction sur
+ce que le diagnostic n'a pas pu voir apparaît :
+
+- en **G** sur un dossier — « Mur / Revêtement fixé », par localisation ;
+- en **H** sur un autre, en clair et sans localisation :
+
+> Le diagnostic se limite aux zones rendues visibles et accessibles par le
+> propriétaire. Les zones situées derrière les doublages des murs et plafonds
+> n'ont pas pu être examinées.
+
+…pendant que la rubrique G du même rapport dit « Néant ».
+
+**Conséquence** : connaître l'encart ne suffit pas, il faut connaître **les
+encarts possibles** pour une information donnée. Un « Néant » en G ne veut pas
+dire que tout a été examiné : il faut lire H aussi.
+
+C'est également en H que se trouve la **Note 1** sur les autres agents de
+dégradation biologique, sur certains millésimes.
+
 ### F · Parties non visitées — **constant**
 
 ---
