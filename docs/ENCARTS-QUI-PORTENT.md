@@ -10,6 +10,24 @@ encart s'il s'est montré **constant** ou **variable**. Rien n'en est implément
 
 ---
 
+## La règle que ces lectures imposent
+
+**On ne cherche pas une info. On cherche un ENDROIT.**
+
+Chercher une information, c'est la trouver partout. Un motif lâché sur un volet
+entier ramène ce qui lui ressemble, pas ce qu'on veut : chercher
+`Intitulé (localisation)` dans un volet amiante a donné cinq faux matériaux et
+raté le vrai ; chercher une localisation dans le tableau du § 5 a donné « Rez de
+chaussée - **conducteurs** Entrée/séjour/cuisine ».
+
+Chercher un endroit, c'est ne trouver que ce qui s'y trouve. **La rubrique
+délimite ; le vocabulaire, jamais.** Et quand la rubrique manque, on ne cite
+rien — mieux vaut se taire que citer faux.
+
+Ce document est donc une carte d'endroits, pas un dictionnaire de formulations.
+
+---
+
 ## Ce qui ressort de la lecture
 
 **L'information importante ne vit pas là où on la cherche d'instinct.** La
