@@ -28,6 +28,32 @@ Ce document est donc une carte d'endroits, pas un dictionnaire de formulations.
 
 ---
 
+## L'ENDROIT QUI COMMANDE TOUS LES AUTRES
+
+**« Référence du logiciel validé »** — le seul encart vérifié sur **cinq
+éditeurs**, Liciel compris.
+
+```
+Référence du logiciel validé : DPEWIN version V5
+Référence du logiciel validé : DPEWIN version V4
+Référence du logiciel validé : Imm'PACT DPE Version 7A
+Référence du logiciel validé : AnalysImmo DPE 2021 4.1.1
+```
+
+Le rapport **déclare lui-même le générateur qui l'a produit**, et souvent la
+version de la méthode de calcul qui va avec — « 3CL-DPE2021 (Moteur V1.4.25.1) »
+contre « 3CL-DPE, version 1.3 ».
+
+C'est décisif, parce que **presque tout le reste dépend du générateur** : le
+catalogue des six domaines n'existe que chez Liciel, le tableau à colonnes
+entrelacées aussi, les caractères doublés sont propres à Expertec Pro, les
+en-têtes quadruplés à DPEWIN V5, et les DPE d'avant 2021 n'ont ni schéma des
+déperditions ni « description isolation ».
+
+**On lit donc cet encart d'abord, et il dit comment lire les autres.**
+
+---
+
 ## Ce qui ressort de la lecture
 
 **L'information importante ne vit pas là où on la cherche d'instinct.** La
