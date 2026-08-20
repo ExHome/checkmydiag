@@ -380,7 +380,19 @@ Le §25 de la Constitution rend ce chapitre obligatoire.
    son texte — ils vivent dans cette image. C'est la seule façon d'afficher les
    vrais pourcentages sans en inventer un seul.
 
-6. **La capture d'écran du volet est intermittente**, ce qui a laissé passer le
+6. **Un constat de termites vivants pourrait passer inaperçu.**
+   `zonesTermites()` ne cherche que « présence d'indices ». Le formulaire des
+   rapports énumère pourtant « Présence de termites vivants » comme premier
+   constat possible. Aucun dossier de l'échantillon (26 volets) n'en constate,
+   donc le risque n'est pas observé — mais il n'est pas fermé non plus.
+
+   *Piège de lecture à retenir :* dans un volet termites, les lignes qui
+   commencent par un tiret sont **le formulaire** — ce que le diagnostiqueur
+   doit chercher — et non ses constats. Les compter revient à annoncer des
+   termites à tous les logements, exactement comme les six domaines de l'arrêté
+   annonçaient six anomalies aux installations saines.
+
+7. **La capture d'écran du volet est intermittente**, ce qui a laissé passer le
    dégradé noir et la liste affichée deux fois. Le contournement — rendre le SVG
    en PNG hors navigateur — ne couvre pas le HTML.
 
