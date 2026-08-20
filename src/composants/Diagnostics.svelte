@@ -1044,7 +1044,9 @@
                   on n'ampute pas.
                 -->
                 {@const chef = chiffreChef(d)}
-                {@const suite = d.faits.filter((f) => f !== chef).slice(0, 3)}
+                {@const autres = d.faits.filter((f) => f !== chef)}
+                {@const suite = autres.slice(0, 3)}
+                {@const reste = autres.slice(3)}
                 <section class="etape" aria-labelledby="et-savoir-{d.type}">
                   <h4 id="et-savoir-{d.type}" class="titre-etape">Ce qu’il faut savoir</h4>
 
@@ -1071,6 +1073,55 @@
                             <li>
                               <b>{fait.valeur}</b>
                               <span>{fait.libelle}</span>
+                            </li>
+                          {/each}
+                        </ul>
+                      {/if}
+
+                      <!--
+                        ═══════════════════════════════════════════════════════
+                        CE QUI ÉTAIT JETÉ.
+                        ═══════════════════════════════════════════════════════
+
+                        `.slice(0, 3)` ne cachait pas les faits suivants : il
+                        les SUPPRIMAIT. Le commentaire au-dessus promettait
+                        « on hiérarchise, on n'ampute pas » — et le code
+                        amputait.
+
+                        MESURE SUR 231 VOLETS RÉELS DU CORPUS :
+
+                          846 faits produits par les analyseurs
+                          602 affichés  (71 %)
+                          244 JETÉS     (29 %)
+
+                        Les plus souvent perdus, sur le seul DPE :
+
+                          « Coût annuel estimé »          30 fois
+                          « Valable jusqu'au »            35 fois
+                          « Établi le »                   35 fois
+                          « Réformes depuis ce diagnostic » 36 fois
+                          « Par où la chaleur s'en va »   32 fois
+                          « N° ADEME »                    28 fois
+                          « Ventilation »                 13 fois
+
+                        Le COÛT ANNUEL EN EUROS — le seul chiffre qu'un
+                        non-spécialiste sait lire — était extrait du rapport
+                        puis jeté. Et « Valable jusqu'au » aussi : quelqu'un
+                        pouvait signer sans savoir que son diagnostic était
+                        périmé.
+
+                        Ils descendent maintenant sous le repli au lieu de
+                        disparaître. « L'exhaustivité appartient au système,
+                        pas au premier écran » — mais elle appartient AU
+                        SYSTÈME, et il faut donc qu'elle y soit.
+                      -->
+                      {#if reste.length && modeDe(d.type) === 'detaille'}
+                        <ul class="chiffres-suite reste">
+                          {#each reste as fait (fait.libelle)}
+                            <li>
+                              <b>{fait.valeur}</b>
+                              <span>{fait.libelle}</span>
+                              {#if fait.precision}<em>{fait.precision}</em>{/if}
                             </li>
                           {/each}
                         </ul>
@@ -2345,6 +2396,22 @@
   .non-essaye b {
     font-weight: 700;
     font-variant-numeric: tabular-nums;
+  }
+
+  /* Les faits qui descendent sous le repli. Meme famille que les trois
+     premiers, separes par un filet : ce sont les memes chiffres du rapport,
+     pas une categorie a part. */
+  .chiffres-suite.reste {
+    margin-top: var(--e3);
+    padding-top: var(--e3);
+    border-top: 1px solid var(--trait);
+  }
+
+  .chiffres-suite.reste em {
+    display: block;
+    font-style: normal;
+    font-size: var(--t-micro);
+    color: var(--n3, var(--sur-fond-doux));
   }
 
   .du-rapport {
