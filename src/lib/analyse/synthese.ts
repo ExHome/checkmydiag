@@ -43,9 +43,27 @@ export interface BlocSynthese {
   lignes: string[];
 }
 
-/** Pied de page du diagnostiqueur, répété sur chaque page. */
+/**
+ * Pied de page du diagnostiqueur, répété sur chaque page.
+ *
+ * La raison sociale ne suffit pas à en faire un : la conclusion de l'état des
+ * risques commence par « L'Etat des Risques délivré par SARL DGLM EXPERTISES en
+ * date du… », et cette ligne-là est du texte, pas un ourlet de page. Filtrée,
+ * elle emportait avec elle le début de la conclusion, qui se recollait au volet
+ * précédent.
+ *
+ * Un vrai pied de page porte des coordonnées : un RCS, un téléphone, un numéro
+ * d'assurance. On exige donc une de ces marques-là, ou deux marques faibles
+ * ensemble — la raison sociale accompagnée du reste de l'en-tête commercial.
+ */
+const COORDONNEES = /RCS|Tél\.?\s*:|MMA \d|num[ée]ro de police/i;
+const ENTETE_COMMERCIAL = /SARL|S\.A\.S|assurance|\d{5}\s+[A-ZÉÈÀ]{3,}/;
+
 function estPiedDePage(ligne: string): boolean {
-  return /RCS|Tél\.?\s*:|SARL|S\.A\.S|assurance|MMA \d/i.test(ligne) && ligne.length < 140;
+  if (ligne.length >= 140) return false;
+  if (COORDONNEES.test(ligne)) return true;
+  const faibles = (ligne.match(new RegExp(ENTETE_COMMERCIAL, 'g')) ?? []).length;
+  return faibles >= 2;
 }
 
 /**
@@ -91,8 +109,35 @@ export function estFormulaire(texte: string): boolean {
 }
 
 /**
+ * De quel diagnostic cette ligne ouvre-t-elle la conclusion ?
+ *
+ * On ne regarde que le DÉBUT de la ligne : c'est là que le tableau de synthèse
+ * pose le nom de la prestation, ou que la conclusion s'annonce elle-même
+ * (« L'Etat des Risques délivré par… »). Plus loin dans la phrase, un nom de
+ * diagnostic n'ouvre rien — la conclusion de l'état des risques cite les
+ * argiles et la sismicité sans changer de sujet.
+ */
+function ouvertureDe(ligne: string): TypeDiag | null {
+  const debut = normalise(ligne).slice(0, 60);
+  return SIGNATURES.find((s) => s.motif.test(debut))?.type ?? null;
+}
+
+/**
  * Recolle les lignes en phrases complètes, après avoir retiré les intitulés de
  * colonne qui s'intercalent.
+ *
+ * Le recollage s'arrête au point final — sauf que **le tableau de synthèse n'en
+ * met pas**. Ses cellules sont des bouts de phrase posés côte à côte, et la
+ * conclusion de l'électricité, qui s'arrête sur « ne comporte aucune anomalie »
+ * sans ponctuation, se voyait recoller tout l'état des risques qui la suivait :
+ * arrêté préfectoral, sismicité, argiles, trois cents caractères. La phrase
+ * géante contenait « électricité » avant « état des risques », et c'est le
+ * premier motif trouvé qui l'emportait — d'où un verdict électrique qui parlait
+ * de préfecture. Neuf verdicts sur trois cent trente-deux.
+ *
+ * On ferme donc aussi la phrase quand la ligne suivante OUVRE la conclusion
+ * d'un autre diagnostic. Deux cellules voisines d'un tableau restent deux
+ * conclusions distinctes, même sans point pour les séparer.
  */
 function phrases(lignes: string[]): string[] {
   const utiles = lignes
@@ -101,11 +146,26 @@ function phrases(lignes: string[]): string[] {
 
   const res: string[] = [];
   let courante = '';
+  let typeCourant: TypeDiag | null = null;
+
   for (const ligne of utiles) {
+    const ouvre = ouvertureDe(ligne);
+    // Changement de prestation : la cellule précédente est finie, même si rien
+    // ne la ponctue. On exige que la phrase en cours dise déjà quelque chose,
+    // pour ne pas couper sur un intitulé isolé.
+    if (courante.length > 40 && ouvre && typeCourant && ouvre !== typeCourant) {
+      res.push(courante.replace(/\s+/g, ' ').trim());
+      courante = '';
+      typeCourant = null;
+    }
+
     courante = courante ? `${courante} ${ligne.trim()}` : ligne.trim();
+    if (!typeCourant) typeCourant = ouvre;
+
     if (/[.!?]\s*$/.test(ligne.trim())) {
       res.push(courante.replace(/\s+/g, ' ').trim());
       courante = '';
+      typeCourant = null;
     }
   }
   if (courante) res.push(courante.replace(/\s+/g, ' ').trim());

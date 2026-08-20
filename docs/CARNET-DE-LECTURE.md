@@ -2614,3 +2614,97 @@ en regardant par hasard le résultat d'une commande de routine. **Le hasard n'es
 pas une méthode.** D'où le test, qui tournera à chaque fois.
 
 ---
+
+## 59 · Un verdict électrique qui parlait de préfecture
+
+Sur la fiche du produit, en toutes lettres :
+
+> **Électricité** — L'installation intérieure d'électricité ne comporte aucune
+> anomalie 06/01/2025 fait apparaître que la commune dans laquelle se trouve le
+> bien fait l'objet d'un arrêté préfectoral n°33-2019-07-23-004 en date du
+> 23/07/2019 en matière d'obligation d'Information Acquéreur Locataire sur les
+> Risques Naturels, Miniers et Technologiques…
+
+Trois cents caractères, coupés net par l'abrègement. Le verdict était juste au
+début, et devenait du charabia — un lecteur qui voit ça doute de toute la fiche.
+
+**Mesuré : 9 verdicts sur 334, tous en électricité.**
+
+### Le tableau de synthèse ne ponctue pas ses cellules
+
+C'est toute l'explication. Le recollage des lignes en phrases s'arrête au point
+final ; le tableau n'en met aucun :
+
+```
+Prestations   Conclusion
+Électricité   L'installation intérieure d'électricité ne comporte aucune anomalie
+              L'Etat des Risques délivré par SARL DGLM EXPERTISES en date du
+              06/01/2025 fait apparaître que la commune dans laquelle se trouve
+              …
+Etat des Risques et          ← l'intitulé de la prestation n'arrive qu'ICI,
+des argiles (L.132-4…)          six lignes plus bas, coupé en deux par le texte
+Pollutions                      de sa propre conclusion
+```
+
+Les deux conclusions n'en faisaient qu'une, et cette phrase géante contenait
+« électricité » avant « état des risques ». Le premier motif trouvé l'emportait.
+
+**Corrigé** : on ferme aussi la phrase quand la ligne suivante **ouvre** la
+conclusion d'un autre diagnostic — l'ouverture se cherchant dans les soixante
+premiers caractères seulement, car plus loin un nom de diagnostic ne commence
+rien : la conclusion de l'état des risques cite les argiles et la sismicité sans
+changer de sujet.
+
+### Et derrière, un second défaut : la raison sociale prise pour un ourlet
+
+La coupure a bien eu lieu, mais **une ligne trop tard**. Le filtre qui retire le
+pied de page répété reconnaissait « SARL » à lui seul — et la conclusion de
+l'état des risques s'ouvre sur « L'Etat des Risques délivré par **SARL** DGLM
+EXPERTISES en date du ». Sa première ligne était jetée ; le reste, devenu
+orphelin, retombait sur le volet d'avant.
+
+Un vrai pied de page porte des **coordonnées** : un RCS, un téléphone, un numéro
+d'assurance. C'est cela qu'on exige désormais — ou deux marques faibles
+ensemble. La phrase qui ne fait que nommer le cabinet reste.
+
+### Le résultat
+
+| | Avant | Après |
+|---|---|---|
+| Verdicts qui débordent | 9 | **0** |
+| Verdicts de plus de 220 caractères | 46 | **35** |
+| Fiches portant un verdict utile | 329/332 (98 %) | **329/334 (99 %)** |
+
+Deux conclusions ont été **rendues** : elles étaient absorbées par le volet
+voisin et n'existaient nulle part. Électricité, amiante et termites conservent
+leur justesse — vérifié avant/après, à l'identique.
+
+### La leçon
+
+**Un séparateur qu'on croit universel ne l'est que dans le texte suivi.** Le
+point final organise un paragraphe ; il n'organise rien dans un tableau, où la
+mise en page fait le travail que la ponctuation ferait ailleurs. Toute règle de
+recollage doit prévoir ce qui n'est pas de la prose.
+
+---
+
+## 60 · La septième sonde menteuse — et cette fois elle accusait ma propre correction
+
+En contrôlant qu'aucune justesse n'avait régressé, la sonde termites a annoncé
+**six verdicts faux**, tous « rapport = infesté, moteur = sain ».
+
+C'était elle qui se trompait, et pour la raison exacte que le §56 venait de
+corriger dans le moteur : sa règle de vérité cherchait « présence d'indices
+d'infestation » sans exiger « **de termites** ». Elle comptait donc les autres
+agents de dégradation biologique comme des termites — l'erreur que le moteur ne
+fait plus.
+
+**On corrige le produit, et on oublie de corriger l'instrument qui le juge.**
+Après réparation : 26 sur 26.
+
+C'est la septième sonde de ce corpus à accuser le moteur à tort, et la première
+à le faire **parce que le moteur avait progressé**. La garde s'allonge d'un
+cran : quand une correction change une définition, **chercher qui d'autre porte
+l'ancienne**.
+
+---

@@ -76,3 +76,80 @@ describe('page de synthèse', () => {
     ).toBe('alerte');
   });
 });
+
+/**
+ * Le tableau de synthèse ne ponctue pas ses cellules.
+ *
+ * Extrait fidèle de la page 3 d'un DDT de janvier 2025. La conclusion de
+ * l'électricité tient sur une ligne, sans point final ; celle de l'état des
+ * risques la suit immédiatement, et son intitulé de prestation — « Etat des
+ * Risques et / Pollutions » — n'arrive que six lignes plus bas, coupé en deux
+ * au milieu de son propre texte.
+ *
+ * Recollées jusqu'au premier point, ces lignes n'en faisaient qu'une, longue de
+ * trois cents caractères, contenant « électricité » avant « état des risques ».
+ * Le premier motif l'emportait : neuf verdicts électriques sur trois cent
+ * trente-deux parlaient d'arrêté préfectoral.
+ */
+const SYNTHESE_SANS_POINTS = [
+  'Prestations Conclusion',
+  'Électricité L’installation intérieure d’électricité ne comporte aucune anomalie',
+  'L’Etat des Risques délivré par SARL DGLM EXPERTISES en date du',
+  '06/01/2025 fait apparaître que la commune dans laquelle se trouve le bien',
+  'fait l’objet d’un arrêté préfectoral n°33 - 2019 - 07 - 23 - 004 en date du',
+  '23/07/2019 en matière d’obligation d’Information Acquéreur Locataire sur',
+  'les Risques Naturels, Miniers et Technologiques.'
+];
+
+describe('deux cellules voisines restent deux conclusions', () => {
+  const blocs = lireSynthese(SYNTHESE_SANS_POINTS);
+
+  it('rend à l’électricité sa seule conclusion', () => {
+    const elec = conclusionDe(blocs, 'electricite');
+    expect(elec).toMatch(/ne comporte aucune anomalie/);
+    expect(elec).not.toMatch(/arrêté préfectoral|Risques Naturels/);
+  });
+
+  it('rend à l’état des risques la sienne, qui lui était prise', () => {
+    const erp = conclusionDe(blocs, 'erp');
+    expect(erp).toMatch(/arrêté préfectoral/);
+  });
+
+  it('ne laisse pas le verdict électrique enfler', () => {
+    // Trois cents caractères, c'était la coupure d'abrègement : le verdict
+    // faisait exactement la longueur maximale, signe qu'il débordait.
+    expect(conclusionDe(blocs, 'electricite')!.length).toBeLessThan(120);
+  });
+});
+
+/**
+ * La raison sociale n'est pas un pied de page.
+ *
+ * Le filtre qui retire l'ourlet répété de chaque page reconnaissait « SARL »
+ * seul. Or la conclusion de l'état des risques s'ouvre sur « L'Etat des Risques
+ * délivré par SARL DGLM EXPERTISES en date du… » : sa première ligne était
+ * jetée, et le reste de la phrase, devenu orphelin, se recollait au volet
+ * précédent.
+ */
+describe('le pied de page et ce qui lui ressemble', () => {
+  const vraiPied = [
+    'Prestations Conclusion',
+    'Électricité L’installation intérieure d’électricité ne comporte aucune anomalie',
+    'SARL DGLM EXPERTISES |76 COURS PORTAL 33000 BORDEAUX| Tél. : 06.72.70.03.38',
+    'RCS : Bordeaux B 891 287 070 | MMA 114.231.812'
+  ];
+
+  it('retire l’ourlet répété de chaque page', () => {
+    const elec = conclusionDe(lireSynthese(vraiPied), 'electricite');
+    expect(elec).not.toMatch(/RCS|COURS PORTAL|MMA/);
+  });
+
+  it('garde la phrase qui ne fait que nommer le cabinet', () => {
+    const blocs = lireSynthese([
+      'Prestations Conclusion',
+      'L’Etat des Risques délivré par SARL DGLM EXPERTISES en date du',
+      '06/01/2025 fait apparaître que la commune est concernée par le risque sismique.'
+    ]);
+    expect(conclusionDe(blocs, 'erp')).toMatch(/L’Etat des Risques délivré par/);
+  });
+});

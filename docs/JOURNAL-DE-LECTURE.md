@@ -79,6 +79,16 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
   de rapport s'y sont écrites cette nuit, entre deux commits — le `.gitignore`
   excluait les PDF, pas leur transcription. Bouché, et tenu par un test qui
   regarde ce que git suit réellement, pas ce que le `.gitignore` déclare.
+- **Les verdicts ne débordent plus d'un volet sur l'autre** (§59) : 9 verdicts
+  électriques sur 334 parlaient d'arrêté préfectoral — le tableau de synthèse ne
+  ponctue pas ses cellules, et le recollage allait jusqu'au premier point. Deux
+  défauts corrigés (fermeture au changement de prestation, raison sociale non
+  prise pour un pied de page) ; **0 débordement, et 2 conclusions rendues** à
+  des volets qui n'en avaient plus. Couverture 98 % → **99 %**.
+- **Septième sonde menteuse** (§60) : elle accusait le moteur de six faux
+  termites, en portant encore la définition que le moteur venait d'abandonner.
+  Quand une correction change une définition, chercher qui d'autre porte
+  l'ancienne.
 
 > **Prochain chantier** : la **zone d'arrêté préfectoral** et le **risque
 > mérule**. Le volet termites porte « Situation du bien en regard d'un arrêté
@@ -92,12 +102,12 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 | | Total |
 |---|---|
 | Rapports lus en entier | 9 |
-| Volets lus page à page | 25 |
+| Volets lus page à page | 29 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 6 majeures |
-| Corrections livrées | 34 |
-| Tests de non-régression ajoutés | 90 |
-| Fausses alertes de mes propres sondes, écartées avant annonce | 6 |
+| Corrections livrées | 36 |
+| Tests de non-régression ajoutés | 95 |
+| Fausses alertes de mes propres sondes, écartées avant annonce | 7 |
 | Sondes de justesse écrites | 3 |
 | Notions métier versées au produit | 6 |
 | Fiches versées à la Dropbox | 2 |
