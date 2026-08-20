@@ -1,7 +1,7 @@
 /**
  * « Lumière sur… » — le fil de la marque, décliné écran par écran.
  *
- * La signature du produit est « La lumière sur vos diagnostics », telle qu'elle
+ * La signature du produit est « Lumière sur vos diagnostics », telle qu'elle
  * est gravée dans le logo fourni. Elle se reprend
  * à l'entrée de chaque écran, appliquée à ce qu'on va y lire : lumière sur
  * votre DPE, sur le gaz, sur l'amiante. Le lecteur retrouve la même promesse à
@@ -48,7 +48,7 @@ export function lumiereSur(ecran: Ecran): string {
 }
 
 /** La signature de la marque, telle que la charte l'écrit. */
-export const SIGNATURE = 'La lumière sur vos diagnostics';
+export const SIGNATURE = 'Lumière sur vos diagnostics';
 
 /**
  * LA QUESTION À LAQUELLE L'ÉCRAN RÉPOND.

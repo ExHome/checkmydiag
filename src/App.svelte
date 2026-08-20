@@ -347,7 +347,7 @@
       </span>
       <span class="mot">
         Verrière
-        <span class="signature">La lumière sur vos diagnostics</span>
+        <span class="signature">Lumière sur vos diagnostics</span>
       </span>
     </a>
     <!--

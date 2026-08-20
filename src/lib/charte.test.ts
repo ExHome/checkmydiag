@@ -104,6 +104,42 @@ describe('les couleurs retirées ne reviennent pas', () => {
  * `color: var(--vert-900)`, soit du vert #12463b sous du vert #0a2b23 —
  * 1,42:1. Tous les boutons du produit étaient illisibles au survol.
  */
+/**
+ * LES INVARIANTS DE MARQUE.
+ *
+ * L'ordre de mission maitre du 20/08/2026 n'en laisse que quatre : le logo, le
+ * nom, la signature et le vert Verriere. Tout le reste de l'identite peut etre
+ * detruit et refait — ces quatre-la, non.
+ *
+ * La signature s'ecrit « Lumiere sur vos diagnostics ». SANS ARTICLE : c'est
+ * ainsi qu'elle est composee sur la publicite de marque, sous le logo. Le code
+ * ecrivait « La lumiere sur vos diagnostics » a quatre endroits, y compris dans
+ * le titre de la page. Un article de trop dans une signature de marque n'est pas
+ * un detail de redaction : c'est la marque qui n'est plus la meme.
+ *
+ * Et la signature n'est plus un slogan — elle est devenue le concept UX du
+ * produit (la lumiere revele). Raison de plus pour qu'elle ne derive pas.
+ */
+describe('les invariants de marque', () => {
+  const SIGNATURE = 'Lumière sur vos diagnostics';
+
+  it('ecrit la signature sans article', () => {
+    const fautifs = FICHIERS.concat(['index.html']).filter((f) =>
+      readFileSync(f, 'utf8').includes('La lumière sur vos diagnostics')
+    );
+    expect(fautifs, 'la signature prend un article dans : ' + fautifs.join(', ')).toEqual([]);
+  });
+
+  it('garde la signature exacte dans le module qui la porte', () => {
+    const lumiere = readFileSync('src/lib/lumiere.ts', 'utf8');
+    expect(lumiere).toContain("export const SIGNATURE = '" + SIGNATURE + "';");
+  });
+
+  it('garde le vert Verriere', () => {
+    expect(readFileSync('src/app.css', 'utf8')).toContain('--verriere-vert: #12463b');
+  });
+});
+
 describe('aucun jeton ne ment sur ce qu’il contient', () => {
   const charte = readFileSync('src/app.css', 'utf8');
 

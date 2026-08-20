@@ -27,8 +27,14 @@ Rien d'autre n'est acquis.
 
 **2. Le nom.** Verrière.
 
-**3. La signature — « Lumière sur vos diagnostics ».** Elle n'est plus un slogan.
-**La lumière devient un concept UX**, une mécanique d'interface.
+**3. La signature — « Lumière sur vos diagnostics ».** Sans article : c'est ainsi
+qu'elle est composée sous le logo sur la publicité de marque. Le code écrivait
+« *La* lumière sur vos diagnostics » à quatre endroits, titre de la page compris ;
+un article de trop dans une signature n'est pas un détail de rédaction, c'est la
+marque qui n'est plus la même. Un test l'empêche désormais de revenir.
+
+Et elle n'est plus un slogan : **la lumière devient un concept UX**, une mécanique
+d'interface.
 
 **4. Le vert Verrière `#12463b`.** Territoire de marque. Mais :
 
