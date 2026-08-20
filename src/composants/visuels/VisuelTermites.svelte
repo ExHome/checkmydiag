@@ -65,6 +65,22 @@
   const sondees = $derived(zones ?? []);
   const avecIndices = $derived(sondees.filter((z) => z.etat === 'alerte'));
 
+  /**
+   * LA CASE QU'ON TOUCHE.
+   *
+   * La grille était muette pour un voyant : le nom de la zone n'existait que
+   * dans un `span` réservé aux lecteurs d'écran. On voyait donc une rangée de
+   * carrés colorés sans savoir de quelles pièces il s'agissait — un dessin qui
+   * ne dit rien à celui qui le regarde, et tout à celui qui ne le voit pas.
+   *
+   * Toucher une case la nomme. `ditZone()` écrivait déjà la phrase.
+   */
+  let touchee = $state<number | null>(null);
+
+  /* `sondees[i]` est `ZoneSondee | undefined` sous `noUncheckedIndexedAccess` :
+     on résout la zone ici, une fois, plutôt que d'indexer dans le balisage. */
+  const zoneTouchee = $derived(touchee === null ? null : (sondees[touchee] ?? null));
+
   /*
    * Une zone en alerte l'emporte sur une conclusion « sain ».
    *
@@ -148,11 +164,24 @@
           class:alerte={z.etat === 'alerte'}
           class:attention={z.etat === 'attention'}
           class:neutre={z.etat === 'neutre'}
+          class:touchee={touchee === i}
         >
-          <span class="hors-vue">{ditZone(z)}</span>
+          <button type="button" aria-pressed={touchee === i} onclick={() => (touchee = touchee === i ? null : i)}>
+            <span class="hors-vue">{ditZone(z)}</span>
+          </button>
         </li>
       {/each}
     </ul>
+
+    <!-- La réponse, à une place fixe : sans hauteur réservée, chaque touche
+         pousserait le bilan et les réserves vers le bas. -->
+    <p class="dit-zone" aria-live="polite">
+      {#if zoneTouchee}
+        {ditZone(zoneTouchee)}
+      {:else}
+        <span class="invite">Touchez une case pour savoir quelle zone c’est.</span>
+      {/if}
+    </p>
   {/if}
 
   <p class="bilan">
@@ -324,6 +353,64 @@
    * le sens de la maquette — les cases s'allument en cascade — sans le saut
    * qu'un `animation-delay` sans `fill-mode` provoquerait au démarrage.
    */
+  /* Le bouton remplit sa case : la cible est le carré entier, pas un point au
+     milieu. Il n'apporte aucun style propre — la case garde le sien. */
+  .cases li button {
+    appearance: none;
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    background: none;
+    border: none;
+    border-radius: inherit;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .cases li button:focus-visible {
+    outline: 2px solid var(--u-texte, #f5f1e8);
+    outline-offset: 2px;
+  }
+
+  /* La case touchée : elle sort du lot par un anneau et cesse de respirer —
+     l'animation d'attente n'a plus lieu d'être une fois qu'on l'a choisie. */
+  .cases li.touchee {
+    opacity: 1;
+    transform: scale(1);
+    animation: none;
+    box-shadow: 0 0 0 2.5px var(--u-texte, #f5f1e8);
+  }
+
+  /*
+   * LA RÉPONSE, À UNE PLACE FIXE.
+   *
+   * Réservée d'avance : sans hauteur minimale, chaque touche pousserait le
+   * bilan et les réserves vers le bas, et le lecteur perdrait de vue la case
+   * qu'il vient de toucher.
+   */
+  .dit-zone {
+    min-height: 34px;
+    margin: var(--e3) 0 0;
+    padding: 8px var(--e3);
+    background: color-mix(in srgb, var(--u-texte, #f5f1e8) 8%, transparent);
+    border-radius: var(--rayon-petit);
+    font-size: var(--t-petit);
+    line-height: 1.4;
+    color: var(--u-texte, #f5f1e8);
+  }
+
+  .dit-zone .invite {
+    opacity: 0.72;
+    font-style: italic;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cases li.touchee {
+      transform: none;
+    }
+  }
+
   .cases li {
     position: relative;
     aspect-ratio: 1;
