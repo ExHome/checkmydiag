@@ -670,3 +670,63 @@ Deux éditeurs sur trois excluent explicitement la synthèse de l'acte. Liciel s
 contente de dire qu'elle ne s'utilise pas seule. **La synthèse est une aide à la
 lecture, pas une pièce du dossier** — et c'est une raison de plus d'aller lire le
 volet.
+
+---
+
+## BC2E — deux endroits que personne d'autre ne donne
+
+*Format des plus anciens dossiers DGLM, produit par les cabinets du réseau
+BC2E. Trouvé dans les dossiers clients, pas dans le corpus hors Liciel.*
+
+### La double pagination — le bornage offert par le document
+
+Chaque pied de page porte **deux compteurs à la fois** :
+
+```
+ATTESTATION LOI CARREZ : 1 sur 2      ← position dans le VOLET
+DDT : 4 sur 6                          ← position dans le DOSSIER
+```
+
+Aucun autre éditeur ne fait cela. Le document dit lui-même où commence et où
+finit chaque volet, et combien de pages il compte. C'est **le bornage que la
+découpe cherche à deviner ailleurs** — et de quoi repérer une page manquante.
+
+À comparer à LICIEL, qui annonce sa pagination une seule fois, en tête de volet
+(« le présent rapport est constitué de 11 pages »), et à AnalysImmo, qui écrit
+`ELEC 2 / 11` — la pagination du volet seul.
+
+### L'avertissement sur l'incomplétude du dossier
+
+En page 1, et nulle part ailleurs dans le corpus :
+
+> Seuls les rapports de diagnostics **demandés par le vendeur** ou un mandataire
+> figurent dans le présent dossier. L'existence et le contenu de diagnostics
+> réalisés antérieurement ou par un autre opérateur **ne sont pas connus**. En
+> conséquence, [le cabinet] ne saurait en aucun cas être tenu pour responsable
+> en cas d'**absence d'un ou plusieurs diagnostics**. Il appartient au vendeur de
+> compléter le présent dossier autant que de besoin.
+
+Le diagnostiqueur déclare d'emblée que **le dossier peut être incomplet**, et
+que la charge de le compléter revient au vendeur. C'est la base explicite du
+contrôle de complétude : ce que Verrière signale comme manquant, le rapport
+lui-même prévient qu'il peut l'être.
+
+### Autres traits
+
+**L'attestation sur l'honneur est en page 2**, juste après la garde — chez
+LICIEL elle est en dernière page, après les annexes.
+
+**« PAS D'ACCOMPAGNATEUR » est coupé en deux** par la mise en page : « PAS » sur
+la ligne du champ, « D'ACCOMPAGNATEUR » deux lignes plus bas.
+
+### La réserve sur la synthèse : le compte s'établit
+
+| Éditeur | Ce que dit sa synthèse |
+|---|---|
+| AnalysImmo | « ne pouvant **en aucun cas** être annexé à un acte authentique » |
+| Expertec Pro | « **seuls** les rapports réglementaires complets pourront être annexés » |
+| BC2E | « ne peut remplacer **en aucun cas** les rapports qui doivent être annexés » |
+| LICIEL | « ne peut être utilisée indépendamment du rapport complet » |
+
+**Trois éditeurs sur quatre** excluent explicitement leur synthèse de l'acte.
+LICIEL est l'exception, avec la formule la plus faible.
