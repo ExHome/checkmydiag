@@ -3380,3 +3380,61 @@ ligne du descriptif. Mais il fait perdre du même coup une information qui
 existe.
 
 ---
+
+## 71 · Première implémentation après les cent : savoir qu'on ne peut pas lire
+
+Cent rapports lus d'un seul générateur, puis douze de cinq éditeurs différents.
+Le seuil est passé, et la première chose à graver n'est pas une extraction :
+c'est un **refus de conclure**.
+
+### Ce que l'ancien seuil laissait passer
+
+Le moteur déclarait un document illisible sous **quatre lignes par page**. Ce
+seuil ne repérait que les documents entièrement muets.
+
+Le corpus hors Liciel en portait un autre : un DDT de **soixante-douze pages,
+dont quarante vides**, qui rendait **treize lignes par page** — uniquement les
+en-têtes que le générateur imprime par-dessus l'image. Il passait pour lisible,
+et **cinq volets y étaient détectés**.
+
+C'est exactement le danger : sur un document scanné, chaque volet paraît vide.
+Aucune anomalie électrique, aucun matériau amianté, aucun indice de termites.
+**Le silence de l'extraction se lit comme un rapport sans défaut.**
+
+### Les deux critères, et leurs chiffres
+
+Mesuré sur soixante rapports du corpus DGLM :
+
+| | Valeur |
+|---|---|
+| lignes par page, médiane | 32,1 |
+| lignes par page, 5ᵉ centile | 21,7 |
+| part de pages vides, médiane | 3 % |
+| rapports au-dessus de 30 % de pages vides | **1 sur 60** |
+| rapports sous 12 lignes par page | **2 sur 60** |
+
+D'où les deux seuils : **moins de 12 lignes par page**, ou **30 % de pages vides
+ou plus**.
+
+La part de pages vides est le critère le plus sûr, parce qu'une moyenne se
+laisse relever par une longue annexe réglementaire — et les dossiers bordelais
+en portent jusqu'à 185 pages.
+
+### Le résultat, mesuré des deux côtés
+
+| Corpus | Déclarés illisibles | Lesquels |
+|---|---|---|
+| DGLM, 60 rapports | 2 | un document d'une page à 7 lignes ; un 36 pages à **0,0 ligne/page**, 100 % vide |
+| Hors Liciel, 12 rapports | 1 | le scanné : 72 p., 13,1 lignes/page, **56 % vides** |
+
+Zéro faux positif : aucun rapport lisible n'est écarté, de part et d'autre.
+
+### La leçon
+
+**Un seuil calé sur un seul corpus ne protège que de ce corpus.** Celui de
+quatre lignes par page avait été choisi contre des documents totalement muets,
+et il tenait — jusqu'à ce qu'un autre éditeur produise un scan dont le
+générateur imprime ses propres en-têtes. Il a fallu douze rapports d'ailleurs
+pour voir que la garde ne gardait pas.
+
+---

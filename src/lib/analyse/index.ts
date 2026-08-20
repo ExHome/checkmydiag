@@ -220,8 +220,34 @@ export function analyser(brutes: PageTexte[]): Analyse {
   const { sections, horsSection, synthese, plageSynthese } = decouper(pages);
   const blocs = lireSynthese(synthese);
 
+  /*
+   * Savoir qu'on ne peut pas lire, AVANT de lire.
+   *
+   * Un rapport scanné ne rend presque aucun texte : son contenu est en image.
+   * Le danger n'est pas de ne rien lire, c'est de conclure — chaque volet
+   * paraît alors vide, et le silence de l'extraction se lit exactement comme un
+   * rapport sans défaut. Aucune anomalie électrique, aucun matériau amianté,
+   * aucun indice de termites.
+   *
+   * L'ancien seuil — moins de quatre lignes par page — ne repérait que les
+   * documents entièrement muets. Un DDT scanné de soixante-douze pages, avec
+   * quarante pages vides, en rendait treize par page : il passait pour lisible,
+   * parce que le générateur imprime ses en-têtes par-dessus l'image.
+   *
+   * Deux critères, mesurés sur soixante rapports :
+   *
+   *  - la MOYENNE de lignes par page. Un rapport lisible en donne 32 (médiane),
+   *    et 22 au cinquième centile. Sous 12, il n'y a plus de texte utile :
+   *    deux documents sur soixante y tombent.
+   *  - la PART DE PAGES VIDES, plus sûre qu'une moyenne, qu'une longue annexe
+   *    réglementaire suffit à relever. Un rapport ordinaire a 3 % de pages
+   *    vides ; un seul dépasse 30 %, et c'est le scanné.
+   */
   const lignesTotales = pages.reduce((n, p) => n + p.lignes.length, 0);
-  const illisible = pages.length > 0 && lignesTotales / pages.length < 4;
+  const pagesVides = pages.filter((p) => p.lignes.join('').trim().length < 5).length;
+  const illisible =
+    pages.length > 0 &&
+    (lignesTotales / pages.length < 12 || pagesVides / pages.length >= 0.3);
 
   const diagnostics: Diagnostic[] = [];
   for (const section of sections) {
