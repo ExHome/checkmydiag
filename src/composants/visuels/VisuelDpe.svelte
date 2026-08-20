@@ -594,8 +594,10 @@
   }
 
   /* L'invite s'efface : elle indique un geste, elle ne dit rien du logement. */
+  /* Mesurée 4,38 en `--encre-doux` : sous le seuil. Une invite s'efface, mais
+     elle se lit — sinon personne ne sait qu'il y a un geste à faire. */
   .invite {
-    color: var(--encre-doux);
+    color: var(--n3, var(--encre-doux));
     font-style: italic;
   }
 

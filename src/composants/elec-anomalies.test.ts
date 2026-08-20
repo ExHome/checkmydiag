@@ -30,24 +30,52 @@ const glossaire = readFileSync(
   'utf8'
 );
 
-describe('le coffret électrique', () => {
-  it('refuse de dessiner des groupes sans anomalie annoncée', () => {
-    const i = ecran.indexOf('function pointsDe(');
+describe('la chaîne des barrières', () => {
+  it('ne connaît QUE les relevés, jamais les groupes', () => {
+    /* La garantie est désormais structurelle : la chaîne se construit depuis
+       `d.releves`, et `schema.groupes` n'entre plus nulle part dans l'écran.
+       Le défaut est éliminé à la racine plutôt que gardé par une condition. */
+    const i = ecran.indexOf('function barrieresDe(');
     expect(i).toBeGreaterThan(-1);
-    const corps = ecran.slice(i, ecran.indexOf('\n  }', i));
-    /* La garde doit précéder le `map` : sinon elle ne garde rien. */
-    const garde = corps.indexOf('aDesAnomalies');
-    const dessin = corps.indexOf('.groupes.map');
-    expect(garde).toBeGreaterThan(-1);
-    expect(garde).toBeLessThan(dessin);
-  });
-
-  it('s’appuie sur le total du rapport ET sur les relevés', () => {
-    const i = ecran.indexOf('function pointsDe(');
-    const corps = ecran.slice(i, ecran.indexOf('\n  }', i));
-    expect(corps).toMatch(/total/);
+    /* Une fenêtre fixe : découper à la première accolade fermante indentée
+       s'arrêtait à celle du premier `if`, bien avant la fin de la fonction. */
+    const corps = ecran.slice(i, i + 1600);
     expect(corps).toMatch(/releves/);
     expect(corps).toMatch(/genre === 'anomalie'/);
+    expect(corps).not.toMatch(/groupes/);
+  });
+
+  it('n’affiche plus le coffret à manettes', () => {
+    /* Il tenait ses six manettes de `schema.groupes` : 15 logements sains sur
+       33 en recevaient six, chacune légendée « 3 anomalies ». */
+    expect(ecran).not.toMatch(/<TableauElectrique/);
+  });
+
+  it('ne devine pas une barrière quand le rattachement échoue', () => {
+    /* `mecanismeDe` rend 'general' quand il ne sait pas : on saute, on
+       n'accroche pas l'anomalie à une barrière au hasard. */
+    const i = ecran.indexOf('function barrieresDe(');
+    /* Une fenêtre fixe : découper à la première accolade fermante indentée
+       s'arrêtait à celle du premier `if`, bien avant la fin de la fonction. */
+    const corps = ecran.slice(i, i + 1600);
+    expect(corps).toMatch(/=== 'general'/);
+    expect(corps).toMatch(/continue/);
+  });
+
+  it('n’affirme rien quand la conclusion n’a pas été lue', () => {
+    const i = ecran.indexOf('function barrieresDe(');
+    /* Une fenêtre fixe : découper à la première accolade fermante indentée
+       s'arrêtait à celle du premier `if`, bien avant la fin de la fonction. */
+    const corps = ecran.slice(i, i + 1600);
+    expect(corps).toMatch(/nonLue/);
+    expect(corps).toMatch(/gravite === 'neutre'/);
+  });
+
+  it('signale les points non vérifiés, même quand la conclusion est bonne', () => {
+    /* « Une information non trouvée n'est jamais transformée en information
+       rassurante. » C'est la règle la plus facile à trahir sur un bon rapport. */
+    expect(ecran).toMatch(/nonVerifiesDe/);
+    expect(ecran).toMatch(/non-essaye/);
   });
 });
 

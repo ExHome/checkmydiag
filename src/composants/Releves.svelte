@@ -259,7 +259,9 @@
     font-size: var(--t-petit);
     font-weight: 700;
     letter-spacing: var(--suivi-serre);
-    color: var(--or-clair);
+    /* Mesurée 4,27 en `--or-clair` : son propre fond translucide l'éclaircit et
+       fait tomber le contraste sous le seuil. L'encre pleine tient. */
+    color: var(--n2, var(--sur-fond));
   }
 
   .epingle {

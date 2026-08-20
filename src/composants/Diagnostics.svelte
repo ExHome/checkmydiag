@@ -17,7 +17,6 @@
   import SchemaDuRapport from './schemas/SchemaDuRapport.svelte';
   import Explicatif from './schemas/Explicatif.svelte';
   import VisuelDpe from './visuels/VisuelDpe.svelte';
-  import TableauElectrique from './visuels/TableauElectrique.svelte';
   import VisuelAmiante from './visuels/VisuelAmiante.svelte';
   import VisuelPlomb from './visuels/VisuelPlomb.svelte';
   import VisuelTermites from './visuels/VisuelTermites.svelte';
@@ -30,6 +29,9 @@
   import AVerifier from './AVerifier.svelte';
   import Travaux from './Travaux.svelte';
   import { libelleCourt } from '../lib/libelle';
+  import { mecanismeDe, type Mecanisme } from '../lib/analyse/mecanisme';
+  import { exploration } from '../lib/savoir/pile.svelte';
+  import ChaineBarrieres, { type Barriere } from './visuels/ChaineBarrieres.svelte';
   import { enPratique, FICHES } from '../lib/analyse/fiches';
   import { echeance } from '../lib/echeance';
   import { etiquetteDe } from '../lib/analyse/confiance';
@@ -561,59 +563,6 @@
    * que personne n'a lu.
    */
   /**
-   * ─────────────────────────────────────────────────────────────────────────
-   * ON FABRIQUAIT UNE MAUVAISE NOUVELLE SUR PRESQUE LA MOITIÉ DES DOSSIERS.
-   * ─────────────────────────────────────────────────────────────────────────
-   *
-   * `schema.groupes` n'est pas un compte d'anomalies : c'est un compte
-   * d'OCCURRENCES D'UN MOT dans le volet électricité. Or les six domaines de
-   * l'arrêté du 28 septembre 2017 — coupure d'urgence, différentiel, mise à la
-   * terre, protection des circuits, salle d'eau, matériel vétuste — sont
-   * imprimés dans TOUS les rapports, y compris ceux qui ne relèvent rien.
-   *
-   * MESURE SUR LE CORPUS, 60 dossiers échantillonnés :
-   *
-   *   33 volets électricité
-   *   15 SANS aucune anomalie — et les 15 affichaient six groupes d'anomalies
-   *   33 sur 33 avec un écart entre le total annoncé et la somme des groupes
-   *
-   * Le lecteur d'un logement sain voyait donc six manettes orange, chacune
-   * légendée « 3 anomalies », sous la phrase « le rapport ne relève aucune
-   * anomalie ». Le glossaire enfonçait le clou : « Votre rapport relève une
-   * anomalie sur ce point ».
-   *
-   * C'est l'inverse exact de la règle : on ne transforme jamais une information
-   * — et transformer une bonne nouvelle en mauvaise est le pire sens.
-   *
-   * GARDE D'AFFICHAGE, pas correctif de fond. La vraie réparation est dans
-   * `analyse/securite.ts`, qui doit cesser de compter des mots ; elle relève
-   * d'une autre session. Ici on refuse simplement de dessiner des anomalies
-   * quand le rapport n'en annonce aucune : mieux vaut un coffret muet qu'un
-   * coffret qui ment.
-   */
-  function pointsDe(d: Diagnostic) {
-    if (d.schema?.genre !== 'anomalies') return null;
-
-    const aDesAnomalies =
-      (d.schema.total ?? 0) > 0 || (d.releves ?? []).some((r) => r.genre === 'anomalie');
-    if (!aDesAnomalies) return null;
-
-    return d.schema.groupes.map((g) => ({
-      nom: g.nom,
-      etat: 'anomalie' as const,
-      detail: g.nombre > 1 ? `${g.nombre} anomalies` : '1 anomalie'
-    }));
-  }
-
-  /**
-   * La consommation par poste, telle que le rapport l'imprime.
-   *
-   * Elle vivait dans le schéma depuis toujours et n'atteignait aucun
-   * composant : le dessin des déperditions montrait des ordres de grandeur
-   * nationaux là où le rapport donne les kWh de CE logement. Mesuré sur 50
-   * dossiers : 29 DPE sur 31 les portent, 115 postes dont 111 chiffrés en euros.
-   */
-  /**
    * CET ÉCRAN A-T-IL DÉJÀ MONTRÉ SES LOCALISATIONS ?
    *
    * Deux choses en dépendaient, et elles se contredisaient : le plan du
@@ -640,9 +589,72 @@
     return d.schema?.genre === 'dpe' ? d.schema.postes : null;
   }
 
-  function nombreAnomaliesDe(d: Diagnostic) {
-    return d.schema?.genre === 'anomalies' ? d.schema.total : null;
+  /**
+   * ─────────────────────────────────────────────────────────────────────────
+   * LES BARRIÈRES ENTRE LE COURANT ET LA MAIN.
+   * ─────────────────────────────────────────────────────────────────────────
+   *
+   * Les six domaines de l'arrêté du 28 septembre 2017 ne sont pas six cases à
+   * cocher : ce sont des barrières successives, dans l'ordre où le courant
+   * devrait les franchir pour atteindre quelqu'un. Le différentiel existe parce
+   * que l'isolement peut lâcher ; la terre existe parce que le différentiel a
+   * besoin d'un chemin.
+   *
+   * `mecanismeDe()` accroche chaque anomalie du rapport à sa barrière — c'est
+   * lui qui fait tout le travail, et il existait déjà pour dessiner les fiches
+   * d'anomalie.
+   *
+   * ── Ce qu'on ne sait pas dire, et qu'on n'invente pas ─────────────────────
+   *
+   * L'état « non essayé » demanderait de savoir QUEL point n'a pas pu être
+   * vérifié. `pointsNonVerifies()` le sait, mais l'analyseur aplatit son
+   * résultat dans un fait global — « Points non vérifiés : 1 » — sans le nom du
+   * point. La barrière ne peut donc pas passer en creux, et la réserve sous la
+   * chaîne le dit à sa place. Le report relève de l'analyseur, pas d'ici.
+   *
+   * De même pour « rattrapé » : `domainesConstates().compense` porte le drapeau,
+   * mais il ne franchit pas la frontière du modèle.
+   */
+  const ORDRE_BARRIERES: Mecanisme[] = [
+    'coupure',
+    'differentiel',
+    'terre',
+    'surintensite',
+    'salleDeau',
+    'contactDirect'
+  ];
+
+  function barrieresDe(d: Diagnostic): Barriere[] {
+    const anomalies = (d.releves ?? []).filter((r) => r.genre === 'anomalie');
+
+    /* Une anomalie « enveloppe » — un boîtier cassé — est un contact direct
+       possible : c'est le même danger, et l'arrêté les compte ensemble. */
+    const barriereDe = (m: Mecanisme): Mecanisme => (m === 'enveloppe' ? 'contactDirect' : m);
+
+    const compte = new Map<Mecanisme, number>();
+    for (const r of anomalies) {
+      const m = barriereDe(mecanismeDe('electricite', r.libelle, r.code));
+      if (m === 'general') continue; // rattachement impossible : on ne devine pas
+      compte.set(m, (compte.get(m) ?? 0) + 1);
+    }
+
+    /* Conclusion non lue : on n'affirme rien sur aucune barrière. */
+    const nonLue = d.gravite === 'neutre';
+
+    return ORDRE_BARRIERES.map((m) => {
+      const n = compte.get(m) ?? 0;
+      if (nonLue) return { mecanisme: m, etat: 'nonLue' as const };
+      if (n > 0) return { mecanisme: m, etat: 'percee' as const, nombre: n };
+      return { mecanisme: m, etat: 'rienSignale' as const };
+    });
   }
+
+  /** Le rapport signale-t-il des points qu'il n'a pas pu vérifier ? */
+  function nonVerifiesDe(d: Diagnostic): Fait | undefined {
+    return d.faits.find((f) => /non v[ée]rifi/i.test(f.libelle));
+  }
+
+
 </script>
 
 <svelte:window
@@ -807,13 +819,38 @@
                   <VisuelDpe energie={s.energie} climat={s.climat} finale={s.finale} />
                 {/if}
               {:else if d.type === 'electricite'}
-                {@const points = pointsDe(d)}
-                {#if points}
-                  <TableauElectrique
-                    {points}
-                    nombreAnnonce={nombreAnomaliesDe(d)}
-                    gravite={d.gravite}
-                  />
+                <!--
+                  LA CHAÎNE DES BARRIÈRES REMPLACE LE COFFRET.
+
+                  Le coffret à manettes passait trois paragraphes de commentaire
+                  à expliquer que ce n'était PAS le tableau du logement, puis
+                  l'écrivait sous le dessin : « un module par point de contrôle
+                  de la norme, pas par circuit ». Un dessin qui doit se démentir
+                  lui-même coûte plus qu'il ne rapporte.
+
+                  Et il tenait ses manettes de `schema.groupes`, qui compte des
+                  MOTS : 15 logements sains sur 33 y recevaient six manettes
+                  orange. La chaîne, elle, ne connaît que les relevés — les
+                  vraies lignes d'anomalie du rapport.
+                -->
+                <ChaineBarrieres
+                  barrieres={barrieresDe(d)}
+                  surTouche={(m) => exploration.ouvrir(m)}
+                />
+
+                {#if nonVerifiesDe(d)}
+                  {@const nv = nonVerifiesDe(d)}
+                  <!-- « Une information non trouvée n'est jamais transformée en
+                       information rassurante. » La chaîne ne sait pas QUELLE
+                       barrière n'a pas pu être essayée — l'analyseur aplatit le
+                       nom du point — alors on le dit sous elle, en clair, même
+                       et surtout quand la conclusion est bonne. -->
+                  <p class="non-essaye">
+                    <b>{nv?.valeur}</b>
+                    {Number(nv?.valeur) > 1 ? 'points n’ont pas pu être vérifiés' : 'point n’a pas pu être vérifié'}{nv?.precision
+                      ? ` — ${nv.precision}`
+                      : '.'}
+                  </p>
                 {/if}
               {:else if d.type === 'amiante'}
                 <VisuelAmiante gravite={d.gravite} zones={zonesDe(d)} />
@@ -1479,7 +1516,10 @@
     --n2: var(--u-texte, #f7f6f2);
     --n3: var(--u-texte-doux, #c6cac3);
     --n4: color-mix(in srgb, var(--u-texte, #f7f6f2) 88%, var(--u-fond, #192e1b));
-    --n5: color-mix(in srgb, var(--u-texte, #f7f6f2) 68%, var(--u-fond, #192e1b));
+    /* 68 % donnait 4,36 sur l'univers de l'électricité, le plus clair des onze :
+       sous le seuil AA. Mesuré à 76 % : 5,32 sur l'électricité, et l'écart avec
+       n4 reste lisible sur les dix autres. */
+    --n5: color-mix(in srgb, var(--u-texte, #f7f6f2) 76%, var(--u-fond, #192e1b));
     --n6: var(--u-accent, #99be88);
 
     --fond: var(--u-fond, #0a2b23);
@@ -1885,9 +1925,12 @@
     color: var(--sur-fond-doux);
   }
 
+  /* Mesurée 4,40 en `--alerte` : les couleurs de gravité sont calées pour des
+     éléments graphiques (seuil 3:1), pas pour du texte. Le mot « Périmé » se
+     suffit, et la graisse le porte. */
   .validite.perimee {
-    color: var(--alerte);
-    font-weight: 650;
+    color: var(--n2, var(--sur-fond));
+    font-weight: 800;
   }
 
   .jusqua-fiche.perimee {
@@ -2224,6 +2267,25 @@
    * proportionnels), l'italique (interdite au rapport, réservée à Verrière).
    * Passez la fiche en noir et blanc et floutez-la : les quatre tiennent.
    */
+  /* Ce que le contrôle n'a pas pu essayer. Ce n'est ni une anomalie ni une
+     bonne nouvelle : c'est un trou, et il se voit. */
+  .non-essaye {
+    margin: var(--e3) 0 0;
+    padding: var(--e3) var(--e4);
+    border-left: 3px solid var(--attention);
+    border-radius: 0 var(--rayon) var(--rayon) 0;
+    background: var(--surface);
+    font-size: var(--t-petit);
+    line-height: 1.5;
+    color: var(--sur-fond);
+    max-width: var(--mesure);
+  }
+
+  .non-essaye b {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
   .du-rapport {
     background: var(--papier);
     border-radius: 18px;
