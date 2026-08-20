@@ -47,8 +47,8 @@ const ETIQUETTES: Record<string, string> = {
 describe('l’encre posée sur une étiquette A→G', () => {
   /*
    * La valeur ne vit plus dans le composant : elle est devenue le jeton
-   * `--encre-etiquette` de la charte, parce que deux dessins l'emploient — la
-   * pastille de l'escalier et le badge de classe du schéma des déperditions —
+   * `--encre-etiquette` de la charte, parce que deux dessins l'emploient — les
+   * lettres de la règle A→G et le badge de classe du schéma des déperditions —
    * et qu'une valeur écrite deux fois finit par diverger.
    *
    * Le test lit donc le jeton à sa source, et vérifie que les deux dessins s'en
@@ -68,7 +68,7 @@ describe('l’encre posée sur une étiquette A→G', () => {
   });
 
   it.each([
-    ['la pastille de l’escalier', './VisuelDpe.svelte'],
+    ['la règle du DPE', './RegleDpe.svelte'],
     ['le badge du schéma des déperditions', '../schemas/Deperditions.svelte']
   ])('%s emploie le jeton, pas une couleur', (_quoi, chemin) => {
     const source = readFileSync(new URL(chemin, import.meta.url), 'utf8');
