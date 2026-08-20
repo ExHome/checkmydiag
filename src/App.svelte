@@ -40,6 +40,8 @@
    * sort pas.
    */
   let photo = $state<Photo | null>(null);
+  /** Le schema des deperditions du DPE, decoupe dans sa page. */
+  let schemaDeperditions = $state<Photo | null>(null);
   /** Dossiers déjà analysés, gardés sur l'appareil — PDF compris. */
   let dossiers = $state<DossierGarde[]>([]);
   listerDossiers().then((liste) => (dossiers = liste));
@@ -55,6 +57,7 @@
     nomFichier = garde.nomFichier;
     rendus = new Map();
     photo = null;
+    schemaDeperditions = null;
     analyse = garde.analyse;
     etat = 'resultat';
 
@@ -83,6 +86,7 @@
     nomFichier = 'dossier de démonstration';
     rendus = new Map(); // pas de vrai PDF : pas de page à montrer
     photo = null;
+    schemaDeperditions = null;
     analyse = analyser(pagesExemple());
     etat = 'resultat';
   }
@@ -148,6 +152,7 @@
       // d'attendre pour savoir si c'est grave.
       rendus = new Map();
       photo = null;
+      schemaDeperditions = null;
       analyse = resultat;
       etat = 'resultat';
       // Le rapport lui-même est gardé, pas seulement son analyse : c'est ce qui
@@ -166,6 +171,14 @@
 
       // La photo arrive quand elle peut : le verdict n'attend pas une image.
       void document.photoDuBien().then((p) => (photo = p));
+
+      /*
+       * Le schema des deperditions se decoupe dans sa page, et il arrive de
+       * meme : le dessin de Verriere explique deja le chemin sans lui. Ses
+       * pourcentages sont les seuls chiffres du logement — la page du DPE est
+       * en image, aucun « % » n'y figure en texte.
+       */
+      void document.schemaDeperditions().then((s) => (schemaDeperditions = s));
 
       void dessinerPages(document, resultat);
     } catch (e) {
@@ -426,7 +439,7 @@
       </p>
     {/if}
 
-    <Lecteur {analyse} {rendus} {demande} {photo} />
+    <Lecteur {analyse} {rendus} {demande} {photo} {schemaDeperditions} />
 
     <p class="avertissement">
       {nomFichier} — outil de lecture, sans valeur réglementaire. La référence reste le rapport

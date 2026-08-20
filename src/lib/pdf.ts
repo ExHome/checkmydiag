@@ -312,23 +312,34 @@ export async function ouvrirPdf(
      */
     async schemaDeperditions() {
       try {
+        /*
+         * On cherche la page dans le texte DEJA extrait, pas en relisant.
+         *
+         * Le document de dessin ne doit servir qu'a dessiner : lui demander son
+         * texte le met dans l'etat ou ses rendus ne se terminent jamais — c'est
+         * la raison d'etre des deux documents, et la premiere version de cette
+         * fonction est tombee dedans. Elle restait bloquee indefiniment sur un
+         * rapport de cinquante et une pages.
+         *
+         * Les positions relevees a l'ouverture donnent tout ce qu'il faut : la
+         * page qui porte le titre, et l'ordonnee de ce titre.
+         */
+        const porteuse = pages.find((p) =>
+          p.lignes.some((l) => /Sch[ée]ma des d[ée]perditions/i.test(l))
+        );
+        if (!porteuse) return null;
+
+        const repere = porteuse.positions?.find((l) =>
+          /Sch[ée]ma des d[ée]perditions/i.test(l.texte)
+        );
+
         const doc = await documentDeDessin();
 
-        for (let n = 1; n <= doc.numPages; n++) {
+        for (let n = porteuse.numero; n === porteuse.numero; n++) {
           const page = await doc.getPage(n);
-          const contenu = await page.getTextContent();
-          const items = contenu.items.filter((i) => 'str' in i) as {
-            str: string;
-            transform: number[];
-          }[];
-          const titre = items.find((i) => /Sch[ée]ma des d[ée]perditions/i.test(i.str));
-          if (!titre) {
-            page.cleanup();
-            continue;
-          }
 
           const base = page.getViewport({ scale: 1 });
-          const yTitre = Number(titre.transform?.[5] ?? base.height);
+          const yTitre = repere ? repere.y : base.height;
           const ops = await page.getOperatorList();
 
           let ctm: Matrice = [1, 0, 0, 1, 0, 0];

@@ -34,9 +34,18 @@
     demande?: string | null;
     /** La photo du bien, tirée de la page de garde. */
     photo?: Photo | null;
+    /**
+     * Le schéma des déperditions du DPE, découpé dans sa page.
+     *
+     * Il descend jusqu'à la fiche du DPE : c'est le seul endroit du dossier où
+     * figurent les pourcentages de CE logement — la page est en image, et son
+     * texte ne porte aucun « % ».
+     */
+    schemaDeperditions?: Photo | null;
   }
 
-  const { analyse, rendus, demande = null, photo = null }: Props = $props();
+  const { analyse, rendus, demande = null, photo = null, schemaDeperditions = null }: Props =
+    $props();
 
   type Repere = NonNullable<Diagnostic['reperes']>[number];
 
@@ -494,6 +503,7 @@
         ouvrir={diagOuvert}
         origine={origineIcone}
         demande={demandeNo}
+        {schemaDeperditions}
       />
     </div>
 

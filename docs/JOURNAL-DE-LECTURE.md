@@ -134,8 +134,10 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
   grandeur **nationaux** de l'ADEME, identiques pour tous les dossiers. On
   découpe donc le vrai schéma et on le montre : le lecteur voit ses chiffres,
   le produit n'en invente aucun. Rectangle identique sur 7 pages sur 7.
-  **L'affichage reste à brancher** — il touche des composants qu'une autre
-  session modifie.
+  **L'affichage est branché** (§68) : `SchemaDuRapport` dans la section « Où ? »
+  de la fiche DPE, sous le dessin — celui-ci explique le chemin, celui-là donne
+  la part. Chaîne validée dans le navigateur sur un rapport de 51 pages ; le
+  découpage lui-même reste à voir à l'œil, un onglet masqué ne dessinant pas.
 
 > **Prochain chantier** : le **schéma de déperditions du DPE** — par où la
 > chaleur s'en va, poste par poste, en pourcentages. C'est la page qui explique

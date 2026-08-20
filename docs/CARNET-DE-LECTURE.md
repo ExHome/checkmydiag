@@ -3213,3 +3213,68 @@ donc un navigateur. La sélection du rectangle, elle, l'a été — sept fois su
 sept.
 
 ---
+
+## 68 · Le schéma du rapport est branché — et un onglet caché ne dessine pas
+
+Le §67 avait livré l'extraction sans l'affichage. Il est branché : App →
+Lecteur → Diagnostics → `SchemaDuRapport`, dans la section « Où ? » de la fiche
+DPE, juste sous le dessin de Verrière.
+
+Les deux se répondent, et c'est voulu : **le dessin explique le chemin** — six
+souffles, avec les ordres de grandeur nationaux de l'ADEME, les mêmes pour tous
+les dossiers puisqu'ils viennent d'une table — et **l'image donne la part** de
+ce logement-ci. La légende le dit en une ligne, pour que personne ne les
+confonde.
+
+### Le blocage, et ce qu'il apprend
+
+Première tentative, la fonction ne rendait jamais la main. Cinquante et une
+pages, trente-sept secondes, rien.
+
+**Le premier soupçon était juste sur le principe, faux sur le cas.** Le fichier
+porte, en commentaire, la raison d'être de ses deux documents : *le premier a
+servi à extraire le texte, dans cet état ses rendus ne se terminent pas*. Or
+j'appelais `getTextContent` sur le document de **dessin** — exactement ce que ce
+commentaire interdit. Corrigé : la page se trouve désormais dans le texte déjà
+extrait à l'ouverture, et les positions relevées donnent l'ordonnée du titre.
+Le document de dessin ne sert plus qu'à dessiner, et on n'ouvre qu'une page au
+lieu de cinquante et une.
+
+**Mais le blocage est resté.** Le vrai coupable se voyait en une ligne :
+
+```js
+document.visibilityState  // "hidden"
+```
+
+Un onglet masqué ne dessine pas — `page.render()` n'y rend jamais la main. La
+preuve que ce n'est pas mon code : **`photoDuBien` bloque exactement pareil**,
+dans le même onglet, alors qu'elle est en production depuis des semaines.
+
+### Ce qui est vérifié, et ce qui ne l'est pas
+
+Vérifié **dans le navigateur**, sur un vrai rapport de 51 pages :
+
+```
+page 11 · yTitre 759 · 14 images · CIBLE 43,541 237x210
+```
+
+Le même rectangle qu'en mesure hors ligne, au point près. La chaîne entière —
+trouver la page, lire l'ordonnée du titre, rejouer la pile graphique, écarter le
+fond de page et les pictogrammes, retenir le schéma — fonctionne.
+
+**Non vérifié : le rendu et le découpage eux-mêmes.** Ils exigent un onglet
+visible. Le code en est repris trait pour trait de `photoDuBien`, qui découpe
+correctement en production, mais la reprise d'un code juste n'est pas une
+preuve. À regarder à la première ouverture d'un dossier réel.
+
+### Deux règles pour la prochaine fois
+
+**Un test dans un onglet caché ne teste pas le dessin.** Vérifier
+`document.visibilityState` avant de conclure qu'une fonction de rendu est
+cassée.
+
+**Comparer avec une fonction voisine qui marche coûte trente secondes et
+tranche.** Ici, faire tourner `photoDuBien` sur le même document a déplacé le
+soupçon de mon code vers l'environnement, immédiatement.
+
+---

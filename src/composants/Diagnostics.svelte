@@ -13,6 +13,8 @@
    */
   import type { Analyse, Diagnostic, Fait, TypeDiag } from '../lib/modele';
   import { espacesFrancaises } from '../lib/typographie';
+  import type { Photo } from '../lib/pdf';
+  import SchemaDuRapport from './schemas/SchemaDuRapport.svelte';
   import Explicatif from './schemas/Explicatif.svelte';
   import VisuelDpe from './visuels/VisuelDpe.svelte';
   import TableauElectrique from './visuels/TableauElectrique.svelte';
@@ -97,6 +99,13 @@
      * diagnostic ne déclencherait rien : la valeur n'aurait pas changé.
      */
     demande?: number;
+    /**
+     * Le schéma des déperditions du DPE, découpé dans sa page.
+     *
+     * Il arrive après le reste : le dessin explique déjà le chemin sans lui,
+     * et le verdict n'attend pas une image.
+     */
+    schemaDeperditions?: Photo | null;
   }
 
   const {
@@ -104,7 +113,8 @@
     surVoirDansLeRapport,
     ouvrir = null,
     origine = null,
-    demande = 0
+    demande = 0,
+    schemaDeperditions = null
   }: Props = $props();
 
   /** « page 12 » ou « pages 12 à 18 » — le lecteur y va, il ne devine pas. */
@@ -948,6 +958,23 @@
                     lettre={lettreDe(d)}
                     postes={postesDe(d)}
                   />
+
+                  <!--
+                    Puis le schéma tel qu'il est dans le rapport.
+
+                    Le dessin ci-dessus explique le chemin, avec les ordres de
+                    grandeur nationaux de l'ADEME — les mêmes pour tous les
+                    dossiers, parce qu'ils viennent d'une table. Celui-ci porte
+                    les pourcentages de CE logement, et il est le seul à les
+                    avoir : la page du DPE est composée d'images, et son texte
+                    ne contient aucun « % » — mesuré sur trente et un volets sur
+                    trente et un.
+
+                    Les recopier demanderait de la reconnaissance de caractères ;
+                    un chiffre de déperdition faux vaut moins que pas de chiffre.
+                    On montre donc la page, découpée dans le PDF déposé.
+                  -->
+                  <SchemaDuRapport schema={schemaDeperditions} />
                 {/if}
 
                 <!-- Le plan des parois : ce que le rapport dit de chez vous,
