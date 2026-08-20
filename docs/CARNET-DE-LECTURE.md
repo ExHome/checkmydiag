@@ -2969,3 +2969,111 @@ exploitable (étage, porte, numéro de lot) ; la reconstituer entièrement
 demanderait de rouvrir la porte aux rubriques.
 
 ---
+
+## 64 · Le schéma des déperditions est une image — le rapport le redit en mots
+
+Demande d'Aude : *la liseuse doit prendre en compte le schéma de déperdition du
+DPE*. C'est la page qui explique le classement énergétique et qui oriente les
+travaux : une maison en coupe, une flèche par poste, par où la chaleur s'en va.
+
+**Elle est en image.** Mesuré : **31 volets DPE sur 31 la nomment, aucun ne porte
+le moindre pourcentage dans son texte.** Comme l'étiquette A→G, le schéma est
+dessiné, et rien n'en sortira jamais par extraction.
+
+Mais le rapport dit la même chose ailleurs, en toutes lettres, dans le
+descriptif du logement :
+
+```
+description isolation
+Murs                Mur en béton banché d'épaisseur ≤ 20 cm non isolé donnant sur un local chauffé
+Plancher bas        Dalle béton non isolée donnant sur un local chauffé
+Toiture/plafond     Dalle béton donnant sur l'extérieur (terrasse) avec isolation extérieure
+Portes et fenêtres  Fenêtres battantes métal, double vitrage à isolation renforcée
+```
+
+### Le moteur lisait déjà — pour dessiner, jamais pour parler
+
+Première surprise : `lireIsolation` existe, et elle est bien faite. Elle porte
+même le garde-fou contre les pictogrammes « confort d'été » — cette page liste
+« toiture isolée » et « fenêtres équipées de volets » comme des icônes, cochées
+ou non, et sans ce filtre le produit concluait à une toiture isolée qui ne
+l'était pas.
+
+Écrire un second module aurait été une régression déguisée. Le trou n'était pas
+la lecture, c'était la **restitution** : mesuré, le produit ne disait **en mots
+quel poste est isolé dans aucun des 31 volets**, alors que 24 en ont au moins un
+qui ne l'est pas. L'information n'existait que dans le dessin.
+
+**Un dessin se regarde ; une phrase se retient et se cherche.** Les deux doivent
+dire la même chose.
+
+### Deux trous d'extraction, trouvés en écrivant les tests
+
+**Les murs n'étaient jamais lus — zéro sur trente et un.** Le motif exigeait
+« donnant » ou « d'épaisseur » collé au mot « mur » :
+
+```
+murs? (?:donnant|d'épaisseur|ext)
+```
+
+Or le tableau met l'intitulé de colonne devant sa description, et toute la
+description s'intercale : « **Murs** Mur en béton banché **d'épaisseur** ≤ 20 cm
+non isolé ». Corrigé : **0 → 13**, et les treize sont justifiés par une ligne
+réelle du rapport, vérifié un par un.
+
+**« Avec isolation extérieure » ne comptait pas comme isolé.** Le motif positif
+n'acceptait que l'adjectif — « isolé », « isolée ». Le descriptif, lui, emploie
+presque toujours le substantif : « avec isolation intérieure (réalisée entre
+1989 et 2000) ». Une paroi décrite isolée restait donc « inconnue », donc muette.
+On exige « avec » devant, parce que « isolation » tout court apparaît aussi dans
+l'intitulé de colonne « description isolation », qui ne constate rien.
+
+### Ce que la fiche dit maintenant
+
+> **Par où la chaleur s'en va** : les murs, le plancher et les fenêtres
+> — *la toiture : le rapport la décrit isolée*
+
+Et dans l'explication : « Le rapport décrit les murs, le plancher et les fenêtres
+comme non isolés : c'est par là que part l'essentiel de la chaleur, et c'est ce
+que montre le schéma des déperditions du DPE. »
+
+Les parois dont l'isolation n'a pas pu être lue ne sont comptées ni parmi les
+bonnes ni parmi les mauvaises. **« Non trouvé » n'est pas « non ».**
+
+### Et, deux fois de suite, la même leçon sur mes tests
+
+Mon test posait la ligne de la toiture **raccourcie de mémoire** — sans « donnant
+sur l'extérieur ». Il échouait, et il avait raison d'échouer : sans marque de
+descriptif, le moteur refuse de conclure, et c'est ce refus qui écarte les
+pictogrammes du confort d'été.
+
+C'est la deuxième fois dans la même nuit qu'un test écrit de mémoire échoue là
+où le corpus passe. **Recopier, ne jamais reconstituer.**
+
+---
+
+## 65 · Ce que Verrière ne contrôlera pas : l'homme de l'art
+
+La mesure notariale du §63 avait laissé trois repères à zéro : l'assurance du
+diagnostiqueur (60 rapports sur 70 la portent), sa certification (47), sa
+mention d'impartialité (28).
+
+**Décision d'Aude, le 20/08 : on n'y va pas.** Ce serait mal vu des confrères.
+
+Ce n'est pas un renoncement technique, c'est une frontière de produit, et elle
+se tient. Un outil qui pointe l'assurance ou la certification d'un cabinet se
+lit comme une mise en cause de la profession, pas comme un service à
+l'acquéreur — et le réseau de confrères est le canal par lequel Verrière
+existera.
+
+**Verrière explique le diagnostic, elle ne juge pas le diagnostiqueur.**
+
+La ligne de partage est nette et opérationnelle : les repères qui portent sur le
+**bien** — lot, validité, dates, surfaces, périmètre de repérage — restent
+pleinement dans le périmètre. Ceux qui portent sur **l'homme de l'art** en
+sortent : ni extraits, ni affichés, ni signalés comme manquants.
+
+Le référentiel de lecture porte cette frontière, pour que la mesure ne la
+rouvre pas à chaque passage.
+
+---

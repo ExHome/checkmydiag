@@ -224,7 +224,19 @@ function lireIsolation(lignes: string[]): Isolation {
     for (const ligne of lignes) {
       if (!motifParoi.test(ligne) || !estDescriptif(ligne)) continue;
       if (/non isol[ée]|sans isolation|isolation\s*:?\s*non\b/i.test(ligne)) return 'nonIsole';
-      if (/\bisol[ée]e?s?\b|isolation\s*:?\s*oui\b/i.test(ligne)) vuIsole = true;
+      /*
+       * « avec isolation intérieure » compte, et c'est la formulation du corpus.
+       *
+       * Le descriptif n'écrit presque jamais « toiture isolée » : il écrit
+       * « Dalle béton donnant sur l'extérieur (terrasse) avec isolation
+       * extérieure (réalisée entre 1989 et 2000) ». Le motif n'acceptait que
+       * l'adjectif — « isolé », « isolée » —, si bien qu'une paroi décrite
+       * isolée par un substantif restait « inconnue », donc muette.
+       *
+       * On exige « avec » devant : « isolation » tout court apparaît aussi dans
+       * l'intitulé de colonne « description isolation », qui ne constate rien.
+       */
+      if (/\bisol[ée]e?s?\b|isolation\s*:?\s*oui\b|avec isolation/i.test(ligne)) vuIsole = true;
     }
     return vuIsole ? 'isole' : 'inconnu';
   }
@@ -235,8 +247,22 @@ function lireIsolation(lignes: string[]): Isolation {
       ? 'isole'
       : 'inconnu';
 
+  /*
+   * « Murs » en tête de ligne, parce que c'est ainsi que le tableau les nomme.
+   *
+   * Le descriptif du logement met l'intitulé de la colonne devant sa
+   * description : « Murs Mur en béton banché d'épaisseur ≤ 20 cm non isolé
+   * donnant sur un local chauffé ». L'ancien motif exigeait que « donnant » ou
+   * « d'épaisseur » suive immédiatement le mot « mur » — ce qui n'arrive jamais
+   * dans cette forme, la description s'intercalant entre les deux.
+   *
+   * Resultat : zero mur non isolé lu sur trente et un volets, alors que huit
+   * rapports en décrivent. Le filtre `estDescriptif` reste seul juge de ce qui
+   * constate quelque chose, et il écarte déjà les pictogrammes du confort
+   * d'été.
+   */
   return {
-    murs: etat(/^\s*Mur\s*\d|murs? (?:donnant|d'épaisseur|ext)/i),
+    murs: etat(/^\s*Murs?\b|^\s*Mur\s*\d|murs? (?:donnant|d'épaisseur|ext)/i),
     toit: etat(/plafond|toiture|combles|rampant/i),
     plancher: etat(/plancher (?:bas|haut)?|dalle b[ée]ton/i),
     fenetres
@@ -482,6 +508,52 @@ export function analyserDpe(lignes: string[], plage: [number, number]): Diagnost
     });
   }
 
+  /*
+   * Par où la chaleur s'en va — le schéma des déperditions, dit en mots.
+   *
+   * Le DPE consacre une page entière à un « Schéma des déperditions de
+   * chaleur » : une maison en coupe, une flèche par poste. C'est la page qui
+   * explique le classement et qui oriente les travaux. **Elle est en image** :
+   * trente et un volets sur trente et un la nomment, aucun ne porte le moindre
+   * pourcentage dans son texte, comme l'étiquette A→G.
+   *
+   * Le descriptif du logement, lui, décrit chaque paroi en toutes lettres, et
+   * `lireIsolation` le lit déjà — mais pour dessiner. Mesuré : le produit ne
+   * disait EN MOTS quel poste est isolé dans aucun des trente et un volets,
+   * alors que vingt en ont au moins un qui ne l'est pas.
+   *
+   * Un dessin se regarde ; une phrase se retient et se cherche. Les deux
+   * doivent dire la même chose.
+   */
+  const parois = lireIsolation(lignes);
+  const NOM_PAROI: Record<keyof Isolation, string> = {
+    murs: 'les murs',
+    toit: 'la toiture',
+    plancher: 'le plancher',
+    fenetres: 'les fenêtres'
+  };
+  const nus = (Object.keys(NOM_PAROI) as (keyof Isolation)[]).filter(
+    (k) => parois[k] === 'nonIsole'
+  );
+  const isoles = (Object.keys(NOM_PAROI) as (keyof Isolation)[]).filter(
+    (k) => parois[k] === 'isole'
+  );
+  const enumerer = (l: (keyof Isolation)[]) =>
+    l
+      .map((k) => NOM_PAROI[k])
+      .join(', ')
+      .replace(/, ([^,]*)$/, ' et $1');
+
+  if (nus.length) {
+    faits.push({
+      libelle: 'Par où la chaleur s’en va',
+      valeur: enumerer(nus),
+      precision: isoles.length
+        ? `${enumerer(isoles)} : le rapport les décrit isolés`
+        : 'd’après le descriptif du logement'
+    });
+  }
+
   const reformes = reformesDepuis(dateFrancaise(etabli?.[1]), m.surface);
   const faitReformes = faitDesReformes(reformes);
   if (faitReformes) faits.push(faitReformes);
@@ -490,6 +562,18 @@ export function analyserDpe(lignes: string[], plage: [number, number]): Diagnost
     "Le DPE mesure deux choses : l'énergie que le logement consomme pour cinq usages (chauffage, eau chaude, climatisation, éclairage, ventilation) et le CO₂ qu'il émet. Chacune donne une lettre ; la lettre affichée sur l'annonce est la moins bonne des deux.",
     "Ces chiffres ne dépendent pas de vos habitudes : ils décrivent le bâtiment (isolation, fenêtres, chauffage) pour un usage standardisé. C'est ce qui permet de comparer deux logements entre eux."
   ];
+
+  /*
+   * La phrase qui accompagne le schéma. On ne cite que ce que le descriptif
+   * affirme : une paroi dont l'isolation n'a pas pu être lue n'est comptée ni
+   * parmi les bonnes, ni parmi les mauvaises.
+   */
+  if (nus.length) {
+    explication.push(
+      `Le rapport décrit ${enumerer(nus)} comme non isolé${nus.length > 1 ? 's' : ''} : c’est par là que part l’essentiel de la chaleur, et c’est ce que montre le schéma des déperditions du DPE.` +
+        (isoles.length ? ` ${enumerer(isoles)}, en revanche, ${isoles.length > 1 ? 'sont isolés' : 'est isolé'}.` : '')
+    );
+  }
 
   if (energie && climat) {
     explication.push(

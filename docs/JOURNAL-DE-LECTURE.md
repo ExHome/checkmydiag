@@ -113,13 +113,25 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 - **Neuvième sonde menteuse** : elle annonçait 82 % de restitution pour
   l'assurance en trouvant une phrase de l'ERP sur le coût des assurances. Avec
   un motif large, les valeurs basses sont fiables, les hautes ne le sont pas.
+- **Le schéma des déperditions est dit en mots** (§64) : la page est une image —
+  31 volets sur 31 la nomment, aucun pourcentage dans le texte — mais le
+  descriptif du logement décrit chaque paroi. Le moteur le lisait déjà pour
+  dessiner, jamais pour parler : **0 → 24** volets qui disent par où la chaleur
+  s'en va. Deux trous d'extraction corrigés au passage — les murs (**0 → 13**,
+  tous justifiés) et « avec isolation extérieure », qui ne comptait pas.
+- **L'homme de l'art sort du périmètre** (§65) : assurance, certification et
+  impartialité ne seront ni extraites ni signalées. Verrière explique le
+  diagnostic, elle ne juge pas le diagnostiqueur.
 
-> **Prochain chantier** : les trois repères notariaux encore à zéro —
-> **certification** de l'opérateur (47 rapports sur 70 la portent), **assurance**
-> et sa date de validité (60), **impartialité** (28). Un diagnostic signé par un
-> opérateur non certifié ou non assuré n'a pas la même valeur, et le notaire le
-> vérifie avant tout le reste. Ensuite : le corps du plomb (798 lignes par volet,
-> 4,1 faits), puis la mérule.
+> **Prochain chantier** : le **schéma de déperditions du DPE** — par où la
+> chaleur s'en va, poste par poste, en pourcentages. C'est la page qui explique
+> le classement énergétique et qui oriente les travaux ; le lecteur ne la lit
+> pas. Ensuite : le corps du plomb (798 lignes par volet, 4,1 faits), puis la
+> mérule.
+>
+> **Hors périmètre, décidé le 20/08** : l'assurance du diagnostiqueur, sa
+> certification et sa mention d'impartialité. Verrière explique le diagnostic,
+> elle ne juge pas le diagnostiqueur.
 
 ## Compteurs
 
@@ -129,10 +141,10 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 | Volets lus page à page | 30 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 7 majeures |
-| Corrections livrées | 42 |
-| Tests de non-régression ajoutés | 113 |
+| Corrections livrées | 45 |
+| Tests de non-régression ajoutés | 119 |
 | Fausses alertes de mes propres sondes, écartées avant annonce | 9 |
-| Sondes de justesse écrites | 9 |
+| Sondes de justesse écrites | 13 |
 | Notions métier versées au produit | 6 |
 | Fiches versées à la Dropbox | 2 |
 | Points ouverts au carnet | 16 |
@@ -145,7 +157,7 @@ Ce que « lu » veut dire ici : le volet a été lu page à page, pas survolé.
 |---|---|---|---|
 | Électricité | 3 | **60/60** verdicts justes (contre 17/31) | catalogue démasqué et rendu robuste aux libellés longs |
 | Gaz | 4 | **7/7** verdicts justes (contre 0/3) | rubrique E lue juste ; rubrique G et « installation non alimentée » restent à remonter |
-| DPE | 3 | **2 %** de muets (contre 4 %) | annexes rattachées : 7 volets courts sur 58, contre 58 |
+| DPE | 3 | **2 %** de muets (contre 4 %) , **24/24** déperditions dites | le schéma est une image, le descriptif du logement le redit en mots |
 | ERP | 9 | **1/63** faux risque techno (contre 49/63) ; argile rattrapée **55/55** | le formulaire vierge n'est plus lu comme un constat |
 | Plomb | 2 | **22/22** verdicts justes | le moteur est bon ; la validité du constat positif était fausse, corrigée |
 | Amiante | 6 | **19/19** verdicts justes, **4/4** état de conservation | le corps est lu : matériau, localisation, suite et état ; zéro faux matériau affiché |

@@ -37,19 +37,28 @@ n'importe quel mot finit par apparaître.
 | Date du rapport | 70 | 58 (83 %) |
 | Date de la visite | 70 | 57 (81 %) |
 | Numéro ADEME du DPE | 42 | 28 (67 %) |
-| Périmètre de repérage | 70 | 1 (1 %) |
-| **Certification de l'opérateur** | 47 | **0** |
-| **Assurance et sa validité** | 60 | **0** |
-| **Impartialité et indépendance** | 28 | **0** |
-| **Désignation du lot** | 70 | **0** |
+| **Désignation du lot** | 70 | **68 (97 %)** |
+| **Périmètre de repérage** | 70 | **1 (1 %)** |
 
-Les quatre derniers sont précisément ceux qu'un notaire ouvre en premier : **qui
-a signé, est-il certifié, est-il assuré, et de quel lot parle-t-on.** Le rapport
-les porte tous ; le lecteur n'en dit rien.
+La désignation du lot était à zéro : un rapport qui décrit le mauvais lot ne
+vaut rien, quelle que soit sa qualité. Elle est faite. Le **périmètre de
+repérage** reste le repère notarial le plus vide — il dit ce que la mission
+couvrait, donc ce sur quoi le rapport n'engage pas.
 
-Ils sont donc le chantier suivant, dans cet ordre — la désignation du lot
-d'abord, parce qu'un rapport qui ne décrit pas le bon lot ne vaut rien, quelle
-que soit sa qualité.
+### Ce que Verrière ne contrôle pas, et pourquoi
+
+La mesure a aussi montré que l'**assurance** du diagnostiqueur (60 rapports sur
+70), sa **certification** (47) et sa mention d'**impartialité** (28) figurent au
+rapport sans être restituées.
+
+**On n'y va pas** — décision du 20/08. Un outil qui pointe l'assurance ou la
+certification d'un cabinet se lit comme une mise en cause de la profession, pas
+comme un service à l'acquéreur, et ce serait mal vu des confrères.
+
+**Verrière explique le diagnostic, elle ne juge pas le diagnostiqueur.** Les
+repères qui portent sur le BIEN — lot, validité, dates, surfaces, périmètre —
+restent pleinement dans le périmètre. Ceux qui portent sur l'homme de l'art, non
+: ni extraits, ni affichés, ni signalés comme manquants.
 
 **Trois réflexes distinguent cette posture de la simple extraction** : vérifier
 la **validité** (un diagnostic exact mais périmé ne vaut rien à la signature),
