@@ -18,11 +18,36 @@
 
   import type { Isolation, Lettre } from '../../lib/modele';
 
+  /** La consommation par poste, telle que le rapport l'imprime. */
+  export interface Poste {
+    nom: string;
+    kwh: number;
+    cout?: string;
+  }
+
   const {
     type,
     isolation = null,
-    lettre = null
-  }: { type: TypeDiag; isolation?: Isolation | null; lettre?: Lettre | null } = $props();
+    lettre = null,
+    postes = null
+  }: {
+    type: TypeDiag;
+    isolation?: Isolation | null;
+    lettre?: Lettre | null;
+    /**
+     * LES CHIFFRES DU LOGEMENT, ENFIN TRANSMIS.
+     *
+     * `d.schema.postes` porte la consommation par poste — chauffage, eau
+     * chaude, éclairage, auxiliaires — avec les kWh et le coût annuel que le
+     * rapport imprime. Mesuré sur 50 dossiers : 29 DPE sur 31 en portent, soit
+     * 115 postes dont 111 avec leur fourchette en euros.
+     *
+     * Le schéma des déperditions ne les recevait pas. Il dessinait donc les
+     * mêmes ordres de grandeur nationaux pour tous les dossiers, alors que le
+     * rapport donne les chiffres de CE logement.
+     */
+    postes?: Poste[] | null;
+  } = $props();
 
   // Le schéma parle du logement du lecteur, pas d'une maison en général.
   const TITRES: Partial<Record<TypeDiag, string>> = {
@@ -44,7 +69,7 @@
   <section class="explicatif">
     <h3>{titre}</h3>
     {#if type === 'dpe'}
-      <Deperditions {isolation} {lettre} />
+      <Deperditions {isolation} {lettre} {postes} />
     {:else if type === 'plomb'}
       <ChainePlomb />
     {:else if type === 'electricite'}

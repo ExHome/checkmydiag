@@ -550,6 +550,18 @@
     }));
   }
 
+  /**
+   * La consommation par poste, telle que le rapport l'imprime.
+   *
+   * Elle vivait dans le schéma depuis toujours et n'atteignait aucun
+   * composant : le dessin des déperditions montrait des ordres de grandeur
+   * nationaux là où le rapport donne les kWh de CE logement. Mesuré sur 50
+   * dossiers : 29 DPE sur 31 les portent, 115 postes dont 111 chiffrés en euros.
+   */
+  function postesDe(d: Diagnostic) {
+    return d.schema?.genre === 'dpe' ? d.schema.postes : null;
+  }
+
   function nombreAnomaliesDe(d: Diagnostic) {
     return d.schema?.genre === 'anomalies' ? d.schema.total : null;
   }
@@ -769,7 +781,12 @@
                 n'en ont pas, l'explicatif reste ici : il est alors LE schéma.
               -->
               {#if !A_UN_VISUEL.includes(d.type)}
-                <Explicatif type={d.type} isolation={isolationDe(d)} lettre={lettreDe(d)} />
+                <Explicatif
+                  type={d.type}
+                  isolation={isolationDe(d)}
+                  lettre={lettreDe(d)}
+                  postes={postesDe(d)}
+                />
               {/if}
             </div>
 
@@ -912,6 +929,27 @@
                   />
                 {/if}
 
+                <!--
+                  « PAR OÙ LA CHALEUR PART DE CHEZ VOUS » EST UNE QUESTION DE LIEU.
+
+                  Le schéma des déperditions vivait dans « Pourquoi ? », qui est
+                  une section repliée : à l'ouverture d'une fiche DPE, il fallait
+                  appuyer sur « Tout le détail » pour le voir. Or son titre pose
+                  une question d'endroit, et la cliente le dit « hyper
+                  important ».
+
+                  Il remonte donc ici, dans la section « Où ? », qui ne se replie
+                  pas — c'est celle des données du rapport.
+                -->
+                {#if d.type === 'dpe'}
+                  <Explicatif
+                    type={d.type}
+                    isolation={isolationDe(d)}
+                    lettre={lettreDe(d)}
+                    postes={postesDe(d)}
+                  />
+                {/if}
+
                 <!-- Le plan des parois : ce que le rapport dit de chez vous,
                      paroi par paroi. Il descend de la scène jusqu'ici — c'est
                      une réponse à « où ? », pas une illustration d'en-tête. -->
@@ -943,7 +981,7 @@
                 <!-- Le dessin qui explique le mécanisme du contrôle. Il ouvre la
                      réponse plutôt que de la précéder de trois écrans — sauf sur
                      les écrans sans visuel propre, où il tient déjà la scène. -->
-                {#if A_UN_VISUEL.includes(d.type)}
+                {#if A_UN_VISUEL.includes(d.type) && d.type !== 'dpe'}
                   <Explicatif type={d.type} isolation={isolationDe(d)} lettre={lettreDe(d)} />
                 {/if}
 

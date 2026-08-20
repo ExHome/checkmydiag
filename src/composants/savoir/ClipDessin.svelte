@@ -19,7 +19,8 @@
     depuis,
     cote = 'droite',
     libelle,
-    etat = null
+    etat = null,
+    valeur = null
   }: {
     id: string;
     /** Le point : l'extrémité du filet. */
@@ -30,6 +31,18 @@
     /** De quel côté du point s'écrit le libellé. */
     cote?: 'gauche' | 'droite';
     libelle?: string | undefined;
+    /**
+     * LE CHIFFRE DU RAPPORT, SOUS LE LIBELLÉ.
+     *
+     * Un clip ne disait que le nom d'un élément — « Chauffage », « Toiture » —,
+     * donc exactement la même chose d'un dossier à l'autre. Quand le rapport
+     * chiffre cet élément, le chiffre s'écrit ici, sous le nom : c'est ce qui
+     * fait que le dessin parle de CE logement.
+     *
+     * Facultatif par construction : un élément que le rapport ne chiffre pas
+     * garde son seul libellé, et n'affiche rien plutôt qu'un tiret.
+     */
+    valeur?: string | null;
     /**
      * Ce que le rapport déposé dit de cet élément, quand il en dit quelque
      * chose. Le point prend alors sa couleur : le lecteur voit son logement
@@ -84,9 +97,29 @@
 
     <circle cx={x} cy={y} r="9" class="halo" />
     <circle cx={x} cy={y} r="4.5" class="point" />
-    <text {x} y={y + 4} dx={dx} class="etiquette" text-anchor={cote === 'droite' ? 'start' : 'end'}>
+    <text
+      {x}
+      y={valeur ? y - 4 : y + 4}
+      dx={dx}
+      class="etiquette"
+      text-anchor={cote === 'droite' ? 'start' : 'end'}
+    >
       {texte}
     </text>
+    {#if valeur}
+      <!-- Le chiffre passe sous le nom, plus discret : le nom situe, le chiffre
+           précise. L'écart de 19 unités suit la taille du clip — à 22 unités de
+           police, deux lignes plus serrées se toucheraient. -->
+      <text
+        {x}
+        y={y + 15}
+        dx={dx}
+        class="valeur"
+        text-anchor={cote === 'droite' ? 'start' : 'end'}
+      >
+        {valeur}
+      </text>
+    {/if}
   </g>
 {/if}
 
@@ -97,6 +130,15 @@
 
   .prise {
     fill: transparent;
+  }
+
+  /* Le chiffre du rapport : même famille que le libellé, un cran en dessous en
+     graisse et en opacité. Il précise, il ne concurrence pas. */
+  .valeur {
+    font-size: var(--t-clip, 20px);
+    font-weight: 500;
+    fill: var(--or);
+    opacity: 0.92;
   }
 
   .filet {

@@ -22,10 +22,28 @@
   const {
     isolation = null,
     lettre = null,
-    papier = false
+    papier = false,
+    postes = null
   }: {
     isolation?: Isolation | null;
     lettre?: Lettre | null;
+    /**
+     * LA CONSOMMATION PAR POSTE, TELLE QUE LE RAPPORT L'IMPRIME.
+     *
+     * Le schéma dessinait les mêmes ordres de grandeur nationaux pour tous les
+     * dossiers : les épaisseurs de souffle viennent d'une table codée en dur,
+     * et les pourcentages n'étaient écrits que sur le document imprimé. À
+     * l'écran, le dessin ne portait AUCUN chiffre du logement.
+     *
+     * Or le rapport en donne, et le moteur les lisait déjà : chauffage, eau
+     * chaude, éclairage, auxiliaires, en kWh et en euros par an. Mesuré sur 50
+     * dossiers du corpus : 29 DPE sur 31 les portent, 115 postes dont 111 avec
+     * leur fourchette de coût.
+     *
+     * Ils s'attachent aux deux ÉQUIPEMENTS, pas aux parois : un poste dit ce
+     * qui consomme, une paroi dit par où ça part. Les confondre serait faux.
+     */
+    postes?: { nom: string; kwh: number; cout?: string }[] | null;
     /**
      * Le document remis. Sur papier on ne clique pas : l'invitation disparaît,
      * les points cessent d'appeler, et le relevé reprend son rôle — c'est le
@@ -94,6 +112,15 @@
     { notion: 'chauffage', depuis: [201, 268] as [number, number], point: [96, 320] as [number, number], cote: 'gauche' as const },
     { notion: 'eau-chaude', libelle: 'Eau chaude', depuis: [308, 268] as [number, number], point: [404, 320] as [number, number], cote: 'droite' as const }
   ];
+
+  /**
+   * Le relevé : tous les postes du rapport, dans son ordre.
+   *
+   * Ils étaient destinés au dessin ; ils n'y tenaient pas. Ici ils sont à
+   * taille de lecture, alignés en colonnes, et le lecteur peut les comparer
+   * d'un coup d'œil — ce qu'un chiffre posé le long d'un trait ne permet pas.
+   */
+  const postesLus = $derived(postes ?? []);
 
   function etatDe(sortie: Sortie): 'isole' | 'nonIsole' | null {
     if (!isolation || !sortie.paroi) return null;
@@ -222,6 +249,20 @@
 
     <!-- Les filets des équipements : fins, ils ne disent pas une fuite. -->
     {#each EQUIPEMENTS as equipement (equipement.notion)}
+      <!--
+        LES CHIFFRES NE TIENNENT PAS DANS LE CADRE — ILS DESCENDENT.
+
+        Premier essai : « 13 400 kWh/an » écrit sous « Chauffage », dans le
+        dessin. Mesuré à l'écran, il sortait du cadre de 35 unités, et « 4 100
+        kWh/an » de 17. Élargir le viewBox rapetissait tout le reste sous le
+        seuil de lisibilité ; rétrécir le chiffre le rendait illisible — le SVG
+        n'a que 306 px de large, chaque unité vaut 0,54 pixel.
+
+        Les chiffres vont donc dans le relevé, sous le dessin, en HTML : à
+        taille normale, alignés, comparables, et sans contrainte de cadre. Le
+        dessin garde ses libellés et ses couleurs — il montre OÙ, le relevé dit
+        COMBIEN.
+      -->
       <ClipDessin
         id={equipement.notion}
         libelle={equipement.libelle}
@@ -275,12 +316,81 @@
 
   <!-- On ne pose pas une question au lecteur : on lui dit ce que son rapport
        raconte. Le détail se prend sur le dessin. -->
-  <figcaption class="constat">{constat}</figcaption>
+  <figcaption class="constat">
+    {constat}
+
+    <!--
+      LES POSTES QUE LE DESSIN NE PEUT PAS PLACER.
+
+      L'éclairage et les auxiliaires — ventilation mécanique, pompes, circulateurs
+      — consomment sans correspondre à un endroit du dessin. Les accrocher à une
+      paroi serait faux ; les taire priverait le lecteur de chiffres que son
+      rapport imprime.
+
+      Ils prennent donc leur place ici, en toutes lettres, avec leur coût quand le
+      rapport le donne. Rien n'est additionné : ce sont ses lignes, pas notre
+      total.
+    -->
+    {#if postesLus.length}
+      <ul class="autres-postes">
+        {#each postesLus as p (p.nom)}
+          <li>
+            <span class="poste-nom">{p.nom}</span>
+            <span class="poste-kwh">{p.kwh.toLocaleString('fr-FR')} kWh/an</span>
+            {#if p.cout}<span class="poste-cout">{p.cout}</span>{/if}
+          </li>
+        {/each}
+      </ul>
+    {/if}
+  </figcaption>
 </figure>
 
 <style>
   figure {
     margin: 0;
+  }
+
+  /* Les postes hors dessin. Une ligne par poste, le nom à gauche, les chiffres
+     alignés à droite en chasse tabulaire : c'est un relevé, il se compare
+     verticalement. */
+  .autres-postes {
+    list-style: none;
+    margin: var(--e3) 0 0;
+    padding: 0;
+    display: grid;
+    gap: 4px;
+  }
+
+  .autres-postes li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--e2);
+    font-size: var(--t-petit);
+    color: var(--encre);
+  }
+
+  /* Pas de `capitalize` : il met une majuscule à CHAQUE mot et donnait « Eau
+     Chaude », que le rapport n'écrit pas ainsi. Seule la première lettre de la
+     ligne se relève — le reste appartient au rapport. */
+  .poste-nom {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .poste-nom::first-letter {
+    text-transform: uppercase;
+  }
+
+  .poste-kwh {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .poste-cout {
+    font-size: var(--t-micro);
+    color: var(--encre-doux);
+    font-variant-numeric: tabular-nums;
   }
 
   .invite {
