@@ -54,6 +54,35 @@ déperditions ni « description isolation ».
 
 ---
 
+## AVANT TOUT : SAVOIR QU'ON NE PEUT PAS LIRE
+
+Un rapport du corpus hors Liciel est **scanné**. Mesuré :
+
+| Document | Pages | Vides | Quasi vides |
+|---|---|---|---|
+| Imm'PACT (DDT 72 p.) | 72 | **40** | 9 |
+| AnalysImmo (DDT 74 p.) | 74 | 4 | 2 |
+| Expertec Pro (97 p.) | 97 | **0** | 0 |
+
+**Deux tiers de ce document sont illisibles** par extraction de texte : son
+contenu est en image. Ne subsistent que les en-têtes et pieds de page ajoutés
+par le générateur — « Dossier de Diagnostic Technique · Réf : Page 20 / 72 ».
+
+**Le danger n'est pas de ne rien lire, c'est de conclure.** Sur un tel document,
+chaque volet paraît vide : aucune anomalie électrique, aucun matériau amianté,
+aucun indice de termites. Le silence de l'extraction se lit alors exactement
+comme un rapport sans défaut.
+
+**Ce qui doit être fait** : mesurer la densité de texte par page avant toute
+lecture, et **le dire** quand elle s'effondre — « ce rapport est scanné, je ne
+peux pas le lire ». Une page vide n'est pas une page sans anomalie.
+
+C'est le § 23 de l'ordre de mission maître, rencontré en vrai : *ne jamais
+masquer un échec d'extraction, ne jamais présenter une absence comme un
+résultat.*
+
+---
+
 ## Ce qui ressort de la lecture
 
 **L'information importante ne vit pas là où on la cherche d'instinct.** La
