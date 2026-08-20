@@ -491,6 +491,28 @@
    * dit à sa façon. Aucun ne devine, aucun ne remplit : un dessin qui invente
    * ses données ment mieux qu'un paragraphe.
    */
+  /**
+   * Ce type a-t-il un visuel d'identité ?
+   *
+   * Sept écrans ont le leur — l'escalier A→G, le tableau à disjoncteurs, la
+   * paillasse, les tubes, la chaudière, le champ de sondage, la coupe de
+   * terrain. Les autres n'en ont pas, et pour eux l'`Explicatif` EST le schéma
+   * de l'écran.
+   *
+   * Descendre l'explicatif à « Pourquoi ? » sans cette distinction a vidé la
+   * scène de la Carrez : 32 px de haut pour 3 552 px de texte, un écran sans
+   * dessin. Un schéma qui domine, c'est bien ; une scène vide, non.
+   */
+  const A_UN_VISUEL: readonly TypeDiag[] = [
+    'dpe',
+    'electricite',
+    'amiante',
+    'plomb',
+    'gaz',
+    'termites',
+    'erp'
+  ];
+
   function dpeDe(d: Diagnostic) {
     return d.schema?.genre === 'dpe' ? d.schema : null;
   }
@@ -743,8 +765,12 @@
                   · le plan des parois (« ce qu'on a trouvé chez vous ») → OÙ.
 
                 Ne reste ici que le schéma d'identité, celui qui dit dans quel
-                diagnostic on est entré avant tout mot.
+                diagnostic on est entré avant tout mot — et pour les écrans qui
+                n'en ont pas, l'explicatif reste ici : il est alors LE schéma.
               -->
+              {#if !A_UN_VISUEL.includes(d.type)}
+                <Explicatif type={d.type} isolation={isolationDe(d)} lettre={lettreDe(d)} />
+              {/if}
             </div>
 
             <div class="dit">
@@ -915,8 +941,11 @@
                 <h4 id="et-pourquoi-{d.type}" class="titre-etape">Pourquoi&nbsp;?</h4>
 
                 <!-- Le dessin qui explique le mécanisme du contrôle. Il ouvre la
-                     réponse plutôt que de la précéder de trois écrans. -->
-                <Explicatif type={d.type} isolation={isolationDe(d)} lettre={lettreDe(d)} />
+                     réponse plutôt que de la précéder de trois écrans — sauf sur
+                     les écrans sans visuel propre, où il tient déjà la scène. -->
+                {#if A_UN_VISUEL.includes(d.type)}
+                  <Explicatif type={d.type} isolation={isolationDe(d)} lettre={lettreDe(d)} />
+                {/if}
 
                 {#if d.explication.length}
                   <div class="propre-au-rapport">
