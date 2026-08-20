@@ -75,6 +75,75 @@ function identifierBien(pages: PageTexte[], horsSection: string[]): Bien {
   if (dossier?.[1]) bien.numeroDossier = dossier[1].trim();
 
   /*
+   * La designation du lot — le premier repere qu'un notaire ouvre.
+   *
+   * Un rapport qui decrit le mauvais lot ne vaut rien, quelle que soit sa
+   * qualite par ailleurs. Les soixante-dix dossiers mesures la portent tous, et
+   * le lecteur n'en disait rien.
+   *
+   * Elle est annoncee par une phrase, et sa valeur tient sur les lignes qui
+   * suivent — la page de garde etant sur deux colonnes, elle se coupe ou elle
+   * peut :
+   *
+   *     Designation et situation du ou des lot(s) de copropriete :
+   *     Bat. B; Etage RDC; Porte 21; Compl.
+   *     Residence La Paix, Lot numero Non communique
+   *
+   * On recolle donc les deux lignes suivantes en s'arretant a la rubrique
+   * d'apres. « Non communique » se dit tel quel : c'est le rapport qui le dit,
+   * et un lot non communique est une information, pas une absence d'information.
+   */
+  const iLot = source.findIndex((l) =>
+    /D[ée]signation et situation du ou des lot\(?s?\)?\s*de copropri[ée]t[ée]/i.test(l)
+  );
+  if (iLot !== -1) {
+    /*
+     * On garde les lignes qui RESSEMBLENT a une designation, pas celles qui ne
+     * ressemblent pas a une rubrique.
+     *
+     * La difference n'est pas theorique. Une liste noire de rubriques ne peut
+     * pas les prevoir toutes — la page de garde en enchaine une dizaine, et
+     * chacune manquante prolongeait la designation : « Lot numero Non
+     * communique Reperage Amiante avant travaux de ». Une liste blanche, elle,
+     * decrit ce qu'on cherche : un batiment, un etage, une porte, un lot, une
+     * residence, ou la mention qu'il n'y a pas de copropriete du tout.
+     *
+     * Trois lignes de portee, parce que la page de garde etant sur deux
+     * colonnes, la designation se coupe ou elle peut — et une ligne perdue
+     * laissait « , Lot numero 21 » commencer par sa virgule.
+     */
+    /*
+     * « ne fait pas partie » ouvre la liste, et ce n'est pas un detail.
+     *
+     * La phrase de la maison individuelle est coupee en deux par la mise en
+     * page — « Ce bien ne fait pas partie d'une » / « copropriete » — et sans
+     * son debut, la liste blanche ne gardait que le mot « copropriete » seul.
+     * Une designation tronquee de cette facon ne dit pas seulement moins :
+     * elle dit le contraire, puisque la negation est dans la moitie perdue.
+     */
+    const DESIGNATION =
+      /b[âa]t\b|bat\.|[ée]tage|porte|\blot\b|r[ée]sidence|compl\.|copropri[ée]t|niveau|appartement|ne fait pas partie|n[°o]\s*\d/i;
+
+    const suite = [source[iLot + 1] ?? '', source[iLot + 2] ?? '', source[iLot + 3] ?? '']
+      .map((l) => l.trim())
+      .filter((l) => l && DESIGNATION.test(l))
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .replace(/^[,;.\s]+/, '')
+      .trim();
+
+    /*
+     * Onze dossiers sur soixante-dix ne sont pas en copropriete, et le rapport
+     * le dit a cet endroit meme : « Ce bien ne fait pas partie d'une
+     * copropriete. » C'est une information notariale — une maison individuelle
+     * n'a ni lot, ni tantiemes, ni parties communes — et non une absence de
+     * reponse. On la reporte telle quelle, sans chercher un lot qui n'existe
+     * pas.
+     */
+    if (suite.length > 3) bien.lot = suite.slice(0, 120);
+  }
+
+  /*
    * « Type de bien », mais aussi « Type d'immeuble » : c'est ainsi que
    * l'appellent les rapports de repérage, et ils sont dix-sept sur trente à le
    * faire. Les points de conduite qui remplissent la ligne — « Type

@@ -2871,3 +2871,101 @@ pas ce que la fonction retourne : les 23 faux vivaient sur des volets où le
 détail ne s'ouvre jamais.
 
 ---
+
+## 63 · Lire comme un notaire : quatre repères à zéro
+
+Nouvel ordre de mission le 20/08 — *tu es notaire, et tu sais où regarder*. Le
+lecteur doit connaître la carte du dossier avant de l'ouvrir.
+
+Premier travail : mesurer ce qu'un notaire cherche, et ce que le lecteur en dit.
+Sur soixante-dix dossiers, en ne comptant que les **libellés de faits et les
+verdicts** :
+
+| Repère | Dans le rapport | Restitué |
+|---|---|---|
+| Surface (Carrez ou habitable) | 38 | **38 (100 %)** |
+| Validité du diagnostic | 23 | 21 (91 %) |
+| Date du rapport | 70 | 58 (83 %) |
+| Date de la visite | 70 | 57 (81 %) |
+| Numéro ADEME du DPE | 42 | 28 (67 %) |
+| Périmètre de repérage | 70 | 1 (1 %) |
+| **Certification de l'opérateur** | 47 | **0** |
+| **Assurance et sa validité** | 60 | **0** |
+| **Impartialité et indépendance** | 28 | **0** |
+| **Désignation du lot** | 70 | **0** |
+
+Les quatre derniers sont exactement ceux qu'un notaire ouvre en premier : qui a
+signé, est-il certifié, est-il assuré, et de quel lot parle-t-on.
+
+### La neuvième sonde menteuse, et ce qu'elle apprend sur la mesure
+
+La première version de cette mesure annonçait **82 % pour l'assurance**. En
+ouvrant, ce n'était pas l'assurance du diagnostiqueur : c'était une phrase de
+l'état des risques sur le **coût des assurances**, dans un paragraphe
+d'explication.
+
+D'où la règle : **un repère est restitué quand il porte un LIBELLÉ**, pas quand
+son mot apparaît quelque part dans un paragraphe. Et un corollaire utile —
+**avec un motif large, les valeurs basses sont fiables et les hautes ne le sont
+pas** : un motif trop large ne peut que surestimer. Les quatre zéros étaient
+donc solides dès la première mesure ; les 82 % ne l'étaient pas.
+
+### La désignation du lot : 0 → 68 sur 70
+
+Un rapport qui décrit le mauvais lot ne vaut rien, quelle que soit sa qualité.
+
+La difficulté est de mise en page : la page de garde est sur deux colonnes, et
+la désignation se coupe où elle peut.
+
+```
+Désignation et situation du ou des lot(s) de copropriété :
+Bat. B; Etage RDC; Porte 21; Compl.
+Résidence La Paix, Lot numéro Non communiqué
+```
+
+**Une liste noire de rubriques ne tient pas.** Première tentative : prendre les
+trois lignes suivantes en écartant ce qui ressemble à une rubrique. La page de
+garde en enchaîne une dizaine, et chaque rubrique oubliée prolongeait la
+désignation — « Lot numéro Non communiqué **Repérage Amiante avant travaux
+de** ».
+
+**La liste blanche tient.** On garde les lignes qui ressemblent à une
+désignation : bâtiment, étage, porte, lot, résidence, niveau, appartement. On
+décrit ce qu'on cherche au lieu d'énumérer ce qu'on refuse — c'est la même
+leçon qu'au §62 sur les matériaux amiantés, et elle vaut deux fois.
+
+### Onze maisons individuelles, et une négation qui se perdait
+
+Onze dossiers sur soixante-dix ne sont **pas** en copropriété, et le rapport le
+dit à cet endroit même. Ma sonde les avait classés « suspects » parce que le mot
+« lot » n'y figure pas : **c'est elle qui avait tort, pas le lecteur.** Une
+maison individuelle n'a ni lot, ni tantièmes, ni parties communes — c'est une
+information notariale, pas une absence de réponse.
+
+Mais la phrase est coupée en deux par la mise en page :
+
+```
+Ce bien ne fait pas partie d'une
+copropriété
+```
+
+La liste blanche ne gardait que la seconde ligne. Résultat : « copropriété »
+tout seul — et **la négation était dans la moitié perdue**. Une désignation
+tronquée de cette façon ne dit pas seulement moins : elle dit le contraire.
+
+C'est le piège de la conclusion amiante du §27, revenu à un troisième endroit.
+**Sur ces rapports, la moitié d'une phrase affirme souvent l'inverse de la
+phrase.**
+
+### Et une leçon sur mes propres tests
+
+Mon test posait la phrase de la maison individuelle **sur une seule ligne**. Il
+passait au vert pendant que le corpus, lui, la coupait en deux. Un test écrit de
+mémoire teste la mémoire ; seul un test tiré du rapport réel teste le rapport.
+
+**Limite connue, assumée** : un fragment de nom de résidence sans marqueur —
+« JARDINS DE SAINTONG » — est écarté par la liste blanche. La désignation reste
+exploitable (étage, porte, numéro de lot) ; la reconstituer entièrement
+demanderait de rouvrir la porte aux rubriques.
+
+---

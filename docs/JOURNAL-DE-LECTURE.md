@@ -103,12 +103,23 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
   affiché.
 - **Huitième sonde menteuse** : deux sondes comptaient la *présence* d'un
   matériau, jamais sa justesse. Un faux matériau compte comme un matériau.
+- **Les repères notariaux sont mesurés** (§63), sous l'ordre de mission « tu es
+  notaire » : sur 70 dossiers, quatre repères sont à **zéro** — certification de
+  l'opérateur (47 rapports le portent), assurance (60), impartialité (28),
+  désignation du lot (70).
+- **La désignation du lot est lue** : **0 → 68 sur 70**, zéro erreur. Une liste
+  noire de rubriques ne tenait pas ; la liste blanche — ce qui ressemble à une
+  désignation — tient. Onze maisons individuelles reconnues comme telles.
+- **Neuvième sonde menteuse** : elle annonçait 82 % de restitution pour
+  l'assurance en trouvant une phrase de l'ERP sur le coût des assurances. Avec
+  un motif large, les valeurs basses sont fiables, les hautes ne le sont pas.
 
-> **Prochain chantier** : le **corps du plomb** — 798 lignes par volet, le plus
-> gros du dossier, pour 4,1 faits. Le tableau des unités de diagnostic donne le
-> local, l'élément, la mesure en mg/cm², la classe et l'état de conservation :
-> c'est la localisation par pièce que l'ordre de mission maître réclame.
-> Ensuite seulement, la mérule.
+> **Prochain chantier** : les trois repères notariaux encore à zéro —
+> **certification** de l'opérateur (47 rapports sur 70 la portent), **assurance**
+> et sa date de validité (60), **impartialité** (28). Un diagnostic signé par un
+> opérateur non certifié ou non assuré n'a pas la même valeur, et le notaire le
+> vérifie avant tout le reste. Ensuite : le corps du plomb (798 lignes par volet,
+> 4,1 faits), puis la mérule.
 
 ## Compteurs
 
@@ -118,10 +129,10 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
 | Volets lus page à page | 30 |
 | Volets et documents lus page à page | 9 |
 | Erreurs de moteur trouvées par la lecture | 7 majeures |
-| Corrections livrées | 40 |
-| Tests de non-régression ajoutés | 108 |
-| Fausses alertes de mes propres sondes, écartées avant annonce | 8 |
-| Sondes de justesse écrites | 6 |
+| Corrections livrées | 42 |
+| Tests de non-régression ajoutés | 113 |
+| Fausses alertes de mes propres sondes, écartées avant annonce | 9 |
+| Sondes de justesse écrites | 9 |
 | Notions métier versées au produit | 6 |
 | Fiches versées à la Dropbox | 2 |
 | Points ouverts au carnet | 16 |

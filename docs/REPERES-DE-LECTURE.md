@@ -1,8 +1,61 @@
 # Points de repère pour lire un rapport de diagnostic
 
 *Adressé à toute session qui lira des rapports du corpus DGLM. Tiré de soixante
-et un relevés du [carnet de lecture](CARNET-DE-LECTURE.md) et de trente-sept
+deux relevés du [carnet de lecture](CARNET-DE-LECTURE.md) et de trente-sept
 rapports lus page à page.*
+
+**Posture** : on lit un dossier de diagnostic comme un notaire lit une pièce
+annexée à un acte — non pour la résumer, mais pour savoir si l'acte peut se
+signer et ce que l'acquéreur achète. Un notaire ne parcourt pas le rapport en
+espérant tomber sur l'essentiel : **il sait où regarder.**
+Voir l'ordre de mission `ODM_REPERES_DE_LECTURE_NOTAIRE.md`.
+
+**Format d'une entrée** — cinq questions, et la cinquième n'est pas facultative :
+
+| | |
+|---|---|
+| **OÙ** | dans quelle rubrique, nommée précisément |
+| **COMMENT** | à quoi on la reconnaît |
+| **VARIANTES** | comment les autres générateurs l'écrivent |
+| **PIÈGES** | ce qui lui ressemble sans en être |
+| **PREUVE** | sur combien de volets c'est mesuré |
+
+*Une entrée sans chiffre n'est pas un repère : c'est une impression.*
+
+---
+
+## Ce qu'un notaire vérifie — et ce que le lecteur en dit aujourd'hui
+
+Mesuré sur soixante-dix dossiers. La colonne « restitué » ne compte que les
+**libellés de faits et les verdicts** — pas les paragraphes d'explication, où
+n'importe quel mot finit par apparaître.
+
+| Repère | Dans le rapport | Restitué |
+|---|---|---|
+| Surface (Carrez ou habitable) | 38 | **38 (100 %)** |
+| Validité du diagnostic | 23 | 21 (91 %) |
+| Date du rapport | 70 | 58 (83 %) |
+| Date de la visite | 70 | 57 (81 %) |
+| Numéro ADEME du DPE | 42 | 28 (67 %) |
+| Périmètre de repérage | 70 | 1 (1 %) |
+| **Certification de l'opérateur** | 47 | **0** |
+| **Assurance et sa validité** | 60 | **0** |
+| **Impartialité et indépendance** | 28 | **0** |
+| **Désignation du lot** | 70 | **0** |
+
+Les quatre derniers sont précisément ceux qu'un notaire ouvre en premier : **qui
+a signé, est-il certifié, est-il assuré, et de quel lot parle-t-on.** Le rapport
+les porte tous ; le lecteur n'en dit rien.
+
+Ils sont donc le chantier suivant, dans cet ordre — la désignation du lot
+d'abord, parce qu'un rapport qui ne décrit pas le bon lot ne vaut rien, quelle
+que soit sa qualité.
+
+**Trois réflexes distinguent cette posture de la simple extraction** : vérifier
+la **validité** (un diagnostic exact mais périmé ne vaut rien à la signature),
+la **complétude** (ce qui manque compte autant que ce qui est écrit), la
+**cohérence entre pièces** (l'adresse du rapport contre celle de l'acte, la
+surface d'un volet contre celle d'un autre, la conclusion contre le corps).
 
 ---
 

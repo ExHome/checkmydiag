@@ -218,6 +218,14 @@ export interface Bien {
   surface?: number;
   numeroDossier?: string;
   dateRepérage?: string;
+  /**
+   * La désignation du lot : bâtiment, étage, porte, numéro de lot.
+   *
+   * Premier repère notarial — un rapport qui décrit le mauvais lot ne vaut
+   * rien, quelle que soit sa qualité par ailleurs. Les soixante-dix dossiers
+   * mesurés la portent tous ; le lecteur n'en disait rien.
+   */
+  lot?: string;
 }
 
 /** Un point du dossier qui mérite d'être vérifié. */
