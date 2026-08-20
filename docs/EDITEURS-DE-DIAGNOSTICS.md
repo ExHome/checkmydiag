@@ -6,13 +6,34 @@ logiciels intégrant la méthode de calcul 3CL-DPE 2021 », à jour au
 **10 juillet 2026**.*
 
 Source : `rt-re-batiment.developpement-durable.gouv.fr`, rubrique
-« DPE / Évaluation des logiciels ». L'arrêté du 31 mars 2021 impose qu'un DPE
-établi avec la méthode 3CL-DPE 2021 le soit **avec un logiciel validé** : cette
-liste est donc close, et elle borne le corpus à couvrir.
+« DPE / Évaluation des logiciels ».
 
 ---
 
-## Les dix logiciels validés au 10.07.2026
+## ⚠️ Cette liste ne borne QUE le DPE
+
+L'arrêté du 31 mars 2021 impose qu'un DPE établi avec la méthode 3CL-DPE 2021 le
+soit **avec un logiciel validé**. Cette obligation ne vaut que pour le DPE.
+
+**Aucun des autres diagnostics n'est soumis à validation de logiciel.** Ni
+l'amiante, ni le plomb, ni les termites, ni le gaz, ni l'électricité, ni l'état
+des risques, ni le mesurage. Leurs rapports peuvent être produits par
+n'importe quel outil — y compris **Word**, comme en atteste un DDT du corpus de
+soixante-six pages généré via Word et iTextSharp.
+
+**Conséquence directe pour la liseuse** : le corpus des formats à savoir lire
+**n'est pas bornable par une liste officielle**. Pour le DPE, la liste
+ci-dessous est close et suffit. Pour tout le reste du dossier, il n'existe
+aucune liste : le catalogue des formes ne peut s'établir que par la lecture.
+
+Un dossier peut d'ailleurs **mélanger les générateurs** : un DPE produit par un
+logiciel validé, et les autres volets par un autre outil. L'encart « Référence
+du logiciel validé » ne renseigne alors que sur le DPE — il ne dit rien de la
+structure des autres volets du même dossier.
+
+---
+
+## Les dix logiciels validés pour le DPE au 10.07.2026
 
 | Logiciel | Éditeur | Rapports lus |
 |---|---|---|
@@ -28,6 +49,11 @@ liste est donc close, et elle borne le corpus à couvrir.
 | DJESERDIAG | TEKIMMO | — |
 
 **Quatre sur dix sont couverts.** Six restent à obtenir.
+
+**LICIEL représente environ 40 % du marché** des diagnostiqueurs — c'est le
+premier éditeur, et c'est celui du corpus DGLM. D'où l'importance de l'épreuve
+hors Liciel : quatre traits que cent de ses rapports faisaient passer pour des
+règles du métier ne valaient que pour lui.
 
 Le périmètre de validation varie d'un logiciel à l'autre — maisons individuelles,
 appartements, immeubles collectifs, échantillonnage, neuf, tertiaire — et
@@ -111,6 +137,28 @@ d'isolation : 10 cm** » — ce que le DPE 2021 ne donne pas.
 
 Un de ses rapports est **scanné** : 40 pages vides sur 72, 13 lignes par page
 d'en-têtes. C'est lui qui a montré que le seuil d'illisibilité ne gardait pas.
+
+---
+
+## Les suites complètes, et les générateurs libres
+
+Les éditeurs se répartissent en trois familles, et seule la première est
+listée officiellement :
+
+**Les suites complètes** — LICIEL, ANALYSIMMO, EXPERTEC, ARGOS et les autres —
+couvrent l'ensemble du dossier : DPE, amiante, plomb, gaz, électricité,
+termites, ERP, mesurage Carrez et Boutin. Ce sont elles qu'on rencontre le plus.
+
+**Les logiciels de DPE seul**, qui ne produisent que ce volet. Le reste du
+dossier vient alors d'ailleurs.
+
+**Les générateurs libres** — Word, traitements de texte, bibliothèques PDF comme
+iTextSharp. Aucune contrainte de forme, aucune validation, et donc **aucune
+structure prévisible**. Le corpus hors Liciel en contient un : un DDT de
+soixante-six pages, DPE compris.
+
+C'est cette troisième famille qui interdit de croire le catalogue des formats
+un jour complet.
 
 ---
 
