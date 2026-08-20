@@ -70,7 +70,10 @@
             {piece}
           </p>
           <ul class="elements">
-            {#each elements as e (e.element + e.classe)}
+            <!-- La clé porte l'INDEX : « A Mur … classe 3 » et « B Mur …
+                 classe 3 » dans la même pièce est un cas normal du CREP, et il
+                 produisait deux clés identiques — donc une erreur Svelte. -->
+            {#each elements as e, i (e.element + e.classe + i)}
               <li>
                 <span class="element">{e.element}</span>
                 <span class="classe classe-{e.classe}">classe {e.classe}</span>

@@ -16,7 +16,7 @@
   import type { Photo } from '../lib/pdf';
   import SchemaDuRapport from './schemas/SchemaDuRapport.svelte';
   import Explicatif from './schemas/Explicatif.svelte';
-  import VisuelDpe from './visuels/VisuelDpe.svelte';
+  import RegleDpe from './visuels/RegleDpe.svelte';
   import VisuelAmiante from './visuels/VisuelAmiante.svelte';
   import VisuelPlomb from './visuels/VisuelPlomb.svelte';
   import VisuelTermites from './visuels/VisuelTermites.svelte';
@@ -585,6 +585,23 @@
     return false; // amiante et termites : leur visuel ne situe rien
   }
 
+  /**
+   * La surface de référence, lue dans les faits du rapport.
+   *
+   * Elle décide des seuils : sous 40 m², l'arrêté du 25 mars 2024 en donne
+   * d'autres. `Schema.dpe` ne la porte pas — VisuelDpe la réclamait déjà en
+   * prop et ne l'a jamais reçue, si bien que toute sa branche « petite
+   * surface » était du code mort à l'écran.
+   *
+   * On la lit donc là où elle est écrite, plutôt que d'attendre un champ.
+   */
+  function surfaceDe(d: Diagnostic): number | null {
+    const f = d.faits.find((x) => /surface de r[ée]f[ée]rence|surface habitable/i.test(x.libelle));
+    if (!f) return null;
+    const m = /([\d]+(?:[.,][\d]+)?)/.exec(f.valeur);
+    return m?.[1] ? Number(m[1].replace(',', '.')) : null;
+  }
+
   function postesDe(d: Diagnostic) {
     return d.schema?.genre === 'dpe' ? d.schema.postes : null;
   }
@@ -816,7 +833,31 @@
               {#if d.type === 'dpe'}
                 {@const s = dpeDe(d)}
                 {#if s}
-                  <VisuelDpe energie={s.energie} climat={s.climat} finale={s.finale} />
+                  <!--
+                    LA RÈGLE REMPLACE L'ESCALIER.
+
+                    L'escalier montrait la lettre. Il ne montrait NI la seconde
+                    note, NI les seuils, NI la distance au seuil — alors que le
+                    DPE est le seul diagnostic du dossier dont le verdict est un
+                    point sur une graduation numérique, avec deux notes dont la
+                    pire commande.
+
+                    Le mécanisme le plus mal compris du DPE — « pourquoi F alors
+                    que je consomme peu ? » — n'existait pour le lecteur que
+                    sous forme d'une phrase à déchiffrer. Sur la règle, une
+                    aiguille est visiblement plus à droite que l'autre.
+
+                    La surface vient des FAITS du rapport : elle commande les
+                    seuils, qui diffèrent sous 40 m² (arrêté du 25 mars 2024).
+                    Poser la graduation générale sur un studio afficherait une
+                    frontière fausse.
+                  -->
+                  <RegleDpe
+                    energie={s.energie}
+                    climat={s.climat}
+                    finale={s.finale}
+                    surface={surfaceDe(d)}
+                  />
                 {/if}
               {:else if d.type === 'electricite'}
                 <!--
@@ -856,7 +897,27 @@
                 <VisuelAmiante gravite={d.gravite} zones={zonesDe(d)} />
               {:else if d.type === 'plomb'}
                 {@const s = plombDe(d)}
-                {#if s}
+                <!--
+                  LA CARTE DES PIÈCES REMPLACE LA PAILLASSE.
+
+                  Les cinq éprouvettes mentaient par mise en page. Leur calcul
+                  de hauteur — `Math.max(PLANCHER, Math.min(1, n / base) *
+                  ECHELLE)` — donne au tube de la classe 0, celui du « rien »,
+                  les deux tiers du dessin : sur un constat réel du corpus,
+                  classe 0 remplie à 0,68 et classe 3 à 0,19, alors que 36
+                  revêtements dégradés déclenchent des travaux obligatoires.
+                  L'œil lisait « majoritairement vert ».
+
+                  Or le CREP est le diagnostic le plus finement localisé du
+                  dossier : il nomme une pièce, un élément, un état. C'est CELA
+                  le visuel d'identité du plomb — pas un histogramme.
+
+                  La paillasse reste disponible pour le document imprimé, où
+                  elle ne prétend rien situer.
+                -->
+                {#if s?.emplacements.length}
+                  <OuEstLePlomb emplacements={s.emplacements} />
+                {:else if s}
                   <VisuelPlomb
                     classes={s.classes}
                     nonMesurees={s.nonMesurees}
