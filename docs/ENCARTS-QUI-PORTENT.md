@@ -273,6 +273,22 @@ existe.
 
 ## TERMITES — 12 volets lus
 
+**Les lettres de rubriques ne sont pas fixes.** Vérifié sur quatre volets :
+
+| | Trois volets sur quatre | Le quatrième |
+|---|---|---|
+| **G** | Ouvrages non examinés | Ouvrages non examinés |
+| **H** | Constatations diverses | **Moyens d'investigation** |
+| **I** | Moyens d'investigation | **Constatations diverses** |
+
+H et I sont permutées. Une lecture qui irait chercher « la rubrique H » y
+trouverait, selon le rapport, une réserve sur ce qui n'a pas été vu — ou la
+description du poinçon et de la hachette.
+
+**C'est la même leçon que pour les pages, appliquée aux lettres : un endroit se
+nomme, il ne se repère ni par sa page, ni par son numéro, ni par sa lettre.**
+Seul l'intitulé tient.
+
 ### A · Situation en regard d'un arrêté préfectoral — **constant**
 
 « Le bien est situé dans une zone soumise à un arrêté préfectoral » ou
