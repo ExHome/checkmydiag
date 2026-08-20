@@ -3278,3 +3278,60 @@ tranche.** Ici, faire tourner `photoDuBien` sur le même document a déplacé le
 soupçon de mon code vers l'environnement, immédiatement.
 
 ---
+
+## 69 · Lectures d'électricité — observations, sans conclusion
+
+**Nouvelle règle, du 20/08 : la structure ne se valide qu'au 100e rapport.**
+Trente-sept sont inscrits au registre. Ce qui suit est donc un relevé
+d'observations, **pas** une description de la structure, et rien n'en est gravé
+dans le code.
+
+La règle s'est justifiée dès le deuxième volet.
+
+### Deux volets électricité lus de bout en bout
+
+| | 24/IMO/0020P (vente, 2024) | 25/IMO/0798N (location, 2025) |
+|---|---|---|
+| Validité annoncée | « durée de validité de 3 ans » | « valable 3 ans pour la vente et 6 ans pour la location » |
+| Anomalie | B7.3 a — enveloppe d'un matériel détériorée | broche de terre non reliée, **compensée** |
+| Libellé propre en annexe | **oui**, avec son code de norme | **non** — l'annexe ne porte que « Photo du Compteur électrique » |
+| § 6 points non vérifiés | Néant | Néant |
+| § 7 devoir de conseil | Néant | **une constatation supplémentaire** |
+| Informations complémentaires | 3 points positifs | 3 points positifs |
+
+### Ce que la deuxième lecture a démenti
+
+Après le premier volet, j'allais poser : *le libellé de l'anomalie se lit en
+annexe photos, jamais dans le tableau du § 5*. Le second volet n'a **pas
+d'annexe de libellés** : son anomalie n'existe que dans le tableau. La règle
+serait tombée au deuxième rapport sur cent.
+
+### Ce que le § 7 porte, et que le tableau ne dit pas
+
+Le second volet écrit, sous « Constatations supplémentaires » :
+
+> Il a été repéré **la présence de connexions de matériel électrique présentant
+> des parties actives nues sous tension** en amont de l'installation électrique.
+
+Des parties nues sous tension — et ce n'est **pas** dans le tableau des
+anomalies du § 5. Le § 7 ajoute :
+
+> Certains points de contrôles n'ont pu être effectués. De ce fait **la
+> responsabilité du propriétaire reste pleinement engagée** en cas d'accident.
+
+À noter aussi : le § 6 déclare « Points de contrôle n'ayant pu être vérifiés :
+Néant » pendant que le § 7 affirme le contraire. Deux parties du même rapport
+qui ne disent pas la même chose — à revoir quand le compte sera fait.
+
+### Les informations complémentaires ne sont pas des anomalies
+
+Les deux volets portent une rubrique « IC. » qui énonce des points **positifs** :
+différentiel 30 mA protégeant l'ensemble, socles à obturateur, puits de 15 mm.
+Les compter parmi les anomalies serait une faute ; les taire en est une autre,
+plus petite — ce sont de bonnes nouvelles, et un diagnostic n'est pas un
+catalogue de problèmes.
+
+**Rien de tout cela n'est implémenté.** Observation consignée, compte à faire :
+soixante-trois lectures avant de conclure quoi que ce soit sur la structure.
+
+---
