@@ -337,12 +337,16 @@ vide** : c'est au vendeur de la remplir, et elle ne l'est jamais.
 
 ## DOSSIER — encarts hors volets
 
-### Page 3 · Résumé de l'expertise — **constant**
+### Résumé de l'expertise — **constant en existence, VARIABLE en position**
 
 Une conclusion par prestation, **en clair**. C'est la source la plus fiable pour
 les conclusions que le formulaire n'arrive pas à trancher.
 
-**Piège** : c'est un tableau, et **un tableau ne ponctue pas ses cellules**. Le
+**Piège 1 — sa position bouge.** Page 3 sur la plupart des dossiers, **page 2**
+sur d'autres. Le chercher à une page fixe le manque ; il se cherche par son
+intitulé, « Résumé de l'expertise n° … ».
+
+**Piège 2 — c'est un tableau, et un tableau ne ponctue pas ses cellules.** Le
 recollage jusqu'au premier point fait déborder la conclusion d'un volet sur le
 suivant.
 
@@ -352,10 +356,16 @@ La pièce qui réunit tout ce qu'un notaire cherche : **certifications par
 prestation** avec leur échéance, **assurance** avec sa validité, **impartialité**,
 moyens. Elle est en dernière page, après les annexes.
 
-### Pages 1-2 · Objet de la mission — **constant, et trompeur**
+### Objet de la mission — **constant, et trompeur**
 
-Le **catalogue des 40 prestations** que le cabinet sait faire. Ce n'est pas le
+Le **catalogue des prestations** que le cabinet sait faire. Ce n'est pas le
 contenu du dossier.
+
+Son contenu varie d'un millésime à l'autre — quarante entrées sur les uns,
+trente-cinq sur les autres, avec des lignes qui apparaissent (« Déchets /
+PEMD », « Performance numérique ») et d'autres qui changent de place. Le
+reconnaître à sa liste exacte ne tient pas ; c'est sa **forme** qui le trahit —
+trois entrées ou plus alignées sur une ligne.
 
 ---
 
