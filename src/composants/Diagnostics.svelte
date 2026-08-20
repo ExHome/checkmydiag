@@ -23,6 +23,7 @@
   import PlanDuLogement from './plans/PlanDuLogement.svelte';
   import MotsExpliques from './MotsExpliques.svelte';
   import Releves from './Releves.svelte';
+  import OuEstLePlomb from './OuEstLePlomb.svelte';
   import AVerifier from './AVerifier.svelte';
   import Travaux from './Travaux.svelte';
   import { libelleCourt } from '../lib/libelle';
@@ -848,9 +849,22 @@
               -->
               <section class="etape" aria-labelledby="et-ou-{d.type}">
                 <h4 id="et-ou-{d.type}" class="titre-etape">Où&nbsp;?</h4>
+
+                <!--
+                  Le plomb sait dire ses pieces, et ne le disait pas.
+
+                  Le moteur relevait deja zone, element et classement, et les
+                  rangeait dans le schema ; aucun composant ne les affichait. Le
+                  lecteur qui demandait « ou ? » lisait « information non
+                  disponible » alors que son rapport la donne, piece par piece.
+                -->
+                {#if d.schema?.genre === 'plomb' && d.schema.emplacements.length}
+                  <OuEstLePlomb emplacements={d.schema.emplacements} />
+                {/if}
+
                 {#if d.releves?.length}
                   <Releves releves={d.releves} page={d.pages[0]} type={d.type} />
-                {:else}
+                {:else if !(d.schema?.genre === 'plomb' && d.schema.emplacements.length)}
                   <p class="reponse-etape sans-donnee">
                     Information non disponible dans le diagnostic&nbsp;: ce rapport
                     ne rattache aucun constat à une pièce ou à un local.
