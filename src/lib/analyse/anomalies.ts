@@ -252,6 +252,115 @@ export function domainesConstates(lignes: string[]): DomaineConstate[] {
   return [...vus.values()].sort((a, b) => a.numero - b.numero);
 }
 
+/**
+ * L'anomalie telle que l'ANNEXE la décrit : son code, son libellé, où, et quoi
+ * faire.
+ *
+ * ## Pourquoi l'annexe, et surtout pas le tableau du § 5
+ *
+ * Le tableau du § 5 met deux colonnes côte à côte, et l'extraction les
+ * entrelace ligne à ligne — le libellé du domaine à gauche, la description de
+ * l'anomalie à droite, chacun coupé où sa colonne s'arrête :
+ *
+ *   L'Enveloppe d'au moins un matériel est manquante ou      ← anomalie
+ *   5. Matériels électriques                                 ← domaine
+ *   détériorée.                                              ← anomalie
+ *   présentant des risques de                                ← domaine
+ *
+ * Une première version a tenté d'y lire la localisation et le geste. Elle a
+ * rendu ceci, sur un dossier réel :
+ *
+ *   Où : « Rez de chaussée - CONDUCTEURS Entrée/séjour/cuisine »
+ *   Demande : « Faire intervenir un ÉLÉMENTS SOUS TENSION - électricien
+ *   qualifié afin de remplacer les matériels PROTECTION MÉCANIQUE DES
+ *   présentant des détériorations »
+ *
+ * Les mots en capitales viennent de la colonne de gauche. Le résultat est du
+ * charabia, et un charabia qui a l'air d'une information : pire que le silence
+ * qu'il remplaçait.
+ *
+ * ## L'annexe, elle, est sur une seule colonne
+ *
+ * En fin de rapport, sous « Annexe - Photos », chaque anomalie est reprise au
+ * propre, avec son code de la norme :
+ *
+ *   Libellé de l'anomalie : B7.3 a L'Enveloppe d'au moins un matériel est
+ *   manquante ou détériorée.
+ *   Remarques : Présence de matériel électrique en place dont l'enveloppe
+ *   présente des détériorations ; Faire intervenir un électricien qualifié afin
+ *   de remplacer les matériels présentant des détériorations (Rez de chaussée -
+ *   Entrée/séjour/cuisine)
+ *
+ * Rien ne s'y intercale : les lignes se recollent sans risque. C'est de là
+ * qu'on lit, et de nulle part ailleurs.
+ */
+export interface AnomalieDetaillee {
+  /** Le code de la norme, quand le rapport le donne : « B7.3 a ». */
+  code: string | null;
+  /** Le libellé normalisé, repris tel quel. */
+  libelle: string;
+  /** « Rez de chaussée - Entrée/séjour/cuisine ». */
+  ou: string | null;
+  /** Le geste demandé, dans les mots du rapport. */
+  geste: string | null;
+}
+
+/** Les pièces et niveaux d'un logement, tels que les rapports les nomment. */
+const NOMME_UNE_PIECE =
+  /rez[- ]de[- ]chauss|[ée]tage|cuisine|s[ée]jour|chambre|salle (?:de bain|d['’]eau)|salon|cave|garage|entr[ée]e|couloir|combles|d[ée]gagement|buanderie|palier|\bwc\b|toilette|terrasse|balcon|cellier|grenier|sous[- ]sol/i;
+
+export function anomaliesDetaillees(lignes: string[]): AnomalieDetaillee[] {
+  const trouvees: AnomalieDetaillee[] = [];
+
+  for (let i = 0; i < lignes.length; i++) {
+    if (!/Libell[ée] de l['’]anomalie\s*:/i.test(lignes[i] ?? '')) continue;
+
+    /*
+     * Le bloc court jusqu'à l'anomalie suivante, ou jusqu'à la fin de l'annexe.
+     * Douze lignes suffisent : au-delà, on mordrait sur les règles de sécurité
+     * générales imprimées ensuite.
+     */
+    const bloc: string[] = [];
+    for (let j = i; j < Math.min(i + 12, lignes.length); j++) {
+      const l = (lignes[j] ?? '').trim();
+      if (j > i && /Libell[ée] de l['’]anomalie\s*:|R[èe]gles [ée]l[ée]mentaires|^Photo /i.test(l)) break;
+      if (/^SARL |^RCS |^\d+\s*\/\s*\d+$|^Rapport du/i.test(l)) continue;
+      bloc.push(l);
+    }
+
+    const texte = bloc.join(' ').replace(/\s+/g, ' ').trim();
+    const apresLibelle = /Libell[ée] de l['’]anomalie\s*:\s*(.+)/i.exec(texte)?.[1] ?? '';
+
+    // Le code de la norme ouvre le libellé : « B7.3 a », « B3.3.1 ».
+    const code = /^([A-Z]\d+(?:\.\d+)*\s*[a-z]?)\s+/.exec(apresLibelle);
+    const sansCode = code ? apresLibelle.slice(code[0].length) : apresLibelle;
+
+    const libelle = (sansCode.split(/\s*Remarques\s*:/i)[0] ?? '').trim();
+    if (libelle.length < 8) continue;
+
+    const remarques = /Remarques\s*:\s*(.+)/i.exec(texte)?.[1] ?? '';
+
+    let ou: string | null = null;
+    for (const m of remarques.matchAll(/\(([^()]{4,80})\)/g)) {
+      const dedans = m[1]?.trim();
+      if (dedans && NOMME_UNE_PIECE.test(dedans)) ou = dedans.replace(/\s+/g, ' ');
+    }
+
+    const geste = /((?:Faire intervenir|Faire v[ée]rifier|Faire contr[ôo]ler|Faire remplacer|Mettre en s[ée]curit[ée]|Rempla[cç]er|Prot[ée]ger)[^.()]{10,200})/i.exec(
+      remarques
+    )?.[1];
+
+    trouvees.push({
+      code: code?.[1]?.trim() ?? null,
+      libelle: libelle.replace(/\s*\.$/, ''),
+      ou,
+      geste: geste ? geste.replace(/\s*;\s*$/, '').trim() : null
+    });
+  }
+
+  return trouvees;
+}
+
 /** Les domaines réellement constatés : rien, quand la liste est le catalogue. */
 export function domainesEnAnomalie(lignes: string[]): string[] {
   const enumeres = domainesEnumeres(lignes);

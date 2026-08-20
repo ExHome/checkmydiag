@@ -8,7 +8,7 @@
  */
 import type { Diagnostic, Fait, Gravite } from '../modele';
 import { trouver, trouverToutes } from './texte';
-import { domainesConstates, releverTout } from './anomalies';
+import { anomaliesDetaillees, domainesConstates, releverTout } from './anomalies';
 import { rubrique as rubriqueDe } from './rubriques';
 import { dateFrancaise, OU_REFAIRE, reformesElectricite } from './reformes';
 
@@ -196,6 +196,34 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
       precision: 'domaines et libellés énumérés par le rapport'
     });
   }
+  /*
+   * OÙ, et QUOI FAIRE — ce que le rapport écrit et que le produit taisait.
+   *
+   * La fiche annonçait « des anomalies : 1 point relevé dans le rapport », et
+   * s'arrêtait là. Le tableau du § 5 dit pourtant la pièce et le geste :
+   *
+   *   « Faire intervenir un électricien qualifié afin de remplacer les
+   *   matériels présentant des détériorations (Rez de chaussée -
+   *   Entrée/séjour/cuisine) »
+   *
+   * Mesuré sur vingt-quatre volets porteurs d'une anomalie : la localisation
+   * sortait zéro fois, le geste zéro fois. Un propriétaire apprenait qu'il
+   * avait « un point », sans savoir lequel, ni où, ni qui appeler.
+   */
+  const detaillees = anomaliesDetaillees(lignes);
+  const ou = detaillees.map((d) => d.ou).filter(Boolean);
+  if (ou.length) {
+    faits.push({
+      libelle: 'Où',
+      valeur: [...new Set(ou)].join(' · '),
+      precision: 'localisation donnée par le rapport'
+    });
+  }
+  const geste = detaillees.find((d) => d.geste)?.geste;
+  if (geste) {
+    faits.push({ libelle: 'Ce que le rapport demande', valeur: geste });
+  }
+
   const date = trouver(lignes, /Date (?:du|de la) (?:rep[ée]rage|visite|diagnostic)\s*:?[\s.]*(\d{1,2}\/\d{1,2}\/\d{4})/i);
   if (date?.[1]) faits.push({ libelle: 'Date de la visite', valeur: date[1] });
 
