@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { analyserAmiante, analyserTermites } from './reperages';
+import { analyserAmiante, analyserTermites, materiauxAmiantes } from './reperages';
 import { zonesDe } from './plan';
 
 /**
@@ -386,5 +386,118 @@ describe('la zone d’arrêté préfectoral', () => {
 
   it('ne dit rien quand le rapport ne porte pas le champ', () => {
     expect(arrete(['Plateau Sol - Béton Absence d’indices d’infestation de termites'])).toBeUndefined();
+  });
+});
+
+/**
+ * La fiche de cotation du § 5.1 — l'état de conservation.
+ *
+ * Extrait fidèle d'un constat d'octobre 2024, liste B positive. Le tableau est
+ * à colonnes : la cotation et son étendue tombent sur deux lignes séparées,
+ * avant même le matériau auquel elles se rapportent.
+ *
+ * Mesuré : sur vingt-deux volets amiante, quatre sont positifs ; les quatre
+ * portent cette cotation, et le produit n'en disait rien.
+ */
+describe('l’état de conservation du matériau amianté', () => {
+  const COTATION = (etat: string[]) => [
+    '1.1 Liste A : Dans le cadre de mission décrit à l’article 3.2, il n’a pas été repéré',
+    '- de matériaux ou produits de la liste A contenant de l’amiante.',
+    '1.1 Liste B : Dans le cadre de mission décrit à l’article 3.2, il a été repéré :',
+    '- des matériaux et produits de la liste B contenant de l’amiante sur décision de l’opérateur :',
+    'Conduits fibres - ciment ( Façade arrière immeuble / Visible depuis l’appartement du R+1) pour',
+    'lequel il est recommandé de réaliser une évaluation périodique.*',
+    '5.1 Liste des matériaux ou produits contenant de l’amiante, états de conservation, conséquences',
+    ...etat
+  ];
+  const etat = (lignes: string[]) =>
+    analyserAmiante(lignes, [1, 17]).faits.find((f) => /État de conservation/i.test(f.libelle));
+
+  it('lit « Matériau dégradé » et son étendue, posée sur la ligne suivante', () => {
+    const f = etat(COTATION(['Matériau dégradé', '(étendue ponctuelle)']));
+    expect(f?.valeur).toBe('dégradé');
+    expect(f?.precision).toMatch(/étendue ponctuelle/);
+  });
+
+  it('dit aussi la bonne nouvelle : « non dégradé »', () => {
+    // Un diagnostic n'est pas un catalogue de problèmes.
+    expect(etat(COTATION(['Matériau non dégradé']))?.valeur).toBe('non dégradé');
+  });
+
+  it('n’attribue pas la cotation quand plusieurs matériaux sont repérés', () => {
+    // L'ordre du tableau ne garantit pas qui va avec quoi. Coller le mauvais
+    // état au mauvais matériau serait pire que de les énoncer sans les apparier.
+    const f = etat([
+      ...COTATION(['Matériau dégradé', '(étendue ponctuelle)']),
+      'Dalles de sol ( Cuisine) pour lequel il est recommandé de réaliser une évaluation périodique.'
+    ]);
+    expect(f?.precision).not.toMatch(/Conduits fibres/);
+    expect(f?.precision).toMatch(/dégradé/);
+  });
+
+  it('ne cote rien quand le rapport ne cote rien', () => {
+    // Une absence de cotation n'est pas un bon état : c'est un état inconnu.
+    expect(etat(COTATION([]))).toBeUndefined();
+  });
+
+  it('ne cote pas un rapport négatif', () => {
+    expect(
+      analyserAmiante(
+        [
+          '1.1 Liste A : Dans le cadre de mission décrit à l’article 3.2, il n’a pas été repéré',
+          '- de matériaux ou produits de la liste A contenant de l’amiante.',
+          'Matériau non dégradé'
+        ],
+        [1, 9]
+      ).faits.find((f) => /État de conservation/i.test(f.libelle))
+    ).toBeUndefined();
+  });
+});
+
+/**
+ * Ce que le volet contient et qui n'est PAS un matériau du logement.
+ *
+ * Lignes reprises telles quelles d'un constat réel. Chacune a la forme qu'on
+ * cherche — un intitulé, puis une parenthèse — et aucune ne désigne un matériau
+ * du bien. Sur ce rapport, le produit annonçait « Amiante repérée : Décembre
+ * 2012 (Listes "A" et "B"), et 4 autres », pendant que le seul vrai matériau,
+ * des conduits en fibres-ciment, était rejeté parce que sa localisation faisait
+ * soixante et un caractères contre une limite de soixante.
+ *
+ * Le filtre par liste noire ne pouvait pas tenir : le volet contient trop de
+ * choses. C'est la rubrique du rapport qui délimite, pas le vocabulaire.
+ */
+describe('ce qu’un volet amiante contient et qui n’est pas un matériau', () => {
+  const BRUIT = [
+    'Décembre 2012 (Listes "A" et "B")',
+    'QUALIXPERT 17 rue Borrel 81100 CASTRES (détail sur www.info - certif.fr)',
+    'Ouvrage : Conduits de fluides (air, eaux, autres fluides)',
+    'Conservation et transmission de ce rapport (Article 11 de l’arrêté du 16 juillet 2019)'
+  ];
+
+  it('ne cite aucun de ces intitulés comme matériau', () => {
+    expect(materiauxAmiantes(BRUIT)).toEqual([]);
+  });
+
+  it('retient le vrai matériau, dont la localisation est longue', () => {
+    const m = materiauxAmiantes([
+      ...BRUIT,
+      '1.1 Liste B : Dans le cadre de mission décrit à l’article 3.2, il a été repéré :',
+      '- des matériaux et produits de la liste B contenant de l’amiante sur décision de l’opérateur :',
+      'Conduits fibres - ciment ( Façade arrière immeuble / Visible depuis l’appartement du R+1) pour',
+      'lequel il est recommandé de réaliser une évaluation périodique.*',
+      '* Un détail des conséquences réglementaires est fourni en annexe.',
+      'Conservation et transmission de ce rapport (Article 11 de l’arrêté du 16 juillet 2019)'
+    ]);
+    expect(m).toHaveLength(1);
+    expect(m[0]?.quoi).toBe('Conduits fibres - ciment');
+    expect(m[0]?.ou).toMatch(/Façade arrière immeuble/);
+    expect(m[0]?.suite).toBe('evaluation');
+  });
+
+  it('préfère ne rien citer plutôt que citer faux', () => {
+    // Sans la rubrique qui énumère, on ne balaie pas le volet : le repli
+    // ramenait vingt-trois lignes fausses sur quarante-trois citées.
+    expect(materiauxAmiantes(['Dalles de sol (Cuisine)'])).toEqual([]);
   });
 });

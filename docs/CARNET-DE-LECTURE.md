@@ -2771,3 +2771,103 @@ de la hiérarchie des sources : le rapport dit le fait, le texte officiel seul
 tranche la référence.
 
 ---
+
+## 62 · Le corps de l'amiante : cinq faux matériaux, et le vrai perdu pour un caractère
+
+Premier chantier mené sous l'ordre de mission maître du 20/08 — *le corps du
+rapport fait foi*. La mesure qui l'a déclenché : **l'amiante fait 15,8 pages par
+volet et n'en sort que 1,5 fait.** Le plus gros écart du dossier avec le plomb.
+
+### Ce que le produit affichait
+
+Sur un constat d'octobre 2024, liste B positive :
+
+> **Amiante repérée : Décembre 2012 (Listes "A" et "B"), et 4 autres.**
+
+Les cinq « matériaux » étaient : un bout de texte réglementaire, l'organisme
+certificateur avec son adresse, deux intitulés de la grille de repérage
+(« Ouvrage : Conduits de fluides (air, eaux, autres fluides) ») et un renvoi à
+l'article 11 d'un arrêté.
+
+**Le seul vrai matériau n'y était pas.**
+
+### Deux fautes, dont une à un caractère près
+
+**La première : le balayage.** La fonction parcourait tout le volet en cherchant
+la forme `Intitulé (précision)`. Le volet en est plein. C'est la fausse alerte du
+§27 revenue sous une autre forme — le filtre écartait les adresses, pas les
+intitulés réglementaires. **Un filtre par liste noire ne peut pas tenir** : on
+ne peut pas énumérer tout ce qu'un rapport contient et qui n'est pas un
+matériau.
+
+**La seconde : une limite arbitraire.** Le vrai matériau était
+
+```
+Conduits fibres - ciment ( Façade arrière immeuble / Visible depuis
+                           l'appartement du R+1)
+```
+
+et sa localisation fait **soixante et un caractères** contre une limite de
+soixante. Le repérage situe parfois par un chemin entier — bâtiment, étage,
+pièce, et d'où le matériau est visible.
+
+Les deux fautes se cachaient l'une l'autre : le balayage remplissait le verdict,
+donc personne ne voyait qu'il manquait quelque chose.
+
+### La correction : prendre le problème par l'autre bout
+
+C'est **la rubrique du rapport qui délimite**, pas le vocabulaire. La rubrique
+1.1 énumère les matériaux repérés, juste après « il a été repéré : », et
+s'arrête à l'astérisque de renvoi ou à la rubrique suivante. Hors de cette
+fenêtre, on ne cite rien.
+
+Et **pas de repli**. Sans rubrique, aucun matériau — mesuré, le repli ramenait
+23 lignes fausses sur 43. Elles ne s'affichaient pas, un garde-fou posé ailleurs
+n'ouvrant le détail que sur conclusion positive ; mais elles n'attendaient qu'un
+changement de ce garde-fou. Vérifié : supprimer le repli ne coûte **aucun**
+matériau légitime.
+
+### L'état de conservation, que le rapport cote et que personne ne lisait
+
+La fiche de cotation du §5.1 donne l'information la plus lourde du volet :
+
+```
+Matériau dégradé
+(étendue ponctuelle)
+```
+
+C'est la seule chose qui distingue une amiante stable d'une amiante qui s'abîme
+— et l'explication du produit disait justement « tout dépend de l'état du
+matériau » sans dire dans quel état était le sien.
+
+**Mesuré : sur 22 volets, 4 sont positifs ; les 4 sont cotés par le rapport, et
+le produit n'en disait rien. 0/4 → 4/4.**
+
+Trois gardes : on n'attribue la cotation à un matériau que si l'appariement ne
+fait aucun doute — une cotation, un matériau ; sinon on énonce sans attribuer.
+Une absence de cotation n'est **pas** un bon état, c'est un état inconnu. Et
+« non dégradé » se dit aussi : un diagnostic n'est pas un catalogue de
+problèmes.
+
+### Le verdict, après
+
+> Amiante repérée : Conduits fibres - ciment (Façade arrière immeuble / Visible
+> depuis l'appartement du R+1). Une évaluation périodique est recommandée : on
+> revient contrôler l'état tous les trois ans.
+> **État de conservation : dégradé** — Conduits fibres - ciment, étendue
+> ponctuelle.
+
+QUOI, OÙ, DANS QUEL ÉTAT, ET QUELLE SUITE.
+
+### Et la huitième sonde menteuse
+
+Deux de mes sondes disaient que tout allait bien : « 4 volets positifs, 4
+matériaux nommés ». Elles comptaient la **présence** d'un matériau, jamais sa
+**justesse**. Un faux matériau compte comme un matériau.
+
+**Mesurer la présence, c'est se mesurer soi-même.** La sonde utile est celle qui
+compte les faux — et elle ne doit regarder que ce que le produit **affiche**,
+pas ce que la fonction retourne : les 23 faux vivaient sur des volets où le
+détail ne s'ouvre jamais.
+
+---

@@ -94,25 +94,34 @@ diagnostics et entretien de la Dropbox, en cycles d'une demi-heure.
   réponse négative, et seulement quand elle tenait seule sur sa ligne. 32/32,
   zéro écart. La fiche dit maintenant de quel côté tombe CE bien, et rappelle la
   déclaration en mairie quand des termites sont constatés.
+- **Le corps de l'amiante est lu** (§62), premier chantier sous l'ordre de
+  mission maître du 20/08 : le produit citait **cinq faux matériaux** — textes
+  réglementaires, organisme certificateur, intitulés de grille — et perdait le
+  vrai parce que sa localisation faisait 61 caractères contre une limite de 60.
+  C'est désormais la rubrique du rapport qui délimite, sans repli. Et
+  l'**état de conservation** est dit : 0/4 → **4/4**, zéro faux matériau
+  affiché.
+- **Huitième sonde menteuse** : deux sondes comptaient la *présence* d'un
+  matériau, jamais sa justesse. Un faux matériau compte comme un matériau.
 
-> **Prochain chantier** : la **mérule**. Le volet termites la cite — le même
-> arrêté préfectoral délimite les zones de risque mérule — et plusieurs rapports
-> ouvrent un volet « Mérule et champignons du bois » avec sa propre conclusion,
-> que le produit compte sans la lire. À mesurer : combien de volets portent ce
-> sous-rapport, et ce que dit sa conclusion.
+> **Prochain chantier** : le **corps du plomb** — 798 lignes par volet, le plus
+> gros du dossier, pour 4,1 faits. Le tableau des unités de diagnostic donne le
+> local, l'élément, la mesure en mg/cm², la classe et l'état de conservation :
+> c'est la localisation par pièce que l'ordre de mission maître réclame.
+> Ensuite seulement, la mérule.
 
 ## Compteurs
 
 | | Total |
 |---|---|
 | Rapports lus en entier | 9 |
-| Volets lus page à page | 29 |
+| Volets lus page à page | 30 |
 | Volets et documents lus page à page | 9 |
-| Erreurs de moteur trouvées par la lecture | 6 majeures |
-| Corrections livrées | 37 |
-| Tests de non-régression ajoutés | 100 |
-| Fausses alertes de mes propres sondes, écartées avant annonce | 7 |
-| Sondes de justesse écrites | 3 |
+| Erreurs de moteur trouvées par la lecture | 7 majeures |
+| Corrections livrées | 40 |
+| Tests de non-régression ajoutés | 108 |
+| Fausses alertes de mes propres sondes, écartées avant annonce | 8 |
+| Sondes de justesse écrites | 6 |
 | Notions métier versées au produit | 6 |
 | Fiches versées à la Dropbox | 2 |
 | Points ouverts au carnet | 16 |
@@ -128,7 +137,7 @@ Ce que « lu » veut dire ici : le volet a été lu page à page, pas survolé.
 | DPE | 3 | **2 %** de muets (contre 4 %) | annexes rattachées : 7 volets courts sur 58, contre 58 |
 | ERP | 9 | **1/63** faux risque techno (contre 49/63) ; argile rattrapée **55/55** | le formulaire vierge n'est plus lu comme un constat |
 | Plomb | 2 | **22/22** verdicts justes | le moteur est bon ; la validité du constat positif était fausse, corrigée |
-| Amiante | 2 | **19/19** verdicts justes (contre 2/19) | fausse alerte massive corrigée ; la découpe reste 15 pages trop courte |
+| Amiante | 6 | **19/19** verdicts justes, **4/4** état de conservation | le corps est lu : matériau, localisation, suite et état ; zéro faux matériau affiché |
 | Termites | 4 | **38/38** verdicts justes, **40/40** autres agents, **32/32** zone d'arrêté | les deux constats sont distingués ; la zone d'arrêté et la déclaration en mairie sont dites ; la mérule reste à restituer |
 | Surface | 2 | — | Boutin et Carrez distingués |
 | **DTG** | **1** | — | structure, curatifs, rubriques vides et cinq points de vigilance ; notions versées au produit |

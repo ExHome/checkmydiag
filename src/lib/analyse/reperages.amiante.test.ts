@@ -36,7 +36,16 @@ describe('les matériaux repérés', () => {
   });
 
   it('distingue une action corrective de second niveau', () => {
+    /*
+     * La ligne est précédée de sa rubrique, désormais exigée.
+     *
+     * Balayer tout le volet ramenait vingt-trois lignes fausses sur quarante-
+     * trois citées — l'organisme certificateur avec son adresse, des renvois
+     * d'articles, des intitulés de grille de repérage. Seule la rubrique qui
+     * énumère fait foi ; sans elle, la fonction ne cite rien plutôt que faux.
+     */
     const m = materiauxAmiantes([
+      '1.1 Liste B : Dans le cadre de mission décrit à l’article 3.2 , il a été repéré :',
       'Dalles de sol amiantées (Rez de chaussée - Cuisine) : action corrective de second niveau'
     ]);
     expect(m[0]?.suite).toBe('action-2');

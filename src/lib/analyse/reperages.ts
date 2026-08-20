@@ -602,6 +602,34 @@ export function analyserAmiante(lignes: string[], plage: [number, number]): Diag
     });
   }
 
+  /*
+   * L'état de conservation : la seule chose qui distingue une amiante stable
+   * d'une amiante qui se dégrade.
+   *
+   * On ne l'attribue à un matériau que si le rapport ne laisse aucun doute sur
+   * l'appariement — une seule cotation pour un seul matériau. Dès qu'il y en a
+   * plusieurs, l'ordre du tableau ne suffit pas à garantir qui va avec quoi, et
+   * coller le mauvais état au mauvais matériau serait pire que se taire : on
+   * énonce alors les cotations sans les attribuer.
+   */
+  const etats = amianteTrouvee ? etatsDeConservation(lignes) : [];
+  const appariable = etats.length === 1 && materiaux.length === 1;
+
+  if (etats.length) {
+    const degrades = etats.filter((e) => e.degrade);
+    faits.push({
+      libelle: 'État de conservation',
+      valeur: degrades.length
+        ? `${degrades.length === etats.length ? '' : `${degrades.length} sur ${etats.length} `}dégradé${degrades.length > 1 ? 's' : ''}`
+        : 'non dégradé',
+      precision: appariable
+        ? `${materiaux[0]?.quoi}${etats[0]?.etendue ? ` — étendue ${etats[0]?.etendue}` : ''}`
+        : etats
+            .map((e) => `${e.degrade ? 'dégradé' : 'non dégradé'}${e.etendue ? ` (${e.etendue})` : ''}`)
+            .join(' · ')
+    });
+  }
+
   return {
     type: 'amiante',
     titre: 'Amiante',
@@ -637,6 +665,25 @@ export function analyserAmiante(lignes: string[], plage: [number, number]): Diag
     explication: [
       'On ne cherche l’amiante que dans les logements construits avant juillet 1997 : après cette date, elle était interdite. Le diagnostiqueur contrôle une liste précise de matériaux — faux plafonds, dalles de sol, conduits, toitures.',
       'Trouver de l’amiante n’est pas une catastrophe. Tant que le matériau est en bon état et qu’on n’y touche pas, il ne libère rien. Le danger vient de la poussière, quand on perce, on ponce ou on casse.',
+      /*
+       * L'état coté par le rapport, dit au lecteur.
+       *
+       * La phrase d'avant explique que tout dépend de l'état du matériau — et
+       * la fiche ne disait pas dans quel état était le sien, alors que le
+       * rapport le cote. « Non dégradé » est une bonne nouvelle : la dire aussi,
+       * un diagnostic n'est pas un catalogue de problèmes.
+       */
+      ...(etats.length
+        ? etats.some((e) => e.degrade)
+          ? [
+              `Justement : le rapport cote ce matériau **dégradé**${
+                etats[0]?.etendue ? `, d’étendue ${etats[0]?.etendue}` : ''
+              }. C’est ce qui distingue une amiante stable d’une amiante qui s’abîme, et c’est pour cela qu’un contrôle est demandé.`
+            ]
+          : [
+              'Le rapport cote ce matériau **non dégradé** : il est en place, intact, et ne libère rien tant qu’on n’y touche pas.'
+            ]
+        : []),
       'Le diagnostiqueur regarde, il ne casse rien. Il ne peut donc pas voir ce qui est enfermé dans les murs. Avant des travaux, un repérage plus poussé est obligatoire : celui-là fait des trous.'
     ],
     aFaire: amianteTrouvee
@@ -668,6 +715,55 @@ export interface MateriauAmiante {
   suite: 'evaluation' | 'action-1' | 'action-2' | null;
 }
 
+/** L'état d'un matériau amianté, tel que la fiche de cotation le cote. */
+export interface EtatConservation {
+  degrade: boolean;
+  /** « ponctuelle », « généralisée » — quand le rapport la précise. */
+  etendue: string | null;
+  /** La phrase du rapport, pour pouvoir remonter à la source. */
+  source: string;
+}
+
+/**
+ * L'état de conservation, dans la fiche de cotation du § 5.1.
+ *
+ * C'est l'information la plus lourde de conséquence du volet, et la seule qui
+ * distingue un logement où l'amiante est stable d'un logement où elle se
+ * dégrade. Le rapport la cote en deux mots :
+ *
+ *     Matériau dégradé
+ *     (étendue ponctuelle)
+ *
+ * **Mesuré : sur vingt-deux volets amiante, quatre sont positifs ; les quatre
+ * portent cette cotation, et le produit n'en disait rien.**
+ *
+ * Les deux lignes sont séparées par la mise en page, comme tout ce tableau à
+ * colonnes : on recolle la suivante avant de chercher l'étendue.
+ *
+ * Rien n'est déduit d'une absence. Un volet qui ne cote pas est un volet dont
+ * on ignore l'état du matériau — ce n'est pas un matériau en bon état.
+ */
+export function etatsDeConservation(lignes: string[]): EtatConservation[] {
+  const trouves: EtatConservation[] = [];
+
+  for (let i = 0; i < lignes.length; i++) {
+    const brut = (lignes[i] ?? '').trim();
+    const m = /Mat[ée]riau\s+(non\s+)?d[ée]grad[ée]/i.exec(brut);
+    if (!m) continue;
+
+    const avecSuite = `${brut} ${lignes[i + 1] ?? ''}`;
+    const etendue = /[ée]tendue\s+(ponctuelle|g[ée]n[ée]ralis[ée]e?)/i.exec(avecSuite);
+
+    trouves.push({
+      degrade: !m[1],
+      etendue: etendue?.[1]?.toLowerCase() ?? null,
+      source: brut.replace(/\s+/g, ' ')
+    });
+  }
+
+  return trouves;
+}
+
 /**
  * Les matériaux amiantés repérés, et la suite à leur donner.
  *
@@ -689,8 +785,57 @@ export interface MateriauAmiante {
 const IDENTITE =
   /code postal|adresse|commune|ville\s*:|raison sociale|siret|siren|t[ée]l\.?\s*:|d[ée]partement|propri[ée]taire|commanditaire|certification|assurance|num[ée]ro de (?:dossier|police)|\(France\)/i;
 
-export function materiauxAmiantes(lignes: string[]): MateriauAmiante[] {
+/**
+ * La fenêtre où le rapport énumère ce qu'il a trouvé — et elle seule.
+ *
+ * Balayer tout le volet ramenait n'importe quelle ligne de la forme
+ * « Intitulé (précision) », et le volet en est plein. Sur un constat réel, le
+ * produit annonçait :
+ *
+ *   « Amiante repérée : Décembre 2012 (Listes "A" et "B"), et 4 autres. »
+ *
+ * Les cinq « matériaux » étaient : un bout de texte réglementaire, l'organisme
+ * certificateur avec son adresse, deux intitulés de la grille de repérage
+ * (« Ouvrage : Conduits de fluides (air, eaux, autres fluides) »), et un renvoi
+ * à l'article 11 d'un arrêté. Le seul vrai matériau — des conduits en
+ * fibres-ciment en façade arrière — n'y était pas.
+ *
+ * C'est la fausse alerte du § 27 revenue sous une autre forme : le filtre des
+ * lignes d'identité écartait les adresses, pas les intitulés réglementaires.
+ * Un filtre par liste noire ne peut pas tenir : le volet contient trop de
+ * choses. On prend donc le problème par l'autre bout — la rubrique 1.1 énumère
+ * les matériaux repérés, juste après « il a été repéré », et s'arrête à
+ * l'astérisque de renvoi ou à la rubrique suivante.
+ */
+function fenetreDesMateriaux(lignes: string[]): string[] {
+  const debut = lignes.findIndex((l) => /il a [ée]t[ée] rep[ée]r[ée]\s*:?\s*$/i.test(l.trim()));
+
+  /*
+   * Sans cette rubrique, on ne cite rien.
+   *
+   * Le repli naturel — balayer tout le volet — est précisément ce qui produisait
+   * les faux : mesuré, il ramenait vingt-trois lignes fausses sur quarante-trois
+   * citées. Elles ne s'affichaient pas, parce qu'un garde-fou posé ailleurs
+   * n'ouvre le détail que sur un volet dont la conclusion est positive ; mais
+   * elles n'attendaient qu'un changement de ce garde-fou pour ressortir.
+   *
+   * Mieux vaut un verdict qui dit « des matériaux ont été repérés » sans les
+   * nommer, qu'un verdict qui en nomme un faux.
+   */
+  if (debut === -1) return [];
+
+  const suite = lignes.slice(debut + 1);
+  const fin = suite.findIndex((l) => {
+    const t = l.trim();
+    return /^\*/.test(t) || /^1\.2\.?\s/.test(t) || /^2\s*[.–-]/.test(t);
+  });
+
+  return fin === -1 ? suite : suite.slice(0, fin);
+}
+
+export function materiauxAmiantes(toutesLignes: string[]): MateriauAmiante[] {
   const trouves: MateriauAmiante[] = [];
+  const lignes = fenetreDesMateriaux(toutesLignes);
 
   for (let i = 0; i < lignes.length; i++) {
     const brut = (lignes[i] ?? '').trim();
@@ -698,7 +843,20 @@ export function materiauxAmiantes(lignes: string[]): MateriauAmiante[] {
     /* La ligne du matériau commence par son nom et porte sa localisation entre
        parenthèses. On exige l'un ET l'autre : une phrase d'explication sur
        l'amiante en général n'a pas de localisation. */
-    const m = /^([A-ZÉÈÀ][^()]{4,70}?)\s*\(([^)]{3,60})\)/.exec(brut);
+    /*
+     * La localisation peut être longue, et l'était d'un caractère de trop.
+     *
+     * « Conduits fibres - ciment ( Façade arrière immeuble / Visible depuis
+     * l'appartement du R+1) » : la parenthèse fait soixante et un caractères, la
+     * limite en autorisait soixante. Le seul matériau amianté du rapport était
+     * perdu pour un caractère — et comme le balayage ramenait par ailleurs cinq
+     * fausses lignes, personne ne voyait qu'il manquait.
+     *
+     * Le repérage situe parfois par un chemin entier — bâtiment, étage, pièce,
+     * et d'où le matériau est visible. Cent vingt caractères couvrent ces
+     * chemins ; la fenêtre de la rubrique 1.1 fait le reste du tri.
+     */
+    const m = /^([A-ZÉÈÀ][^()]{4,70}?)\s*\(([^)]{3,120})\)/.exec(brut);
     if (!m?.[1] || !m[2]) continue;
 
     /*
