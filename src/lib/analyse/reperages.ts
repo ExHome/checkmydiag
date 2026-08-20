@@ -364,7 +364,22 @@ export function analyserTermites(lignes: string[], plage: [number, number]): Dia
     ],
     aFaire: infeste
       ? [
-          'Déclarez l’infestation en mairie : c’est une obligation dès qu’un foyer est constaté.',
+          /*
+           * Qui déclare, et ce n'est pas celui qu'on croit.
+           *
+           * Article L. 126-4 du CCH, lu à la source le 20/08/2026 : la
+           * déclaration incombe à l'OCCUPANT ; au propriétaire seulement à
+           * défaut d'occupant ; au syndicat pour les parties communes. Le
+           * produit disait « Déclarez », en s'adressant au propriétaire — dans
+           * un logement loué, c'est le locataire qui doit déclarer.
+           *
+           * Le délai et la forme sont à l'article R. 126-2 : un mois, lettre
+           * recommandée avec accusé de réception ou dépôt contre récépissé.
+           *
+           * La norme NF P 03-201, de 2016, renvoie encore aux anciens articles
+           * L. 133-4 et R. 133-3 : le code a été recodifié au 1er juillet 2021.
+           */
+          'L’infestation doit être déclarée en mairie dans le mois, par lettre recommandée avec accusé de réception ou en la déposant contre récépissé. Attention à qui doit le faire : c’est l’occupant du logement — donc le locataire s’il est loué —, le propriétaire seulement s’il n’y a pas d’occupant, et le syndicat de copropriété pour les parties communes.',
           'Faites intervenir une entreprise spécialisée pour un traitement curatif, et faites vérifier la charpente et les structures porteuses.',
           'À la vente, cet état doit être daté de moins de six mois au jour de la signature.'
         ]

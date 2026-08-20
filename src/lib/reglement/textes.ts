@@ -461,6 +461,50 @@ export const REGLEMENT: Partial<Record<TypeDiag, Reglement>> = {
         },
         reserve:
           'La mérule est une information distincte de l’état termites, et l’application ne sait pas encore la lire. Un champignon n’est pas un insecte : les deux ne se repèrent ni ne se traitent de la même façon.'
+      },
+      {
+        /*
+         * Qui déclare, et ce n'est pas celui qu'on croit.
+         *
+         * NF P 03-201 renvoie, pour cette obligation, aux articles L 133-4 et
+         * R 133-3 du code. Ces numéros ne sont plus : le code a été recodifié
+         * par l'ordonnance du 29 janvier 2020, en vigueur au 1er juillet 2021.
+         * La norme est de 2016 et cite l'ancienne numérotation.
+         *
+         * Et le texte actuel, lu à la source, dit autre chose que ce que le
+         * produit affichait : l'obligation pèse d'abord sur l'OCCUPANT. Dans un
+         * logement loué, c'est le locataire qui déclare, pas le bailleur. En
+         * copropriété, pour les parties communes, c'est le syndicat.
+         */
+        enonce:
+          'Dès qu’il a connaissance de la présence de termites, l’occupant de l’immeuble en fait la déclaration en mairie. À défaut d’occupant, la déclaration incombe au propriétaire ; pour les parties communes d’une copropriété, elle incombe au syndicat des copropriétaires.',
+        source: {
+          reference: 'article L. 126-4 du code de la construction et de l’habitation',
+          url: 'https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000041565125',
+          luLe: '2026-08-20'
+        },
+        reserve:
+          'La norme NF P 03-201 renvoie encore aux anciens articles L. 133-4 et R. 133-3 : elle date de 2016, et le code a été recodifié au 1er juillet 2021.'
+      },
+      {
+        enonce:
+          'La déclaration est adressée dans le mois suivant les constatations au maire de la commune où se situe l’immeuble, par lettre recommandée avec demande d’avis de réception ou déposée contre récépissé en mairie.',
+        source: {
+          reference: 'article R. 126-2 du code de la construction et de l’habitation',
+          url: 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006074096/LEGISCTA000043818551/',
+          luLe: '2026-08-20'
+        }
+      },
+      {
+        enonce:
+          'L’état relatif à la présence de termites identifie l’immeuble, indique les parties visitées et celles qui n’ont pu l’être, les éléments infestés et ceux qui ne le sont pas. Il est daté et signé.',
+        source: {
+          reference: 'article R. 126-42 du code de la construction et de l’habitation',
+          url: 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006074096/LEGISCTA000043818661/2024-07-01',
+          luLe: '2026-08-20'
+        },
+        reserve:
+          'Le code exige les parties NON visitées au même titre que les visitées : une liste absente n’est pas un détail de forme.'
       }
     ]
   },

@@ -65,6 +65,35 @@ describe('ce que la norme termites impose, et que la fiche doit dire', () => {
     );
   });
 
+  it('dit qui doit déclarer en mairie, et ce n’est pas le propriétaire', () => {
+    /*
+     * Article L. 126-4 du CCH, lu à la source le 20/08/2026 : la déclaration
+     * incombe à l'OCCUPANT ; au propriétaire seulement à défaut d'occupant ; au
+     * syndicat pour les parties communes. Le produit disait « Déclarez » en
+     * s'adressant au propriétaire — dans un logement loué, c'est le locataire.
+     *
+     * Le délai et la forme sont à l'article R. 126-2 : un mois, lettre
+     * recommandée avec accusé de réception ou dépôt contre récépissé.
+     *
+     * NF P 03-201, de 2016, renvoie encore aux anciens L. 133-4 et R. 133-3 :
+     * le code a été recodifié au 1er juillet 2021.
+     */
+    const infeste = analyserTermites(
+      [
+        'ÉTAT DU BÂTIMENT RELATIF À LA PRÉSENCE DE TERMITES',
+        'Il a été repéré des indices d’infestation de termites.',
+        'Fait à Bordeaux, le 12/03/2024'
+      ],
+      [4, 11]
+    );
+    const aFaire = infeste.aFaire.join(' ');
+    expect(aFaire).toMatch(/occupant/);
+    expect(aFaire).toMatch(/locataire/);
+    expect(aFaire).toMatch(/syndicat/);
+    expect(aFaire).toMatch(/dans le mois/);
+    expect(aFaire).toMatch(/recommandée|récépissé/);
+  });
+
   it('les dit aussi quand aucun termite n’a été trouvé', () => {
     /*
      * Ce sont des règles du diagnostic, pas des conséquences d'une infestation.

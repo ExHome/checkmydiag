@@ -3918,3 +3918,61 @@ corrigé deux choses que la norme disait — dont une que j'avais consignée com
 acquise dans deux documents.
 
 ---
+
+## 77 · Qui déclare les termites en mairie — et ce n'est pas celui qu'on croit
+
+*20/08/2026. Vérification à la source, après lecture de NF P 03-201.*
+
+La norme termites renvoie, pour la déclaration en mairie, aux articles **L 133-4
+et R 133-3** du code de la construction. Ces numéros n'existent plus : le code a
+été recodifié par l'ordonnance du 29 janvier 2020, entrée en vigueur le
+**1er juillet 2021**. La norme est de 2016.
+
+Trois articles lus à la source, un par un, et le premier corrige le produit.
+
+### L. 126-4 — l'obligation pèse sur l'OCCUPANT
+
+> Dès qu'il a connaissance de la présence de termites dans un immeuble bâti ou
+> non bâti, l'occupant de l'immeuble contaminé en fait la déclaration en mairie.
+> À défaut d'occupant, la déclaration incombe au propriétaire. Pour les parties
+> communes […] la déclaration incombe au syndicat des copropriétaires.
+
+Verrière écrivait : « **Déclarez** l'infestation en mairie », en s'adressant au
+propriétaire. **Dans un logement loué, c'est le locataire qui doit déclarer.** En
+copropriété, pour les parties communes, c'est le syndicat.
+
+Ce n'était pas faux au point d'être dangereux, mais c'était une obligation
+attribuée à la mauvaise personne — et un vendeur qui s'y fie croira avoir à faire
+une démarche qui n'est pas la sienne, ou pire, croira l'avoir faite.
+
+### R. 126-2 — un mois, et une forme
+
+Dans le **mois** suivant les constatations, au **maire** de la commune, par
+**lettre recommandée avec demande d'avis de réception** ou déposée **contre
+récépissé** en mairie. Ni le délai ni la forme n'étaient dits.
+
+### R. 126-42 — ce que l'état doit contenir
+
+Identifier l'immeuble, indiquer **les parties visitées et celles qui n'ont pu
+l'être**, les éléments infestés et ceux qui ne le sont pas. Daté et signé.
+
+Le code met donc les parties **non** visitées au même rang que les visitées.
+Une liste absente n'est pas un détail de forme.
+
+### Le numéro faux que la recherche m'a donné
+
+En cherchant l'article du délai, une recherche m'a rendu « **R. 126-41** », avec
+un texte plausible et complet. Je suis allé au chapitre : R. 126-41 ne traite pas
+de cela. **C'est R. 126-2.**
+
+Le texte était juste, le numéro était faux — et c'est précisément le genre de
+citation qu'un notaire vérifie. Sans l'aller-voir, Verrière aurait cité un
+article qui n'existe pas pour cette obligation.
+
+### La leçon
+
+**Une source secondaire peut donner le bon contenu sous le mauvais numéro.** Et
+un numéro d'article est ce qui se vérifie le plus vite chez le notaire : c'est
+donc lui qu'il faut le moins inventer.
+
+---
