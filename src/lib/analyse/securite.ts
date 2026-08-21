@@ -9,6 +9,12 @@
 import type { Diagnostic, Fait, Gravite } from '../modele';
 import { trouver, trouverToutes } from './texte';
 import { anomaliesDetaillees, domainesConstates, releverTout } from './anomalies';
+import {
+  anomaliesDuTableau,
+  catalogueDesDomaines,
+  localisationsDe,
+  porteUnTableauDAnomalies
+} from './tableau-anomalies';
 import { rubrique as rubriqueDe } from './rubriques';
 import { dateFrancaise, OU_REFAIRE, reformesElectricite } from './reformes';
 
@@ -98,11 +104,42 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
    * suit sa conclusion, et le point compensé est dit dans les faits.
    */
   const nonCompenses = constates.filter((d) => !d.compense);
-  const etat =
-    conclusion.etat === 'inconnu' && (anomalies.length > 0 || nonCompenses.length > 0)
-      ? 'anomalies'
-      : conclusion.etat;
-  const total = conclusion.nombre ?? (anomalies.length > 0 ? anomalies.length : null);
+
+  /*
+   * Les anomalies du tableau de la rubrique 5 — la seconde mise en page.
+   *
+   * `anomaliesDetaillees` lit une annexe « Libellé de l'anomalie : » que tous
+   * les rapports n'ont pas. Neuf volets lus en entier portent les leurs dans le
+   * tableau, et le produit n'en restituait alors aucune.
+   */
+  const duTableau = anomaliesDuTableau(lignes);
+
+  /*
+   * Le silence du tableau vaut conclusion — mais seulement là où il parle.
+   *
+   * La rubrique 5 imprime les deux conclusions opposées l'une sous l'autre, et
+   * la case qui les départage est un graphique : le texte ne permet pas de
+   * conclure, et les volets sains ressortaient « conclusion non lue ». Le
+   * tableau, lui, ne s'imprime que s'il y a quelque chose à y mettre — mesuré
+   * sur neuf volets, cinq sains sans tableau, quatre avec.
+   *
+   * On n'en tire une absence d'anomalie QUE si le catalogue des domaines est
+   * imprimé : c'est lui qui atteste qu'on est bien devant cette mise en page.
+   * Ailleurs, on continue de se taire plutôt que de conclure à tort.
+   */
+  const catalogueImprime = catalogueDesDomaines(lignes).length >= 5;
+
+  let etat = conclusion.etat;
+  if (etat === 'inconnu') {
+    if (anomalies.length > 0 || nonCompenses.length > 0 || duTableau.length > 0) {
+      etat = 'anomalies';
+    } else if (catalogueImprime && !porteUnTableauDAnomalies(lignes)) {
+      etat = 'aucune';
+    }
+  }
+
+  const total =
+    conclusion.nombre ?? (duTableau.length || anomalies.length || null);
 
   const groupes = THEMES_ELEC.map((t) => ({
     nom: t.nom,
@@ -189,11 +226,17 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
   }
   if (conclusion.nombre !== null) {
     faits.push({ libelle: 'Anomalies relevées', valeur: String(conclusion.nombre) });
-  } else if (anomalies.length > 0) {
+  } else if (duTableau.length > 0 || anomalies.length > 0) {
+    /* Le tableau de la rubrique 5 énumère plus finement que les domaines : on
+       cite le plus complet des deux comptes, jamais le plus petit. */
+    const compte = Math.max(duTableau.length, anomalies.length);
     faits.push({
       libelle: 'Points relevés',
-      valeur: String(anomalies.length),
-      precision: 'domaines et libellés énumérés par le rapport'
+      valeur: String(compte),
+      precision:
+        duTableau.length >= anomalies.length
+          ? 'anomalies énumérées une à une par le rapport'
+          : 'domaines et libellés énumérés par le rapport'
     });
   }
   /*
@@ -211,7 +254,21 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
    * avait « un point », sans savoir lequel, ni où, ni qui appeler.
    */
   const detaillees = anomaliesDetaillees(lignes);
-  const ou = detaillees.map((d) => d.ou).filter(Boolean);
+  /*
+   * TOUTES les localisations, des deux mises en page.
+   *
+   * Le §10 de l'ordre de mission exige de conserver chacune ; le §32 fait un
+   * blocage d'une seule gardée en silence. Les rapports en collent plusieurs
+   * dans la même parenthèse, sans séparateur : elles sont séparées à la
+   * lecture du tableau, pas ici.
+   */
+  const ou = [
+    // L'annexe colle elle aussi ses pièces sans séparateur : elle passe par le
+    // même séparateur que le tableau, sinon « 2ème étage - mezzanine2ème étage
+    // - mezzanine1er étage - Entrée » ressortait tel quel, illisible.
+    ...detaillees.flatMap((d) => (d.ou ? localisationsDe(`(${d.ou})`) : [])),
+    ...duTableau.flatMap((a) => a.localisations)
+  ];
   if (ou.length) {
     faits.push({
       libelle: 'Où',
@@ -219,7 +276,7 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
       precision: 'localisation donnée par le rapport'
     });
   }
-  const geste = detaillees.find((d) => d.geste)?.geste;
+  const geste = detaillees.find((d) => d.geste)?.geste ?? duTableau.find((a) => a.geste)?.geste;
   if (geste) {
     faits.push({ libelle: 'Ce que le rapport demande', valeur: geste });
   }
