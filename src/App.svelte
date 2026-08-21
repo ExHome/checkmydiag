@@ -470,10 +470,34 @@
    * rendu plutôt que comme une structure. Un filet citron dilué suffit à poser
    * la limite, et l'écran gagne un aplat continu du haut jusqu'au dock.
    */
+  /*
+   * ─────────────────────────────────────────────────────────────────────────
+   * LE BANDEAU EST VERT, COMME LE BUREAU SOUS LUI.
+   * ─────────────────────────────────────────────────────────────────────────
+   *
+   * Il était `transparent`, donc ivoire — et le bureau étant passé au vert, il
+   * formait une bande claire en haut de l'écran : exactement la « strate qui se
+   * lit comme un défaut de rendu » que le commentaire ci-dessus redoutait, mais
+   * dans l'autre sens.
+   *
+   * Le vert commence donc au premier pixel. Le dégradé prolonge celui du
+   * bureau — même direction, même lumière venue du haut — pour que la couture
+   * entre les deux ne se voie pas.
+   *
+   * L'encre suit : sur ce fond, le vert profond du texte tomberait à 1,0. Les
+   * valeurs posées ici sont mesurées sur #0a2b23, le plus clair des tons du
+   * dégradé, donc le pire cas — ivoire 14,04 et sauge clair 10,09.
+   */
   .entete {
     padding: var(--e4) 0;
     border-bottom: 1px solid var(--trait-or);
-    background: transparent;
+    background: linear-gradient(178deg, #0d3229 0%, #0a2b23 100%);
+
+    --sur-fond: #f7f6f2;
+    --sur-fond-doux: #c3d9ba;
+    --encre: #f7f6f2;
+    --encre-doux: #c3d9ba;
+    color: var(--sur-fond);
   }
 
   /*

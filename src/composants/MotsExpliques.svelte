@@ -87,7 +87,25 @@
 {#if ouvert}
   {@const def = bouts.find((b) => b.texte === ouvert)?.definition}
   {#if def}
-    <span class="definition apparait">{def}</span>
+    <!--
+      UNE AIDE SUR LE CÔTÉ, PAS AU MILIEU DE LA PHRASE.
+
+      La définition s'insérait dans le fil du texte : la phrase se coupait en
+      deux, tout ce qui suivait descendait, et le lecteur perdait la ligne qu'il
+      était en train de lire — pour un mot dont il voulait seulement le sens.
+
+      Elle devient une note de marge. Sur un écran large, elle sort dans la
+      marge de droite, en face du passage. Sur un téléphone, où il n'y a pas de
+      marge, elle se pose sous la ligne, décalée et tenue par un filet : la
+      forme d'une annotation, pas d'un paragraphe de plus.
+
+      Le mot est repris en tête : une note qui ne dit pas de quoi elle parle
+      oblige à revenir en arrière pour le retrouver.
+    -->
+    <span class="aide apparait" role="note">
+      <span class="aide-mot">{ouvert}</span>
+      <span class="aide-texte">{def}</span>
+    </span>
   {/if}
 {/if}
 
@@ -119,15 +137,60 @@
     text-decoration-style: solid;
   }
 
-  .definition {
+  /*
+   * L'AIDE, EN MARGE.
+   *
+   * Elle tient par son filet et son retrait, pas par un cadre : une note
+   * annotée à la main sur un rapport imprimé ne porte pas de boîte.
+   *
+   * Le filet reprend la teinte de l'écran courant (`--u-accent`), pour que
+   * l'aide appartienne visiblement au diagnostic qu'on lit — et retombe sur le
+   * vert de la marque partout ailleurs.
+   */
+  .aide {
     display: block;
-    margin: var(--e2) 0 var(--e1);
-    padding: var(--e2) var(--e3);
-    border-left: 2px solid var(--verriere-sable-or);
-    background: var(--surface-forte);
-    border-radius: 0 var(--rayon-petit) var(--rayon-petit) 0;
-    font-size: var(--t-base);
-    line-height: 1.45;
-    color: var(--sur-fond-doux);
+    margin: var(--e2) 0 var(--e3) var(--e3);
+    padding: var(--e2) 0 var(--e2) var(--e3);
+    border-left: 3px solid var(--u-accent, var(--verriere-vert));
+    font-size: var(--t-petit);
+    line-height: 1.5;
+    color: var(--encre-doux, var(--sur-fond-doux));
+  }
+
+  /* Le mot dont il s'agit, repris en tête de la note. */
+  .aide-mot {
+    display: block;
+    font-size: var(--t-micro);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--u-accent, var(--verriere-vert));
+  }
+
+  .aide-texte {
+    display: block;
+    margin-top: 2px;
+  }
+
+  /*
+   * DANS LA MARGE, DÈS QU'IL Y A UNE MARGE.
+   *
+   * Au-delà de 1100 px, la colonne de lecture n'occupe plus toute la largeur :
+   * l'aide sort à droite, en face du passage, et le texte ne bouge pas d'un
+   * pixel. C'est la disposition d'un ouvrage annoté — et c'est le seul cas où
+   * « sur le côté » peut être pris au pied de la lettre.
+   *
+   * En dessous, la marge n'existe pas : l'aide reste sous la ligne, tenue par
+   * son filet. Sortir une note dans une marge de zéro pixel la ferait
+   * disparaître hors de l'écran.
+   */
+  @media (min-width: 1100px) {
+    .aide {
+      position: absolute;
+      right: var(--e4);
+      width: 232px;
+      margin: 0;
+      padding-left: var(--e3);
+    }
   }
 </style>

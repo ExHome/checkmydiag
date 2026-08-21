@@ -654,6 +654,19 @@
    * la régression qui a déjà coûté un écran de conditions illisible.
    */
   .bureau {
+    /*
+     * LE VERT COMMENCE SOUS LE BANDEAU, SANS COUTURE.
+     *
+     * Le conteneur de lecture pose un rembourrage haut — `clamp(28px, 6vw,
+     * 56px)` — qui laissait voir l'ivoire du socle entre le bandeau vert et le
+     * bureau vert : une bande claire de vingt-huit à cinquante-six pixels,
+     * exactement la strate qu'on venait de supprimer en haut.
+     *
+     * La marge négative reprend la même expression, au pixel près. La répéter
+     * plutôt que la nommer est un moindre mal : elle vit dans `App.svelte` sur
+     * un sélecteur d'élément, hors de portée d'un jeton.
+     */
+    margin-top: calc(-1 * clamp(28px, 6vw, 56px));
     margin-bottom: var(--e6);
     padding: var(--e5) var(--e4) var(--e6);
     /* Jusqu'aux bords, quelle que soit la largeur de la colonne de lecture. */
@@ -669,7 +682,31 @@
      * (Le commentaire nommait ici deux bleus pétrole. Ils ont quitté la charte
      * il y a longtemps ; les valeurs, elles, n'en portent plus.)
      */
-    background: transparent;
+    /*
+     * ─────────────────────────────────────────────────────────────────────
+     * LE BUREAU EST VERT. LES APPLICATIONS SONT IVOIRE.
+     * ─────────────────────────────────────────────────────────────────────
+     *
+     * C'est la mécanique d'un téléphone : le bureau porte un fond, et chaque
+     * application qu'on ouvre est une feuille claire posée dessus. On sait
+     * toujours si l'on est chez soi ou dans un écran — et l'ouverture devient
+     * un geste, pas un changement de page.
+     *
+     * LE FOND N'EST PAS LE VERT DE LA MARQUE, ET C'EST MESURÉ. Sur le vert
+     * Verrière #12463b, les pastilles de gravité empruntées à l'étiquette DPE
+     * tombent à 2,89 pour la classe A et 2,62 pour la classe G — sous le seuil
+     * de 3,0 exigé d'un élément graphique. Elles cesseraient de se voir, alors
+     * que ce sont elles qui disent la gravité.
+     *
+     * Sur le vert profond #0a2b23 elles remontent à 4,10 et 3,72 ; sur le vert
+     * d'espace #011915, à 4,93 et 4,47. D'où le dégradé : le vert d'espace en
+     * bas, le vert profond en haut, là où la lumière entre. Le vert Verrière
+     * garde son rôle — il signe, il ne fait pas le fond.
+     *
+     * Le dégradé descend du haut : c'est la verrière, et c'est la même
+     * direction de lumière dans tout le produit.
+     */
+    background: linear-gradient(178deg, #0a2b23 0%, #05201a 46%, #011915 100%);
     color: var(--sur-fond);
     /* Le bas s'arrondit : la page continue en dessous, et un aplat coupé net
        ressemblerait à un défaut de rendu plutôt qu'à un panneau. */
@@ -679,17 +716,34 @@
     /* Le bureau suit le socle : ivoire dessous, vert profond dessus. Il portait
        une encre claire, héritée du temps où son fond était sombre — sur
        l'ivoire, les noms des applis tombaient à 1,04 de contraste. */
-    --sur-fond: #0a2b23;
-    --sur-fond-doux: #4a5a55;
-    --encre: #0a2b23;
-    --encre-doux: #4a5a55;
-    --gris: #58775f;
-    --surface: rgb(10 43 35 / 3%);
-    --surface-forte: rgb(10 43 35 / 6%);
-    --surface-bord: rgb(10 43 35 / 12%);
-    --trait: #779576;
-    --trait-fin: #dfe6db;
-    --action-texte: #a33220;
+    /*
+     * L'ENCRE SUIT LE FOND. Toutes ces valeurs sont mesurées sur le vert
+     * profond #0a2b23, le plus clair des trois tons du dégradé — donc le pire
+     * cas pour une encre claire :
+     *
+     *   ivoire  #f7f6f2 → 14,04     ivoire doux #dfe6db → 11,92
+     *   sauge   #a6c39a →  7,88     sauge clair #c3d9ba → 10,09
+     *
+     * Elles étaient sombres, héritées du jour où ce bureau est passé en
+     * ivoire ; le commentaire ci-dessus en gardait la trace. Le fond revient
+     * au vert, l'encre revient au clair — et cette fois les deux sont écrits
+     * au même endroit, pour qu'ils ne puissent plus diverger.
+     */
+    --sur-fond: #f7f6f2;
+    --sur-fond-doux: #c3d9ba;
+    --encre: #f7f6f2;
+    --encre-doux: #c3d9ba;
+    --gris: #a6c39a;
+    --surface: rgb(255 255 255 / 6%);
+    --surface-forte: rgb(255 255 255 / 10%);
+    --surface-bord: rgb(255 255 255 / 18%);
+    --trait: #a6c39a;
+    --trait-fin: rgb(255 255 255 / 22%);
+    /*
+     * L'action sur fond vert : la terre cuite #a33220 y tombe à 1,71. Le
+     * sauge clair tient 10,09 et reste dans la charte.
+     */
+    --action-texte: #c3d9ba;
   }
 
   /* ---- Le cartouche ------------------------------------------------------
@@ -954,6 +1008,28 @@
     position: relative;
     width: 100%;
     margin: 0;
+    /*
+     * UNE SURFACE CLAIRE REMET L'ENCRE À L'ENDROIT.
+     *
+     * Le bureau porte désormais une encre claire, faite pour son fond vert.
+     * Toute surface blanche posée dessus en hérite — et le texte disparaît :
+     * mesuré à 1,08 sur les trois chiffres de la synthèse et 1,13 sur les noms
+     * du dock, là où il en faut 4,5.
+     *
+     * C'est le piège que le commentaire du bureau annonçait déjà. Il ne suffit
+     * pas de l'écrire : chaque surface claire doit rétablir les jetons, sinon
+     * la règle ne vaut que jusqu'à la prochaine carte ajoutée.
+     */
+    --sur-fond: #0a2b23;
+    --sur-fond-doux: #4a5a55;
+    --encre: #0a2b23;
+    --encre-doux: #4a5a55;
+    --gris: #58775f;
+    --trait: #779596;
+    --trait-fin: #dfe6db;
+    --action-texte: #a33220;
+    color: var(--encre);
+
     padding: var(--e4) var(--e4) var(--e3);
     display: grid;
     gap: var(--e3);
@@ -1577,6 +1653,28 @@
     position: sticky;
     bottom: var(--e3);
     z-index: var(--plan-colle);
+    /*
+     * UNE SURFACE CLAIRE REMET L'ENCRE À L'ENDROIT.
+     *
+     * Le bureau porte désormais une encre claire, faite pour son fond vert.
+     * Toute surface blanche posée dessus en hérite — et le texte disparaît :
+     * mesuré à 1,08 sur les trois chiffres de la synthèse et 1,13 sur les noms
+     * du dock, là où il en faut 4,5.
+     *
+     * C'est le piège que le commentaire du bureau annonçait déjà. Il ne suffit
+     * pas de l'écrire : chaque surface claire doit rétablir les jetons, sinon
+     * la règle ne vaut que jusqu'à la prochaine carte ajoutée.
+     */
+    --sur-fond: #0a2b23;
+    --sur-fond-doux: #4a5a55;
+    --encre: #0a2b23;
+    --encre-doux: #4a5a55;
+    --gris: #58775f;
+    --trait: #779596;
+    --trait-fin: #dfe6db;
+    --action-texte: #a33220;
+    color: var(--encre);
+
     margin-top: var(--e5);
     display: grid;
     grid-template-columns: repeat(5, 1fr);
