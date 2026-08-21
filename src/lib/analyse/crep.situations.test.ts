@@ -59,14 +59,22 @@ describe('les situations cochées dans le CREP', () => {
   it('relève la seule situation répondue OUI, et nomme sa pièce', () => {
     const alertes = alertesDuCrep(ENCART);
     expect(alertes).toHaveLength(1);
-    expect(alertes[0]?.libelle).toContain('menace de s’effondrer');
+    /*
+     * Le TERME du rapport, entier — « on n'extrapole pas ». Le libellé de
+     * l'article 8 se retrouve tel quel, jusqu'à « ou en tout ou partie
+     * effondré » : un notaire doit pouvoir le chercher dans son rapport.
+     */
+    expect(alertes[0]?.terme).toBe(
+      'Les locaux objets du constat présentent au moins un plancher ou plafond menaçant de s’effondrer ou en tout ou partie effondré'
+    );
+    expect(alertes[0]?.explique).toMatch(/menace de tomber/);
     expect(alertes[0]?.ou).toBe('Cave');
   });
 
   it('ne relève aucune des quatre situations répondues NON', () => {
-    const libelles = alertesDuCrep(ENCART).map((a) => a.libelle);
-    expect(libelles.some((l) => /50|moitié/.test(l))).toBe(false);
-    expect(libelles.some((l) => /cinquième|20/.test(l))).toBe(false);
+    const libelles = alertesDuCrep(ENCART).map((a) => a.terme);
+    expect(libelles.some((l) => /50 %/.test(l))).toBe(false);
+    expect(libelles.some((l) => /20 %/.test(l))).toBe(false);
     expect(libelles.some((l) => /coulure/.test(l))).toBe(false);
     expect(libelles.some((l) => /moisissures/.test(l))).toBe(false);
   });

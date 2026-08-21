@@ -183,6 +183,22 @@ function emplacements(lignes: string[]): { zone: string; element: string; classe
  */
 export interface AlerteCrep {
   /**
+   * LE TERME DU RAPPORT, ENTIER — jamais reformulé, jamais tronqué.
+   *
+   * « Je veux que les termes extraits restent conformes dans Verrière. On les
+   * explique après. On n'extrapole pas. » — Aude, 21/08/2026.
+   *
+   * Une première version écrivait « une pièce au moins a la moitié de ses
+   * surfaces en plomb dégradé » là où l'arrêté écrit « Au moins un local parmi
+   * les locaux objets du constat présente au moins 50 % d'unités de diagnostic
+   * de classe 3 ». C'était une paraphrase : un notaire n'y retrouvait plus son
+   * libellé, et « unité de diagnostic » — la notion qui porte tout le CREP —
+   * avait disparu.
+   *
+   * Ce champ porte donc le libellé réglementaire. L'explication vit à côté.
+   */
+  terme: string;
+  /**
    * Laquelle des deux listes de l'article 8.
    *
    * L'arrêté du 19 août 2011 (lu en entier le 20/08/2026) ne fait pas un tas
@@ -204,8 +220,8 @@ export interface AlerteCrep {
    * sous leurs deux intitulés.
    */
   groupe: 'saturnisme' | 'bati';
-  /** Ce que le rapport affirme, dans nos mots. */
-  libelle: string;
+  /** Ce que le terme veut dire, dans nos mots — APRÈS lui, jamais à sa place. */
+  explique: string;
   /** La pièce, quand le rapport la nomme. */
   ou?: string;
 }
@@ -217,7 +233,14 @@ export interface AlerteCrep {
  * du constat présentent… » — mais ce qui les distingue, et qui tombe toujours
  * sur une ligne de continuation.
  */
-const SITUATIONS: { cle: string; groupe: 'saturnisme' | 'bati'; motif: RegExp; libelle: string }[] = [
+const SITUATIONS: {
+  cle: string;
+  groupe: 'saturnisme' | 'bati';
+  motif: RegExp;
+  /* Le libellé de l'article 8 de l'arrêté du 19 août 2011, mot pour mot. */
+  terme: string;
+  explique: string;
+}[] = [
   /*
    * « DE classe 3 » ou « EN classe 3 » — les deux circulent.
    *
@@ -230,25 +253,35 @@ const SITUATIONS: { cle: string; groupe: 'saturnisme' | 'bati'; motif: RegExp; l
     cle: 'piece50',
     groupe: 'saturnisme' as const,
     motif: /au moins 50\s*%\s*d['’]unit[ée]s de diagnostic (?:de|en) classe 3/i,
-    libelle: 'une pièce au moins a la moitié de ses surfaces en plomb dégradé'
+    terme:
+      'Au moins un local parmi les locaux objets du constat présente au moins 50 % d’unités de diagnostic de classe 3',
+    explique:
+      'Dans une pièce au moins, une surface mesurée sur deux porte du plomb qui s’écaille.'
   },
   {
     cle: 'locaux20',
     groupe: 'saturnisme' as const,
     motif: /moins 20\s*%\s*d['’]unit[ée]s de diagnostic (?:de|en) classe 3/i,
-    libelle: 'l’ensemble du logement a un cinquième de ses surfaces en plomb dégradé'
+    terme:
+      'L’ensemble des locaux objets du constat présente au moins 20 % d’unités de diagnostic de classe 3',
+    explique:
+      'Sur tout le logement, une surface mesurée sur cinq porte du plomb qui s’écaille.'
   },
   {
     cle: 'effondrement',
     groupe: 'bati' as const,
     motif: /plancher ou plafond mena[çc]ant de s['’]effondrer/i,
-    libelle: 'un plancher ou un plafond menace de s’effondrer'
+    terme:
+      'Les locaux objets du constat présentent au moins un plancher ou plafond menaçant de s’effondrer ou en tout ou partie effondré',
+    explique: 'Un plancher ou un plafond menace de tomber, ou s’est déjà effondré.'
   },
   {
     cle: 'coulure',
     groupe: 'bati' as const,
     motif: /importantes de coulure/i,
-    libelle: 'des traces importantes de coulure, de ruissellement ou d’écoulement'
+    terme:
+      'Les locaux objets du constat présentent des traces importantes de coulures ou de ruissellement ou d’écoulement d’eau sur plusieurs unités de diagnostic d’une même pièce',
+    explique: 'L’eau coule ou ruisselle sur plusieurs surfaces d’une même pièce.'
   },
   {
     /*
@@ -265,7 +298,9 @@ const SITUATIONS: { cle: string; groupe: 'saturnisme' | 'bati'; motif: RegExp; l
     cle: 'moisissures',
     groupe: 'bati' as const,
     motif: /moisissures/i,
-    libelle: 'des moisissures ou de nombreuses taches d’humidité'
+    terme:
+      'Les locaux objets du constat présentent plusieurs unités de diagnostic d’une même pièce recouvertes de moisissures ou de nombreuses tâches d’humidité',
+    explique: 'Plusieurs surfaces d’une même pièce sont moisies ou tachées d’humidité.'
   }
 ];
 
@@ -334,7 +369,11 @@ export function alertesDuCrep(lignes: string[]): AlerteCrep[] {
       if (SITUATIONS.some((s) => s.motif.test(ligne))) break;
     }
 
-    const base = { groupe: situation.groupe, libelle: situation.libelle };
+    const base = {
+      groupe: situation.groupe,
+      terme: situation.terme,
+      explique: situation.explique
+    };
     alertes.push(ou ? { ...base, ou } : base);
   }
 
@@ -408,7 +447,7 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
        * combat : rassurer au-delà de ce qui a été constaté.
        */
       verdict =
-        'Du plomb est présent, mais aucun revêtement n’a été trouvé dégradé : ils sont soit en bon état, soit recouverts par un autre revêtement qui empêche d’en juger (classe 1).';
+        'Du plomb est présent. Tous les revêtements concernés sont classés 1 — « non dégradé ou non visible » : soit ils sont intacts, soit ils sont sous un autre revêtement qui empêche d’en juger.';
     } else {
       gravite = 'bon';
       verdict = 'Aucun revêtement contenant du plomb au-delà du seuil réglementaire.';
@@ -488,21 +527,27 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
     faits.push({
       /* Le mot de la norme, en clair : « dégradé » est le terme de l'arrêté du
          19 août 2011 pour la classe 3, et c'est lui qui déclenche les travaux. */
-      libelle: 'Dégradés',
+      libelle: 'Classe 3',
       valeur: String(c3),
-      precision: c3 > 0 ? 'travaux obligatoires' : 'classe 3'
+      precision: c3 > 0 ? 'dégradé — travaux obligatoires' : 'dégradé'
     });
     faits.push({
-      libelle: 'En état d’usage',
+      libelle: 'Classe 2',
       valeur: String(c2),
-      precision: 'classe 2 — usés ou éraflés, mais pas dégradés'
+      precision: 'état d’usage — usés ou éraflés, mais qui ne font ni poussière ni écaille'
     });
     faits.push({
-      /* « intacts » était faux : la classe 1 couvre aussi les revêtements dont
-         l'état n'a pas pu être vu. Voir le verdict, et le § 10 de la norme. */
-      libelle: 'Avec plomb, non dégradés',
+      /*
+       * Le terme de l'arrêté, entier, puis l'explication — « on n'extrapole
+       * pas ». Le § 9 sépare « non dégradé » et « non visible » : les fondre en
+       * « intacts » faisait dire au produit ce que le rapport ne dit pas.
+       *
+       * Vu dans le corpus : un plafond à 8,17 mg/cm², huit fois le seuil, classé
+       * 1 parce qu'il est sous une toile de verre.
+       */
+      libelle: 'Classe 1',
       valeur: String(chiffres.classes[1]),
-      precision: 'classe 1 — en bon état, ou masqués par un autre revêtement'
+      precision: 'non dégradé ou non visible — intacts, ou masqués par un autre revêtement'
     });
   }
   /*
@@ -536,12 +581,20 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
    * qu'un plafond qui menace de tomber ne se compte pas, il se nomme, et la
    * pièce concernée avec lui.
    */
+  /*
+   * Le terme du rapport en valeur, l'explication en précision — dans cet ordre.
+   *
+   * « Les termes extraits restent conformes. On les explique après. » Le fait
+   * porte donc le libellé de l'article 8, entier, et l'explication vient
+   * dessous. La pièce concernée s'ajoute à l'explication, elle ne la remplace
+   * pas : elle est une donnée du rapport, pas une reformulation.
+   */
   for (const alerte of alertes) {
-    faits.push(
-      alerte.ou
-        ? { libelle: 'Le constat signale', valeur: alerte.libelle, precision: alerte.ou }
-        : { libelle: 'Le constat signale', valeur: alerte.libelle }
-    );
+    faits.push({
+      libelle: 'Le constat coche',
+      valeur: alerte.terme,
+      precision: alerte.ou ? `${alerte.explique} — ${alerte.ou}` : alerte.explique
+    });
   }
   if (signale) {
     faits.push({
@@ -652,7 +705,7 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
     aFaire.unshift(
       ...alertes.map(
         (a) =>
-          `Le constat relève ${a.libelle}${a.ou ? ` — ${a.ou}` : ''}. Ce n’est pas une question de plomb : c’est l’état du bâti, et c’est à faire vérifier avant de s’engager.`
+          `Le constat coche « ${a.terme} »${a.ou ? ` — ${a.ou}` : ''}. ${a.explique} C’est à faire vérifier avant de s’engager.`
       )
     );
   }

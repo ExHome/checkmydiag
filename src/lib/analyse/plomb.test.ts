@@ -67,9 +67,23 @@ describe('les facteurs de dégradation du bâti', () => {
   it('relève les deux seuils, que les mots-clés ne pouvaient pas voir', () => {
     const d = analyserPlomb([...ENTETE, ...RUBRIQUE(['OUI', 'OUI', 'NON', 'NON', 'NON'])], [4, 9]);
 
+    /*
+     * Le TERME du rapport, entier — « on n'extrapole pas ».
+     *
+     * Une version antérieure affichait « une pièce au moins a la moitié de ses
+     * surfaces en plomb dégradé ». C'était une paraphrase : « unité de
+     * diagnostic », la notion qui porte tout le CREP, avait disparu, et un
+     * notaire ne retrouvait plus son libellé. On cite l'article 8, puis on
+     * explique — jamais l'inverse.
+     */
     const dit = d.faits.map((f) => `${f.libelle} ${f.valeur}`).join(' | ');
-    expect(dit).toMatch(/moitié de ses surfaces/);
-    expect(dit).toMatch(/cinquième de ses surfaces/);
+    expect(dit).toMatch(/au moins 50 % d’unités de diagnostic de classe 3/);
+    expect(dit).toMatch(/au moins 20 % d’unités de diagnostic de classe 3/);
+
+    /* Et l'explication est là, mais À CÔTÉ, jamais à la place du terme. */
+    const explications = d.faits.map((f) => f.precision ?? '').join(' | ');
+    expect(explications).toMatch(/une surface mesurée sur deux/);
+    expect(explications).toMatch(/une surface mesurée sur cinq/);
   });
 
   it('ne prend pas un revêtement écaillé pour un désordre du bâti', () => {
@@ -196,10 +210,24 @@ describe('le vocabulaire des classes, celui de l’arrêté', () => {
     expect(d.verdict).toMatch(/travaux sont obligatoires/);
   });
 
-  it('nomme les faits comme la norme', () => {
+  it('nomme les faits comme le tableau du rapport, et explique à côté', () => {
+    /*
+     * « Les termes extraits restent conformes. On les explique après. »
+     *
+     * Le rapport nomme ses colonnes « Classe 1 », « Classe 2 », « Classe 3 » —
+     * pas « Dégradés » ni « En état d'usage ». Le lecteur qui compare la fiche
+     * et son rapport doit tomber sur les mêmes mots ; l'état, lui, est le terme
+     * de l'arrêté et vit dans la précision.
+     */
     const d = analyserPlomb(CREP(1, 2, 3), [1, 12]);
     const libelles = d.faits.map((f) => f.libelle);
-    expect(libelles).toContain('Dégradés');
-    expect(libelles).toContain('En état d’usage');
+    expect(libelles).toContain('Classe 1');
+    expect(libelles).toContain('Classe 2');
+    expect(libelles).toContain('Classe 3');
+
+    const par = (l: string) => d.faits.find((f) => f.libelle === l)?.precision ?? '';
+    expect(par('Classe 1')).toMatch(/non dégradé ou non visible/);
+    expect(par('Classe 2')).toMatch(/état d’usage/);
+    expect(par('Classe 3')).toMatch(/dégradé/);
   });
 });
