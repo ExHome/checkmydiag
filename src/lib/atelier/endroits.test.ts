@@ -81,3 +81,28 @@ describe('la correction d’un endroit', () => {
     );
   });
 });
+
+describe('le rapport se lit en entier', () => {
+  /*
+   * Une page qu'aucun volet ne couvre doit rester VISIBLE et se dire orpheline.
+   * C'est le cas le plus utile : ce qu'on ne voit pas ne se corrige pas, et une
+   * page invisible sort du dossier sans bruit.
+   */
+  it('montre aussi les pages rattachées à aucun volet', () => {
+    const vus = endroitsDe([
+      page(1, ['ÉTAT DE L’INSTALLATION INTÉRIEURE DE GAZ', 'E - Anomalies identifiées']),
+      page(2, ['Annexe photographique', 'Cliché n°1 — tableau électrique'])
+    ]);
+    expect(vus.pages.map((p) => p.numero)).toEqual([1, 2]);
+
+    const orpheline = vus.pages.find((p) => p.volet === null);
+    expect(orpheline, 'la page annexe ne doit pas disparaître').toBeDefined();
+    expect(orpheline!.lignes.map((l) => l.texte)).toContain('Annexe photographique');
+  });
+
+  it('marque dans la page les lignes qui ouvrent une rubrique', () => {
+    const vus = endroitsDe(VOLET_GAZ);
+    const marquees = vus.pages.flatMap((p) => p.lignes).filter((l) => l.repere);
+    expect(marquees.map((l) => l.repere)).toEqual(['D', 'E']);
+  });
+});

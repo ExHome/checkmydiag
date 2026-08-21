@@ -64,8 +64,24 @@ export interface VoletVu {
   attenduesManquantes: string[];
 }
 
+/**
+ * Une page du rapport, telle qu'on la lit dans l'atelier.
+ *
+ * Le rapport se lit ENTIER — y compris les pages que le moteur n'a rattachées
+ * à aucun volet. Ce sont souvent les plus intéressantes : ce qu'on ne voit pas
+ * ne se corrige pas, et une page invisible sort du dossier sans bruit.
+ */
+export interface PageVue {
+  numero: number;
+  /** Le volet auquel la page a été rattachée, ou `null` si aucun. */
+  volet: TypeDiag | null;
+  lignes: LigneVue[];
+}
+
 export interface Endroits {
   volets: VoletVu[];
+  /** Le rapport entier, page par page — la surface de lecture. */
+  pages: PageVue[];
   /** Pages qui n'ont été rattachées à aucun volet : elles sortent du dossier. */
   horsSection: number;
   /** La page de synthèse, quand le rapport en porte une. */
@@ -118,8 +134,35 @@ export function endroitsDe(pages: PageTexte[]): Endroits {
     };
   });
 
+  /*
+   * Le rapport entier, page par page. Le volet de rattachement vient des
+   * plages de sections ; une page qu'aucune plage ne couvre est orpheline, et
+   * c'est dit franchement plutôt que passé sous silence.
+   */
+  const voletDeLaPage = (numero: number): TypeDiag | null =>
+    decoupe.sections.find((s) => numero >= s.plage[0] && numero <= s.plage[1])?.type ?? null;
+
+  /* Les lignes déjà reconnues comme ouvrant une rubrique, pour les marquer
+     aussi dans la lecture page à page. */
+  const titresReperes = new Map<string, string>();
+  for (const volet of volets) {
+    for (const l of volet.texte) {
+      if (l.repere) titresReperes.set(l.texte, l.repere);
+    }
+  }
+
+  const pagesVues: PageVue[] = pages.map((p) => ({
+    numero: p.numero,
+    volet: voletDeLaPage(p.numero),
+    lignes: p.lignes.map((texte, index) => {
+      const repere = titresReperes.get(texte);
+      return repere ? { index, texte, repere } : { index, texte };
+    })
+  }));
+
   return {
     volets,
+    pages: pagesVues,
     horsSection: decoupe.horsSection.length,
     synthese: decoupe.plageSynthese
   };

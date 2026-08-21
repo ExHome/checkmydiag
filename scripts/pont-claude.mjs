@@ -23,7 +23,22 @@
  * wifi partagé, aucune autre machine ne peut l'atteindre.
  */
 import { createServer } from 'node:http';
+import { appendFile } from 'node:fs/promises';
 import Anthropic from '@anthropic-ai/sdk';
+
+/**
+ * LE JOURNAL — ce que l'atelier consigne, écrit où Claude peut le lire.
+ *
+ * Aude qualifie dans l'atelier ; le carnet vit dans son navigateur, où Claude
+ * n'a pas accès. Le pont recopie donc chaque consignation dans un fichier du
+ * poste, à mesure. C'est ce qui rend le binôme continu : elle n'a plus à me
+ * recopier ce qu'elle vient de constater, je le lis.
+ *
+ * Le fichier est HORS DU DÉPÔT (motif `carnet-*.md` dans `.gitignore`) : une
+ * ligne de rubrique recopiée d'un rapport peut porter une adresse, et le dépôt
+ * est public. Il reste sur le poste, comme le reste.
+ */
+const JOURNAL = new URL('../carnet-atelier.md', import.meta.url);
 
 const PORT = Number(process.env.PONT_PORT ?? 8787);
 
@@ -89,9 +104,59 @@ const serveur = createServer(async (requete, reponse) => {
     return;
   }
 
-  /* La page appelle ceci au chargement pour savoir si Claude est là. */
+  /* La page appelle ceci au chargement : le journal tourne-t-il, et Claude
+     peut-il répondre ? Les deux sont indépendants. */
   if (requete.method === 'GET' && requete.url === '/present') {
-    reponse.writeHead(200, entetes(origine)).end(JSON.stringify({ present: true }));
+    reponse
+      .writeHead(200, entetes(origine))
+      .end(JSON.stringify({ present: true, journal: true, claude: claude !== null }));
+    return;
+  }
+
+  /*
+   * CONSIGNER — l'atelier envoie ici chaque qualification, à mesure.
+   *
+   * Aucun appel à l'API, aucun coût : on écrit une ligne dans un fichier du
+   * poste. C'est ce que Claude relira pour corriger le moteur.
+   */
+  if (requete.method === 'POST' && requete.url === '/consigner') {
+    let corps = '';
+    for await (const morceau of requete) corps += morceau;
+    try {
+      const { rapport, editeur, note } = JSON.parse(corps);
+      if (typeof note !== 'string' || !note.trim()) {
+        reponse.writeHead(400, entetes(origine)).end(JSON.stringify({ erreur: 'note vide' }));
+        return;
+      }
+      const quand = new Date().toISOString().slice(0, 16).replace('T', ' ');
+      /* Les lignes suivantes de la note sont indentées : le journal reste lisible
+         quand une correction porte une priorité sur sa propre ligne. */
+      const lignes = note.trim().split('\n');
+      const entree = [
+        '',
+        `- **${quand}** · ${rapport ?? 'rapport sans nom'} · ${editeur ?? 'éditeur inconnu'}`,
+        ...lignes.map((l) => `  ${l.trim()}`),
+        ''
+      ].join('\n');
+      await appendFile(JOURNAL, entree, 'utf8');
+      console.log(`✎ consigné — ${lignes[0].slice(0, 90)}`);
+      reponse.writeHead(200, entetes(origine)).end(JSON.stringify({ ecrit: true }));
+    } catch (erreur) {
+      console.error('journal :', erreur);
+      reponse.writeHead(500, entetes(origine)).end(JSON.stringify({ erreur: String(erreur).slice(0, 200) }));
+    }
+    return;
+  }
+
+  if (requete.method === 'POST' && requete.url === '/demander' && !claude) {
+    reponse
+      .writeHead(503, entetes(origine))
+      .end(
+        JSON.stringify({
+          erreur:
+            'Pas de clé : le pont tient le journal, mais ne peut pas interroger Claude. Poser ANTHROPIC_API_KEY pour cela — c’est facturé à l’usage.'
+        })
+      );
     return;
   }
 
@@ -177,5 +242,10 @@ const serveur = createServer(async (requete, reponse) => {
 
 serveur.listen(PORT, '127.0.0.1', () => {
   console.log(`Le pont écoute sur http://127.0.0.1:${PORT} — ce poste uniquement.`);
-  console.log('Ouvrez la zone de travail : Claude y apparaît comme disponible.');
+  console.log('Journal : ' + decodeURIComponent(JOURNAL.pathname).slice(1));
+  console.log(
+    claude
+      ? 'Claude peut répondre depuis l’atelier (facturé à l’usage).'
+      : 'Sans clé : le journal seul, et c’est gratuit. C’est le mode normal.'
+  );
 });

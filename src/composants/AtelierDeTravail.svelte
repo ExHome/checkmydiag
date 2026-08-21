@@ -31,7 +31,13 @@
     viderCarnet,
     type Lecture
   } from '../lib/atelier/carnet';
-  import { demander, poidsDeLEnvoi, pontPresent, type TourApi } from '../lib/atelier/claude';
+  import {
+    consigner,
+    demander,
+    poidsDeLEnvoi,
+    pontPresent,
+    type TourApi
+  } from '../lib/atelier/claude';
   import {
     clesAttendues,
     endroitsDe,
@@ -57,9 +63,17 @@
 
   listerLectures().then((liste) => (carnet = liste));
 
-  /* Claude : présent seulement si le pont répond. Vérifié une fois, au montage. */
+  /*
+   * Le pont rend deux services indépendants : le JOURNAL, qui recopie les
+   * qualifications là où Claude peut les lire — gratuit —, et CLAUDE lui-même,
+   * qui demande une clé facturée. On peut avoir le premier sans le second.
+   */
   let claudeLa = $state(false);
-  pontPresent().then((oui) => (claudeLa = oui));
+  let journalLa = $state(false);
+  pontPresent().then((etat) => {
+    claudeLa = etat.claude;
+    journalLa = etat.journal;
+  });
 
   let question = $state('');
   let extrait = $state('');
@@ -72,8 +86,8 @@
   let cleVisee = $state('');
   let ligneVisee = $state('');
   let pourquoi = $state('');
-  /** Le volet dont on lit le texte. Un seul à la fois : un DDT fait 130 pages. */
-  let voletLu = $state<TypeDiag | null>(null);
+  /** Le rapport est-il ouvert à la lecture ? */
+  let lit = $state(false);
 
   /** Le tableau des traits mesurés, éditeur par éditeur — `docs/REPERES-PAR-EDITEUR.md`. */
   const REPERES: ReadonlyArray<{ trait: string; chez: Record<string, boolean> }> = [
@@ -133,7 +147,7 @@
       meles = generateursMeles(document.metadonnees, lignes);
       /* Le découpage est mis à plat tout de suite : c'est sur lui qu'on agit. */
       endroits = endroitsDe(document.pages);
-      voletLu = null;
+      lit = false;
       voletVise = null;
       ligneVisee = '';
 
@@ -210,11 +224,23 @@
     }
   }
 
+  /** Consigner au carnet ET, si le pont tourne, là où Claude le lira. */
+  async function inscrireEtPartager(texte: string): Promise<void> {
+    if (!fiche) return;
+    fiche = await noter(fiche.id, texte);
+    carnet = await listerLectures();
+    if (journalLa) {
+      void consigner({
+        rapport: fiche?.nomFichier ?? '',
+        editeur: generateur?.editeur ?? null,
+        note: texte
+      });
+    }
+  }
+
   async function qualifier(): Promise<void> {
     if (!note.trim() || !fiche) return;
-    fiche = await noter(fiche.id, note.trim());
-    /* Le carnet est relu pour que le compteur « n qualifiés » suive. */
-    carnet = await listerLectures();
+    await inscrireEtPartager(note.trim());
     note = '';
   }
 
@@ -225,8 +251,7 @@
    */
   async function corrigerEndroit(): Promise<void> {
     if (!fiche || !voletVise || !cleVisee.trim() || !ligneVisee.trim()) return;
-    fiche = await noter(
-      fiche.id,
+    await inscrireEtPartager(
       formulerCorrection({
         editeur: generateur?.editeur ?? null,
         volet: voletVise,
@@ -235,7 +260,6 @@
         ...(pourquoi.trim() ? { pourquoi } : {})
       })
     );
-    carnet = await listerLectures();
     ligneVisee = '';
     pourquoi = '';
   }
@@ -385,6 +409,51 @@
     {#if endroits}
       <section class="endroits">
         <h2>Les endroits</h2>
+
+        <button type="button" class="viser lire" onclick={() => (lit = !lit)}>
+          {lit ? 'Fermer le rapport' : 'Lire le rapport en entier'}
+        </button>
+
+        <!--
+          LE RAPPORT ENTIER. Toutes les pages, y compris celles qu'aucun volet
+          ne couvre : ce qu'on ne voit pas ne se corrige pas, et une page
+          invisible sort du dossier sans bruit. Chaque ligne se désigne d'un
+          clic — on ne recopie rien, donc on ne se trompe pas d'un caractère.
+        -->
+        {#if lit}
+          <div class="lecture">
+            {#each endroits.pages as p (p.numero)}
+              <p class="entete-page" class:orpheline={p.volet === null}>
+                page {p.numero}
+                {#if p.volet}· {p.volet}{:else}· <strong>rattachée à aucun volet</strong>{/if}
+              </p>
+              <ol>
+                {#each p.lignes as l (l.index)}
+                  <li class:repere={!!l.repere}>
+                    <button
+                      type="button"
+                      class="ligne"
+                      class:choisie={ligneVisee === l.texte}
+                      onclick={() => {
+                        if (p.volet) voletVise = p.volet;
+                        if (!cleVisee && p.volet) {
+                          cleVisee =
+                            endroits?.volets.find((v) => v.type === p.volet)
+                              ?.attenduesManquantes[0] ?? '';
+                        }
+                        designer(l.texte);
+                      }}
+                      title="Désigner cette ligne"
+                    >
+                      {#if l.repere}<span class="marqueur">{l.repere}</span>{/if}
+                      {l.texte}
+                    </button>
+                  </li>
+                {/each}
+              </ol>
+            {/each}
+          </div>
+        {/if}
         {#if endroits.horsSection}
           <p class="verdict alerte">
             <strong>{endroits.horsSection} lignes ne sont rattachées à aucun volet.</strong>
@@ -413,42 +482,6 @@
               <p class="silence">Aucune rubrique bornée dans ce volet.</p>
             {/if}
 
-            <button
-              type="button"
-              class="viser lire"
-              onclick={() => (voletLu = voletLu === volet.type ? null : volet.type)}
-            >
-              {voletLu === volet.type ? 'Fermer le texte' : 'Lire le rapport'}
-            </button>
-
-            <!--
-              LA FENÊTRE DE LECTURE. Le texte du volet tel que le moteur le voit,
-              avec les repères qu'il a reconnus. Chaque ligne se désigne d'un
-              clic : on ne recopie rien, donc on ne se trompe pas de caractère.
-            -->
-            {#if voletLu === volet.type}
-              <ol class="lecture">
-                {#each volet.texte as l (l.index)}
-                  <li class:repere={!!l.repere}>
-                    <button
-                      type="button"
-                      class="ligne"
-                      class:choisie={ligneVisee === l.texte}
-                      onclick={() => {
-                        voletVise = volet.type;
-                        if (!cleVisee) cleVisee = volet.attenduesManquantes[0] ?? '';
-                        designer(l.texte);
-                      }}
-                      title="Désigner cette ligne"
-                    >
-                      {#if l.repere}<span class="marqueur">{l.repere}</span>{/if}
-                      {l.texte}
-                    </button>
-                  </li>
-                {/each}
-              </ol>
-            {/if}
-
             {#if volet.attenduesManquantes.length}
               <p class="silence"><strong>Non trouvées</strong> — clique celle que tu veux corriger :</p>
               <ul class="manquantes">
@@ -473,19 +506,37 @@
           </article>
         {/each}
 
-        {#if voletVise}
+        {#if ligneVisee}
           <div class="correction">
-            <p class="quoi">
-              Volet <strong>{voletVise}</strong> · rubrique <strong>{cleVisee}</strong>
-            </p>
+            <p class="quoi">La ligne désignée : « {ligneVisee.trim()} »</p>
+
+            <!--
+              Une page rattachée à aucun volet n'en désigne aucun : c'est à Aude
+              de dire de quel diagnostic relève la ligne. Sans ce choix, le cas
+              le plus utile — la rubrique perdue hors section — resterait
+              impossible à qualifier.
+            -->
             <label>
-              <span>Ce n’est pas la bonne ? Choisis-en une autre</span>
-              <select bind:value={cleVisee}>
-                {#each clesAttendues(voletVise) as cle (cle)}
-                  <option value={cle}>{cle}</option>
+              <span>De quel volet relève-t-elle ?</span>
+              <select bind:value={voletVise}>
+                <option value={null}>— à choisir —</option>
+                {#each endroits.volets as v (v.type)}
+                  <option value={v.type}>{v.type}</option>
                 {/each}
               </select>
             </label>
+
+            {#if voletVise}
+              <label>
+                <span>Quelle rubrique le moteur n’a-t-il pas vue ?</span>
+                <select bind:value={cleVisee}>
+                  <option value="">— à choisir —</option>
+                  {#each clesAttendues(voletVise) as cle (cle)}
+                    <option value={cle}>{cle}</option>
+                  {/each}
+                </select>
+              </label>
+            {/if}
             <label>
               <span>La ligne du rapport qui l’ouvre — recopiée mot pour mot</span>
               <textarea bind:value={ligneVisee} rows="2" placeholder="H — Conclusion de l’état…"
@@ -496,7 +547,11 @@
               <textarea bind:value={pourquoi} rows="2" placeholder="Ce que ça engage pour l’acquéreur…"
               ></textarea>
             </label>
-            <button type="button" onclick={corrigerEndroit} disabled={!ligneVisee.trim()}>
+            <button
+              type="button"
+              onclick={corrigerEndroit}
+              disabled={!ligneVisee.trim() || !voletVise || !cleVisee}
+            >
               Consigner cet endroit
             </button>
           </div>
@@ -528,12 +583,20 @@
   <section class="claude">
     <h2>Claude</h2>
     {#if !claudeLa}
+      {#if journalLa}
+        <p class="absent-claude">
+          <strong>Le journal tourne</strong> — tout ce que tu consignes est recopié sur ce poste,
+          là où Claude peut le lire. Il ne peut pas répondre ici (ça demanderait une clé facturée),
+          mais il voit ton travail en continu.
+        </p>
+      {:else}
       <p class="absent-claude">
         Claude n’est pas là : le pont ne tourne pas sur ce poste. Pour le lancer, dans un
         terminal — <code>node scripts/pont-claude.mjs</code> — après avoir posé la clé dans
-        <code>ANTHROPIC_API_KEY</code>. La clé reste sur le poste ; elle n’entre jamais dans le
-        dépôt, qui est public.
+        <code>ANTHROPIC_API_KEY</code> — la clé est facultative : sans elle, le pont tient
+        seulement le journal, et c’est gratuit.
       </p>
+      {/if}
     {:else if !fiche}
       <p class="absent-claude">Ouvre un rapport : le fil se rattache au dossier en cours.</p>
     {:else}
@@ -849,9 +912,8 @@
   }
 
   .lecture {
-    list-style: none;
-    margin: 0 0 0.75rem;
-    padding: 0.5rem;
+    margin: 0 0 1rem;
+    padding: 0.5rem 0.6rem;
     max-height: 26rem;
     overflow-y: auto;
     background: #ffffff;
@@ -859,6 +921,29 @@
     border-radius: 0.4rem;
     font-size: 0.82rem;
     line-height: 1.45;
+  }
+
+  .lecture ol {
+    list-style: none;
+    margin: 0 0 0.6rem;
+    padding: 0;
+  }
+
+  .entete-page {
+    position: sticky;
+    top: 0;
+    margin: 0.5rem 0 0.2rem;
+    padding: 0.15rem 0.3rem;
+    background: var(--atelier-voile);
+    font-size: 0.74rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+
+  .entete-page.orpheline {
+    background: #f3e3c9;
+    opacity: 1;
   }
 
   .ligne {

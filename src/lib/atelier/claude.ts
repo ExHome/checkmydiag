@@ -13,10 +13,46 @@
 
 const PONT = 'http://127.0.0.1:8787';
 
-/** Le pont répond-il ? Sert à afficher Claude, ou à expliquer comment le lancer. */
-export async function pontPresent(): Promise<boolean> {
+/** Ce que le pont sait faire aujourd'hui : le journal toujours, Claude si clé. */
+export interface EtatDuPont {
+  journal: boolean;
+  claude: boolean;
+}
+
+/** Le pont répond-il, et jusqu'où ? Les deux services sont indépendants. */
+export async function pontPresent(): Promise<EtatDuPont> {
   try {
     const reponse = await fetch(`${PONT}/present`, { signal: AbortSignal.timeout(1500) });
+    if (!reponse.ok) return { journal: false, claude: false };
+    const etat = (await reponse.json()) as Partial<EtatDuPont>;
+    return { journal: etat.journal ?? true, claude: etat.claude ?? false };
+  } catch {
+    return { journal: false, claude: false };
+  }
+}
+
+/**
+ * RECOPIER UNE QUALIFICATION LÀ OÙ CLAUDE PEUT LA LIRE.
+ *
+ * Le carnet vit dans le navigateur d'Aude, où Claude n'a pas accès. Le pont
+ * l'écrit dans un fichier du poste, à mesure : elle n'a plus à recopier ce
+ * qu'elle vient de constater. Aucun appel à l'API, donc aucun coût.
+ *
+ * N'échoue jamais bruyamment : sans pont, le carnet local reste la source, et
+ * l'atelier fonctionne comme avant.
+ */
+export async function consigner(entree: {
+  rapport: string;
+  editeur: string | null;
+  note: string;
+}): Promise<boolean> {
+  try {
+    const reponse = await fetch(`${PONT}/consigner`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(entree),
+      signal: AbortSignal.timeout(2000)
+    });
     return reponse.ok;
   } catch {
     return false;

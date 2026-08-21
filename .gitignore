@@ -33,3 +33,7 @@ docs/BRIEF.md
 # Les sondes locales pointent vers la Dropbox : leur chemin est prive.
 *.local.mjs
 dist-atelier/
+
+# Le journal de l atelier : il recopie des lignes de rapports, donc
+# potentiellement des adresses. Il reste sur le poste.
+carnet-*.md
