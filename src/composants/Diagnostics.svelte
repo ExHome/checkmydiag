@@ -13,6 +13,7 @@
    */
   import type { Analyse, Diagnostic, Fait, TypeDiag } from '../lib/modele';
   import { espacesFrancaises } from '../lib/typographie';
+  import { ouvrirCouche } from '../lib/couches';
   import type { Photo } from '../lib/pdf';
   import SchemaDuRapport from './schemas/SchemaDuRapport.svelte';
   import Explicatif from './schemas/Explicatif.svelte';
@@ -178,14 +179,81 @@
       if (origine) {
         depuis = origine;
         pleinEcran = true;
+        /*
+         * L'ÉCRAN S'INSCRIT DANS L'HISTORIQUE.
+         *
+         * Sans cela, le balayage depuis le bord de l'iPhone et la flèche du
+         * navigateur s'adressent au SITE : ils quittent Verrière, et le
+         * diagnostic ouvert ne bouge pas. C'est la façon la plus naturelle de
+         * sortir d'un écran sur un téléphone, et c'était la seule qui ne
+         * fonctionnait pas.
+         */
+        quitterLHistorique = ouvrirCouche(() => {
+          pleinEcran = false;
+          revenirVers?.focus();
+          revenirVers = null;
+          quitterLHistorique = null;
+        });
       }
     });
   });
 
+  /*
+   * Les gestes posés par une ACTION, et non par des attributs.
+   *
+   * Un `<div>` qui porte `onpointerdown` doit, aux yeux de l'outillage
+   * d'accessibilité, annoncer un rôle — sans quoi il se présente comme une
+   * commande qu'aucun clavier ne peut atteindre. Or ce conteneur n'est pas une
+   * commande : c'est la surface du contenu, et le geste n'y est qu'un raccourci
+   * que la flèche, la touche Échap et le bandeau des onglets font déjà.
+   *
+   * Lui coller un `role` pour faire taire l'avertissement reviendrait à
+   * déclarer aux lecteurs d'écran quelque chose de faux. L'action attache les
+   * mêmes écouteurs sans rien promettre.
+   */
+  function gestesDuDoigt(el: HTMLElement) {
+    const bas = (e: Event) => debut(e as PointerEvent);
+    const bouge = (e: Event) => pendant(e as PointerEvent);
+    const haut = (e: Event) => fin(e as PointerEvent);
+    el.addEventListener('pointerdown', bas);
+    el.addEventListener('pointermove', bouge);
+    el.addEventListener('pointerup', haut);
+    el.addEventListener('pointercancel', haut);
+    return {
+      destroy() {
+        el.removeEventListener('pointerdown', bas);
+        el.removeEventListener('pointermove', bouge);
+        el.removeEventListener('pointerup', haut);
+        el.removeEventListener('pointercancel', haut);
+      }
+    };
+  }
+
   /** L'élément d'où l'on est parti : le clavier doit y revenir en ressortant. */
   let revenirVers: HTMLElement | null = null;
 
+  /** De quoi retirer l'entrée d'historique quand on sort par le bouton. */
+  let quitterLHistorique: (() => void) | null = null;
+
+  /*
+   * UNE SEULE SORTIE, QUEL QUE SOIT LE GESTE.
+   *
+   * Le bouton, la touche Échap et le balayage depuis le bord passent tous par
+   * `ouvrirCouche` : c'est lui qui referme l'écran ET retire l'entrée
+   * d'historique. Fermer directement laisserait une entrée fantôme par
+   * diagnostic consulté — au bout de dix, il faudrait dix retours pour quitter
+   * le site.
+   */
   function fermerLApp(): void {
+    if (quitterLHistorique) {
+      const sortir = quitterLHistorique;
+      quitterLHistorique = null;
+      pleinEcran = false;
+      revenirVers?.focus();
+      revenirVers = null;
+      sortir();
+      return;
+    }
     pleinEcran = false;
     revenirVers?.focus();
     revenirVers = null;
@@ -793,15 +861,28 @@
   <!-- Le geste est un confort, jamais le seul chemin : le bandeau au-dessus et
        les flèches en dessous font la même chose au clavier comme à la souris.
        D'où le simple rôle de groupe — il n'y a rien à activer ici. -->
+  <!--
+    La scène garde le geste pour l'état DÉPLIÉ — celui qui se lit dans la page,
+    hors plein écran, où `.dedans` n'existe pas. En plein écran, c'est `.dedans`
+    qui prend le relais : les deux ne coexistent jamais.
+  -->
   <div
     class="scene"
     role="group"
     aria-label="Les diagnostics du dossier, un par un"
     aria-roledescription="carrousel"
-    onpointerdown={debut}
-    onpointermove={pendant}
-    onpointerup={fin}
-    onpointercancel={fin}
+    onpointerdown={(e) => {
+      if (!pleinEcran) debut(e);
+    }}
+    onpointermove={(e) => {
+      if (!pleinEcran) pendant(e);
+    }}
+    onpointerup={(e) => {
+      if (!pleinEcran) fin(e);
+    }}
+    onpointercancel={(e) => {
+      if (!pleinEcran) fin(e);
+    }}
   >
     <div class="piste" style:--sens={sens}>
       {#each diags as d, i (d.type)}
@@ -1541,10 +1622,25 @@
     <!-- L'univers du diagnostic commence ici, et pas plus haut : la barre au-
          dessus reste à la charte, c'est elle qui dit qu'on est toujours dans le
          même produit. -->
+    <!--
+      LE GESTE DU BORD SE PREND ICI, PAS SUR LA SCÈNE.
+
+      Les mêmes gestionnaires vivaient uniquement sur `.scene`, le carrousel des
+      volets. Or la scène commence APRÈS le rembourrage du contenu : mesuré à
+      l'écran sur un iPhone de 375 px, elle démarre à x = 16, tandis que le
+      retour par le bord n'est reconnu que sous x = 24. Il restait huit pixels
+      pour un geste qui part, par définition, du bord de la dalle — autant dire
+      qu'il ne se déclenchait jamais.
+
+      `.dedans` occupe toute la largeur, du pixel zéro au dernier. Le
+      feuilletage reste inchangé : `debut()` ne retient le retour que si le
+      doigt part du bord, et un mouvement vertical rend la main au défilement.
+    -->
     <div
       class="dedans"
       class:sombre={estSombre(diags[courant]?.type ?? 'dpe')}
       style={styleUnivers(diags[courant]?.type ?? 'dpe')}
+      use:gestesDuDoigt
     >
       <!--
         LA QUESTION D'ABORD, l'accroche de marque ensuite.

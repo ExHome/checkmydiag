@@ -15,6 +15,7 @@
   import { tick } from 'svelte';
   import type { Analyse, Diagnostic, TypeDiag } from '../lib/modele';
   import type { Origine } from '../lib/bureau';
+  import { ouvrirCouche } from '../lib/couches';
   import type { PageRendue, Photo } from '../lib/pdf';
   import Explicatif from './schemas/Explicatif.svelte';
   import MiniSchema from './MiniSchema.svelte';
@@ -251,13 +252,40 @@
    */
   let vueOuverte = $state(false);
 
+  /*
+   * LA VUE AUSSI S'INSCRIT DANS L'HISTORIQUE.
+   *
+   * Les quatre vues du dock — les diagnostics, les alertes, le conseil, le
+   * rapport — et le lexique s'ouvrent en plein écran, exactement comme une
+   * application. Le geste de retour du téléphone doit donc les refermer, et
+   * non quitter Verrière. Voir `lib/couches.ts`.
+   *
+   * L'empilement n'a lieu qu'à l'ENTRÉE : passer d'une vue à l'autre alors
+   * qu'on est déjà dedans change le contenu, pas le niveau. Sans cette garde,
+   * chaque aller-retour dans le dock ajouterait un cran, et il en faudrait
+   * autant pour ressortir.
+   */
+  let quitterLaVue: (() => void) | null = null;
+
+  function ouvrirLaVue(): void {
+    if (vueOuverte) return;
+    vueOuverte = true;
+    quitterLaVue = ouvrirCouche(() => {
+      vueOuverte = false;
+      quitterLaVue = null;
+    });
+  }
+
   function allerALaVue(cle: string): void {
     vue = cle;
-    vueOuverte = true;
+    ouvrirLaVue();
   }
 
   function fermerLaVue(): void {
     vueOuverte = false;
+    const sortir = quitterLaVue;
+    quitterLaVue = null;
+    sortir?.();
   }
 
   /*
@@ -289,7 +317,7 @@
      * montre que les applis, le lecteur n'existe qu'une fois ouvert — et
      * cliquer sur une icône ne produisait plus rien du tout.
      */
-    vueOuverte = true;
+    ouvrirLaVue();
     diagOuvert = type;
     origineIcone = origine;
     demandeNo += 1;
