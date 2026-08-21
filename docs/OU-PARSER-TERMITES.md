@@ -156,4 +156,205 @@ des lignes — pas par une règle qui tienne.
 
 ---
 
-*Lectures faites : 3. À faire avant toute correction : 47.*
+---
+
+# LES QUARANTE CONSTATATIONS DIVERSES, LUES
+
+*Extraites en bornant sur le TITRE, jamais sur la lettre, et lues une par une le
+21/08/2026. Rubrique trouvée dans **40 volets sur 40**.*
+
+## Ce que la rubrique contient réellement
+
+Trois natures de contenu, et elles n'ont rien à voir entre elles.
+
+```
+« Néant - - »                    ~18 sur 40   la rubrique existe et ne dit rien
+clauses de limite d'examen       ~17 sur 40   du texte-type, recopié à l'identique
+constatations réelles              5 sur 40   dont 4 portent sur un même bien
+```
+
+**Cinq constatations réelles sur quarante.** Un lecteur qui verserait tout dans
+une carte « Constatations diverses » noierait ces cinq informations sous
+dix-sept clauses de style.
+
+### Les cinq, exhaustivement — mots du rapport
+
+| lecture | ce que le rapport écrit | où |
+|---|---|---|
+| 1 | « Présence d'indices d'infestation d'autres agents de dégradation biologique **du bois** » | 1er étage - Entrée /Cuisine/Séjour ; 2ème étage - mezzanine |
+| 2 | « Indices d'infestations de **vrillettes** » | pannes du plafond R+1 |
+| 2 | « **Traces d'humidité** sur plinthes bois » | R+1 : Salle de bain/wc |
+| 2 | « indices d'infestation de **termites** […] suite à un **dégât des eaux** » | salle de bain |
+| 2 | « de la **pourriture fibreuse** et des traces d'humidité importante » | plancher sur solives bois, salle de bain |
+| 3 | l'historique 2025 + « des travaux ont été réalisés […] remplacement du plancher bois » | salle de bain |
+| 4 | vrillettes + traces d'humidité | pannes plafond R+1 · plinthes salle de bain |
+| 16 | « **Traces de moisissures** au plafond » · « Traces d'humidité sur plinthes » | RDC : Cuisine et Séjour · cuisine |
+
+⚠️ **Les lectures 1 à 4 sont le même logement.** En biens distincts, deux sur
+trente-sept portent une constatation réelle.
+
+### Les clauses de limite, qui ne sont pas des constatations
+
+Quatre blocs reviennent mot pour mot :
+
+```
+« Le diagnostic se limite aux zones rendues visibles et accessibles par le
+  propriétaire »
+« Les zones situées derrière les doublages des murs et plafonds n'ont pas été
+  visitées par défaut d'accès »
+« Nous nous engageons, lors d'une autre visite, à compléter le diagnostic sur
+  les zones ayant été rendues accessibles »
+« Les faces arrières des doublages (plâtre, bois) […] Eléments de la Charpente
+  en partie non-visible au-dessus des plafonds rampants. Contrôle effectué sans
+  déplacement de mobilier lourd, électroménager, cuisine aménagée, encombrement
+  des pièces, stock de bois. »
+```
+
+L'ODM les sépare : elles vont à **ZONES NON EXAMINÉES / LIMITES DE L'EXAMEN**
+(§ 14), pas à « Constatations diverses » (§ 10). Et elles nomment la **charpente**
+— dans un rapport de termites, ce n'est pas un détail.
+
+Une cinquième mention, dans la même famille, ne vise que ce bien-là :
+
+```
+« A cause de l'absence de trappe, un désardoisage ou un détuilage permettrait
+  une inspection de la charpente non visible lors de la visite »
+```
+
+---
+
+## Les quatre pièges de forme, mesurés
+
+### 1. ⚠️ La colonne « Localisation » s'insère AU MILIEU d'une phrase
+
+Systématique. La colonne de gauche est centrée verticalement sur le bloc de
+texte, et l'extraction la pose à la ligne où elle tombe :
+
+```
+Nous nous engageons, lors d'une autre visite, à compléter le
+Général - diagnostic sur les zones ayant été rendues accessibles
+```
+
+Recoller naïvement produit : *« …à compléter le **Général -** diagnostic sur les
+zones… »*. La localisation doit être **retirée du texte et gardée à part** — c'est
+précisément ce que l'ODM § 10 exige : chaque constatation reliée à sa
+localisation.
+
+### 2. ⚠️ Le pied de page s'insère au milieu, lui aussi
+
+```
+H. - Constatations diverses :
+31/03/2025                        ← la date du pied de page
+Liste des ouvrages, parties
+```
+
+et parfois en plein texte (lecture 3, « 29/04/2026 » entre deux mots d'une
+phrase). Une date isolée sur sa ligne, dans cette rubrique, est de l'habillage —
+jamais du contenu.
+
+### 3. ⚠️ Les mots sont coupés par des espaces parasites
+
+Dans le **titre** comme dans le texte :
+
+```
+« H. - Const atations diverses : »      « I. - Moyens d'i nvestigation »
+« dispos itions »   « lam bris »   « n'on t pu »   « s tock de bois »
+« ét é rendues »    « e t éléments »
+```
+
+C'est le même piège que « eff ondré » et « l'a gence » du corpus plomb. **On
+compare des lignes aplaties** — espaces et apostrophes écrasés — sinon le titre
+lui-même échappe au lecteur une fois sur quarante.
+
+### 4. « Néant - - » n'est pas « rubrique absente »
+
+Les deux tirets sont les colonnes « Liste des ouvrages » et « Localisation »,
+vides. La rubrique existe et **répond**. Le distinguer d'une rubrique absente est
+la différence entre *« le diagnostiqueur n'a rien constaté d'autre »* et *« on ne
+sait pas s'il a regardé »*.
+
+---
+
+## Ce que le lecteur actuel manque, et ce qu'il invente
+
+### Il manque « moisissures »
+
+Le motif du produit est :
+
+```
+/m[ée]rule|champignons? lignivores?|coniophore|pourriture (?:cubique|fibreuse|molle)/i
+```
+
+**« Moisissures » n'y est pas.** Ni « altération fongique », ni « traces
+d'humidité ». La lecture 16 — *« Traces de moisissures au plafond dans RDC:
+Cuisine et Séjour »* — passe donc entièrement inaperçue.
+
+Et l'ODM § 12 impose le mot du rapport : si le rapport écrit « moisissures »,
+Verrière écrit **moisissures**. Ni « champignon », ni — surtout — « mérule ».
+
+### Il annonce la mérule sur des rapports qui n'en parlent pas
+
+**Le mot « mérule » n'apparaît dans AUCUNE des quarante rubriques.** Il n'apparaît
+que dans le rappel réglementaire du § E, imprimé dans tous les rapports :
+
+> « Lorsque, dans une ou plusieurs communes, des foyers de mérule sont
+> identifiés, un arrêté préfectoral […] délimite les zones de présence d'un
+> risque de mérule. »
+
+### MESURÉ, sur 120 volets
+
+```
+le motif « mérule / champignons » du produit
+  trouvé dans le VOLET ENTIER   : 106
+  trouvé dans la RUBRIQUE       :   2
+
+le rappel réglementaire du § E, qui contient le mot
+  présent                       : 106      ← le même nombre, exactement
+
+la rubrique « Constatations diverses »
+  présente                      : 120 sur 120
+  répondue « Néant »            :  48
+```
+
+**106 annonces, 2 constats. 104 faux positifs — 98 %.**
+
+Les deux nombres coïncident au rapport près : le motif ne trouve **que** le
+rappel légal. Verrière annonce donc aujourd'hui « Mérule et champignons du bois »
+à 106 logements sur 120, dont 104 ne portent aucun constat de ce genre.
+
+Et il faut ajouter l'erreur inverse : le rapport de la lecture 16 porte
+« traces de moisissures » dans sa rubrique, et n'est **pas** compté dans ces 2 —
+le motif ne connaît pas le mot. Le lecteur se trompe donc **dans les deux
+sens à la fois**, sur le même volet : il crie au loup 104 fois, et il rate un
+constat réel.
+
+C'est le prix exact de « chercher une info, pas un endroit ».
+
+---
+
+## Où en est la branche
+
+```
+volets lus EN ENTIER            :  3
+rubriques « constatations »     : 40
+```
+
+L'ordre permanent demande **cinquante lectures intégrales** avant toute
+correction. Elles ne sont pas faites : **aucun code n'a été touché**, et rien ne
+le sera avant. Ce carnet enregistre ce qui a été vu et mesuré, pas ce qui a été
+décidé.
+
+### Ce qui devra être corrigé, quand le droit d'y toucher sera acquis
+
+1. **Borner sur la rubrique**, jamais sur le volet entier — 104 faux positifs.
+2. **Comparer sur des lignes aplaties** — le titre lui-même échappe une fois sur
+   quarante.
+3. **Retirer la localisation du texte et la garder à part** — elle s'insère au
+   milieu des phrases, et l'ODM § 10 exige que chaque constatation reste reliée
+   à la sienne.
+4. **Filtrer l'habillage inséré en plein texte**, dates de pied de page comprises.
+5. **Séparer les clauses de limite des constatations** — ODM § 14 contre § 10.
+6. **Écrire le mot du rapport** : moisissures, pourriture fibreuse, vrillettes,
+   traces d'humidité. Jamais « mérule » à leur place — ODM § 12.
+7. **Distinguer « Néant » de « rubrique absente »** — 48 volets sur 120 répondent
+   « Néant », et répondre n'est pas se taire.
