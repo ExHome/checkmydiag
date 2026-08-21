@@ -328,7 +328,10 @@
 
     <div class="dessous">
       <h2>{analyse.bien.adresse ?? titre}</h2>
-      {#if analyse.bien.commune}<p class="commune">{analyse.bien.commune}</p>{/if}
+      <!-- La commune est déjà dans le badge du haut, avec son picto de lieu.
+           Elle était ici aussi : le même texte, dans la même carte, à 74 px
+           d'écart. Mesuré à l'écran. L'adresse se lit mieux d'un bloc avec ses
+           caractéristiques. -->
 
       <p class="traits">
         {#if analyse.bien.typeBien}<span>{analyse.bien.typeBien}</span>{/if}
@@ -800,12 +803,6 @@
     font-weight: 700;
     line-height: 1.15;
     letter-spacing: -0.022em;
-  }
-
-  .commune {
-    margin: 0;
-    font-size: var(--t-petit);
-    opacity: 0.92;
   }
 
   /* Type, surface, année : séparés par des points médians, comme le visuel. */

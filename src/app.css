@@ -382,15 +382,47 @@
   --rayon: 12px;
   --rayon-large: 20px;
 
-  /* Trois profondeurs, toutes teintées de bleu pétrole : une ombre grise sur du
-     sable vire au sale. */
+  /* Trois profondeurs, toutes teintées du VERT PROFOND — une ombre grise sur de
+     l'ivoire vire au sale. Le commentaire disait « bleu pétrole » : c'était une
+     trace de l'ancienne charte, et les valeurs ci-dessous n'en ont jamais
+     contenu. Un commentaire qui ment sur ce qu'il décrit finit par ramener ce
+     qu'il nomme. */
   --ombre: 0 2px 8px rgb(10 43 35 / 6%);
   --ombre-forte: 0 4px 16px rgb(10 43 35 / 10%);
   --ombre-lourde: 0 8px 32px rgb(10 43 35 / 12%);
 
-  /* La courbe de la charte : un départ franc, une arrivée douce. */
+  /*
+   * ═══════════════════════════════════════════════════════════════════════
+   * LE MOUVEMENT : quatre durées, deux courbes.
+   * ═══════════════════════════════════════════════════════════════════════
+   *
+   * La durée ne se choisit pas au goût : elle répond à la question que le
+   * mouvement pose.
+   *
+   *   --instant   90 ms  « j'ai vu ton doigt ». Sous 100 ms, le retour est
+   *                      perçu comme simultané au geste ; au-delà, l'interface
+   *                      semble réfléchir avant de répondre.
+   *   --duree    200 ms  un état qui bascule — bordure, pastille, couleur.
+   *   --ample    340 ms  un élément qui apparaît ou se déplie.
+   *   --ecran    480 ms  un changement de LIEU. On accepte d'attendre une
+   *                      demi-seconde pour changer d'écran, jamais pour
+   *                      changer d'état.
+   *
+   * LA COURBE. `cubic-bezier(0.32, 0.72, 0, 1)` est celle des transitions
+   * iOS : elle démarre vite et s'arrête sans rebond, ce qui donne la sensation
+   * qu'un objet a été LANCÉ puis freiné — et non déplacé à vitesse constante.
+   * L'ancienne (0.25, 0.46, 0.45, 0.94) est un easeOutQuad générique : correct,
+   * mais c'est exactement la courbe qu'on trouve partout ailleurs.
+   *
+   * `--courbe-sortie` sert à ce qui DISPARAÎT : plus sec, parce qu'on n'a pas
+   * besoin d'accompagner ce qu'on ne regarde plus.
+   */
+  --instant: 0.09s;
   --duree: 0.2s;
-  --courbe: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ample: 0.34s;
+  --ecran: 0.48s;
+  --courbe: cubic-bezier(0.32, 0.72, 0, 1);
+  --courbe-sortie: cubic-bezier(0.4, 0, 1, 1);
 
   /* Les deux polices du site : Fraunces pour les titres, la linéale du système
      pour le corps. */
@@ -1069,4 +1101,382 @@ body.demarrage .promesse-locale {
 body.demarrage .entete {
   background: transparent;
   border-bottom-color: rgb(247 246 242 / 18%);
+}
+
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * LE VOCABULAIRE DE MOUVEMENT DE LA LUMIÈRE
+ * ═══════════════════════════════════════════════════════════════════════════
+ *
+ * Le mécanisme de `src/composants/lumiere/` lit ces jetons. Ils sont ici, dans
+ * la feuille de la maison, parce qu'un vocabulaire de mouvement qui vit dans
+ * un composant n'est pas un vocabulaire : c'est un réglage local que le
+ * composant suivant ne reprendra pas.
+ *
+ * ── LES SIX DURÉES ────────────────────────────────────────────────────────
+ *
+ * Elles ne sont pas une échelle décorative. Chacune répond à une question
+ * différente, et c'est la question qui fixe la durée :
+ *
+ *   --t-instant     90 ms   « j'ai vu ton doigt ». En dessous de 100 ms, un
+ *                           retour est perçu comme simultané au geste. Au-delà,
+ *                           l'interface paraît réfléchir avant de répondre.
+ *
+ *   --t-court      180 ms   un état interne à un élément : une bordure, une
+ *                           pastille, un pictogramme qui bascule.
+ *
+ *   --t-lumiere    320 ms   une lumière qui s'allume. C'est la durée la plus
+ *                           employée du produit. Plus court, ça claque ; plus
+ *                           long, on attend.
+ *
+ *   --t-revelation 520 ms   un carreau qui s'ouvre en écran. On accepte
+ *                           d'attendre une demi-seconde pour un changement de
+ *                           lieu ; pas pour un changement d'état.
+ *
+ *   --t-grave      700 ms   la lumière qui SE RETIRE. Volontairement plus long
+ *                           que l'allumage : une lumière qui part vite est une
+ *                           coupure, une lumière qui part lentement est une
+ *                           pudeur. `retraitDe()` calcule la valeur exacte
+ *                           entre 320 et 700 selon la gravité.
+ *
+ *   --t-heure     1200 ms   le passage d'un moment du jour à l'autre. Assez
+ *                           long pour n'être jamais remarqué — c'est le but :
+ *                           l'écran a changé, on ne l'a pas vu changer.
+ *
+ * ── LES QUATRE COURBES ────────────────────────────────────────────────────
+ *
+ *   --verre     départ franc, très longue traîne. C'est la courbe de la
+ *               lumière : elle apparaît vite et s'installe lentement, comme un
+ *               tube qui monte en régime. Tout ce qui éclaire prend celle-ci.
+ *
+ *   --sortie    la courbe standard des choses qui arrivent.
+ *   --entree    celle des choses qui partent. Asymétrique par rapport à
+ *               `--sortie` : ce qui s'en va doit accélérer, pas ralentir.
+ *   --braise    symétrique, lente aux deux bouts. Réservée au retrait de
+ *               lumière sur ce qui est grave. C'est la seule courbe qui prend
+ *               son temps pour COMMENCER.
+ *
+ * AUCUN REBOND, NULLE PART. Pas de `cubic-bezier` qui dépasse 1, pas de
+ * ressort, pas d'overshoot. Une lumière ne rebondit pas, et un diagnostic
+ * immobilier n'est pas un jouet.
+ *
+ * ── QUAND ON N'ANIME PAS ──────────────────────────────────────────────────
+ *
+ * Quatre cas, et ce sont des interdictions, pas des préférences.
+ *
+ * 1. UN FAIT NE S'ANIME JAMAIS. Un nombre d'anomalies ne défile pas de 0 à 7.
+ *    Pendant l'animation, l'écran afficherait 3 — un chiffre que le rapport
+ *    n'a jamais écrit. C'est la règle de fidélité appliquée au mouvement :
+ *    une valeur intermédiaire est une valeur inventée. Les compteurs, les
+ *    barres qui se remplissent depuis zéro, les étiquettes A→G qui montent
+ *    lettre à lettre : interdits.
+ *
+ * 2. AU PREMIER RENDU. Une page qui s'anime en arrivant fait attendre pour
+ *    rien quelqu'un qui vient chercher une information. La première peinture
+ *    n'est pas une transition.
+ *
+ * 3. AU-DELÀ DE TROIS ÉLÉMENTS SIMULTANÉS. On anime alors le conteneur, une
+ *    fois, plutôt que ses enfants. Un cascadement de huit carreaux coûte huit
+ *    couches de composition et se lit comme une animation de présentation.
+ *
+ * 4. HORS DE L'ÉCRAN. Rien ne s'anime dans ce qu'on ne regarde pas : les
+ *    transitions des éléments non visibles sont coupées.
+ */
+:root {
+  --t-instant: 90ms;
+  --t-court: 180ms;
+  --t-lumiere: 320ms;
+  --t-revelation: 520ms;
+  --t-grave: 700ms;
+  --t-heure: 1200ms;
+
+  --verre: cubic-bezier(0.16, 0.84, 0.24, 1);
+  --sortie: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --entree: cubic-bezier(0.4, 0, 1, 1);
+  --braise: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /*
+   * LES BORNES DE LISIBILITÉ DE LA LUMIÈRE.
+   *
+   * Elles sont démontrées dans `src/composants/lumiere/gravite.ts` et tenues
+   * par `gravite.test.ts`. Elles figurent ici pour qu'une feuille de style qui
+   * voudrait « éclaircir un peu » trouve la borne avant de la franchir.
+   *
+   *   --lampe-plafond        0,34   ivoire à 5,03 au pire cas (lampe de midi)
+   *   --lampe-plafond-texte  0,12   ivoire à 10,23, encre douce à 6,19
+   *   --carreau-plafond      0,42   ivoire à 5,28 au pire substrat admissible
+   *
+   * Au-delà, la surface entre dans la BANDE MORTE ] 0,1719 ; 0,2611 [ où ni
+   * l'ivoire ni le vert profond n'atteignent 4,5. Ce n'est pas un seuil de
+   * confort : c'est l'intervalle où la marque n'a plus d'encre lisible.
+   */
+  --lampe-plafond: 0.34;
+  --lampe-plafond-texte: 0.12;
+  --carreau-plafond: 0.42;
+}
+
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * ON NE TRANSITIONNE JAMAIS UNE PROPRIÉTÉ QUI LIT UN JETON QUI CHANGE
+ * ═══════════════════════════════════════════════════════════════════════════
+ *
+ * C'est une règle d'écriture, née d'un défaut mesuré au banc le 21/08/2026.
+ * Sur les quatre gravités, la couche qui calcule était juste et l'écran n'en
+ * montrait rien :
+ *
+ *   --tl-sol          calculé  #0a2b23 → #092820 → #08231c → #061b15
+ *   fond réellement peint      #092820 → #092820 → #092820 → #092820
+ *
+ *   --tl-encre-douce  calculé   0,720  →  0,747  →  0,783  →  0,850
+ *   alpha réellement peint      0,745  →  0,745  →  0,745  →  0,745
+ *
+ * `gravite.ts` produisait les bonnes valeurs, `gravite.test.ts` était vert, et
+ * « le silence sur ce qui est grave » ne sortait pas du fichier TypeScript.
+ * C'est le pire genre de défaut : tout est juste sauf le pixel.
+ *
+ * LA CAUSE. Une propriété personnalisée non déclarée est substituée au moment
+ * du calcul : elle n'a pas de type, donc elle n'est pas animable. Une
+ * déclaration `transition: background …` posée sur `background: var(--tl-sol)`
+ * capture la couleur au premier rendu et NE LA REJOUE JAMAIS — un changement
+ * du seul jeton ne redéclenche pas la transition. La surface reste figée, en
+ * silence, sans erreur ni avertissement de console.
+ *
+ * ET DÉCLARER LE JETON NE SUFFIT PAS. Essayé, mesuré : avec `@property` et
+ * `transition: --tl-sol …`, le jeton se fige à son tour sur sa valeur de
+ * premier rendu. Toute transition portée sur ces jetons les gèle.
+ *
+ * LA RÈGLE, donc, et elle est simple : ces jetons se posent, ils ne
+ * s'animent pas. Les surfaces qui les lisent prennent la bonne valeur
+ * immédiatement, toutes ensemble — plateau SVG, fond de légende et encre douce
+ * restent d'une seule pièce, sans couture.
+ *
+ * CE QU'ON NE PERD PAS, et c'est pourquoi le remède est le bon : la gravité
+ * est une PROPRIÉTÉ DU DIAGNOSTIC AFFICHÉ, pas un état qui bascule sous les
+ * yeux du lecteur. Un rapport a la gravité qu'il a. Elle ne change en cours de
+ * route qu'au banc d'essai, quand on clique exprès pour comparer. Il n'y avait
+ * donc aucun mouvement à préserver ici — seulement une valeur à peindre juste.
+ *
+ * `--t-grave` et `etat.duree` gardent tout leur emploi : ils cadencent ce qui
+ * s'anime VRAIMENT — les ombres, les états sous le doigt, les apparitions —
+ * c'est-à-dire des propriétés ordinaires, qui ne lisent aucun jeton mouvant.
+ */
+
+/*
+ * Le mouvement réduit, appliqué globalement au mécanisme de lumière.
+ *
+ * On ne met pas tout à zéro. Un allumage instantané est un FLASH, et un flash
+ * est plus agressif que le mouvement qu'on cherchait à retirer. Les fondus
+ * d'opacité restent, courts et linéaires ; tout ce qui se déplace, s'agrandit
+ * ou se floute s'arrête.
+ */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --t-instant: 0ms;
+    --t-court: 0ms;
+    --t-lumiere: 120ms;
+    --t-revelation: 120ms;
+    --t-grave: 120ms;
+    --t-heure: 0ms;
+    --verre: linear;
+    --sortie: linear;
+    --entree: linear;
+    --braise: linear;
+  }
+}
+
+/*
+ * Le mode sobre coupe aussi les durées longues.
+ *
+ * Ce n'est pas de la cosmétique : sur un appareil lent, une transition de
+ * 1200 ms est 1200 ms pendant lesquelles le compositeur travaille. La lumière
+ * de l'heure devient un saut, invisible puisqu'il n'a lieu que toutes les cinq
+ * minutes.
+ */
+html[data-rendu='sobre'] {
+  --t-heure: 0ms;
+  --t-revelation: 260ms;
+  --t-grave: 320ms;
+}
+
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * LE CUIVRE ET LA BRAISE — les deux jetons de l'écran électricité
+ * ═══════════════════════════════════════════════════════════════════════════
+ *
+ * Ils sont ici et pas dans le composant pour la même raison que le vocabulaire
+ * de mouvement : une matière qui vit dans un seul fichier n'est pas une
+ * matière, c'est un réglage local.
+ *
+ * ── POURQUOI DEUX, ET PAS UNE PALETTE ──────────────────────────────────────
+ *
+ * La règle de la matière : elle n'apparaît QUE là où elle dit quelque chose de
+ * vrai. Le cuivre sur l'électricité parce qu'un conducteur EST en cuivre ; la
+ * braise sur une interruption parce que deux bouts de conducteur coupés
+ * chauffent. Partout ailleurs sur cet écran : du silence et de la lumière.
+ *
+ * ── LE CUIVRE N'EST PAS UNE COULEUR NOUVELLE ───────────────────────────────
+ *
+ * `--cuivre` #e8b06a est l'ancrage 3000 K de la rampe de `lumiere/heure.ts`,
+ * c'est-à-dire la lumière de la marque elle-même, arrêtée à la température d'un
+ * métal. Teinte 33,3° — dans la famille ambre relevée sur la publicité
+ * (#eba303, #e09402), entre le terracotta 18° et le sable 40°, et très loin de
+ * l'intervalle interdit 60°–140° des jaunes-verts.
+ *
+ * L'écran ne le pose jamais en aplat : il ne le voit que par transparence, à
+ * travers la fente du câble, où il se compose avec le fond entre 3,40:1 (à
+ * l'aube, le pire cas mesuré) et 7,17:1 (à midi). Le jeton lui-même ne sert
+ * qu'aux filets de 1 px du texte courant :
+ *
+ *   #e8b06a sur #0a2b23   7,85:1   ✓ très au-dessus des 3:1 d'un graphique
+ *
+ * ── LA BRAISE, ET POURQUOI ELLE NE S'APPELLE PAS `--braise` ────────────────
+ *
+ * Le nom était pris, et le prendre aurait été un dégât silencieux : `--braise`
+ * est déjà une COURBE — `cubic-bezier(0.65, 0, 0.35, 1)`, réservée par le
+ * vocabulaire de mouvement au retrait de lumière sur ce qui est grave. Une
+ * couleur redéclarée sous ce nom aurait transformé, le jour où quelqu'un
+ * l'emploie, une fonction d'accélération en `#c85a2c` : la transition serait
+ * simplement devenue invalide, sans erreur ni avertissement. Le jeton s'appelle
+ * donc `--tison`.
+ *
+ * ── LA BRAISE, ET SA SEULE INTERDICTION ────────────────────────────────────
+ *
+ * `--tison` #c85a2c, teinte 17,7°. C'est le terracotta de la direction
+ * artistique, et il ne sert PAS d'alarme : il ne remplit aucun fond, ne borde
+ * aucune boîte, ne clignote nulle part. Il marque l'endroit où le conducteur
+ * est coupé, et c'est tout.
+ *
+ *   #c85a2c sur #0a2b23 (sol clair)   3,58:1   ✓ élément graphique
+ *   #c85a2c sur #061b15 (sol grave)   4,21:1   ✓ il GAGNE quand la lumière
+ *                                              se retire — la braise est le
+ *                                              seul signal qui ne s'éteint pas
+ *
+ * INTERDICTION ABSOLUE : il ne porte jamais de texte. Sa luminance vaut 0,1976,
+ * en plein milieu de la BANDE MORTE ] 0,1719 ; 0,2611 [ où ni l'ivoire ni le
+ * vert profond n'atteignent 4,5. Un libellé posé dessus serait illisible quelle
+ * que soit l'encre choisie. `electricite.test.ts` le vérifie.
+ */
+:root {
+  --cuivre: #e8b06a;
+  --tison: #c85a2c;
+}
+
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * LE TACTILE — ce qui sépare une page web d'une application
+ * ═══════════════════════════════════════════════════════════════════════════
+ *
+ * Trois réglages manquaient, et ce sont les trois que l'on sent immédiatement
+ * sur un téléphone. Aucun n'est décoratif :
+ *
+ * 1. LE FLASH BLEU. Au toucher, le navigateur pose un voile bleu translucide
+ *    sur l'élément. C'est le marqueur le plus reconnaissable d'une page web —
+ *    aucune application native ne fait ça.
+ *
+ * 2. LE DÉLAI DE 300 ms. Le navigateur attend pour savoir si le geste est un
+ *    double-tap de zoom. `touch-action: manipulation` le lui dit tout de
+ *    suite. C'est la différence entre « ça répond » et « ça traîne ».
+ *
+ * 3. LA SÉLECTION ACCIDENTELLE. Un appui maintenu sur un bouton sélectionne
+ *    son libellé et ouvre le menu de copie. Sur un contrôle, jamais — mais sur
+ *    le TEXTE du rapport, toujours : le lecteur doit pouvoir copier ce que son
+ *    diagnostic dit. La règle ne vise donc que les contrôles.
+ */
+button,
+a,
+[role='button'],
+summary,
+label {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/*
+ * LE RETOUR AU DOIGT.
+ *
+ * Un élément touché s'enfonce. C'est la convention iOS, et c'est ce qui fait
+ * qu'une interface paraît matérielle plutôt que peinte. Le retrait est faible
+ * — 3 % — parce qu'au-delà, l'écran « saute » ; et il est INSTANTANÉ à
+ * l'aller, plus lent au retour : le doigt doit être obéi tout de suite, la
+ * remontée peut prendre son temps.
+ */
+button:active,
+a:active,
+[role='button']:active {
+  transform: scale(0.97);
+  transition-duration: var(--instant);
+}
+button,
+a,
+[role='button'] {
+  transition: transform var(--duree) var(--courbe);
+}
+/* Sauf ce qui n'a pas à bouger : la navigation de fond et les liens de texte. */
+nav a:active,
+p a:active,
+li a:active {
+  transform: none;
+}
+
+/*
+ * LE DÉFILEMENT NE DÉBORDE PAS.
+ *
+ * Sans `overscroll-behavior`, tirer une liste jusqu'au bout fait défiler la
+ * page DERRIÈRE elle — puis, sur mobile, déclenche le rechargement de la page.
+ * Un lecteur qui parcourt ses anomalies et perd son dossier parce qu'il a tiré
+ * un peu trop fort ne recommencera pas.
+ */
+.dedans,
+.piste,
+[class*='scroll'] {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button,
+  a,
+  [role='button'] {
+    transition: none;
+  }
+  button:active,
+  a:active,
+  [role='button']:active {
+    transform: none;
+  }
+}
+
+/*
+ * LES CIBLES DE 44 PX, SANS DÉFORMER LA PHRASE.
+ *
+ * Mesuré à l'écran : trois liens tombaient à 22 et 26 px de haut — « Voir un
+ * exemple », « lire les réponses en clair », « Comment le vérifie ». Ce sont
+ * des liens posés DANS une phrase : leur donner une hauteur de 44 px casserait
+ * l'interligne du paragraphe.
+ *
+ * La zone tactile s'étend donc par-dessous, en absolu, sans toucher au flux.
+ * Le lien garde sa taille de texte ; le doigt, lui, trouve 44 px.
+ *
+ * `min-height` n'aurait pas suffi sur un élément en ligne — il est ignoré tant
+ * que l'affichage n'est pas `inline-block`, ce qui déplacerait la ligne de base.
+ */
+a.lien,
+button.lien,
+button.verifier {
+  position: relative;
+}
+a.lien::after,
+button.lien::after,
+button.verifier::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 44px;
+  transform: translateY(-50%);
+  /* La zone est là pour le doigt, pas pour l'œil ni pour la souris au survol. */
+  pointer-events: auto;
 }
