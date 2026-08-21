@@ -626,6 +626,42 @@
       transparent 1px 4px
     );
 
+  /*
+   * ═══════════════════════════════════════════════════════════════════════════
+   * LA SIGNATURE : LA VERRIÈRE EN PIED D'ÉCRAN.
+   * ═══════════════════════════════════════════════════════════════════════════
+   *
+   * Ordre d'Aude : « la page de téléchargement PDF et la page avec les mini-
+   * applis doivent être la référence visuelle du reste », et « étends de
+   * manière intelligente ».
+   *
+   * L'intelligence, ici, c'est de ne PAS refaire ce qui a raté. Posée en fond
+   * plein sur un écran de contenu, la verrière disparaît sous le texte : le
+   * lexique l'a prouvé — elle y était entièrement recouverte, invisible mais
+   * téléchargée.
+   *
+   * Elle se pose donc là où un écran S'ARRÊTE. Sous la dernière ligne, le
+   * contenu cesse et l'ivoire reprend : c'est exactement la composition de la
+   * référence — du vide à gauche, la verrière à droite. On la retrouve en
+   * quittant chaque écran, comme une signature au bas d'une page.
+   *
+   * ─── ELLE S'AJOUTE AUX COUCHES, ELLE NE LES REMPLACE PAS ───
+   *
+   * Premier essai : une classe qui posait `background-image`. Elle effaçait le
+   * carreau d'architecte de l'écran, parce qu'une déclaration de fond remplace
+   * TOUTES les couches, pas seulement la première. Le jeton ci-dessous se glisse
+   * donc dans la liste existante, en tête, avec sa position et sa taille — c'est
+   * la seule forme qui compose au lieu d'écraser.
+   *
+   * `local` et non `fixed` : elle appartient au document et défile avec lui.
+   * Fixée, elle traverserait le texte pendant tout le défilement.
+   *
+   * Un seul fichier pour tout le produit, déjà en cache depuis l'écran
+   * d'arrivée : l'extension ne coûte pas un octet de plus.
+   */
+  --signature-verriere: image-set(url('/fond/verriere-fond-960.webp') type('image/webp'))
+    right bottom / min(520px, 68%) auto no-repeat;
+
   --plan-fond: 1;
   --plan-colle: 5;
   --plan-vue: 45;

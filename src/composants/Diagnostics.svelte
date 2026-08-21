@@ -1864,6 +1864,9 @@
      * ailleurs (`color-mix`, voiles, cartes) continue de partir de lui.
      */
     background:
+      /* LA SIGNATURE, en tête de pile : elle se pose au pied de l'écran, sous
+         la dernière ligne, là où le contenu s'arrête et où l'ivoire reprend. */
+      var(--signature-verriere),
       /*
          LA GRILLE D'ARCHITECTE : ELLE DEVIENT VERTE, ET ELLE SE VOIT.
          ─────────────────────────────────────────────────────────────────────
@@ -2319,14 +2322,29 @@
   }
 
   /* ---- Où l'on en est ---------------------------------------------------- */
+  /*
+   * LA BARRE DE FEUILLETAGE SE PROTÈGE DU DESSIN.
+   *
+   * La signature de la verrière se pose au pied de l'écran — exactement là où
+   * vit cette barre. Mesuré : si « Précédent » ou « Suivant » tombe sur les
+   * montants verts du dessin, le contraste chute à 1,86 pour un seuil de 4,5.
+   *
+   * Elle reprend donc le fond de l'écran, en opaque, et le prolonge de part et
+   * d'autre par son rembourrage : le dessin réapparaît autour d'elle, jamais
+   * dessous. C'est la règle de non-régression de l'ordre de mission — aucun
+   * effet ne dégrade la lecture.
+   */
   .pas-a-pas {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--e4);
     margin-top: var(--e4);
-    padding-top: var(--e4);
+    padding: var(--e4) var(--e3) var(--e3);
     border-top: 1px solid var(--trait-or);
+    border-radius: var(--rayon-petit);
+    background: var(--u-fond, var(--ivoire));
   }
 
   .pas-a-pas button {
