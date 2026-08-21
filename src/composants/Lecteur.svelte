@@ -490,7 +490,7 @@
 <!-- L'écran d'accueil du dossier : le cartouche, puis une tuile par diagnostic.
      C'est la porte d'entrée — on y voit l'état du dossier avant d'avoir lu une
      ligne, et chaque tuile ouvre la fiche correspondante. -->
-<Bureau {analyse} surOuvrirDiagnostic={ouvrirDansLAnalyse} surVue={allerALaVue} />
+<Bureau {analyse} {photo} surOuvrirDiagnostic={ouvrirDansLAnalyse} surVue={allerALaVue} />
 
 <!--
   L'ACCUEIL NE MONTRE QUE DES APPLIS.

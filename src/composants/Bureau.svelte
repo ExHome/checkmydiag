@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { Photo } from '../lib/pdf';
   /**
    * L'écran d'accueil du dossier.
    *
@@ -30,9 +31,17 @@
     surOuvrirDiagnostic?: (type: TypeDiag, origine?: Origine | null) => void;
     /** Va à l'une des trois parties du dossier. */
     surVue?: (cle: string) => void;
+    /**
+     * LA PHOTO DU BIEN, quand le rapport en porte une.
+     *
+     * Elle est extraite du PDF par `photoDuBien()` — la plus grande image des
+     * deux premières pages, découpée à sa position réelle. L'extraction
+     * existait et fonctionnait ; c'est l'affichage qui manquait.
+     */
+    photo?: Photo | null;
   }
 
-  const { analyse, surOuvrirDiagnostic, surVue }: Props = $props();
+  const { analyse, surOuvrirDiagnostic, surVue, photo = null }: Props = $props();
 
   /**
    * Le nom de la tuile, et son dessin.
@@ -301,9 +310,30 @@
     de l'ecran ne montrait rien. Le jour ou une photo sera fournie, la classe
     tombe et le grand cadre revient.
   -->
-  <article class="bien" class:sans-photo={true}>
+  <!--
+    `sans-photo` valait `true` EN DUR : le widget restait serré même quand le
+    rapport portait une photo. Le commentaire ci-dessus annonçait pourtant « le
+    jour où une photo sera fournie, la classe tombe » — elle ne tombait jamais,
+    puisque rien ne la calculait.
+  -->
+  <article class="bien" class:sans-photo={!photo}>
     <div class="paysage" aria-hidden="true">
-      <img class="filigrane" src="./logo/verriere-line-art.svg" alt="" />
+      {#if photo}
+        <!--
+          LA PHOTO DU BIEN.
+
+          `object-fit: cover` la recadre sans la déformer : un rapport peut
+          porter un cliché en portrait comme en paysage, et un logement écrasé
+          se voit immédiatement.
+
+          Elle est décorative au sens de l'accessibilité — l'adresse, juste
+          en dessous, dit ce que la photo montre. Un `alt` la décrivant
+          répéterait ce texte au lecteur d'écran.
+        -->
+        <img class="cliche" src={photo.image} alt="" width={photo.largeur} height={photo.hauteur} />
+      {:else}
+        <img class="filigrane" src="./logo/verriere-line-art.svg" alt="" />
+      {/if}
     </div>
 
     {#if analyse.bien.commune}
@@ -704,10 +734,24 @@
    * commande la hauteur -- badge, adresse, commune, traits, bouton -- et 206
    * est la valeur ou plus rien ne se telescope, verifiee a l'ecran.
    */
+  /*
+   * L'ENCRE BLANCHE VAUT DANS LES DEUX CAS.
+   *
+   * Elle n'était posée que sur `.sans-photo`. Conséquence, mesurée dès que la
+   * photo est arrivée : le titre retombait sur le vert hérité — rgb(10,43,35)
+   * — et se retrouvait écrit en vert profond sur une façade en pierre claire.
+   * Illisible, alors que c'est le seul cas où le voile sombre EST là pour
+   * porter du blanc.
+   *
+   * Le voile (`.bien::after`) couvre les deux états : l'encre aussi.
+   */
+  .bien {
+    color: #ffffff;
+  }
+
   .bien.sans-photo {
     min-height: 206px;
     box-shadow: var(--ombre-forte);
-    color: #ffffff;
   }
 
   .paysage {
@@ -803,6 +847,16 @@
     font-weight: 700;
     line-height: 1.15;
     letter-spacing: -0.022em;
+  }
+
+  /* La photo occupe tout le cadre, recadrée sans déformation. Le voile de
+     lecture est déjà posé par `.bien` — la photo passe dessous. */
+  .cliche {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
   }
 
   /* Type, surface, année : séparés par des points médians, comme le visuel. */
