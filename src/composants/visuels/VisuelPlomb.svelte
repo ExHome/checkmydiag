@@ -131,8 +131,11 @@
         'Le revêtement est éraflé, usé, entamé par endroits. C’est l’état qui précède la classe 3 : entretenu il y reste, laissé il s’y dégrade.'
     },
     {
-      haut: '#ff8a80',
-      bas: '#f4675f',
+      /* La classe 3 est la plus grave : elle prend le rouge de l'étiquette G,
+         assombri vers le bas. Les deux valeurs précédentes étaient des coraux,
+         que la charte a retirés du produit. */
+      haut: '#fc0205',
+      bas: '#c00204',
       titre: 'Classe 3 — du plomb, revêtement dégradé',
       texte:
         'La peinture s’écaille, se pulvérise, tombe. C’est la classe qui contamine par la poussière, et la seule qui oblige le propriétaire à faire supprimer l’exposition.'

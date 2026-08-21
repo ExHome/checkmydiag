@@ -29,7 +29,10 @@ const MARGE = 80;
 const FOND = '#0a2b23';
 const CREME = '#f5f1e8';
 const OR = '#12463b';
-const OR_CLAIR = '#ff9084';
+/* Ce jeton s'appelle « or clair » et portait un corail — deux couleurs
+   bannies pour le prix d'une. Il prend le sauge de la charte, qui est la
+   seule teinte claire admise à côté du vert. */
+const OR_CLAIR = '#a6c39a';
 const DOUX = '#7fa3ad';
 
 /**

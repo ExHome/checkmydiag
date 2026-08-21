@@ -746,9 +746,12 @@
     font-size: var(--t-base);
   }
 
+  /* Le survol du geste destructeur : il valait un corail, banni du produit.
+     Sur ce fond vert, l'orange de l'étiquette F tient 7,05 là où aucun rouge
+     lisible n'existe — c'est une couleur de l'arrêté, pas une invention. */
   .oublier:hover {
-    border-color: #fc7060;
-    color: #fc7060;
+    border-color: #fc9935;
+    color: #fc9935;
   }
 
   .erreur {

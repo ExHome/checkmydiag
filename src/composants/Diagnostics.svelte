@@ -2057,16 +2057,38 @@
    * démarrage, réutilisées telles quelles : deux séries divergeraient tôt ou
    * tard, et c'est sur la gravité qu'elles divergeraient.
    */
+  /*
+   * ── LE CORAIL VIVAIT ICI, ET LE TEST NE LE VOYAIT PAS ──────────────────
+   *
+   * `--alerte` et `--action` valaient #ff9084 : teinte 6°, saturation 100 %.
+   * C'est un corail, et le corail a été retiré du produit par décision
+   * explicite. Le test de charte ne l'attrapait pas parce qu'il vise trois
+   * valeurs nommées — #ff6b5d, #f05844, #d0402c — et pas celle-là. Une règle
+   * qui ne connaît que les couleurs auxquelles on avait pensé n'est pas une
+   * règle : elle est une liste.
+   *
+   * Ce que la mesure dit, et qui explique pourquoi ce corail était tentant :
+   * sur le vert profond #0a2b23, TOUT rouge qui atteint 4,5 de contraste est
+   * soit un corail, soit un rose. Il n'existe pas d'encre rouge lisible sur ce
+   * fond. L'alerte s'y dit donc autrement — par l'orange de l'étiquette F,
+   * qui est une couleur de l'arrêté DPE et tient 7,05.
+   *
+   * Ce bloc est par ailleurs INACTIF : aucun univers du produit ne se déclare
+   * sombre, `estSombre()` rend donc toujours faux. Il est conservé parce qu'il
+   * porte des valeurs mesurées pour fond sombre, et corrigé pour qu'il ne
+   * réintroduise pas une couleur bannie le jour où il servira.
+   */
   .dedans.sombre {
-    --alerte: #ff9084;
-    --alerte-fond: rgb(214 230 106 / 19%);
+    --alerte: #fc9935;
+    --alerte-fond: rgb(252 153 53 / 16%);
     --attention: #ffd54a;
     --attention-fond: rgb(255 213 74 / 14%);
     --ok: #cfe3ea;
     --ok-fond: rgb(207 227 234 / 10%);
-    --action: #ff9084;
-    /* Le vert profond qui signale ailleurs ne tient que 2,1 ici. */
-    --alerte-vive: #ff9084;
+    --action: #fc9935;
+    /* Le vert profond qui signale ailleurs ne tient que 2,1 ici — et le
+       corail qui le remplaçait est banni. Même raison, même réponse. */
+    --alerte-vive: #fc9935;
   }
 
   .dedans .diagnostics {

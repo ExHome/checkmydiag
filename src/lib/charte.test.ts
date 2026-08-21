@@ -19,7 +19,10 @@ function sources(dossier = 'src', trouves: string[] = []): string[] {
   for (const e of readdirSync(dossier)) {
     const chemin = join(dossier, e);
     if (statSync(chemin).isDirectory()) sources(chemin, trouves);
-    else if (/\.(svelte|css|ts)$/.test(e) && !e.endsWith('charte.test.ts')) trouves.push(chemin);
+    /* Tous les fichiers de test sont exclus, pas seulement celui-ci : un test
+       qui interdit une couleur doit pouvoir la NOMMER. `corail.test.ts` s'est
+       fait accuser par cette règle le jour où il a été écrit. */
+    else if (/\.(svelte|css|ts)$/.test(e) && !e.endsWith('.test.ts')) trouves.push(chemin);
   }
   return trouves;
 }
