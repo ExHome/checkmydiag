@@ -6,6 +6,7 @@
  * suite. On produit donc une liste de `Diagnostic`, pas un objet unique.
  */
 import type { Nature } from './analyse/nature';
+import type { Generateur } from './atelier/editeur';
 
 export type { Nature };
 
@@ -243,6 +244,24 @@ export interface PointDeControle {
 
 export interface Analyse {
   bien: Bien;
+  /**
+   * QUI A PRODUIT LE DOCUMENT — la première question, avant toute lecture.
+   *
+   * « L'éditeur conditionne le formalisme. L'éditeur conditionne tout. »
+   *
+   * Ce n'est pas une information de plus : c'est ce qui dit quelle carte de
+   * lecture appliquer. Une mise en page mesurée sur cent rapports d'un même
+   * générateur n'est pas une règle du métier — c'est l'habitude d'un logiciel,
+   * et le lecteur qui la généralise se trompe partout ailleurs.
+   *
+   * Vérifié en vrai, sur le CREP : la réponse OUI/NON des cinq situations
+   * termine la première ligne du libellé chez un éditeur, et occupe une ligne à
+   * elle seule chez un autre. Appliquer la mauvaise carte fait lire un NON là
+   * où le rapport dit OUI — sur une situation de saturnisme infantile.
+   *
+   * `null` quand rien ne le nomme : on ne devine pas.
+   */
+  generateur: Generateur | null;
   /**
    * De quel document il s'agit — dossier de vente, DTG, PPPT, DTA, repérage
    * avant travaux. C'est la première question d'un professionnel, et elle

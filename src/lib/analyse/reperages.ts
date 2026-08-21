@@ -553,6 +553,65 @@ export function constatEnSuspens(lignes: string[]): ConstatEnSuspens {
   return { enCoursDAnalyse, aSonder };
 }
 
+/**
+ * Ce que le repérage a effectivement visité.
+ *
+ * Le constat amiante négatif est le plus pauvre du produit : mesuré sur cent
+ * vingt dossiers, il rend **0,8 relevé par fiche**, quand le DPE en rend 9,4.
+ * Il dit « aucun matériau amianté » et se tait — alors que la question du
+ * lecteur est ailleurs : *a-t-il seulement vu tout mon logement ?*
+ *
+ * Le rapport y répond, au § 3.2.6 « Le périmètre de repérage effectif » :
+ *
+ *     Descriptif des pièces visitées
+ *     2ème étage - Entrée/cuisine, 2ème étage - Salle de bain /Wc,
+ *     2ème étage - Chambre, 2ème étage - Placard
+ *     Localisation Description
+ *
+ * Des pièces nommées, séparées par des virgules, sur une ou deux lignes. La
+ * liste se referme sur l'en-tête du tableau suivant.
+ *
+ * C'est le pendant de `nonVisitesAmiante`, qui lit déjà ce qui n'a PAS pu être
+ * visité : ensemble, les deux disent au lecteur ce que le constat couvre.
+ *
+ * Mesuré : onze volets amiante sur soixante-trois portent cette rubrique, avec
+ * deux à huit pièces, quatre en médiane.
+ */
+export function piecesVisiteesAmiante(lignes: string[]): string[] {
+  const debut = lignes.findIndex((l) => /Descriptif des pi[èe]ces visit[ée]es/i.test(l));
+  if (debut < 0) return [];
+
+  const brut: string[] = [];
+  for (let i = debut + 1; i < Math.min(debut + 6, lignes.length); i++) {
+    const ligne = (lignes[i] ?? '').trim();
+    /*
+     * La liste se referme sur l'en-tête du tableau suivant, ou sur le titre
+     * numéroté qui vient après la rubrique.
+     *
+     * Le titre s'écrit « 4. – Conditions de réalisation » : un chiffre, un
+     * point, PUIS un tiret cadratin. Une première version attendait une lettre
+     * juste après le point et ne s'arrêtait donc pas — la dernière pièce
+     * repartait avec le titre collé derrière elle.
+     *
+     * On ne teste donc que le début : des chiffres suivis d'une ponctuation.
+     * « 1er étage » et « 2ème étage » n'y répondent pas, et restent des pièces.
+     */
+    if (!ligne || /^(?:Localisation|Descriptif|\d+\s*[.)–—-])/.test(ligne)) break;
+    brut.push(ligne);
+  }
+  if (!brut.length) return [];
+
+  const pieces = brut
+    .join(' ')
+    .split(',')
+    .map((p) => p.replace(/\s+/g, ' ').trim())
+    .filter((p) => p.length >= 2 && p.length <= 60 && !/^n[ée]ant$/i.test(p));
+
+  /* Le même nom revient quand le rapport répète le niveau : on ne le répète
+     pas, mais on garde l'ordre du rapport. */
+  return [...new Set(pieces)];
+}
+
 export function analyserAmiante(lignes: string[], plage: [number, number]): Diagnostic {
   // Piège : le titre du rapport contient « repérage des matériaux et produits
   // contenant de l'amiante », et le corps explique longuement ce qu'est
@@ -670,6 +729,23 @@ export function analyserAmiante(lignes: string[], plage: [number, number]): Diag
   const faits: Fait[] = [];
   const date = trouver(lignes, /Date du rep[ée]rage\s*:?[\s.]*(\d{1,2}\/\d{1,2}\/\d{4})/i);
   if (date?.[1]) faits.push({ libelle: 'Date du repérage', valeur: date[1] });
+
+  /*
+   * Le périmètre réellement visité — ce qui manque le plus à un constat négatif.
+   *
+   * Un volet amiante sans amiante rendait 0,8 relevé, contre 9,4 pour le DPE :
+   * il concluait et se taisait. La question du lecteur n'est pourtant pas « y
+   * a-t-il de l'amiante » — le verdict y répond — mais « a-t-il vu tout mon
+   * logement ». Le § 3.2.6 du rapport le dit, pièce par pièce.
+   */
+  const visitees = piecesVisiteesAmiante(lignes);
+  if (visitees.length)
+    faits.push({
+      libelle: visitees.length > 1 ? 'Pièces visitées' : 'Pièce visitée',
+      valeur: String(visitees.length),
+      precision: visitees.slice(0, 6).join(' · ') + (visitees.length > 6 ? ' …' : '')
+    });
+
   if (listesAvecAmiante.length)
     faits.push({
       libelle: 'Listes concernées',

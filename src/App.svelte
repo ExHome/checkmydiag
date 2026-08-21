@@ -101,7 +101,7 @@
     // gardé la semaine dernière doit profiter de ce qu'on sait lire aujourd'hui.
     // On ne réécrit rien dans le coffre : le PDF y est déjà, et l'analyse se
     // refait à chaque ouverture.
-    const frais = analyser(document.pages);
+    const frais = analyser(document.pages, document.metadonnees);
     analyse = frais;
 
     if (import.meta.env.DEV) {
@@ -175,7 +175,7 @@
 
     try {
       const document = await ouvrirPdf(fichier, (fait, total) => (progression = { fait, total }));
-      const resultat = analyser(document.pages);
+      const resultat = analyser(document.pages, document.metadonnees);
 
       // Les résultats s'affichent tout de suite : dessiner les pages prend
       // plusieurs secondes sur un gros dossier, et le lecteur n'a aucune raison

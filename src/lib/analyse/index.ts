@@ -3,6 +3,7 @@
  */
 import type { PageTexte } from '../lignes';
 import type { Analyse, Bien, Diagnostic, TypeDiag } from '../modele';
+import { identifierGenerateur, type MetadonneesPdf } from '../atelier/editeur';
 import { decouper } from './decoupe';
 import { natureDe } from './nature';
 import { controlerCopropriete } from './copropriete';
@@ -215,8 +216,25 @@ function normaliserPages(pages: PageTexte[]): PageTexte[] {
   }));
 }
 
-export function analyser(brutes: PageTexte[]): Analyse {
+export function analyser(brutes: PageTexte[], metadonnees: MetadonneesPdf = {}): Analyse {
   const pages = normaliserPages(brutes);
+
+  /*
+   * QUI A PRODUIT CE DOCUMENT — avant tout le reste.
+   *
+   * « L'éditeur conditionne le formalisme. L'éditeur conditionne tout. »
+   *
+   * On le nomme une fois, ici, et le nom descend vers les lecteurs qui en ont
+   * besoin. Sans lui, chaque lecteur applique la carte du seul générateur sur
+   * lequel il a été écrit — et se trompe sur tous les autres.
+   *
+   * Le coût est nul quand l'appelant ne fournit rien : la rubrique du logiciel
+   * validé se lit dans le texte, et l'empreinte d'impression reste facultative.
+   */
+  const generateur = identifierGenerateur(
+    metadonnees,
+    pages.flatMap((p) => p.lignes)
+  );
   const { sections, horsSection, synthese, plageSynthese } = decouper(pages);
   const blocs = lireSynthese(synthese);
 
@@ -390,6 +408,7 @@ export function analyser(brutes: PageTexte[]): Analyse {
 
   return {
     bien,
+    generateur,
     nature,
     diagnostics,
     textePages,

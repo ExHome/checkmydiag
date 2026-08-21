@@ -141,9 +141,15 @@ const SIGNATURES: ReadonlyArray<{
     mesure: 29
   },
   /* 59 PDF de 11 pages, un fichier par volet (…-dta.pdf, …-dapp.pdf,
-     …-plomb_pc.pdf). L'éditeur n'est PAS identifié : la chaîne HTML2PDF ne le
-     nomme pas, et aucun de ces rapports n'a encore été lu. On ne devine pas —
-     c'est un trou du référentiel, pas une conclusion. */
+     …-plomb_pc.pdf). La chaîne d'impression ne nomme aucun éditeur, et c'est
+     exact : TCPDF est une bibliothèque, pas un logiciel de diagnostic.
+
+     ⚠️ Ce trou du référentiel est refermé depuis le 21/08/2026, mais PAS ici :
+     ces rapports ont été lus, et ils portent la marque d'un réseau de cabinets
+     dans leur pied de page. C'est `reseauDuPiedDePage` qui les nomme, après
+     cette table — voir le commentaire qui l'accompagne, et la mesure qui le
+     justifie. On garde donc `editeur: null` sur l'empreinte : elle ne sait
+     toujours rien, et c'est le pied de page qui parle. */
   { producteur: /TCPDF|HTML2PDF/i, editeur: null, genre: 'diagnostic', mesure: 59 },
   /* Les numérisations — 42 PDF, aucun fragment de texte en page 1. Le scanner
      ou l'imprimante virtuelle signe à la place du logiciel de diagnostic. */
@@ -198,6 +204,47 @@ export function logicielDeclare(lignes: readonly string[]): {
   return null;
 }
 
+/**
+ * Le pied de page qui nomme le réseau — la seule marque du corps admise ici.
+ *
+ * Ce module dit, à juste titre, que les marques du corps ne disent rien : un nom
+ * d'éditeur cherché au hasard dans le texte se trouve partout et de travers.
+ * Cette exception-là est d'une autre nature, et elle a été mesurée avant d'être
+ * écrite.
+ *
+ * Un réseau de cabinets produit des rapports que ni la rubrique ni la
+ * métadonnée ne nomment : la rubrique du logiciel validé n'existe que s'il y a
+ * un DPE, et la métadonnée dit « TCPDF » — une bibliothèque d'impression, pas
+ * un éditeur. Le document reste donc anonyme, alors que sa mise en page est
+ * parfaitement reconnaissable et **diffère de celle de LICIEL au point de
+ * casser un lecteur** : la réponse OUI/NON du CREP y termine la première ligne
+ * du libellé, quand elle occupe une ligne à elle seule ailleurs.
+ *
+ * La marque n'est pas un mot isolé, c'est un **endroit** : le domaine du réseau
+ * dans la ligne de contact du pied de page, répété à chaque feuille.
+ *
+ * Mesuré sur les 127 documents du corpus : ce domaine ressort sur 4, la double
+ * pagination propre au réseau sur **les mêmes 4**, et l'intersection avec les 73
+ * rapports qui déclarent LICIEL est **vide**. La marque est disjointe.
+ */
+const PIED_DE_RESEAU: ReadonlyArray<readonly [RegExp, string, string]> = [
+  [/\bbc2e\.com\b/i, 'BC2E', 'Réseau BC2E']
+];
+
+export function reseauDuPiedDePage(lignes: readonly string[]): {
+  editeur: string;
+  societe: string;
+  preuve: string;
+} | null {
+  for (const ligne of lignes) {
+    for (const [motif, editeur, societe] of PIED_DE_RESEAU) {
+      if (!motif.test(ligne)) continue;
+      return { editeur, societe, preuve: ligne.trim().slice(0, 120) };
+    }
+  }
+  return null;
+}
+
 /** Ce que l'empreinte d'impression du PDF dit du générateur. */
 export function signatureDuPdf(meta: MetadonneesPdf): {
   editeur: string | null;
@@ -245,6 +292,25 @@ export function identifierGenerateur(
       genre: signature?.genre ?? 'diagnostic'
     };
   }
+  /*
+   * Une signature d'impression peut être reconnue SANS nommer d'éditeur : TCPDF
+   * dit qu'on a affaire à un diagnostic, pas qui l'a produit. Dans ce cas le
+   * pied de page du réseau passe devant — sinon la fonction sortait ici en
+   * rendant « inconnu », et le repli plus bas n'était jamais atteint.
+   */
+  const reseau = reseauDuPiedDePage(lignes);
+  if (reseau && !signature?.editeur) {
+    return {
+      editeur: reseau.editeur,
+      societe: reseau.societe,
+      logiciel: null,
+      version: null,
+      source: 'signature',
+      preuve: reseau.preuve,
+      genre: signature?.genre ?? 'diagnostic'
+    };
+  }
+
   if (signature) {
     return {
       editeur: signature.editeur,

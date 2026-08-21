@@ -79,6 +79,25 @@ const MARQUEURS: Marqueur[] = [
        */
       'constatdereperageamiante',
       'dossiertechniqueamiante',
+      /*
+       * Le DAPP — dossier amiante des parties privatives.
+       *
+       * C'est un document réglementaire distinct du DTA : le DTA couvre les
+       * parties communes d'un immeuble, le DAPP les parties privatives d'un
+       * logement. Le second est celui qu'un acquéreur d'appartement reçoit.
+       *
+       * Son titre courant est répété en tête de chaque page — 261 fois dans le
+       * corpus — et il ne figurait pas ici. Résultat : ses pages ne
+       * s'attachaient à aucun volet et disparaissaient du dossier. Mesuré sur
+       * trente dossiers : quatorze pages perdues dans trois d'entre eux.
+       *
+       * Le piège : le catalogue de prestations du cabinet écrit « Dossier
+       * amiante Parties Privatives Exposition au plomb Métrage… » — même début,
+       * suivi de trois autres diagnostics. Il est écarté par `estSommaire` (une
+       * page qui cite deux diagnostics ou plus n'est pas un rapport) et par le
+       * choix du marqueur le plus haut sur la page.
+       */
+      'dossieramiantepartiesprivatives',
       'constatamianteavantvente',
       'etatmentiondelapresencedamiante'
     ]
