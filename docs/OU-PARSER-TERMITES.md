@@ -564,5 +564,164 @@ c'est aussi la différence entre « le vendeur n'a pas signalé de traitement »
 
 ---
 
-*Lectures intégrales : 5. Rubriques « constatations diverses » lues : 40.
+---
+
+# BC2E — LE VOLET LU EN ENTIER
+
+*Le seul volet BC2E des 250. Lu intégralement le 21/08/2026. Rien de LICIEL ne
+s'y applique.*
+
+## ⚠️ Le cas décisif : la synthèse dit « rien », la rubrique I dit « des indices »
+
+```
+SYNTHÈSE
+Dans les bâtiments, parties de bâtiment, pièces, volumes, ouvrages, parties
+d'ouvrages et éléments examinés, il n'a pas été repéré d'indice d'infestation
+par les termites.
+```
+
+Trois pages plus loin :
+
+```
+I. CONSTATATIONS DIVERSES :
+Indices d'infestation par des agents de dégradation biologique du bois autres
+que des termites :
+Des indices d'infestation ONT ÉTÉ REPÉRÉS. Ils ne sont pas causés par des
+termites.
+```
+
+Le tableau D est intégralement « Absence d'indices ». Il n'y a **aucune
+contradiction juridique** — la synthèse ne parle que des termites, la rubrique I
+parle des autres agents. Le rapport est correct.
+
+Mais pour un acquéreur, lire *« il n'a pas été repéré d'indice d'infestation »*
+puis, trois pages plus loin, *« des indices d'infestation ont été repérés »*,
+c'est exactement ce que l'ordre de mission interdit de laisser passer : § 22
+(moteur de contradictions), § 23 (pas de moyenne, pas d'effacement), § 3
+(indice ≠ infestation, termites ≠ autres agents).
+
+**Verrière doit afficher les deux phrases, chacune dans ses mots, et dire ce qui
+les sépare.** C'est le cas d'école de la branche.
+
+## Le § G de BC2E est un vrai tableau, et il est directement lisible
+
+Là où LICIEL entrelace trois colonnes au point de couper un nom de pièce en
+deux, BC2E écrit une ligne par élément, la pièce à gauche :
+
+```
+G. IDENTIFICATION DES OUVRAGES … QUI N'ONT PAS ÉTÉ EXAMINÉS ET JUSTIFICATION :
+Pièces        Éléments non examinés
+Sejour        faces cachées des meubles de cuisine
+              solives, lambourdes de planchers (non visitable)
+              présence de doublages de murs masquant des éléments (non démontable)
+              sous-faces des parquets (non démontable)
+              sous-faces des plinthes (non démontable)
+Combles       charpente recouverte d'isolant
+              combles perdus (non visitable)
+Salle d'eau   présence de doublages de murs …
+WC            présence de doublages de murs …
+Chambre 01    (les cinq mêmes)
+Chambre 02    (les cinq mêmes)
+```
+
+**Six pièces, dix-neuf éléments non examinés, chacun avec son motif.** C'est
+exactement la structure OÙ ? / QUOI ? / POURQUOI ? que l'ordre de mission (§ 14)
+réclame — et chez BC2E elle s'extrait sans effort, les lignes suivantes héritant
+de la pièce.
+
+Dont : **« Combles → charpente recouverte d'isolant · combles perdus (non
+visitable) »**. La charpente non examinée, nommée et localisée.
+
+## Le tableau D est bâti à l'envers de LICIEL
+
+```
+LICIEL   une ligne par OUVRAGE
+         « Salle de bain/wc  Sol - Carrelage  Absence d'indices … »
+
+BC2E     une ligne par PIÈCE, tous les ouvrages concaténés dans une cellule
+         « Étage : RDC - Sejour | Sol ( Parquet) - Plinthe (Peinture Bois) -
+           Plafond (Peinture Plâtre) - … - Radiateur 2 ( Métal) |
+           Absence d'indices d'infestation de termites »
+```
+
+Et la pièce s'écrit **« Étage : RDC - Sejour »**, jamais « Sejour » seul.
+
+⚠️ Le motif `PIECES` de `reperages.ts` exige un nom de pièce en tête de ligne
+suivi d'un ouvrage. Il ne peut pas reconnaître « Étage : RDC - Sejour », et le
+séparateur des ouvrages est un tiret, pas un saut de ligne. **BC2E ne rend donc
+vraisemblablement aucune zone.** *(À mesurer.)*
+
+## Quatre endroits que BC2E possède et que LICIEL n'a pas
+
+**1. La zone contaminée, avec sa réponse.**
+
+```
+Lieu du constat situé dans une zone contaminée par les termites ou susceptible
+de l'être à court terme (au sens de l'article L.133-5 du CCH) : OUI
+```
+
+Une phrase, une réponse en fin de ligne. Chez LICIEL, c'est un bloc de cinq
+lignes avec « Niveau d'infestation fort ».
+
+**2. Les informations du donneur d'ordre — RÉPONDUES.**
+
+```
+- Traitements antérieurs contre les termites : AUCUN
+- Présence de termites dans le bâtiment : AUCUNES
+- Fourniture de la notice technique … : NON
+```
+
+⚠️ **C'est l'endroit que LICIEL imprime sans réponse lisible.** Le même champ est
+donc lisible chez un éditeur et muet chez l'autre. Un lecteur unique écrirait
+« information non lisible » partout, et jetterait trois réponses claires.
+
+**3. Les abords de l'immeuble.**
+
+```
+Indices d'infestation par des termites aux abords de l'immeuble examiné : Néant
+```
+
+Sous-rubrique de I. LICIEL ne l'a pas du tout.
+
+**4. Les écarts à la norme, déclarés.**
+
+```
+L. ECARTS / ADJONCTIONS PAR RAPPORT A LA NORME NF P 03-201 :
+Absence de copie de contrat de mission accepté par le donneur d'ordre annexée
+au présent rapport …
+```
+
+Un écart réel à la norme, écrit par l'opérateur lui-même. Chez LICIEL, la ligne
+équivalente est « Commentaires (Ecart par rapport à la norme, …) : Néant ».
+
+## ⚠️ La rubrique E change de SENS entre les deux éditeurs
+
+Même lettre, même titre — sens opposé.
+
+```
+LICIEL   « E. – Catégories de termites en cause : »
+         suivi de deux pages de texte réglementaire générique, identique dans
+         tous les rapports, qui ne dit RIEN du bien.
+
+BC2E     « E. CATÉGORIE DE TERMITES EN CAUSE : »
+         « Néant »
+         → une RÉPONSE : aucune catégorie en cause dans ce bien.
+```
+
+C'est le plus bel exemple de « l'éditeur conditionne tout » que la branche ait
+produit : un lecteur qui apprendrait chez BC2E que E est une réponse lirait, chez
+LICIEL, deux pages de loi comme si c'était un constat.
+
+## Et le faux positif « mérule » est un phénomène LICIEL
+
+Le rappel réglementaire de BC2E cite **L 133-5** — l'ancienne rédaction — et il
+**ne mentionne pas la mérule**. Le mot n'apparaît nulle part dans ce volet.
+
+La mesure « 106 volets sur 120 déclenchent le motif mérule » est donc, elle
+aussi, **une mesure LICIEL**. Elle reste vraie ; elle ne dit rien de BC2E.
+
+---
+
+*Lectures intégrales : 6 (5 LICIEL, 1 BC2E). Rubriques « constatations
+diverses » LICIEL : 40. Volets INCONNUS extraits, non encore lus : 11.
 Aucun code touché.*
