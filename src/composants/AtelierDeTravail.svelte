@@ -32,6 +32,13 @@
     type Lecture
   } from '../lib/atelier/carnet';
   import { demander, poidsDeLEnvoi, pontPresent, type TourApi } from '../lib/atelier/claude';
+  import {
+    clesAttendues,
+    endroitsDe,
+    formulerCorrection,
+    type Endroits
+  } from '../lib/atelier/endroits';
+  import type { TypeDiag } from '../lib/modele';
 
   interface Props {
     surSortie: () => void;
@@ -58,6 +65,15 @@
   let extrait = $state('');
   let enCours = $state(false);
   let note = $state('');
+
+  /* LES ENDROITS — le découpage du rapport ouvert, et ce qu'on corrige dessus. */
+  let endroits = $state<Endroits | null>(null);
+  let voletVise = $state<TypeDiag | null>(null);
+  let cleVisee = $state('');
+  let ligneVisee = $state('');
+  let pourquoi = $state('');
+  /** Le volet dont on lit le texte. Un seul à la fois : un DDT fait 130 pages. */
+  let voletLu = $state<TypeDiag | null>(null);
 
   /** Le tableau des traits mesurés, éditeur par éditeur — `docs/REPERES-PAR-EDITEUR.md`. */
   const REPERES: ReadonlyArray<{ trait: string; chez: Record<string, boolean> }> = [
@@ -115,6 +131,11 @@
       const g = identifierGenerateur(document.metadonnees, lignes);
       generateur = g;
       meles = generateursMeles(document.metadonnees, lignes);
+      /* Le découpage est mis à plat tout de suite : c'est sur lui qu'on agit. */
+      endroits = endroitsDe(document.pages);
+      voletLu = null;
+      voletVise = null;
+      ligneVisee = '';
 
       /* La fiche est inscrite au carnet, et retrouve ses notes si le rapport
          avait déjà été ouvert : rouvrir n'efface jamais ce qu'on en a dit. */
@@ -154,6 +175,7 @@
     };
     repris = true;
     meles = false;
+    endroits = null;
   }
 
   async function interroger(): Promise<void> {
@@ -194,6 +216,33 @@
     /* Le carnet est relu pour que le compteur « n qualifiés » suive. */
     carnet = await listerLectures();
     note = '';
+  }
+
+  /**
+   * Corriger un endroit : désigner la ligne EXACTE qui ouvre une rubrique que
+   * le moteur n'a pas su voir. C'est la sortie utile de l'atelier — de quoi
+   * ajouter une forme et le test qui la tient, sans rien deviner.
+   */
+  async function corrigerEndroit(): Promise<void> {
+    if (!fiche || !voletVise || !cleVisee.trim() || !ligneVisee.trim()) return;
+    fiche = await noter(
+      fiche.id,
+      formulerCorrection({
+        editeur: generateur?.editeur ?? null,
+        volet: voletVise,
+        cle: cleVisee.trim(),
+        ligne: ligneVisee,
+        ...(pourquoi.trim() ? { pourquoi } : {})
+      })
+    );
+    carnet = await listerLectures();
+    ligneVisee = '';
+    pourquoi = '';
+  }
+
+  /** Désigner une ligne du rapport plutôt que la retaper : zéro faute de frappe. */
+  function designer(texte: string): void {
+    ligneVisee = texte;
   }
 
   async function toutEffacer(): Promise<void> {
@@ -325,6 +374,136 @@
       </section>
     {/if}
 
+
+    <!--
+      LES ENDROITS. La règle maîtresse : on ne cherche pas une information, on
+      cherche la RUBRIQUE qui la porte. Tout ce que le moteur lit de travers
+      vient d'un endroit mal borné — ou pas vu du tout. Cet écran les montre,
+      et surtout il montre les SILENCES : un atelier qui n'afficherait que les
+      trouvailles donnerait à voir un rapport bien lu, toujours.
+    -->
+    {#if endroits}
+      <section class="endroits">
+        <h2>Les endroits</h2>
+        {#if endroits.horsSection}
+          <p class="verdict alerte">
+            <strong>{endroits.horsSection} lignes ne sont rattachées à aucun volet.</strong>
+            Elles sortent du dossier sans être lues.
+          </p>
+        {/if}
+
+        {#each endroits.volets as volet (volet.type)}
+          <article>
+            <h3>
+              {volet.type}
+              <span class="pages">pages {volet.pages[0]}–{volet.pages[1]} · {volet.lignes} lignes</span>
+            </h3>
+
+            {#if volet.rubriques.length}
+              <ul class="trouvees">
+                {#each volet.rubriques as r (r.repere + r.titre)}
+                  <li class:vide={r.lignes === 0}>
+                    <span class="repere">{r.repere}</span>
+                    {r.titre}
+                    <span class="taille">{r.lignes} lignes</span>
+                  </li>
+                {/each}
+              </ul>
+            {:else}
+              <p class="silence">Aucune rubrique bornée dans ce volet.</p>
+            {/if}
+
+            <button
+              type="button"
+              class="viser lire"
+              onclick={() => (voletLu = voletLu === volet.type ? null : volet.type)}
+            >
+              {voletLu === volet.type ? 'Fermer le texte' : 'Lire le rapport'}
+            </button>
+
+            <!--
+              LA FENÊTRE DE LECTURE. Le texte du volet tel que le moteur le voit,
+              avec les repères qu'il a reconnus. Chaque ligne se désigne d'un
+              clic : on ne recopie rien, donc on ne se trompe pas de caractère.
+            -->
+            {#if voletLu === volet.type}
+              <ol class="lecture">
+                {#each volet.texte as l (l.index)}
+                  <li class:repere={!!l.repere}>
+                    <button
+                      type="button"
+                      class="ligne"
+                      class:choisie={ligneVisee === l.texte}
+                      onclick={() => {
+                        voletVise = volet.type;
+                        if (!cleVisee) cleVisee = volet.attenduesManquantes[0] ?? '';
+                        designer(l.texte);
+                      }}
+                      title="Désigner cette ligne"
+                    >
+                      {#if l.repere}<span class="marqueur">{l.repere}</span>{/if}
+                      {l.texte}
+                    </button>
+                  </li>
+                {/each}
+              </ol>
+            {/if}
+
+            {#if volet.attenduesManquantes.length}
+              <p class="silence"><strong>Non trouvées</strong> — clique celle que tu veux corriger :</p>
+              <ul class="manquantes">
+                {#each volet.attenduesManquantes as cle (cle)}
+                  <li>
+                    <button
+                      type="button"
+                      class="viser"
+                      class:active={voletVise === volet.type && cleVisee === cle}
+                      onclick={() => {
+                        voletVise = volet.type;
+                        cleVisee = cle;
+                        ligneVisee = '';
+                      }}
+                    >
+                      {cle}
+                    </button>
+                  </li>
+                {/each}
+              </ul>
+            {/if}
+          </article>
+        {/each}
+
+        {#if voletVise}
+          <div class="correction">
+            <p class="quoi">
+              Volet <strong>{voletVise}</strong> · rubrique <strong>{cleVisee}</strong>
+            </p>
+            <label>
+              <span>Ce n’est pas la bonne ? Choisis-en une autre</span>
+              <select bind:value={cleVisee}>
+                {#each clesAttendues(voletVise) as cle (cle)}
+                  <option value={cle}>{cle}</option>
+                {/each}
+              </select>
+            </label>
+            <label>
+              <span>La ligne du rapport qui l’ouvre — recopiée mot pour mot</span>
+              <textarea bind:value={ligneVisee} rows="2" placeholder="H — Conclusion de l’état…"
+              ></textarea>
+            </label>
+            <label>
+              <span>Pourquoi cet endroit compte — ce que toi seule sais</span>
+              <textarea bind:value={pourquoi} rows="2" placeholder="Ce que ça engage pour l’acquéreur…"
+              ></textarea>
+            </label>
+            <button type="button" onclick={corrigerEndroit} disabled={!ligneVisee.trim()}>
+              Consigner cet endroit
+            </button>
+          </div>
+        {/if}
+      </section>
+    {/if}
+
     <!--
       LA QUALIFICATION. Une session utile finit par une phrase consignée, pas
       par un écran regardé : c'est elle qui devient un cas de test.
@@ -390,11 +569,44 @@
 </div>
 
 <style>
+  /*
+   * L'ATELIER IMPOSE SES COULEURS.
+   *
+   * C'est un outil de travail, pas une page du produit : il doit rester
+   * lisible quoi qu'il arrive au thème du site. Il héritait du fond vert nuit
+   * de l'application et affichait une encre vert profond dessus — donc rien.
+   * Les valeurs sont écrites en clair, sans passer par les variables du
+   * produit, pour qu'un changement de charte ne puisse plus l'éteindre.
+   */
   .zone {
+    --atelier-fond: #f7f6f2;
+    --atelier-encre: #14211d;
+    --atelier-vert: #12463b;
+    --atelier-filet: #cfd6cd;
+    --atelier-voile: #ecefe9;
+
+    position: relative;
+    min-height: 100vh;
+    padding: 2rem max(1.25rem, calc(50vw - 26rem)) 4rem;
+    background: var(--atelier-fond);
+    color: var(--atelier-encre);
+  }
+
+  /*
+   * Le fond clair couvre l'écran entier — sans `100vw`, qui compte la barre de
+   * défilement dans la largeur et provoquait un défilement horizontal parasite.
+   */
+  .zone::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: var(--atelier-fond);
+    z-index: -1;
+  }
+
+  /* Le contenu reste dans une colonne lisible, centrée par le padding. */
+  .zone > * {
     max-width: 52rem;
-    margin: 0 auto;
-    padding: 2rem 1.25rem 4rem;
-    color: var(--encre, #0a2b23);
   }
 
   header {
@@ -402,7 +614,7 @@
     align-items: baseline;
     justify-content: space-between;
     gap: 1rem;
-    border-bottom: 1px solid var(--verriere-sable-filet, #d8c199);
+    border-bottom: 1px solid var(--atelier-filet);
     padding-bottom: 0.75rem;
   }
 
@@ -449,9 +661,9 @@
     font: inherit;
     font-size: 0.9rem;
     padding: 0.5rem;
-    border: 1px solid var(--verriere-sable-filet, #d8c199);
+    border: 1px solid var(--atelier-filet);
     border-radius: 0.4rem;
-    background: var(--verriere-blanc, #fff);
+    background: #ffffff;
     color: inherit;
     resize: vertical;
   }
@@ -465,7 +677,7 @@
 
   .carnet li {
     padding: 0.2rem 0;
-    border-bottom: 1px solid var(--verriere-sable-voile, rgb(200 169 107 / 16%));
+    border-bottom: 1px solid var(--atelier-voile);
   }
 
   .reprise {
@@ -502,8 +714,8 @@
   }
 
   .verdict.alerte {
-    background: var(--verriere-sable-voile, rgb(200 169 107 / 16%));
-    border-left: 3px solid var(--verriere-sable-or, #c8a96b);
+    background: var(--atelier-voile);
+    border-left: 3px solid var(--atelier-vert);
     padding: 0.6rem 0.75rem;
     font-size: 0.95rem;
   }
@@ -573,10 +785,165 @@
   }
 
   .fil li.claude p {
-    background: var(--verriere-blanc, #fff);
-    border: 1px solid var(--verriere-sable-filet, #d8c199);
+    background: #ffffff;
+    border: 1px solid var(--atelier-filet);
     border-radius: 0.4rem;
     padding: 0.6rem 0.75rem;
+  }
+
+
+  .endroits article {
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--atelier-voile);
+  }
+
+  .endroits h3 {
+    font-size: 0.95rem;
+    margin: 0 0 0.35rem;
+    text-transform: capitalize;
+  }
+
+  .pages {
+    font-weight: 400;
+    font-size: 0.78rem;
+    opacity: 0.7;
+    text-transform: none;
+    margin-left: 0.4rem;
+  }
+
+  .trouvees {
+    list-style: none;
+    margin: 0 0 0.5rem;
+    padding: 0;
+    font-size: 0.86rem;
+  }
+
+  .trouvees li {
+    padding: 0.1rem 0;
+  }
+
+  .trouvees li.vide {
+    opacity: 0.55;
+  }
+
+  .repere {
+    display: inline-block;
+    min-width: 2.1rem;
+    font-weight: 700;
+  }
+
+  .taille {
+    opacity: 0.6;
+    font-size: 0.78rem;
+    margin-left: 0.35rem;
+  }
+
+  .silence {
+    font-size: 0.86rem;
+    margin: 0.25rem 0;
+  }
+
+  .lire {
+    margin-bottom: 0.5rem;
+  }
+
+  .lecture {
+    list-style: none;
+    margin: 0 0 0.75rem;
+    padding: 0.5rem;
+    max-height: 26rem;
+    overflow-y: auto;
+    background: #ffffff;
+    border: 1px solid var(--atelier-filet);
+    border-radius: 0.4rem;
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
+
+  .ligne {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: 0;
+    padding: 0.12rem 0.3rem;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    border-radius: 0.25rem;
+  }
+
+  .ligne:hover {
+    background: var(--atelier-voile);
+  }
+
+  .lecture li.repere .ligne {
+    font-weight: 700;
+  }
+
+  .ligne.choisie {
+    background: var(--atelier-vert);
+    color: #f7f6f2;
+  }
+
+  .marqueur {
+    display: inline-block;
+    min-width: 1.9rem;
+    color: var(--atelier-vert);
+    font-weight: 700;
+  }
+
+  .ligne.choisie .marqueur {
+    color: inherit;
+  }
+
+  .manquantes {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin: 0.25rem 0 0.5rem;
+    padding: 0;
+  }
+
+  .viser {
+    font-size: 0.8rem;
+    background: none;
+    border: 1px solid var(--atelier-filet);
+    border-radius: 0.4rem;
+    padding: 0.2rem 0.55rem;
+    color: inherit;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .viser.active {
+    background: var(--atelier-vert);
+    color: #f7f6f2;
+    border-color: var(--atelier-vert);
+  }
+
+  .correction {
+    background: var(--atelier-voile);
+    border-left: 3px solid var(--atelier-vert);
+    padding: 0.75rem 0.9rem;
+    margin-top: 0.75rem;
+  }
+
+  .correction .quoi {
+    margin: 0 0 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  select {
+    font: inherit;
+    font-size: 0.9rem;
+    padding: 0.35rem;
+    border: 1px solid var(--atelier-filet);
+    border-radius: 0.4rem;
+    background: #ffffff;
+    color: inherit;
   }
 
   .sortant {
@@ -585,9 +952,12 @@
     margin: 0 0 0.5rem;
   }
 
-  button[type='button']:not(.sortir):not(.reprise):not(.effacer) {
-    background: var(--action, #12463b);
-    color: var(--sur-action, #f7f6f2);
+  /* Les boutons pleins sont les ACTIONS. Une ligne du rapport et une puce de
+     rubrique n'en sont pas : elles restent du texte tant qu'on ne les choisit
+     pas. Sans cette exclusion, le rapport entier s'affichait en vert plein. */
+  button[type='button']:not(.sortir):not(.reprise):not(.effacer):not(.viser):not(.ligne) {
+    background: var(--atelier-vert);
+    color: #f7f6f2;
     border: 0;
     border-radius: 0.4rem;
     padding: 0.5rem 1rem;
