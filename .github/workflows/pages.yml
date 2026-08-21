@@ -35,22 +35,17 @@ jobs:
         continue-on-error: true
 
   # ─────────────────────────────────────────────────────────────────────────
-  # LE SITE EST EN CONSTRUCTION — décision d'Aude, 21/08/2026.
+  # LE SITE EST ROUVERT — décision d'Aude, 21/08/2026.
   #
-  # Ce qui est publié n'est plus l'application, mais la seule page
-  # `chantier/index.html`. Ce n'est pas un écran posé devant un site qui
-  # tournerait encore : l'application n'est pas construite ici, donc son code
-  # n'est pas déployé et il n'y a rien à explorer derrière la page.
+  # L'application est de nouveau construite et publiée. La page de chantier
+  # reste dans le dépôt (`chantier/index.html`) : pour refermer le site, il
+  # suffit de remettre l'assemblage de cette page à la place du build, et
+  # `path: chantier` à la place de `path: dist`.
   #
-  # L'ATELIER, lui, n'est jamais concerné : il n'entre même pas dans un build
-  # public (garde `VITE_ATELIER`, tenue par `src/lib/atelier/hors-bundle.test.ts`),
-  # et il vit derrière son propre portail — voir `docs/ATELIER-EN-LIGNE.md`.
-  #
-  # Le contrôle ci-dessus continue de tourner sur l'application entière : le
-  # chantier ne met pas les tests en pause.
-  #
-  # Pour rouvrir le site le jour venu : rétablir `npm run build` et remettre
-  # `path: dist`.
+  # L'ATELIER n'est jamais concerné, ni ouvert ni fermé : il n'entre pas dans
+  # un build public — garde `VITE_ATELIER`, tenue par
+  # `src/lib/atelier/hors-bundle.test.ts`, qui échoue si un import statique
+  # revient. Rouvrir le site ne l'expose donc pas.
   # ─────────────────────────────────────────────────────────────────────────
   deploiement:
     needs: controle
@@ -60,17 +55,26 @@ jobs:
       url: ${{ steps.pages.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      # Pas de `npm ci`, pas de build : pendant le chantier, il n'y a rien à
-      # construire. Une page, et les éléments de marque qu'elle affiche.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Le titre des cartes de partage vient de la police du dépôt, mais leurs
+      # mentions sont dans la linéale du système. Sans police installée, elles
+      # ne seraient pas dessinées du tout.
+      - run: sudo apt-get install -y --no-install-recommends fonts-dejavu-core
+      # L'adresse du site sert aux liens canoniques, aux données structurées et
+      # au sitemap. Sans elle, le build retombe sur le domaine d'exemple écrit
+      # dans rendu.ts, et chaque page publiée déclarerait que la « vraie »
+      # version se trouve ailleurs — pire que pas de canonique du tout.
+      # Le jour où un domaine propre sera branché, c'est ici qu'on le change.
       #
-      # Le prisme et les favicons sont COPIÉS depuis `public/logo/` plutôt que
-      # dupliqués dans `chantier/` : le visuel de Verrière a une seule source,
-      # et une copie dans le dépôt finirait par diverger de l'originale.
-      - name: Assembler la page de chantier
-        run: |
-          mkdir -p _site/logo
-          cp chantier/index.html _site/
-          cp public/logo/prisme.svg public/logo/favicon.ico public/logo/favicon-32.png _site/logo/
+      # `npm run build` — et surtout PAS `npm run atelier` : c'est ce qui garde
+      # l'atelier hors du site public.
+      - run: npm run build
+        env:
+          CMD_SITE: https://exhome.github.io/checkmydiag
       # enablement : le workflow allume GitHub Pages lui-même au premier
       # passage. Sans ça, il faut d'abord cocher « Source : GitHub Actions »
       # dans les réglages — un geste de plus, à faire sous le compte
@@ -80,6 +84,6 @@ jobs:
           enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: _site
+          path: dist
       - id: pages
         uses: actions/deploy-pages@v4
