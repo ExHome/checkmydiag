@@ -582,9 +582,35 @@ body {
   overflow: hidden;
 }
 
-/* L'en-tête garde sa hauteur : c'est le cadre, il ne défile pas. */
+/*
+ * L'en-tête garde sa hauteur : c'est le cadre, il ne défile pas.
+ *
+ * ── L'ENCOCHE ────────────────────────────────────────────────────────────
+ *
+ * `viewport-fit=cover` est déclaré dans index.html : la page occupe donc
+ * l'écran ENTIER de l'iPhone, encoche comprise. Tant que le document défilait,
+ * personne ne s'en apercevait — on faisait glisser et le titre réapparaissait.
+ * Depuis que le cadre est fixe, le logo se retrouverait coincé sous la barre
+ * d'état, sans aucun moyen de l'en sortir.
+ *
+ * `env(safe-area-inset-top)` vaut 0 partout ailleurs : la règle ne coûte rien
+ * sur un ordinateur ou un Android sans encoche.
+ */
 #app > header {
   flex: none;
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/*
+ * LES CÔTÉS, EN PAYSAGE.
+ *
+ * Téléphone couché, l'encoche passe sur le flanc et les coins de la dalle sont
+ * arrondis : un texte calé au bord se fait rogner ses premières lettres. Les
+ * marges du contenu absorbent l'écart quand il existe.
+ */
+#app > main {
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
 }
 
 /* Le contenu est la seule chose qui bouge. */

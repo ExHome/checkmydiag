@@ -295,6 +295,9 @@
   /* Horodatage du début du geste : sans lui, on ne peut pas distinguer un
      balayage vif d'un déplacement lent de même amplitude. */
   let partiA = 0;
+  /* Vrai quand le doigt est parti du bord gauche : le geste ferme alors
+     l'écran au lieu de changer de diagnostic. */
+  let depuisLeBord = $state(false);
   /** Vrai dès que le geste s'est déclaré horizontal. */
   let horizontal = false;
 
@@ -305,6 +308,18 @@
     /* L'instant du départ sert à mesurer la VITESSE, pas seulement la distance
        parcourue — voir `fin()`. */
     partiA = e.timeStamp;
+    /*
+     * LE RETOUR PAR LE BORD.
+     *
+     * Deux gestes horizontaux cohabitent : glisser AU MILIEU change de
+     * diagnostic, glisser DEPUIS LE BORD GAUCHE revient en arrière. C'est
+     * exactement la règle d'iOS, et c'est le point de DÉPART du doigt qui
+     * tranche — pas sa direction ni sa longueur.
+     *
+     * 24 px : la largeur qu'Apple retient pour cette zone. Plus étroit, on
+     * rate le geste ; plus large, on ferme l'écran en croyant le feuilleter.
+     */
+    depuisLeBord = pleinEcran && e.clientX <= 24;
   }
 
   function pendant(e: PointerEvent): void {
@@ -335,6 +350,12 @@
      * n'ait lu quoi que ce soit. C'est le comportement d'iOS en bout de liste,
      * et il n'a pas besoin d'être expliqué.
      */
+    /* Parti du bord, on ne tire que vers la droite, et l'écran suit le doigt
+       en entier : c'est lui qui s'en va, pas le diagnostic qui défile. */
+    if (depuisLeBord) {
+      glisse = Math.max(0, dx);
+      return;
+    }
     const auBord = (dx > 0 && courant === 0) || (dx < 0 && courant === diags.length - 1);
     glisse = auBord ? dx / 3 : dx;
   }
@@ -357,11 +378,18 @@
       const vitesse = Math.abs(glisse) / duree;
       const lance = vitesse > 0.4 && Math.abs(glisse) > 24;
 
-      if (glisse <= -seuil || (lance && glisse < 0)) versLe(courant + 1);
+      if (depuisLeBord) {
+        /* Le retour se valide plus tôt qu'un changement de page : on ferme un
+           écran d'un geste, on ne le feuillette pas.
+           `depuisLeBord` n'est vrai qu'en plein écran — hors de ce mode, il n'y
+           a rien à fermer, et le geste doit rester un feuilletage. */
+        if (glisse >= seuil * 0.6 || (lance && glisse > 0)) fermerLApp();
+      } else if (glisse <= -seuil || (lance && glisse < 0)) versLe(courant + 1);
       else if (glisse >= seuil || (lance && glisse > 0)) versLe(courant - 1);
     }
     depart = null;
     horizontal = false;
+    depuisLeBord = false;
     partiA = 0;
     glisse = 0;
   }
