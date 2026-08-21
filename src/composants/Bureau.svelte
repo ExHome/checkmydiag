@@ -248,7 +248,8 @@
   let dicodiagOuvert = $state(false);
 
   /**
-   * LA BARRE DE NAVIGATION, à cinq entrées comme le visuel de référence.
+   * LA BARRE DE NAVIGATION. Quatre entrées : la grille des applications
+   * ouvre déjà les diagnostics, un onglet de plus aurait fait doublon.
    *
    * Elle en comptait trois, et c'étaient les trois VUES du dossier — un
    * sélecteur de contenu, pas une navigation. Le visuel montre autre chose : une
@@ -279,12 +280,18 @@
    */
   const NAVIGATION = [
     { cle: 'accueil', picto: 'accueil', nom: 'Accueil' },
-    /* « Diagnostics » avait disparu de cette liste dans le dossier de travail,
-       alors que le commentaire ci-dessus la dit « à cinq entrées comme le
-       visuel de référence » et que la version publiée en compte bien cinq.
-       Rétablie : un dock à quatre entrées laissait l'écran des diagnostics
-       sans porte d'entrée depuis la barre. */
-    { cle: 'point', picto: 'diagnostics', nom: 'Diagnostics' },
+    /*
+     * QUATRE ENTRÉES, ET « DIAGNOSTICS » N'EN FAIT PLUS PARTIE.
+     *
+     * Décision d'Aude : « je ne veux pas de doublons, ça fait 3 entrées avec
+     * les mini-apps ». La grille des applications EST l'accès aux
+     * diagnostics ; un onglet de plus dans la barre menait au même endroit
+     * qu'une icône posée juste au-dessus.
+     *
+     * (Je l'avais rétablie en croyant à une disparition accidentelle — le
+     * commentaire ci-dessus annonçait cinq entrées. C'est le commentaire qui
+     * était périmé, pas la liste.)
+     */
     { cle: 'alertes', picto: 'alertes', nom: 'Alertes' },
     { cle: 'conseil', picto: 'conseil', nom: 'Conseils' },
     { cle: 'rapport', picto: 'rapport', nom: 'Rapport' }
@@ -418,9 +425,15 @@
         </span>
       {/if}
 
-      <button type="button" class="voir" onclick={() => surVue?.('point')}>
-        Voir le bien <span aria-hidden="true">›</span>
-      </button>
+      <!--
+        « VOIR LE BIEN » A ÉTÉ RETIRÉ — décision d'Aude, même raison que
+        l'onglet du dock : il menait à la vue des diagnostics, que la grille
+        des applications ouvre déjà juste dessous. Deux chemins vers le même
+        écran, à trois centimètres l'un de l'autre.
+
+        Le widget garde ce qu'il est : l'identité du bien. Il n'a pas besoin
+        d'être une porte de plus.
+      -->
     </div>
 
   </article>
@@ -882,27 +895,59 @@
     inset: 0;
     z-index: -2;
     background: linear-gradient(150deg, #2f6b52 0%, #17493c 46%, #0a2b23 100%);
+    overflow: hidden;
+  }
+
+  /* Sans photo, le cadre porte l'ivoire du dessin et non le vert. */
+  .bien.sans-photo .paysage {
+    background: var(--ivoire);
   }
 
   /*
-   * LA VERRIÈRE DANS LE WIDGET, TEINTÉE DU VERT DE LA MAISON.
+   * LA VERRIÈRE TELLE QU'ELLE EST : VERTE SUR IVOIRE.
    *
-   * L'image de référence est ivoire ; le widget est vert profond et porte une
-   * encre blanche. Posée telle quelle, elle rendrait le titre illisible.
+   * Premier essai : un filtre `luminosity` qui lui faisait prendre le vert du
+   * widget. Il tenait debout — il gardait la structure et sauvait le contraste
+   * du titre blanc — mais il effaçait précisément ce qu'Aude a validé : la
+   * verrière VERTE sur l'ivoire, pas une verrière verte sur du vert.
    *
-   * `luminosity` résout les deux problèmes d'un coup : elle ne garde de
-   * l'image que ses valeurs — la géométrie des montants, les vitrages, la
-   * grande ombre projetée — et prend sa couleur du dégradé vert dessous. La
-   * verrière devient donc verte sur vert, en relief, et le contraste du texte
-   * reste celui qui était mesuré avant.
+   * Le widget change donc de camp quand il n'a pas de photo : fond ivoire,
+   * dessin intact, encre sombre. Il redevient vert le jour où une vraie photo
+   * arrive, puisque c'est alors la photo qui commande.
    *
    * Le fichier léger suffit : à cette taille, les 121 Ko n'apporteraient
    * aucun pixel visible de plus.
    */
   .verriere-defaut {
-    opacity: 0.55;
-    mix-blend-mode: luminosity;
     object-position: right bottom;
+  }
+
+  /*
+   * L'ENCRE SUIT, ET C'EST LA QUATRIÈME FOIS DANS CE CHANTIER.
+   *
+   * Une surface passe du sombre au clair, et le texte reste blanc : le titre
+   * disparaît. Les valeurs ci-dessous sont mesurées sur l'ivoire du dessin —
+   * vert profond #0a2b23 à 14,04, gris de mention #4a5a55 à 6,19.
+   */
+  .bien.sans-photo {
+    color: #0a2b23;
+    --sur-fond: #0a2b23;
+    --sur-fond-doux: #4a5a55;
+    --encre: #0a2b23;
+    --encre-doux: #4a5a55;
+  }
+
+  /* Le voile qui rattrape la lisibilité est fait pour une photo sombre :
+     sur l'ivoire il n'a plus lieu d'être et grisaillerait le dessin. */
+  .bien.sans-photo::after {
+    display: none;
+  }
+
+  /* Le badge de commune était blanc translucide sur du vert : sur l'ivoire il
+     devient un halo invisible. Il reprend le vert de la marque. */
+  .bien.sans-photo .ville {
+    background: rgb(10 43 35 / 8%);
+    color: #0a2b23;
   }
 
   /* L'illustration au trait, conservée : elle sert encore ailleurs. */
