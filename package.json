@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "atelier": "vite build --mode atelier --outDir dist-atelier",
+    "atelier:ouvrir": "vite --mode atelier --host 127.0.0.1 --port 80",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "test": "vitest run",

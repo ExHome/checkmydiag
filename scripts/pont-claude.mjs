@@ -38,7 +38,10 @@ const PORT = Number(process.env.PONT_PORT ?? 8787);
      set PONT_ATELIER=https://atelier-verriere.pages.dev
      node scripts/pont-claude.mjs */
 const SITE = new Set(
-  (process.env.PONT_ATELIER ?? 'https://verriere-diag.fr,https://www.verriere-diag.fr')
+  (
+    process.env.PONT_ATELIER ??
+    'http://atelier.verriere-diag.fr,https://atelier.verriere-diag.fr,https://verriere-diag.fr'
+  )
     .split(',')
     .map((o) => o.trim())
     .filter(Boolean)
