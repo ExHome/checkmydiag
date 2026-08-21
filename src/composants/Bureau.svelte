@@ -328,16 +328,7 @@
 
     <div class="dessous">
       <h2>{analyse.bien.adresse ?? titre}</h2>
-      <!--
-        LA COMMUNE NE S'ÉCRIT QU'UNE FOIS.
-
-        Elle était ici ET dans le badge du haut — le même texte, dans la même
-        carte, à 74 px d'écart. Mesuré à l'écran, pas déduit du code.
-
-        C'est le badge qui gagne : il porte le picto de lieu, il se voit avant
-        qu'on ait rien lu, et il laisse l'adresse se lire d'un bloc avec ses
-        caractéristiques. Répéter la ville sous la rue n'apprenait rien.
-      -->
+      {#if analyse.bien.commune}<p class="commune">{analyse.bien.commune}</p>{/if}
 
       <p class="traits">
         {#if analyse.bien.typeBien}<span>{analyse.bien.typeBien}</span>{/if}
@@ -809,6 +800,12 @@
     font-weight: 700;
     line-height: 1.15;
     letter-spacing: -0.022em;
+  }
+
+  .commune {
+    margin: 0;
+    font-size: var(--t-petit);
+    opacity: 0.92;
   }
 
   /* Type, surface, année : séparés par des points médians, comme le visuel. */
