@@ -1003,6 +1003,107 @@ la date de fin précède souvent le repérage sans rien dire de l'assurance.
 
 ---
 
+## Qui a produit le volet plomb ? — la question n'avait jamais été posée
+
+*Mesure du 21/08/2026, échantillon réparti sur tout le corpus : 11 358 PDF
+candidats, 400 lus, **111 volets plomb**. Compteurs seuls.*
+
+La carte ci-dessus range 117 volets sous « LICIEL » et 3 sous « BC2E ». Mais cet
+éditeur-là est celui du **dossier**, nommé par la rubrique « Référence du
+logiciel validé » — laquelle ne renseigne que le DPE. `editeur.ts` prévient
+lui-même qu'un DDT peut mêler les générateurs.
+
+En cherchant l'éditeur **sur les pages du volet plomb**, et sur elles seules :
+
+```
+éditeur du dossier          : LICIEL   111 / 111
+éditeur nommé sur le volet  : inconnu  111 / 111
+```
+
+**Deux choses, et elles vont ensemble.**
+
+1. **Les pages d'un CREP ne nomment jamais leur éditeur.** Ni rubrique logiciel,
+   ni pied de page de réseau : 111 sur 111. Dire « ce CREP est un CREP LICIEL »
+   est donc une **inférence tirée du DPE voisin**, jamais une lecture. Elle est
+   probablement juste — un cabinet produit son dossier avec un seul outil — mais
+   elle n'est pas mesurée, et elle tombe le jour où un dossier est assemblé.
+
+2. **Le corpus plomb est mono-éditeur.** 111 volets sur 111 viennent de dossiers
+   LICIEL. Ce n'est pas un défaut d'échantillonnage : c'est l'outil du cabinet.
+   Les 3 volets BC2E sont l'exception qui a permis les seules comparaisons.
+
+**Ce qu'il faut en conclure, et rien de plus** : tout ce que cette carte dit du
+plomb est vrai *chez LICIEL*. Aucune règle plomb n'est aujourd'hui vérifiable
+chez un second éditeur avec ce corpus. Le trou se déclare, il ne se comble pas —
+il faudra des CREP d'ailleurs pour trancher.
+
+---
+
+## Lecture intégrale d'un CREP LICIEL — ce qu'elle ajoute
+
+*Volet de 12 pages lu en entier, page à page, dans un dossier de 254 pages.*
+
+### Le zéro s'écrit de DEUX façons dans le même rapport
+
+Au § 6.1 « Classement des unités de diagnostic », le tableau de synthèse écrit
+les classes vides **`0`**. Au § 5 « Résultats des mesures », le même décompte,
+par local, écrit les mêmes classes vides **`-`** :
+
+```
+§ 5    Rez de chaussée - Plateau   12   2 (16,7 %)   5 (41,8 %)   -   5 (41,7 %)   -
+§ 6.1  Nombre d'unités             12   2            5            0   5            0
+```
+
+Un lecteur qui attendrait six nombres au § 5 n'en trouve que quatre. C'est une
+raison de plus de compter au § 6.1, comme le fait `compter()`.
+
+### Le pourcentage est faux, l'effectif est juste
+
+Sur ce rapport, 5 unités sur 12 valent 41,7 % — l'éditeur écrit **41,8 %** pour
+la classe 0 et 41,7 % pour la classe 2, deux valeurs différentes pour le même
+effectif. La ligne des pourcentages totalise **100,2 %**.
+
+`compter()` écarte déjà toute ligne contenant `%`. **Ne jamais y revenir** : le
+pourcentage de ce tableau n'est pas fiable, l'effectif l'est — et le contrôle
+`non mesurées + classes = total` le vérifie.
+
+### Les énumérations entre parenthèses sont des CATALOGUES, pas des constats
+
+Ce rapport porte **zéro unité de classe 1**. Il écrit pourtant, deux fois :
+
+```
+il a été repéré des unités de diagnostics de classe 1 et/ou 2
+… de la nature des dégradations constatées (non dégradé, non visible, état
+d'usage) sur certaines unités de diagnostic
+```
+
+« et/ou », et une parenthèse qui liste les **trois** états de la norme alors que
+le tableau n'en montre qu'un. C'est le même piège que le catalogue des six
+domaines de l'électricité : une phrase pré-rédigée qui couvre tous les cas.
+
+**Aucune classe ne se lit dans une phrase de conclusion.** Les chiffres sont au
+§ 6.1, et `analyserPlomb` a raison de ne se fier qu'à eux — un lecteur qui
+recopierait cette phrase annoncerait de la classe 1 dans un logement qui n'en a
+aucune.
+
+### Les traits d'union sont espacés partout
+
+`au - delà`, `L.1334 - 10`, `R.1334 - 10`, `NF X46 - 030`, `info - certif.fr`.
+Aucun motif de `plomb.ts` ne dépend d'un trait d'union collé — vérifié, il n'y en
+a aucun — mais **tout motif futur doit tolérer `\s*-\s*`**, comme le fait déjà
+`6\s*\.\s*4` pour les points.
+
+### Ce que la lecture confirme sans rien changer
+
+La position de la réponse du § 6.4 varie **dans le même rapport** : le premier
+`NON` est inséré au milieu du libellé, coupé en deux lignes ; le deuxième le
+précède. Les quatre mises en page décrites plus haut se vérifient ici.
+
+Le § 6.3 donne la date en clair — « durée de validité de 1 an (jusqu'au
+13/10/2025) » pour un repérage du 14/10/2024 : un an moins un jour.
+
+---
+
 ## Un endroit de plus : « Validité du constat » (§ 6.3)
 
 Le CREP écrit lui-même jusqu'à quand il vaut. Verrière, elle, le **calculait** —
@@ -1478,3 +1579,276 @@ lecture suivante.
 5. **Le texte de l'arrêté du 28 septembre 2017**, annexe III — c'est lui qui
    impose le modèle, et il dira lequel des trois découpages de domaines est le
    sien.
+
+---
+
+# GAZ — État de l'installation intérieure
+
+*Mesuré le 21/08/2026 sur le corpus terrain : **881 PDF parcourus, 26 volets gaz
+distincts**, lus en entier. Norme NF P 45-500 (juillet 2022), arrêté du
+6 avril 2007 modifié.*
+
+## ⚠️ Ce que ce corpus ne permet pas
+
+**Les 26 volets sont tous du même éditeur : LICIEL** (29 occurrences dont 22 par
+déclaration du logiciel, 4 par signature du PDF). Rien de ce qui suit n'est
+validé hors LICIEL. Conformément à la règle du référentiel, aucune entrée ci-
+dessous n'est « constante » : elle est vraie *chez LICIEL*, et « non mesuré »
+partout ailleurs.
+
+Et 26 lectures ne sont pas 100. Le corpus terrain n'en contient pas davantage :
+le plafond est celui du fonds, pas celui de la méthode. Ce qui suit est donc
+**mesuré et reproductible, mais pas gravé**.
+
+## Le plan des rubriques n'est pas le même dans tous les rapports LICIEL
+
+Deux plans coexistent, et la différence porte précisément sur la conclusion :
+
+| | 24 volets sur 26 | 2 volets sur 26 |
+|---|---|---|
+| Conclusion | **`H. - Conclusion`** | **`Conclusion :`, sans lettre** |
+| Actions en cas de DGI | `I. -` | **`H. -`** |
+| Actions en cas de 32c | `J. -` | **`I. -`** |
+
+**Conséquence directe : « la rubrique H » ne désigne pas la même chose d'un
+rapport à l'autre.** Un lecteur qui borne la conclusion à la lettre H lit, dans
+deux rapports sur vingt-six, *les actions de fermeture de l'installation* à la
+place du verdict. Borner par la lettre est ici une faute ; c'est l'intitulé qui
+délimite, et lui seul.
+
+## ⛔ L'endroit où la conclusion NE se lit PAS : la conclusion elle-même
+
+La rubrique de conclusion est un **formulaire à cocher**. Les cinq réponses
+possibles y sont imprimées, l'une sous l'autre, **dans les 26 volets sur 26** :
+
+```
+Conclusion :
+L'installation ne comporte aucune anomalie.
+L'installation comporte des anomalies de type A1 qui devront être réparées ultérieurement.
+L'installation comporte des anomalies de type A2 qui devront être réparées dans les meilleurs délais.
+L'installation comporte des anomalies de type DGI qui devront être réparées avant remise en service.
+L'installation comporte une anomalie 32c qui devra faire l'objet d'un traitement particulier…
+```
+
+La réponse est la **case cochée**, qui est un glyphe : elle ne sort pas dans le
+texte extrait. Mesuré : chacune des cinq phrases est présente exactement une
+fois dans chacun des 26 volets.
+
+**Donc chercher « L'installation ne comporte aucune anomalie » la trouve
+toujours — 26 fois sur 26, y compris sur les rapports qui portent un DGI.**
+C'est le faux positif le plus dangereux du volet gaz : il annonce une
+installation saine là où le rapport demande une coupure immédiate.
+
+La même remarque vaut pour les rubriques « en cas de DGI » et « en cas
+d'anomalie 32c » : leur contenu — *fermeture totale, pose d'une étiquette de
+condamnation, transmission au distributeur* — est imprimé **dans tous les
+rapports**, y compris ceux sans la moindre anomalie. Ce sont des consignes de
+procédure, jamais un constat.
+
+## ✅ L'endroit qui répond : la rubrique E, bornée
+
+**Bornes** — présentes dans les 26 volets sur 26 :
+
+- ouverture : `E. - Anomalies identifiées`
+- fermeture : `F. – Identification des bâtiments et parties du bâtiment…`
+  (⚠️ tiret **demi-cadratin** dans F, trait d'union dans les autres lettres)
+
+**Dans ces bornes, deux états, et ils s'excluent — mesuré 26/26 :**
+
+| État | Forme | Volets |
+|---|---|---|
+| Aucune anomalie | la ligne `Néant - -` | 13 |
+| Anomalies constatées | une ou plusieurs lignes portant un **code de point de contrôle** | 13 |
+| Les deux à la fois | — | **0** |
+
+Le code de point de contrôle est la référence de la norme : `C.4 - 7a2`,
+`C.7 - 8a1`, `C.7 - 8b`, `C.10 - 14`, `C.14 - 19.1`, `C.14 - 19.8`. Motif
+mesuré : `C.<n> - <n><lettre ou .n>`.
+
+**C'est lui le repère, pas le mot.** Une ligne qui porte un code constate ; une
+ligne qui n'en porte pas ne constate pas.
+
+## Les trois parasites de la zone E, mesurés
+
+Tout ce qui suit tombe **à l'intérieur des bornes** de E et cite A1, A2 ou DGI
+sans rien constater :
+
+1. **La fin de la légende de colonne**, coupée par la mise en page :
+   `DGI (6) , 32c (7) )` — présente dans **9 volets sur 26**, dont **4 qui
+   portent « Néant »**. Un lecteur qui cherche « DGI » dans la zone E annonce
+   donc un Danger Grave et Immédiat sur quatre installations sans anomalie.
+2. **Les notes de bas de tableau** `(4) A1 : …`, `(5) A2 : …`, `(6) DGI : …`,
+   `(7) 32c : …` — une par type, chacune définissant son type en toutes lettres.
+   Elles se reconnaissent à l'appel `(n)` en tête de ligne.
+3. **Les lignes de continuation de ces notes**, qui n'ont plus l'appel `(n)` :
+   *« fourniture du gaz, mais est suffisamment importante pour que la réparation
+   soit réalisée dans les meilleurs délais. »* — c'est la suite de la note (5).
+   Elles ne se filtrent pas par leur début : seule l'absence de code de contrôle
+   les distingue.
+
+## Rubrique A · « Installation alimentée en gaz » — le préalable
+
+Endroit stable : rubrique `A. - Désignation du ou des bâtiments`, ligne
+`Installation alimentée en gaz : …`. Présente dans les 26 volets.
+
+Mesuré : **OUI dans 24, NON dans 2.**
+
+Une installation non alimentée ne permet **aucun essai** : c'est le pendant gaz
+du différentiel non déclenché de l'électricité. La portée de la conclusion en
+dépend, et le rapport peut alors porter « Néant » en E sans que cela signifie
+une installation saine. À signaler comme tel, jamais à confondre avec un
+verdict favorable.
+
+## Rubrique G · « Constatations diverses » — le gisement
+
+Ni un fourre-tout ni un champ libre : elle porte des obligations de l'occupant
+que rien d'autre du dossier ne dit — attestation de vacuité des conduits de
+fumée, justificatif d'entretien de la chaudière, conduit de raccordement non
+visitable, assemblage par ruban d'étanchéité. Présente dans les 26 volets.
+
+## À vérifier avant de citer un chiffre du volet
+
+Les annexes de sécurité contiennent des chiffres qui **ne décrivent pas le
+logement** : *« 98 % des accidents, fuites et explosions sont recensés dans les
+installations intérieures »* est une statistique nationale, imprimée dans tous
+les rapports. Même piège que le seuil des 450 kWh du DPE.
+
+## Ce qui reste à mesurer
+
+- **Tout, hors LICIEL.** Aucun autre éditeur dans ce corpus.
+- La rubrique D (identification des appareils) et la mesure de CO : non bornée.
+- La contradiction F/G relevée au carnet (F « Néant » et G « certains points
+  n'ont pu être contrôlés ») : vue sur un volet, non mesurée sur les 26.
+
+---
+
+## Lectures 4 à 12 — neuf volets LICIEL de plus, et la question du catalogue tranchée
+
+*21/08/2026. Neuf volets LICIEL bornés par leur pagination interne, dont cinq
+sans anomalie et quatre avec. Deux rapports du lot n'ont pas de volet élec.*
+
+### La question du catalogue est tranchée : ce n'est PAS un catalogue
+
+Le chapitre laissait ouverte une question : la cellule du domaine 2, avec ses
+huit libellés dont deux seulement portaient une remarque, était-elle le
+catalogue du domaine imprimé d'office ?
+
+**Non.** Un volet lu ensuite ne porte qu'**une seule** ligne dans son domaine 5
+et **une seule** dans son domaine 6, chacune avec sa remarque. Un catalogue
+s'imprimerait là aussi. Il ne s'imprime pas.
+
+**Donc les huit libellés du premier volet sont huit anomalies retenues** — une
+installation gravement défaillante — et **six d'entre elles n'ont aucune
+localisation**. C'est le cas que le §11 de l'ordre de mission anticipe : la
+localisation n'est pas exhaustive, et son absence ne vaut pas absence
+d'anomalie.
+
+### ⚠️ Ce qui EST un catalogue, en revanche : la rubrique 5 elle-même
+
+Trois volets sains, trois biens différents, trois années différentes. Le bloc
+qui va de « Anomalies avérées selon les domaines suivants » à « Informations
+complémentaires » est **identique au caractère près** dans les trois — même
+empreinte après retrait des espaces.
+
+C'est la preuve directe de ce que le chapitre avançait : **la rubrique 5 de
+LICIEL ne porte aucune information.** Elle imprime les deux conclusions
+opposées et les six domaines, toujours pareil. Seule la case graphique
+distingue, et elle ne s'extrait pas.
+
+### La règle qui en découle, et qui débloque le verdict LICIEL
+
+**Le tableau `Domaines | Anomalies | Photo` est présent si et seulement s'il y a
+des anomalies.** Mesuré sur neuf volets : les cinq sains n'en ont aucun, les
+quatre autres en ont un.
+
+| | Volets | Tableau d'anomalies | Ce que le rapport conclut |
+|---|---|---|---|
+| Sains | 5 | absent | aucune anomalie |
+| Avec anomalies | 4 | présent | une ou des anomalies |
+
+**Son absence vaut donc « aucune anomalie ».** C'est le seul signal lisible en
+texte, et il tient sur neuf volets sans exception.
+
+### ⚠️ La rubrique « Informations complémentaires », elle, est vraie — et lisible
+
+Contrairement au §5, le bloc `IC. Socles de prise de courant…` est **rédigé par
+rapport**, dans sa forme positive ou négative, sans case à cocher :
+
+| | Volets sains | Volet défaillant |
+|---|---|---|
+| Différentiel 30 mA | « L'ensemble de l'installation électrique **est protégé** par au moins un dispositif différentiel à haute sensibilité ≤ 30 mA » | « **Il n'y a aucun** dispositif différentiel à haute sensibilité ≤ 30 mA » |
+| Obturateurs | « L'ensemble des socles **est du type** à obturateur » | « **Au moins un** socle **n'est pas** de type à obturateur » + `Remarques :` avec localisation |
+| Puits de 15 mm | « L'ensemble des socles **possède** un puits » | « **ne possède pas** un puits de 15 mm » + `Remarques :` |
+
+C'est la même polarité que les `B11` d'AnalysImmo et de DPE WIN, chez un
+**troisième** éditeur. La règle est donc acquise : **l'information
+complémentaire porte un sens, elle n'est jamais une anomalie**, et sa forme
+négative porte une localisation qu'il faut recueillir.
+
+### Le test « zéro perte » du §37, mesuré sur dix volets
+
+Outil : `scripts/elec-zeroperte.local.ts`. Il compte les lignes d'anomalie du
+tableau et les compare à ce que le moteur restitue.
+
+**Trois constats, tous des BLOCAGES au sens du §32 :**
+
+1. **Le moteur ne restitue aucun repère d'anomalie** — zéro sur les dix volets,
+   y compris ceux qui en portent treize. L'écran « toutes les anomalies » du
+   §29 n'aurait rien à afficher.
+2. **Le compte diverge.** Sur le volet le plus chargé, le moteur annonce
+   « Points relevés = 4 » là où la seule cellule du domaine 2 en contient huit.
+3. **Les localisations multiples sont collées en une seule chaîne** :
+   `Où = 2ème étage - mezzaninne2ème étage - mezzaninne1er étage - Entrée /Cuisine/Séjour`.
+   Le §32 nomme ce cas : « une anomalie mentionne plusieurs localisations et
+   Verrière n'en garde qu'une sans avertissement → BLOCAGE ».
+
+### ⚠️ Et le plus lourd : Verrière ne sait pas dire « installation saine »
+
+Les cinq volets sans anomalie ressortent en gravité **`neutre`** — c'est-à-dire
+« conclusion non lue » — et non `bon`.
+
+La cause est exactement celle que le chapitre décrivait : les deux phrases
+opposées de la rubrique 5 sont imprimées toutes les deux, la case est
+graphique, donc la conclusion reste `inconnu`.
+
+**Sur l'éditeur qui fait 80 % du corpus, Verrière est muette sur les
+installations saines.** Le §6 de l'ordre exige pourtant que la vignette sache
+afficher « Aucune anomalie identifiée ».
+
+La règle du tableau absent, ci-dessus, est ce qui répare cela.
+
+### Ce que ces neuf lectures ajoutent aux rubriques LICIEL
+
+Le chapitre laissait la colonne LICIEL presque vide. Elle se remplit :
+
+| Rubrique | LICIEL |
+|---|---|
+| Rappel des limites du champ | `4. –` |
+| Conclusion / évaluation des risques | `5. –` — **boilerplate, sans information** |
+| Tableau des anomalies | sous `5.`, présent seulement s'il y a des anomalies |
+| Anomalies relatives aux installations particulières | ✅ sous le tableau (parties communes, piscine) |
+| Informations complémentaires | ✅ table `IC.`, **rédigée par rapport** |
+| Avertissement particulier | `6. –` |
+| Points de contrôle n'ayant pu être vérifiés | ✅ table `Domaines / Points de contrôle`, `Néant -` si vide |
+| Parties du bien n'ayant pu être visitées | ✅ sous `6.`, `Néant` si vide |
+| Devoir de conseil | `7. –`, `Néant` si vide |
+| Certification de l'opérateur | ✅ ligne `Nota :` sous `7.` |
+| Dates de visite et d'établissement | ✅ `Visite effectuée le :` / `Etat rédigé à … le` |
+| **Date de fin de validité** | ❌ **jamais écrite** — contrairement à AnalysImmo |
+| Explicitations des risques (pavé) | ✅ `Informations complémentaires / Objectif des dispositions…` |
+
+**La dernière ligne compte pour l'échéance** : AnalysImmo écrit sa date de fin
+de validité, LICIEL ne l'écrit pas. La règle « lire avant de calculer », acquise
+sur le CREP, ne peut donc pas être appliquée telle quelle : elle doit être
+**par éditeur**, avec calcul en repli quand la date n'est pas écrite.
+
+### Ce qui reste ouvert
+
+- **Le pied de page de LICIEL est le repère de bornage**, mais l'en-tête du
+  volet varie : `Etat de l'Installation Intérieure d'Electricité` avec des
+  espaces insécables et des apostrophes typographiques différentes d'un rapport
+  à l'autre. Le bornage doit tolérer ces variantes.
+- **L'entrelacement des colonnes touche aussi LICIEL** : la cellule de domaine
+  et la cellule d'anomalie se mélangent sur la même ligne reconstruite. Comme
+  chez AnalysImmo, la lecture par lignes ne suffit pas.
+- 45 volets élec du registre restent à lire.
