@@ -21,6 +21,36 @@
 
   let etat = $state<'accueil' | 'conditions' | 'lecture' | 'resultat'>('accueil');
   /**
+   * L'ATELIER DE TRAVAIL — hors du bâtiment public, littéralement.
+   *
+   * Décision d'Aude du 21/08/2026 : l'atelier ne doit pas être visible. Le
+   * cacher derrière un code ne suffirait pas — sur un site statique le code
+   * est lisible, et le composant serait dans le fichier que tout le monde
+   * télécharge. Il est donc **absent du bundle public** : l'import est
+   * dynamique et gardé par `VITE_ATELIER`, que Vite remplace par sa valeur
+   * littérale au build. Sans cette variable, la condition devient `if (false)`
+   * et l'atelier n'est tout simplement pas compilé — il n'y a rien à trouver.
+   *
+   *   npm run build                 → le produit, sans une ligne d'atelier
+   *   VITE_ATELIER=1 npm run build  → la version d'Aude, à mettre derrière son portail
+   */
+  let Atelier = $state<typeof import('./composants/AtelierDeTravail.svelte').default | null>(
+    null
+  );
+
+  function ouvrirAtelier(): void {
+    void import('./composants/AtelierDeTravail.svelte').then((m) => (Atelier = m.default));
+  }
+  /*
+   * L'ENTRÉE. L'ancre `#atelier` ouvre l'atelier — dans la version d'Aude
+   * seulement, puisque ailleurs il n'est pas compilé. Le jour où l'écran
+   * d'arrivée sera monté (chantier d'une autre session), son encart n'aura qu'à
+   * appeler `ouvrirAtelier()`.
+   */
+  if (import.meta.env.VITE_ATELIER && typeof location !== 'undefined' && location.hash === '#atelier') {
+    ouvrirAtelier();
+  }
+  /**
    * Le rapport choisi, mis en attente le temps que les conditions soient
    * acceptées. Il n'est pas encore ouvert : c'est tout l'intérêt de demander
    * maintenant plutôt qu'après.
@@ -378,7 +408,9 @@
   profils — a été retiré : c'était du remplissage entre le geste et la réponse.
 -->
 <main class="enveloppe">
-  {#if etat === 'conditions'}
+  {#if Atelier}
+    <Atelier surSortie={() => (Atelier = null)} />
+  {:else if etat === 'conditions'}
     <!-- Le rapport est choisi mais pas encore ouvert : c'est le seul moment où
          annoncer ce que le site conserve ait une valeur. -->
     <section class="seuil">

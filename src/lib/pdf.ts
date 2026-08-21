@@ -18,6 +18,14 @@ export type { PageTexte };
 export interface Document {
   pages: PageTexte[];
   /**
+   * Ce que le PDF déclare de son outil d'impression.
+   *
+   * C'est le seul endroit qui nomme le générateur d'un dossier sans DPE — et
+   * l'atelier ne peut ranger ses repères par éditeur qu'à partir de là. Voir
+   * `src/lib/atelier/editeur.ts`.
+   */
+  metadonnees: { producteur?: string | undefined; createur?: string | undefined };
+  /**
    * Dessine une page et renvoie une image utilisable dans un <img>, avec ses
    * dimensions en unités PDF — indispensable pour poser des repères dessus.
    */
@@ -123,8 +131,14 @@ export async function ouvrirPdf(
     page.cleanup();
   }
 
+  const infos = await pdf
+    .getMetadata()
+    .then((m) => m.info as { Producer?: string; Creator?: string })
+    .catch(() => ({}) as { Producer?: string; Creator?: string });
+
   return {
     pages,
+    metadonnees: { producteur: infos.Producer, createur: infos.Creator },
 
     async prechauffer() {
       await documentDeDessin();

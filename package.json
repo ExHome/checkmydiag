@@ -15,6 +15,7 @@
     "dump": "node scripts/dump-pdf.mjs"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "^0.120.0",
     "@resvg/resvg-js": "^2.6.2",
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
     "@tsconfig/svelte": "^5.0.4",

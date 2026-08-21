@@ -225,7 +225,7 @@
   {#if EMPREINTE}
     <section class="atelier">
       <button type="button" class="entree" onclick={() => (ouvert = !ouvert)} aria-expanded={ouvert}>
-        Zone de travail
+        Atelier de travail
       </button>
 
       {#if ouvert}

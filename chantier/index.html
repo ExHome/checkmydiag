@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Verrière — en construction</title>
+    <meta name="description" content="Verrière prépare son ouverture." />
+    <link rel="icon" href="logo/favicon.ico" sizes="any" />
+    <link rel="icon" href="logo/favicon-32.png" type="image/png" />
+    <!--
+      LE SITE EST EN CONSTRUCTION — décision d'Aude, 21/08/2026.
+
+      C'est cette page, et elle seule, que le site publie. L'application n'est
+      pas déployée : son code n'est donc pas téléchargeable, et il n'y a rien à
+      explorer derrière cette page. C'est ce qui distingue « en construction »
+      d'un simple écran posé devant un site qui tourne encore.
+
+      LE VISUEL EST CELUI DE VERRIÈRE, pas une reconstitution : le prisme vient
+      de `public/logo/prisme.svg` (versé depuis `02_IDENTITE_LOGO/`), les
+      couleurs de la charte claire d'`app.css`, et la typographie est la linéale
+      du site — la charte demande des titres en linéale, pas en serif.
+
+      `noindex` retire les pages déjà connues des moteurs pendant les travaux.
+      C'est réversible — mais le référencement acquis se reconstruit, il ne se
+      retrouve pas d'un clic : la ligne est à retirer le jour de l'ouverture.
+    -->
+    <meta name="robots" content="noindex, nofollow" />
+    <style>
+      :root {
+        color-scheme: light;
+
+        /* La charte claire du site — mêmes valeurs qu'`app.css`. */
+        --encre: #0a2b23;
+        --vert: #12463b;
+        --sauge: #a6c39a;
+        --ivoire: #f7f6f2;
+        --police: 'IBM Plex Sans', 'Rubik', system-ui, -apple-system, 'Segoe UI', Roboto,
+          sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 2rem 1.5rem;
+        background: var(--ivoire);
+        color: var(--encre);
+        font-family: var(--police);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      main {
+        max-width: 30rem;
+        text-align: center;
+      }
+
+      /* La barre de marque du site : le prisme, puis le nom. */
+      .marque {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        margin-bottom: 2.5rem;
+      }
+
+      .marque img {
+        width: 2.1rem;
+        height: 2.35rem;
+      }
+
+      .marque p {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 500;
+        letter-spacing: 0.01em;
+      }
+
+      .signature {
+        font-size: 0.95rem;
+        color: var(--vert);
+        margin: 0 0 2.5rem;
+      }
+
+      hr {
+        border: 0;
+        border-top: 1px solid var(--sauge);
+        width: 3rem;
+        margin: 0 auto 2.5rem;
+      }
+
+      .mot {
+        font-size: 1.15rem;
+        font-weight: 500;
+        margin: 0 0 1rem;
+      }
+
+      .detail {
+        font-size: 0.95rem;
+        color: var(--vert);
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="marque">
+        <img src="logo/prisme.svg" alt="" width="34" height="38" />
+        <p>Verrière</p>
+      </div>
+
+      <p class="signature">Lumière sur vos diagnostics</p>
+
+      <hr />
+
+      <p class="mot">Le site est en construction.</p>
+      <p class="detail">
+        Nous préparons l’outil qui rendra votre dossier de diagnostic lisible : ce que chaque ligne
+        veut dire, ce qui engage, et ce qui manque.
+      </p>
+    </main>
+  </body>
+</html>
