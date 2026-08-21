@@ -32,3 +32,4 @@ docs/BRIEF.md
 
 # Les sondes locales pointent vers la Dropbox : leur chemin est prive.
 *.local.mjs
+dist-atelier/

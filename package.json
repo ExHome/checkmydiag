@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "atelier": "vite build --mode atelier --outDir dist-atelier",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "test": "vitest run",
