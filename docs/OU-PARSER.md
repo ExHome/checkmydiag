@@ -1209,3 +1209,272 @@ dont le local est NOMMÉ                    : 47
 Les deux manquants sont des rapports sans récapitulatif. **Aucun fait n'est posé
 sans nom de pièce.** Répartition des pièces désignées : 15 autres, 13 pièces de
 vie, 11 pièces d'eau, 8 circulations.
+
+---
+
+# ÉLECTRICITÉ — état de l'installation intérieure
+
+*Ouvert le 21/08/2026. Trois volets lus en entier, chez trois éditeurs :
+AnalysImmo (11 pages), DPE WIN V4 (5 pages), LICIEL (pages 2 à 4 sur 10).
+Aucune ligne de ce chapitre ne vient d'une sonde : tout est lu.*
+
+**Ce que ce chapitre ne couvre pas encore.** 57 volets élec sont au registre de
+lecture ; trois sont lus ici. Imm'PACT n'a qu'une mention de sommaire, Expertec
+et la famille HTML2PDF n'ont aucun volet élec dans le corpus hors Liciel. Les
+lignes ci-dessous valent **chez les éditeurs où elles sont mesurées**, et nulle
+part ailleurs.
+
+## Borner le volet — le seul repère vrai chez les trois éditeurs
+
+**La pagination interne du volet, en pied de page.** Chaque éditeur la formule à
+sa manière, tous la portent sur **chaque** page du volet :
+
+| Éditeur | Ce que dit le pied de page | Étendue mesurée |
+|---|---|---|
+| AnalysImmo | `<réf> ELEC 1 / 11` … `11 / 11` | 11 pages |
+| DPE WIN V4 | `Etat de l'Installation intérieure d'Electricité <réf> - page 1/5` | 5 pages |
+| LICIEL | `2 / 10`, sous l'en-tête `Etat de l'Installation Intérieure d'Electricité n° <réf>` | 10 pages |
+
+C'est le seul repère de bornage vu chez **trois** éditeurs : il passe donc la
+règle des deux. Le titre du volet, lui, ne borne rien — il apparaît aussi au
+sommaire du dossier (page 3 chez AnalysImmo comme chez LICIEL).
+
+## ⚠️ Le piège qui commande tout le reste : la case cochée
+
+Les trois éditeurs impriment **la liste entière des domaines**, cochée ou non.
+Ce qui distingue un domaine touché d'un domaine sain n'est donc jamais le texte.
+Et l'état de la case s'extrait de **trois façons différentes** :
+
+| Éditeur | Ce que devient la coche à l'extraction | Conséquence |
+|---|---|---|
+| **DPE WIN V4** | le caractère **9** seul sur sa ligne, ou sur la ligne *suivant* le libellé | lisible, mais jamais alignée : à lire par coordonnées |
+| **LICIEL** | **rien du tout** — la case est un graphique | **le texte ne permet pas de conclure** |
+| **AnalysImmo** | pas de case : le mot **Néant** sous le domaine sans anomalie | lisible en clair, le plus sûr des trois |
+
+**Chez LICIEL, les deux conclusions opposées sont imprimées l'une sous l'autre :**
+
+> L'installation intérieure d'électricité ne comporte aucune anomalie.
+> L'installation intérieure d'électricité comporte une ou des anomalies.
+
+Un lecteur de texte voit les deux et peut conclure l'une ou l'autre. **Il ne
+faut donc pas lire la conclusion de LICIEL à cet endroit** — voir ci-dessous.
+
+## Où lire le verdict, éditeur par éditeur
+
+### LICIEL — dans la **première colonne du tableau d'anomalies**, pas dans la conclusion
+
+Le tableau qui suit la liste des domaines a trois colonnes : `Domaines`,
+`Anomalies`, `Photo`. La première colonne porte le domaine **numéroté** — par
+exemple « 2. Dispositif de protection différentiel à l'origine de
+l'installation », « 4. La liaison équipotentielle… », « 5. Matériels
+électriques… ».
+
+**Les domaines réellement touchés sont exactement ceux qui apparaissent dans
+cette colonne.** C'est le seul endroit du volet où l'information existe en
+toutes lettres.
+
+⚠️ **Question ouverte, à trancher à la lecture suivante.** Dans le volet lu, la
+cellule du domaine 2 contient **huit** libellés d'anomalie, dont deux seulement
+portent un `Remarques :` avec localisation. On ne peut pas décider depuis le
+texte si les six autres sont des anomalies retenues sans remarque, ou le
+catalogue complet du domaine imprimé d'office. **Deux libellés y sont
+mutuellement peu compatibles** — « Il n'existe aucun dispositif différentiel »
+et « Au moins un dispositif de protection différentielle ne fonctionne pas pour
+son seuil de déclenchement » — ce qui fait pencher vers le catalogue. Mais
+pencher n'est pas mesurer. Un second volet LICIEL tranche : si les huit mêmes
+lignes reviennent sur un autre bien, c'est un catalogue.
+
+### DPE WIN V4 — trois rubriques cochées, dans cet ordre
+
+1. `1 - Anomalies et/ou constatations diverses relevées lors du diagnostic :`
+   quatre phrases exclusives, une seule cochée.
+2. `2 - Les domaines faisant l'objet d'anomalies sont :` **onze** libellés.
+3. `3 - Les constatations diverses concernent :` trois libellés.
+
+### AnalysImmo — « Néant » ou un tableau, sous chacun des six domaines numérotés
+
+`§5 CONCLUSIONS RELATIVES A L'EVALUATION DES RISQUES…` porte les six domaines
+numérotés `1.` à `6.`, puis `Installations particulières : P1, P2.` et `P3. La
+piscine privée ou le bassin de fontaine`. Sous chacun : **Néant**, ou un tableau.
+
+## ⚠️ Le nombre de domaines n'est pas le même d'un éditeur à l'autre
+
+| | AnalysImmo | DPE WIN V4 | LICIEL |
+|---|---|---|---|
+| Domaines listés | **6** + P1/P2 + P3 | **11** | **6** |
+| Différentiel et prise de terre | groupés en un domaine | **séparés** en deux | groupés en un |
+| Contact direct et protection mécanique | groupés en un | **séparés** en deux | groupés en un |
+| Zones des locaux avec douche | dans le domaine 4 | domaine distinct | dans le domaine 4 |
+
+Un lecteur qui compte six domaines se trompe d'un tiers chez DPE WIN. **Le
+domaine ne se lit pas par son rang, il se lit par son libellé.**
+
+## ⚠️ Le code d'article n'est pas une clé universelle
+
+| Éditeur | Forme du code | Exemples |
+|---|---|---|
+| AnalysImmo | points et parenthèse fermante | `B.3.3.6 a1)`, `B.5.3 a)`, `B.8.3 e)` |
+| DPE WIN V4 | pas de point après B, pas de parenthèse | `B2.3.1 h`, `B4.3 e`, `B5.3 a` |
+| **LICIEL** | **aucun code** — l'anomalie n'est désignée que par son libellé | — |
+
+Deux conséquences :
+
+1. Une expression régulière sur `B\.\d` rate DPE WIN ; sur `B\d`, elle rate
+   AnalysImmo. Et **chez DPE WIN le séparateur varie à l'intérieur du même
+   tableau** : `B5.3.d` et `B5.3 b` s'y suivent.
+2. **Chez LICIEL, il n'y a rien à faire correspondre qu'un libellé.** Ces
+   libellés sont ceux du FD C16-600 : c'est donc une table de libellés, pas une
+   table de codes, qui rapproche les trois éditeurs.
+
+## ⚠️ Le même code apparaît dans des rubriques de sens opposé
+
+Chez DPE WIN, `B5.3 a` est **une anomalie** ; `B5.3.d` et `B5.3 b` sont, deux
+rubriques plus bas, des **points de contrôle n'ayant pu être vérifiés**. Même
+famille de code, sens inverse.
+
+Un ramassage de tous les codes du volet compte donc des points non vérifiés
+comme des anomalies. **Sans rubrique bornée, on ne cite rien.**
+
+### Les trois rubriques qui portent des codes, et ce qu'elles veulent dire
+
+| Rubrique | Sens | Vu chez |
+|---|---|---|
+| Conclusion / anomalies identifiées | anomalie constatée | les trois |
+| `Points de contrôle du diagnostic n'ayant pu être vérifiés` | **non contrôlé** — ni bon ni mauvais | DPE WIN |
+| `Informations complémentaires` | **constat, souvent favorable** | AnalysImmo, DPE WIN |
+
+**La polarité des `B11` se lit au dernier caractère** — mesuré sur deux
+éditeurs, deux volets, à confirmer :
+
+| | AnalysImmo (volet lu) | DPE WIN (volet lu) |
+|---|---|---|
+| `B11 a1` | présent — différentiel 30 mA en place | présent — idem |
+| `B11 b…` | `b2` : « au moins un socle **n'est pas** à obturateur » | `b1` : « l'ensemble des socles **est** à obturateur » |
+| `B11 c…` | `c2` : « ne possède pas un puits de 15 mm » | `c1` : « possède un puits de 15 mm » |
+
+`1` = favorable, `2` = défavorable. **Compter les `B11` comme des anomalies est
+une faute** : ici, `B11 a1` dit que l'installation *est* protégée.
+
+## ⚠️ Le pavé pédagogique répète tous les noms de domaine
+
+Les trois éditeurs ferment le volet par l'explication réglementaire des risques
+— `§8 EXPLICITATIONS DETAILLEES…` chez AnalysImmo, `OBJECTIF DES DISPOSITIONS ET
+DESCRIPTION DES RISQUES ENCOURUS` chez DPE WIN. **Ce pavé reprend en titres tous
+les noms de domaine.** Qui cherche « Dispositif de protection différentiel » sur
+le volet entier le trouve deux fois : dans la conclusion, et dans le cours.
+
+Chez DPE WIN le pavé est indexé par **code de groupe** (`B1`, `B2`, …), ce qui
+ajoute une quatrième famille de codes à ne pas confondre avec les trois autres.
+
+## Où sont les mesures chiffrées — trois endroits différents
+
+| Éditeur | Rubrique | Ce qu'on y trouve |
+|---|---|---|
+| DPE WIN V4 | `CARACTERISTIQUES DE L'INSTALLATION INTERIEURE…`, en tête | « mesure de la résistance de la prise de terre par la boucle d'impédance : *n* ohms » |
+| AnalysImmo | `Autres constatations`, **rubrique non numérotée**, en puces libres | résistance de terre, calibre du disjoncteur, seuils de déclenchement mesurés |
+| LICIEL | non mesuré dans les pages lues | — |
+
+Chez AnalysImmo c'est une zone de texte libre de l'opérateur : les quatre puces
+lues y sont rédigées à la main. **Fiabilité faible, mais c'est le seul endroit
+où les valeurs existent.**
+
+## Le cadeau d'AnalysImmo : la même anomalie, écrite trois fois
+
+Le tableau du `§5` est **illisible en lecture par lignes** : ses six colonnes
+s'entrelacent à l'extraction, et le libellé, la mesure compensatoire et
+l'observation se mélangent sur la même ligne reconstruite. Il faudrait le lire
+par coordonnées.
+
+**Ce n'est pas nécessaire, parce que le même contenu est réécrit deux fois plus
+bas, proprement :**
+
+| Endroit | Forme | Contenu |
+|---|---|---|
+| `§5`, par domaine | 6 colonnes entrelacées (domaine 2) ou 4 (domaines 4, 6) | toutes les anomalies **+ le domaine** |
+| `ANNEXE 1 – LISTE DES ANOMALIES COMPENSEES` | tableau propre à 4 colonnes | les anomalies **compensées seulement** |
+| `ANNEXE 3 – PHOTO(S) DES ANOMALIES` | **clé-valeur à plat**, un bloc par anomalie | **toutes** les anomalies |
+
+L'annexe 3 est la forme la plus simple du corpus, tous éditeurs confondus :
+`Point de contrôle N° <code>`, puis `Description :`, `Observation(s)`,
+`Localisation :`.
+
+**Donc : lire l'annexe 3 pour la liste des anomalies, et le `§5` seulement pour
+rattacher chaque code à son domaine.** À confirmer sur un second volet
+AnalysImmo — l'annexe s'appelle « photos des anomalies », et rien ne dit encore
+qu'elle existe quand l'opérateur n'a pris aucune photo.
+
+## Le nombre de colonnes change à l'intérieur du même rapport
+
+Chez AnalysImmo, le tableau du `§5` a **six** colonnes pour le domaine 2 —
+celui qui admet des mesures compensatoires — et **quatre** pour les domaines 4
+et 6, qui n'en admettent pas. Un lecteur qui fixe le nombre de colonnes sur la
+première table décale tout le reste.
+
+Chez DPE WIN le tableau des anomalies n'a que **deux** colonnes : le code, puis
+une cellule unique où le libellé, le conseil, `Mesure compensatoire :` et
+`Localisation :` s'empilent en lignes étiquetées.
+
+## La localisation, chez les trois
+
+| Éditeur | Où | Forme |
+|---|---|---|
+| AnalysImmo | colonne `Localisation(*)`, et `Localisation :` en annexe 3 | phrase courte |
+| DPE WIN V4 | ligne `Localisation :` dans la cellule de l'anomalie | phrase courte |
+| LICIEL | dans `Remarques :`, **mêlée au conseil**, entre parenthèses | noms de pièces **collés sans séparateur**, et répétés |
+
+Chez LICIEL, la localisation n'est pas un champ : c'est la fin d'une phrase de
+remarque, où les pièces s'agglutinent. Elle se lit, elle ne se découpe pas
+proprement.
+
+## Ce que ces trois lectures imposent au produit
+
+1. **Ne jamais lire la conclusion élec de LICIEL dans la rubrique 5.** Lire la
+   première colonne du tableau d'anomalies.
+2. **Ne jamais compter les `B11`** parmi les anomalies.
+3. **Ne jamais ramasser les codes hors d'une rubrique bornée** : les points non
+   vérifiés partagent le namespace des anomalies.
+4. **Ne pas indexer les domaines par leur rang** : six chez deux éditeurs, onze
+   chez le troisième.
+5. **La date de fin de validité est écrite dans le volet** — AnalysImmo :
+   `Date de fin de validité : <date>`, sous `DATE, SIGNATURE ET CACHET`. Comme
+   pour le CREP, elle se lit avant de se calculer.
+
+## Rubriques rencontrées, éditeur par éditeur
+
+Une case vide est **un trou de mesure**, pas une absence.
+
+| Rubrique | AnalysImmo | DPE WIN V4 | LICIEL |
+|---|---|---|---|
+| Désignation du local / caractéristiques du bâtiment | `1` | `CARACTERISTIQUES DU BÂTIMENT` | non lu |
+| Caractéristiques de l'installation | — | ✅ (avec la mesure de terre) | non lu |
+| Donneur d'ordre | `2` | dans `MISSION` | non lu |
+| Opérateur, certification, assurance | `3` | dans `MISSION` | non lu |
+| Rappel des limites du champ | `4` | ✅ | `4.` |
+| Conclusion / évaluation des risques | `5` | ✅ (3 sous-listes cochées) | `5.` |
+| Tableau des anomalies | dans `5` | rubrique séparée | sous `5.` |
+| Informations complémentaires | ✅ | ✅ | non lu |
+| Points de contrôle non vérifiés | non relevé | ✅ | non lu |
+| Avertissement particulier | `6` (Néant) | ✅ (fusionné aux constatations diverses) | non lu |
+| Devoir de conseil | `7` (Néant) | fusionné au tableau d'anomalies | non lu |
+| Autres constatations (mesures chiffrées) | ✅ non numérotée | — | non lu |
+| Explicitations des risques (pavé) | `8` | ✅ indexé `B1`…`B11` | non lu |
+| Parties non visitées | `9` (Néant) | ✅ (Néant) | non lu |
+| Date, signature, fin de validité | ✅ | non relevé | non lu |
+| Certificat de compétences | page image | non relevé | non lu |
+| Annexe : anomalies compensées | ✅ | — | — |
+| Annexe : photos des anomalies (clé-valeur) | ✅ | non relevé | non lu |
+| Installations particulières P1/P2/P3 | ✅ (Néant) | dans les 11 domaines | ✅ |
+
+**Sur 19 rubriques et 3 éditeurs, 27 cases sur 57 sont vides.** Le volet LICIEL
+n'a été lu qu'en ses pages 2 à 4 sur 10 : ses colonnes se rempliront à la
+lecture suivante.
+
+## Ce qui reste à lire
+
+1. **Les pages 1 et 5 à 10 du volet LICIEL** déjà ouvert.
+2. **Un second volet LICIEL**, pour trancher la question du catalogue du domaine 2.
+3. **Les 56 autres volets élec** du registre.
+4. **Imm'PACT** : une seule mention en page 16, jamais ouverte.
+5. **Le texte de l'arrêté du 28 septembre 2017**, annexe III — c'est lui qui
+   impose le modèle, et il dira lequel des trois découpages de domaines est le
+   sien.
