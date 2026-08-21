@@ -358,3 +358,118 @@ décidé.
    traces d'humidité. Jamais « mérule » à leur place — ODM § 12.
 7. **Distinguer « Néant » de « rubrique absente »** — 48 volets sur 120 répondent
    « Néant », et répondre n'est pas se taire.
+
+---
+
+# LECTURES 4 ET 5, EN ENTIER
+
+## Lecture 4 — le même bien, quatrième visite, et un piège d'identité
+
+Chronologie du logement des lectures 1 à 4 : **15/07/2024 · 25/07/2025 ·
+20/11/2025 · 29/04/2026**. Quatre rapports.
+
+⚠️ **Les lectures 1 et 4 portent le MÊME numéro de dossier** — `24/IMO/0106P` —
+pour deux visites séparées d'un an et deux rapports différents.
+
+La règle que j'avais posée du côté du plomb — *« à numéro de dossier égal, la
+date de rapport la plus récente gagne »* — **écarterait ici un rapport
+authentique**. Elle vaut pour départager deux ÉDITIONS d'un même constat ; elle
+ne vaut pas pour deux constats successifs qui réutilisent le numéro. Le
+départage doit se faire sur la date de repérage, et deux dates de repérage
+différentes signifient deux missions différentes.
+
+---
+
+## Lecture 5 — un bien sain, et le pire piège de forme vu jusqu'ici
+
+Rapport `25/IMO/0527P`, neuf pièces, tout en « Absence d'indices ». Rien à
+signaler au tableau D — et pourtant deux endroits majeurs y sont illisibles.
+
+### ⚠️ Rubrique G : les colonnes du MILIEU et de DROITE s'insèrent dans celle de GAUCHE
+
+```
+G. - Identification des ouvrages, parties d'ouvrages et éléments qui n'ont pas
+été examinés et justification :
+Liste des ouvrages, parties
+Localisation                    Motif
+d'ouvrages
+Rez de chaussée - Entrée, Rez de chaussée
+- Chambre 1, Rez de chaussée - Chambre
+2, Rez de chaussée - Salle de bain, Rez de
+Mur           Revetement fixé          ← l'ouvrage ET le motif, plantés au milieu
+chaussée - Séjour, Rez de chaussée -
+Cuisine, Rez de chaussée - Cellier, Rez de
+chaussée - Wc
+```
+
+Lu ligne à ligne, cela donne *« …Rez de chaussée - Salle de bain, Rez de **Mur
+Revetement fixé** chaussée - Séjour… »*. Le nom d'une pièce est coupé en deux par
+deux autres colonnes.
+
+**Et l'information est majeure : les MURS de HUIT pièces n'ont pas été
+examinés**, parce que le revêtement est fixé. C'est précisément l'écran
+« ZONES NON EXAMINÉES » de l'ordre de mission (§ 14), et Verrière n'en lit rien.
+
+C'est le même piège que la localisation des constatations diverses, en pire :
+là-bas une colonne s'insérait dans le texte, ici **deux colonnes s'insèrent dans
+une liste de pièces qu'elles coupent en deux**.
+
+### ⚠️ Le tableau D reprend son en-tête au saut de page, et la pièce continue
+
+```
+… Cellier   Sol - Carrelage         Absence d'indices
+            Plinthes - Carrelage    Absence d'indices
+            Mur - Divers et Peinture Absence d'indices
+[pied de page · numéro de page · en-tête du rapport]
+Bâtiments et parties de
+Ouvrages, parties d'ouvrages et éléments examinés
+Résultats du diagnostic d'infestation (3)
+bâtiments visités (1) (2)
+            Porte (P1) - bois et peinture  Absence d'indices     ← toujours le Cellier
+            Plafond - Divers et Peinture   Absence d'indices
+Wc          Sol - Carrelage                Absence d'indices
+```
+
+**La pièce n'est PAS renommée après le saut de page.** Les deux derniers ouvrages
+du Cellier n'ont, dans le texte, aucun rattachement — sauf à retenir la pièce
+courante par-dessus l'en-tête réimprimé.
+
+Corollaire : les lignes d'en-tête réimprimées — « Bâtiments et parties de »,
+« bâtiments visités (1) (2) » — ne doivent jamais être prises pour un nom de
+pièce.
+
+### Deux formes du champ « arrêté préfectoral »
+
+```
+lecture 5   « Le bien est situé dans une zone soumise à un arrêté
+              préfectoral n°2001-02-12 »                          ← forme courte
+
+lectures    « Le bien est situé dans une zone soumise à un arrêté préfectoral:
+2, 3, 4       33800 BORDEAUX (Information au 14/04/2025)
+              Niveau d'infestation fort
+              Arrêté préfectoral / Liste des arrêtés
+              12-févr-01 - Arrêté préfectoral - »                 ← forme longue
+```
+
+Seule la forme longue porte le **niveau d'infestation de la commune**. Le lire
+suppose donc d'accepter les deux formes et de se taire sur la première.
+
+### Un endroit dont la réponse n'est PAS dans le texte
+
+```
+Informations collectées auprès du donneur d'ordre :
+Présence de traitements antérieurs contre les termites
+Présence de termites dans le bâtiment
+Fourniture de la notice technique relatif à l'article R 131-3 du CCH …
+```
+
+Trois libellés, **aucune réponse**. Les cases sont vraisemblablement des images.
+C'est un endroit où l'on doit écrire *« information non lisible dans le
+rapport »* — jamais supposer un « non ». L'ordre de mission (§ 24) l'impose, et
+c'est aussi la différence entre « le vendeur n'a pas signalé de traitement » et
+« on n'a pas pu lire la réponse ».
+
+---
+
+*Lectures intégrales : 5. Rubriques « constatations diverses » lues : 40.
+Aucun code touché.*
