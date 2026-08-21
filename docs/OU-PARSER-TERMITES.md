@@ -8,12 +8,45 @@ quelle rubrique · quelles bornes · quelle disposition. Un endroit sans ces qua
 choses n'est pas un endroit. Et on lit les volets **en entier, un par un**, avant
 de corriger quoi que ce soit.
 
+---
+
+## ⚠️⚠️ CE CARNET EST UNE CARTE **LICIEL**, ET RIEN D'AUTRE
+
+**Tout ce qui suit a été lu chez un seul éditeur.** Les cinq lectures intégrales
+et les quarante rubriques « constatations diverses » portent, sans exception,
+l'étiquette `ÉDITEUR : LICIEL`.
+
+Aude l'a rappelé le 21/08/2026, et c'est l'ordre de mission
+`ODM_L_EDITEUR_CONDITIONNE_TOUT` : **on parse différemment pour chaque éditeur.**
+Un repère mesuré sur un seul logiciel est **l'habitude de ce logiciel**, pas une
+règle du diagnostic.
+
+Concrètement, rien de ce qui est écrit plus bas ne peut être présenté comme
+« la façon dont les rapports termites sont faits » :
+
+- la rubrique s'appelle-t-elle « Constatations diverses » chez les autres ?
+- porte-t-elle une lettre ? laquelle ?
+- ses colonnes s'insèrent-elles de la même façon dans le texte ?
+- « Néant - - » est-il la réponse vide partout ?
+- le rappel réglementaire du § E — celui qui fabrique 104 faux positifs
+  « mérule » — existe-t-il seulement ailleurs ?
+
+**Aucune de ces questions n'a de réponse à ce stade.** Les sections ci-dessous
+sont donc titrées LICIEL, et le lecteur qu'on écrira devra choisir sa carte après
+avoir nommé l'éditeur — jamais avant.
+
+*(Recensement des éditeurs en cours ; les chiffres seront écrits ici, pas
+déduits.)*
+
 ⚠️ **Aucune donnée du corpus n'entre ici.** Ni nom, ni adresse. Les numéros de
 dossier sont des références internes de cabinet, pas des données personnelles.
 
 ---
 
 ## Ce que le lecteur fait aujourd'hui, et pourquoi c'est à refaire
+
+*(Ce défaut-ci, lui, ne dépend d'aucun éditeur : chercher un mot dans tout un
+volet est faux partout.)*
 
 `reperages.ts` détecte les volets « xylophages », « mérule » et « constatations
 diverses » en cherchant **des mots dans tout le volet** :
@@ -42,7 +75,7 @@ rapports le disent quand même, en clair, dans une rubrique nommée.
 
 ---
 
-## L'ENDROIT : « Constatations diverses »
+## LICIEL — L'ENDROIT : « Constatations diverses »
 
 ### ⚠️ La lettre de la rubrique CHANGE. On s'ancre sur le titre.
 
@@ -158,7 +191,7 @@ des lignes — pas par une règle qui tienne.
 
 ---
 
-# LES QUARANTE CONSTATATIONS DIVERSES, LUES
+# LICIEL — LES QUARANTE CONSTATATIONS DIVERSES, LUES
 
 *Extraites en bornant sur le TITRE, jamais sur la lettre, et lues une par une le
 21/08/2026. Rubrique trouvée dans **40 volets sur 40**.*
@@ -361,7 +394,7 @@ décidé.
 
 ---
 
-# LECTURES 4 ET 5, EN ENTIER
+# LICIEL — LECTURES 4 ET 5, EN ENTIER
 
 ## Lecture 4 — le même bien, quatrième visite, et un piège d'identité
 
