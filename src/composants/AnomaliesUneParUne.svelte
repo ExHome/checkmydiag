@@ -17,6 +17,7 @@
    *    absence dans le rapport ne vaut pas « aucune mesure ».
    */
   import type { Anomalie } from '../lib/modele';
+  import MotsExpliques from './MotsExpliques.svelte';
 
   const { anomalies }: { anomalies: Anomalie[] } = $props();
 
@@ -64,8 +65,21 @@
 
         {#if ouverte === i}
           <dl class="detail apparait">
+            <!--
+              LA PÉDAGOGIE VIENT DES MOTS, PAS D'UNE PLUME INVENTÉE.
+
+              Le §29 demande « qu'est-ce que cela signifie ? ». Écrire une
+              explication par anomalie reviendrait à inventer un commentaire que
+              le rapport ne porte pas — ce que le §24 et le §40 interdisent.
+
+              Mais les mots, eux, ont déjà leur définition validée : « dispositif
+              différentiel », « mise à la terre », « liaison équipotentielle »
+              vivent dans le lexique du produit. On les rend explicables SUR
+              PLACE, dans la phrase même du rapport, qui n'est pas modifiée d'un
+              caractère : elle est seulement soulignée là où un mot se définit.
+            -->
             <dt>Ce que dit le rapport</dt>
-            <dd class="source">« {a.libelle} »</dd>
+            <dd class="source">« <MotsExpliques texte={a.libelle} /> »</dd>
 
             <dt>Où</dt>
             <dd>
@@ -105,7 +119,7 @@
 
             {#if a.geste}
               <dt>Ce que le rapport demande</dt>
-              <dd>{a.geste}</dd>
+              <dd><MotsExpliques texte={a.geste} /></dd>
             {/if}
 
             {#if a.code}
