@@ -144,6 +144,20 @@ export interface Diagnostic {
   /** Date de réalisation, au format JJ/MM/AAAA, si elle a été lue. */
   date?: string;
   /**
+   * La fin de validité telle que le RAPPORT l'écrit, quand il l'écrit.
+   *
+   * Elle prime sur toute durée calculée. Mesuré le 21/08/2026 sur 200 constats
+   * plomb : le calcul « douze mois » tombait juste sur les 83 rapports de vente
+   * et se trompait de cinq ans sur les 29 rapports de location, qui valent six
+   * ans (article R. 1334-11 du code de la santé publique). Le rapport, lui,
+   * donne la date exacte — « durée de validité de 1 an (jusqu'au 14/09/2026) ».
+   *
+   * `sansLimite` porte l'autre réponse du même endroit : « il n'y a pas lieu de
+   * faire établir un nouveau constat ». `terme` garde la phrase du rapport,
+   * entière — on cite, puis on explique.
+   */
+  validiteLue?: { jusquAu?: string; sansLimite?: boolean; terme: string };
+  /**
    * Passages du rapport à montrer du doigt, avec leur explication. Le type
    * complet vit dans analyse/reperes.ts ; on le garde souple ici pour ne pas
    * faire dépendre le modèle de l'extraction.

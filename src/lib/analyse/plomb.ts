@@ -531,6 +531,7 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
    * et un acquéreur ne la trouve jamais.
    */
   const signale = transmisALArs(lignes);
+  const validiteLue = validiteDuConstat(lignes) ?? undefined;
 
   let gravite: Gravite = 'neutre';
   let verdict = "Un constat plomb est présent, mais son tableau de conclusion n'a pas pu être lu.";
@@ -896,7 +897,10 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
         }
       : null,
     pages: plage,
-    ...(date ? { date } : {})
+    ...(date ? { date } : {}),
+    /* La fin de validité que le rapport écrit lui-même, quand il l'écrit :
+       elle vaut mieux que la nôtre — voir `validiteDuConstat`. */
+    ...(validiteLue ? { validiteLue } : {})
   };
 }
 
@@ -968,6 +972,96 @@ export function appareilPlomb(lignes: string[]): AppareilPlomb {
 }
 
 /**
+ * Jusqu'à quand le constat vaut — écrit par le rapport, pas calculé par nous.
+ *
+ * ## Ce que le calcul se trompait, et de combien
+ *
+ * Verrière DÉDUISAIT la validité du CREP de ses compteurs de classes : sans
+ * limite s'il ne trouve rien, douze mois sinon. Le second terme est celui de la
+ * **vente** (article L. 1334-6). À la **location**, c'est **six ans** — article
+ * R. 1334-11, énoncé déjà noté dans `reglement/textes.ts` et lu le 14/08/2026.
+ *
+ * Mesuré le 21/08/2026 sur 200 volets plomb, en comparant la date que le rapport
+ * écrit à celle que nous calculions :
+ *
+ *     120 rapports portent une date de fin écrite
+ *      83 tombent juste  → tous cochés « Avant la vente »
+ *      29 se trompent    → tous cochés « Avant la mise en location »,
+ *                          et de 1825 jours, soit cinq ans, à un jour près
+ *
+ * Zéro exception dans les deux sens. **Verrière déclarait donc périmés 29 CREP
+ * de location sur 200 — 14,5 % — qui avaient encore cinq ans à courir.**
+ *
+ * ## Pourquoi lire plutôt que corriger le calcul
+ *
+ * On pourrait ajouter « six ans si location » et refaire le calcul juste. Mais
+ * le rapport écrit la réponse, en toutes lettres, dans sa rubrique 6.3 :
+ *
+ *     Validité du constat :
+ *     Du fait de la présence de revêtement contenant du plomb à des
+ *     concentrations supérieures aux seuils définis par arrêté …, le présent
+ *     constat a une durée de validité de 1 an (jusqu'au 14/09/2026).
+ *
+ * Le lire supprime le calcul, la lecture de la mission, et le risque de se
+ * tromper sur l'une des deux. *Aucun chiffre inventé : le rapport reste la
+ * référence.*
+ *
+ * ## Les formes, mesurées sur 200 volets
+ *
+ *     120  « durée de validité de N an(s) (jusqu'au JJ/MM/AAAA) »
+ *      30  « il n'y a pas lieu de faire établir un nouveau constat à chaque
+ *           MUTATION » — le constat négatif, en vente
+ *      13  la même chose « à chaque nouveau CONTRAT DE LOCATION »
+ *      29  rubrique absente
+ *       3  rubrique VIDE — un CREP de parties communes, où la durée en années
+ *           ne s'applique pas. Vide n'est pas « non trouvé ».
+ *       5  forme non reconnue
+ *
+ * Les 37 derniers retombent sur le calcul, faute de mieux.
+ */
+export interface ValiditeDuConstat {
+  /** Le dernier jour de validité, JJ/MM/AAAA, quand le rapport le donne. */
+  jusquAu?: string;
+  /** Le rapport écrit qu'aucun nouveau constat n'est à faire. */
+  sansLimite?: boolean;
+  /** La phrase du rapport, entière — on cite, puis on explique. */
+  terme: string;
+}
+
+const RUBRIQUE_VALIDITE = /Validit[ée] du constat\s*:?/i;
+const FIN_DE_VALIDITE =
+  /Documents? remis par le donneur|6\s*\.\s*4|Situations? de risque de saturnisme/i;
+
+export function validiteDuConstat(lignes: string[]): ValiditeDuConstat | null {
+  const debut = lignes.findIndex((l) => RUBRIQUE_VALIDITE.test(l));
+  if (debut < 0) return null;
+
+  const apres = lignes.slice(debut + 1).findIndex((l) => FIN_DE_VALIDITE.test(l));
+  const fin = apres < 0 ? Math.min(debut + 10, lignes.length) : debut + 1 + apres;
+  const terme = lignes
+    .slice(debut, fin)
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .replace(RUBRIQUE_VALIDITE, '')
+    .trim();
+
+  /* Vide n'est pas « non trouvé » : la rubrique existe et ne dit rien. On ne
+     conclut rien non plus, plutôt que d'inventer une durée. */
+  if (!terme) return null;
+
+  const date = /jusqu['’]au\s*(\d{1,2}\/\d{1,2}\/\d{4})/i.exec(terme);
+  if (date?.[1]) return { jusquAu: date[1], terme };
+
+  /* « il n'y a pas lieu de faire établir un nouveau constat » — les deux formes,
+     vente et location, disent la même chose : le constat ne périme pas. */
+  if (/pas lieu de faire [ée]tablir un nouveau constat/i.test(terme)) {
+    return { sansLimite: true, terme };
+  }
+
+  return null;
+}
+
+/**
  * Le constat a-t-il été transmis à l'agence régionale de santé ?
  *
  * L'arrêté du 19 août 2011 définit CINQ situations de risque, et une seule
@@ -1002,21 +1096,23 @@ export function transmisALArs(lignes: string[]): boolean {
   const normalisees = lignes.map(normaliser);
 
   /*
-   * ⚠️ D'ABORD LA RUBRIQUE. C'est la correction que les cinquante lectures ont
-   * imposée, et c'était le défaut le plus grave du lecteur.
-   *
-   * Trois rapports sur cinquante ont réellement transmis à l'ARS : un chez
-   * BC2E, deux chez LICIEL (21/IMO/787 et 22/IMO/0340). **Les deux LICIEL
-   * n'écrivent aucune phrase d'action** — ils répondent dans un formulaire :
+   * D'ABORD LA RUBRIQUE, parce que c'est un formulaire et qu'une rubrique
+   * répond. Chez LICIEL, la transmission ne s'écrit pas, elle se coche :
    *
    *     6.5 Transmission du constat à l'agence régionale de santé
    *     Si le constat identifie au moins l'une de ces cinq situations, son
    *     OUI  auteur transmet, dans un délai de cinq jours ouvrables, une copie…
    *
-   * Le lecteur cherchait « a été transmis » : il les manquait tous les deux, et
-   * disait donc « pas de transmission » sur les seuls rapports du corpus qui
-   * portent une situation de saturnisme infantile. Une rubrique répond ; c'est
-   * elle qu'on lit.
+   * ⚠️ Ce que cette correction gagne, mesuré — et ce n'est pas ce que j'avais
+   * annoncé. Sur 200 volets, le verdict est **identique avant et après** : zéro
+   * rapport rattrapé, zéro perdu. J'avais écrit qu'elle en rattrapait deux ;
+   * c'était faux. Les rapports LICIEL qui cochent `OUI` portent aussi, plus bas,
+   * une remarque au passé composé que le motif de phrase trouvait déjà.
+   *
+   * Ce qu'elle apporte est donc de la robustesse, pas de la justesse : la
+   * lecture ne repose plus sur une tournure que chaque éditeur écrit à sa façon,
+   * mais sur la case du formulaire. La phrase reste en second recours, pour
+   * l'éditeur qui n'imprime pas la rubrique.
    *
    * La fenêtre est de sept lignes parce que la réponse se promène : deuxième
    * ligne du paragraphe (22/IMO/0340), première (25/IMO/1001P), troisième

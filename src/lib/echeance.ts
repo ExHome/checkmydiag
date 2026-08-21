@@ -52,6 +52,33 @@ function plombSansLimite(d: Diagnostic): boolean {
 
 export function echeance(d: Diagnostic, aujourdhui: Date = new Date()): Echeance {
   /*
+   * ⚠️ D'ABORD CE QUE LE RAPPORT ÉCRIT. Toute durée calculée passe après.
+   *
+   * Le CREP porte sa propre fin de validité, en toutes lettres, dans sa rubrique
+   * 6.3 : « durée de validité de 1 an (jusqu'au 14/09/2026) ».
+   *
+   * Le calcul qui suit tombait juste sur les rapports de VENTE et se trompait de
+   * CINQ ANS sur ceux de location, qui valent six ans (article R. 1334-11 du
+   * code de la santé publique). Mesuré le 21/08/2026 sur 200 constats plomb :
+   * 83 ventes justes, 29 locations fausses, zéro exception dans les deux sens.
+   * Verrière déclarait donc périmés 14,5 % des constats qu'elle lisait.
+   *
+   * Lire supprime le calcul ET la lecture de la mission — et le risque de se
+   * tromper sur l'une des deux.
+   */
+  if (d.validiteLue?.sansLimite) return { texte: 'Sans limite', perimee: false };
+  const lue = enDate(d.validiteLue?.jusquAu);
+  if (lue) {
+    /* Le rapport écrit le DERNIER JOUR valable : il est encore valable ce
+       jour-là. On compare donc au jour d'après. */
+    const perimee = lue.getTime() + 86_400_000 <= aujourdhui.getTime();
+    return {
+      texte: `${perimee ? 'Périmé depuis le ' : 'Valable jusqu’au '}${lue.toLocaleDateString('fr-FR')}`,
+      perimee
+    };
+  }
+
+  /*
    * Le plomb : douze mois s'il trouve quelque chose, sans limite sinon.
    *
    * On le traite avant la table des durées, parce que sa validité ne dépend pas

@@ -941,15 +941,47 @@ La rubrique était trouvée dans les 117 cas. C'est donc bien l'appariement de l
 réponse au libellé qui échouait, et lui seul — exactement ce que les quatre
 mises en page annonçaient.
 
-### Ce que la mesure a appris en plus
+### Deux affirmations que la mesure suivante a démenties
 
-Huit rapports cochent une situation, six ont transmis à l'ARS. **L'écart est dans
-les rapports**, pas dans le lecteur : deux constats cochent une des cinq
-situations et répondent `NON` au § 6.5.
+Sur 120 volets j'ai lu « 8 situations cochées, 6 transmissions » et j'en ai
+conclu que deux rapports se contredisaient. **C'était faux, et l'erreur était
+dans mon compteur** : il additionnait des SITUATIONS d'un côté et des RAPPORTS de
+l'autre. Un rapport coche souvent plusieurs des cinq.
 
-Verrière n'en tire aucune conclusion et ne le présente pas comme une faute : elle
-affiche ce que le rapport dit à chacun des deux endroits. *Elle explique le
-diagnostic, elle ne juge pas le diagnostiqueur.*
+Repris proprement sur **200 volets**, rapport par rapport :
+
+```
+coche une situation mais § 6.5 = NON : 0
+§ 6.5 = OUI mais aucune situation    : 0
+```
+
+**Aucune contradiction.** Les deux formulaires s'accordent partout.
+
+Et la seconde, plus gênante encore, sur la même mesure :
+
+```
+transmission à l'ARS — même verdict avant / après : 200
+                       vue maintenant, manquée avant :  0
+                       vue avant, perdue maintenant  :  0
+```
+
+**La correction du § 6.5 ne gagne aucun rapport.** J'ai écrit qu'elle rattrapait
+deux constats que le lecteur manquait : elle n'en rattrape aucun sur ce corpus.
+Le motif de phrase les trouvait déjà, parce que les rapports LICIEL qui répondent
+`OUI` portent AUSSI, plus bas, une remarque au passé composé — « Nous avons donc,
+conformément à l'article L. 1334-10 […], transmis immédiatement une copie ».
+
+Ce que la correction apporte reste réel, mais il faut le dire à sa taille : la
+lecture ne repose plus sur une tournure de phrase que chaque éditeur écrit à sa
+façon, mais sur la case du formulaire. C'est de la robustesse, pas de la
+justesse — et je ne l'aurais pas su sans mesurer les deux versions côte à côte.
+
+Le gain, lui, est entier sur les situations :
+
+```
+situations cochées OUI, sur 200 volets   avant :  1
+                                         après : 22
+```
 
 ### L'attestation d'assurance, même défaut de forme
 
@@ -968,3 +1000,67 @@ chez eux. La lecture 47 en porte le cas exact.
 L'ancre reste le **contrat d'assurance**, jamais « Date de validité » seul : deux
 lignes plus bas, le même intitulé sert à l'autorisation ASN de l'appareil, dont
 la date de fin précède souvent le repérage sans rien dire de l'assurance.
+
+---
+
+## Un endroit de plus : « Validité du constat » (§ 6.3)
+
+Le CREP écrit lui-même jusqu'à quand il vaut. Verrière, elle, le **calculait** —
+sans limite s'il ne trouve rien, douze mois sinon.
+
+Douze mois, c'est la durée de la **vente** (article L. 1334-6). À la
+**location**, c'est **six ans** : article R. 1334-11 du code de la santé
+publique, énoncé déjà noté dans `reglement/textes.ts` et lu le 14/08/2026. Le
+calcul ignorait la moitié de la règle.
+
+### Mesuré, sur 200 volets
+
+En comparant la date que le rapport écrit à celle que nous calculions :
+
+```
+120 rapports portent une date de fin écrite
+ 83 tombent juste  → tous cochés « Avant la vente »
+ 29 se trompent    → tous cochés « Avant la mise en location »,
+                     et de 1825 jours, soit cinq ans à un jour près
+```
+
+**Zéro exception dans les deux sens.** Et l'effet sur le verdict affiché :
+
+```
+d'où vient la fin de validité
+  écrite dans le rapport                : 157
+  calculée faute de mieux                :  43
+
+verdict « périmé » avant / après
+  inchangé                               : 169
+  déclaré périmé à tort, rendu valable   :  31
+  devenu périmé                          :   0
+```
+
+**31 constats sur 200 — 15,5 % — étaient annoncés périmés alors qu'ils avaient
+jusqu'à cinq ans à courir.** Aucun ne bascule dans l'autre sens.
+
+### La correction n'est pas « ajouter six ans si location »
+
+Elle est de **lire la date que le rapport écrit**. Cela supprime d'un coup le
+calcul ET la lecture de la mission — donc deux occasions de se tromper. *Aucun
+chiffre inventé : le rapport reste la référence.*
+
+Le calcul reste en second recours pour les 43 volets où la rubrique est absente,
+vide, ou d'une forme non reconnue.
+
+### Les quatre réponses de la rubrique
+
+```
+120  « durée de validité de N an(s) (jusqu'au JJ/MM/AAAA) »
+ 30  « il n'y a pas lieu de faire établir un nouveau constat à chaque MUTATION »
+ 13  la même chose, « à chaque nouveau CONTRAT DE LOCATION »
+ 29  rubrique absente
+  3  rubrique VIDE — un CREP de parties communes, où la durée en années ne
+     s'applique pas. Vide n'est pas « non trouvé », et ce n'est pas non plus
+     « sans limite » : on se tait.
+  5  forme non reconnue
+```
+
+Les bornes : de « Validité du constat : » jusqu'à « Documents remis par le
+donneur d'ordre » ou le titre 6.4 — le titre suivant, jamais la fin de page.
