@@ -815,6 +815,24 @@
     text-transform: uppercase;
   }
 
+  /*
+   * LE BOUTON D'IMPRESSION FAISAIT 36 px.
+   *
+   * Le cercle blanc reste à 36 px — c'est son dessin, et l'agrandir
+   * déséquilibrerait le coin de la photo. C'est la ZONE qui passe à 44,
+   * par un pseudo-élément centré : le doigt trouve la cible, l'œil garde la
+   * pastille. Le minimum tactile d'iOS porte sur ce qu'on peut toucher, pas
+   * sur ce qu'on voit.
+   */
+  .menu::after {
+    content: '';
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
+  }
+
   .menu {
     position: absolute;
     top: var(--e3);
@@ -896,6 +914,7 @@
   }
 
   .voir {
+    min-height: 44px;
     justify-self: start;
     margin-top: var(--e2);
     min-height: 40px;
