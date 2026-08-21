@@ -303,3 +303,40 @@ export interface Analyse {
    */
   confiance: number;
 }
+
+/** L'étendue que le rapport donne à une anomalie, dans ses propres mots. */
+export type Pluralite = 'auMoinsUn' | 'ensemble' | 'inconnue';
+
+/**
+ * Une anomalie électrique, objet complet au sens du §8 de l'ordre de mission.
+ *
+ * « B3 — anomalie terre » est expressément déclaré insuffisant. Neuf champs
+ * sont exigés ; ceux qui manquent dans le rapport valent « non précisé », et
+ * jamais « aucun » : le §2 interdit de transformer un silence en constat.
+ *
+ * La mesure compensatoire est portée ICI, par l'anomalie — et non par le
+ * domaine, comme elle l'était. Un domaine qui compte trois anomalies dont une
+ * seule est compensée les marquait toutes les trois. Le §14 exige le
+ * rattachement un à un.
+ */
+export interface Anomalie {
+  /** Le code de la norme quand le rapport l'écrit. LICIEL n'en écrit pas. */
+  code: string | null;
+  /** La famille de sécurité dont relève l'anomalie. */
+  domaine: { numero: number; nom: string } | null;
+  /** Le libellé du rapport, repris mot pour mot. */
+  libelle: string;
+  /** TOUTES les localisations données, jamais une seule (§10). */
+  localisations: string[];
+  /** « Au moins un socle… » n'est pas « le socle » (§9). */
+  pluralite: Pluralite;
+  /**
+   * La mesure compensatoire, rattachée à l'anomalie qu'elle compense.
+   *
+   * `null` signifie « non précisé par le rapport », jamais « aucune » — et une
+   * mesure présente ne fait pas disparaître l'anomalie (§12, §13, §15).
+   */
+  mesureCompensatoire: { code: string | null; libelle: string } | null;
+  /** Le geste demandé, dans les mots du rapport. */
+  geste: string | null;
+}
