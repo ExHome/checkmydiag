@@ -727,6 +727,32 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
     });
   }
   /*
+   * Le local le plus touché, avec les chiffres du rapport et pas les nôtres.
+   *
+   * Le CREP récapitule chaque local en tête de son tableau — « Nombre d'unités
+   * de diagnostic : 8 … de classe 3 repéré : 5 soit 62.5 % ». C'est la donnée
+   * qui répond à la question que se pose l'acquéreur : *où* ?
+   *
+   * Elle justifie aussi la première situation de l'article 8, qui se juge PAR
+   * LOCAL et non sur le total : un logement à 17 % de classe 3 sur l'ensemble
+   * peut avoir une pièce à 60 %. On ne recalcule pas la case pour autant — on
+   * montre les deux endroits côte à côte.
+   */
+  if (c3 > 0) {
+    const pire = recapitulatifParLocal(lignes)
+      .filter((l) => l.classe3 > 0)
+      .sort((a, b) => b.pourcentage - a.pourcentage)[0];
+    if (pire) {
+      faits.push({
+        libelle: pire.local ? `Le local le plus touché — ${pire.local}` : 'Le local le plus touché',
+        valeur: pire.terme,
+        precision:
+          'Le seuil de l’article 8 se juge local par local, pas sur le total du logement : une pièce peut dépasser la moitié quand l’ensemble reste bas.'
+      });
+    }
+  }
+
+  /*
    * Les enfants, et seulement quand le rapport répond OUI.
    *
    * Un `NON` ne dit rien à l'acquéreur : les occupants partent avec le vendeur.
@@ -996,6 +1022,100 @@ export function appareilPlomb(lignes: string[]): AppareilPlomb {
     /* Entrée ET sortie, le même jour : c'est ce que la norme demande. */
     etalonnageDuJour: dates.length >= 2 && new Set(dates).size === 1
   };
+}
+
+/**
+ * Le récapitulatif par local — la pièce justificative du seuil des 50 %.
+ *
+ * En tête de chaque local, le rapport écrit son compte et son pourcentage :
+ *
+ *     Rez de jardin - Atelier
+ *     Nombre d'unités de diagnostic : 8 - Nombre d'unités de diagnostic
+ *     de classe 3 repéré : 1 soit 12.5 %
+ *
+ * C'est exactement ce que mesure la première situation de l'article 8 — « au
+ * moins un local présente au moins 50 % d'unités de diagnostic de classe 3 » —
+ * et le rapport le donne **sans qu'on ait à calculer quoi que ce soit**.
+ *
+ * ## Mesuré le 21/08/2026 sur 200 volets
+ *
+ *     192 rapports le portent, 8 non
+ *     1812 locaux récapitulés
+ *     aucune ligne d'une forme que le motif ne reconnaisse
+ *
+ * ## Le croisement avec la case du § 6.4, et son seul point de friction
+ *
+ *     un local à 50 % ou plus           : 10
+ *     la case « 50 % » cochée OUI       :  8
+ *     les deux d'accord                 : 198 sur 200
+ *     case cochée sans local ≥ 50 %     :  0
+ *     local ≥ 50 % mais case non cochée :  2
+ *
+ * Les deux exceptions sont **exactement à 50 %** — 3 unités de classe 3 sur 6,
+ * dans les deux cas. Nulle part ailleurs les deux endroits ne divergent.
+ *
+ * L'arrêté écrit « **au moins** 50 % ». Deux lectures restent possibles, et on
+ * ne tranche pas : soit le rapport applique un « plus de 50 % » strict, soit son
+ * dénominateur n'est pas le même aux deux endroits — les unités non mesurées
+ * peuvent compter ici et pas là.
+ *
+ * **Verrière ne recalcule donc pas la case, et ne dit pas que le rapport se
+ * trompe.** Elle lit la case là où elle est cochée, et montre le récapitulatif à
+ * côté. Les deux viennent du rapport ; le lecteur voit les deux. *Elle explique
+ * le diagnostic, elle ne juge pas le diagnostiqueur.*
+ */
+export interface LocalRecapitule {
+  /** Le nom du local, tel que le rapport l'écrit — vide s'il ne se lit pas. */
+  local: string;
+  unites: number;
+  classe3: number;
+  pourcentage: number;
+  /** La ligne du rapport, entière. */
+  terme: string;
+}
+
+const RECAP_LOCAL =
+  /Nombre d'unit[ée]s de diagnostic\s*:\s*(\d+)\s*-\s*Nombre d'unit[ée]s de diagnostic de classe 3 rep[ée]r[ée]s?\s*:\s*(\d+)\s*soit\s*([\d.,]+)\s*%/i;
+
+/*
+ * Ce qui n'est PAS un nom de local, juste au-dessus du récapitulatif.
+ *
+ * Le nom se lit sur la ligne d'avant — sauf quand un saut de page glisse entre
+ * les deux l'en-tête du rapport ou son pied. On les écarte et on remonte ; si
+ * rien de plausible n'apparaît en trois lignes, on laisse le nom vide plutôt
+ * que d'attribuer les chiffres d'une pièce à une autre.
+ */
+const PAS_UN_LOCAL =
+  /^(?:Constat (?:de|des) [Rr]isques?|SARL|SAS |RCS|N.\s*SIREN|Mesure$|N° Zone|\d+\s*\/\s*\d+$|Rapport du|\(mg\/cm|^\s*$)/i;
+
+export function recapitulatifParLocal(lignes: string[]): LocalRecapitule[] {
+  const normalisees = lignes.map(normaliser);
+  const locaux: LocalRecapitule[] = [];
+
+  for (let i = 0; i < normalisees.length; i++) {
+    const m = RECAP_LOCAL.exec(normalisees[i] ?? '');
+    if (!m?.[3]) continue;
+
+    let local = '';
+    for (let j = i - 1; j >= 0 && j > i - 4; j--) {
+      const candidat = (lignes[j] ?? '').trim();
+      if (!candidat || PAS_UN_LOCAL.test(candidat) || RECAP_LOCAL.test(normalisees[j] ?? '')) {
+        continue;
+      }
+      if (candidat.length <= 60) local = candidat;
+      break;
+    }
+
+    locaux.push({
+      local,
+      unites: Number(m[1]),
+      classe3: Number(m[2]),
+      pourcentage: Number((m[3] ?? '0').replace(',', '.')),
+      terme: (normalisees[i] ?? '').trim()
+    });
+  }
+
+  return locaux;
 }
 
 /**

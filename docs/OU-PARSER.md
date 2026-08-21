@@ -1140,3 +1140,72 @@ Rien n'est entré dans le dépôt, mais la règle est simple et je l'avais oubli
 **une sonde qui masque « à peu près » ne masque pas.** Le masquage est désormais
 une liste BLANCHE — les mots du formulaire, et rien d'autre ; tout le reste
 devient « … ».
+
+---
+
+## Un endroit de plus : le récapitulatif par local
+
+En tête de chaque local, le rapport écrit son compte et son pourcentage :
+
+```
+Rez de jardin - Atelier
+Nombre d'unités de diagnostic : 8 - Nombre d'unités de diagnostic
+de classe 3 repéré : 1 soit 12.5 %
+```
+
+C'est **exactement** ce que mesure la première situation de l'article 8 — « au
+moins un local présente au moins 50 % d'unités de diagnostic de classe 3 » — et
+le rapport le donne sans qu'on ait à calculer quoi que ce soit.
+
+### Mesuré sur 200 volets
+
+```
+192  rapports le portent
+  8  ne le portent pas
+1812  locaux récapitulés
+   0  ligne d'une forme que le motif ne reconnaisse
+```
+
+### Le croisement avec la case du § 6.4, et son seul point de friction
+
+```
+un local à 50 % ou plus            : 10
+la case « 50 % » cochée OUI        :  8
+les deux d'accord                  : 198 sur 200
+case cochée sans local ≥ 50 %      :  0
+local ≥ 50 % mais case non cochée  :  2
+```
+
+Les deux exceptions sont **exactement à 50 %** — 3 unités de classe 3 sur 6,
+dans les deux cas. Nulle part ailleurs les deux endroits ne divergent.
+
+L'arrêté écrit « **au moins** 50 % ». Deux lectures restent possibles, et **on ne
+tranche pas** : soit le rapport applique un « plus de 50 % » strict, soit son
+dénominateur n'est pas le même aux deux endroits — les unités non mesurées
+peuvent compter ici et pas là.
+
+**Verrière ne recalcule donc pas la case et ne dit pas que le rapport se
+trompe.** Elle lit la case là où elle est cochée, et montre le récapitulatif à
+côté. Les deux viennent du rapport ; le lecteur voit les deux. *Elle explique le
+diagnostic, elle ne juge pas le diagnostiqueur.*
+
+### Le piège du nom de la pièce
+
+Le nom du local est sur la ligne d'AVANT — sauf quand un saut de page glisse
+entre les deux l'en-tête du rapport ou son pied. Pris pour le nom, il ferait
+afficher « Le local le plus touché — Constat de risque d'exposition au plomb
+n° … ». On les écarte et on remonte de trois lignes au plus ; si rien de
+plausible n'apparaît, **on laisse le nom vide plutôt que d'attribuer les chiffres
+d'une pièce à une autre.**
+
+### Ce que le fait rend, mesuré
+
+```
+rapports avec du plomb DÉGRADÉ (classe 3) : 49 sur 200
+fait « Le local le plus touché » posé      : 47
+dont le local est NOMMÉ                    : 47
+```
+
+Les deux manquants sont des rapports sans récapitulatif. **Aucun fait n'est posé
+sans nom de pièce.** Répartition des pièces désignées : 15 autres, 13 pièces de
+vie, 11 pièces d'eau, 8 circulations.
