@@ -1064,3 +1064,79 @@ vide, ou d'une forme non reconnue.
 
 Les bornes : de « Validité du constat : » jusqu'à « Documents remis par le
 donneur d'ordre » ou le titre 6.4 — le titre suivant, jamais la fin de page.
+
+---
+
+## Un endroit de plus : les enfants (« Renseignements », en tête)
+
+C'est la raison d'être du CREP, et Verrière ne le lisait chez aucun éditeur. Le
+saturnisme est une maladie de l'enfant : l'arrêté du 19 août 2011 nomme sa
+première liste « situations de risque de saturnisme **infantile** », et le modèle
+de rapport qu'il annexe pose la question **avant** les mesures.
+
+### L'endroit, mesuré sur 200 volets
+
+L'intitulé est présent dans **200 volets sur 200** — le seul endroit du CREP dont
+on puisse le dire. La réponse occupe la ligne SUIVANTE, seule :
+
+```
+Nom de l'occupant, si différent du propriétaire
+Nombre total :
+Présence et nombre d'enfants mineurs,
+NON
+dont des enfants de moins de 6 ans   Nombre d'enfants de moins de 6 ans : 2
+```
+
+Après correction, le lecteur rend **21 OUI, 179 NON, zéro silence.**
+
+### Deux pièges, dont un qui m'a coûté un volet
+
+⚠️ **La casse change.** Le corpus écrit `NON` en capitales mais **`Oui`** en
+capitale initiale — la même bascule que les lectures 12 et 13 avaient montrée sur
+une réédition. Un motif qui n'accepte que les capitales lit tous les non et aucun
+oui : il rendrait « aucun enfant » sur les 21 rapports qui disent l'inverse.
+
+C'est une exception à la règle des capitales, et elle est bornée : on exige que
+la ligne ne contienne QUE le mot, juste sous un intitulé connu. Ailleurs, « non »
+finit une phrase ordinaire sur deux.
+
+⚠️ **La réponse ne termine pas la ligne.** Mon premier motif la cherchait en fin
+de ligne. Il a manqué un volet sur 200, et le seul de sa forme :
+
+```
+Le local est-il habité lors de la visite : NON  Présence de mineurs
+de -6 ans : NON  Le local est-il en travaux : NON
+```
+
+Trois questions et trois réponses sur une ligne. Exiger la fin de ligne
+manquait celle-ci — et aurait pu, ailleurs, prendre la réponse de la question
+**suivante** pour la sienne. On lit donc la réponse collée à SON intitulé.
+
+`Nombre total :` se promène aussi : tantôt sur la ligne d'avant, tantôt collé à
+l'intitulé. On ne s'y ancre pas.
+
+### Ce que le croisement montre
+
+```
+OUI, et du plomb au-delà du seuil (classes 1, 2 ou 3) : 13 sur 200
+OUI, et du plomb DÉGRADÉ (classe 3)                   :  7 sur 200
+```
+
+**Sept rapports sur deux cents** décrivent un logement où vivaient des enfants
+mineurs et où du plomb dégradé a été mesuré. C'est exactement la situation que
+l'arrêté vise, et Verrière ne la disait nulle part.
+
+Le fait ne s'affiche que sur un `OUI` : un `NON` ne dit rien à l'acquéreur,
+puisque les occupants partent avec le vendeur. On rapproche deux endroits du
+rapport, chacun cité dans ses mots, et on n'en tire aucune conclusion médicale.
+
+### ⚠️ Ma sonde a laissé fuir deux noms
+
+En mesurant les formes de cet endroit, mon masquage ne remplaçait que les
+chiffres. Il a laissé passer **deux noms de personnes** dans ma sortie : « Nom de
+l'occupant » est un champ libre, juste au-dessus de l'intitulé mesuré.
+
+Rien n'est entré dans le dépôt, mais la règle est simple et je l'avais oubliée :
+**une sonde qui masque « à peu près » ne masque pas.** Le masquage est désormais
+une liste BLANCHE — les mots du formulaire, et rien d'autre ; tout le reste
+devient « … ».

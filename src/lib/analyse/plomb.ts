@@ -532,6 +532,9 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
    */
   const signale = transmisALArs(lignes);
   const validiteLue = validiteDuConstat(lignes) ?? undefined;
+  /* La raison d'être du constat, lue en tête de rapport — voir
+     `enfantsDansLeLogement`. Présente dans 200 volets sur 200. */
+  const enfants = enfantsDansLeLogement(lignes);
 
   let gravite: Gravite = 'neutre';
   let verdict = "Un constat plomb est présent, mais son tableau de conclusion n'a pas pu être lu.";
@@ -723,6 +726,30 @@ export function analyserPlomb(lignes: string[], plage: [number, number]): Diagno
       precision: alerte.ou ? `${alerte.explique} — ${alerte.ou}` : alerte.explique
     });
   }
+  /*
+   * Les enfants, et seulement quand le rapport répond OUI.
+   *
+   * Un `NON` ne dit rien à l'acquéreur : les occupants partent avec le vendeur.
+   * Un `OUI` en dit beaucoup, et le rapport le sait — c'est pour cet enfant-là
+   * que le constat existe. Quand du plomb dégradé a été trouvé dans le même
+   * logement, les deux faits se lisent ensemble, et c'est la situation que
+   * l'arrêté appelle « risque de saturnisme infantile ».
+   *
+   * On n'en tire aucune conclusion médicale et on ne met personne en cause : on
+   * rapproche deux endroits du rapport, chacun cité dans ses mots.
+   */
+  if (enfants?.reponse === 'OUI') {
+    const combien = enfants.moinsDeSixAns;
+    faits.push({
+      libelle: 'Le constat relève',
+      valeur: enfants.terme,
+      precision:
+        c3 > 0
+          ? `Réponse : OUI${combien ? ` — ${combien} de moins de 6 ans` : ''}. Du plomb dégradé a été trouvé dans ce même logement : c’est la situation que l’arrêté appelle « risque de saturnisme infantile ».`
+          : `Réponse : OUI${combien ? ` — ${combien} de moins de 6 ans` : ''}. Le saturnisme est une maladie de l’enfant : c’est pour cela que le constat pose la question avant de mesurer.`
+    });
+  }
+
   if (signale) {
     faits.push({
       libelle: 'Suite donnée',
@@ -968,6 +995,110 @@ export function appareilPlomb(lignes: string[]): AppareilPlomb {
     finAutorisation: validite?.[2] ?? null,
     /* Entrée ET sortie, le même jour : c'est ce que la norme demande. */
     etalonnageDuJour: dates.length >= 2 && new Set(dates).size === 1
+  };
+}
+
+/**
+ * Des enfants vivaient-ils dans le logement au moment du constat ?
+ *
+ * C'est la raison d'être du CREP, et Verrière ne le lisait chez aucun éditeur.
+ * Le saturnisme est une maladie de l'enfant : l'arrêté du 19 août 2011 nomme sa
+ * première liste « situations de risque de saturnisme INFANTILE », et le modèle
+ * de rapport qu'il annexe pose la question en tête, avant même les mesures.
+ *
+ * ## L'endroit, mesuré le 21/08/2026 sur 200 volets
+ *
+ * L'intitulé est présent dans **200 volets sur 200** — c'est le seul endroit du
+ * CREP dont on puisse dire cela. La réponse occupe la ligne SUIVANTE, seule :
+ *
+ *     Nom de l'occupant, si différent du propriétaire
+ *     Nombre total :
+ *     Présence et nombre d'enfants mineurs,
+ *     NON
+ *     dont des enfants de moins de 6 ans   Nombre d'enfants de moins de 6 ans : 2
+ *
+ * Répartition : 179 `NON`, 21 `OUI`.
+ *
+ * ## Deux pièges de forme
+ *
+ * ⚠️ **La casse change.** Le corpus écrit `NON` en capitales mais `Oui` en
+ * capitale initiale — la même bascule que les lectures 12 et 13 avaient montrée
+ * sur une réédition. Un motif qui n'accepte que les capitales lit tous les non
+ * et aucun oui, et rend donc « aucun enfant » sur 21 rapports qui disent
+ * l'inverse. On accepte donc les deux casses ICI — c'est sans danger, parce
+ * qu'on exige que la ligne ne contienne QUE le mot, juste sous un intitulé
+ * connu. Ailleurs, « non » finit une phrase ordinaire sur deux.
+ *
+ * ⚠️ **`Nombre total :` se promène.** Tantôt sur la ligne d'avant, tantôt collé
+ * à l'intitulé. On ne s'y ancre pas.
+ *
+ * L'autre éditeur pose la question sur une seule ligne — « Présence de mineurs
+ * de -6 ans : OUI » —, la réponse en fin de ligne.
+ */
+export interface EnfantsDansLeLogement {
+  /** Le terme du rapport, entier — on cite, puis on explique. */
+  terme: string;
+  /** Ce que le constat coche. */
+  reponse: 'OUI' | 'NON';
+  /** Le nombre d'enfants de moins de six ans, quand le rapport le chiffre. */
+  moinsDeSixAns?: number;
+}
+
+const INTITULE_ENFANTS = /Pr[ée]sence (?:et nombre d'enfants mineurs|de mineurs de\s*-?\s*6 ans)/i;
+/*
+ * ⚠️ La réponse suit l'intitulé — elle ne termine PAS la ligne.
+ *
+ * Premier motif écrit, `/\b(OUI|NON)\s*$/` : la réponse en fin de ligne. Il a
+ * manqué un volet sur 200, et le seul de sa forme :
+ *
+ *     Le local est-il habité lors de la visite : NON  Présence de mineurs
+ *     de -6 ans : NON  Le local est-il en travaux : …
+ *
+ * Deux questions et leurs deux réponses sur la même ligne, suivies d'une
+ * troisième. Rien ne termine la ligne, et exiger la fin de ligne aurait aussi
+ * pu prendre la réponse de la question SUIVANTE pour celle-ci.
+ *
+ * On lit donc la réponse collée à SON intitulé, et pas ailleurs.
+ */
+const REPONSE_APRES_L_INTITULE =
+  /Pr[ée]sence (?:et nombre d'enfants mineurs|de mineurs de\s*-?\s*6 ans)\s*[,:]*\s*(OUI|NON)\b/i;
+const MOT_SEUL = /^(OUI|NON)$/i;
+const COMBIEN = /Nombre d'enfants de moins de 6 ans\s*:\s*(\d+)/i;
+
+export function enfantsDansLeLogement(lignes: string[]): EnfantsDansLeLogement | null {
+  const normalisees = lignes.map(normaliser);
+  const i = normalisees.findIndex((l) => INTITULE_ENFANTS.test(l));
+  if (i < 0) return null;
+
+  /* La réponse : collée à l'intitulé, ou seule sur une des deux lignes qui
+     suivent. Au-delà, on serait dans un autre champ du formulaire. */
+  let reponse: 'OUI' | 'NON' | undefined;
+  const surLaLigne = REPONSE_APRES_L_INTITULE.exec(normalisees[i] ?? '');
+  if (surLaLigne?.[1]) reponse = surLaLigne[1].toUpperCase() === 'OUI' ? 'OUI' : 'NON';
+  else {
+    for (let j = i + 1; j < Math.min(i + 3, normalisees.length); j++) {
+      const m = MOT_SEUL.exec((normalisees[j] ?? '').trim());
+      if (m?.[1]) {
+        reponse = m[1].toUpperCase() === 'OUI' ? 'OUI' : 'NON';
+        break;
+      }
+    }
+  }
+  if (!reponse) return null;
+
+  let moinsDeSixAns: number | undefined;
+  for (let j = i; j < Math.min(i + 4, normalisees.length); j++) {
+    const m = COMBIEN.exec(normalisees[j] ?? '');
+    if (m?.[1]) {
+      moinsDeSixAns = Number(m[1]);
+      break;
+    }
+  }
+
+  return {
+    terme: 'Présence et nombre d’enfants mineurs, dont des enfants de moins de 6 ans',
+    reponse,
+    ...(moinsDeSixAns !== undefined ? { moinsDeSixAns } : {})
   };
 }
 
