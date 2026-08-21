@@ -174,6 +174,14 @@
     <p class="nom">Dicodiag</p>
   </header>
 
+  <!--
+    PAS DE VERRIÈRE ICI, ET C'EST UNE ERREUR CORRIGÉE.
+    Je l'y avais posée en pensant que le lexique respirait. Vérifié à l'écran :
+    ses définitions s'affichent sur DEUX colonnes qui vont d'un bord à l'autre,
+    et la tranche alphabétique occupe la marge droite. Le dessin se retrouvait
+    entièrement recouvert — invisible, mais téléchargé.
+    Le lexique a déjà sa matière : Fraunces, le papier, la tranche.
+  -->
   <div class="dedans" style={styleUnivers('dicodiag')}>
     <div class="ouvrage">
       <header class="titraille">

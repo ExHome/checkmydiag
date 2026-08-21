@@ -1550,6 +1550,53 @@ body.demarrage {
 }
 
 /*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * LA VERRIÈRE DEVIENT LA SIGNATURE, LÀ OÙ ELLE A DE LA PLACE.
+ * ═══════════════════════════════════════════════════════════════════════════
+ *
+ * Aude : « je pense que l'image donnée va beaucoup t'aider et peut devenir
+ * notre image de marque ». Elle m'a laissé juger de son étendue. Voici le
+ * jugement, et ses raisons.
+ *
+ * ELLE ENTRE sur les écrans qui respirent : l'arrivée, le lexique, les pages
+ * de contenu. Ce sont des écrans où la colonne de lecture est étroite et où
+ * la droite reste libre — exactement la composition de la référence.
+ *
+ * ELLE N'ENTRE PAS sur le bureau, qui garde son vert profond. Deux raisons,
+ * et la seconde est la vraie : les neuf icônes d'application y tirent leur
+ * éclat du fond sombre, et surtout le passage du vert à l'ivoire EST
+ * l'ouverture d'une application. Poser le même fond des deux côtés effacerait
+ * ce seuil, et c'est lui qui fait qu'on sait où l'on est.
+ *
+ * ELLE N'ENTRE PAS non plus sur les écrans de diagnostic : le dessin y
+ * passerait derrière un texte dense et des schémas, il faudrait l'atténuer
+ * jusqu'à le faire disparaître. On perdrait précisément ce qui plaît.
+ *
+ * L'atténuation ci-dessous — l'image à 55 % sur l'ivoire — n'est pas un
+ * compromis timide : sur ces écrans le texte court sur toute la largeur, et
+ * la référence elle-même laisse sa verrière s'éclaircir à mesure qu'elle
+ * s'éloigne de la source.
+ */
+.enveloppe-verriere {
+  background:
+    linear-gradient(rgb(247 246 242 / 45%), rgb(247 246 242 / 45%)),
+    image-set(url('/fond/verriere-fond-1536.webp') type('image/webp'))
+      right bottom / cover no-repeat,
+    var(--ivoire);
+  background-attachment: scroll;
+}
+
+@media (max-width: 900px) {
+  .enveloppe-verriere {
+    background:
+      linear-gradient(rgb(247 246 242 / 62%), rgb(247 246 242 / 62%)),
+      image-set(url('/fond/verriere-fond-960.webp') type('image/webp'))
+        right bottom / cover no-repeat,
+      var(--ivoire);
+  }
+}
+
+/*
  * LES PETITS ÉCRANS PRENNENT LE FICHIER LÉGER.
  *
  * 54 Ko au lieu de 121, sans changer le dessin : l'ordre demande de

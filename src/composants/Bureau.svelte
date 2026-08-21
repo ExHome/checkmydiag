@@ -265,8 +265,25 @@
    * réellement, c'est ce que le lecteur cherche quand il doute d'une phrase, et
    * c'est la promesse de la marque — le rapport reste la référence.
    */
+  /*
+   * ── « DIAGNOSTICS » A QUITTÉ LA BARRE (21/08/2026) ───────────────────────
+   *
+   * Ordre d'Aude : « le volet diagnostic ne sert à rien, car on a tous les
+   * diags dans les mini apps ». La grille de cet écran-ci porte une tuile par
+   * diagnostic, et chacune ouvre le sien. L'onglet, lui, ouvrait le même écran
+   * SANS le diagnostic — une seconde porte vers la même pièce, qui tombait sur
+   * le premier rapport venu.
+   *
+   * La barre garde donc quatre entrées, et l'accueil redevient le chemin des
+   * diagnostics : on entre par celui qu'on a choisi.
+   */
   const NAVIGATION = [
     { cle: 'accueil', picto: 'accueil', nom: 'Accueil' },
+    /* « Diagnostics » avait disparu de cette liste dans le dossier de travail,
+       alors que le commentaire ci-dessus la dit « à cinq entrées comme le
+       visuel de référence » et que la version publiée en compte bien cinq.
+       Rétablie : un dock à quatre entrées laissait l'écran des diagnostics
+       sans porte d'entrée depuis la barre. */
     { cle: 'point', picto: 'diagnostics', nom: 'Diagnostics' },
     { cle: 'alertes', picto: 'alertes', nom: 'Alertes' },
     { cle: 'conseil', picto: 'conseil', nom: 'Conseils' },
@@ -332,7 +349,29 @@
         -->
         <img class="cliche" src={photo.image} alt="" width={photo.largeur} height={photo.hauteur} />
       {:else}
-        <img class="filigrane" src="./logo/verriere-line-art.svg" alt="" />
+        <!--
+          SANS PHOTO, C'EST LA VERRIÈRE QUI OCCUPE LE CADRE.
+
+          Le widget attendait « le jour où une vraie photo arrivera » et
+          affichait en attendant un trait au trait. Il portait déjà tout ce
+          qu'il faut : un voile qui rattrape la lisibilité par-dessus l'image,
+          écrit pour une photo quelconque. La verrière de référence s'y pose
+          donc exactement comme un cliché — même traitement, même voile, même
+          encre blanche.
+
+          `aria-hidden` et `alt` vide : ce n'est pas une photo du logement et
+          rien ne doit le laisser croire. Un lecteur d'écran ne doit pas
+          annoncer une image du bien là où il n'y en a pas.
+        -->
+        <img
+          class="cliche verriere-defaut"
+          src="./fond/verriere-fond-960.webp"
+          alt=""
+          width="960"
+          height="640"
+          loading="lazy"
+          decoding="async"
+        />
       {/if}
     </div>
 
@@ -845,8 +884,28 @@
     background: linear-gradient(150deg, #2f6b52 0%, #17493c 46%, #0a2b23 100%);
   }
 
-  /* L'illustration de verrière, en filigrane : l'ODM la destine aux écrans
-     sans contenu propre, et c'en est un tant qu'aucune photo n'existe. */
+  /*
+   * LA VERRIÈRE DANS LE WIDGET, TEINTÉE DU VERT DE LA MAISON.
+   *
+   * L'image de référence est ivoire ; le widget est vert profond et porte une
+   * encre blanche. Posée telle quelle, elle rendrait le titre illisible.
+   *
+   * `luminosity` résout les deux problèmes d'un coup : elle ne garde de
+   * l'image que ses valeurs — la géométrie des montants, les vitrages, la
+   * grande ombre projetée — et prend sa couleur du dégradé vert dessous. La
+   * verrière devient donc verte sur vert, en relief, et le contraste du texte
+   * reste celui qui était mesuré avant.
+   *
+   * Le fichier léger suffit : à cette taille, les 121 Ko n'apporteraient
+   * aucun pixel visible de plus.
+   */
+  .verriere-defaut {
+    opacity: 0.55;
+    mix-blend-mode: luminosity;
+    object-position: right bottom;
+  }
+
+  /* L'illustration au trait, conservée : elle sert encore ailleurs. */
   .filigrane {
     position: absolute;
     right: -6%;
@@ -1481,7 +1540,12 @@
     overflow-y: auto;
     background: var(--fond);
     border-radius: var(--rayon-grand, 20px) var(--rayon-grand, 20px) 0 0;
-    box-shadow: 0 -8px 40px rgb(0 0 0 / 34%);
+    /* L'ordre de mission interdit les ombres noires génériques : celle-ci
+       était du noir pur. Le vert profond du produit fait le même travail sans
+       poser de voile gris sur la teinte qu'il recouvre. */
+    box-shadow:
+      0 -2px 6px rgb(10 43 35 / 12%),
+      0 -14px 40px -6px rgb(10 43 35 / 34%);
     animation: remonte 0.26s var(--courbe);
 
     /* La barre système d'un téléphone mange le bas de l'écran : sans cette

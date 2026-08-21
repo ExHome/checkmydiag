@@ -915,7 +915,10 @@
     border-top-color: var(--surface-bord);
     border-left: 3px solid var(--gravite, var(--sur-fond-doux));
     border-radius: var(--rayon);
-    box-shadow: 0 1px 0 var(--surface-forte) inset, 0 10px 22px -18px rgb(10 43 35 / 90%);
+    /* Second plan. L'ancienne valeur cumulait les deux faux reliefs du
+       produit : une arête interne blanche sur une carte blanche — zéro pixel
+       peint — et une ombre à 90 % rabotée de dix-huit pixels. */
+    box-shadow: var(--relief-souleve);
     color: var(--sur-fond);
     cursor: pointer;
     transition:
@@ -930,7 +933,8 @@
     border-color: var(--surface-bord);
     border-left-color: var(--gravite, var(--sur-fond-doux));
     transform: translateY(-2px);
-    box-shadow: 0 1px 0 var(--surface-forte) inset, 0 16px 28px -20px rgb(10 43 35 / 100%);
+    /* Premier plan : la carte survolée vient vers le lecteur. */
+    box-shadow: var(--relief-avant);
   }
 
   @media (prefers-reduced-motion: reduce) {
