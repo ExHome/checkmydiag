@@ -677,6 +677,31 @@
    * Sans et Rubik ouvrent la pile ; à défaut d'être installées, la police du
    * système prend le relais, ce que la charte prévoit.
    */
+  /*
+   * ═══════════════════════════════════════════════════════════════════════
+   * DEUX VOIX, ET L'ITALIQUE POUR LES DISTINGUER.
+   * ═══════════════════════════════════════════════════════════════════════
+   *
+   * Ordre d'Aude : « j'aime beaucoup l'italique », « joue sur la police pour
+   * les infos ».
+   *
+   * Le produit fait cohabiter deux paroles qu'il ne faut jamais confondre :
+   * les MOTS DU RAPPORT, qui engagent la responsabilité d'un professionnel,
+   * et l'EXPLICATION de Verrière, qui n'engage qu'elle. Jusqu'ici, les deux
+   * s'écrivaient dans la même linéale : rien, à l'œil, ne disait laquelle on
+   * lisait.
+   *
+   * Fraunces était pourtant déjà chargée — en variable, avec sa véritable
+   * italique dessinée — et ne servait que dans le lexique. Elle porte
+   * désormais la voix de Verrière : celle qui commente, situe, met en garde.
+   * Le rapport, lui, garde la linéale : ses mots ne se stylisent pas.
+   *
+   * C'est une VRAIE italique, pas une inclinaison calculée par le
+   * navigateur : les lettres changent de dessin, ce qui se voit à petit corps
+   * là où une oblique synthétique se contente de pencher.
+   */
+  --police-voix: 'Fraunces', Georgia, 'Times New Roman', serif;
+
   --police: 'IBM Plex Sans', 'Rubik', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --police-titre: 'IBM Plex Sans', 'Rubik', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
@@ -1478,17 +1503,73 @@ body.demarrage {
    * couleur du texte sur le fond » obtient la bonne sans savoir que le fond a
    * changé de camp.
    */
-  background: var(--verriere-vert);
+  /*
+   * ═══════════════════════════════════════════════════════════════════════
+   * LE FOND ARCHITECTURAL. La référence fait foi.
+   * ═══════════════════════════════════════════════════════════════════════
+   *
+   * Ordre d'Aude du 21 août 2026, livré avec son image maîtresse. Le texte de
+   * décision et l'original vivent dans docs/reference/ — ils ne doivent
+   * jamais être écrasés : ils servent de contrôle de non-régression.
+   *
+   * L'ordre est explicite sur un point : « Claude ne doit pas répondre : j'ai
+   * repris l'esprit. Claude doit reproduire la référence. » Redessiner cette
+   * verrière en CSS aurait été une réinterprétation — la végétation
+   * botanique, les vitrages traversés de lumière et l'ombre qui reprend la
+   * géométrie des montants ne se refont pas en dégradés. C'est donc le dessin
+   * lui-même qui est posé, et la part d'invention se limite à l'intégration,
+   * comme l'ordre le prescrit au § 10.
+   *
+   * LE POIDS. L'original pèse 2,27 Mo — un fond à ce prix contredirait la
+   * règle « le premium ne doit jamais ralentir Verrière ». Deux WebP le
+   * remplacent : 121 Ko en pleine largeur, 54 Ko pour les petits écrans,
+   * sans recadrage ni retouche du dessin.
+   *
+   * LA COMPOSITION. La verrière tient la droite et déborde du cadre ; la
+   * gauche reste libre pour le contenu. `background-position: right bottom`
+   * et `background-size: cover` conservent ce cadrage à toutes les tailles.
+   *
+   * LE FOND N'EST PLUS VERT, ET C'EST L'ORDRE QUI LE DIT : « ne pas
+   * transformer le fond ivoire en blanc pur, gris ou vert ». L'écran
+   * d'arrivée revient donc à l'ivoire, et l'encre repasse au sombre.
+   */
+  background:
+    image-set(
+      url('/fond/verriere-fond-1536.webp') type('image/webp')
+    )
+    right bottom / cover no-repeat,
+    var(--ivoire);
+  background-attachment: fixed;
 
-  --sur-fond: var(--ivoire);
-  --sur-fond-doux: rgb(247 246 242 / 82%);
-  --trait-fin: rgb(247 246 242 / 20%);
-  --trait: rgb(247 246 242 / 34%);
-  /* Les deux noms hérités de l'ancienne charte portent encore du texte :
-     « Ce que nous savons lire » passe par --gris, « Le radon… » par
-     --encre-doux. Oubliés, ils restaient sombres sur le vert. */
-  --gris: rgb(247 246 242 / 78%);
-  --encre-doux: rgb(247 246 242 / 78%);
+  --sur-fond: #0a2b23;
+  --sur-fond-doux: #4a5a55;
+  --trait-fin: #dfe6db;
+  --trait: #779576;
+  --gris: #58775f;
+  --encre-doux: #4a5a55;
+}
+
+/*
+ * LES PETITS ÉCRANS PRENNENT LE FICHIER LÉGER.
+ *
+ * 54 Ko au lieu de 121, sans changer le dessin : l'ordre demande de
+ * « recadrer intelligemment en conservant structure, lumière et identité »,
+ * pas de remplacer l'illustration.
+ *
+ * `background-attachment: fixed` tombe aussi : sur iOS il force un
+ * recomposition à chaque image du défilement, et c'est le premier coupable
+ * d'un défilement qui accroche.
+ */
+@media (max-width: 900px) {
+  body.demarrage {
+    background:
+      image-set(
+        url('/fond/verriere-fond-960.webp') type('image/webp')
+      )
+      right bottom / cover no-repeat,
+      var(--ivoire);
+    background-attachment: scroll;
+  }
 }
 
 /*
@@ -1498,8 +1579,17 @@ body.demarrage {
  * hériteraient de l'encre ivoire ci-dessus et deviendraient illisibles à leur
  * tour — on aurait déplacé le défaut au lieu de le corriger.
  */
-body.demarrage .depot,
-body.demarrage .promesse-locale {
+/*
+ * La carte de dépôt rétablit l'encre sombre : elle pose son propre fond
+ * ivoire sur le dessin.
+ *
+ * La promesse de confidentialité, elle, en sort — et c'est une correction :
+ * elle garde un fond vert profond, donc l'encre sombre l'y rendait invisible.
+ * Mesuré à 1,00 sur ses deux lignes, c'est-à-dire encre et fond exactement de
+ * la même couleur. Le passage du fond vert au fond architectural a déplacé le
+ * problème d'un cran : la règle valait quand tout l'écran était vert.
+ */
+body.demarrage .depot {
   --sur-fond: #0a2b23;
   --sur-fond-doux: #4a5a55;
   --trait-fin: #dfe6db;
@@ -1511,9 +1601,27 @@ body.demarrage .promesse-locale {
 
 /* Le bandeau du site suit le fond : un rectangle blanc en haut d'un écran
    bleu couperait l'écran en deux au lieu de le coiffer. */
+/*
+ * LE BANDEAU SUR LE FOND ARCHITECTURAL.
+ *
+ * Il portait une encre claire, héritée du temps où cet écran était un aplat
+ * vert. Le fond est passé à l'ivoire de la référence, et le nom « VERRIÈRE »
+ * s'est retrouvé écrit en ivoire sur de l'ivoire — la marque illisible sur le
+ * premier écran que voit un visiteur. C'est la troisième fois que ce piège se
+ * referme dans ce chantier : une surface change de camp, l'encre reste.
+ *
+ * Il reste transparent : la référence veut que le fond coure jusqu'au bord
+ * haut, sans bandeau posé dessus. Seule l'encre repasse au sombre.
+ */
 body.demarrage .entete {
   background: transparent;
-  border-bottom-color: rgb(247 246 242 / 18%);
+  border-bottom-color: rgb(10 43 35 / 12%);
+
+  --sur-fond: #0a2b23;
+  --sur-fond-doux: #4a5a55;
+  --encre: #0a2b23;
+  --encre-doux: #4a5a55;
+  color: var(--sur-fond);
 }
 
 /*
@@ -1892,4 +2000,43 @@ button.verifier::after {
   transform: translateY(-50%);
   /* La zone est là pour le doigt, pas pour l'œil ni pour la souris au survol. */
   pointer-events: auto;
+}
+
+/*
+ * ───────────────────────────────────────────────────────────────────────────
+ * LA VOIX DE VERRIÈRE.
+ * ───────────────────────────────────────────────────────────────────────────
+ *
+ * Tout ce qui n'est pas dans le rapport et que Verrière ajoute pour aider :
+ * une mise en contexte, une précision de méthode, une aide en marge.
+ *
+ * L'italique fait le partage à elle seule, sans cadre ni couleur — c'est la
+ * convention de l'imprimé depuis toujours : ce qui est dit d'un texte
+ * s'écrit autrement que le texte.
+ *
+ * `font-optical-sizing` est laissé à `auto` : Fraunces est une variable
+ * optique, ses pleins et déliés s'ajustent au corps. C'est précisément ce qui
+ * la rend lisible en petit là où une serif ordinaire se casse.
+ */
+.voix-verriere {
+  font-family: var(--police-voix);
+  font-style: italic;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/*
+ * LA DONNÉE CHIFFRÉE NE S'ÉCRIT PAS COMME UNE PHRASE.
+ *
+ * Les chiffres d'un diagnostic se comparent : 373 kWh contre 26 kg, 48,5 m²
+ * contre 42. Sans chasse fixe, les colonnes se décalent et l'œil doit relire
+ * pour aligner les unités. `tabular-nums` les met en colonne, et
+ * `font-variant-numeric` ne coûte rien puisque la police les contient déjà.
+ */
+.chiffre-fort {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+  font-weight: 700;
+  letter-spacing: -0.015em;
 }

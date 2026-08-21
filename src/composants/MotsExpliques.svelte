@@ -147,19 +147,36 @@
    * l'aide appartienne visiblement au diagnostic qu'on lit — et retombe sur le
    * vert de la marque partout ailleurs.
    */
+  /*
+   * L'AIDE PARLE AVEC LA VOIX DE VERRIÈRE, DONC EN ITALIQUE.
+   *
+   * C'est le partage le plus utile du produit : ce qui vient du rapport reste
+   * en linéale, ce que Verrière ajoute s'écrit en Fraunces italique. Le
+   * lecteur sait d'un coup d'œil qui parle, sans qu'on ait besoin de le lui
+   * écrire.
+   *
+   * Une vraie italique dessinée, pas une oblique calculée : à ce corps, la
+   * différence se voit.
+   */
   .aide {
     display: block;
     margin: var(--e2) 0 var(--e3) var(--e3);
     padding: var(--e2) 0 var(--e2) var(--e3);
     border-left: 3px solid var(--u-accent, var(--verriere-vert));
-    font-size: var(--t-petit);
+    font-family: var(--police-voix);
+    font-style: italic;
+    font-optical-sizing: auto;
+    font-size: var(--t-base);
     line-height: 1.5;
     color: var(--encre-doux, var(--sur-fond-doux));
   }
 
   /* Le mot dont il s'agit, repris en tête de la note. */
+  /* Le mot, lui, vient du rapport : il garde la linéale et ne s'incline pas. */
   .aide-mot {
     display: block;
+    font-family: var(--police);
+    font-style: normal;
     font-size: var(--t-micro);
     font-weight: 700;
     letter-spacing: 0.06em;

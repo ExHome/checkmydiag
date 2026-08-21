@@ -1,0 +1,132 @@
+ORDRE DE MISSION ABSOLU — CLAUDE
+VERRIÈRE — REPRODUCTION STRICTE DU FOND ARCHITECTURAL DE RÉFÉRENCE
+
+STATUT
+L’image VERRIERE_FOND_ARCHITECTURAL_REFERENCE.png jointe à ce dossier est la RÉFÉRENCE VISUELLE MAÎTRE.
+Claude doit la recopier fidèlement dans l’application Verrière. Il ne s’agit PAS d’une inspiration, d’une piste graphique ou d’un exemple à réinterpréter.
+
+OBJECTIF
+Reproduire dans l’interface Verrière le même langage visuel, la même composition, la même profondeur et la même lumière que l’image de référence.
+
+CONTRAINTE ABSOLUE ET PERMANENTE
+- Ne pas remplacer la verrière par un pictogramme ou un logo.
+- Ne pas modifier sa silhouette générale.
+- Ne pas changer la perspective.
+- Ne pas changer son implantation sur la droite.
+- Ne pas supprimer les vitrages transparents.
+- Ne pas supprimer les montants vert émeraude foncé.
+- Ne pas supprimer la végétation dessinée.
+- Ne pas supprimer l’ombre architecturale projetée vers la gauche.
+- Ne pas transformer le fond ivoire en blanc pur, gris ou vert.
+- Ne pas ajouter de doré.
+- Ne pas ajouter de décor inutile.
+- Ne pas rendre la composition plus chargée.
+- Ne pas transformer le rendu en photographie immobilière.
+- Ne pas transformer le rendu en illustration enfantine ou générique.
+
+1. COMPOSITION À REPRODUIRE
+Le fond est ivoire chaud, lumineux, légèrement texturé et très calme.
+La verrière occupe la partie droite de la composition et déborde naturellement du cadre sur la droite et vers le bas.
+La partie gauche reste largement libre afin d’accueillir le contenu de l’application.
+La verrière est vue en perspective, légèrement depuis le bas, ce qui lui donne de la hauteur et du volume.
+Son toit à deux pentes reste clairement visible.
+
+2. STRUCTURE DE LA VERRIÈRE
+Structure métallique fine, architecturale, vert émeraude très profond.
+Montants verticaux réguliers.
+Traverses horizontales précises.
+Charpente du toit visible.
+Façade vitrée transparente.
+Porte vitrée visible en façade.
+Aucune structure lourde ou industrielle.
+Le dessin doit rester élégant, précis et premium.
+
+3. VITRAGE
+Les vitrages sont presque transparents.
+Ils ne doivent pas devenir bleus.
+Ils ne doivent pas être opaques.
+Ils laissent traverser la lumière ivoire.
+De légers reflets peuvent exister mais restent très discrets.
+
+4. LUMIÈRE
+La lumière constitue une partie essentielle du dessin.
+Elle traverse la verrière et génère une grande ombre architecturale douce projetée vers la gauche.
+Cette ombre reprend la géométrie des montants et du toit.
+Elle est longue, diffuse, chaude et extrêmement subtile.
+Aucune ombre noire dure.
+Aucun effet dramatique.
+La lumière doit donner l’impression d’un soleil naturel doux.
+
+5. VÉGÉTATION
+Conserver une végétation fine et architecturale autour de la verrière.
+Les végétaux sont traités comme des dessins botaniques délicats, vert sauge / vert désaturé.
+Ils accompagnent la structure sans la masquer.
+Une partie de la végétation apparaît derrière la verrière et une autre au premier plan dans la partie basse droite.
+
+6. FOND IVOIRE
+Le fond n’est pas un aplat blanc.
+Il doit rester ivoire chaud avec une très légère variation de lumière et une texture presque imperceptible.
+Le centre/gauche doit rester très respirant.
+
+7. PROFONDEUR
+La profondeur repose sur :
+- la perspective de la verrière ;
+- les plans successifs de végétation ;
+- la transparence du vitrage ;
+- la lumière traversante ;
+- la grande ombre projetée ;
+- la différence de netteté entre structure principale et éléments végétaux secondaires.
+Ne pas simuler le volume avec de grosses ombres CSS génériques.
+
+8. INTÉGRATION DANS VERRIÈRE
+Cette illustration devient un élément architectural de l’interface, pas un simple décor posé au hasard.
+Elle peut être utilisée comme fond ou comme grand élément latéral.
+Le contenu principal doit pouvoir vivre dans l’espace ivoire laissé libre à gauche.
+Sur desktop : conserver la présence forte de la verrière à droite.
+Sur tablette : réduire proportionnellement sans modifier la composition fondamentale.
+Sur mobile : recadrer intelligemment la verrière en conservant structure, lumière et identité ; ne pas la remplacer par une autre illustration.
+
+9. PRIORITÉ DE FIDÉLITÉ
+Ordre de priorité :
+1. Composition générale.
+2. Position et perspective de la verrière.
+3. Vert émeraude profond de la structure.
+4. Fond ivoire.
+5. Ombre projetée vers la gauche.
+6. Transparence des vitrages.
+7. Végétation botanique.
+8. Sensation de lumière et de profondeur.
+
+10. INTERDICTION DE RÉINTERPRÉTATION
+Claude ne doit pas répondre : « j’ai repris l’esprit ».
+Claude doit reproduire la référence.
+Toute modification volontaire doit être refusée tant qu’elle n’est pas explicitement demandée par Aude.
+La créativité de Claude doit s’exercer dans l’intégration technique et responsive, PAS dans la modification du dessin de référence.
+
+11. CONTRÔLE VISUEL OBLIGATOIRE
+Avant validation, placer la réalisation de Claude à côté de VERRIERE_FOND_ARCHITECTURAL_REFERENCE.png et vérifier :
+- silhouette comparable ;
+- cadrage comparable ;
+- perspective comparable ;
+- structure comparable ;
+- proportion de vide ivoire comparable ;
+- direction de lumière identique ;
+- ombre architecturale comparable ;
+- végétation comparable ;
+- densité visuelle comparable ;
+- absence de doré et d’effets parasites.
+Si l’utilisateur peut immédiatement voir que Claude a réinterprété l’image plutôt que de la reproduire, le travail est NON VALIDÉ.
+
+12. FICHIER MAÎTRE
+Ne jamais écraser le fichier de référence.
+Le conserver comme référence permanente de non-régression graphique.
+Nom : VERRIERE_FOND_ARCHITECTURAL_REFERENCE.png
+
+CONCLUSION
+CONTRAINTE ABSOLUE D’EXCELLENCE ET DE RÉUSSITE.
+INTERDICTION DE DÉGRADER LE VISUEL.
+INTERDICTION DE LE REMPLACER.
+INTERDICTION DE LE RÉINTERPRÉTER LIBREMENT.
+INTERDICTION DE PERDRE SA LUMIÈRE, SA PROFONDEUR OU SA RESPIRATION.
+
+LA RÉFÉRENCE VISUELLE FAIT FOI.
