@@ -706,7 +706,34 @@
      * Le dégradé descend du haut : c'est la verrière, et c'est la même
      * direction de lumière dans tout le produit.
      */
-    background: linear-gradient(178deg, #0a2b23 0%, #05201a 46%, #011915 100%);
+    /*
+     * LE FOND EN CINQ COUCHES, ET AUCUNE N'EST UN APLAT.
+     * ─────────────────────────────────────────────────────────────────────
+     * L'ordre est strict et se lit de haut en bas comme un empilement :
+     *
+     *   1. le GRAIN, la matière minérale, 3 % — le plus près de l'œil ;
+     *   2. la TRAME de verrière : montants verticaux, traverses horizontales ;
+     *   3. le VIGNETTAGE : les bords se densifient, le centre respire ;
+     *   4. les DEUX HALOS — l'ivoire en haut à gauche, qui dit d'où vient la
+     *      lumière ; le vert plus lumineux plus bas, qui empêche la moitié
+     *      basse de retomber en aplat ;
+     *   5. le DÉGRADÉ de base : trois nuances de vert très proches.
+     *
+     * Aucune image, aucun SVG encodé : cinq dégradés CSS. Rien à télécharger,
+     * rien à décoder — la contrainte de performance de l'ordre de mission ne
+     * laissait pas d'autre voie.
+     *
+     * Le dégradé garde 178° plutôt que la verticale exacte : un degré de
+     * biais suffit à ce que l'œil ne trouve pas la ligne de séparation.
+     */
+    background:
+      var(--grain),
+      var(--trame-verriere),
+      var(--vignettage),
+      var(--halo-ivoire),
+      var(--halo-vert),
+      linear-gradient(178deg, #0d3229 0%, #0a2b23 34%, #05201a 68%, #011915 100%);
+    background-attachment: local;
     color: var(--sur-fond);
     /* Le bas s'arrondit : la page continue en dessous, et un aplat coupé net
        ressemblerait à un défaut de rendu plutôt qu'à un panneau. */

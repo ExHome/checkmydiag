@@ -2087,6 +2087,9 @@
    * du blanc ne se lit pas -- la couleur vient du texte, pas de nous, et il
    * faut s'y adapter.
    */
+  /* PREMIER PLAN. C'est le sujet de l'écran : la seule surface teintée, et
+     la seule qui a droit au relief maximal. « Si tout ressort, rien ne
+     ressort » — il y a un `--relief-avant` par écran, pas deux. */
   .classe-dpe {
     position: absolute;
     top: 0;
@@ -2100,7 +2103,7 @@
     font-size: 30px;
     font-weight: 700;
     color: #1c1c1c;
-    box-shadow: 0 6px 16px -6px rgb(0 0 0 / 45%);
+    box-shadow: var(--relief-avant);
   }
 
   .fiche-diag header {
@@ -2232,7 +2235,10 @@
     background: linear-gradient(180deg, var(--surface-bord), var(--surface-forte));
     border-color: var(--gravite, var(--verriere-sable-or));
     color: var(--sur-fond);
-    box-shadow: 0 8px 18px -12px rgb(10 43 35 / 100%);
+    /* L'onglet ouvert avance vers le lecteur ; les autres restent en retrait.
+       L'ancienne ombre était opaque et rabotée de douze pixels : elle ne se
+       voyait pas. */
+    box-shadow: var(--relief-souleve);
   }
 
   .pastille {
@@ -2269,6 +2275,8 @@
     display: grid;
   }
 
+  /* SECOND PLAN. Elle porte le contenu, elle se détache du papier sans
+     venir au premier plan. */
   .fiche-diag {
     grid-area: 1 / 1;
     min-width: 0;
@@ -2278,6 +2286,7 @@
     visibility: hidden;
     height: 0;
     overflow: hidden;
+    box-shadow: var(--relief-souleve);
   }
 
   .fiche-diag.ouvert {
@@ -2418,7 +2427,17 @@
     border-top-color: var(--surface-bord);
     border-left: 4px solid var(--gravite-fiche, var(--sur-fond-doux));
     border-radius: var(--rayon);
-    box-shadow: 0 1px 0 var(--surface-forte) inset, 0 24px 48px -32px rgb(10 43 35 / 100%);
+    /*
+     * SECOND PLAN — et c'est ici que ça se joue, pas dans le bloc plus haut :
+     * deux règles `.fiche-diag` coexistent dans ce fichier, celle-ci écrase
+     * l'autre.
+     *
+     * L'ancienne valeur était du faux relief : une ombre à 100 % d'opacité,
+     * mais étalée à -32 px pour un flou de 48 — opaque sur le papier, rabotée
+     * jusqu'à l'invisible à l'écran. Et l'arête interne était blanche sur une
+     * carte blanche : zéro pixel peint.
+     */
+    box-shadow: var(--relief-souleve);
     break-inside: avoid;
     /* La barre des vues est collante : sans cette marge, une ancre déposait le
        titre de la fiche juste derrière elle. */
@@ -2660,6 +2679,7 @@
 
   /* La scène. Elle respire plus qu'une vignette : c'est elle qu'on regarde en
      premier, et le premier regard ne doit pas tomber sur un bord. */
+  /* POSÉ. Un schéma est une surface de lecture, pas un objet à soulever. */
   .dessin {
     background: var(--papier);
     border-radius: var(--rayon);
@@ -2667,6 +2687,7 @@
     color: var(--encre);
     display: grid;
     gap: var(--e5);
+    box-shadow: var(--relief-pose);
   }
 
   @media (max-width: 560px) {
@@ -2756,6 +2777,8 @@
     color: var(--n3, var(--sur-fond-doux));
   }
 
+  /* POSÉ. Les mots du rapport appartiennent au document : ils tiennent au
+     fond, ils n'en décollent pas. */
   .du-rapport {
     background: var(--papier);
     border-radius: 18px;
@@ -2765,9 +2788,7 @@
     /* L'arête haute éclairée et l'ombre portée : le relief vient de la lumière,
        pas d'un cadre. Jamais animées — une carte qui bouge se lit comme un
        bouton. */
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 8%),
-      0 10px 24px -14px rgb(0 0 0 / 65%);
+    box-shadow: var(--relief-pose);
 
     color: var(--n2);
     font-variant-numeric: tabular-nums lining-nums;
@@ -2948,6 +2969,7 @@
   /* La démarche : un bouton plein, à l'accent de l'univers. C'est la seule
      action de la fiche qui emmène ailleurs, et elle rend une étiquette à qui y
      a droit. */
+  /* SECOND PLAN. C'est une action : elle doit se voir comme telle. */
   .demarche {
     justify-self: start;
     display: inline-flex;
@@ -2962,6 +2984,7 @@
     font-weight: 700;
     text-decoration: none;
     transition: background var(--duree) var(--courbe), transform var(--duree) var(--courbe);
+    box-shadow: var(--relief-souleve);
   }
 
   /* Le survol se lit par un fondu vers l'encre de l'écran, pas par une seconde

@@ -177,17 +177,52 @@
     cliquer. Chacun a maintenant son bloc.
   -->
   <div class="sous-depot">
+    <!--
+      LA LISTE DEVIENT UNE PHRASE.
+
+      Neuf pastilles alignées se lisent comme un tableau de bord : l'œil les
+      compte au lieu de les lire, et rien ne dit que ce sont EXACTEMENT les
+      pièces d'un dossier de vente. Une phrase le dit — et elle se lit en une
+      fois.
+    -->
     <section class="lisibles">
       <p class="quoi-lisibles">Ce que nous savons lire</p>
-      <ul class="badges">
-        {#each LISIBLES as d (d)}
-          <li>{d}</li>
-        {/each}
-      </ul>
+      <p class="phrase-lisibles">
+        {LISIBLES.slice(0, -1).join(', ')} et {LISIBLES[LISIBLES.length - 1]} —
+        les diagnostics d’un dossier de vente ou de location.
+      </p>
       <p class="muet petit reserve-lisibles">
         Le radon et les autres risques du terrain font partie de l’état des risques.
       </p>
     </section>
+
+    <!--
+      LA RÉSERVE, ET CE QU'ELLE PROTÈGE.
+      ─────────────────────────────────────────────────────────────────────────
+      Elle dit deux choses, et les deux comptent.
+
+      D'abord QUI FAIT LE DIAGNOSTIC. Verrière lit un rapport ; elle ne visite
+      pas un logement, ne sonde pas une plinthe et ne mesure pas une teneur en
+      plomb. Cela reste le travail d'un professionnel certifié qui s'est
+      déplacé, et le dire n'est pas une politesse : c'est ce qui donne au
+      lecteur la bonne échelle de confiance entre les deux documents.
+
+      Ensuite CE QUI FAIT FOI. En cas d'écart entre ce qu'affiche
+      l'application et ce qu'imprime le rapport, c'est le rapport qui compte —
+      il est signé, il engage une responsabilité, il a une valeur
+      réglementaire que Verrière n'a pas et ne revendique pas.
+
+      La phrase est au même endroit que le dépôt, avant la lecture : une
+      réserve qui n'apparaît qu'au moment du résultat arrive trop tard.
+    -->
+    <p class="reserve">
+      <strong>Le diagnostic reste l’œuvre de votre diagnostiqueur.</strong>
+      Certifié et assuré, il s’est déplacé, a sondé, mesuré, et son rapport
+      signé engage sa responsabilité. Verrière ne fait que le lire pour vous
+      l’expliquer : elle ne le corrige pas, ne le complète pas et ne le
+      remplace pas. En cas de différence entre cet écran et votre rapport,
+      c’est le rapport qui fait foi.
+    </p>
 
     <!-- La promesse du produit. Elle a droit à un bandeau : c'est la première
          question qu'on se pose en déposant un document qui porte son adresse. -->
@@ -367,6 +402,39 @@
     margin-top: var(--e5);
   }
 
+  /* La phrase remplace les neuf pastilles : on la lit, on ne la compte pas. */
+  .phrase-lisibles {
+    margin: var(--e2) 0 0;
+    font-size: var(--t-base);
+    line-height: 1.55;
+    color: var(--sur-fond);
+    text-wrap: pretty;
+  }
+
+  /*
+   * LA RÉSERVE : lisible, jamais criarde.
+   *
+   * Une mention en gris pâle et en corps 11 se lit comme des conditions
+   * générales qu'on saute. Celle-ci dit qui engage sa responsabilité — elle
+   * se lit au corps du texte courant, tenue par un filet, sans encadré : un
+   * cadre en ferait un avertissement, alors que c'est une mise au point.
+   */
+  .reserve {
+    margin: var(--e4) 0 0;
+    padding-left: var(--e3);
+    border-left: 3px solid var(--trait-or);
+    font-size: var(--t-petit);
+    line-height: 1.6;
+    color: var(--sur-fond-doux);
+    text-wrap: pretty;
+  }
+
+  .reserve strong {
+    display: block;
+    color: var(--sur-fond);
+    font-weight: 700;
+  }
+
   .quoi-lisibles {
     margin: 0 0 var(--e3);
     font-size: var(--t-micro);
@@ -377,41 +445,11 @@
 
   /* Des pastilles plutôt qu'une ligne de sigles séparés par des points : on
      distingue les mots, et la liste se parcourt au lieu de se lire. */
-  .badges {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--e2);
-  }
 
   /* La pastille de la charte : filet de teal, voile de la même teinte, et un
      soulèvement au survol qui passe au citron. */
-  .badges li {
-    padding: var(--e4) var(--e3);
-    background: rgb(10 43 35 / 8%);
-    border: 2px solid var(--verriere-vert);
-    border-radius: var(--rayon-badge);
-    font-size: var(--t-petit);
-    font-weight: 600;
-    color: var(--sur-fond);
-    transition:
-      border-color var(--duree) ease,
-      background var(--duree) ease,
-      transform var(--duree) ease;
-  }
-
-  .badges li:hover {
-    border-color: var(--action);
-    background: rgb(214 230 106 / 12%);
-    transform: translateY(-2px);
-  }
 
   @media (prefers-reduced-motion: reduce) {
-    .badges li:hover {
-      transform: none;
-    }
   }
 
   .reserve-lisibles {

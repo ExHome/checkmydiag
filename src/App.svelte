@@ -491,7 +491,12 @@
   .entete {
     padding: var(--e4) 0;
     border-bottom: 1px solid var(--trait-or);
-    background: linear-gradient(178deg, #0d3229 0%, #0a2b23 100%);
+    /* Le bandeau prend la même lumière que le bureau sous lui : le halo
+       ivoire y est encore présent, puisque la source est en haut. Sans lui,
+       la couture entre les deux se verrait au premier coup d'œil. */
+    background:
+      var(--halo-ivoire),
+      linear-gradient(178deg, #0f3730 0%, #0a2b23 100%);
 
     --sur-fond: #f7f6f2;
     --sur-fond-doux: #c3d9ba;
