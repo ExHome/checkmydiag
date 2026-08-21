@@ -375,6 +375,32 @@ export const REGLEMENT: Partial<Record<TypeDiag, Reglement>> = {
     validiteMois: null,
     regles: [
       {
+        /*
+         * L'article que le produit citait au lecteur sans l'avoir lu.
+         *
+         * Audit du 21/08/2026 : sur les dix-neuf articles que Verrière cite,
+         * onze n'étaient adossés à aucune source. Celui-ci était le seul dans
+         * le moteur d'analyse — les dix autres sont dans la rubrique
+         * pédagogique. C'est aussi le plus lourd : c'est lui qui impose les
+         * travaux, et le produit l'annonce dans « à faire » dès qu'une unité
+         * est classée 3.
+         *
+         * Le connaître par l'arrêté du 19 août 2011, qui le reproduit, n'est
+         * pas l'avoir lu : un texte cité dans un autre texte peut avoir changé
+         * depuis. Celui-ci a d'ailleurs été modifié par la loi du 23 novembre
+         * 2018, postérieure à l'arrêté.
+         */
+        enonce:
+          'Si le constat établit la présence de revêtements dégradés contenant du plomb au-delà des seuils, le propriétaire informe les occupants et les personnes amenées à faire des travaux, et procède aux travaux appropriés pour supprimer le risque d’exposition tout en garantissant la sécurité des occupants. En location, ces travaux incombent au bailleur.',
+        source: {
+          reference: 'article L. 1334-9 du code de la santé publique',
+          url: 'https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000037671590',
+          luLe: '2026-08-21'
+        },
+        reserve:
+          'Version en vigueur depuis le 1er mars 2019, modifiée par la loi n° 2018-1021 du 23 novembre 2018. Le texte ajoute que le défaut de travaux avant mise en location constitue un manquement aux obligations de sécurité pouvant engager la responsabilité pénale du bailleur — Verrière ne le dit pas, et ce n’est pas à elle de le dire.'
+      },
+      {
         enonce:
           'Pour une vente, le constat de risque d’exposition au plomb doit avoir été établi depuis moins d’un an à la date de la promesse ou de l’acte authentique.',
         source: {
