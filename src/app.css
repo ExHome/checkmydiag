@@ -607,10 +607,35 @@ body {
  * Téléphone couché, l'encoche passe sur le flanc et les coins de la dalle sont
  * arrondis : un texte calé au bord se fait rogner ses premières lettres. Les
  * marges du contenu absorbent l'écart quand il existe.
+ *
+ * ────────────────────────────────────────────────────────────────────────────
+ * L'ENCOCHE S'AJOUTE À LA MARGE DE LECTURE. ELLE NE LA REMPLACE PAS.
+ * ────────────────────────────────────────────────────────────────────────────
+ *
+ * Cette règle s'est d'abord écrite `#app > main { padding-left: env(...) }`, et
+ * elle a coûté la marge latérale de TOUTE l'application. La cause est une
+ * spécificité : `#app > main` pèse 1-0-1, `.enveloppe` — qui porte la marge de
+ * lecture, `clamp(16px, 4vw, 32px)` — ne pèse que 0-1-0. L'identifiant gagne,
+ * et sur tout appareil sans encoche `env()` vaut 0 : la marge tombait à zéro.
+ *
+ * Mesuré à l'écran sur verriere-diag.fr : le paragraphe de pied commençait à
+ * `left: 0`, collé au bord de la dalle, et le padding calculé de `main` valait
+ * `0px` alors que la feuille en déclarait seize.
+ *
+ * D'où les deux gestes ci-dessous : `main` ne se voit imposer l'encoche que
+ * s'il ne porte PAS déjà une marge de lecture, et `.enveloppe` prend le plus
+ * grand des deux — sa marge, ou l'encoche du côté concerné. Le `max()` par
+ * côté, et non un `padding-inline` unique : couché, l'iPhone ne met son
+ * encoche que d'un seul flanc.
  */
-#app > main {
+#app > main:not(.enveloppe) {
   padding-left: env(safe-area-inset-left, 0px);
   padding-right: env(safe-area-inset-right, 0px);
+}
+
+.enveloppe {
+  padding-left: max(clamp(16px, 4vw, 32px), env(safe-area-inset-left, 0px));
+  padding-right: max(clamp(16px, 4vw, 32px), env(safe-area-inset-right, 0px));
 }
 
 /* Le contenu est la seule chose qui bouge. */
