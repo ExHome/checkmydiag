@@ -179,6 +179,32 @@
   /** Ce qui ne bloque pas mais mérite une question. */
   const remarques = $derived(parGenre('attention'));
 
+  /*
+   * ───────────────────────────────────────────────────────────────────────
+   * CE QUI N'A PAS PU ÊTRE VU.
+   * ───────────────────────────────────────────────────────────────────────
+   *
+   * Un diagnostiqueur ne perce pas les murs et n'ouvre pas ce qui est
+   * condamné. Chaque rapport porte donc la liste de ce qu'il n'a PAS pu
+   * regarder — et c'est une information majeure pour un acquéreur : là où
+   * personne n'est allé, personne ne sait.
+   *
+   * Le moteur la lit déjà, sous deux genres : `nonVisite`, une pièce ou un
+   * local inaccessible, et `nonVerifie`, un point que le diagnostiqueur n'a
+   * pas pu contrôler. Elle vivait dans le détail de chaque diagnostic, où il
+   * fallait aller la chercher rapport par rapport.
+   *
+   * Elle remonte ici, au même rang que les incohérences et les péremptions :
+   * ce sont les trois choses qu'on emporte chez le notaire.
+   */
+  const nonVus = $derived(
+    analyse.diagnostics.flatMap((d) =>
+      (d.releves ?? [])
+        .filter((r) => r.genre === 'nonVisite' || r.genre === 'nonVerifie')
+        .map((r) => ({ diagnostic: d, releve: r }))
+    )
+  );
+
   /** Les installations de sécurité dont le rapport signale des anomalies. */
   const anomalies = $derived(
     analyse.diagnostics.filter(
@@ -268,6 +294,36 @@
         quoiFaire:
           'Ce point pèse sur le prix, et il se discute. Faites chiffrer les travaux qui feraient remonter la classe.',
         ...(nomDuDiag('dpe') ? { diagnostic: nomDuDiag('dpe') as string } : {})
+      });
+    }
+
+    /*
+     * Une seule ligne pour tout le dossier, et non une par pièce : dix lignes
+     * « le diagnostiqueur n'a pas pu entrer » noieraient les constats qui,
+     * eux, disent ce qui a été trouvé. Le détail se lit dans la ligne même.
+     *
+     * Le ton est `moyen` et jamais `mauvais` : une cave fermée n'est pas une
+     * anomalie. C'est un angle mort, et le lecteur doit savoir qu'il existe
+     * sans croire qu'on lui annonce un défaut.
+     */
+    if (nonVus.length) {
+      liste.push({
+        cle: 'non-vus',
+        ton: 'moyen',
+        titre:
+          nonVus.length === 1
+            ? 'Un endroit n’a pas pu être examiné'
+            : `${nonVus.length} endroits n’ont pas pu être examinés`,
+        explication:
+          nonVus
+            .map(({ diagnostic, releve }) => {
+              const ou = releve.ou ? `${releve.ou} — ` : '';
+              return `${diagnostic.titre} : ${ou}${releve.libelle}`;
+            })
+            .join(' · ') +
+          '. Là où le diagnostiqueur n’a pas pu aller, le rapport ne dit rien — ni dans un sens, ni dans l’autre.',
+        quoiFaire:
+          'Demandez au vendeur de rendre ces endroits accessibles, puis un complément de visite. C’est la seule façon de savoir.'
       });
     }
 

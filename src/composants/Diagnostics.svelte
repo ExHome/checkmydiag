@@ -26,6 +26,7 @@
   import MotsExpliques from './MotsExpliques.svelte';
   import Releves from './Releves.svelte';
   import OuEstLePlomb from './OuEstLePlomb.svelte';
+  import AnomaliesUneParUne from './AnomaliesUneParUne.svelte';
   import LesSurfaces from './LesSurfaces.svelte';
   import AVerifier from './AVerifier.svelte';
   import Travaux from './Travaux.svelte';
@@ -1362,6 +1363,19 @@
                 {/if}
 
                 <!--
+                  L'électricité savait dire ses anomalies, et n'en montrait que
+                  le compte.
+
+                  « 4 points relevés » : le lecteur savait combien, jamais
+                  lesquelles ni où. Chaque anomalie devient une carte, avec la
+                  phrase du rapport, ses localisations — toutes —, son étendue
+                  et le geste demandé. Le §29 de l'ordre de mission.
+                -->
+                {#if d.type === 'electricite' && d.anomalies?.length}
+                  <AnomaliesUneParUne anomalies={d.anomalies} />
+                {/if}
+
+                <!--
                   La Carrez savait dire ses pièces, et ne le disait pas.
 
                   « On veut connaître toutes les surfaces. » Le certificat les
@@ -1850,25 +1864,47 @@
      * ailleurs (`color-mix`, voiles, cartes) continue de partir de lui.
      */
     background:
-      /* LA GRILLE D'ARCHITECTE — 5 % de présence, et tout change.
-         Le fond cesse d'être une couleur pour devenir un ESPACE : celui d'une
-         feuille de calque posée sur une table à dessin. On ne la lit pas, on la
-         sent. C'est ce qui sépare un papier d'architecte d'un aplat de SaaS. */
+      /*
+         LA GRILLE D'ARCHITECTE : ELLE DEVIENT VERTE, ET ELLE SE VOIT.
+         ─────────────────────────────────────────────────────────────────────
+         Elle existait déjà, mais à 5 % — soit 1,087 de contraste avec
+         l'ivoire, sous le seuil où un écran ordinaire montre quelque chose.
+         Le fond se voulait « une feuille de calque posée sur une table à
+         dessin » ; il n'était qu'un aplat avec une intention en commentaire.
+
+         Les valeurs sont prises au point de bascule, mesuré :
+
+           trame    fond      se voit   texte #12463b   texte doux #4a5a55
+            5 %   #ecede9      1,087        9,09              6,19
+           12 %   #dce1dc      1,228        8,05              5,48
+           20 %   #c9d3cd      1,420        6,96              4,74
+           24 %   #c0ccc6      1,532        6,45              4,39   ← refusé
+
+         24 % ferait tomber le texte doux sous 4,5. Le carreau fin monte donc
+         à 12 %, le trait fort à 20 % — et c'est ce dernier qui commande, car
+         un mot peut tomber sur n'importe quelle ligne : 4,74 au pire endroit
+         de l'écran.
+      */
       repeating-linear-gradient(
         0deg,
         transparent 0 27px,
-        color-mix(in srgb, var(--verriere-vert) 5%, transparent) 27px 28px
+        color-mix(in srgb, var(--verriere-vert) 12%, transparent) 27px 28px
       ),
       repeating-linear-gradient(
         90deg,
         transparent 0 27px,
-        color-mix(in srgb, var(--verriere-vert) 5%, transparent) 27px 28px
+        color-mix(in srgb, var(--verriere-vert) 12%, transparent) 27px 28px
       ),
       /* et tous les cinq carreaux, le trait fort du calque */
       repeating-linear-gradient(
         0deg,
         transparent 0 139px,
-        color-mix(in srgb, var(--verriere-vert) 8%, transparent) 139px 140px
+        color-mix(in srgb, var(--verriere-vert) 20%, transparent) 139px 140px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent 0 139px,
+        color-mix(in srgb, var(--verriere-vert) 20%, transparent) 139px 140px
       ),
       linear-gradient(
         180deg,
