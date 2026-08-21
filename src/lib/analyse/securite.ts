@@ -14,7 +14,8 @@ import {
   catalogueDesDomaines,
   localisationsDe,
   nettoyerLibelle,
-  porteUnTableauDAnomalies
+  porteUnTableauDAnomalies,
+  ressembleALiciel
 } from './tableau-anomalies';
 import { rubrique as rubriqueDe } from './rubriques';
 import { dateFrancaise, OU_REFAIRE, reformesElectricite } from './reformes';
