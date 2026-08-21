@@ -50,6 +50,56 @@
   type Repere = NonNullable<Diagnostic['reperes']>[number];
 
   /** L'échelle du DPE, au service du sens. */
+  /*
+   * LA BARRE COLLÉE SAIT SI QUELQUE CHOSE PASSE DERRIÈRE ELLE.
+   *
+   * Un écouteur de `scroll` aurait marché, mais il se déclenche à chaque pixel
+   * et le conteneur qui défile n'est pas toujours la fenêtre. L'observateur,
+   * lui, ne réveille le navigateur qu'au franchissement — et il trouve seul le
+   * bon conteneur.
+   *
+   * L'astuce du `rootMargin: -1px` en haut : tant que la barre est à sa place
+   * naturelle, elle est pleinement visible et le ratio vaut 1. Dès qu'elle se
+   * colle, ce pixel retranché la fait passer sous 1 — c'est le signal.
+   */
+  let barreVues = $state<HTMLElement | null>(null);
+  let detachee = $state(false);
+
+  /** L'ancêtre qui défile réellement — ce n'est pas toujours la fenêtre. */
+  function conteneurQuiDefile(el: HTMLElement): HTMLElement | null {
+    let p = el.parentElement;
+    while (p) {
+      const o = getComputedStyle(p).overflowY;
+      if ((o === 'auto' || o === 'scroll') && p.scrollHeight > p.clientHeight) return p;
+      p = p.parentElement;
+    }
+    return null;
+  }
+
+  $effect(() => {
+    const el = barreVues;
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+    /*
+     * Le `root` doit être le conteneur qui défile, pas la fenêtre.
+     *
+     * Première version : `root` implicite. L'observateur regardait donc le
+     * viewport pendant que le contenu défilait dans `.dedans` — la barre se
+     * collait, et rien ne se déclenchait. Mesuré : scroll à 400 px, classe
+     * toujours absente.
+     *
+     * C'est le piège des `position: sticky` imbriqués : le collage est
+     * relatif au conteneur de défilement, l'observation doit l'être aussi.
+     */
+    const root = conteneurQuiDefile(el);
+    const oeil = new IntersectionObserver(([e]) => (detachee = !!e && e.intersectionRatio < 1), {
+      root,
+      threshold: [1],
+      rootMargin: '-1px 0px 0px 0px'
+    });
+    oeil.observe(el);
+    return () => oeil.disconnect();
+  });
+
   const TEINTES = {
     bon: '#319834',
     moyen: '#fc9935',
@@ -472,7 +522,13 @@
     <!-- Trois vues, pas vingt-trois écrans à la file. Le lecteur sait toujours
          où il est et ce qui reste. À l'impression, tout se déplie : le document
          remis n'a pas d'onglets. -->
-    <nav class="vues" id="les-vues" aria-label="Les parties du dossier">
+    <nav
+      class="vues"
+      class:detachee
+      id="les-vues"
+      aria-label="Les parties du dossier"
+      bind:this={barreVues}
+    >
       {#each VUES as v (v.cle)}
         <button
           type="button"
@@ -997,10 +1053,35 @@
     /* Le sélecteur de vues était un bandeau SABLE posé sur le fond : « pourquoi
        l'analyse, le rapport et le conseil sont en sable ». Il devient un rail
        de la même famille que le fond, et c'est l'onglet actif qui se détache. */
-    background: var(--surface-forte);
+    /*
+     * LA BARRE SE SOLIDIFIE QUAND ON DESCEND.
+     *
+     * Collée en haut, elle restait opaque en permanence — donc elle avait
+     * l'air posée sur le contenu même quand il n'y avait rien dessous elle.
+     * Sur iOS, une barre est TRANSPARENTE tant que la page est en haut, puis
+     * elle se voile dès que du contenu passe dessous : c'est ce voile qui dit
+     * « il y a quelque chose au-dessus », sans le moindre mot.
+     *
+     * Le flou fait le reste. Il ne sert pas à décorer : il laisse deviner ce
+     * qui glisse derrière, et c'est cette profondeur d'un demi-millimètre qui
+     * sépare une barre native d'un bandeau collé.
+     */
+    background: color-mix(in srgb, var(--surface-forte) 82%, transparent);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
     border: 1px solid var(--trait);
     border-radius: 999px;
     box-shadow: var(--ombre);
+    transition:
+      background var(--duree) var(--courbe),
+      box-shadow var(--duree) var(--courbe);
+  }
+
+  /* En haut de page, rien ne passe derrière : la barre s'efface. */
+  .vues:not(.detachee) {
+    background: transparent;
+    box-shadow: none;
+    border-color: transparent;
   }
 
   .vues button {

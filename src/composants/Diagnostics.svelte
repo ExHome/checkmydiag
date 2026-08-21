@@ -292,6 +292,9 @@
   let depart: { x: number; y: number } | null = null;
   /** Le décalage du doigt, en pixels, tant que le geste dure. */
   let glisse = 0;
+  /* Horodatage du début du geste : sans lui, on ne peut pas distinguer un
+     balayage vif d'un déplacement lent de même amplitude. */
+  let partiA = 0;
   /** Vrai dès que le geste s'est déclaré horizontal. */
   let horizontal = false;
 
@@ -299,6 +302,9 @@
     if (e.pointerType === 'mouse' && e.button !== 0) return;
     depart = { x: e.clientX, y: e.clientY };
     horizontal = false;
+    /* L'instant du départ sert à mesurer la VITESSE, pas seulement la distance
+       parcourue — voir `fin()`. */
+    partiA = e.timeStamp;
   }
 
   function pendant(e: PointerEvent): void {
@@ -317,18 +323,46 @@
       horizontal = true;
     }
 
-    glisse = dx;
+    /*
+     * LA RÉSISTANCE AUX EXTRÉMITÉS.
+     *
+     * Sur le premier diagnostic, tirer encore vers la droite ne mène nulle
+     * part. Le contenu suivait pourtant le doigt à l'identique, et repartait
+     * ensuite sans rien avoir fait — le geste semblait ignoré.
+     *
+     * Il suit maintenant au TIERS de la distance. Le doigt sent une résistance
+     * élastique : la main comprend qu'il n'y a rien au-delà avant que l'œil
+     * n'ait lu quoi que ce soit. C'est le comportement d'iOS en bout de liste,
+     * et il n'a pas besoin d'être expliqué.
+     */
+    const auBord = (dx > 0 && courant === 0) || (dx < 0 && courant === diags.length - 1);
+    glisse = auBord ? dx / 3 : dx;
   }
 
-  function fin(): void {
+  function fin(e?: PointerEvent): void {
     if (horizontal) {
-      // Un quart de l'écran, ou 90 px : au-delà, le geste était une intention.
+      /*
+       * LA DISTANCE, OU LA VITESSE — l'une des deux suffit.
+       *
+       * Le seuil seul punissait le geste vif : un coup de pouce rapide de 40 px
+       * est une intention parfaitement claire, et il ne se passait rien. Le
+       * lecteur recommençait plus lentement, en croyant s'y être mal pris.
+       *
+       * On mesure donc aussi la vitesse. Au-delà de 0,4 px/ms — l'ordre de
+       * grandeur d'un feuilletage franc — le geste passe quelle que soit la
+       * distance. C'est ce qui distingue un balayage d'un déplacement.
+       */
       const seuil = Math.min(90, window.innerWidth / 4);
-      if (glisse <= -seuil) versLe(courant + 1);
-      else if (glisse >= seuil) versLe(courant - 1);
+      const duree = e && partiA ? Math.max(1, e.timeStamp - partiA) : Infinity;
+      const vitesse = Math.abs(glisse) / duree;
+      const lance = vitesse > 0.4 && Math.abs(glisse) > 24;
+
+      if (glisse <= -seuil || (lance && glisse < 0)) versLe(courant + 1);
+      else if (glisse >= seuil || (lance && glisse > 0)) versLe(courant - 1);
     }
     depart = null;
     horizontal = false;
+    partiA = 0;
     glisse = 0;
   }
 
