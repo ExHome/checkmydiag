@@ -1,8 +1,28 @@
 # Basculer le site sur verriere-diag.fr
 
-> État au 21 août 2026 : **la bascule n'est pas faite.** Le domaine pointe encore
-> vers OVH, qui y affiche sa page « site en construction ». L'application, elle,
-> tourne normalement sur `exhome.github.io/checkmydiag`.
+> **FAIT le 21 août 2026.** Le site répond sur https://verriere-diag.fr — HTTPS
+> actif, `www` redirigé vers l'apex, vérification DNS validée par GitHub.
+>
+> Ce document reste ici parce qu'il a fallu deux tentatives, et que la seconde a
+> révélé une étape que la première ignorait.
+
+---
+
+## Ce qui avait échoué la première fois
+
+**Deux causes, et aucune n'était visible.**
+
+**1. L'import OVH n'avait pas pris.** Le 20 août, OVH avait affiché « la
+configuration sera importée dans quelques instants » — et le lendemain la zone
+était revenue à `213.186.33.5`. D'où la règle ajoutée plus bas : **rouvrir le
+mode textuel après validation** pour vérifier que le numéro de série SOA a été
+incrémenté et que les quatre adresses y sont.
+
+**2. Le fichier `CNAME` ne suffit pas.** Avec un déploiement par GitHub Actions,
+publier `public/CNAME` ne configure PAS le domaine : GitHub répond `404 Site not
+found` indéfiniment. Il faut **saisir le domaine dans Réglages → Pages → Custom
+domain** et cliquer sur Save. C'est cette étape qui manquait, et rien ne la
+signale.
 
 ---
 
