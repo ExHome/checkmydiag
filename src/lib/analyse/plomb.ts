@@ -242,17 +242,28 @@ const SITUATIONS: {
   explique: string;
 }[] = [
   /*
-   * « DE classe 3 » ou « EN classe 3 » — les deux circulent.
+   * ⚠️ « de classe 3 » ne peut PAS entrer dans le motif.
    *
-   * Le § 12 de NF X 46-030 et son modèle de rapport écrivent « d'unités de
-   * diagnostic DE classe 3 ». Un éditeur du corpus écrit « EN classe 3 ». Le
-   * motif ne connaissait que le second : un rapport resté fidèle au modèle de la
-   * norme aurait vu ses deux seuils ignorés.
+   * Lecture 40 des cinquante volets — rapport 22/IMO/0340, LICIEL, et le seul du
+   * corpus qui coche cette situation :
+   *
+   *     Au moins un local … présente au moins 50% d'unités de diagnostic
+   *     OUI
+   *     de classe 3
+   *
+   * Le libellé est coupé, et « de classe 3 » tombe DERRIÈRE la réponse. Exiger
+   * les deux sur la même ligne, c'était ne jamais reconnaître cette situation
+   * chez LICIEL — soit 40 % du marché, et le seul OUI mesuré.
+   *
+   * « 50 % d'unités de diagnostic » suffit à distinguer : dans une rubrique
+   * bornée à ses cinq lignes, aucune autre situation ne porte ce nombre. Et le
+   * « au » initial ne peut pas non plus être exigé — chez BC2E il termine la
+   * ligne précédente.
    */
   {
     cle: 'piece50',
     groupe: 'saturnisme' as const,
-    motif: /au moins 50\s*%\s*d['’]unit[ée]s de diagnostic (?:de|en) classe 3/i,
+    motif: /moins 50\s*%\s*d'unit[ée]s de diagnostic/i,
     terme:
       'Au moins un local parmi les locaux objets du constat présente au moins 50 % d’unités de diagnostic de classe 3',
     explique:
@@ -261,7 +272,9 @@ const SITUATIONS: {
   {
     cle: 'locaux20',
     groupe: 'saturnisme' as const,
-    motif: /moins 20\s*%\s*d['’]unit[ée]s de diagnostic (?:de|en) classe 3/i,
+    /* Même raison : chez LICIEL comme chez BC2E, « de classe 3 » ou « en classe
+       3 » peut basculer sur la ligne suivante. Le nombre distingue à lui seul. */
+    motif: /moins 20\s*%\s*d'unit[ée]s de diagnostic/i,
     terme:
       'L’ensemble des locaux objets du constat présente au moins 20 % d’unités de diagnostic de classe 3',
     explique:
@@ -270,7 +283,7 @@ const SITUATIONS: {
   {
     cle: 'effondrement',
     groupe: 'bati' as const,
-    motif: /plancher ou plafond mena[çc]ant de s['’]effondrer/i,
+    motif: /plancher ou plafond mena[çc]ant de s'effondrer/i,
     terme:
       'Les locaux objets du constat présentent au moins un plancher ou plafond menaçant de s’effondrer ou en tout ou partie effondré',
     explique: 'Un plancher ou un plafond menace de tomber, ou s’est déjà effondré.'
@@ -304,47 +317,160 @@ const SITUATIONS: {
   }
 ];
 
-/** L'intitulé des deux rubriques. Hors d'elles, on ne lit rien. */
-const RUBRIQUES_SITUATIONS =
-  /Situations? de risque de saturnisme infantile|Situations? de d[ée]gradation du b[âa]ti/i;
-
-/** Ce qui referme les rubriques : le rappel réglementaire qui les suit. */
-const FIN_DES_SITUATIONS =
-  /Rappel du cadre r[ée]glementaire|atteste que le pr[ée]sent constat|Dur[ée]e du?e? validit[ée]/i;
+/**
+ * Mettre les lignes dans une seule orthographe avant de les chercher.
+ *
+ * Lecture 44 des cinquante volets — le rapport 25/IMO/1001P sort d'une autre
+ * version du moteur PDF, et l'extraction rend :
+ *
+ *     d ’ unités        au lieu de   d’unités
+ *     s ’ effondrer     au lieu de   s’effondrer
+ *     L.1334-10         au lieu de   L.1334 - 10
+ *
+ * Tous les motifs de ce fichier échouaient sur ce rapport : ils cherchaient
+ * `d['’]unités`, ils trouvaient `d ’ unités`. Et symétriquement, ceux qui
+ * toléraient les espaces du tiret de `L.1334 - 10` ne le trouvaient plus ici.
+ *
+ * Un motif qui décrit l'orthographe d'un seul moteur de rendu n'est pas un
+ * motif, c'est une coïncidence. On normalise donc d'abord — apostrophe unique,
+ * pas d'espace autour d'elle, pas d'espace dans les tirets internes aux
+ * références d'articles — et les motifs n'ont plus qu'une forme à connaître.
+ *
+ * Ce qui est normalisé sert à CHERCHER. Ce qui s'affiche reste le texte du
+ * rapport : « on n'extrapole pas » vaut aussi pour la ponctuation.
+ */
+function normaliser(ligne: string): string {
+  return ligne
+    .replace(/[’‘‚`´]/g, "'")
+    .replace(/\s*'\s*/g, "'")
+    .replace(/(\b[A-Z]\.\s?\d{3,4})\s*-\s*(\d)/g, '$1-$2')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
 
 /**
- * La réponse doit être en capitales.
+ * L'intitulé des deux rubriques. Hors d'elles, on ne lit rien.
  *
- * En minuscules, « non » termine une phrase ordinaire sur deux — « ce qui n'est
- * pas le cas ici, ou non ». Le formulaire, lui, coche en capitales.
+ * LICIEL titre « Situations de dégradation DE bâti », la norme « DU bâti » :
+ * les deux articles circulent.
  */
-const REPONSE = /\b(OUI|NON)\s*$/;
+const RUBRIQUES_SITUATIONS =
+  /Situations? de risque de saturnisme infantile|Situations? de d[ée]gradation d[eu] b[âa]ti/i;
+
+/**
+ * Ce qui referme les rubriques.
+ *
+ * ⚠️ Le § 6.5 doit en faire partie, et c'était l'oubli.
+ *
+ * Chez LICIEL, la rubrique suivante — « 6.5 Transmission du constat à l'agence
+ * régionale de santé » — est elle aussi un formulaire, avec sa propre réponse
+ * OUI/NON. Sans borne, la cinquième situation pouvait lui emprunter la sienne.
+ *
+ * Une rubrique se borne au titre suivant, jamais à la fin de la page : lecture
+ * 40, les situations 1 à 3 sont sur une page et les 4 et 5 sur la suivante,
+ * séparées par le pied de page et le numéro de page.
+ */
+const FIN_DES_SITUATIONS =
+  /Rappel du cadre r[ée]glementaire|atteste que le pr[ée]sent constat|Dur[ée]e du?e? validit[ée]|^\s*6\s*\.\s*5\b|Transmission du constat/i;
+
+/**
+ * Une réponse de formulaire, et sa place sur la ligne.
+ *
+ * ⚠️ Il n'y a PAS de place fixe. Onze volets LICIEL lus à la file donnent quatre
+ * mises en page pour la même case :
+ *
+ *     lecture 44   « NON Si le constat identifie… »          → en tête
+ *     lecture 43   « NON jours ouvrables, une copie… »       → en tête, ligne 2
+ *     lecture 41   « NON » seule, entre les deux lignes
+ *     lecture 42   « NON » seule, après les deux lignes
+ *
+ * et BC2E, lui, la met en FIN de la première ligne du libellé. Aucune règle
+ * d'ordre de ligne ne survit à ces cinq cas — ni « la réponse termine la
+ * première ligne », ni « la i-ième réponse répond à la i-ième question ».
+ *
+ * Ce qui reste vrai partout : la réponse est un mot isolé, collé au bord de sa
+ * ligne, jamais au milieu d'une phrase. C'est cela qu'on reconnaît.
+ *
+ * Les capitales sont exigées : en minuscules, « non » termine une phrase
+ * ordinaire sur deux. Le formulaire, lui, coche en capitales.
+ */
+function reponseDeLaLigne(ligne: string): 'OUI' | 'NON' | null {
+  const t = ligne.trim();
+  const m = /^(OUI|NON)$/.exec(t) ?? /^(OUI|NON)\s+\S/.exec(t) ?? /\s(OUI|NON)$/.exec(t);
+  return m?.[1] === 'OUI' ? 'OUI' : m?.[1] === 'NON' ? 'NON' : null;
+}
+
+/**
+ * La réponse la plus proche du libellé, et qui n'est pas déjà prise.
+ *
+ * On cherche des deux côtés parce que les éditeurs la mettent des deux côtés, et
+ * on garde la plus proche. Une réponse consommée par une situation ne peut plus
+ * l'être par sa voisine : c'est ce qui empêche une case de servir deux fois
+ * quand deux situations se suivent sans ligne de séparation.
+ *
+ * La fenêtre est étroite — trois lignes en amont, deux en aval — parce que
+ * au-delà on est déjà dans la situation d'à côté.
+ */
+function reponsePour(
+  zone: string[],
+  i: number,
+  consommees: Set<number>
+): 'OUI' | 'NON' | undefined {
+  let meilleure: { distance: number; ligne: number; valeur: 'OUI' | 'NON' } | undefined;
+
+  for (let j = Math.max(0, i - 3); j <= Math.min(zone.length - 1, i + 2); j++) {
+    if (consommees.has(j)) continue;
+    const valeur = reponseDeLaLigne(zone[j] ?? '');
+    if (!valeur) continue;
+    const distance = Math.abs(j - i);
+    if (!meilleure || distance < meilleure.distance) meilleure = { distance, ligne: j, valeur };
+  }
+
+  if (!meilleure) return undefined;
+  consommees.add(meilleure.ligne);
+  return meilleure.valeur;
+}
+
+/**
+ * Borner la rubrique — et ne pas se tromper de rubrique.
+ *
+ * L'intitulé des situations apparaît DEUX fois chez LICIEL : au sommaire, puis
+ * en page 15. Le sommaire vient en premier, et il ne contient rien. On garde
+ * donc la première occurrence dont la zone porte réellement une situation.
+ */
+function zoneDesSituations(lignes: string[]): [debut: number, fin: number] | null {
+  for (let debut = 0; debut < lignes.length; debut++) {
+    if (!RUBRIQUES_SITUATIONS.test(lignes[debut] ?? '')) continue;
+
+    const apres = lignes.slice(debut + 1).findIndex((l) => FIN_DES_SITUATIONS.test(l));
+    const fin = apres < 0 ? Math.min(debut + 40, lignes.length) : debut + 1 + apres;
+
+    if (lignes.slice(debut, fin).some((l) => SITUATIONS.some((s) => s.motif.test(l)))) {
+      return [debut, fin];
+    }
+  }
+  return null;
+}
 
 export function alertesDuCrep(lignes: string[]): AlerteCrep[] {
-  const debut = lignes.findIndex((l) => RUBRIQUES_SITUATIONS.test(l));
-  if (debut < 0) return [];
+  const normalisees = lignes.map(normaliser);
+  const bornes = zoneDesSituations(normalisees);
+  if (!bornes) return [];
 
-  const apres = lignes.slice(debut + 1).findIndex((l) => FIN_DES_SITUATIONS.test(l));
-  const fin = apres < 0 ? Math.min(debut + 40, lignes.length) : debut + 1 + apres;
-  const zone = lignes.slice(debut, fin);
+  const zone = normalisees.slice(bornes[0], bornes[1]);
+  /* On CHERCHE sur les lignes normalisées, on CITE sur celles du rapport : le
+     nom d'une pièce s'affiche avec l'apostrophe que le rapport y a mise. */
+  const brutes = lignes.slice(bornes[0], bornes[1]);
 
   const alertes: AlerteCrep[] = [];
   const vues = new Set<string>();
+  const consommees = new Set<number>();
 
   for (let i = 0; i < zone.length; i++) {
     const situation = SITUATIONS.find((s) => s.motif.test(zone[i] ?? ''));
     if (!situation || vues.has(situation.cle)) continue;
 
-    /* On remonte à la première ligne qui porte une réponse. Trois lignes au
-       plus : au-delà, on serait dans la situation précédente. */
-    let reponse: string | undefined;
-    for (let j = i; j >= 0 && j > i - 3; j--) {
-      const m = REPONSE.exec((zone[j] ?? '').trimEnd());
-      if (m?.[1]) {
-        reponse = m[1];
-        break;
-      }
-    }
+    const reponse = reponsePour(zone, i, consommees);
 
     /* Sans réponse lisible, on ne conclut pas : le libellé seul est un intitulé
        de formulaire, imprimé que la réponse soit oui ou non. */
@@ -360,7 +486,7 @@ export function alertesDuCrep(lignes: string[]): AlerteCrep[] {
     let ou: string | undefined;
     for (let j = i + 1; j < Math.min(i + 7, zone.length); j++) {
       const ligne = zone[j] ?? '';
-      const m = /Liste des pi[èe]ces concern[ée]es\s*:\s*(.+)/i.exec(ligne);
+      const m = /Liste des pi[èe]ces concern[ée]es\s*:\s*(.+)/i.exec(brutes[j] ?? ligne);
       if (m?.[1]) {
         const propre = m[1].replace(/^[,;\s]+/, '').replace(/\s+/g, ' ').trim();
         if (propre) ou = propre;
@@ -873,10 +999,45 @@ export function appareilPlomb(lignes: string[]): AppareilPlomb {
  * rarement, et que l'acquéreur ne voit jamais : elle est en page 15 sur 19.
  */
 export function transmisALArs(lignes: string[]): boolean {
-  const texte = lignes.join(' ').replace(/\s+/g, ' ');
+  const normalisees = lignes.map(normaliser);
 
   /*
-   * On exige la phrase d'ACTION, pas le rappel de la règle.
+   * ⚠️ D'ABORD LA RUBRIQUE. C'est la correction que les cinquante lectures ont
+   * imposée, et c'était le défaut le plus grave du lecteur.
+   *
+   * Trois rapports sur cinquante ont réellement transmis à l'ARS : un chez
+   * BC2E, deux chez LICIEL (21/IMO/787 et 22/IMO/0340). **Les deux LICIEL
+   * n'écrivent aucune phrase d'action** — ils répondent dans un formulaire :
+   *
+   *     6.5 Transmission du constat à l'agence régionale de santé
+   *     Si le constat identifie au moins l'une de ces cinq situations, son
+   *     OUI  auteur transmet, dans un délai de cinq jours ouvrables, une copie…
+   *
+   * Le lecteur cherchait « a été transmis » : il les manquait tous les deux, et
+   * disait donc « pas de transmission » sur les seuls rapports du corpus qui
+   * portent une situation de saturnisme infantile. Une rubrique répond ; c'est
+   * elle qu'on lit.
+   *
+   * La fenêtre est de sept lignes parce que la réponse se promène : deuxième
+   * ligne du paragraphe (22/IMO/0340), première (25/IMO/1001P), troisième
+   * (21/IMO/787), seule entre deux lignes, ou seule après elles.
+   *
+   * L'intitulé apparaît deux fois — au sommaire, puis dans le corps — et le
+   * sommaire ne porte pas de réponse. On garde donc la première occurrence qui
+   * en porte une.
+   */
+  for (let i = 0; i < normalisees.length; i++) {
+    if (!/Transmission du constat/i.test(normalisees[i] ?? '')) continue;
+    for (let j = i + 1; j < Math.min(i + 8, normalisees.length); j++) {
+      const reponse = reponseDeLaLigne(normalisees[j] ?? '');
+      if (reponse) return reponse === 'OUI';
+    }
+  }
+
+  const texte = normalisees.join(' ');
+
+  /*
+   * À défaut de rubrique, la phrase d'ACTION — pas le rappel de la règle.
    *
    * La rubrique 6.5 reproduit d'abord le texte de l'arrêté — « si le constat
    * identifie au moins l'une de ces cinq situations, son auteur transmet… » —

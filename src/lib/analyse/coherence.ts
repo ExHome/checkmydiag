@@ -389,26 +389,71 @@ function illisibles(diagnostics: Diagnostic[]): PointDeControle[] {
  * verte. Ni l'assureur ni le numéro de police ne sont montrés : ils ne
  * regardent pas le lecteur, et les afficher mettrait en cause le confrère.
  */
+/**
+ * Où la date de validité de l'attestation est écrite — et il y a DEUX endroits.
+ *
+ * ⚠️ Le contrôle ne connaissait qu'une seule forme, celle d'un éditeur
+ * minoritaire :
+ *
+ *     Numéro de police et date de validité : 114.231.812 - 30/09/2023
+ *
+ * L'autre — 117 volets sur 120 dans la mesure du 21/08/2026 — écrit la même
+ * chose en deux lignes, sous un autre intitulé :
+ *
+ *     N° de contrat d'assurance      CDIAGK000266
+ *     Date de validité :             01/10/2025
+ *
+ * Le contrôle ne se déclenchait donc **jamais** chez cet éditeur. Or la lecture
+ * 47 des cinquante en porte le cas exact : une attestation valable jusqu'au
+ * 30/09/2023 sur un repérage du 27/02/2024.
+ *
+ * On ancre sur le contrat d'assurance, jamais sur « Date de validité » seul :
+ * le même intitulé sert à l'autorisation ASN de l'appareil, deux lignes plus
+ * bas, et ne dit rien de l'assurance.
+ */
+const CONTRAT_ASSURANCE = /(?:N°|Num[ée]ro)\s*de contrat d['’]assurance/i;
+const DATE_DE_VALIDITE = /Date de validit[ée]\s*:?\s*(\d{1,2}\/\d{1,2}\/\d{4})/i;
+
+function finDeValidite(lignes: string[]): string | undefined {
+  for (let i = 0; i < lignes.length; i++) {
+    const ligne = lignes[i] ?? '';
+
+    const enUneLigne = /Num[ée]ro de police et date de validit[ée]\s*:?[\s.]*(\S[^\n]{0,60})/i.exec(
+      ligne
+    );
+    if (enUneLigne?.[1]) {
+      const date = /(\d{1,2}\/\d{1,2}\/\d{4})\s*$/.exec(enUneLigne[1].trim());
+      if (date?.[1]) return date[1];
+      continue;
+    }
+
+    if (!CONTRAT_ASSURANCE.test(ligne)) continue;
+    /* La date suit dans les deux lignes qui viennent, parfois sur celle-ci. */
+    for (let j = i; j < Math.min(i + 3, lignes.length); j++) {
+      const date = DATE_DE_VALIDITE.exec(lignes[j] ?? '');
+      if (date?.[1]) return date[1];
+    }
+  }
+  return undefined;
+}
+
 function attestationAssurance(
   lignes: string[],
   dateRapport: string | undefined
 ): PointDeControle[] {
   if (!dateRapport) return [];
 
-  const ligne = lignes
-    .map((l) => /Num[ée]ro de police et date de validit[ée]\s*:?[\s.]*(\S[^\n]{0,60})/i.exec(l))
-    .find(Boolean);
-  const fin = ligne?.[1] ? /(\d{1,2}\/\d{1,2}\/\d{4})\s*$/.exec(ligne[1].trim()) : null;
-  if (!fin?.[1]) return [];
+  const fin = finDeValidite(lignes);
+  if (!fin) return [];
 
-  const finValidite = enDate(fin[1]);
+  const finValidite = enDate(fin);
   const duRapport = enDate(dateRapport);
   if (!finValidite || !duRapport || finValidite >= duRapport) return [];
 
   return [
     {
       titre: 'L’attestation d’assurance jointe n’est plus à jour',
-      explication: `L’attestation reproduite dans le rapport était valable jusqu’au ${fin[1]}, alors que le rapport est daté du ${dateRapport}. C’est presque toujours la pièce du dossier qui n’a pas été actualisée, et non la couverture elle-même — mais un dossier qui arrive chez le notaire avec une attestation périmée peut être renvoyé.`,
+      explication: `L’attestation reproduite dans le rapport était valable jusqu’au ${fin}, alors que le rapport est daté du ${dateRapport}. C’est presque toujours la pièce du dossier qui n’a pas été actualisée, et non la couverture elle-même — mais un dossier qui arrive chez le notaire avec une attestation périmée peut être renvoyé.`,
       quoiFaire:
         'Demandez au diagnostiqueur l’attestation d’assurance en cours de validité, et faites-la joindre au dossier.',
       genre: 'attention'

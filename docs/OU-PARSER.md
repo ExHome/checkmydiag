@@ -24,7 +24,7 @@ Trois issues, pas une de plus : **trouvé** · la rubrique dit **« Néant »**
 
 # PLOMB — CREP
 
-*Lectures en cours : 31 sur 50 (11 doublons ⇒ **39 rapports distincts**). 47 LICIEL et 3 BC2E extraits.*
+*Lectures en cours : 38 sur 50 (11 doublons ⇒ **39 rapports distincts**). 47 LICIEL et 3 BC2E extraits.*
 
 ## Ce qui diffère entre les deux éditeurs, et qui casse un lecteur naïf
 
@@ -211,6 +211,22 @@ Les trois états sont confirmés sur des rapports réels, dont deux **positifs a
 classe 3** (3 unités sur 82, puis 9 sur 63). Le troisième reproduit
 l'article L. 1334-9, comme l'arrêté l'impose en première page.
 
+⚠️ **Et le troisième état a lui-même DEUX libellés**, chez le même éditeur :
+
+```
+Dans le cadre de la mission, il a été repéré des unités de diagnostics de
+classe 3. Par conséquent, en application de l'article L.1334-9 …
+```
+```
+Du fait de la présence de revêtements contenant du plomb au-delà des seuils en
+vigueur ET DE LA NATURE DES DÉGRADATIONS CONSTATÉES (DÉGRADÉ) sur certaines
+unités de diagnostic et en application de l'article L. 1334-9 …
+```
+
+Le second nomme la dégradation. Quatre formulations en tout pour trois états —
+un motif qui s'accrocherait à la phrase raterait la moitié des cas. **L'ancre est
+l'article cité, pas la tournure.**
+
 **C'est l'endroit qui donne le verdict en clair**, et il distingue les trois cas
 que le décompte des classes oblige aujourd'hui à recalculer.
 
@@ -239,6 +255,25 @@ Total Non mesurées Classe 0 Classe 1 Classe 2 Classe 3
 **ou non visible** ». C'est précisément le cas où écrire « en bon état » aurait
 été faux quarante-trois fois dans un seul rapport.
 
+### Et le corpus donne le cas en clair — lecture 35
+
+```
+136 mesure 1 7,55
+Plafond  Divers  Toile de verre  Non Dégradé  1
+137 mesure 2 8,17
+```
+
+**Un plafond à 7,55 puis 8,17 mg/cm² — huit fois le seuil — classé 1.** Parce
+qu'il est recouvert de **toile de verre**.
+
+C'est exactement le cas que l'annexe B de NF X 46-030 décrit avec un mur à
+12,45 mg/cm². Je l'avais lu dans la norme hier ; le voici dans un vrai rapport.
+
+Le produit écrivait « tous les revêtements concernés sont **en bon état** ». Huit
+fois le seuil, sous une toile de verre : ce n'est pas « en bon état », c'est
+**du plomb qu'on ne voit pas**. La correction du 20/08 tenait sur un texte ; elle
+tient maintenant sur un cas.
+
 **Et une seule unité de classe 3 sur 233 — 0,4 %** — suffit à déclencher la
 conclusion qui cite L. 1334-9 et impose les travaux. Le seuil n'est pas une
 proportion : c'est **une unité**.
@@ -257,6 +292,24 @@ décompte du § 6.1 :
 rapport, et non seulement de la lire — c'est le seul des cinq dans ce cas, avec
 celui des 50 % s'il y a le détail par local.
 
+### ⚠️ Le piège de la classe 2 — vérifié sur trois rapports
+
+Un logement peut être massivement en plomb **sans déclencher aucun signalement** :
+
+| Rapport | classe 2 | classe 3 | seuils § 6.4 |
+|---|---|---|---|
+| 32 | 14 / 31 = **45 %** | 0 | NON · NON |
+| 33 | 20 / 35 = **57 %** | 0 | NON · NON |
+| 23 | 31 / 61 = **51 %** | 3 (4,9 %) | NON · NON |
+
+**Les deux seuils portent sur la classe 3, jamais sur la classe 2.** Un rapport
+où 57 % des surfaces contiennent du plomb en état d'usage répond NON aux cinq
+situations — et il a raison.
+
+C'est un endroit où un motif mal borné, ou un lecteur pressé, lirait « 57 % » et
+conclurait l'inverse. Le produit doit dire les deux choses sans les mélanger :
+**beaucoup de plomb, aucun signalement** — parce que rien n'est dégradé.
+
 ### § 2.1 · L'appareil et son étalonnage
 
 ```
@@ -267,6 +320,29 @@ Etalonnage sortie  122  10/11/2025  1 (+/- 0,1)
 
 Deux mesures test, à une valeur proche du seuil, comme la norme l'exige.
 L'autorisation ASN porte sa date de fin de validité (`28/07/2029`).
+
+⚠️ **La DATE de l'étalonnage est un contrôle, et elle se vérifie sans rien
+supposer.**
+
+Le § 9.2 de la norme et le § 4 de l'annexe I de l'arrêté imposent une
+vérification **en début et en fin de CHAQUE constat**. La date portée au tableau
+doit donc être celle du repérage.
+
+Sur trente-huit lectures elle coïncide — sauf une :
+
+```
+Date du repérage : 12/11/2025
+Etalonnage entrée  1   28/03/2024  1 (+/- 0,1)
+Etalonnage sortie  89  28/03/2024  1 (+/- 0,1)
+```
+
+**Vingt mois d'écart.** C'est la date d'un autre chantier, restée dans le
+formulaire.
+
+Deux dates à comparer, rien de plus — et c'est de la même famille que les deux
+contrôles que le produit fait déjà : l'attestation d'assurance et l'autorisation
+ASN. Ce sont des **conditions de validité de la mesure**, écrites dans le
+rapport. On les rapporte ; on ne juge pas celui qui les a saisies.
 
 ### § 2.3 · « Liste des locaux visités » et « Liste des locaux non visités ou non mesurés (avec justification) »
 
@@ -670,4 +746,225 @@ juger celui qui l'a saisie.
 
 ---
 
-*À suivre : 19 lectures restantes.*
+## Lectures 40 à 50 — ce que la fin du corpus a appris
+
+### La réponse du § 6.5 occupe QUATRE positions différentes, chez le même éditeur
+
+Onze rapports LICIEL, une seule rubrique — « 6.5 Transmission du constat à
+l'agence régionale de santé » — et quatre mises en page de la réponse :
+
+```
+lecture 44   NON  en tête de la LIGNE 1
+             « NON Si le constat identifie au moins l'une de ces cinq situations, … »
+
+lecture 43   NON  en tête de la LIGNE 2
+   45 46 47  « Si le constat identifie au moins l'une de ces cinq situations, … »
+   48 49 50  « NON jours ouvrables, une copie du rapport au directeur général … »
+
+lecture 41   NON  SEUL sur sa ligne, entre la ligne 1 et la ligne 2
+             « Si le constat identifie … dans un délai de cinq »
+             « NON »
+             « jours ouvrables, une copie du rapport … »
+
+lecture 42   NON  SEUL sur sa ligne, APRÈS la ligne 2
+             « Si le constat identifie … dans un délai de cinq »
+             « jours ouvrables, une copie du rapport … »
+             « NON »
+             « d'implantation du bien expertisé … »
+```
+
+**Aucune règle d'ordre de ligne ne survit à ces quatre cas.** Ni « la réponse
+termine la première ligne », ni « la réponse précède le libellé », ni « la
+i-ième réponse répond à la i-ième question ». La seule chose qui reste vraie
+dans les quatre : **la réponse est le mot le plus à gauche de sa bande
+horizontale**, dans la colonne étroite qui longe le paragraphe. C'est de la
+géométrie, pas de l'ordre de lecture.
+
+### Le second OUI du corpus — et il est chez LICIEL (lecture 40)
+
+Le rapport `22/IMO/0340` répond **OUI** deux fois :
+
+```
+§ 6.4  « Au moins un local parmi les locaux objets du constat présente au
+         moins 50% d'unités de diagnostic de classe 3 »              OUI
+§ 6.5  transmission à l'agence régionale de santé                    OUI
+```
+
+Trois choses en découlent.
+
+1. **La lecture 29 n'était pas un cas isolé.** Deux rapports sur cinquante ont
+   transmis à l'ARS, chez deux éditeurs différents, et **aucun des deux n'écrit
+   de phrase d'action**. Les deux répondent dans un formulaire. Un lecteur qui
+   cherche « le rapport a été transmis » manque les deux.
+
+2. **Le seuil de 50 % se juge PAR LOCAL, pas sur le total.** Ce rapport porte
+   36 unités de classe 3 sur 208, soit 17 % — donc **sous** les 20 % du second
+   critère, qui est bien répondu `NON`. Et pourtant le premier critère est `OUI`,
+   parce qu'un local pris isolément dépasse la moitié. On ne peut pas recalculer
+   ce `OUI` depuis le tableau de synthèse : il faut le lire là où il est écrit.
+
+3. **Le rapport porte lui-même la pièce justificative**, en tête de chaque local :
+
+   ```
+   Rez de jardin - Atelier
+   Nombre d'unités de diagnostic : 8 - Nombre d'unités de diagnostic de
+   classe 3 repéré : 1 soit 12.5 %
+   ```
+
+   C'est un endroit à part entière, présent chez LICIEL, et il donne le
+   pourcentage par local sans aucun calcul de notre part.
+
+### Le bloc des cinq situations est coupé par un saut de page (lecture 40)
+
+Les situations 1 à 3 sont sur une page, les situations 4 et 5 sur la suivante,
+séparées par le pied de page et le numéro de page. **Borner la rubrique « jusqu'à
+la fin de la page » perd deux situations sur cinq.** La borne basse est le titre
+suivant (« 6.5 »), pas la fin de page.
+
+### Le piège de l'apostrophe espacée (lecture 44)
+
+Le rapport `25/IMO/1001P` sort d'une autre version du moteur PDF. L'extraction
+rend :
+
+```
+d ’ unités        au lieu de   d’unités
+l ’ ensemble      au lieu de   l’ensemble
+s ’ effondrer     au lieu de   s’effondrer
+L.1334-10         au lieu de   L.1334 - 10
+```
+
+**Tous les motifs de `plomb.ts` échouent sur ce rapport** : ils cherchent
+`d['’]unit[ée]s`, ils trouvent `d ’ unités`. Et symétriquement, les motifs qui
+tolèrent les espaces autour du tiret de `L.1334 - 10` ne les trouvent plus ici.
+
+Conclusion de forme, valable partout : **normaliser avant de chercher** —
+apostrophes typographiques, espaces autour des apostrophes, espaces autour des
+tirets internes aux références d'articles. Un motif qui décrit l'orthographe d'un
+seul moteur de rendu n'est pas un motif, c'est une coïncidence.
+
+Ce rapport a aussi un pied de page différent (autre adresse, pas de numéro
+d'assurance) : **le pied de page ne peut pas servir d'ancre stable**, même chez
+un seul cabinet.
+
+### Une attestation d'assurance qui ne couvre pas la mission (lecture 47)
+
+```
+N° de contrat d'assurance   86517808/808109424
+Date de validité :          30/09/2023
+Date du repérage :          27/02/2024
+```
+
+Cas réel, et il n'est pas seul : les lectures 48 et 49 portent la même
+attestation, périmée elle aussi au regard de leur date de repérage… sauf que ces
+deux-là ont été faites en avril et mai 2023, donc **dans** la validité. Le
+contrôle ne peut donc pas se faire sur le numéro de contrat : il se fait
+date contre date, à chaque rapport.
+
+Rappel du cadre : on affiche « attestation d'assurance à mettre à jour », on
+n'affiche ni l'assureur ni le numéro, et on ne juge pas le diagnostiqueur.
+
+### La réédition qui ne reprend pas tout (lecture 50)
+
+Les lectures 49 et 50 sont **le même dossier** `23/IMO/0519N`, mêmes mesures,
+mêmes locaux. Ce qui change dans la réédition :
+
+```
+                         lecture 49              lecture 50
+date du repérage         16/05/2023              28/01/2025
+n° de contrat            86517808/808109424      CDIAGK000266
+date de validité         30/09/2023              01/10/2025
+étalonnage entrée        16/05/2023              16/05/2023   ← inchangé
+étalonnage sortie        16/05/2023              16/05/2023   ← inchangé
+```
+
+**L'attestation a été corrigée, l'étalonnage non.** Ce qui explique enfin les
+trois écarts mesurés plus haut :
+
+```
+rapports avec date de repérage : 47
+  étalonnage le même jour      : 44
+  étalonnage à une autre date  :  3
+```
+
+Ces trois-là ne sont pas des appareils non vérifiés le jour de la visite : ce
+sont **des rééditions dont la date d'étalonnage n'a pas été resaisie**. Verrière
+ne doit donc pas conclure « appareil non vérifié » — elle lit et affiche les deux
+dates, et laisse le lecteur voir l'écart. *Elle explique le diagnostic, elle ne
+juge pas le diagnostiqueur.*
+
+### « Rubrique absente » se prononce sur le rapport entier
+
+Sur la lecture 45, le § 6.5 apparaît et le § 6.4 non — parce que l'extrait de
+travail ne retient que des fenêtres autour des ancres. Le rappel vaut pour le
+produit : **on ne conclut « rubrique absente » qu'après avoir balayé toutes les
+pages**, jamais depuis une fenêtre de lecture.
+
+---
+
+## Ce que les cinquante lectures imposent de corriger
+
+Par ordre de gravité mesurée.
+
+1. **`transmisALArs` cherche une phrase, alors que c'est un formulaire.**
+   Deux rapports sur cinquante ont transmis ; le lecteur actuel en manque deux
+   sur deux. À réécrire sur la rubrique « 6.5 » et sa réponse `OUI`/`NON`.
+2. **Les cinq situations doivent se lire à la géométrie.** Quatre positions de
+   réponse constatées pour une seule rubrique.
+3. **Normaliser apostrophes, espaces et tirets** avant tout motif.
+4. **Borner les rubriques par le titre suivant**, pas par la fin de page.
+5. **Lire le récapitulatif par local**, qui justifie le seuil des 50 %.
+6. **Départager les rééditions** : à numéro de dossier égal, la date de rapport
+   la plus récente gagne.
+7. **Contrôler l'assurance date contre date**, jamais par numéro de contrat.
+
+---
+
+## Ce que la correction a changé, mesuré
+
+Lecteur avant / après, sur les **120 premiers volets plomb** du corpus, éditeur
+par éditeur. ⚠️ Compteurs seuls — rien du corpus ne sort d'ici.
+
+```
+                       volets   § 6.4 présente   situations OUI   transmis ARS
+LICIEL   avant           117              117                0              6
+         après           117              117                8              6
+BC2E     avant             3                3                1              1
+         après             3                3                1              1
+```
+
+**Zéro.** Le lecteur des cinq situations ne rendait rien sur 117 volets LICIEL —
+c'est-à-dire sur 97 % de ce qu'il voit. Il ne se trompait pas : il se taisait, et
+le silence ressemblait à « aucune situation constatée ». Huit situations cochées
+`OUI` étaient dans les rapports, écrites en toutes lettres, page 15.
+
+La rubrique était trouvée dans les 117 cas. C'est donc bien l'appariement de la
+réponse au libellé qui échouait, et lui seul — exactement ce que les quatre
+mises en page annonçaient.
+
+### Ce que la mesure a appris en plus
+
+Huit rapports cochent une situation, six ont transmis à l'ARS. **L'écart est dans
+les rapports**, pas dans le lecteur : deux constats cochent une des cinq
+situations et répondent `NON` au § 6.5.
+
+Verrière n'en tire aucune conclusion et ne le présente pas comme une faute : elle
+affiche ce que le rapport dit à chacun des deux endroits. *Elle explique le
+diagnostic, elle ne juge pas le diagnostiqueur.*
+
+### L'attestation d'assurance, même défaut de forme
+
+Le contrôle ne connaissait qu'une écriture — « Numéro de police et date de
+validité : … - 30/09/2023 », tout sur une ligne. Elle appartient à l'éditeur qui
+pèse **3 volets sur 120**. Les 117 autres écrivent :
+
+```
+N° de contrat d'assurance      CDIAGK000266
+Date de validité :             01/10/2025
+```
+
+Deux lignes, un autre intitulé — et le contrôle ne se déclenchait donc jamais
+chez eux. La lecture 47 en porte le cas exact.
+
+L'ancre reste le **contrat d'assurance**, jamais « Date de validité » seul : deux
+lignes plus bas, le même intitulé sert à l'autorisation ASN de l'appareil, dont
+la date de fin précède souvent le repérage sans rien dire de l'assurance.

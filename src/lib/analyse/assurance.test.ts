@@ -78,3 +78,58 @@ describe('l’attestation d’assurance jointe', () => {
     ).toBeUndefined();
   });
 });
+
+/**
+ * La même attestation, écrite comme l'écrit l'éditeur majoritaire.
+ *
+ * ⚠️ Le contrôle ne connaissait que la forme d'un seul éditeur — « Numéro de
+ * police et date de validité : … - 30/09/2023 », tout sur une ligne. Mesuré le
+ * 21/08/2026 : cet éditeur pèse 3 volets sur 120. Les 117 autres écrivent la
+ * même chose en DEUX lignes, sous un autre intitulé, et le contrôle ne se
+ * déclenchait donc jamais chez eux.
+ *
+ * La lecture 47 des cinquante en porte le cas exact : attestation valable
+ * jusqu'au 30/09/2023, repérage du 27/02/2024.
+ */
+const FORME_EN_DEUX_LIGNES = (fin: string) => [
+  'Société réalisant le constat',
+  'Nom et prénom de l’auteur du constat MARTIN',
+  'N° de certificat de certification C3596 le 22/08/2022',
+  'N° de contrat d’assurance CDIAGK000266',
+  `Date de validité : ${fin}`,
+  'Appareil utilisé',
+  'Autorisation/Déclaration ASN (DGSNR)',
+  'Date d’autorisation/de déclaration Date de fin de validité (si applicable)',
+  '21/11/2018 13/11/2023'
+];
+
+const controleDeuxLignes = (fin: string, dateRapport: string) =>
+  controler({}, [diag(dateRapport)], new Date('2026-08-20'), false, FORME_EN_DEUX_LIGNES(fin)).find(
+    (c) => /attestation d’assurance/i.test(c.titre)
+  );
+
+describe('l’attestation d’assurance, écrite en deux lignes', () => {
+  it('signale l’attestation dépassée que le contrôle ne voyait pas', () => {
+    const c = controleDeuxLignes('30/09/2023', '27/02/2024');
+    expect(c?.titre).toMatch(/n’est plus à jour/);
+    expect(c?.explication).toMatch(/30\/09\/2023/);
+  });
+
+  it('se tait quand elle couvre la mission', () => {
+    expect(controleDeuxLignes('01/10/2025', '21/08/2025')).toBeUndefined();
+  });
+
+  it('ne prend pas la validité de l’autorisation ASN pour celle de l’assurance', () => {
+    /*
+     * Deux lignes plus bas, le même rapport porte une autorisation ASN dont la
+     * date de fin — 13/11/2023 — précède le repérage. Ce n'est pas l'assurance,
+     * et s'ancrer sur « validité » seul l'aurait confondue avec elle.
+     */
+    expect(controleDeuxLignes('01/10/2025', '21/08/2025')).toBeUndefined();
+  });
+
+  it('ne montre ni l’assureur ni le numéro de contrat', () => {
+    const c = controleDeuxLignes('30/09/2023', '27/02/2024');
+    expect(`${c?.titre} ${c?.explication} ${c?.quoiFaire}`).not.toMatch(/CDIAGK/);
+  });
+});
