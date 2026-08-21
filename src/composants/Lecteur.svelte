@@ -634,15 +634,38 @@
                 )}
                 {#if trouve >= 0}
                   {@const r = reperes[trouve]?.repere}
+                  <!--
+                    LE GRAS PORTE LE CONSTAT, LA PASTILLE DIT LA GRAVITÉ.
+
+                    Les vingt-sept lignes repérées d'un dossier se rendaient
+                    toutes pareil : même corps, même encre, seul le fond
+                    changeait d'une nuance. « N°ADEME : 2633E2660001X » pesait
+                    donc autant que « il a été repéré des unités de diagnostic
+                    de classe 3 ». La classe `surlignee` posée ici n'était
+                    stylée nulle part — la distinction n'avait jamais été
+                    écrite.
+
+                    Le moteur, lui, la donnait déjà : il classe chaque repère
+                    en `constat`, `donnee` ou `mot`, et lui pose un `ton`.
+                    C'est cette information qui commande maintenant le rang.
+                  -->
                   <button
                     type="button"
                     id="repere-r{trouve}"
-                    class="ligne surlignee"
+                    class="ligne rang-{r?.famille ?? 'donnee'}"
                     class:actif={actifId === `r${trouve}`}
                     style:--teinte={TEINTES[r?.ton ?? 'info']}
                     onclick={() => epingler(`r${trouve}`)}
                   >
                     <span class="puce-ligne">{trouve + 1}</span>
+                    {#if r?.famille === 'constat' && r.ton && r.ton !== 'info'}
+                      <!-- La petite alerte : elle dit la gravité sans répéter
+                           un mot que la phrase du rapport dit déjà. -->
+                      <span class="alerte-ligne" aria-hidden="true"></span>
+                      <span class="lecture-seule">
+                        {r.ton === 'mauvais' ? 'Point important : ' : 'À surveiller : '}
+                      </span>
+                    {/if}
                     {ligne}
                   </button>
                 {:else}
@@ -1305,20 +1328,87 @@
     text-align: left;
   }
 
+  /*
+   * ───────────────────────────────────────────────────────────────────────
+   * TROIS RANGS, ET LE GRAS FAIT LE PREMIER.
+   * ───────────────────────────────────────────────────────────────────────
+   *
+   * Le rang ne se devine pas : il vient de `famille`, que le moteur pose sur
+   * chaque repère. Sur le dossier d'exemple, cela donne 5 constats, 14
+   * données et 8 mots de métier — trois poids, là où il n'y en avait qu'un.
+   *
+   * Le gras plutôt que l'aplat, et une petite alerte plutôt qu'une bande :
+   * un aplat par ligne repérée transformerait la page du rapport en tableau
+   * de bord, et l'important cesserait de se voir dès qu'il y en a beaucoup.
+   */
   button.ligne {
     display: block;
     width: 100%;
-    background: color-mix(in srgb, var(--teinte) 15%, #fff);
+    background: none;
     border: none;
-    border-left: 4px solid var(--teinte);
     border-radius: var(--rayon-petit);
     padding: var(--e1) var(--e2);
     margin: var(--e1) 0;
     cursor: pointer;
-    color: #0a2b23;
+    color: #4a5a55;
     font: inherit;
-    font-weight: 650;
-    transition: background 0.15s ease, box-shadow 0.15s ease;
+    font-weight: 400;
+    text-align: left;
+    transition:
+      background 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  /* RANG 1 — le constat. Ce que le rapport CONCLUT. */
+  button.ligne.rang-constat {
+    color: #0a2b23;
+    font-weight: 700;
+    font-size: 1.08em;
+    line-height: 1.4;
+    border-left: 4px solid var(--teinte);
+    background: color-mix(in srgb, var(--teinte) 8%, #fff);
+  }
+
+  /* RANG 2 — la donnée du dossier : un numéro, une date, une surface.
+     Elle reste lisible et touchable, mais elle ne réclame rien. */
+  button.ligne.rang-donnee {
+    border-left: 2px solid color-mix(in srgb, var(--teinte) 45%, #fff);
+  }
+
+  /* RANG 3 — le mot du métier. Même convention que dans le corps du texte :
+     un pointillé, jamais un fond. */
+  button.ligne.rang-mot {
+    border-left: 2px dotted color-mix(in srgb, var(--teinte) 55%, #fff);
+  }
+
+  /*
+   * LA PETITE ALERTE.
+   *
+   * Un disque de huit pixels, à la couleur de la gravité, posé avant la
+   * phrase. Il ne dit rien de plus que le filet — mais il se voit de loin,
+   * et c'est lui qu'on cherche en parcourant une page.
+   *
+   * Il double une information portée par la couleur : le texte caché qui le
+   * suit la donne aux lecteurs d'écran, pour qui un disque coloré n'existe
+   * pas.
+   */
+  .alerte-ligne {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-right: 8px;
+    border-radius: 50%;
+    background: var(--teinte);
+    vertical-align: 0.1em;
+  }
+
+  .lecture-seule {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 
   button.ligne:hover,
