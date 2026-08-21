@@ -628,6 +628,22 @@ button {
   width: min(100%, 1060px);
   margin-inline: auto;
   padding-inline: clamp(16px, 4vw, 32px);
+  /*
+   * LE DÉBORDEMENT DE LA BARRE DE DÉFILEMENT.
+   *
+   * Les blocs pleine largeur emploient `margin-inline: calc(50% - 50vw)` pour
+   * aller d'un bord à l'autre. Le piège est dans les unités : `50%` se calcule
+   * sur la largeur du CONTENU, `50vw` sur celle de la FENÊTRE — barre de
+   * défilement comprise. L'écart, c'est la barre. Mesuré : la section du
+   * bureau allait de -7 px à 533 px sur un écran de 525, et ces 8 px de trop
+   * ouvraient une barre de défilement HORIZONTALE. Sur un téléphone, la page
+   * se met alors à glisser latéralement quand on veut simplement la lire.
+   *
+   * `clip` et non `hidden` : `hidden` crée un contexte de défilement, ce qui
+   * neutraliserait tous les `position: sticky` à l'intérieur — dont la barre
+   * des vues. `clip` coupe sans rien casser.
+   */
+  overflow-x: clip;
 }
 
 /* La carte de la charte : filet de teal dilué, ombre douce, et un soulèvement

@@ -660,11 +660,14 @@
     margin-inline: calc(50% - 50vw);
     padding-inline: max(var(--e4), calc(50vw - 480px));
     /*
-     * Le bureau posait un second pétrole — #1A4D5C — sur le fond général qui
-     * est maintenant #0F3A47. Deux bleus voisins mais distincts font une
-     * strate visible en haut de page, comme un défaut de rendu. Il porte
-     * désormais le fond du produit, et se détache par son arrondi et son
-     * contenu, pas par une nuance de plus.
+     * Le bureau posait autrefois un second fond, voisin mais distinct de celui
+     * de la page : deux teintes proches font une strate visible en haut
+     * d'écran, comme un défaut de rendu. Il porte désormais le fond du
+     * produit, et se détache par son arrondi et son contenu, pas par une
+     * nuance de plus.
+     *
+     * (Le commentaire nommait ici deux bleus pétrole. Ils ont quitté la charte
+     * il y a longtemps ; les valeurs, elles, n'en portent plus.)
      */
     background: transparent;
     color: var(--sur-fond);
