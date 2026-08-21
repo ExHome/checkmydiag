@@ -35,8 +35,68 @@ Concrètement, rien de ce qui est écrit plus bas ne peut être présenté comme
 sont donc titrées LICIEL, et le lecteur qu'on écrira devra choisir sa carte après
 avoir nommé l'éditeur — jamais avant.
 
-*(Recensement des éditeurs en cours ; les chiffres seront écrits ici, pas
-déduits.)*
+### Le recensement, mesuré sur 250 volets termites
+
+```
+124  LICIEL (reconnu par la signature du PDF)
+114  LICIEL (reconnu par la déclaration « Référence du logiciel validé »)
+ 11  INCONNU — aucune source ne le nomme
+  1  BC2E (signature)
+```
+
+**238 LICIEL sur 250, soit 95 %.** Douze volets échappent, dont **onze que rien
+ne nomme**. C'est peu, et c'est exactement pourquoi le piège est dangereux : un
+lecteur écrit sur 95 % du corpus a l'air juste partout, et se tait — ou se
+trompe — sur les 5 % restants.
+
+### BC2E n'a pas UNE rubrique de texte libre, il en a QUATRE
+
+Le seul volet BC2E du corpus porte :
+
+```
+I. CONSTATATIONS DIVERSES :
+J. OBSERVATIONS :
+K. INFORMATIONS :
+L. ECARTS / ADJONCTIONS PAR RAPPORT A LA NORME NF P 03-201 :
+```
+
+LICIEL s'arrête à **J. – VISA et mentions**. BC2E va jusqu'à **L**, et ses
+titres sont en CAPITALES, sans le tiret qui suit la lettre chez LICIEL
+(« I. CONSTATATIONS » et non « I. - Constatations »).
+
+L'ordre de mission (§ 10) vise les quatre : *Constatations diverses ·
+Observations · Commentaires · Informations complémentaires · Notes.* **Verrière
+n'en lit aucune.**
+
+Et BC2E écrit une phrase que LICIEL n'écrit jamais :
+
+> « Des indices d'infestation ont été repérés. **Ils ne sont pas causés par des
+> termites.** »
+
+C'est le constat le plus explicite du corpus sur la distinction que l'ordre de
+mission (§ 11) exige — et un lecteur écrit sur LICIEL ne peut pas la trouver,
+parce que la formulation n'existe pas chez LICIEL.
+
+Sa réponse vide diffère aussi : **« Observations : Néant »**, et non
+« Néant - - ».
+
+### Les onze INCONNUS : ce qu'on peut en dire, et ce qu'on ne peut pas
+
+Leurs titres de rubriques sont, mot pour mot, ceux de LICIEL — jusqu'au tiret
+cadratin de « E. – Catégories de termites en cause : ».
+
+⚠️ **Cela ne permet pas de les appeler LICIEL.** L'ordre de mission est explicite :
+*« On garde sur une signature POSITIVE de l'éditeur, jamais sur l'absence d'un
+signe. »* Se ressembler n'est pas être. Ce que la mesure autorise à écrire est
+exactement ceci : **la carte de leurs rubriques est identique à celle de
+LICIEL** — une observation, pas une identification.
+
+Ce qu'elle signale, en revanche, c'est **qu'il manque une source
+d'identification**. `identifierGenerateur` connaît trois sources — déclaration,
+signature du PDF, pied de page de réseau — et aucune ne fonctionne sur ces onze.
+Une quatrième piste existe : **la séquence exacte des titres de rubriques**. Mais
+elle ne vaudra que mesurée disjointe, chez au moins deux éditeurs, et ce n'est
+pas fait.
 
 ⚠️ **Aucune donnée du corpus n'entre ici.** Ni nom, ni adresse. Les numéros de
 dossier sont des références internes de cabinet, pas des données personnelles.
