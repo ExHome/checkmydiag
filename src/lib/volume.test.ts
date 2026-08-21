@@ -98,6 +98,9 @@ describe('les trois formes de faux relief ne reviennent pas', () => {
     expect(depart, 'la règle .bureau a disparu').toBeGreaterThan(-1);
     const arret = toutes.findIndex((l, i) => i > depart && l.trim() === '}');
     const bloc = toutes.slice(depart, arret).join(SAUT);
+    /* La trame reste sur le BUREAU, qui est vert et n'a pas d'autre matière.
+       C'est sur les écrans d'application — ivoire — que le quadrillage a été
+       retiré au profit du dessin de la verrière. */
     for (const couche of ['--grain', '--trame-verriere', '--vignettage', '--halo-ivoire', '--halo-vert']) {
       expect(bloc, 'le fond du bureau a perdu ' + couche).toContain(couche);
     }

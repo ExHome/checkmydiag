@@ -148,7 +148,11 @@
 </script>
 
 <figure class="visuel">
-  <p class="etiquette">Sondage de la charpente</p>
+  <!-- « de la charpente » retiré : le diagnostiqueur sonde TOUS les bois
+       accessibles — plinthes, huisseries, planchers, poutres — et pas la
+       seule charpente. Nommer une pièce laissait croire que le reste n'avait
+       pas été regardé. -->
+  <p class="etiquette">Sondage des bois</p>
 
   <!--
     LE TRONC A DISPARU.

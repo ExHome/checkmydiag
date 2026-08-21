@@ -162,11 +162,25 @@
     color: var(--verriere-vert);
   }
 
+  /*
+   * « NON LU » N'EST PAS UNE NOTE DE BAS DE PAGE.
+   *
+   * Le message se rendait en gris-vert, 14 px, italique — la mise en forme
+   * d'un détail qu'on peut sauter. Il tenait 6,4 de contraste, donc il était
+   * techniquement lisible : il ne SE VOYAIT pas, ce qui n'est pas la même
+   * chose.
+   *
+   * Or il dit quelque chose de lourd : Verrière n'a pas su lire ce point du
+   * rapport. Le lecteur doit le savoir, sinon il croit que l'application a
+   * regardé et n'a rien trouvé. Il prend donc l'encre d'attention — 5,48 sur
+   * l'ivoire — et son poids.
+   */
   .absent {
     margin-top: var(--e2) !important;
     font-size: var(--t-petit);
-    font-style: italic;
-    color: var(--sur-fond-doux);
+    font-weight: 600;
+    font-style: normal;
+    color: var(--attention);
   }
 
   .pourquoi {

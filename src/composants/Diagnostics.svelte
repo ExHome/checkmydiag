@@ -1868,47 +1868,17 @@
          la dernière ligne, là où le contenu s'arrête et où l'ivoire reprend. */
       var(--signature-verriere),
       /*
-         LA GRILLE D'ARCHITECTE : ELLE DEVIENT VERTE, ET ELLE SE VOIT.
+         PLUS DE QUADRILLAGE, LA VERRIÈRE À LA PLACE.
          ─────────────────────────────────────────────────────────────────────
-         Elle existait déjà, mais à 5 % — soit 1,087 de contraste avec
-         l'ivoire, sous le seuil où un écran ordinaire montre quelque chose.
-         Le fond se voulait « une feuille de calque posée sur une table à
-         dessin » ; il n'était qu'un aplat avec une intention en commentaire.
+         Le fond portait une grille d'architecte : deux trames fines et un
+         trait fort tous les cinq carreaux. Elle avait été montée de 5 à 12 et
+         20 % pour devenir visible — et c'est précisément une fois visible
+         qu'elle est devenue de trop. Le dessin de la verrière tient seul ce
+         rôle : dire que l'écran est un espace et non une page.
 
-         Les valeurs sont prises au point de bascule, mesuré :
-
-           trame    fond      se voit   texte #12463b   texte doux #4a5a55
-            5 %   #ecede9      1,087        9,09              6,19
-           12 %   #dce1dc      1,228        8,05              5,48
-           20 %   #c9d3cd      1,420        6,96              4,74
-           24 %   #c0ccc6      1,532        6,45              4,39   ← refusé
-
-         24 % ferait tomber le texte doux sous 4,5. Le carreau fin monte donc
-         à 12 %, le trait fort à 20 % — et c'est ce dernier qui commande, car
-         un mot peut tomber sur n'importe quelle ligne : 4,74 au pire endroit
-         de l'écran.
+         Ne restent donc que deux couches : la verrière au pied de l'écran, et
+         le dégradé d'ivoire qui l'éclaire par le haut.
       */
-      repeating-linear-gradient(
-        0deg,
-        transparent 0 27px,
-        color-mix(in srgb, var(--verriere-vert) 12%, transparent) 27px 28px
-      ),
-      repeating-linear-gradient(
-        90deg,
-        transparent 0 27px,
-        color-mix(in srgb, var(--verriere-vert) 12%, transparent) 27px 28px
-      ),
-      /* et tous les cinq carreaux, le trait fort du calque */
-      repeating-linear-gradient(
-        0deg,
-        transparent 0 139px,
-        color-mix(in srgb, var(--verriere-vert) 20%, transparent) 139px 140px
-      ),
-      repeating-linear-gradient(
-        90deg,
-        transparent 0 139px,
-        color-mix(in srgb, var(--verriere-vert) 20%, transparent) 139px 140px
-      ),
       linear-gradient(
         180deg,
         #ffffff 0%,
