@@ -1576,7 +1576,7 @@
   .dock {
     position: sticky;
     bottom: var(--e3);
-    z-index: 5;
+    z-index: var(--plan-colle);
     margin-top: var(--e5);
     display: grid;
     grid-template-columns: repeat(5, 1fr);

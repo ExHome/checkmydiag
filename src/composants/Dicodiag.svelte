@@ -24,7 +24,48 @@
   import { GLOSSAIRE, type Terme } from '../lib/analyse/glossaire';
   import { styleUnivers } from '../lib/univers';
 
+  import { ouvrirCouche } from '../lib/couches';
+
   const { surFermer }: { surFermer: () => void } = $props();
+
+  /*
+   * ─────────────────────────────────────────────────────────────────────────
+   * LE LEXIQUE N'AVAIT QU'UNE SEULE SORTIE AU MONDE.
+   * ─────────────────────────────────────────────────────────────────────────
+   *
+   * Un bouton de 44 px, en haut à gauche, et rien d'autre : pas de touche
+   * Échap, pas de fond cliquable — l'écran est un aplat opaque — et aucune
+   * inscription dans l'historique. Il se déclarait pourtant `role="dialog"`
+   * `aria-modal="true"` : un contrat qu'il ne tenait pas.
+   *
+   * Installée sur l'écran d'accueil d'un iPhone, l'application n'offre ni
+   * flèche de retour, ni barre d'adresse, ni clavier. Ce bouton unique était
+   * donc la seule issue — celui-là même que l'encoche recouvrait. On entrait
+   * dans le lexique, et on n'en sortait plus.
+   *
+   * Trois chemins désormais, comme partout ailleurs : le bouton, la touche
+   * Échap, et le geste de retour du téléphone.
+   */
+  let quitter: (() => void) | null = null;
+
+  $effect(() => {
+    quitter = ouvrirCouche(() => {
+      quitter = null;
+      surFermer();
+    });
+    return () => {
+      const sortir = quitter;
+      quitter = null;
+      sortir?.();
+    };
+  });
+
+  function fermer(): void {
+    const sortir = quitter;
+    quitter = null;
+    surFermer();
+    sortir?.();
+  }
 
   let recherche = $state('');
 
@@ -116,11 +157,17 @@
   }
 </script>
 
+<svelte:window
+  onkeydown={(e: KeyboardEvent) => {
+    if (e.key === 'Escape') fermer();
+  }}
+/>
+
 <div class="app-outil" role="dialog" aria-modal="true" aria-label="Dicodiag, le lexique">
   <!-- La barre reste à la charte : elle dit qu'on est toujours dans le même
        produit, même quand la page dessous devient un livre. -->
   <header class="barre">
-    <button type="button" class="retour" onclick={surFermer}>
+    <button type="button" class="retour" onclick={fermer}>
       <span aria-hidden="true">←</span> Retour
     </button>
     <span class="signe" aria-hidden="true">📖</span>
@@ -229,7 +276,7 @@
   .app-outil {
     position: fixed;
     inset: 0;
-    z-index: 50;
+    z-index: var(--plan-appli);
     background: var(--fond);
     display: flex;
     flex-direction: column;
@@ -242,7 +289,25 @@
     display: flex;
     align-items: center;
     gap: var(--e2);
-    padding: var(--e2) var(--e3);
+    /*
+     * SOUS L'ENCOCHE, LE BOUTON DE SORTIE N'EXISTE PLUS.
+     *
+     * `index.html` déclare `viewport-fit=cover` et une barre d'état
+     * translucide ; le manifeste demande `standalone`. Installée sur l'écran
+     * d'accueil, l'application occupe donc la dalle ENTIÈRE, encoche comprise
+     * — et il n'y a alors ni barre d'adresse, ni flèche de retour, ni clavier.
+     *
+     * Le compte est sans appel : 8 px de rembourrage puis 44 px de bouton, soit
+     * une sortie entre y = 8 et y = 52. L'encoche mange jusqu'à y = 47 sur un
+     * iPhone 12 à 14, et jusqu'à 59 avec l'îlot dynamique — où le bouton est
+     * intégralement recouvert. L'écran s'ouvre, et plus rien ne permet d'en
+     * sortir.
+     *
+     * `env()` vaut 0 partout ailleurs : la règle ne coûte rien sur un
+     * ordinateur ni sur un Android sans encoche. Le `max()` garde le
+     * rembourrage habituel quand il n'y a pas d'encoche à compenser.
+     */
+    padding: max(var(--e2), env(safe-area-inset-top, 0px)) var(--e3) var(--e2);
     background: rgb(255 255 255 / 82%);
     backdrop-filter: blur(20px);
     border-bottom: 2px solid var(--verriere-vert);

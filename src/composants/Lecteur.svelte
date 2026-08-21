@@ -1012,7 +1012,7 @@
   .lecteur.plein {
     position: fixed;
     inset: 0;
-    z-index: 45;
+    z-index: var(--plan-vue);
     background: var(--fond);
     display: flex;
     flex-direction: column;
@@ -1025,7 +1025,25 @@
     display: flex;
     align-items: center;
     gap: var(--e2);
-    padding: var(--e2) var(--e3);
+    /*
+     * SOUS L'ENCOCHE, LE BOUTON DE SORTIE N'EXISTE PLUS.
+     *
+     * `index.html` déclare `viewport-fit=cover` et une barre d'état
+     * translucide ; le manifeste demande `standalone`. Installée sur l'écran
+     * d'accueil, l'application occupe donc la dalle ENTIÈRE, encoche comprise
+     * — et il n'y a alors ni barre d'adresse, ni flèche de retour, ni clavier.
+     *
+     * Le compte est sans appel : 8 px de rembourrage puis 44 px de bouton, soit
+     * une sortie entre y = 8 et y = 52. L'encoche mange jusqu'à y = 47 sur un
+     * iPhone 12 à 14, et jusqu'à 59 avec l'îlot dynamique — où le bouton est
+     * intégralement recouvert. L'écran s'ouvre, et plus rien ne permet d'en
+     * sortir.
+     *
+     * `env()` vaut 0 partout ailleurs : la règle ne coûte rien sur un
+     * ordinateur ni sur un Android sans encoche. Le `max()` garde le
+     * rembourrage habituel quand il n'y a pas d'encoche à compenser.
+     */
+    padding: max(var(--e2), env(safe-area-inset-top, 0px)) var(--e3) var(--e2);
     background: rgb(255 255 255 / 82%);
     backdrop-filter: blur(20px);
     border-bottom: 2px solid var(--verriere-vert);
@@ -1327,10 +1345,21 @@
      Elle couvre l'écran : c'est le moment où l'on explique, et il ne se
      partage pas avec le document. Le voile assombrit le rapport sans le faire
      disparaître — on sait d'où l'on vient et où l'on retourne. */
+  /*
+   * ELLE AUSSI PASSAIT SOUS LE LECTEUR.
+   *
+   * Même défaut que le schéma en pleine page, trouvé par le test des plans :
+   * 40, quand `.lecteur.plein` vaut 45 et porte un fond opaque. La fenêtre
+   * d'explication s'ouvrait donc DERRIÈRE l'écran qu'elle devait expliquer —
+   * on touchait un passage du rapport et il ne se passait rien.
+   *
+   * `.fenetre` vit à l'intérieur de ce voile : elle n'a pas besoin de plan
+   * propre, elle monte avec lui.
+   */
   .voile {
     position: fixed;
     inset: 0;
-    z-index: 40;
+    z-index: var(--plan-pleine-page);
     display: grid;
     place-items: center;
     padding: clamp(0px, 3vw, 32px);
@@ -1704,10 +1733,18 @@
 
   /* Le schéma en pleine page : le fond du site s'assombrit, la feuille prend
      l'écran. On en sort au clic, à la croix, ou avec Échap. */
+  /*
+     * AU-DESSUS DU LECTEUR, ET C'EST TOUT L'ENJEU.
+     *
+     * Ce bloc valait 40 pendant que `.lecteur.plein` vaut 45 avec un fond
+     * opaque — et il en est le FRÈRE, pas le descendant : les deux valeurs se
+     * comparaient donc directement. Le schéma agrandi était peint dessous, et
+     * l'écran ne bougeait pas quand on appuyait sur « agrandir ».
+     */
   .pleine-page {
     position: fixed;
     inset: 0;
-    z-index: 40;
+    z-index: var(--plan-pleine-page);
     background: rgb(10 43 35 / 72%);
     backdrop-filter: blur(4px);
     display: grid;

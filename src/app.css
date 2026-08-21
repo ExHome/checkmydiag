@@ -393,6 +393,40 @@
 
   /*
    * ═══════════════════════════════════════════════════════════════════════
+   * L'ORDRE DES PLANS. Six valeurs, et elles vivent ici.
+   * ═══════════════════════════════════════════════════════════════════════
+   *
+   * Cette échelle n'existait pas : la feuille ne contenait AUCUN `z-index`
+   * sur seize cents lignes, et dix valeurs — 1, 2, 5, 8, 40, 41, 45, 50 —
+   * avaient été posées à la main dans huit fichiers qui ne se connaissaient
+   * pas. Deux écrans en sont morts, l'un et l'autre vérifiés à l'écran :
+   *
+   *   · le schéma en pleine page s'ouvrait à 40, sous le lecteur qui vaut 45
+   *     et porte un fond opaque. On appuyait sur « agrandir » : rien. Puis sur
+   *     Échap : rien non plus, la touche refermant une couche invisible. Deux
+   *     gestes morts d'affilée — c'est le vécu « l'application ne répond plus » ;
+   *
+   *   · le panneau du savoir s'ouvrait à 40/41, sous les deux plein-écrans.
+   *     On touchait un mot souligné, rien n'apparaissait — et le panneau
+   *     surgissait plus tard, par-dessus l'accueil, sans qu'on l'ait demandé.
+   *
+   * Les valeurs se lisent comme une pile physique : le fond, ce qui colle, les
+   * écrans, ce qui recouvre un écran, et le savoir qui peut s'ouvrir de
+   * partout — donc au-dessus de tout.
+   *
+   * Un `<dialog>` ouvert par `showModal()` n'entre pas dans cette échelle : le
+   * navigateur le place dans sa couche du dessus, hors de portée de tout
+   * `z-index`. La feuille « pas au dossier » en est un ; c'est voulu.
+   */
+  --plan-fond: 1;
+  --plan-colle: 5;
+  --plan-vue: 45;
+  --plan-appli: 50;
+  --plan-pleine-page: 60;
+  --plan-savoir: 65;
+
+  /*
+   * ═══════════════════════════════════════════════════════════════════════
    * LE MOUVEMENT : quatre durées, deux courbes.
    * ═══════════════════════════════════════════════════════════════════════
    *

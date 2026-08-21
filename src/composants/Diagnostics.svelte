@@ -1686,7 +1686,7 @@
   .app {
     position: fixed;
     inset: 0;
-    z-index: 50;
+    z-index: var(--plan-appli);
     background: var(--fond);
     display: flex;
     flex-direction: column;
@@ -1710,7 +1710,25 @@
     display: flex;
     align-items: center;
     gap: var(--e2);
-    padding: var(--e2) var(--e3);
+    /*
+     * SOUS L'ENCOCHE, LE BOUTON DE SORTIE N'EXISTE PLUS.
+     *
+     * `index.html` déclare `viewport-fit=cover` et une barre d'état
+     * translucide ; le manifeste demande `standalone`. Installée sur l'écran
+     * d'accueil, l'application occupe donc la dalle ENTIÈRE, encoche comprise
+     * — et il n'y a alors ni barre d'adresse, ni flèche de retour, ni clavier.
+     *
+     * Le compte est sans appel : 8 px de rembourrage puis 44 px de bouton, soit
+     * une sortie entre y = 8 et y = 52. L'encoche mange jusqu'à y = 47 sur un
+     * iPhone 12 à 14, et jusqu'à 59 avec l'îlot dynamique — où le bouton est
+     * intégralement recouvert. L'écran s'ouvre, et plus rien ne permet d'en
+     * sortir.
+     *
+     * `env()` vaut 0 partout ailleurs : la règle ne coûte rien sur un
+     * ordinateur ni sur un Android sans encoche. Le `max()` garde le
+     * rembourrage habituel quand il n'y a pas d'encoche à compenser.
+     */
+    padding: max(var(--e2), env(safe-area-inset-top, 0px)) var(--e3) var(--e2);
     background: rgb(255 255 255 / 82%);
     backdrop-filter: blur(20px);
     border-bottom: 2px solid var(--verriere-vert);

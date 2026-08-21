@@ -147,12 +147,12 @@
     position: fixed;
     inset: 0;
     background: rgb(9 20 16 / 34%);
-    z-index: 40;
+    z-index: var(--plan-savoir);
   }
 
   .panneau {
     position: fixed;
-    z-index: 41;
+    z-index: calc(var(--plan-savoir) + 1);
     inset: auto 0 0 0;
     max-height: 82vh;
     overflow-y: auto;
