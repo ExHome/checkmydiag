@@ -319,6 +319,40 @@ export function anomaliesDuTableau(lignes: string[]): Anomalie[] {
  * Le tableau, lui, ne s'imprime que s'il y a quelque chose à y mettre. Mesuré
  * sur neuf volets : les cinq sains n'en ont aucun, les quatre autres en ont un.
  */
+/**
+ * Ce volet est-il de la mise en page LICIEL ?
+ *
+ * ⚠️ **Question de sûreté, pas de confort.** La règle « pas de tableau, donc
+ * pas d'anomalie » est une habitude de LICIEL, et d'aucun autre éditeur. Or la
+ * phrase qui ouvre son catalogue — « Anomalies avérées selon les domaines
+ * suivants » — est aussi imprimée par AnalysImmo, qui range ensuite ses
+ * anomalies tout autrement : six domaines numérotés, chacun suivi de « Néant »
+ * ou d'un tableau à six colonnes, et jamais d'en-tête « Domaines Anomalies ».
+ *
+ * Sans ce garde-fou, un volet AnalysImmo portant sept anomalies ressortait
+ * « ne présente aucune anomalie » : le catalogue était lu, le tableau LICIEL
+ * absent, et l'absence prise pour une bonne nouvelle. C'est la conformité
+ * inventée que le §43 interdit en premier.
+ *
+ * On exige donc une signature POSITIVE de LICIEL. Deux marqueurs, tous deux
+ * mesurés sur les quatre volets lus en entier, et absents des deux autres
+ * éditeurs : la numérotation « 5. – » à tiret demi-cadratin, et la table des
+ * informations complémentaires qui s'ouvre par « IC. ».
+ */
+export function ressembleALiciel(lignes: string[]): boolean {
+  let numerotationTiret = false;
+  let tableIC = false;
+
+  for (const brut of lignes) {
+    const l = compact(brut);
+    if (/^\d\s*\.\s*[–—]\s*\S/.test(l)) numerotationTiret = true;
+    if (/^IC\.\s/.test(l)) tableIC = true;
+    if (numerotationTiret && tableIC) return true;
+  }
+
+  return numerotationTiret || tableIC;
+}
+
 export function porteUnTableauDAnomalies(lignes: string[]): boolean {
   let dedans = false;
   for (const brut of lignes) {

@@ -128,7 +128,20 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
    * imprimé : c'est lui qui atteste qu'on est bien devant cette mise en page.
    * Ailleurs, on continue de se taire plutôt que de conclure à tort.
    */
-  const catalogueImprime = catalogueDesDomaines(lignes).length >= 5;
+  /*
+   * ⚠️ ON PARSE DIFFÉREMMENT POUR CHAQUE ÉDITEUR.
+   *
+   * Le catalogue ne suffit PAS à reconnaître la mise en page : AnalysImmo
+   * imprime la même phrase d'ouverture, puis range ses anomalies tout autrement.
+   * Un de ses volets, porteur de sept anomalies, ressortait « ne présente
+   * aucune anomalie » — le tableau LICIEL était absent, et son absence prise
+   * pour une bonne nouvelle.
+   *
+   * La règle du tableau est une habitude de LICIEL. Elle ne s'applique donc
+   * qu'à LICIEL, sur signature positive. Chez les autres, on se tait.
+   */
+  const catalogueImprime =
+    catalogueDesDomaines(lignes).length >= 5 && ressembleALiciel(lignes);
 
   let etat = conclusion.etat;
   if (etat === 'inconnu') {

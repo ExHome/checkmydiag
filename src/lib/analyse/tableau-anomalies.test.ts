@@ -8,7 +8,8 @@ import {
   anomaliesDuTableau,
   catalogueDesDomaines,
   localisationsDe,
-  porteUnTableauDAnomalies
+  porteUnTableauDAnomalies,
+  ressembleALiciel
 } from './tableau-anomalies';
 
 /** Le catalogue tel qu'il est imprimé au-dessus du tableau, dans TOUS les volets. */
@@ -131,5 +132,44 @@ describe('les localisations collées', () => {
 
   it('ne retient pas une parenthèse qui ne nomme aucune pièce', () => {
     expect(localisationsDe('un dispositif (voir photo)')).toEqual([]);
+  });
+});
+
+/**
+ * ⚠️ LA RÈGLE DU TABLEAU EST UNE HABITUDE DE LICIEL, PAS UNE RÈGLE DU MÉTIER.
+ *
+ * AnalysImmo ouvre son § 5 par la MÊME phrase — « Anomalies avérées selon les
+ * domaines suivants » — puis range ses anomalies tout autrement : six domaines
+ * numérotés, chacun suivi de « Néant » ou d'un tableau à six colonnes, et
+ * jamais d'en-tête « Domaines Anomalies ».
+ *
+ * Sans signature d'éditeur, un tel volet ressortait « aucune anomalie » alors
+ * qu'il en porte. C'est la conformité inventée du § 43.
+ */
+describe('la forme d’un autre éditeur ne doit pas être lue comme du LICIEL', () => {
+  const ANALYSIMMO = [
+    'Anomalies avérées selon les domaines suivants :',
+    '1. L’appareil général de commande et de protection et son accessibilité.',
+    'Néant',
+    '2. Dispositif de protection différentiel à l’origine de l’installation / Prise de terre.',
+    'N° article Libellé des anomalies Localisation(*) Observation',
+    'B.3.3.6 a1) Au moins un socle de prise de courant ne comporte pas de broche de terre.',
+    '3. Dispositif de protection contre les surintensités adapté à la section des conducteurs.',
+    'Néant'
+  ];
+
+  it('ne reconnaît pas la signature LICIEL', () => {
+    expect(ressembleALiciel(ANALYSIMMO)).toBe(false);
+  });
+
+  it('reconnaît LICIEL à sa numérotation à tiret et à sa table IC', () => {
+    expect(ressembleALiciel(['5. – Conclusion relative à l’évaluation des risques'])).toBe(true);
+    expect(ressembleALiciel(['IC. Socles de prise de courant'])).toBe(true);
+  });
+
+  it('n’y voit aucun tableau d’anomalies LICIEL — d’où le danger', () => {
+    // Le tableau est bien absent : c'est précisément pour cela que la règle
+    // « absence de tableau = aucune anomalie » ne doit PAS s'appliquer ici.
+    expect(porteUnTableauDAnomalies(ANALYSIMMO)).toBe(false);
   });
 });
