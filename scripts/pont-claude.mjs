@@ -69,16 +69,19 @@ const autorisee = (origine) => SITE.has(origine) || LOCALE.test(origine);
    envoie un passage, pas un dossier. */
 const PLAFOND_CARACTERES = 60_000;
 
+/*
+ * LA CLÉ EST FACULTATIVE — et c'est le mode normal.
+ *
+ * Sans elle, le pont tient le JOURNAL et rien d'autre : il recopie sur le poste
+ * ce qu'Aude qualifie dans l'atelier, là où Claude peut le lire. C'est gratuit,
+ * et c'est l'essentiel du binôme — elle qualifie, il corrige le moteur.
+ *
+ * Avec une clé, il relaie en plus les questions posées depuis l'écran, ce qui
+ * passe par l'API et se facture à l'usage. Refuser de démarrer sans clé, comme
+ * il le faisait, privait du service gratuit pour cause d'absence du payant.
+ */
 const cle = process.env.ANTHROPIC_API_KEY;
-if (!cle) {
-  console.error(
-    'ANTHROPIC_API_KEY absente. Le pont ne démarre pas : sans clé il ne peut rien faire,\n' +
-      'et une clé écrite en dur dans un fichier finirait par partir dans le dépôt public.'
-  );
-  process.exit(1);
-}
-
-const claude = new Anthropic({ apiKey: cle });
+const claude = cle ? new Anthropic({ apiKey: cle }) : null;
 
 /** L'en-tête qui autorise la page à lire la réponse — sinon le navigateur la jette. */
 function entetes(origine) {

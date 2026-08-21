@@ -19,16 +19,28 @@ export interface EtatDuPont {
   claude: boolean;
 }
 
-/** Le pont répond-il, et jusqu'où ? Les deux services sont indépendants. */
+/**
+ * Le pont répond-il, et jusqu'où ? Les deux services sont indépendants.
+ *
+ * ⚠️ Le premier appel est lent, et c'est normal : une page servie sur un nom
+ * public qui contacte un service de la machine locale déclenche une
+ * vérification de sécurité du navigateur (Private Network Access) avant même
+ * la requête. Un délai de 1,5 s l'annulait au passage, et l'atelier affichait
+ * « le pont ne tourne pas » alors qu'il tournait — le pire des messages : faux
+ * et décourageant. On laisse quatre secondes, et on réessaie une fois.
+ */
 export async function pontPresent(): Promise<EtatDuPont> {
-  try {
-    const reponse = await fetch(`${PONT}/present`, { signal: AbortSignal.timeout(1500) });
-    if (!reponse.ok) return { journal: false, claude: false };
-    const etat = (await reponse.json()) as Partial<EtatDuPont>;
-    return { journal: etat.journal ?? true, claude: etat.claude ?? false };
-  } catch {
-    return { journal: false, claude: false };
+  for (const essai of [0, 1]) {
+    try {
+      const reponse = await fetch(`${PONT}/present`, { signal: AbortSignal.timeout(4000) });
+      if (!reponse.ok) return { journal: false, claude: false };
+      const etat = (await reponse.json()) as Partial<EtatDuPont>;
+      return { journal: etat.journal ?? true, claude: etat.claude ?? false };
+    } catch {
+      if (essai === 1) return { journal: false, claude: false };
+    }
   }
+  return { journal: false, claude: false };
 }
 
 /**
@@ -51,7 +63,7 @@ export async function consigner(entree: {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(entree),
-      signal: AbortSignal.timeout(2000)
+      signal: AbortSignal.timeout(5000)
     });
     return reponse.ok;
   } catch {
