@@ -219,14 +219,34 @@
    * duplication : c'est sa place. L'analyse montre les diagnostics un par un,
    * les alertes montrent ce qui bloque. Deux questions, deux écrans.
    */
+  /*
+   * « LES DIAGNOSTICS » N'EST PLUS UN ONGLET.
+   *
+   * Ordre d'Aude (21/08/2026) : « le volet diagnostic ne sert à rien, car on a
+   * tous les diags dans les mini apps ». C'est exact, et la preuve est dans le
+   * code : `ouvrirDansLAnalyse()` — la fonction qu'appelle une tuile de
+   * l'accueil — pose `vue = 'point'`. Cliquer sur la mini-app DPE ouvrait donc
+   * déjà cette vue-là, sur le bon diagnostic. L'onglet offrait le même écran
+   * sans le diagnostic : une seconde porte vers la même pièce, qui s'ouvrait
+   * sur le premier rapport venu.
+   *
+   * La VUE reste — c'est elle que les mini-apps ouvrent. Seule sa place dans la
+   * barre disparaît. On entre désormais par le diagnostic qu'on a choisi, ce
+   * qui est la promesse des mini-apps.
+   *
+   * Le repli sur `alertes` compte : c'est ce que le lecteur cherche en ouvrant
+   * un dossier, et c'était déjà la vue qu'ouvre le badge de la barre.
+   */
   const VUES = [
-    { cle: 'point', nom: 'Les diagnostics', quoi: 'Chacun, un par un' },
     { cle: 'alertes', nom: 'Les alertes', quoi: 'Ce qui demande une action' },
     { cle: 'conseil', nom: 'Le conseil', quoi: 'Ce qu’il faut en faire' },
     { cle: 'rapport', nom: 'Le rapport', quoi: 'Toutes les pages, expliquées' }
   ];
 
-  let vue = $state('point');
+  /** Le nom d'un diagnostic ouvert depuis sa mini-app, quand il n'est plus dans la barre. */
+  const NOM_HORS_BARRE: Record<string, string> = { point: 'Les diagnostics' };
+
+  let vue = $state('alertes');
 
   /**
    * Le diagnostic demandé depuis l'état descriptif.
@@ -542,7 +562,11 @@
         <button type="button" class="sortie-vue" onclick={fermerLaVue}>
           <span aria-hidden="true">←</span> Retour
         </button>
-        <p class="titre-vue">{VUES.find((v) => v.cle === vue)?.nom ?? ''}</p>
+        <!-- La barre nomme aussi les vues qui ne sont plus dans les onglets :
+             sans quoi ouvrir une mini-app affichait une barre sans titre. -->
+        <p class="titre-vue">
+          {VUES.find((v) => v.cle === vue)?.nom ?? NOM_HORS_BARRE[vue] ?? ''}
+        </p>
       </header>
     {/if}
 

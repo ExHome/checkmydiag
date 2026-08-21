@@ -316,6 +316,15 @@ function aFaire(finale: Lettre | null): string[] {
         'Louer : depuis le 1ᵉʳ janvier 2025, on ne peut plus louer un logement classé G à un nouveau locataire. Les logements F seront interdits à partir de 2028.',
         'Le loyer est bloqué. On ne peut plus l’augmenter, ni quand un nouveau locataire arrive, ni quand on renouvelle le bail.',
         'Vendre : si c’est une maison, il faut faire faire un audit énergétique et le donner à l’acheteur dès la première visite.',
+        /*
+         * La phrase de négociation, rapatriée depuis l'écran du conseil.
+         *
+         * Elle y était écrite à la main, et n'existait que là : le lecteur qui
+         * ouvrait la fiche du DPE apprenait l'interdiction de louer et le gel du
+         * loyer sans qu'on lui dise ce qu'il pouvait en faire. Ce qui pèse sur le
+         * prix appartient au diagnostic, pas à une vue.
+         */
+        'Ces deux points pèsent sur le prix. Ils se discutent.',
         ...commun
       ];
     case 'E':
@@ -340,8 +349,29 @@ function aFaire(finale: Lettre | null): string[] {
         'Louer : au 1ᵉʳ janvier 2034, un logement classé E ne sera plus considéré comme décent. Il ne pourra plus être loué — ni nouveau bail, ni renouvellement, ni reconduction tacite.',
         ...commun
       ];
+    /*
+     * Les classes qui ne déclenchent rien — et le silence qui n'en est pas une.
+     *
+     * `default` couvre A à D, mais AUSSI `null`, c'est-à-dire la lettre qu'on
+     * n'a pas su lire. Écrire « aucune interdiction ne vise cette classe » sur
+     * un dossier dont on ignore la classe serait un feu vert donné par
+     * inadvertance — le pire cas possible sur cet écran. On ne rassure donc que
+     * lorsqu'une lettre a réellement été lue.
+     *
+     * ⚠️ Une phrase de l'ancien écran du conseil n'est PAS reprise ici :
+     * « Aucun audit énergétique n'est exigé pour vendre. » Le calendrier de
+     * l'audit énergétique ne figure à aucune ligne du référentiel
+     * `reglement/textes.ts` — personne ne l'a lu à la source. Une affirmation
+     * négative fondée sur rien est exactement ce que le référentiel interdit.
+     * Elle revient le jour où l'article est lu et noté.
+     */
     default:
-      return commun;
+      if (!finale) return commun;
+      return [
+        'Aucune interdiction de location ne vise cette classe à ce jour.',
+        'C’est un point favorable du dossier : il se dit dans l’annonce.',
+        ...commun
+      ];
   }
 }
 
