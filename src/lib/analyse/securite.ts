@@ -6,13 +6,14 @@
  * une gradation (A1, A2, DGI) qu'il faut absolument expliquer : « DGI » veut dire
  * que le distributeur peut couper le gaz le jour même.
  */
-import type { Diagnostic, Fait, Gravite } from '../modele';
+import type { Anomalie, Diagnostic, Fait, Gravite } from '../modele';
 import { trouver, trouverToutes } from './texte';
 import { anomaliesDetaillees, domainesConstates, releverTout } from './anomalies';
 import {
   anomaliesDuTableau,
   catalogueDesDomaines,
   localisationsDe,
+  nettoyerLibelle,
   porteUnTableauDAnomalies
 } from './tableau-anomalies';
 import { rubrique as rubriqueDe } from './rubriques';
@@ -254,6 +255,55 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
    * avait « un point », sans savoir lequel, ni où, ni qui appeler.
    */
   const detaillees = anomaliesDetaillees(lignes);
+
+  /*
+   * La liste détaillée, sans agrégat.
+   *
+   * Les deux mises en page se rejoignent ici, au même format : l'annexe
+   * « Libellé de l'anomalie : » et le tableau de la rubrique 5. Une anomalie
+   * lue dans l'une ou dans l'autre donne le même objet, et l'écran n'a pas à
+   * savoir d'où elle vient.
+   */
+  const memeAnomalie = (a: Anomalie, b: Anomalie): boolean =>
+    a.libelle.toLowerCase().replace(/[^a-zà-ÿ]/gi, '') ===
+    b.libelle.toLowerCase().replace(/[^a-zà-ÿ]/gi, '');
+
+  const brut: Anomalie[] = [
+    ...duTableau,
+    ...detaillees.map((d) => ({
+      code: d.code,
+      domaine: null,
+      // La même toilette que le tableau : la rubrique suivante se soude au
+      // libellé quand la ligne reconstruite les réunit.
+      libelle: nettoyerLibelle(d.libelle),
+      localisations: d.ou ? localisationsDe(`(${d.ou})`) : [],
+      pluralite: /^\s*au moins un/i.test(d.libelle)
+        ? ('auMoinsUn' as const)
+        : /^\s*l['’]ensemble/i.test(d.libelle)
+          ? ('ensemble' as const)
+          : ('inconnue' as const),
+      mesureCompensatoire: null,
+      geste: d.geste
+    }))
+  ];
+
+  /*
+   * Une anomalie lue dans les deux mises en page ne compte qu'une fois.
+   *
+   * Certains rapports portent leur tableau ET son annexe : le même défaut y
+   * figure deux fois, et le lecteur en voyait deux cartes identiques. On garde
+   * la version la mieux renseignée — celle qui a une localisation, un geste ou
+   * un code — plutôt que la première venue.
+   */
+  const richesse = (a: Anomalie): number =>
+    a.localisations.length + (a.geste ? 1 : 0) + (a.code ? 1 : 0) + (a.domaine ? 1 : 0);
+
+  const detail: Anomalie[] = [];
+  for (const a of brut) {
+    const jumelle = detail.findIndex((d) => memeAnomalie(d, a));
+    if (jumelle < 0) detail.push(a);
+    else if (richesse(a) > richesse(detail[jumelle]!)) detail[jumelle] = a;
+  }
   /*
    * TOUTES les localisations, des deux mises en page.
    *
@@ -365,6 +415,7 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
       : {}),
     schema: groupes.length ? { genre: 'anomalies', groupes, total: total ?? 0 } : null,
     pages: plage,
+    ...(detail.length ? { anomalies: detail } : {}),
     ...(releves.length ? { releves } : {}),
     ...(date?.[1] ? { date: date[1] } : {})
   };

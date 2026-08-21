@@ -137,6 +137,16 @@ export interface Diagnostic {
     quoiEmporter?: string;
   };
   schema: Schema | null;
+  /**
+   * Les anomalies, une par une — chacune un objet complet au sens du §8 de
+   * l'ordre de mission électricité.
+   *
+   * Les `faits` en donnent le compte et les localisations réunies ; ceci en
+   * donne le détail, sans rien agréger. C'est ce qui permet d'afficher une
+   * carte par anomalie, avec SES localisations et SON geste, plutôt qu'un
+   * champ « Où » commun à toutes.
+   */
+  anomalies?: Anomalie[];
   /** Pages du PDF où se trouve ce diagnostic (1-indexé). */
   pages: [number, number];
   /** Numéros de toutes les pages du diagnostic, pour les faire défiler. */
