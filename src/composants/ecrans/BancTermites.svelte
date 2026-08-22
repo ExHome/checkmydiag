@@ -10,6 +10,7 @@
    */
   import type { Diagnostic } from '../../lib/modele';
   import Termites from './Termites.svelte';
+  import MiniAppTermites from '../termites/MiniAppTermites.svelte';
 
   const explication = [
     'Le diagnostiqueur cherche des traces : galeries dans le bois, cordons de terre le long des murs, bois qui sonne creux. Il regarde ce qui est visible, sans démontage.',
@@ -98,11 +99,95 @@
     pages: [12, 14]
   };
 
+  /*
+   * LES RUBRIQUES DU PACK, remplies avec ce que le corpus porte réellement.
+   *
+   * Constatations diverses, rubrique F et rubrique G : recopiées de volets
+   * lus, jamais inventées. Sans elles, la mini-app serait vide et le banc ne
+   * montrerait rien de ce que l'ordre du 22/08 demande.
+   */
+  const RUBRIQUES = {
+    constatations: {
+      lue: true,
+      neant: false,
+      entrees: [
+        {
+          terme:
+            'Indices d’infestations de vrillettes dans pannes du plafond R+1: entré/Cuisine/Séjour et Mezzanine',
+          nature: 'constat' as const,
+          ou: 'Général'
+        },
+        {
+          terme: 'Traces d’humidité sur plinthes bois dans R+1 : Salle de bain/wc',
+          nature: 'constat' as const,
+          ou: 'Général'
+        },
+        {
+          terme:
+            'Le diagnostic se limite aux zones rendues visibles et accessibles par le propriétaire',
+          nature: 'limite' as const,
+          ou: 'Général'
+        }
+      ]
+    },
+    nonVisitees: {
+      lue: true,
+      neant: false,
+      charpente: true,
+      pieces: [
+        {
+          terme: 'R+1 - Combles générales (Absence de trappe de visite)',
+          ou: 'R+1 - Combles générales',
+          pourquoi: 'Absence de trappe de visite'
+        },
+        {
+          terme: 'Rez de chaussée - Débarras (Encombrement trop important)',
+          ou: 'Rez de chaussée - Débarras',
+          pourquoi: 'Encombrement trop important'
+        }
+      ]
+    },
+    nonExamines: {
+      lue: true,
+      neant: false,
+      ouvrages: [
+        {
+          terme:
+            'Rez de chaussée - Entrée, Rez de chaussée - Chambre 1, Rez de chaussée - Chambre 2, Rez de chaussée - Salle de bain, Rez de chaussée - Séjour, Rez de chaussée - Cuisine, Rez de chaussée - Cellier, Rez de chaussée - Wc — Mur Revetement fixé',
+          ou: 'Rez de chaussée - Entrée, Rez de chaussée - Chambre 1, Rez de chaussée - Chambre 2, Rez de chaussée - Salle de bain, Rez de chaussée - Séjour, Rez de chaussée - Cuisine, Rez de chaussée - Cellier, Rez de chaussée - Wc',
+          pourquoi: 'Mur Revetement fixé',
+          separable: true
+        }
+      ]
+    }
+  };
+
   const CAS = [
-    { nom: 'nominal · 7 zones · bon', d: NOMINAL },
-    { nom: 'infesté · 1 zone sur 4', d: GRAVE },
-    { nom: 'conclusion non lue', d: PAUVRE }
+    { nom: 'nominal · 7 zones · bon', d: { ...NOMINAL, ...RUBRIQUES } },
+    { nom: 'infesté · 1 zone sur 4', d: { ...GRAVE, ...RUBRIQUES } },
+    { nom: 'conclusion non lue', d: PAUVRE },
+    {
+      nom: 'rubriques « Néant »',
+      d: {
+        ...NOMINAL,
+        constatations: { lue: true, neant: true, entrees: [] },
+        nonVisitees: { lue: true, neant: true, charpente: false, pieces: [] },
+        nonExamines: { lue: true, neant: true, ouvrages: [] }
+      }
+    },
+    {
+      nom: 'éditeur non couvert',
+      d: {
+        ...NOMINAL,
+        constatations: { lue: false, neant: false, entrees: [] },
+        nonVisitees: { lue: false, neant: false, charpente: false, pieces: [] }
+      }
+    }
   ];
+
+  /* Deux écrans, deux disciplines : la planche rétroéclairée, et la mini-app
+     du pack. On bascule pour comparer. */
+  let miniApp = $state(true);
 
   let cas = $state(0);
   let heure = $state(18);
@@ -121,12 +206,22 @@
     {/each}
     <span class="sep"></span>
     {#each HEURES as [nom, h] (nom)}
-      <button class:on={heure === h} onclick={() => (heure = h)}>{nom}</button>
+      <button class:on={heure === h} onclick={() => (heure = h)} disabled={miniApp}>{nom}</button>
     {/each}
+    <span class="sep"></span>
+    <button class:on={miniApp} onclick={() => (miniApp = true)}>mini-app du pack</button>
+    <button class:on={!miniApp} onclick={() => (miniApp = false)}>planche</button>
   </nav>
   <div class="tel">
-    {#key `${cas}-${heure}`}
-      <Termites diagnostic={CAS[cas]?.d ?? NOMINAL} {heure} onvoirLeRapport={() => {}} />
+    {#key `${cas}-${heure}-${miniApp}`}
+      {#if miniApp}
+        <MiniAppTermites
+          diagnostic={CAS[cas]?.d ?? NOMINAL}
+          surVoirDansLeRapport={() => {}}
+        />
+      {:else}
+        <Termites diagnostic={CAS[cas]?.d ?? NOMINAL} {heure} onvoirLeRapport={() => {}} />
+      {/if}
     {/key}
   </div>
 </div>

@@ -99,6 +99,16 @@ export interface SyntheseTermites {
   readonly nonVisitees: BlocT<LimiteT>;
   /** Les OUVRAGES non examinés là où l'on est entré — rubrique G. */
   readonly nonExamines: BlocT<LimiteT>;
+  /**
+   * Les clauses qui bornent l'examen, d'où qu'elles viennent.
+   *
+   * ⚠️ Elles étaient PERDUES : filtrées du bloc « constatations diverses »
+   * parce qu'elles n'y sont pas des constats, et reversées nulle part. Le § 30
+   * l'interdit — « aucune information critique supprimée par simplification ».
+   * Elles rejoignent donc « ce qui n'a pas été contrôlé », qui est leur place
+   * (§ 14).
+   */
+  readonly bornages: readonly string[];
   /** Les combles, la charpente ou le grenier sont-ils du nombre ? */
   readonly charpente: boolean;
   /** Ce que le rapport dit de sa propre complétude. Jamais un pourcentage. */
@@ -281,6 +291,22 @@ function conseilDe(issue: IssueTermites, charpente: boolean, limites: number): s
   return conseils;
 }
 
+/**
+ * Les clauses de bornage, ramassées partout où elles traînent.
+ *
+ * La rubrique « Constatations diverses » en porte (dix-sept sur quarante n'en
+ * portent QUE cela), et la rubrique G en imprime une de plus. Filtrées des
+ * constats, elles doivent réapparaître ici — sinon elles disparaissent.
+ */
+function bornagesDe(d: Diagnostic): string[] {
+  const clauses = (d.constatations?.entrees ?? [])
+    .filter((e) => e.nature === 'limite')
+    .map((e) => e.terme);
+  const g = d.nonExamines?.bornage;
+  if (g && !clauses.includes(g)) clauses.push(g);
+  return clauses;
+}
+
 export function syntheseTermites(d: Diagnostic): SyntheseTermites {
   const issue = issueTermites(d);
   const constatations = constatationsDe(d);
@@ -367,6 +393,7 @@ export function syntheseTermites(d: Diagnostic): SyntheseTermites {
     constatations,
     nonVisitees,
     nonExamines,
+    bornages: bornagesDe(d),
     charpente,
     completude: completudeDe(d, nonVisitees, nonExamines),
     conseil: conseilDe(issue, charpente, nonVisitees.entrees.length + nonExamines.entrees.length),
