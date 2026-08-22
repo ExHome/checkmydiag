@@ -11,8 +11,6 @@
    * pas de rapporter, on dit ce qui engage, ce qui coûte et ce qui se négocie.
    */
   import type { Analyse, TypeDiag } from '../lib/modele';
-  import Positionnement from './Positionnement.svelte';
-  import Deperditions from './schemas/Deperditions.svelte';
   import MotsExpliques from './MotsExpliques.svelte';
   import RubanDpe from './RubanDpe.svelte';
   import DoubleSeuil from './schemas/DoubleSeuil.svelte';
@@ -470,24 +468,18 @@
       </div>
     {/if}
 
-    <!-- Les deux planches côte à côte : la maison et l'échelle se répondent,
-         et l'écran large cesse d'être une longue colonne étroite. -->
-    <div class="planches">
-      {#if dpe?.schema?.genre === 'dpe'}
-        <div class="planche">
-          <h2 class="apres"><span class="num">{numeros.chaleur}</span>Par où la chaleur s’en va</h2>
-          <Deperditions isolation={dpe.schema.isolation} {lettre} papier />
-          <p class="pourquoi"><MotsExpliques texte={pourquoi} /></p>
-        </div>
-      {/if}
+    <!--
+      LE SCHÉMA DES DÉPERDITIONS ET LE POSITIONNEMENT SONT PARTIS.
 
-      {#if lettre}
-        <div class="planche">
-          <h2 class="apres"><span class="num">{numeros.echelle}</span>Où se situe ce logement</h2>
-          <Positionnement {lettre} />
-        </div>
-      {/if}
-    </div>
+      Ordre d'Aude (22/08/2026) : « on dégage le schéma moche déperdition et
+      note ». Ils décrivaient le logement — par où la chaleur s'en va, où le
+      bien se situe sur l'échelle — et cette page-ci ne décrit rien : elle dit
+      ce qu'il faut faire. Le §3 de l'ordre de mission l'écrit noir sur blanc :
+      « cette page ne doit pas devenir une deuxième synthèse du diagnostic ».
+
+      Les deux vivent toujours, à leur place : la vue « Les diagnostics » porte
+      le schéma des déperditions, et l'écran DPE son positionnement.
+    -->
 
     {#if chiffres.length}
       <!-- Les chiffres du logement, à leur place : juste après ce qui les
@@ -599,6 +591,29 @@
           <p>Anticiper aujourd’hui, c’est sécuriser demain et valoriser votre bien.</p>
         </aside>
       </header>
+
+      <!--
+        LA VERRIÈRE.
+
+        Ordre d'Aude : « je veux la verrière ». C'est l'illustration du visuel
+        de référence, découpée dans le pack et servie en WebP — 82 Ko là où le
+        PNG d'origine en pesait 1 390.
+
+        Elle est décorative et le dit (`alt` vide, `aria-hidden`) : un lecteur
+        d'écran n'a rien à y gagner, et la page doit se lire entière sans elle.
+        `loading="lazy"` parce qu'elle n'est jamais le premier écran.
+      -->
+      <figure class="la-verriere">
+        <img
+          src="./verriere-conseils.webp"
+          alt=""
+          aria-hidden="true"
+          width="860"
+          height="980"
+          loading="lazy"
+          decoding="async"
+        />
+      </figure>
 
       {#if leConseil.cartes.length}
         <div class="cartes">
@@ -1103,6 +1118,30 @@
   /* ---- Les cartes -------------------------------------------------------
      Deux colonnes dès qu'il y a la place, comme le visuel. Une seule sur
      mobile (§170) : une carte par ligne, très lisible. */
+  /* La verrière : une illustration, pas une bannière. Elle garde ses
+     proportions, ne dépasse jamais la largeur de lecture, et se contente de la
+     moitié de la hauteur d'écran pour ne pas repousser les cartes sous la
+     ligne de flottaison — ce sont elles qu'on vient lire. */
+  .la-verriere {
+    margin: 0;
+    text-align: center;
+  }
+
+  .la-verriere img {
+    width: 100%;
+    max-width: 430px;
+    height: auto;
+    max-height: 52vh;
+    object-fit: contain;
+  }
+
+  /* Sur le papier, l'illustration ne sert à rien et coûte une demi-page. */
+  @media print {
+    .la-verriere {
+      display: none;
+    }
+  }
+
   .cartes {
     display: grid;
     grid-template-columns: 1fr;
