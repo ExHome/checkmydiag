@@ -21,15 +21,68 @@
    * Les recommandations d'entretien ne sont pas des travaux : ce sont des
    * gestes, sans devis. Elles ont leur propre bloc, replié — priorité 3.
    */
+  import type { PosteDeperditionChiffre } from '../../lib/ademe/consultation';
+  import type { Enveloppe } from '../../lib/analyse/enveloppe';
+  import { parOuCommencer, prioriserLesTravaux } from '../../lib/analyse/priorite';
   import type { Travaux } from '../../lib/analyse/travaux';
 
-  const { travaux }: { travaux: Travaux } = $props();
+  const {
+    travaux,
+    enveloppe = null,
+    chiffres = []
+  }: {
+    travaux: Travaux;
+    /** Le bâtiment lu, pour relier chaque travail aux parois qu'il concerne. */
+    enveloppe?: Enveloppe | null;
+    /** Les parts de déperdition réelles, quand la fiche ADEME a répondu. */
+    chiffres?: PosteDeperditionChiffre[];
+  } = $props();
+
+  /*
+   * ── PAR OÙ COMMENCER ──────────────────────────────────────────────────────
+   *
+   * La maquette proposait une colonne « économie estimée ~ 320 € / an ». Ce
+   * chiffre n'existe nulle part : ni dans les vingt-six rapports lus, ni dans la
+   * base de l'ADEME, où les champs `economie`, `gain` et `travaux` sont absents.
+   *
+   * On répond à la même question — par où commencer ? — avec deux données
+   * réelles croisées : la consigne et sa performance visée viennent du rapport,
+   * la part de pertes vient de la fiche ADEME du même DPE. Le croisement est une
+   * addition, pas une estimation.
+   */
+  const priorises = $derived(
+    enveloppe ? prioriserLesTravaux(travaux.packs, enveloppe, chiffres) : []
+  );
+  const premier = $derived(parOuCommencer(priorises));
+
+  function porteeDe(lot: string | null, pack: string) {
+    return priorises.find((t) => t.lot === lot && t.pack === pack)?.portee ?? { genre: 'inconnue' };
+  }
+
+  function paroisDe(lot: string | null, pack: string) {
+    return priorises.find((t) => t.lot === lot && t.pack === pack)?.parois ?? [];
+  }
+
+  const part = (n: number) => `${(n * 100).toLocaleString('fr-FR', { maximumFractionDigits: 1 })} %`;
 
   let gestesOuverts = $state(false);
 </script>
 
 <section class="travaux" aria-labelledby="titre-travaux">
   <h2 id="titre-travaux">Les travaux que le rapport recommande</h2>
+
+  <!--
+    La phrase que le rapport ne dit jamais : lequel de ses travaux touche le plus
+    gros poste de pertes. Elle n'apparaît que si on a vraiment la part.
+  -->
+  {#if premier && premier.portee.genre === 'part'}
+    <p class="commencer">
+      <b>Par où commencer :</b>
+      {premier.lot ?? 'ce travail'} — il agit sur
+      <b>{part(premier.portee.part)}</b> des pertes de votre logement, c’est le poste le
+      plus lourd que le rapport propose de traiter.
+    </p>
+  {/if}
 
   {#if !travaux.presente || travaux.packs.length === 0}
     <p class="rien">
@@ -56,11 +109,37 @@
         {:else}
           <ul>
             {#each pack.recommandations as r, i (r.lot ?? i)}
+              {@const portee = porteeDe(r.lot, pack.titre)}
+              {@const parois = paroisDe(r.lot, pack.titre)}
               <li>
                 <div class="tete">
                   <b>{r.lot ?? 'Poste non nommé'}</b>
                   {#if r.performance}<span class="perf">{r.performance}</span>{/if}
                 </div>
+                {#if portee.genre === 'part'}
+                  <p class="portee">
+                    Agit sur <b>{part(portee.part)}</b> des pertes — {portee.poste.toLowerCase()}.
+                  </p>
+                {:else if portee.genre === 'hors enveloppe'}
+                  <!--
+                    Ce n'est pas une donnée manquante : changer une chaudière ne
+                    réduit aucune perte, le logement perd toujours autant. Une
+                    case vide se lirait « on ne sait pas », alors qu'on sait.
+                  -->
+                  <p class="portee hors">
+                    N’agit pas sur les pertes : change la façon dont elles sont compensées.
+                  </p>
+                {/if}
+                {#if parois.length > 0}
+                  <p class="parois">
+                    Concerne : {parois
+                      .map(
+                        (x) =>
+                          `${x.nom ?? 'une paroi'}${x.surface ? ` (${x.surface.toLocaleString('fr-FR')} m²)` : ''}`
+                      )
+                      .join(' · ')}
+                  </p>
+                {/if}
                 <p class="consigne">{r.description}</p>
               </li>
             {/each}
@@ -195,6 +274,33 @@
     font-size: 0.72rem;
     font-variant-numeric: tabular-nums;
     color: var(--vert-verriere, #12463b);
+  }
+
+  .commencer {
+    margin: 0;
+    padding: 0.7rem 0.9rem;
+    border-left: 3px solid var(--vert-verriere, #12463b);
+    background: var(--surface, rgb(10 43 35 / 3%));
+    border-radius: 0 6px 6px 0;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--encre, #0a2b23);
+  }
+
+  .portee {
+    margin: 0.25rem 0 0;
+    font-size: 0.8rem;
+    color: var(--vert-verriere, #12463b);
+  }
+
+  .portee.hors {
+    color: var(--encre-doux, #4a5a55);
+  }
+
+  .parois {
+    margin: 0.15rem 0 0;
+    font-size: 0.76rem;
+    color: var(--verriere-sable-encre, #896c33);
   }
 
   .consigne {

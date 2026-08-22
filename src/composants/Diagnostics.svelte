@@ -20,6 +20,15 @@
   import RegleDpe from './visuels/RegleDpe.svelte';
   import VisuelAmiante from './visuels/VisuelAmiante.svelte';
   import VisuelPlomb from './visuels/VisuelPlomb.svelte';
+  /*
+   * LA PREMIÈRE DES NOUVELLES SCÈNES.
+   *
+   * `VisuelTermites` reste importé tant que les trente autres schémas n'ont
+   * pas leur scène : on remplace un dessin à la fois, en gardant l'écran
+   * fonctionnel à chaque étape. Le jour où il n'a plus d'appelant, il part.
+   */
+  import Scene from './scene/Scene.svelte';
+  import { sceneZonesTermites, largeurDe, HAUTEUR_SCENE } from './scene/zonesTermites';
   import VisuelTermites from './visuels/VisuelTermites.svelte';
   import VisuelRisques from './visuels/VisuelRisques.svelte';
   import PlanDuLogement from './plans/PlanDuLogement.svelte';
@@ -1143,11 +1152,26 @@
                   />
                 {/if}
                             {:else if d.type === 'termites'}
-                <VisuelTermites
-                  conclusion={d.gravite === 'bon' ? 'sain' : d.gravite === 'alerte' ? 'indices' : null}
-                  zones={zonesDe(d)}
-                  page={d.pages?.[0] ?? null}
-                />
+                <!--
+                  LA SCÈNE DES ZONES, à la place du dessin d'avant.
+
+                  Elle dit la même chose et trois de plus : on peut toucher une
+                  zone pour l'éclairer, chaque zone cite ce que le rapport y a
+                  vu, et les angles morts sont écrits sous le dessin au lieu
+                  d'être sous-entendus.
+                -->
+                {#if sceneZonesTermites(d)}
+                  {@const sc = sceneZonesTermites(d)}
+                  {#if sc}
+                    <Scene scene={sc} largeur={largeurDe(sc)} hauteur={HAUTEUR_SCENE} />
+                  {/if}
+                {:else}
+                  <VisuelTermites
+                    conclusion={d.gravite === 'bon' ? 'sain' : d.gravite === 'alerte' ? 'indices' : null}
+                    zones={zonesDe(d)}
+                    page={d.pages?.[0] ?? null}
+                  />
+                {/if}
               {:else if d.type === 'erp'}
                 <VisuelRisques risques={risquesDe(d)} />
               {/if}
@@ -1698,6 +1722,50 @@
                       pas été lue. Cela ne veut pas dire que tout a été visité — ouvrez-la dans
                       le rapport.
                     </p>
+                  {/if}
+
+                  <!--
+                    RUBRIQUE G — ce qui n'a pas été EXAMINÉ là où l'on est entré.
+
+                    F dit quelles pièces n'ont pas été visitées ; G dit ce qui,
+                    dans les pièces visitées, n'a pas pu être regardé : les murs
+                    derrière un doublage, la sous-face d'un parquet collé, le
+                    plancher sur solives sous un carrelage.
+
+                    Le cas réel du corpus : les MURS de HUIT pièces, revêtement
+                    fixé. C'est la moitié de la § 14 que le bloc précédent ne
+                    porte pas.
+                  -->
+                  {#if d.nonExamines?.ouvrages.length}
+                    <div class="limites-examen">
+                      <p class="titre-limites">Ouvrages non examinés dans les pièces visitées</p>
+                      {#each d.nonExamines.ouvrages as o (o.terme)}
+                        {#if o.separable}
+                          <p class="mot-du-rapport">{o.ou}</p>
+                          {#if o.pourquoi}
+                            <p class="ou-du-rapport">Motif porté au rapport&nbsp;: {o.pourquoi}</p>
+                          {/if}
+                        {:else}
+                          <!--
+                            Les colonnes du rapport n'ont pas pu être démêlées :
+                            on CITE plutôt que d'inventer un appariement. Le
+                            lecteur voit le texte du rapport, tel quel.
+                          -->
+                          <p class="mot-du-rapport">« {o.terme} »</p>
+                          <p class="ou-du-rapport">
+                            Texte du rapport, colonnes non séparées&nbsp;— reportez-vous à la
+                            rubrique&nbsp;G du rapport.
+                          </p>
+                        {/if}
+                      {/each}
+                    </div>
+                  {/if}
+
+                  {#if d.nonExamines?.bornage}
+                    <div class="limites-examen">
+                      <p class="titre-limites">Ce qui borne l’examen</p>
+                      <p class="mot-du-rapport">« {d.nonExamines.bornage} »</p>
+                    </div>
                   {/if}
                 </section>
               {/if}
