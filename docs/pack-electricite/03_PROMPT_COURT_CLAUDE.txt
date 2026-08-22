@@ -1,0 +1,36 @@
+VERRIÈRE — MINI-APP ÉLECTRICITÉ — ORDRE CLAUDE
+
+Référence visuelle : 01_VISUEL_REFERENCE_ELECTRICITE.png.
+
+BUT :
+Faire de l'électricité la mini-app la plus pédagogique et la plus rigoureuse de Verrière.
+
+ARCHITECTURE :
+Points clés → Résultat global → Résultat détaillé → Ce qui a été contrôlé →
+Constatations diverses → Anomalies détaillées → Ce qui n'a pas été contrôlé →
+Complétude si justifiable → Conseil Verrière → Rapport complet.
+
+CONTRAINTE ABSOLUE :
+Aucune donnée inventée. Ne jamais inventer de code, article, nombre d'anomalies,
+niveau de gravité, conformité, risque ou pourcentage de confiance.
+
+Chaque anomalie doit conserver :
+- code source,
+- libellé source,
+- localisation,
+- constat/mesure,
+- éventuelle photo,
+- reformulation pédagogique séparée.
+
+NE JAMAIS CONFONDRE :
+conforme / absence d'anomalie / non contrôlé / non vérifié / non applicable.
+
+IMPORTANT :
+Le mockup est une référence graphique uniquement. Les chiffres, codes et niveaux affichés
+dans l'image sont illustratifs et ne doivent jamais être utilisés comme données par défaut.
+
+La mini-app doit rester exacte même avec 20+ anomalies, des zones inaccessibles,
+des constatations diverses et des informations ambiguës.
+
+Validation impossible tant que toutes les anomalies, limites, localisations et sources
+ne sont pas cohérentes et traçables.

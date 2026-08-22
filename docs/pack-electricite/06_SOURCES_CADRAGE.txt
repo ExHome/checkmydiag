@@ -1,0 +1,9 @@
+SOURCES DE CADRAGE — ÉLECTRICITÉ
+
+- Arrêté du 28 septembre 2017 définissant le modèle et la méthode de réalisation de l'état de l'installation intérieure d'électricité dans les immeubles à usage d'habitation — Légifrance.
+- Article 1 : l'état vise à évaluer les risques pouvant porter atteinte à la sécurité des personnes et le fonctionnement de l'installation électrique.
+- Article 2 : périmètre de l'installation privative contrôlée en aval de l'appareil général de commande et de protection jusqu'aux bornes d'alimentation ou socles de prises ; prise en compte des équipements fixes et de leurs conditions d'installation au regard des exigences de sécurité.
+
+RÈGLE POUR CLAUDE :
+Les textes officiels, référentiels métier et informations extraites du rapport sont prioritaires sur tout exemple graphique.
+Les codes et numéros figurant sur le visuel de maquette ne sont pas des références réglementaires à reproduire automatiquement.

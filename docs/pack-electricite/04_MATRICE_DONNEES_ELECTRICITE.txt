@@ -1,0 +1,31 @@
+MATRICE DE DONNÉES MINIMALE — ÉLECTRICITÉ
+
+Pour chaque anomalie :
+- id interne
+- code anomalie source
+- libellé technique source
+- reformulation pédagogique
+- localisation
+- équipement / circuit concerné
+- constat
+- mesure ou valeur si présente
+- catégorie source si présente
+- priorité uniquement si règle validée
+- photo(s) liée(s)
+- page / section source
+- niveau de certitude de l'extraction
+
+Pour chaque point de contrôle :
+- libellé
+- statut : contrôlé / non contrôlé / non applicable / non vérifiable
+- résultat
+- motif si non contrôlé
+- page / section source
+
+Pour les constatations diverses :
+- texte source
+- reformulation pédagogique éventuelle
+- localisation
+- page source
+
+Aucune valeur par défaut ne doit simuler une information absente.
