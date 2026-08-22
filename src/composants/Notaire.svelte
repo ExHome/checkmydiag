@@ -312,6 +312,90 @@
   }
 
   /**
+   * OÙ SE POSE CHAQUE POINT SUR LA VERRIÈRE.
+   *
+   * Ordre d'Aude (22/08/2026) : « pose des raccourcis sur la verrière, on
+   * clique dessus et on a le conseil ». C'est le schéma du visuel de
+   * référence — les pastilles dorées sur la structure, les conseils dessous.
+   *
+   * Chaque point vise l'endroit du bâti que son diagnostic concerne, et non une
+   * place décorative : la toiture en haut, les menuiseries sur la façade
+   * vitrée, le soubassement en bas pour ce qui touche aux revêtements et au
+   * sol. Un lecteur qui clique le toit doit tomber sur la toiture.
+   *
+   * Les coordonnées sont en pourcentage de l'image, donc indépendantes de sa
+   * taille d'affichage. Un domaine absent de cette table n'a PAS de point :
+   * mieux vaut pas de pastille qu'une pastille posée n'importe où.
+   */
+  const POINTS: Record<string, { x: number; y: number }> = {
+    /* Le faîtage : ce qui couvre. */
+    couvreur: { x: 47, y: 10 },
+    /* La pente vitrée, à droite : le verre et ses menuiseries. */
+    menuisier: { x: 76, y: 27 },
+    miroitier: { x: 84, y: 40 },
+    /* Le mur pignon, à gauche. */
+    facadier: { x: 10, y: 33 },
+    isolation: { x: 16, y: 52 },
+    /* L'intérieur : ce qui s'y branche et ce qui s'y respire. */
+    electricite: { x: 58, y: 47 },
+    ventilation: { x: 34, y: 42 },
+    chauffage: { x: 44, y: 66 },
+    gaz: { x: 66, y: 62 },
+    eau: { x: 30, y: 70 },
+    /* Le soubassement et le sol : revêtements, terrain, réseaux. */
+    plomb: { x: 20, y: 82 },
+    amiante: { x: 74, y: 80 },
+    termites: { x: 62, y: 88 },
+    erp: { x: 44, y: 94 },
+    assainissement: { x: 82, y: 92 },
+    carrez: { x: 8, y: 68 },
+    dpe: { x: 88, y: 14 },
+    dossier: { x: 92, y: 60 }
+  };
+
+  /**
+   * À quel point rattacher une carte.
+   *
+   * Les cartes de travaux du DPE portent le métier dans leur clé — c'est lui
+   * qui commande l'endroit, puisqu'un couvreur ne travaille pas là où travaille
+   * un chauffagiste. Les autres suivent leur diagnostic.
+   */
+  function pointDe(carte: { cle: string; origine: string }): { x: number; y: number } | null {
+    const parMetier: [RegExp, string][] = [
+      [/couvreur/i, 'couvreur'],
+      [/miroitier/i, 'miroitier'],
+      [/menuisier/i, 'menuisier'],
+      [/fa[çc]adier/i, 'facadier'],
+      [/isolation/i, 'isolation'],
+      [/ventilation/i, 'ventilation'],
+      [/climaticien|chauffagiste/i, 'chauffage'],
+      [/plombier/i, 'eau'],
+      [/renouvelables/i, 'couvreur'],
+      [/[ée]lectricien/i, 'electricite']
+    ];
+    if (carte.cle.startsWith('carte-travaux-')) {
+      for (const [motif, cle] of parMetier) {
+        if (motif.test(carte.cle)) return POINTS[cle] ?? null;
+      }
+      return null;
+    }
+    return POINTS[carte.origine] ?? null;
+  }
+
+  /**
+   * La carte ouverte par un clic sur la verrière.
+   *
+   * Cliquer un point ne se contente pas d'amener l'œil : il DÉPLIE le conseil,
+   * sinon on arrive devant une carte fermée et le geste n'a rien donné.
+   */
+  let carteOuverte = $state<string | null>(null);
+
+  function ouvrirDepuisLaVerriere(cle: string, origine: string): void {
+    carteOuverte = cle;
+    allerAu(ancre(origine));
+  }
+
+  /**
    * Les niveaux de recommandation, §7 de l'ordre de mission.
    *
    * « Le langage doit refléter exactement le niveau de certitude disponible. »
@@ -604,15 +688,49 @@
         `loading="lazy"` parce qu'elle n'est jamais le premier écran.
       -->
       <figure class="la-verriere">
-        <img
-          src="./verriere-conseils.webp"
-          alt=""
-          aria-hidden="true"
-          width="860"
-          height="980"
-          loading="lazy"
-          decoding="async"
-        />
+        <div class="cadre-verriere">
+          <img
+            src="./verriere-conseils.webp"
+            alt=""
+            aria-hidden="true"
+            width="860"
+            height="980"
+            decoding="async"
+          />
+
+          <!--
+            LES RACCOURCIS SUR LA VERRIÈRE.
+
+            Une pastille par conseil, posée à l'endroit du bâti qu'elle
+            concerne. Un clic déplie le conseil et amène l'œil dessus.
+
+            Ce sont de VRAIS boutons, pas des zones cliquables dessinées : ils
+            se prennent au clavier, portent le nom de leur domaine, et la liste
+            des cartes reste dessous pour qui ne peut pas viser une pastille.
+          -->
+          {#each leConseil.cartes as carte (carte.cle)}
+            {@const point = pointDe(carte)}
+            {#if point}
+              <button
+                type="button"
+                class="point {carte.niveau}"
+                style:left="{point.x}%"
+                style:top="{point.y}%"
+                aria-label="{carte.domaine} — {NIVEAUX[carte.niveau]}"
+                onclick={() => ouvrirDepuisLaVerriere(carte.cle, carte.origine)}
+              >
+                <span
+                  class="picto-point"
+                  aria-hidden="true"
+                  style:--picto={carte.origine !== 'dossier' && APPS[carte.origine]?.picto
+                    ? `url(./pictos/${APPS[carte.origine].picto}.svg)`
+                    : 'url(./pictos/conseil.svg)'}
+                ></span>
+              </button>
+            {/if}
+          {/each}
+        </div>
+        <figcaption>Cliquez un point de la verrière pour ouvrir le conseil.</figcaption>
       </figure>
 
       {#if leConseil.cartes.length}
@@ -650,7 +768,7 @@
               </div>
 
               <div class="pieds-carte">
-                <details class="pourquoi">
+                <details class="pourquoi" open={carteOuverte === carte.cle}>
                   <summary>
                     Pourquoi ?
                     <span class="combien-points">
@@ -1125,6 +1243,91 @@
   .la-verriere {
     margin: 0;
     text-align: center;
+  }
+
+  /* Le cadre porte les pastilles : elles se placent en pourcentage de LUI, et
+     suivent donc l'image quelle que soit sa taille. */
+  /*
+   * ⚠️ LE CADRE DOIT AVOIR UNE TAILLE AVANT QUE L IMAGE ARRIVE.
+   *
+   * Il etait en `inline-block` autour d une image en `loading="lazy"` sans
+   * taille intrinseque : le cadre mesurait donc 0 px, l image n entrait jamais
+   * dans le champ, le navigateur ne la chargeait jamais, et le cadre restait a
+   * 0 px. Les pastilles s empilaient dans un coin. Mesure a l ecran :
+   * naturalWidth 0, cadre 0.
+   *
+   * Le rapport de forme reserve la place des le premier rendu, et la vue est
+   * deja ouverte quand on arrive ici : le chargement differe n a rien a gagner.
+   */
+  .cadre-verriere {
+    position: relative;
+    display: block;
+    width: 100%;
+    max-width: 430px;
+    margin: 0 auto;
+    aspect-ratio: 860 / 980;
+  }
+
+  /* La pastille du visuel : un anneau sable, un disque crème, le pictogramme du
+     diagnostic au centre. C'est un bouton, il grossit sous le doigt. */
+  .point {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    background: var(--papier);
+    border: 2px solid var(--point-teinte, var(--sable));
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgb(255 255 255 / 0.55);
+    cursor: pointer;
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .point:hover,
+  .point:focus-visible {
+    transform: translate(-50%, -50%) scale(1.18);
+    box-shadow: 0 0 0 6px rgb(255 255 255 / 0.7);
+  }
+
+  .point.urgence,
+  .point.necessaire {
+    --point-teinte: var(--alerte-vive);
+  }
+  .point.controle {
+    --point-teinte: var(--attention);
+  }
+
+  .picto-point {
+    width: 16px;
+    height: 16px;
+    background: var(--vert);
+    mask-image: var(--picto);
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+    -webkit-mask-image: var(--picto);
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
+  }
+
+  .la-verriere figcaption {
+    margin-top: var(--e2);
+    font-size: var(--t-micro);
+    color: var(--sur-fond-doux);
+  }
+
+  /* Le point ne se vise pas au doigt sur un petit écran : on l'agrandit. */
+  @media (pointer: coarse) {
+    .point {
+      width: 40px;
+      height: 40px;
+    }
   }
 
   .la-verriere img {
