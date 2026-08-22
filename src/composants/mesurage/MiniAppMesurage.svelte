@@ -42,7 +42,7 @@
   import { ecartNonCompte, piecesEcartees } from '../../lib/lecteurs/mesurage/modele';
   import type { LectureMesurage } from '../../lib/lecteurs/mesurage/modele';
   import { legendeDuCroquis, type Croquis } from '../../lib/lecteurs/mesurage/croquis';
-  import type { SurfaceDeReference } from '../../lib/lecteurs/mesurage/reference';
+  import { confronter, type SurfaceDeReference } from '../../lib/lecteurs/mesurage/reference';
 
   const {
     diagnostic,
@@ -75,40 +75,11 @@
   /**
    * LES CARTES DE SURFACES — celles qui existent, et rien d'autre.
    *
-   * La surface légale d'abord, parce que c'est elle qui s'écrit dans l'acte ou
-   * dans le bail. Puis les autres totaux du document, avec leurs intitulés.
-   * Puis, si le dossier porte un DPE, la surface de référence — lue sur SA page
-   * de garde, et étiquetée comme telle : ce n'est ni la Carrez ni la Boutin.
+   * Le tri, l'ordre et les explications viennent de `confronter()` : une seule
+   * source, éprouvée à part. La maquette en montre trois ; le rapport en donne
+   * une, deux ou trois, et c'est le rapport qui décide.
    */
-  const cartes = $derived.by(() => {
-    if (!lecture) return [];
-    const sortie: { libelle: string; valeur: number; ou: string; forte: boolean }[] = [];
-    if (lecture.surfaceLegale) {
-      sortie.push({
-        libelle: lecture.surfaceLegale.libelle,
-        valeur: lecture.surfaceLegale.valeur,
-        ou: lecture.loi === 'carrez' ? 'ce qui s’écrit dans l’acte' : 'ce qui s’écrit dans le bail',
-        forte: true
-      });
-    }
-    for (const autre of lecture.autresTotaux) {
-      sortie.push({
-        libelle: autre.libelle,
-        valeur: autre.valeur,
-        ou: 'total imprimé par le rapport',
-        forte: false
-      });
-    }
-    if (reference.etat === 'lue') {
-      sortie.push({
-        libelle: reference.libelle,
-        valeur: reference.valeur,
-        ou: 'page de garde du DPE',
-        forte: false
-      });
-    }
-    return sortie;
-  });
+  const cartes = $derived(lecture ? confronter(lecture, reference) : []);
 
   const ecart = $derived(lecture ? ecartNonCompte(lecture) : null);
   const ecartees = $derived(lecture ? piecesEcartees(lecture) : []);
@@ -206,11 +177,16 @@
       <h3 class="rubrique">Résumé des surfaces</h3>
       {#if cartes.length}
         <ul class="cartes">
-          {#each cartes as c (c.libelle)}
-            <li class="carte" class:forte={c.forte}>
-              <p class="carte-libelle">{c.libelle}</p>
+          {#each cartes as c, i (c.quoi)}
+            <!-- La première est la surface due par la loi : c'est la seule qui
+                 s'écrira dans l'acte ou dans le bail, elle se voit. -->
+            <li class="carte" class:forte={i === 0}>
+              <p class="carte-libelle">{c.quoi}</p>
               <p class="carte-valeur">{fr(c.valeur)}<span class="unite"> m²</span></p>
-              <p class="carte-ou">{c.ou}</p>
+              {#if c.aQuoiCaSert}
+                <p class="carte-ou">{c.aQuoiCaSert}</p>
+              {/if}
+              <p class="carte-source">lu dans {c.ou}</p>
             </li>
           {/each}
         </ul>
@@ -368,9 +344,9 @@
     {#if onglet === 'récapitulatif'}
       <h3 class="rubrique">Récapitulatif</h3>
       <dl class="recap">
-        {#each cartes as c (c.libelle)}
+        {#each cartes as c (c.quoi)}
           <div>
-            <dt>{c.libelle}</dt>
+            <dt>{c.quoi}</dt>
             <dd>{fr(c.valeur)} m²</dd>
           </div>
         {/each}
@@ -578,6 +554,16 @@
     margin: 0;
     font-size: 0.72rem;
     color: var(--encre-doux, #4a5a55);
+    line-height: 1.35;
+  }
+
+  /* D'où sort le chiffre — la traçabilité que l'ordre maître exige, en petit :
+     elle doit être là sans voler la vedette au chiffre lui-même. */
+  .carte-source {
+    margin: 0.3rem 0 0;
+    font-size: 0.68rem;
+    color: var(--encre-doux, #4a5a55);
+    opacity: 0.85;
   }
 
   .phrase {

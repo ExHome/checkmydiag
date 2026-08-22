@@ -344,10 +344,41 @@ Mesuré sur 60 dossiers témoins : **11 planches trouvées** (toutes en amiante)
 
 ---
 
-## 8. Ce que cette carte ne couvre pas encore
+## 8. Ce qui a été mesuré, et sur quoi
 
-- **Deux éditeurs seulement.** 18 volets, ce n'est pas 100 : les formes tiennent,
-  le sens n'est pas verrouillé. La lecture continue.
+*Échantillon **témoin** : des volets qui n'ont pas servi à écrire les lecteurs.
+La vérité employée ne vient pas de moi — le tableau pièce par pièce et le total
+annoncé sont deux écritures indépendantes de la même chose.*
+
+| | Volets | Format reconnu | Surface lue | Somme = total |
+|---|---|---|---|---|
+| LICIEL | 150 | 150 | 150 | 150 |
+| BC2E | *voir § 9* | | | |
+
+Deux défauts ont été trouvés là, et **aucun des deux par mes propres tests** :
+
+1. le commentaire tient parfois **sur** la ligne, après les deux nombres — deux
+   pièces sur trois perdues sans erreur, somme tombée de 45,69 à 4,26 m² ;
+2. `2ème étage - Chambre 1 10,1 10,33 Embrasure…` se lisait « Chambre », **1 m²**
+   retenu : le numéro de la chambre pris pour sa surface. Total 64,88 → 44,67 m².
+
+Et un troisième, trouvé en **regardant l'écran** avec un vrai rapport : le type
+`carrez` recouvre les deux mesurages, si bien qu'une attestation Boutin
+s'affichait avec la fiche de la vente — « ce chiffre part dans l'acte », les
+5 %, la copropriété. Le lecteur avait lu la loi ; l'écran ne la regardait pas.
+
+---
+
+## 9. Ce que cette carte ne couvre pas encore
+
+- **Deux éditeurs seulement.** 18 volets lus en entier, ce n'est pas 100 : les
+  formes tiennent, le sens n'est pas verrouillé. La lecture continue.
+- **⚠️ Le témoin BC2E n'existe pas encore.** Les 150 volets témoins sont 150
+  LICIEL : le corpus DGLM est passé à LICIEL, et les rapports BC2E datent de
+  2020-2021. Le lecteur BC2E n'a donc été éprouvé que sur les 8 volets qui ont
+  servi à l'écrire, plus ses tests. **C'est exactement la situation où les deux
+  défauts LICIEL ci-dessus étaient invisibles** — et il n'y a aucune raison
+  qu'un lecteur écrit sur 8 volets soit plus sûr qu'un lecteur écrit sur 10.
 - **Aucun volet d'éditeur tiers lu** à ce jour pour le mesurage.
 - **Le croquis n'a pas encore été regardé à l'écran.** Un tracé vectoriel ne
   s'ouvre pas hors navigateur : la planche est localisée et sa signature est

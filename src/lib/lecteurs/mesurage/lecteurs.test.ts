@@ -472,11 +472,54 @@ describe('la troisième surface : la référence, lue sur le DPE', () => {
        dossier annonce 31,48 m² — le total au sol. Ce n'est pas une erreur, et
        ce n'est pas à nous de trancher. */
     const vues = confronter(
-      { loi: 'carrez', surfaceLegale: { valeur: 30.92, source: 'Surface loi Carrez totale' } },
-      { etat: 'lue', valeur: 31.48, libelle: 'Surface habitable', source: 'Surface habitable' }
+      {
+        loi: 'carrez',
+        surfaceLegale: {
+          valeur: 30.92,
+          libelle: 'Surface loi Carrez totale',
+          source: 'Surface loi Carrez totale : 30.92 m²'
+        },
+        autresTotaux: [
+          {
+            valeur: 31.48,
+            libelle: 'Surface au sol totale',
+            source: 'Surface au sol totale : 31.48 m²'
+          }
+        ]
+      },
+      {
+        etat: 'lue',
+        valeur: 31.48,
+        libelle: 'Surface habitable',
+        source: 'Surface habitable : 31.48 m²'
+      }
     );
-    expect(vues.map((v) => v.valeur)).toEqual([30.92, 31.48]);
+    expect(vues.map((v) => v.valeur)).toEqual([30.92, 31.48, 31.48]);
     expect(vues[0]?.ou).toBe('le certificat de superficie');
-    expect(vues[1]?.ou).toBe('la page de garde du DPE');
+    expect(vues[2]?.ou).toBe('la page de garde du DPE');
+    /* La surface due par la loi est en tête : c'est la seule qui s'écrira. */
+    expect(vues[0]?.aQuoiCaSert).toMatch(/acte de vente/);
+  });
+
+  it('n’explique pas une colonne dont l’intitulé ne dit pas ce qu’elle contient', () => {
+    /* « Superficie HSP < 1.80M » range un jardin et une cave — ni l'un ni
+       l'autre n'a de hauteur sous plafond. On affiche l'intitulé du rapport et
+       rien de plus : lui inventer un sens serait parler à sa place. */
+    const vues = confronter(
+      {
+        loi: 'boutin',
+        surfaceLegale: {
+          valeur: 55.91,
+          libelle: 'La superficie habitable est',
+          source: 'La superficie habitable est : 55.91 m²'
+        },
+        autresTotaux: [
+          { valeur: 28.56, libelle: 'Superficie HSP < 1.80M', source: 'Totaux 55.91 m² 28.56 m²' }
+        ]
+      },
+      { etat: 'absente' }
+    );
+    expect(vues[1]).toMatchObject({ quoi: 'Superficie HSP < 1.80M', aQuoiCaSert: null });
+    expect(vues[0]?.aQuoiCaSert).toMatch(/bail/);
   });
 });
