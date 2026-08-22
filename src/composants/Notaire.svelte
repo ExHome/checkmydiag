@@ -402,8 +402,15 @@
    * l'egalite des coordonnees : deux points a 1 % l'un de l'autre se
    * chevauchent tout autant que deux points confondus.
    */
-  /** L'ecart minimal entre deux centres, en pourcentage de l'image. */
-  const ECART = 9;
+  /**
+   * L'ecart minimal entre deux centres, en pourcentage de l'image.
+   *
+   * A 9 %, les deux pastilles de l'electricite se touchaient bord a bord :
+   * mesure, 41 px d'ecart pour 40 px de diametre. Cliquables, mais collees, et
+   * l'oeil y lisait une seule tache. A 13 %, elles laissent une quinzaine de
+   * pixels entre elles sur un cadre de 430 px — deux objets, pas un.
+   */
+  const ECART = 13;
 
   const pastilles = $derived.by(() => {
     const posees: { x: number; y: number }[] = [];
