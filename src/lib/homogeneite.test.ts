@@ -91,7 +91,9 @@ const PLAFONDS: ReadonlyMap<string, number> = new Map([
   ['src/composants/dpe/EcranDpe.svelte', 5],
   ['src/composants/dpe/LesParois.svelte', 1],
   ['src/composants/dpe/LesSystemes.svelte', 1],
-  ['src/composants/dpe/MiniAppDpe.svelte', 32],
+  /* 32 → 31 le 22/08 : la jauge du résultat global posait son vert en dur
+     (#378546) quelle que soit la classe. Elle prend la couleur de l'arrêté. */
+  ['src/composants/dpe/MiniAppDpe.svelte', 31],
   ['src/composants/ecrans/BancTermites.svelte', 4],
   ['src/composants/ecrans/Termites.svelte', 1],
   ['src/composants/electricite/BancElectricite.svelte', 1],

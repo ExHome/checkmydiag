@@ -123,6 +123,21 @@
   const rempli = $derived(finale ? (OUVERT * (LETTRES.indexOf(finale) + 1)) / 7 : 0);
 
   /*
+   * LA JAUGE PORTE LA COULEUR DE LA CLASSE — ordre d'Aude, 22/08.
+   *
+   * L'arc était peint en `#378546` EN DUR : un vert, quelle que soit la lettre.
+   * Un logement classé F — passoire thermique, bientôt interdit à la location —
+   * s'affichait donc avec un arc vert, qui dit exactement l'inverse de ce que le
+   * rapport conclut. La référence montre un B, donc un arc vert : c'est la
+   * couleur de SA classe, pas une couleur de marque.
+   *
+   * Les sept teintes sont celles de l'arrêté, déjà dans `app.css` sous
+   * `--etq-a` … `--etq-g` — les mêmes que le ruban et que la pastille du bien.
+   * Elles ne se retouchent pas : c'est l'encre qui s'adapte autour.
+   */
+  const couleurDeLaClasse = $derived(finale ? `var(--etq-${finale.toLowerCase()})` : 'var(--trait-fin)');
+
+  /*
    * Le titre court, en serif, comme la maquette. Il nomme la classe ; la phrase
    * en dessous vient de l'analyse, qui connaît les seuils et les conséquences.
    */
@@ -314,9 +329,12 @@
       {#if finale}
         <div class="jauge">
           <svg viewBox="0 0 100 100" aria-hidden="true">
-            <circle cx="50" cy="50" r="42" fill="none" stroke="#afcda9" stroke-width="7"
+            <!-- Le rail : un gris de la charte, pour ne pas suggérer une classe
+                 que le logement n'a pas. Il était vert pâle, ce qui posait déjà
+                 du vert sur l'écran d'un logement classé F. -->
+            <circle cx="50" cy="50" r="42" fill="none" stroke="var(--trait-fin)" stroke-width="7"
               stroke-linecap="round" stroke-dasharray="{OUVERT} {CERCLE - OUVERT}" />
-            <circle cx="50" cy="50" r="42" fill="none" stroke="#378546" stroke-width="7"
+            <circle cx="50" cy="50" r="42" fill="none" stroke={couleurDeLaClasse} stroke-width="7"
               stroke-linecap="round" stroke-dasharray="{rempli} {CERCLE - rempli}" />
           </svg>
           <div class="lettre"><b>{finale}</b><span>Classe énergie</span></div>
