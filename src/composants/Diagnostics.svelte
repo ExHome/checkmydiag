@@ -104,6 +104,8 @@
   import { tick, untrack } from 'svelte';
 
   interface Props {
+    /** Les bandes du rapport, découpées pour être montrées. */
+    bandeaux?: BandeauDecoupe[];
     analyse: Analyse;
     /** Ouvre le rapport à l'endroit exact d'où sort ce verdict. */
     surVoirDansLeRapport?: (type: Diagnostic['type']) => void;
@@ -134,7 +136,8 @@
     ouvrir = null,
     origine = null,
     demande = 0,
-    schemaDeperditions = null
+    schemaDeperditions = null,
+    bandeaux = []
   }: Props = $props();
 
   /*
