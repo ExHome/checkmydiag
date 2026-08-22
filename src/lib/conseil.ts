@@ -380,7 +380,33 @@ const RECOURS: Partial<Record<TypeDiag, Recours>> = {
  */
 const METIERS_PAR_LOT: { motif: RegExp; recours: Recours }[] = [
   {
-    motif: /mur|plancher|comble|toiture|isolation/i,
+    /* Le lot « Toiture » d'un DPE parle d'isoler, mais on n'isole pas une
+       toiture sans toucher à la couverture : c'est le couvreur qui intervient. */
+    motif: /toiture|couverture|charpente|combles? perdus?/i,
+    recours: {
+      qui: 'Un couvreur',
+      appel: 'un couvreur',
+      quoi: 'un devis de la toiture — c’est le premier poste de perte, et le plus rentable à traiter'
+    }
+  },
+  {
+    motif: /mur|fa[çc]ade|pignon/i,
+    recours: {
+      qui: 'Un façadier ou une entreprise d’isolation',
+      appel: 'un façadier',
+      quoi: 'un devis de l’isolation des murs — le poste le plus coûteux, à chiffrer avant l’offre'
+    }
+  },
+  {
+    motif: /plancher|vide sanitaire|cave|sous-sol/i,
+    recours: {
+      qui: 'Une entreprise d’isolation',
+      appel: 'une entreprise d’isolation',
+      quoi: 'un devis de l’isolation du plancher bas'
+    }
+  },
+  {
+    motif: /comble|isolation|calorifug/i,
     recours: {
       qui: 'Une entreprise d’isolation',
       appel: 'une entreprise d’isolation',
@@ -388,7 +414,7 @@ const METIERS_PAR_LOT: { motif: RegExp; recours: Recours }[] = [
     }
   },
   {
-    motif: /menuiserie|fen[êe]tre|vitrage|porte/i,
+    motif: /menuiserie|fen[êe]tre|porte|volet|occultation/i,
     recours: {
       qui: 'Un menuisier',
       appel: 'un menuisier',
@@ -396,15 +422,23 @@ const METIERS_PAR_LOT: { motif: RegExp; recours: Recours }[] = [
     }
   },
   {
-    motif: /ventilation|vmc/i,
+    motif: /vitrage|survitrage|double vitrage/i,
     recours: {
-      qui: 'Un professionnel de la ventilation',
-      appel: 'un professionnel de la ventilation',
-      quoi: 'un devis de la ventilation que le rapport recommande — elle conditionne la santé du bâti'
+      qui: 'Un miroitier',
+      appel: 'un miroitier',
+      quoi: 'un devis du vitrage — le remplacer coûte souvent moins que la menuiserie entière'
     }
   },
   {
-    motif: /chauffage|chaudi[èe]re|[ée]metteur|r[ée]gulation|pompe [àa] chaleur/i,
+    motif: /ventilation|vmc|a[ée]ration/i,
+    recours: {
+      qui: 'Un professionnel de la ventilation',
+      appel: 'un professionnel de la ventilation',
+      quoi: 'un devis de la ventilation — elle conditionne la santé du bâti autant que la vôtre'
+    }
+  },
+  {
+    motif: /chauffage|chaudi[èe]re|[ée]metteur|r[ée]gulation|pompe [àa] chaleur|po[êe]le|radiateur/i,
     recours: {
       qui: 'Un chauffagiste',
       appel: 'un chauffagiste',
@@ -412,11 +446,35 @@ const METIERS_PAR_LOT: { motif: RegExp; recours: Recours }[] = [
     }
   },
   {
-    motif: /eau chaude|ecs|ballon|solaire|photovolta/i,
+    motif: /climatisation|refroidissement|rafra[îi]chiss/i,
     recours: {
-      qui: 'Un professionnel de l’eau chaude et des énergies renouvelables',
-      appel: 'un professionnel de l’eau chaude sanitaire',
-      quoi: 'un devis du poste d’eau chaude que le rapport recommande'
+      qui: 'Un climaticien',
+      appel: 'un climaticien',
+      quoi: 'un devis du poste de refroidissement'
+    }
+  },
+  {
+    motif: /eau chaude|ecs\b|ballon|cumulus|chauffe-eau/i,
+    recours: {
+      qui: 'Un plombier-chauffagiste',
+      appel: 'un plombier-chauffagiste',
+      quoi: 'un devis du poste d’eau chaude sanitaire'
+    }
+  },
+  {
+    motif: /solaire|photovolta|[ée]olien|renouvelable|enr\b|biomasse|bois/i,
+    recours: {
+      qui: 'Un installateur en énergies renouvelables',
+      appel: 'un installateur en énergies renouvelables',
+      quoi: 'un devis de l’équipement que le rapport recommande, et les aides auxquelles il ouvre droit'
+    }
+  },
+  {
+    motif: /[ée]clairage|luminaire/i,
+    recours: {
+      qui: 'Un électricien',
+      appel: 'un électricien',
+      quoi: 'un devis de la reprise de l’éclairage'
     }
   }
 ];
