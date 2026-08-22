@@ -1769,12 +1769,18 @@
 
 
   /* La ligne du rapport, citée telle quelle, avant toute explication.
-     Sur fond d'or, comme le surlignage qui l'a désignée sur la page : c'est la
-     même phrase, du même jaune, retrouvée à deux endroits. */
+     Sur fond champagne, comme le surlignage qui l'a désignée sur la page : la
+     même phrase retrouvée à deux endroits.
+
+     Elle a d'abord été posée sur l'or plein — une surface, là où les packs ne
+     demandent qu'un « accent discret ». Mesuré sur le visuel de référence le
+     22/08 : le doré n'y occupe que 0,28 % des pixels, et jamais un fond. Les
+     deux cartes du visuel sont sur un champagne très pâle (#fbf5ec, #f7f0e5),
+     et c'est ce registre-là que la citation reprend. */
   .extrait {
     margin: 0;
     padding: var(--e3) var(--e4);
-    background: var(--verriere-sable-or);
+    background: var(--verriere-champagne);
     border-left: 3px solid var(--verriere-vert-profond);
     border-radius: var(--rayon-petit);
     font-size: var(--t-base);

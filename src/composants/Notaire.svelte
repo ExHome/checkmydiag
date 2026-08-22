@@ -1052,7 +1052,7 @@
     width: 6px;
     height: 6px;
     border-radius: 1px;
-    background: var(--verriere-sable-or);
+    background: var(--verriere-vert);
   }
 
 

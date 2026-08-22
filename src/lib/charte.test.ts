@@ -174,6 +174,58 @@ describe('aucun jeton ne ment sur ce qu’il contient', () => {
    * illustration où il a un sens ; il ne peut plus être le fond, la carte, la
    * bordure dominante ni la pastille de qui que ce soit.
    */
+  /*
+   * LE DORE EST UN ACCENT, PAS UNE SURFACE.
+   *
+   * « Que sur le visuel demandé », 22/08/2026. Le visuel de référence a été
+   * mesuré pixel par pixel ce jour-là : le doré y occupe **0,28 %** de l'image
+   * — 1 086 pixels sur 393 216 — et seulement trois choses, le texte
+   * « Non contrôlé », le sous-titre en capitales et le pictogramme. Jamais un
+   * fond. Le bouton principal du visuel est vert profond.
+   *
+   * Le produit, lui, avait posé l'or en fond plein sous une citation, et en
+   * puces de liste — que le visuel montre vertes, et qui tenaient 2,08 sur
+   * l'ivoire, sous le seuil de 3:1 d'un élément graphique.
+   *
+   * Ce test attrape la signature d'une SURFACE : un fond doré dans un bloc qui
+   * a du padding ou une hauteur minimale. Les filets, les joints d'un pixel et
+   * les puces restent libres — ce sont des accents, et le visuel en a.
+   */
+  it('ne pose jamais le doré en fond d’une surface', () => {
+    const fautifs: string[] = [];
+    for (const f of FICHIERS) {
+      const source = readFileSync(f, 'utf8');
+      /* Chaque bloc CSS, de son accolade ouvrante à la fermante. */
+      for (const bloc of source.split('}')) {
+        if (!/background(-color)?:\s*var\(--verriere-sable-or/.test(bloc)) continue;
+
+        const selecteur = bloc.split('{')[0]?.trim().split(String.fromCharCode(10)).pop() ?? '?';
+
+        /* Un survol est transitoire et ne se voit qu'à la souris. Le visuel est
+           une maquette mobile : il ne peut pas montrer d'état de survol, donc il
+           ne peut pas trancher. En attente de l'arbitrage d'Aude. */
+        if (/:hover|:focus|:active/.test(selecteur)) continue;
+
+        /* `padding: 0` ne fait pas une surface — au contraire. `.panneaux` de
+           l'accueil pose le doré derrière une grille à `gap: 1px` : il ne s'en
+           voit qu'un filet d'un pixel entre les carreaux, le plomb de la
+           verrière. C'est l'accent le plus juste du produit, et le premier jet
+           de ce test l'accusait. */
+        /* Écrit en deux temps, et pas en un lookahead négatif : `padding:\s*(?!0)`
+           passe sur `padding: 0` parce que `\s*` peut matcher zéro espace et que
+           la négation est alors testée sur l'espace, pas sur le zéro. La regex
+           disait le contraire de ce qu'elle avait l'air de dire. */
+        const paddingNul = /padding:\s*0\s*;/.test(bloc);
+        const surface = (/padding:/.test(bloc) && !paddingNul) || /min-height:/.test(bloc);
+        if (surface) fautifs.push(`${f} → ${selecteur}`);
+      }
+    }
+    expect(
+      fautifs,
+      `le doré est posé en fond d'une surface : ${fautifs.join(', ')}`
+    ).toEqual([]);
+  });
+
   it('n’utilise plus le sauge comme couleur de structure', () => {
     const fautifs: string[] = [];
     for (const f of FICHIERS) {
