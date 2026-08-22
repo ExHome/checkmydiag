@@ -40,6 +40,7 @@ export function lireLeGaz(lignes: readonly string[]): Aiguillage<LectureGaz> {
 
 export { LECTEUR_GAZ_LICIEL } from './liciel';
 export { LECTEUR_GAZ_BC2E } from './bc2e';
+export { contradictions } from './modele';
 export type {
   LectureGaz,
   AnomalieGaz,

@@ -134,6 +134,48 @@ describe('LICIEL — ce que 26 volets ont imposé', () => {
     expect(lu.anomalies[0]?.appareil).toBeNull();
   });
 
+  /*
+   * La régression du 22/08 : une anomalie s'étale sur PLUSIEURS lignes — code
+   * seul, puis niveau, puis libellé — et une version du lecteur ne gardait que
+   * la ligne du code. Les A1, A2 et DGI du rapport étaient perdus.
+   *
+   * Le piège de la correction : les appels de note `(3)`, `(4) (5)` figurent
+   * aussi dans l'en-tête du tableau. Fermer le bloc dessus faisait ressortir
+   * « zéro anomalie » sur un volet qui porte un DGI.
+   */
+  it('lit une anomalie étalée sur plusieurs lignes, niveau compris', () => {
+    const etale = [
+      'E. - Anomalies identifiées',
+      'Anomalies',
+      '(3)',
+      'Points de contrôle observées',
+      '(4) (5) Libellé des anomalies et recommandations Photos',
+      '(selon la norme) (A1 , A2 ,',
+      'DGI (6) , 32c (7) )',
+      'C.7 - 8a1',
+      'Au moins un organe de coupure d’appareil est',
+      'Organe de Coupure d’Appareil A1',
+      'absent. (Chaudière MARQUE MODELE)',
+      'D.3 - S1',
+      'DGI Remarques : (RDC - Cuisine)',
+      'Présence d’un taux de CO (Monoxyde de Carbone) supérieur à 25 ppm',
+      '(4) A1 : L’installation présente une anomalie à prendre en compte',
+      '(5) A2 : L’installation présente une anomalie dont le caractère',
+      'fourniture du gaz, mais est suffisamment importante pour que la réparation',
+      'F. – Identification des bâtiments et parties du bâtiment'
+    ];
+    const a = LECTEUR_GAZ_LICIEL.lire(etale).anomalies;
+    expect(a).toHaveLength(2);
+    expect(a[0]?.niveau).toBe('A1');
+    expect(a[1]?.niveau).toBe('DGI');
+    expect(a[0]?.libelle).toMatch(/organe de coupure d’appareil est.*absent/i);
+    /* « Monoxyde de Carbone » est une glose de la norme, pas un appareil. */
+    expect(a[1]?.appareil).toBeNull();
+    expect(a[0]?.appareil).toMatch(/Chaudière/);
+    /* La continuation de la note (5) n'appartient à aucune anomalie. */
+    expect(a.map((x) => x.libelle).join(' ')).not.toMatch(/fourniture du gaz, mais est suffisamment/);
+  });
+
   it('lit l’alimentation, la zone non contrôlée et son motif', () => {
     expect(lu.alimentee).toBe('OUI');
     expect(lu.zonesNonControlees[0]?.zone).toMatch(/Combles/);

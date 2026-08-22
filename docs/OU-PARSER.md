@@ -1313,6 +1313,91 @@ se vérifie sur un cas connu avant d'être crue.
 
 ---
 
+## Les éléments d'unité de diagnostic, tels que les tableaux les nomment
+
+*Liste tenue par la LECTURE, jamais par analogie. Chaque entrée a été vue à la
+place d'unité de diagnostic dans un tableau du § 5.*
+
+Le lecteur en connaissait seize. **Huit volets lus en entier en ont ajouté
+quinze** :
+
+```
+cheminée · barreaux · marche · contremarche · faux limon · crémaillère
+balustre · main courante · charpente · poteau · panne · solive
+terrasse · façade · végétation
+```
+
+Six sont des pièces d'escalier : un escalier de 16 unités n'en rendait que 2.
+Quatre sont des pièces de charpente, que le CREP mesure parce que le bois peut
+porter une peinture au plomb. Les trois derniers sont des extérieurs — et
+« végétation », que rien ne laissait prévoir, montre qu'une liste d'éléments ne
+se devine pas : elle se lit.
+
+### Ce qui a été refusé
+
+**« Poutre »** — ajoutée par analogie avec « charpente », puis retirée : elle
+n'apparaît dans aucun tableau lu. **« Lambris »** — retirée aussi : elle existe
+dans les rapports, mais comme *revêtement* (« Plafond lambris bois vernis »), où
+l'unité est le plafond. L'inscrire aurait fabriqué une unité de plus.
+
+**« Grille »**, que le § 3.2 cite pourtant en exemple d'élément métallique à
+mesurer, n'y est pas non plus : le texte la mentionne, aucun tableau ne la porte.
+
+### Le prix d'un élargissement
+
+Ajouter « Escalier » à la liste a créé **deux unités fantômes** : le tableau
+récapitulatif du § 5 liste les pièces, et « RDC - Escalier 1  2  2 (100 %)… »
+porte le mot. Les autres pièces y échappaient par hasard — « Cuisine » et
+« Garage » ne sont pas des éléments.
+
+D'où le garde-fou, vérifié sur les volets lus : **une ligne d'unité ne porte
+jamais de pourcentage.** Les pourcentages vivent dans les récapitulatifs.
+
+⚠️ **Élargir une liste de motifs se paie toujours quelque part**, et on ne le voit
+qu'en mesurant après. C'est la raison d'être de l'échantillon figé.
+
+---
+
+## Le lecteur d'unités, arrivé à la concordance — et ce que ça ne prouve pas
+
+*21/08/2026, échantillon figé de 120 dossiers, 33 volets plomb.*
+
+```
+                       départ    arrivée
+concordance § 41        33 %      29 / 29 volets exploitables
+écarts                  18        0
+récupération            —         2 960 / 2 960 unités
+```
+
+Huit volets lus en entier ont donné **treize défauts**, dont deux dans du code
+que je n'avais pas écrit (le nommage des locaux et la date du pied de page pris
+pour un nom de pièce, tous deux dans `plomb.ts`, tous deux visibles dans le
+produit).
+
+### ⚠️ Ce que ce 100 % ne prouve pas
+
+**Les corrections ont été faites en regardant cet échantillon.** Un lecteur
+ajusté sur son propre terrain de mesure y réussit toujours : c'est du
+sur-ajustement, pas de la justesse.
+
+L'échantillon d'ajustement est donc archivé (`echantillon-crep-01.json`) et un
+**second échantillon est tiré, que le lecteur n'a jamais vu**. C'est lui qui dit
+la vérité. Tant que cette seconde mesure n'est pas faite, la première ne vaut
+que comme « plus aucun défaut connu », jamais comme « le lecteur est juste ».
+
+### La méthode qui a marché, en quatre temps
+
+1. **Figer l'échantillon** — trois passes antérieures avaient donné 39 %, 47 %
+   puis 33 % sur trois tirages différents, dont deux avec le même code.
+2. **Lire un volet en écart en entier**, jamais sonder. Quatre sondes
+   successives avaient réfuté trois hypothèses sans rien trouver ; la première
+   lecture a donné trois défauts en quelques minutes.
+3. **Corriger ce que la lecture montre**, et rien d'autre.
+4. **Remesurer sur le même échantillon**, et regarder les DEUX chiffres : la
+   concordance stricte peut monter pendant que la récupération baisse.
+
+---
+
 ## Un endroit de plus : « Validité du constat » (§ 6.3)
 
 Le CREP écrit lui-même jusqu'à quand il vaut. Verrière, elle, le **calculait** —
@@ -2608,3 +2693,95 @@ Sur 55 volets soumis (26 LICIEL, 24 BC2E, 5 inconnus) :
 | conclusions lues | 24 — les BC2E, aucune LICIEL |
 | points de contrôle non vérifiés remontés | 82 |
 | appareils | 79 |
+
+## L'échantillon témoin — ou comment un lecteur à 100 % en fait 77
+
+Le lecteur d'unités CREP atteignait **0 écart et 100 % des unités** sur
+l'échantillon figé de 150 dossiers. Le chiffre était vrai, et il ne prouvait
+rien : chaque correction avait été faite **après** avoir lu ce corpus-là. Un
+lecteur calé de cette façon peut n'avoir appris qu'un corpus, élément par
+élément, sans rien comprendre de la forme.
+
+Un second échantillon a donc été tiré, **figé lui aussi et disjoint par
+construction**, sur lequel on ne corrige jamais. Il n'existe que pour mesurer.
+
+| | figé (a servi à corriger) | témoin (jamais lu pour corriger) |
+|---|---|---|
+| volets plomb | 39 | 39 |
+| concordance § 41 | 90 % | **77 %** |
+| écarts | 0 | **6** |
+| unités récupérées | 2 513 / 2 513 | 3 550 / 3 567 |
+| état renseigné sur les unités au-dessus du seuil | 98 % | **79 %** |
+
+**Treize points de concordance étaient du surapprentissage.** Sans le témoin,
+ils auraient été annoncés comme un résultat.
+
+### Ce que le témoin a montré et que le figé ne pouvait pas montrer
+
+Cinq volets perdent des unités, un en fabrique deux de trop, et le plus gros
+écart du lot atteint **11 unités sur 83**. Aucun de ces cas n'existait dans le
+figé : ce sont des formes de tableau que le lecteur n'avait jamais rencontrées.
+
+Une piste est ouverte, et elle n'est **pas encore établie** : l'extraction
+collerait parfois deux unités sur une même ligne, et le lecteur n'en cherche
+qu'une par ligne. La sonde en compte 35 — mais elle compte des *mots*, et
+« Porte du placard » en contient deux pour une seule unité. Tant que ces lignes
+n'ont pas été lues une par une, le chiffre est un signal, pas un défaut.
+
+> ⚠️ Ce chiffre n'est pas comparable au 0 relevé sur le figé : les deux passes
+> n'utilisaient pas la même liste d'éléments. La sonde recopiait la liste du
+> lecteur au lieu de la lui demander, et sa copie avait vieilli. Elle la lui
+> demande désormais — deux mesures faites avec deux règles différentes ne se
+> comparent pas.
+
+### La règle qui en sort
+
+> Un échantillon sur lequel on corrige ne mesure plus rien. Il en faut un second,
+> figé, disjoint, jamais lu pour corriger — et quand il révèle un défaut absent du
+> premier, on **agrandit le lot d'apprentissage**, on ne corrige pas sur le témoin.
+
+C'est pour ça que le mode `etendre` conserve les dossiers déjà figés et n'ajoute
+que des dossiers pris hors du témoin : la non-régression tient, et le témoin
+reste intact.
+
+### Hypothèse réfutée : « deux unités collées sur une ligne »
+
+Une sonde comptait 88 lignes portant plus d'un nom d'élément dans le tableau des
+mesures, et j'y voyais la cause des unités perdues. **Elle ne l'est pas.** Les
+43 formes distinctes, lues une par une, se répartissent en deux familles et
+aucune ne porte deux unités :
+
+- des phrases du **rappel réglementaire** — « balcons, rebords extérieurs de
+  fenêtres », « nettoyer le sol, les rebords des fenêtres » — qui contiennent
+  deux noms d'éléments et zéro unité de diagnostic ;
+- des **noms composés désignant une seule unité** : *Porte placard*, *Porte
+  fenêtre*, *Solives plafond*, *Faux plafond*, *Sol plastique*, *Dalle de sol*,
+  *Plafond charpente*.
+
+Compter des mots n'est pas constater un défaut. La sonde mesurait sa propre
+définition, pas le rapport.
+
+### Le vrai défaut : un élément de page devenu nom de local
+
+Sur un volet de 407 unités, **deux locaux entiers rendaient zéro unité** et un
+troisième n'avait pas de nom. La cause tient en une ligne : le rapport porte un
+filigrane, imprimé **une fois par page**, qui s'intercale entre le titre d'un
+local et son récapitulatif. La fonction qui nomme les locaux remonte de trois
+lignes au-dessus du récapitulatif et retient la première ligne « plausible » —
+elle a retenu le filigrane.
+
+Le filigrane est alors devenu un nom de local. Et comme **le titre d'un local
+ferme le tableau du local précédent**, ce faux titre refermait le tableau à
+chaque page où il apparaissait. Les unités situées après lui n'étaient plus
+dans aucun tableau.
+
+Le repère qui les sépare est mesurable, pas supposé :
+
+| | occurrences dans le volet |
+|---|---|
+| un vrai titre de local | **1** |
+| le filigrane | **25** (une par page) |
+| l'en-tête de colonnes | 52 |
+
+Un nom de local ne se répète pas ; un élément de page se répète autant qu'il y a
+de pages.

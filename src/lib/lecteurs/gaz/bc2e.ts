@@ -50,6 +50,24 @@ const CODE_NU = /\b(S?\d{1,2}[a-z]?\d?|[A-Z])\b/;
 /** Le lexique en bas du tableau E : il définit les niveaux, il ne constate pas. */
 const LEXIQUE = /^(A1|A2|DGI|32c)\s*[:(]|^Lexique|^\*\s*Point de contr/i;
 
+/**
+ * L'en-tête du tableau E, reconnu à sa CASSE — et non à son premier mot.
+ *
+ * ⚠️ Les quatre lignes d'en-tête sont en capitales : `POINT DE A1, A2, DGI,`,
+ * `APPAREIL LIBELLÉ DES ANOMALIES ET RECOMMANDATIONS`, `CONTRÔLE* 32C`. Une
+ * version antérieure les écartait sur leur premier mot, dont `APPAREIL` — et
+ * perdait du même coup toute anomalie portant sur un « Appareil Etanche », qui
+ * est pourtant un genre d'appareil du rapport. Une anomalie A1 disparaissait
+ * ainsi d'un volet dont la conclusion annonçait pourtant des anomalies.
+ *
+ * Un constat porte des minuscules, un en-tête n'en porte pas.
+ */
+function estUnEnTete(ligne: string): boolean {
+  const lettres = ligne.replace(/[^A-Za-zÀ-ÿ]/g, '');
+  if (lettres.length < 3) return true;
+  return lettres === lettres.toUpperCase();
+}
+
 /** Les mentions de pied de page, présentes sur chaque page du volet. */
 const PIED = /^(DGLM|n° de rapport|76 COURS|DIAGNOSTIC GAZ|Tel :|DDT :|Siret|RÉSERVE DE)/i;
 
@@ -129,6 +147,10 @@ function appareils(lignes: readonly string[]): AppareilGaz[] {
       designation: ligne,
       type,
       puissance,
+      /* BC2E n'imprime pas d'annee d'installation : mesure sur 29 volets. */
+      annee: null,
+      entretienAppareil: null,
+      entretienConduit: null,
       localisation,
       co: mesureCO(ligne),
       observations: [],
@@ -151,7 +173,7 @@ export function anomaliesBc2e(lignes: readonly string[]): AnomalieGaz[] {
   for (const brute of zone) {
     const ligne = brute.trim();
     if (!ligne || LEXIQUE.test(ligne) || estUnePhraseDuFormulaire(ligne)) continue;
-    if (/^(POINT DE|APPAREIL|CONTR[ÔO]LE|A1, A2|LIBELL[ÉE])/i.test(ligne)) continue;
+    if (estUnEnTete(ligne)) continue;
     const niveau = niveauDe(ligne);
     if (!niveau) continue;
     /* L'appareil précède le code ; le code précède le niveau. */
@@ -201,11 +223,32 @@ function pointsNonVerifies(lignes: readonly string[]): PointNonVerifie[] {
   return sorties;
 }
 
+/**
+ * Les constatations de la rubrique G.
+ *
+ * ⚠️ Chez BC2E, la rubrique G porte les constatations PUIS les cinq phrases
+ * pré-imprimées de la conclusion, suivies de l'avertissement DGI et de la
+ * phrase 32c — le tout coupé en lignes par la mise en page. Filtrer les cinq
+ * phrases ne suffit pas : leurs continuations restaient, et « et signalé(s) par
+ * la ou les étiquettes de condamnation. » ressortait comme une observation du
+ * diagnostiqueur sur un rapport sans la moindre anomalie.
+ *
+ * La première des cinq phrases marque donc la fin des constatations : tout ce
+ * qui suit appartient au formulaire.
+ */
 function constatations(lignes: readonly string[]): string[] {
-  return entre(lignes, RUBRIQUES.constatations, RUBRIQUES.actionsDgi)
-    .map((l) => l.trim())
-    .filter((l) => l && !estUnePhraseDuFormulaire(l))
-    .filter((l) => !/^Tant que la \(ou les\) anomalie/i.test(l));
+  const zone = entre(lignes, RUBRIQUES.constatations, RUBRIQUES.actionsDgi);
+  const sorties: string[] = [];
+  for (const brute of zone) {
+    const ligne = brute.trim();
+    if (!ligne) continue;
+    if (estUnePhraseDuFormulaire(ligne)) break;
+    /* Les cases « NC (Non Concerné) », coupées en deux lignes par la colonne. */
+    if (/^NC\s*\(?Non$|^Concern[ée]\)?$/i.test(ligne)) continue;
+    /* La case coupée laisse aussi « Concerné) » collé en tête de la ligne suivante. */
+    sorties.push(ligne.replace(/^(?:NC\s*\(?\s*Non\s*)?Concern[ée]\)\s*/i, '').replace(/^NC\s*\(?\s*/i, '').trim());
+  }
+  return sorties.filter(Boolean);
 }
 
 /**

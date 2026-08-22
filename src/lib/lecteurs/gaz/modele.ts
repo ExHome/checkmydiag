@@ -29,6 +29,24 @@ export interface AppareilGaz {
   /** « Raccordé », « Non raccordé », « Étanche ». */
   type: string | null;
   puissance: string | null;
+  /**
+   * L'année d'installation de l'appareil, telle qu'écrite — « 2012 ».
+   *
+   * ⚠️ Champ propre à LICIEL : présent dans 13 volets sur 26, et dans AUCUN des
+   * 29 volets BC2E lus. `null` veut donc dire « non renseigné par ce rapport »,
+   * jamais « appareil neuf » ni « âge inconnu du diagnostiqueur ».
+   */
+  annee: string | null;
+  /**
+   * L'entretien, tel que le rapport le coche : « Oui », « Non », « Sans objet ».
+   *
+   * Trois etats, jamais deux : « Sans objet » n'est pas « Non ». C'est un champ
+   * du volet gaz — le seul jugement que ce diagnostic porte sur l'etat
+   * d'entretien d'un appareil. Il ne dit rien de sa vetuste : le mot n'apparait
+   * dans AUCUN des 55 volets lus.
+   */
+  entretienAppareil: string | null;
+  entretienConduit: string | null;
   /** « RDC - Cuisine », « Rez de chaussée - Cellier »… tel quel. */
   localisation: string | null;
   co: MesureCO;
@@ -109,6 +127,94 @@ const PHRASES_DU_FORMULAIRE = [
  */
 export function estUnePhraseDuFormulaire(ligne: string): boolean {
   return PHRASES_DU_FORMULAIRE.some((p) => p.test(ligne));
+}
+
+/**
+ * LE MOTEUR DE CONTRADICTIONS (§ 32-33 de l'ordre de mission).
+ *
+ * La synthèse n'écrase jamais le détail, et le détail ne fait pas taire la
+ * synthèse : quand les deux se contredisent, on le DIT. Ce contrôle a été écrit
+ * après qu'un volet dont la conclusion annonçait « une ou des anomalie(s) : A1 »
+ * est ressorti avec zéro anomalie extraite — l'anomalie était perdue par le
+ * lecteur, et rien ne le signalait.
+ *
+ * Il ne corrige pas la lecture : il la met en accusation. Une contradiction non
+ * résolue doit remonter à l'écran, jamais être arbitrée en silence.
+ */
+export function contradictions(lecture: LectureGaz): string[] {
+  const dits: string[] = [];
+  const c = lecture.conclusion;
+  const n = lecture.anomalies.length;
+
+  if (c.lisible) {
+    const annonceDesAnomalies = /comporte (?:une ou des|des|une) anomalie/i.test(c.texte);
+    const annonceAucune = /ne comporte aucune anomalie/i.test(c.texte);
+    if (annonceDesAnomalies && n === 0) {
+      dits.push(
+        `La conclusion du rapport annonce des anomalies — « ${c.texte} » — mais aucune n'a pu être extraite du tableau. Une anomalie est probablement perdue à la lecture.`
+      );
+    }
+    if (annonceAucune && n > 0) {
+      dits.push(
+        `La conclusion du rapport annonce « aucune anomalie », mais ${n} anomalie(s) figurent au tableau. Le rapport se contredit, ou la lecture se trompe.`
+      );
+    }
+  }
+
+  /* Un appareil dont un point de contrôle n'a pas été vérifié n'est pas « vu ». */
+  for (const p of lecture.pointsNonVerifies) {
+    if (!p.appareil) continue;
+    const cite = lecture.appareils.some((a) => a.designation.toLowerCase().includes(p.appareil!.toLowerCase()));
+    if (cite && lecture.anomalies.length === 0 && lecture.conclusion.lisible) {
+      dits.push(
+        `Le point « ${p.point} » n'a pas été vérifié sur « ${p.appareil} » : l'absence d'anomalie ne vaut pas pour ce point.`
+      );
+      break;
+    }
+  }
+
+  /*
+   * ⚠️ Le rapport peut se contredire LUI-MÊME sur l'alimentation.
+   *
+   * Relevé sur un volet réel : la rubrique A porte « Installation alimentée en
+   * gaz : OUI », et les constatations diverses écrivent « Le compteur de Gaz a
+   * été déposé. En l'absence de Gaz dans l'installation, les essais […] n'ont
+   * pas pu être effectués. » Les deux ne peuvent pas être vraies.
+   *
+   * On ne tranche pas : on signale. Suivre la rubrique A seule ferait présenter
+   * comme essayée une installation qui ne l'a pas été.
+   */
+  const dementiAlimentation = lecture.constatations.find((c) =>
+    /(?:absence de gaz|compteur (?:de gaz )?(?:a été )?déposé|gaz (?:a été )?coup[ée])/i.test(c)
+  );
+  if (lecture.alimentee === 'OUI' && dementiAlimentation) {
+    dits.push(
+      `Le rapport se contredit sur l'alimentation : la rubrique A la déclare alimentée, et les constatations diverses écrivent « ${dementiAlimentation.slice(0, 110)}… ». Les essais n'ont donc peut-être pas été réalisés.`
+    );
+  }
+
+  /*
+   * La contradiction F / G : la rubrique des parties non contrôlées porte
+   * « Néant », et les constatations diverses annoncent que des points n'ont pas
+   * pu être contrôlés. Les deux ne peuvent pas être vraies.
+   */
+  const dementiControle = lecture.constatations.find((c) =>
+    /certains points de contr[ôo]les? n['’]ont? pu [êe]tre contr[ôo]l/i.test(c)
+  );
+  if (dementiControle && lecture.zonesNonControlees.length === 0 && lecture.pointsNonVerifies.length === 0) {
+    dits.push(
+      "Le rapport annonce en constatations diverses que certains points n'ont pas pu être contrôlés, mais ne les liste nulle part. Les rubriques prévues pour cela sont vides."
+    );
+  }
+
+  /* Une installation non alimentée ne permet aucun essai : le dire. */
+  if (lecture.alimentee === 'NON' && lecture.anomalies.length === 0) {
+    dits.push(
+      "L'installation n'était pas alimentée en gaz : les essais n'ont pas pu être réalisés. L'absence d'anomalie constatée ne vaut pas installation saine."
+    );
+  }
+
+  return dits;
 }
 
 /** Le niveau cité par une ligne, s'il y en a un et un seul. */
