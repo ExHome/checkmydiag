@@ -16,7 +16,46 @@ function zonesTermites(lignes: string[]): { nom: string; etat: Gravite; detail?:
 
   for (const ligne of lignes) {
     const colle = compact(ligne);
-    if (!colle.includes('indicesdinfestation') && !colle.includes('indicedinfestation')) continue;
+
+    /*
+     * LE FILTRE D'ENTRÉE LAISSAIT PASSER DEUX ÉTATS SUR TROIS.
+     *
+     * Il n'acceptait qu'une ligne portant « indice(s) d'infestation ». Une
+     * ligne de tableau écrite « Cave — Solives — Présence de termites » —
+     * c'est-à-dire la conclusion la plus grave de la norme — était donc
+     * écartée avant même d'être examinée, et la zone touchée n'existait
+     * nulle part. Mesuré : aucune zone produite sur un rapport d'infestation.
+     *
+     * L'intitulé du diagnostic est exclu ici aussi : « État relatif à la
+     * présence de termites » n'est pas une ligne de constat.
+     */
+    const estLIntitule = /relatif [àa] la pr[ée]sence|[ée]tat du b[âa]timent/i.test(ligne);
+
+    /*
+     * UNE PHRASE N'EST PAS UNE LIGNE DE TABLEAU.
+     *
+     * « Présence de termites vivants constatée dans la cave. » est la
+     * conclusion du rapport, pas une entrée de son tableau des zones. Sans
+     * cette garde elle devenait une zone anonyme de plus : mesuré, le verdict
+     * annonçait « des termites ont été constatés dans 2 zones » là où le
+     * rapport n'en nomme qu'une.
+     *
+     * Le point final tranche : les lignes de tableau n'en portent pas.
+     */
+    const estUnePhrase = /\.\s*$/.test(ligne);
+
+    const parleDePresence =
+      !estLIntitule &&
+      !estUnePhrase &&
+      (colle.includes('presencedetermites') || /termites? vivants?/i.test(ligne));
+
+    if (
+      !colle.includes('indicesdinfestation') &&
+      !colle.includes('indicedinfestation') &&
+      !parleDePresence
+    ) {
+      continue;
+    }
 
     // « Piece 1 Sol - Carrelage Absence d'indices d'infestation de termites »
     const piece = ligne.match(/^((?:Pi[eè]ce|Chambre|Cuisine|Salon|S[ée]jour|Salle|Garage|Cave|Grenier|Combles|WC|Couloir|Entr[ée]e|D[ée]gagement|Buanderie|Terrasse|Balcon|Ext[ée]rieur)[^-]*?)\s+(?:Sol|Mur|Plafond|Plinthes|Porte|Fen[eê]tre|Charpente|Escalier)/i);
@@ -37,9 +76,44 @@ function zonesTermites(lignes: string[]): { nom: string; etat: Gravite; detail?:
      * non. On exige donc que la ligne nomme les termites.
      */
     const parleDeTermites = /termites?/i.test(ligne);
-    const presence =
+
+    /*
+     * ─────────────────────────────────────────────────────────────────────
+     * LES TROIS ÉTATS DE LA NORME, ET PAS DEUX.
+     * ─────────────────────────────────────────────────────────────────────
+     *
+     * NF P 03-201 distingue trois conclusions : absence d'indice, présence
+     * d'indices, et présence de TERMITES — des insectes vivants, constatés.
+     * Cette fonction n'en connaissait que deux : `presence ? 'alerte' : 'bon'`.
+     *
+     * Le troisième n'avait donc nulle part où aller. Mesuré le 22 août sur un
+     * rapport écrit « Cave — Solives — Présence de termites » : aucune zone
+     * n'était marquée, la conclusion était déclarée illisible, et l'écran
+     * annonçait à un acquéreur dont la cave abrite des termites vivants que
+     * la conclusion de son rapport n'était pas lisible.
+     *
+     * ── POURQUOI DEUX MOTIFS ET NON UN SEUL ────────────────────────────────
+     *
+     * « Présence d'indices d'infestation de termites » contient le mot
+     * « termites » ET le mot « indice ». Un motif unique confondrait les deux
+     * états. La règle est donc : une ligne qui nomme des indices relève du
+     * deuxième état ; une ligne qui nomme les termites SANS parler d'indices
+     * relève du troisième.
+     *
+     * Les deux portent la même gravité — `alerte` est déjà le maximum — mais
+     * ils ne se disent pas de la même façon au lecteur, et la déclaration en
+     * mairie n'est obligatoire que pour le troisième.
+     */
+    const parleDIndices = colle.includes('presencedindices') || /pr[ée]sence d.indice/i.test(ligne);
+    const presenceIndices = parleDeTermites && parleDIndices;
+    const presenceTermites =
       parleDeTermites &&
-      (colle.includes('presencedindices') || /pr[ée]sence d.indice/i.test(ligne));
+      !parleDIndices &&
+      (/pr[ée]sence de termites/i.test(ligne) ||
+        /termites? vivants?/i.test(ligne) ||
+        colle.includes('presencedetermites'));
+
+    const presence = presenceIndices || presenceTermites;
     const existante = zones.find((z) => z.nom === nom);
 
     if (existante) {
@@ -140,6 +214,47 @@ export function analyserTermites(lignes: string[], plage: [number, number]): Dia
   );
 
   /*
+   * ───────────────────────────────────────────────────────────────────────
+   * LE TROISIÈME ÉTAT : DES TERMITES, PAS DES TRACES.
+   * ───────────────────────────────────────────────────────────────────────
+   *
+   * Le motif de présence ci-dessus exige les mots « indice » ou
+   * « infestation ». Or la conclusion la plus grave de la norme ne les
+   * contient ni l'un ni l'autre : « Présence de termites vivants constatée
+   * dans la cave. »
+   *
+   * Conséquence mesurée le 22 août : `conclusionLue` valait faux, la gravité
+   * tombait à « neutre », et le verdict annonçait « sa conclusion n'a pas pu
+   * être lue automatiquement ». Le cas le plus grave du diagnostic était le
+   * seul que le produit ne savait pas lire.
+   *
+   * L'exclusion d'« indice » est nécessaire : « présence d'indices
+   * d'infestation de termites » nomme les termites elle aussi, et sans cette
+   * garde elle serait promue au troisième état — on annoncerait des insectes
+   * vivants là où le rapport ne décrit que des traces.
+   */
+  /*
+   * ── LE PIÈGE DU TITRE ───────────────────────────────────────────────────
+   *
+   * L'intitulé réglementaire du diagnostic est « État relatif à la PRÉSENCE
+   * DE TERMITES ». Le premier motif écrit ici l'attrapait donc en tête de
+   * CHAQUE rapport, y compris ceux qui concluent à l'absence : mesuré, un
+   * rapport « présence d'indices » se voyait annoncer « des termites ont été
+   * constatés ». Le nom du document devenait sa conclusion.
+   *
+   * On écarte donc les tournures d'intitulé — « relatif à », « état du
+   * bâtiment » — avant de chercher le constat.
+   */
+  const sansLeTitre = lignes.filter(
+    (l) => !/relatif [àa] la pr[ée]sence|[ée]tat du b[âa]timent/i.test(l)
+  );
+
+  const phraseInfestation = trouver(
+    sansLeTitre,
+    /(?:pr[ée]sence de termites|termites? vivants?|infestation (?:active|constat[ée]e))(?![^.]*indice)/i
+  );
+
+  /*
    * A-t-on seulement lu quelque chose ?
    *
    * Sans cette question, un rapport dont rien n'est reconnu — page scannée,
@@ -148,8 +263,22 @@ export function analyserTermites(lignes: string[], plage: [number, number]): Dia
    * Un silence n'est pas une absence, et cette phrase-là part chez le notaire.
    */
   const conclusionLue =
-    !!phraseAbsence || !!phrasePresence || infestees.length > 0 || zones.length > 0;
-  const infeste = infestees.length > 0 || (!!phrasePresence && !phraseAbsence);
+    !!phraseAbsence ||
+    !!phrasePresence ||
+    !!phraseInfestation ||
+    infestees.length > 0 ||
+    zones.length > 0;
+
+  /*
+   * `infeste` couvre les DEUX états graves : la gravité est la même — `alerte`
+   * est déjà le maximum — et tout ce qui en découle plus bas (ce qu'il faut
+   * faire, les échéances) vaut pour l'un comme pour l'autre.
+   *
+   * `termitesVivants` les sépare là où ils diffèrent : le verdict, qui ne doit
+   * pas annoncer des traces quand le rapport a vu des insectes.
+   */
+  const termitesVivants = !!phraseInfestation && !phraseAbsence;
+  const infeste = infestees.length > 0 || termitesVivants || (!!phrasePresence && !phraseAbsence);
 
   const faits: Fait[] = [];
   if (zones.length) faits.push({ libelle: 'Zones contrôlées', valeur: String(zones.length) });
@@ -274,9 +403,14 @@ export function analyserTermites(lignes: string[], plage: [number, number]): Dia
     verdict:
       (!conclusionLue
         ? 'Un état termites figure au dossier ; sa conclusion n’a pas pu être lue automatiquement.'
-        : infeste
-          ? `Des indices d’infestation de termites ont été relevés${infestees.length ? ` dans ${infestees.length} zone${infestees.length > 1 ? 's' : ''}` : ''}.`
-          : 'Aucun indice d’infestation de termites n’a été relevé dans les parties visitées.') +
+        : termitesVivants
+          ? /* Le troisième état de la norme. On nomme les termites, pas des
+               traces : le rapport a vu des insectes, et la déclaration en
+               mairie découle de ce mot-là. */
+            `Des termites ont été constatés${infestees.length ? ` dans ${infestees.length} zone${infestees.length > 1 ? 's' : ''}` : ''}.`
+          : infeste
+            ? `Des indices d’infestation de termites ont été relevés${infestees.length ? ` dans ${infestees.length} zone${infestees.length > 1 ? 's' : ''}` : ''}.`
+            : 'Aucun indice d’infestation de termites n’a été relevé dans les parties visitées.') +
       mentionVolets,
     gravite: !conclusionLue ? 'neutre' : infeste ? 'alerte' : 'bon',
     faits,

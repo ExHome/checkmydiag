@@ -109,10 +109,17 @@ describe('les points réglementaires de l’état termites', () => {
    * lire ». Les deux ne se disent pas au lecteur de la même façon.
    */
   it('distingue « pas écrit » de « pas lu »', () => {
-    const p = pointsReglementairesTermites(
-      diag({ origine: 'illisible', verdict: undefined, date: undefined } as Partial<Diagnostic>),
-      BIEN
-    );
+    /* `exactOptionalPropertyTypes` refuse d'assigner `undefined` a un champ
+       optionnel : on construit donc l'objet sans ces cles plutot qu'avec des
+       valeurs vides. */
+    const sansConclusion = {
+      type: 'termites',
+      titre: 'Termites',
+      gravite: 'neutre',
+      origine: 'illisible',
+      pages: [6, 6]
+    } as unknown as Diagnostic;
+    const p = pointsReglementairesTermites(sansConclusion, BIEN);
     const conclusion = p.find((x) => /éléments infestés/.test(x.exige));
     expect(conclusion?.etat).toBe('illisible');
   });
