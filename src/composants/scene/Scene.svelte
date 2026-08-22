@@ -113,9 +113,16 @@
     lecteur d'écran doit pouvoir les parcourir une par une plutôt que d'entendre
     une description unique.
   -->
+  <!--
+    LE CADRE ENGLOBE LES NOMS.
+
+    Ils étaient dessinés SOUS le viewBox — donc hors du cadre — et sortaient de
+    l'image en caractères démesurés. La bande de six unités ajoutée en bas leur
+    donne leur place, et le dessin cesse de déborder.
+  -->
   <svg
     class="scene__dessin"
-    viewBox="0 0 {largeur} {hauteur}"
+    viewBox="0 0 {largeur} {hauteur + 8}"
     role="group"
     aria-label={scene.question}
   >
@@ -162,6 +169,27 @@
             }
           }}
         />
+      {/if}
+    {/each}
+
+    <!--
+      LES NOMS, SOUS LES CASES.
+
+      Sans eux, il faut toucher chaque zone pour savoir laquelle on regarde —
+      c'est une devinette, pas une lecture. Ils sont posés hors des formes
+      pour ne pas hériter de leur opacité : une zone en pénombre garde son nom
+      lisible, sinon on perd le repère en même temps que la lumière.
+    -->
+    {#each scene.briques as b, i (identifiant(b) + '-nom' || 'n' + i)}
+      {#if b.forme === 'cellule' || b.forme === 'paroi'}
+        {@const rang = scene.briques.filter((x) => x.forme !== 'volume').indexOf(b)}
+        <text
+          class="nom-brique"
+          x={rang * 22 + 9}
+          y={hauteur + 5.5}
+          text-anchor="middle"
+          aria-hidden="true">{b.nom}</text
+        >
       {/if}
     {/each}
   </svg>
@@ -227,10 +255,23 @@
     color: var(--sur-fond-doux);
   }
 
+  /*
+   * LE DESSIN NE S'ÉTIRE PAS.
+   *
+   * `width: 100%` seul donnait des cases de cinq cents pixels de haut sur un
+   * écran large : le viewBox est plat — cinquante-huit sur vingt-six — et la
+   * hauteur suivait la largeur du conteneur. Vu à l'écran : trois rectangles
+   * verts qui remplissaient la page.
+   *
+   * La hauteur est donc bornée, et le dessin se centre plutôt que de s'étirer.
+   */
   .scene__dessin {
     display: block;
     width: 100%;
+    max-width: min(100%, 620px);
+    max-height: 180px;
     height: auto;
+    margin-inline: auto;
   }
 
   /* Le volume ne se touche pas : il porte le décor, pas l'information. */
@@ -249,15 +290,41 @@
     transition: opacity var(--duree, 0.2s) var(--courbe, ease);
   }
 
+  /*
+   * LE FOCUS SUIT LA FORME, IL NE L'ENCADRE PAS.
+   *
+   * `outline` dessinait un rectangle noir autour de la case — vu à l'écran, un
+   * cadre épais qui écrasait le dessin. Sur une forme SVG, c'est le trait qui
+   * doit s'épaissir : il épouse le contour au lieu de le boîter.
+   */
   .brique:focus-visible {
-    outline: 3px solid var(--sur-fond, #0a2b23);
-    outline-offset: 2px;
+    outline: none;
+    stroke: var(--sur-fond, #0a2b23);
+    stroke-width: 1.6;
+  }
+
+  /* Le doigt et la souris ont droit au même signal que le clavier. */
+  .brique:hover {
+    stroke-width: 1.2;
   }
 
   @media (prefers-reduced-motion: reduce) {
     .brique {
       transition: none;
     }
+  }
+
+  /* Le nom reste lisible même quand sa case est dans l'ombre. */
+  /*
+   * La taille est exprimée dans le repère du dessin, pas en pixels d'écran :
+   * quatre unités sur un cadre de vingt-six, soit le sixième de la hauteur
+   * d'une case. C'est ce rapport qui reste constant quand le dessin se réduit
+   * sur un téléphone.
+   */
+  .nom-brique {
+    font-size: 4px;
+    font-weight: 600;
+    fill: var(--sur-fond, #0a2b23);
   }
 
   .scene__dit {
