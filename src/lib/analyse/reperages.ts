@@ -8,6 +8,7 @@
 import type { Diagnostic, Fait, Gravite } from '../modele';
 import type { Releve } from './anomalies';
 import { compact, trouver } from './texte';
+import { conclusionsParListe } from './amiante.listes';
 
 function zonesTermites(lignes: string[]): { nom: string; etat: Gravite; detail?: string }[] {
   const zones: { nom: string; etat: Gravite; detail?: string }[] = [];
@@ -631,18 +632,20 @@ export function analyserAmiante(lignes: string[], plage: [number, number]): Diag
   // chacune sur sa ligne. C'est le seul endroit qui affirme quelque chose : le
   // reste du rapport ne fait qu'expliquer ce qu'est l'amiante (« en cas de
   // présence d'amiante… »), et comptait à tort dans une version précédente.
-  const listes: { liste: string; presence: boolean }[] = [];
-  for (const ligne of lignes) {
-    const m = ligne.match(/Liste\s*([ABC])\s*:/i);
-    if (!m?.[1]) continue;
-    /* Les deux apostrophes : trente-neuf dossiers sur quarante emploient les
-       deux, parfois dans la même phrase. Voir `tolerantAuxApostrophes`. */
-    if (/n['’]?a\s*pas\s*[ée]t[ée]\s*rep[ée]r[ée]/i.test(ligne)) {
-      listes.push({ liste: m[1].toUpperCase(), presence: false });
-    } else if (/il\s*a\s*[ée]t[ée]\s*rep[ée]r[ée]/i.test(ligne)) {
-      listes.push({ liste: m[1].toUpperCase(), presence: true });
-    }
-  }
+  /*
+   * ⚠️ CORRIGÉ LE 21/08/2026, APRÈS 130 VOLETS LUS.
+   *
+   * On décidait « présence » dès que la ligne du « Liste X : » contenait « il a
+   * été repéré ». Or ce qui porte le sens, c'est la ou les LIGNES À TIRET qui
+   * suivent — et quatre formes sur les neuf rencontrées n'annoncent pas
+   * d'amiante. Mesuré sur les dix-huit lignes de ce type du corpus : six
+   * n'étaient pas une présence. Le détail est dans `amiante.listes.ts`.
+   */
+  const conclusions = conclusionsParListe(lignes);
+  const listes = conclusions.map((c) => ({ liste: c.liste, presence: c.etat === 'presence' }));
+  /* Les listes non conclues : relevées mais pas encore exploitées ici. On les
+     garde nommées plutôt que de perdre la lecture qui les distingue. */
+  void conclusions.filter((c) => c.etat === 'nonConclu');
 
   /*
    * Les listes simplement citées, sans conclusion attachée.

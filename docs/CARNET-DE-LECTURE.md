@@ -4119,3 +4119,244 @@ et les lettres du volet termites, que je croyais propres aux rapports alors
 qu'un modèle réglementaire existe — sans être suivi.
 
 ---
+
+## 80 · L'amiante, lu comme liseuse : deux éditeurs, quatre missions, un mot qui ment
+
+*Quatorze documents lus en entier le 21/08 — dix LICIEL, quatre BC2E. La carte
+des endroits est dans [`OU-PARSER-AMIANTE.md`](OU-PARSER-AMIANTE.md) ; ici, ce
+que la lecture apprend du métier.*
+
+### « Il a été repéré » ne veut pas dire qu'il y a de l'amiante
+
+C'est la leçon centrale, et elle vaut chez les deux éditeurs.
+
+Chez BC2E, la conclusion de la page 1 a **six** états, dont quatre commencent
+par les mêmes cinq mots — « il a été repéré des matériaux ». Ce qui tranche
+tombe au milieu de la phrase :
+
+> il a été repéré des matériaux et produits **susceptibles de contenir** de
+> l'amiante : marquage des matériaux, **ils ne contiennent pas d'amiante** dans :
+
+Cette phrase-là annonce une absence. La même ouverture annonce une présence
+quand elle porte « contenant » au lieu de « susceptibles de contenir ». Un
+lecteur qui cherche l'ouverture annonce donc de l'amiante dans quatre cas sur
+six, dont deux où le rapport dit exactement le contraire.
+
+Chez LICIEL, le même piège tient à deux caractères : `il n'a pas été repéré`
+contre `il a été repéré`, dans un corpus qui écrit l'apostrophe de trois façons.
+
+### Un rapport peut ne rien conclure du tout
+
+> PRÉLÈVEMENT(S) AMIANTE EN COURS D'ANALYSE.
+
+Un DTA BC2E lu porte cette phrase à la place de sa conclusion. Le laboratoire
+n'a pas rendu. Ce n'est ni une présence ni une absence : c'est **une question
+ouverte**, et rien dans le reste du rapport ne la referme. Dix rapports LICIEL
+n'avaient jamais montré cet état — il n'existe pas dans ce gabarit.
+
+Un lecteur qui n'a que deux cases, « amiante » et « pas d'amiante », range
+forcément ce rapport dans la mauvaise.
+
+### Le mot « retrait » n'a pas la même valeur selon l'éditeur
+
+LICIEL imprime en annexe **tout le droit de l'amiante** — R. 1334-27 à
+R. 1334-29-3, les scores 1/2/3, les cinq fibres par litre, les trente-six mois,
+EP/AC1/AC2 — dans **100 %** des rapports, y compris ceux où rien n'a été trouvé.
+Chercher « travaux de retrait ou de confinement » dans un volet LICIEL, c'est le
+trouver toujours.
+
+BC2E ne les imprime **que s'il y a un positif**.
+
+Le même mot est donc un signal chez l'un et un bruit chez l'autre. C'est
+l'illustration la plus nette de « l'éditeur conditionne tout » : ce n'est pas la
+forme qui change, c'est **ce que la présence d'un mot prouve**.
+
+### Une rubrique vide n'est pas toujours une réponse
+
+La règle acquise disait : une rubrique présente et vide est un résultat. La
+fiche récapitulative de DTA de BC2E la met en défaut. Son § 3, « Détenteur du
+dossier technique amiante », est entièrement vierge — nom, fonction, adresse,
+horaires de consultation. Ce n'est pas un constat de vide : **c'est un
+formulaire que le propriétaire doit remplir**, et que le diagnostiqueur n'avait
+pas à remplir.
+
+La règle se précise donc : une rubrique vide est une réponse **quand elle porte
+la réponse du diagnostiqueur**. Quand toute la rubrique est vierge, libellés
+compris, c'est un champ en attente d'un tiers.
+
+### Le tableau des matériaux « repérés » n'est pas le tableau de l'amiante
+
+Chez LICIEL, le § 5.0.2 liste ce que l'opérateur a **regardé** en liste B. Sa
+colonne de conclusion porte aussi bien `Présence d'amiante` que
+`Absence d'amiante` ou `Matériau ou produit qui par nature ne contient pas
+d'amiante`. Compter ses lignes, c'est annoncer de l'amiante à des logements qui
+n'en ont pas — la faute du § 27, sur son vrai terrain.
+
+Et le même matériau y est compté **deux fois** : une fois au § 5.0.2, une fois
+au § 5.3.
+
+### Ce que BC2E dit et que LICIEL ne dit pas
+
+Trois choses, et elles comptent pour un acquéreur :
+
+1. **Pourquoi le repérage est dû** — « Date du permis de construire : Non
+   précisée (antérieur au 1er juillet 1997 sur déclaration du mandataire) ». Le
+   seuil réglementaire est nommé, et la source de l'information aussi.
+2. **À quoi le rapport ne sert pas** — « Le présent rapport de repérage ne peut
+   pas constituer la fiche récapitulative du dossier technique amiante […] Il ne
+   peut donc pas constituer l'état […] requis pour la vente de l'immeuble bâti. »
+3. **Ce que le rapport contient** — une check-list d'annexes, pièce par pièce,
+   avec `oui` / `non` / `présent` / `sans objet`. C'est le seul endroit du
+   corpus qui permette de dire qu'il manque une pièce sans l'avoir cherchée.
+
+### Le sommaire ment sur le corps — chez les deux éditeurs
+
+Le sommaire d'un DTA LICIEL annonce trois sous-rubriques au § 4 ; le corps en
+imprime quatre. Le sommaire d'un DTA BC2E annonce `8.1` et `8.2` ; le corps
+imprime aussi `8.3`.
+
+Mesuré chez **deux éditeurs**, ce n'est plus l'habitude d'un logiciel : c'est un
+trait du métier. **La table des matières d'un rapport de diagnostic n'est pas
+une carte de son corps.**
+
+### Et le DTA n'est pas un rapport : c'est un classeur qui se heurte lui-même
+
+Un DTA contient le constat comme partie 1, puis sept parties de plus. Ses
+numéros et ceux du constat **coexistent dans le même PDF** : `5.1` vaut « fiche
+de cotation » dans le constat et « Évaluation des matériaux de la liste A » dans
+le classeur. Chercher un numéro dans un DTA, c'est tomber sur deux rubriques
+différentes.
+
+C'est la démonstration finale de la règle : **on ne cherche pas un numéro, on
+cherche un endroit.**
+
+## 81 · Le même bien, deux rapports, onze jours — et « il a été repéré » ne veut toujours rien dire
+
+*Le corpus garde, dans un même dossier client, le **pré-rapport** et le
+**rapport définitif** du même repérage amiante. Onze jours les séparent. C'est
+le meilleur enseignement de la lecture amiante, parce qu'il montre en un seul
+couple ce que toutes les autres lectures suggéraient.*
+
+### Ce qui change entre les deux
+
+Le pré-rapport, sur les faux plafonds de l'étage — **liste A** :
+
+> il a été repéré : - des matériaux et produits de la liste A **pour lesquels
+> les résultats d'analyse des sondages et/ou prélèvements sont attendus**
+
+Le rapport définitif, onze jours plus tard, sur les mêmes faux plafonds :
+
+> il a été repéré : - des matériaux et produits de la liste A **ayant fait
+> l'objet d'analyse, ne contenant pas d'amiante**
+
+Et sur les dalles de sol du rez-de-chaussée — **liste B** — les deux documents
+disent la même chose, dès le pré-rapport :
+
+> - des matériaux et produits de la liste B **contenant de l'amiante après
+> analyse en laboratoire**
+
+### Ce que cela apprend
+
+**Le laboratoire avait déjà tranché la liste B, pas la liste A.** Le pré-rapport
+n'était donc pas un brouillon : c'était un rapport à moitié rendu, et la moitié
+manquante portait sur les faux plafonds — c'est-à-dire sur la liste A, celle qui
+déclenche les scores 1/2/3, la mesure d'empoussièrement, et les travaux de
+retrait. **La moitié la plus lourde était celle qui manquait.**
+
+**Rien dans le nom du fichier ne le disait.** Il s'appelait « AMIANTE
+14.05.25.pdf ». Seule la deuxième ligne de la page 1 porte la mention
+« Pré - Rapport du … », et elle s'insère à la place même du sous-titre qui
+déclare la mission — donc à l'endroit exact où l'on borne.
+
+**Et « il a été repéré » introduit ici trois conclusions différentes** dans deux
+documents : une attente d'analyse, une absence prouvée, une présence prouvée. Le
+mot n'a aucune valeur ; tout est dans la ligne à tiret qui suit.
+
+### La mesure
+
+Sur 70 documents lus, dix-huit lignes ouvrent une liste par « Liste X : … il a
+été repéré : ». **Douze sont une vraie présence. Cinq ne concluent pas. Une dit
+l'absence, prouvée par analyse.**
+
+Un tiers de ces lignes ne dit donc pas qu'il y a de l'amiante — et l'erreur va
+dans les deux sens : annoncer de l'amiante là où le laboratoire dit qu'il n'y en
+a pas, et fermer un dossier que le laboratoire n'a pas encore rendu.
+
+C'est la même leçon que la classe 0 du plomb (« sous le seuil » n'est pas
+« absence ») et que les termites du tableau D (« présence d'indices » sans
+regarder de quoi) : **la phrase qui ouvre n'est pas la phrase qui conclut.**
+
+## 82 · Le flocage en Score 3 — quand le texte d'annexe devient une obligation
+
+*Quatre-vingt-douzième volet lu. Une copropriété bordelaise de quatre niveaux,
+dossier technique amiante des parties communes. **Des flocages amiantés dans les
+caves, cotés Score 3.** C'est le seul volet du corpus qui porte de l'amiante en
+liste A, et il retourne trois règles apprises.*
+
+### Ce qui est écrit
+
+> 1.1 Liste A : […] il a été repéré :
+> \- des matériaux et produits de la liste A contenant de l'amiante **sur
+> anciennes analyses** :
+> **Flocages** (Sous-Sol - Parties Communes / Caves) pour lequel **il faut faire
+> réaliser des travaux de retrait ou de confinement**.
+
+et, dans la fiche de cotation :
+
+> Matériau **en décollement** · **Score 3** · Liste selon annexe 13-9 du CSP : **A**
+
+### Première règle retournée : une liste porte plusieurs conclusions
+
+Le même § 1.1, sur la seule liste B, porte **quatre lignes à tiret** : de
+l'amiante sur anciennes analyses, de l'amiante après analyse en laboratoire, de
+l'amiante sur décision de l'opérateur, et des matériaux qu'il faut encore
+sonder. Quatre états, quatre justifications, dans une seule rubrique.
+
+Un lecteur qui prend « la ligne qui suit Liste B » en lit une sur quatre. Et la
+quatrième est coupée par un saut de page : son intitulé finit une page, ses
+matériaux commencent la suivante.
+
+**Le § 1.1 n'est pas une phrase. C'est une liste de listes.**
+
+### Deuxième règle retournée : le texte d'annexe finit par s'appliquer
+
+Il était acquis que « travaux de retrait ou de confinement », « Score 3 »,
+« cinq fibres par litre » sont imprimés dans 100 % des volets et ne prouvent
+rien. C'est vrai — **dans quatre-vingt-onze volets sur quatre-vingt-douze**.
+
+Dans celui-ci, le même texte désigne une obligation réelle : l'article
+R. 1334-29 donne trente-six mois pour les travaux, impose des mesures
+conservatoires dans l'intervalle et l'information du préfet dans les deux mois.
+
+La règle juste n'est donc pas « ces mots ne veulent rien dire », mais : **ces
+mots ne prouvent rien par leur présence ; ce qui prouve, c'est la case `Etat de
+conservation` du § 5.1 et la ligne à tiret du § 1.1.** Un produit qui écarte le
+vocabulaire de gravité au lieu de le rattacher à sa case rate exactement le
+dossier où il fallait alerter.
+
+### Troisième leçon : une preuve qui n'est pas jointe
+
+`Sur anciennes analyses` — le flocage n'a été ni prélevé ni jugé. Il est reconnu
+sur des analyses **antérieures au repérage, que le rapport ne fournit pas**. Ce
+n'est ni un jugement d'opérateur, ni une preuve consultable. C'est une sixième
+valeur de la colonne « justification », et elle mérite d'être citée telle quelle
+plutôt que rangée avec les autres présences.
+
+### Et un défaut de fabrication, imprimé noir sur blanc
+
+La cellule du Score 3 porte, dans le texte extrait :
+
+> **Souligne_**Score 3
+
+`Souligne_` est une instruction de mise en forme du logiciel, imprimée telle
+quelle dans le PDF. Un lecteur qui cherche « Score 3 » précédé de « Résultat »
+ne trouve rien ; un lecteur qui recopie la cellule affiche « Souligne_Score 3 »
+à un acquéreur. **Le seul dossier grave du corpus est aussi celui où le gabarit
+laisse fuir son code.**
+
+### Ce que le même volet dit encore, et qui compte
+
+Deux locaux n'ont pas été visités, faute de clef — dont **la chaufferie**,
+c'est-à-dire l'endroit où vivent les calorifugeages, qui sont eux aussi de la
+liste A. Un immeuble dont les caves sont floquées et dont la chaufferie n'a pas
+été ouverte n'est pas un immeuble sur lequel on peut conclure.

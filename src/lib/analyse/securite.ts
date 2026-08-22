@@ -9,14 +9,9 @@
 import type { Anomalie, Diagnostic, Fait, Gravite } from '../modele';
 import { trouver, trouverToutes } from './texte';
 import { anomaliesDetaillees, domainesConstates, releverTout } from './anomalies';
-import {
-  anomaliesDuTableau,
-  catalogueDesDomaines,
-  localisationsDe,
-  nettoyerLibelle,
-  porteUnTableauDAnomalies,
-  ressembleALiciel
-} from './tableau-anomalies';
+import { localisationsDe, nettoyerLibelle } from './tableau-anomalies';
+import { aiguiller } from '../lecteurs/socle';
+import { LECTEURS_ELECTRICITE } from '../lecteurs/electricite';
 import { rubrique as rubriqueDe } from './rubriques';
 import { dateFrancaise, OU_REFAIRE, reformesElectricite } from './reformes';
 import { lireLeGaz } from '../lecteurs/gaz';
@@ -115,7 +110,16 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
    * les rapports n'ont pas. Neuf volets lus en entier portent les leurs dans le
    * tableau, et le produit n'en restituait alors aucune.
    */
-  const duTableau = anomaliesDuTableau(lignes);
+  /*
+   * ⚠️ ON NOMME L'ÉDITEUR AVANT DE LIRE.
+   *
+   * L'aiguillage choisit le lecteur mesuré sur CE format, ou déclare « format
+   * inconnu ». Chez un éditeur sans lecteur, on ne rend rien plutôt que de
+   * deviner : un lecteur lâché hors de son format ne rend pas moins
+   * d'information, il en rend de la fausse, en silence.
+   */
+  const lu = aiguiller(LECTEURS_ELECTRICITE, lignes);
+  const duTableau = lu.etat === 'lu' ? lu.valeur.anomalies : [];
 
   /*
    * Le silence du tableau vaut conclusion — mais seulement là où il parle.
@@ -142,14 +146,15 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
    * La règle du tableau est une habitude de LICIEL. Elle ne s'applique donc
    * qu'à LICIEL, sur signature positive. Chez les autres, on se tait.
    */
-  const catalogueImprime =
-    catalogueDesDomaines(lignes).length >= 5 && ressembleALiciel(lignes);
+  /* Le verdict « aucune anomalie » n'a de sens que chez l'éditeur dont c'est la
+     règle — donc seulement quand un lecteur a reconnu le format. */
+  const sansAnomalieLisible = lu.etat === 'lu' && lu.valeur.sansAnomalie;
 
   let etat = conclusion.etat;
   if (etat === 'inconnu') {
     if (anomalies.length > 0 || nonCompenses.length > 0 || duTableau.length > 0) {
       etat = 'anomalies';
-    } else if (catalogueImprime && !porteUnTableauDAnomalies(lignes)) {
+    } else if (sansAnomalieLisible) {
       etat = 'aucune';
     }
   }

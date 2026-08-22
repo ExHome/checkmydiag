@@ -911,3 +911,407 @@ n'a rien été repéré. Le produit annonçait une alerte.
 la conclusion **globale** du volet, jamais sur le détail des zones. Une mesure de
 justesse ne se fait pas une fois pour toutes : elle ne vaut que pour ce qu'elle
 a regardé.
+
+### 21 août 2026 — la liseuse amiante : 14 documents, et un second éditeur nommé
+
+**Ordre d'Aude** : « tu es la liseuse amiante de Verrière, va dans la Dropbox
+DGLM et lis tous les diags amiante du début à la fin, apprends et apprends où
+parser. »
+
+**Outil posé** : `scripts/amiante-lire.local.ts` — il nomme l'éditeur **avant**
+d'ouvrir, borne le volet amiante, écrit le texte intégral du volet plus une page
+avant et une après, et tient son propre registre d'empreintes dans la Dropbox
+(`05_CORPUS_RAPPORTS/registre-amiante.json`). Un sixième argument permet
+d'**écarter un éditeur** : sans lui, un corpus aux neuf dixièmes LICIEL ne rend
+jamais qu'un seul gabarit.
+
+**Corpus** : 15 673 PDF sous `AA -CLIENTS`, dont **11 114 candidats** une fois
+les factures et les fichiers en attente écartés.
+
+**Lu** : 14 documents en entier — **10 LICIEL** (5 constats de vente, 3 DTA,
+2 DAPP) et **4 BC2E** (2 DTA dont un positif, 1 fiche récapitulative, 1 DAPP).
+Carte des endroits : [`OU-PARSER-AMIANTE.md`](OU-PARSER-AMIANTE.md), 836 lignes.
+Ce que la lecture apprend du métier : carnet § 80.
+
+**Le trou d'identification du corpus est comblé.** La famille `TCPDF /
+HTML2PDF` — 59 documents, aucun encore lu, seul éditeur non identifié du
+corpus — **est BC2E**, et elle le dit en clair dans son pied de page : « membre
+du réseau BC2E ». Le pied de page donne en prime, sur chaque page, le volet, la
+mission et la pagination du volet : `AMIANTE (DTA) : 3 sur 10`. C'est la borne
+la plus sûre rencontrée dans tout le corpus.
+
+**Quatre missions, et non une.** Vente, DTA, DAPP, repérage avant travaux. Elles
+ne se distinguent ni par le titre courant (un DTA de 2021 porte « Constat de
+repérage Amiante », un DTA de 2025 porte « Dossier Technique Amiante »), ni par
+l'avertissement de tête, qui parle de démolition et de travaux **dans toutes**.
+Seul le sous-titre de la page 1 statue.
+
+Et la mission change la structure : en DAPP, la conclusion n'a **qu'un** § 1.1
+et ne nomme aucune liste ; les § 5.0.1 et 5.0.2 n'existent pas ; le § 5.3, lui,
+apparaît. Un lecteur écrit pour la vente lit un DAPP de travers.
+
+**Trois pièges qui feraient annoncer de l'amiante là où il n'y en a pas** :
+
+1. `il a été repéré des matériaux et produits **susceptibles de contenir** de
+   l'amiante : marquage des matériaux, **ils ne contiennent pas d'amiante**` —
+   BC2E, page 1. Quatre des six états de conclusion commencent par les mêmes
+   cinq mots.
+2. Le § 5.0.2 de LICIEL, qui liste ce qui a été **regardé** en liste B et non ce
+   qui contient de l'amiante — `Absence d'amiante` y côtoie `Présence
+   d'amiante`, et le même matériau est recompté au § 5.3.
+3. Les annexes de LICIEL, qui impriment **tout le droit de l'amiante** dans
+   100 % des rapports : « travaux de retrait ou de confinement », « Score 3 »,
+   « cinq fibres par litre ». Chez BC2E, ces mêmes mots ne sortent que s'il y a
+   un positif. **Le même mot est un signal chez l'un et un bruit chez l'autre.**
+
+**Un état inconnu du produit** : `PRÉLÈVEMENT(S) AMIANTE EN COURS D'ANALYSE.`
+Un rapport qui ne conclut pas. Ni présence, ni absence : une question ouverte.
+
+**Un trait promu au métier** : le sommaire ment sur le corps. Mesuré chez les
+deux éditeurs — un DTA LICIEL annonce trois sous-rubriques au § 4 et en imprime
+quatre ; un DTA BC2E annonce `8.1` et `8.2` et imprime aussi `8.3`. Ce n'est
+plus l'habitude d'un logiciel.
+
+**Un défaut d'outil relevé** : la découpe borne la fiche récapitulative BC2E aux
+pages 1-2 d'un document qui en compte 9.
+
+**Par où reprendre** : `npx vite-node scripts/amiante-lire.local.ts -- "<racine>"
+<sortie> <combien> [motif de nom] [éditeur à écarter]`. Le registre reprend seul
+où la lecture s'est arrêtée. Restent à ouvrir : un volet portant de l'amiante en
+**liste A** (aucun des quatorze n'en porte), un volet avec **prélèvement et
+rapport d'essai**, un **repérage avant travaux**, Imm'PACT, et un rapport
+**numérisé** — où le silence de l'extraction se lit comme une absence.
+
+### 21 août 2026, suite — six documents de plus, et la métadonnée prise en défaut
+
+Lecture ciblée sur les fichiers nommés « amiante », « RAAT », « avant travaux » :
+**65 candidats, 12 ouverts, 6 lus** — soit **20 documents amiante lus en
+entier** dans la journée.
+
+**Quatre viennent de cabinets confrères** (SARL DIE2M / groupe EDEC, CSD
+BORDEAUX, CARRE D'EXPERTS), rangés dans les dossiers clients comme pièces
+antérieures. **Les six portent le gabarit LICIEL au mot près.**
+
+**La métadonnée a menti quatre fois sur six.** Signatures rencontrées :
+`Microsoft® Word 2019`, `Microsoft® Word pour Microsoft 365`,
+`GdPicture Managed PDF Plugin Ver. 4.5` — quatre documents rendus « éditeur
+inconnu » alors que le rapport est un LICIEL de bout en bout. Un rapport
+réenregistré perd sa signature d'origine : **la métadonnée nomme le dernier
+outil qui a touché le fichier, pas celui qui a produit le rapport.** La règle
+des deux endroits tient toujours, mais elle se complète : une signature qui
+nomme un **outil bureautique** n'est pas concluante ; il faut alors lire le
+gabarit.
+
+**Deux corrections à ce que la lecture du matin avait établi** — c'est
+`ODM_UNE_ERREUR_CINQUANTE_LECTURES.md` qui joue, et il vaut mieux qu'il joue
+ici que dans le produit :
+
+1. **La composition du § 5 n'est pas commandée par la mission.** Un constat de
+   **vente** de 2020 porte `5.1 / 5.2 / 5.3` **sans** `5.0`, exactement comme un
+   DAPP. C'est un trait de **version du logiciel**. On ne déduit donc jamais la
+   mission du § 5 : on lit le sous-titre de la page 1.
+2. **« Ensemble du bien » n'est pas toujours une clause de style.** Un constat
+   lu porte trois lignes `Ensemble du bien` **renseignées**, avec parties du
+   local et raisons propres au logement. Ce qui est une clause, c'est le bloc de
+   six lignes « Le diagnostic se limite aux zones rendues visibles… » — reconnu
+   à son texte, jamais à la seule localisation.
+
+**Deux états du document que rien d'autre ne signale** :
+
+- **le pré-rapport** — `Pré - Rapport du 15/05/2025 de la mission de repérage…`,
+  inséré à la place même du sous-titre qui déclare la mission. Un document
+  provisoire qui se lit comme un rapport définitif si l'on borne mal ;
+- **la double pagination** — `1 / 10` pour le volet et `Rapport DDT : page 18 /
+  47` pour le dossier entier, dans le même pied de page.
+
+**Ce que la journée n'a toujours pas trouvé** : un repérage **avant travaux**.
+Le filtre par nom de fichier n'en a pas rendu un seul sur 65 candidats — les
+22 fichiers nommés « RAAT » restent à ouvrir un par un.
+
+### 21 août 2026, fin de journée — 28 documents, et une troisième issue
+
+Huit documents de plus (**10 885 candidats restants**), dont un DTA BC2E et sept
+DDT LICIEL. **28 documents amiante lus en entier dans la journée.**
+
+**La correction la plus importante de la journée.** Il avait été écrit le matin
+que LICIEL n'a que deux issues — trouvé / pas trouvé — et que seul BC2E sait
+dire « on ne sait pas encore ». C'est faux. Un constat LICIEL lu porte, au
+§ 1.1 Liste B :
+
+> \- des matériaux et produits de la liste B **pour lesquels des sondages et/ou
+> prélèvements doivent être effectués** :
+
+et, au § 5.1, une sous-liste dédiée dont la conclusion est
+`Susceptible de contenir de l'amiante (Non prélevé pour ne pas altérer sa
+fonction)`.
+
+⚠️ **Cette phrase ne contient ni « contenant de l'amiante » ni « il n'a pas été
+repéré ».** Elle échappe aux deux motifs qui servent à lire la conclusion. Un
+lecteur à deux cases la range dans « rien trouvé » — alors que le rapport dit
+qu'il n'a pas conclu, et pourquoi.
+
+**Acquis, chez les deux éditeurs : un constat amiante a TROIS issues, pas deux.**
+Présence · absence · **non conclu**. C'est la même leçon que la classe 0 du
+plomb (« sous le seuil » n'est pas « absence »), sur un autre volet.
+
+Deux variantes de plus, mineures mais qui cassent un motif : le § 2 s'intitule
+tantôt `Le(s) laboratoire(s) d'analyses` (vide : « Il n'a pas été fait appel à un
+laboratoire d'analyse »), tantôt `Analyses chimiques du laboratoire` (vide :
+« Aucune analyse chimique n'a été réalisée en laboratoire. ») ; et une cellule de
+localisation peut porter **plusieurs pièces séparées par un point-virgule**.
+
+**Le corpus amiante n'est pas un corpus de logements** : `Cave`,
+`Bureaux > 300 m²`, `Local commercial mixte en copropriété`, `Parties communes`
+figurent au champ « Type de logement ».
+
+### 21 août 2026, nuit — 70 documents, la quatrième mission, et sept états au lieu de deux
+
+La lecture n'a pas été interrompue. **70 documents amiante lus**, 365 examinés,
+sur 10 800 candidats restants.
+
+**La quatrième mission est ouverte : le repérage avant travaux (RAAT).** Cinq
+lus. Ce n'est pas le même métier :
+
+- ce n'est **pas** le code de la santé publique mais le **code du travail**
+  (L. 4412-2, décret 2017-899 du 9 mai 2017, arrêté du 16 juillet 2019) ;
+- il n'y a **ni liste A ni liste B**, mais les **dix catégories** de l'annexe 1
+  de l'arrêté du 16 juillet 2019, imprimées en entier — nouveau catalogue
+  réglementaire à ne jamais lire comme un constat ;
+- le § 5 n'a plus rien de commun : `5.1 Liste des produits et matériaux
+  présentées par catégorie`, `5.2 Récapitulatif zone par zone` ;
+- la conclusion du § 1.1 **ne dit ni quoi ni où** : elle renvoie à la partie 5.
+
+**Le § 2 « laboratoire » est enfin rempli** — ITGA (Rennes) et Eurofins LEM.
+C'est le premier volet du corpus où l'amiante est établie **par analyse** :
+28 échantillons P001 à P028, quatre positifs. Et cela confirme sur pièce le faux
+d'identification déjà tenu par un test : **ITGA y est le laboratoire, pas
+l'éditeur Imm'PACT.**
+
+⚠️ Le champ `Programme détaillé des travaux` est à **`Néant` dans les cinq
+RAAT** — alors que c'est lui qui devrait dire les travaux. Ce qui les dit, c'est
+le champ `Périmètre de repérage` de la page 1 : « avant réfection de la
+couverture (remplacement plaques en fibrociment) », « avant pose de borne
+électrique pour recharge de véhicule », « de réfection des sols d'une salle de
+bains suite à un dégât des eaux ». **Un RAAT ne vaut que pour ces travaux-là**,
+et c'est la première chose à restituer.
+
+**La découverte qui remet en cause tout ce qui précède : le § 1.1 a SEPT états,
+pas deux.** Quatre lignes sur sept commencent par `- des matériaux et produits
+de la liste X`, et **trois d'entre elles ne disent pas qu'il y a de l'amiante** :
+
+- `… pour lesquels des sondages et/ou prélèvements doivent être effectués` — rien
+  n'a été prélevé ;
+- `… pour lesquels les résultats d'analyse des sondages et/ou prélèvements sont
+  en attente` — le laboratoire n'a pas rendu ;
+- `… ayant fait l'objet d'analyse, ne contenant pas d'amiante` — **absence
+  prouvée**, écrite avec les mots d'une présence.
+
+Et la synthèse du DDT porte la même chose en quatre formes, dont
+`il a été repéré des matériaux et produits susceptibles de contenir de
+l'amiante : après analyse, ils ne contiennent pas d'amiante`. **C'est la
+phrase-piège relevée le matin chez BC2E, mot pour mot, chez LICIEL.** Le même
+piège chez deux éditeurs n'est plus l'habitude d'un logiciel : **c'est la langue
+du métier.**
+
+**Autres endroits ajoutés à la carte** : le titre courant qui se coupe en deux
+lignes (`Dossier Amiante –` / `n° …`) et rend le volet invisible à un bornage
+naïf ; la seconde forme de la ligne de matériau (`Conduits dont l'état de
+conservation est : EP`) ; la mention en capitales `DIAGNOSTIC AMIANTE NON
+VALABLE POUR AVANT TRAVAUX / DEMOLITION.` ; les notes de bas de tableau du DTA
+(« locaux inaccessibles, clefs absentes » y est un **exemple du texte**, pas un
+motif observé) ; quatre motifs de non-visite de plus ; `Temps passé sur site`
+comme variante de `Durée du repérage`.
+
+**Méthode** : un gabarit neuf se lit en intégral ; les suivants se lisent **en
+différentiel de lignes** — chaque ligne est soit déjà lue mot pour mot, soit
+présentée à la lecture. Rien n'est sauté, et le rendement se voit : le lot 8 n'a
+plus rien apporté sur le gabarit LICIEL de vente, signe que ce gabarit-là
+approche de la saturation.
+
+**Reste** : la liste A (flocages, calorifugeages, faux plafonds) — toujours pas
+un seul en 70 lectures ; Imm'PACT ; un rapport numérisé ; un RAAT avant
+démolition.
+
+### 21 août 2026, nuit — le flocage en Score 3, et le § 1.1 qui porte quatre conclusions
+
+La lecture continue. **92 volets extraits, 86 lus**, 407 documents examinés.
+
+**La liste A est trouvée.** Une copropriété de quatre niveaux, DTA de parties
+communes : **flocages amiantés dans les caves, cotés Score 3** — travaux de
+retrait ou de confinement, trente-six mois, préfet informé sous deux mois. Le
+seul volet du corpus où le texte d'annexe, imprimé à l'identique dans les
+quatre-vingt-onze autres, **désigne une obligation réelle**.
+
+**Et il retourne la règle des annexes.** Elle disait : « ces mots ne prouvent
+rien ». Elle devient : **ces mots ne prouvent rien par leur présence ; ce qui
+prouve, c'est la case `Etat de conservation` du § 5.1 et la ligne à tiret du
+§ 1.1.** Un produit qui écarte le vocabulaire de gravité au lieu de le rattacher
+à sa case rate exactement le dossier où il fallait alerter.
+
+**Découverte de structure, la plus lourde de la journée : un même § 1.1 porte
+JUSQU'À QUATRE LIGNES À TIRET pour la seule liste B** — amiante sur anciennes
+analyses, amiante après analyse en laboratoire, amiante sur décision de
+l'opérateur, et matériaux restant à sonder. Quatre états, quatre justifications,
+une seule rubrique. Un lecteur qui prend « la ligne qui suit `Liste B :` » en
+lit **une sur quatre** — et la quatrième est coupée par un saut de page.
+
+**Neuvième forme de conclusion** : `contenant de l'amiante sur anciennes
+analyses` — une présence établie sur une pièce **que le rapport ne joint pas**.
+
+**Un défaut de fabrication imprimé noir sur blanc** : la cellule du Score 3
+porte `Souligne_Score 3`. L'instruction de mise en forme du logiciel fuit dans
+le texte. Le seul dossier grave du corpus est aussi celui où le gabarit laisse
+voir son code.
+
+**Mesure sur 93 volets extraits** : 78 disent « rien trouvé », **11 portent de
+l'amiante**, **7 ne concluent pas**. Autrement dit, sur les dix-huit volets qui
+ne sont pas un simple négatif, **près de quatre sur dix ne tranchent pas**.
+
+**Défaut du moteur, mesuré et non corrigé** : `src/lib/analyse/reperages.ts`
+décide « présence » dès que la ligne d'une liste contient `il a été repéré`. Sur
+les dix-huit lignes de ce type rencontrées, **six n'annoncent pas d'amiante**
+(cinq non conclus, une absence prouvée par analyse). Un tiers d'erreur, dans les
+deux sens. `ODM_UNE_ERREUR_CINQUANTE_LECTURES.md` interdit le correctif à chaud :
+le défaut est écrit dans la carte, la correction se mesurera sur le corpus.
+
+**Amélioration de la liseuse** : elle borne désormais le volet sur **le titre
+courant** (`Constat de repérage Amiante`, `Dossier Technique Amiante`,
+`Repérage Amiante - Travaux`, `Dossier Amiante`) et sur **le pied de page BC2E**
+(`AMIANTE (DTA) : n sur N`), en union avec la découpe du moteur. Motif : la
+découpe seule tronquait trois RAAT sur cinq à quatre pages, et un volet tronqué
+se lit comme un volet sans amiante.
+
+### 21 août 2026 — rappel d'Aude : « on parse différemment pour chaque éditeur »
+
+**La carte avait dérivé.** Elle comptait cinq parties de niveau 1, dont trois qui
+n'étaient pas des éditeurs — « la quatrième mission », « le cas d'école », « la
+liste A ». Or ces trois-là sont **des observations LICIEL et rien d'autre** : les
+sortir de la partie LICIEL, c'était laisser croire qu'elles valent partout.
+
+**Remis en ordre.** Le fichier est désormais rangé en quatre parties étanches,
+une par producteur : **LICIEL** · **BC2E** · **ITGA (laboratoire)** · **les
+documents sans éditeur**. Rien d'une partie ne vaut dans une autre.
+
+**Ajouté en tête : la table de correspondance « le même endroit, chez qui »** —
+22 endroits, deux éditeurs, et **9 cases vides sur 44**, déclarées « non
+mesuré ». Le tableau dit surtout ce qu'il ne dit pas.
+
+**Et deux traits seulement sont mesurés chez les deux éditeurs** — donc seuls
+candidats à être des traits du métier plutôt que d'un logiciel : le sommaire qui
+annonce moins de rubriques que le corps, et la phrase d'ouverture identique qui
+introduit des conclusions opposées. **Tout le reste est l'habitude d'un
+logiciel.**
+
+**Un troisième producteur est entré dans la carte : ITGA, le laboratoire.**
+17 documents du corpus, une page chacun, `RAPPORT D'ESSAI N° … EN DATE DU …`.
+C'est la pièce que les constats citent quand ils écrivent « après analyse en
+laboratoire », et personne ne l'avait ouverte. Elle apprend trois choses que le
+constat ne dit jamais :
+
+- **le seuil** : « la détection est garantie si la teneur est supérieure ou égale
+  à **0,1 % en masse** », et la note (1) précise que « non détecté » n'exclut pas
+  une teneur inférieure à la limite. **« Non détecté » n'est pas « absent »** —
+  la leçon de la classe 0 du plomb, écrite par le laboratoire lui-même ;
+- **la localisation n'engage pas le laboratoire** : « Le laboratoire n'est pas
+  responsable des données fournies par le client qui sont simplement
+  retranscrites » — la pièce et le matériau sont le texte du diagnostiqueur ;
+- **le positif ne contient pas le mot « amiante »** : le résultat s'écrit
+  `Amiante non détecté` au négatif, mais **`Présence de fibres`** au positif,
+  avec la variété (`Chrysotile`) dans une colonne à part. Chercher « amiante »
+  dans la colonne Résultat trouve le négatif et rate le positif.
+
+Et le gabarit du laboratoire laisse fuir son code comme celui de LICIEL :
+`¤DATERAPPORT`, `¤VALIDEUR`, `<ignorediff/>` imprimés dans la page.
+
+**Un fichier de rapports d'essai en contient plusieurs** — un par page. La borne
+est le titre, jamais le fichier.
+
+**Enfin, le danger le mieux documenté a été rencontré en vrai** : un constat
+amiante d'un cabinet confrère, **huit pages, zéro texte extractible**, signature
+`iLovePDF`. Un volet sans texte se lit exactement comme un volet sans amiante.
+14 documents du corpus amiante sont dans ce cas ; ils ont désormais leur partie
+dans la carte, et la signature les dénonce **avant** toute lecture.
+
+### 21 août 2026 — trois mesures, trois échantillons, aucune comparaison
+
+Le lecteur d'unités de diagnostic du CREP a été mesuré trois fois de suite
+contre le tableau de synthèse. Trois passes, trois résultats :
+
+```
+39 %   sur 107 volets
+47 %   sur  55 volets   (après correction des bornes)
+33 %   sur  33 volets   (même code que la précédente)
+```
+
+**Les trois échantillons étaient différents.** Entre la deuxième et la
+troisième, le code n'avait pas bougé — seul le tirage. Quatorze points d'écart
+sans qu'une ligne change.
+
+J'ai présenté la deuxième comme une amélioration de la première. C'était faux :
+je comparais deux terrains, pas deux versions. Une correction dont l'effet se
+mesure sur un autre échantillon que celui du diagnostic n'est pas mesurée du
+tout.
+
+**Ce qui est corrigé** : l'échantillon est tiré une fois, écrit à côté du
+registre de lecture, et relu tel quel à chaque passe. Pour en changer, il faut
+le supprimer sciemment. Le chiffre ne bouge plus alors que parce que le code a
+bougé.
+
+**La leçon, générale** : avant de comparer deux mesures, vérifier qu'elles ont
+regardé la même chose. Un chiffre qui bouge parce que le terrain bouge ne mesure
+rien — et il est plus dangereux qu'une absence de mesure, parce qu'il a l'air
+d'un résultat.
+
+
+### 21 août 2026 — l'amiante migré : un lecteur LICIEL, un lecteur BC2E
+
+Premier volet passé à l'architecture par éditeur
+(`docs/ODM-LECTEURS-PAR-EDITEUR.md`).
+
+**Trois modules, trois séries de tests** :
+
+| | |
+|---|---|
+| `lecteurs.ts` | l'aiguillage — l'éditeur est **dans le contexte**, il n'est plus possible d'écrire un lecteur qui l'ignore. 8 tests |
+| `amiante.listes.ts` | le § 1.1 **chez LICIEL**, corrigé sur 130 volets. 10 tests |
+| `amiante.bc2e.ts` | le bloc `A` **chez BC2E**, écrit sur sa propre carte. 9 tests |
+
+**Deux fautes corrigées, mesurées sur de vrais rapports.**
+
+**1. Une fausse présence.** Le lecteur décidait « présence » dès que la ligne
+d'une liste portait « il a été repéré ». Sur les dix-huit lignes de ce type du
+corpus, **six n'annoncent pas d'amiante** : cinq non conclus, une absence
+prouvée par analyse. Le § 1.1 se lit maintenant ligne à tiret par ligne à tiret,
+et une liste peut en porter quatre.
+
+**2. Une fausse ABSENCE — la plus grave.** Vérification sur un DTA de
+copropriété dont la liste B porte quatre conduits amiantés : le produit rendait
+**« Aucun matériau contenant de l'amiante n'a été repéré »**. Cause : la ligne
+écrit `conte nant de l'amiante` — **LICIEL coupe les mots au hasard de
+l'extraction**, et le motif ratait la ligne entière.
+
+La recherche se fait désormais sur le texte **sans aucun espace**, ce qui fait
+disparaître toute la famille (`matéria ux`, `exigence s`, `Descri ptif`,
+`rep érage`). Après correction, le même rapport rend : *« Amiante repérée :
+Conduits (Sous - Sol - Cave), et 3 autres. Une évaluation périodique est
+recommandée. »*
+
+⚠️ **On cherche sans espaces, on cite avec.** La forme compacte sert à trouver,
+jamais à restituer — une localisation s'écrit « SOUS-SOL - Cave », et la coller
+la déforme. Le même piège a été pris et corrigé dans le lecteur BC2E.
+
+**Vérifié sur pièce**, trois rapports passés par `analyser()` :
+
+| Rapport | Éditeur choisi | Verdict |
+|---|---|---|
+| DTA parties communes | **BC2E** | « ne conclut pas encore : des prélèvements restent à faire » |
+| DTA copropriété positive | **BC2E** | « repère des matériaux contenant de l'amiante » |
+| DTA copropriété, 4 conduits | **LICIEL** | « Amiante repérée : Conduits (Sous - Sol - Cave), et 3 autres » |
+
+**1 320 tests passent.**
+
+⚠️ **Signalé, non touché** : `src/lib/analyse/securite.ts` appelle
+`ressembleALiciel` sans l'importer (la fonction vit dans
+`tableau-anomalies.ts`). Le fichier est en cours d'écriture par une autre
+session — l'appel plante à l'exécution sur un volet électricité à cinq domaines.
+Ce n'est pas dans le périmètre de la migration amiante.

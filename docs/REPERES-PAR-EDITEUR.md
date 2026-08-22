@@ -11,7 +11,13 @@ porte. Celui-ci dit **chez qui c'est vrai**.*
 ## La règle
 
 **Un repère mesuré sur un seul éditeur n'est pas un repère du métier : c'est
-l'habitude d'un logiciel.** Cent rapports LICIEL ont fait passer quatre traits
+l'habitude d'un logiciel.**
+
+⚠️ **Et l'architecture qui en découle est une contrainte absolue, permanente et
+générale à toute l'application** : *un lecteur par éditeur, choisi sur
+signature, jamais un lecteur unique rafistolé* — voir
+[`ODM-LECTEURS-PAR-EDITEUR.md`](ODM-LECTEURS-PAR-EDITEUR.md), tenue par
+`src/lib/analyse/lecteurs.ts` et ses tests. Cent rapports LICIEL ont fait passer quatre traits
 pour des règles ; l'épreuve hors Liciel les a démentis en douze rapports.
 
 Trois conséquences, qui s'appliquent sans exception :
@@ -69,11 +75,22 @@ Les deux cas sont tenus par un test.
 | **LICIEL** | 345 | signature `iTextSharp 5.4.x`, confirmée par 260 déclarations |
 | **PreventImmo** (états des risques) | 29 | signature `itext-paulo` + `pdftk-java` |
 | **Imm'PACT** | 1 | signature `iTextSharp 5.5.13` + `Creator: ITGA` |
-| **— famille non identifiée —** | **59** | chaîne `TCPDF / HTML2PDF`, un fichier par volet |
+| **BC2E** (ex-« famille non identifiée ») | **59** (215 sur 2 500 PDF re-mesurés le 21/08) | chaîne `TCPDF / HTML2PDF`, un fichier par volet — **nommée le 21/08 : le pied de page porte « membre du réseau BC2E »** |
+| **ITGA (laboratoire)** | 17 | `iTextSharp 5.5.13` + `Creator: ITGA` — **rapports d'essai, pas des diagnostics** |
 
-**375 des 434 documents de diagnostic portent un éditeur nommé — 86 %.** Les 59
-autres forment **une seule famille**, et c'est le seul trou d'identification du
-corpus.
+**375 des 434 documents de diagnostic portaient un éditeur nommé — 86 %.** Les
+59 autres formaient **une seule famille**, seul trou d'identification du corpus.
+
+**21/08/2026 — le trou est comblé : c'est BC2E**, et le rapport le dit dans son
+pied de page, sur chaque page : « DGLM EXPERTISES / <opérateur> **membre du
+réseau BC2E** ». Le même pied donne le volet, la mission et la pagination du
+volet (`AMIANTE (DTA) : 3 sur 10`). **100 % des documents de diagnostic du
+corpus portent désormais un éditeur nommé.**
+
+⚠️ C'est une exception apparente à la règle « on ne cherche jamais une marque
+dans le corps » — et elle n'en est pas une : ici, le nom est dans une
+**rubrique** à position fixe (le pied de page), pas dans un mot rencontré au
+hasard du texte.
 
 Le reste des 700 n'est pas à lire, et l'atelier n'a pas à l'ouvrir :
 
@@ -96,8 +113,14 @@ Repris de l'épreuve hors Liciel (douze rapports, cinq éditeurs, 436 pages) et
 des 100 rapports LICIEL lus. **Lire les colonnes, pas les lignes** : une case
 vide est un trou de mesure, pas une absence.
 
-| Trait de forme | LICIEL | AnalysImmo | DPE WIN | Imm'PACT | Expertec Pro | HTML2PDF |
+| Trait de forme | LICIEL | AnalysImmo | DPE WIN | Imm'PACT | Expertec Pro | BC2E |
 |---|---|---|---|---|---|---|
+| Un fichier PDF **par volet**, nommé d'après la mission | ❌ | non mesuré | non mesuré | non mesuré | non mesuré | ✅ `…-dta.pdf`, `…-dapp.pdf` |
+| Pied de page nommant l'éditeur, le volet et la mission | ❌ | non mesuré | non mesuré | non mesuré | non mesuré | ✅ |
+| Conclusion amiante en **page 1** | ❌ (page 2) | non mesuré | non mesuré | non mesuré | non mesuré | ✅ |
+| Résultats amiante en **sigles + légende imprimée** (JPOR, MM, DOC, RASP, MPSCA) | ❌ (texte en clair) | non mesuré | non mesuré | non mesuré | non mesuré | ✅ |
+| Droit de l'amiante imprimé **même sans positif** | ✅ (toujours) | non mesuré | non mesuré | non mesuré | non mesuré | ❌ (seulement si positif) |
+| Le sommaire annonce moins de rubriques que le corps | ✅ | non mesuré | non mesuré | non mesuré | non mesuré | ✅ |
 | Rubrique « Référence du logiciel validé » | ✅ | ✅ | ✅ | ✅ | non mesuré | non mesuré |
 | Six domaines électricité imprimés même sans résultat | ✅ | ❌ verdict par domaine | non mesuré | non mesuré | non mesuré | non mesuré |
 | Synthèse en tableau à **colonnes entrelacées** | ✅ | ❌ titres majuscules + texte | non mesuré | non mesuré | non mesuré | non mesuré |
@@ -116,9 +139,9 @@ troué par négligence : il l'est parce qu'un seul éditeur a été lu en profon
 
 ## Ce qu'il reste à faire, par ordre d'utilité
 
-1. **Nommer la famille HTML2PDF** — 59 rapports du corpus, aucun encore lu. Un
-   seul lu en entier suffirait à l'identifier et ouvrirait 14 % des documents de
-   diagnostic.
+1. ~~**Nommer la famille HTML2PDF**~~ — **fait le 21/08** : c'est BC2E, nommé
+   après lecture intégrale de quatre de ses documents amiante. Reste à lire ses
+   autres volets (DPE, électricité, plomb, termites), jamais ouverts.
 2. **Six des dix logiciels validés n'ont jamais été vus** : ARGOS, CLIMAWIN,
    KLK DIAG, PLÉIADES, WINDPE, DJESERDIAG. Les sources publiques rassemblées
    dans `VERRIERE_Corpus_Formats_Diagnostics_Hors_Liciel_v1.zip` couvrent
