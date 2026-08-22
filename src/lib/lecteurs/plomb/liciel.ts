@@ -279,6 +279,51 @@ function finDuLibelle(ligne: string): number {
   return apres < ligne.length ? apres : -1;
 }
 
+/**
+ * LE LIBELLÉ D'UNE UNITÉ QUI N'EN A PAS SUR SA PROPRE LIGNE.
+ *
+ * Dernière disposition rencontrée, et la plus retorse : l'extraction rejette le
+ * nom de l'unité sur les DEUX lignes voisines, mêlé aux mesures, et ne laisse
+ * sur la ligne de l'unité que sa zone, son substrat, son revêtement et sa
+ * classe :
+ *
+ *     16 Huisserie Fenêtre partie basse (< 1 m) 0,27   <- début du nom
+ *     A Bois Peinture 0                                 <- l'unité, sans nom
+ *     17 intérieure (F1) partie haute (> 1 m) 0,31      <- fin du nom
+ *
+ * L'unité s'appelle « Huisserie Fenêtre intérieure (F1) ». Chaque morceau est
+ * écrit dans le rapport : on les remet bout à bout, on n'en invente aucun.
+ *
+ * ⚠️ LE PIÈGE, ET IL EST SÉRIEUX. « Huisserie » SEULE est une localisation de
+ * mesure — la colonne de gauche, au même titre que « partie basse ». Elle avait
+ * été RETIRÉE de la liste des éléments pour cette raison précise. Ce qui
+ * distingue les deux n'est donc pas le mot, mais la forme de la ligne : une
+ * unité porte zone, substrat, revêtement et classement réunis ; une
+ * localisation de mesure n'en porte aucun.
+ *
+ * Mesuré sur 117 volets : quatre lignes exactement, toutes sur un même volet.
+ * La signature est étroite, et c'est ce qui la rend sûre.
+ */
+function fragmentDeLibelle(ligne: string | undefined): string {
+  if (!ligne) return '';
+  /* Le numéro de mesure qui ouvre la ligne appartient à la colonne de gauche. */
+  let reste = ligne.trim().replace(/^\d{1,3}\s+/, '');
+  /* La localisation de la mesure ferme la partie utile : ce qui la précède est
+     le fragment de nom. À défaut, la concentration fait la même borne. */
+  const localisation = reste.match(/\b(?:partie\s|mesure\s\d|au centre)/i)?.index;
+  const borne = localisation ?? reste.search(/\d{1,3}[.,]\d{1,2}(?=\s|$)/);
+  if (borne !== undefined && borne > 0) reste = reste.slice(0, borne);
+  return reste.trim();
+}
+
+function libelleParLesVoisines(lignes: readonly string[], i: number): string | null {
+  const entier = `${fragmentDeLibelle(lignes[i - 1])} ${fragmentDeLibelle(lignes[i + 1])}`
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (entier.length < 3 || entier.length > 48) return null;
+  return entier;
+}
+
 function libelleParLaForme(ligne: string): string | null {
   const zone = ligne.match(ZONE_EN_TETE);
   const debut = zone ? zone[0].length : 0;
@@ -411,7 +456,22 @@ export function unitesDeDiagnostic(lignes: readonly string[]): UniteDeDiagnostic
    */
   const estUneUnite = (i: number): boolean => {
     const l = lignes[i]?.trim();
-    return !!l && ELEMENT.test(l);
+    if (!l) return false;
+    /*
+     * ⚠️ UNE LIGNE QUI OUVRE SUR UN NUMÉRO DE MESURE EST UNE MESURE.
+     *
+     * Elle peut contenir un nom d'élément sans être une unité — l'extraction y
+     * rejette parfois le libellé de l'unité voisine :
+     *
+     *     16 Huisserie Fenêtre partie basse (< 1 m) 0,27
+     *
+     * Le mot « Fenêtre » la faisait passer pour une unité, si bien qu'elle
+     * était exclue du bloc de l'unité voisine — et sa mesure perdue avec elle.
+     * Le § 8 veut chaque mesure rattachée à son unité : la colonne de gauche
+     * se reconnaît à son numéro, pas à son vocabulaire.
+     */
+    if (LIGNE_DE_MESURE.test(l)) return false;
+    return ELEMENT.test(l);
   };
 
   /* Les titres de locaux, pour les reconnaître : ce sont eux qui ferment le
@@ -521,7 +581,23 @@ export function unitesDeDiagnostic(lignes: readonly string[]): UniteDeDiagnostic
      * /!\ La forme ne remplace pas la liste, elle s'y ajoute : les deux portes
      * mènent au même contrôle de vraisemblance, quelques lignes plus bas.
      */
-    const parLaForme = element?.[1] ? null : libelleParLaForme(ligne);
+    /*
+     * ⚠️ TROISIÈME PORTE — et la plus étroite, à dessein.
+     *
+     * Une ligne peut porter zone, substrat, revêtement ET classement sans
+     * aucun nom : son libellé est parti sur les deux lignes voisines. On ne
+     * l'ouvre QUE sur cette forme complète, parce qu'une localisation de mesure
+     * n'en réunit jamais autant. Sur 117 volets, elle capte quatre lignes.
+     */
+    const formeComplete =
+      !element?.[1] &&
+      ZONE_EN_TETE.test(ligne) &&
+      SUBSTRATS.test(ligne) &&
+      REVETEMENTS.test(ligne) &&
+      classeDe(ligne) !== null;
+    const parLaForme = element?.[1]
+      ? null
+      : (libelleParLaForme(ligne) ?? (formeComplete ? libelleParLesVoisines(lignes, i) : null));
     if (!element?.[1] && !parLaForme) {
       /*
        * /!\ Un second chemin de nommage vivait ici : « une ligne courte sans
@@ -582,14 +658,26 @@ export function unitesDeDiagnostic(lignes: readonly string[]): UniteDeDiagnostic
 
     /* Le libellé entier de l'élément : de son nom jusqu'à la parenthèse de
        repère comprise, c'est lui qui distingue les faces. */
-    const debut = element?.[1] ? ligne.indexOf(element[1]) : ligne.indexOf(parLaForme!);
+    /* ⚠️ Quand le libellé vient des lignes VOISINES, il n'est pas dans celle-ci :
+       `indexOf` rendrait -1 et découperait n'importe quoi. On le prend tel
+       qu'il a été reconstitué, sans repasser par la ligne. */
+    const debut = element?.[1]
+      ? ligne.indexOf(element[1])
+      : parLaForme
+        ? ligne.indexOf(parLaForme)
+        : -1;
+    const venuDesVoisines = debut < 0;
     /* /!\ LA MÊME BORNE POUR LES DEUX CHEMINS.
        Une liste de substrats était recopiée ici, plus courte que la vraie et
        déjà périmée ; et elle s'arrêtait au PREMIER substrat, ce qui tronquait
        « Terrasse bois » en « Terrasse ». `finDuLibelle` répond pour les deux. */
     const fin = finDuLibelle(ligne);
     const libelle = (
-      fin > debut ? ligne.slice(debut, fin) : (element?.[1] ?? parLaForme ?? '')
+      venuDesVoisines
+        ? (parLaForme ?? '')
+        : fin > debut
+          ? ligne.slice(debut, fin)
+          : (element?.[1] ?? parLaForme ?? '')
     ).trim();
 
     unites.push({
@@ -597,7 +685,7 @@ export function unitesDeDiagnostic(lignes: readonly string[]): UniteDeDiagnostic
       zone: ligne.match(ZONE_EN_TETE)?.[1] ?? null,
       element: libelle,
       face: libelle.match(FACE)?.[1]?.toLowerCase() ?? null,
-      substrat: ligne.slice(debut + libelle.length).match(SUBSTRATS)?.[1] ?? null,
+      substrat: (venuDesVoisines ? ligne : ligne.slice(debut + libelle.length)).match(SUBSTRATS)?.[1] ?? null,
       revetement: ligne.match(REVETEMENTS)?.[1] ?? null,
       mesures: nonMesuree ? [] : mesures,
       etat,

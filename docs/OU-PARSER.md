@@ -2865,3 +2865,52 @@ pas lu du tout.
 > ⚠️ La règle de lecture reste la somme. Si les cinq effectifs ne retombent pas
 > exactement sur le total, on ne rend rien — un effectif approché serait un
 > chiffre inventé, et un test l'interdit explicitement.
+
+### Le compte y est : 117 volets sur 117
+
+| | départ | + filigrane | + forme | + signature | + synthèse | + libellé éclaté |
+|---|---|---|---|---|---|---|
+| **apprentissage** (117 volets) | 79 % | 81 % | 88 % | 89 % | 97 % | **100 %** |
+| **témoin** (39 volets, jamais corrigés) | 77 % | 77 % | 82 % | 87 % | 92 % | **92 %** |
+| unités récupérées, apprentissage | | | | | | **9 602 / 9 602** |
+| volets fabriquant des unités | 1 et 2 | | | 0 et 0 | 0 et 0 | **0 et 0** |
+| tableaux illisibles | 10 et 3 | | | 10 et 3 | **0 et 0** | 0 et 0 |
+
+**Aucune unité perdue, aucune unité inventée**, sur les 9 602 que les 117 volets
+annoncent. C'est ce que le § 41 demande, et c'est vérifié volet par volet.
+
+### La dernière disposition, et le piège qu'elle tendait
+
+L'extraction rejette parfois le nom de l'unité sur ses DEUX lignes voisines et
+ne laisse sur la sienne que sa zone, son substrat, son revêtement et sa classe :
+
+```
+16 Huisserie Fenêtre partie basse (< 1 m) 0,27   <- début du nom
+A Bois Peinture 0                                 <- l'unité, sans aucun nom
+17 intérieure (F1) partie haute (> 1 m) 0,31      <- fin du nom
+```
+
+L'unité s'appelle « Huisserie Fenêtre intérieure (F1) ». Chaque morceau est
+écrit dans le rapport, on les remet bout à bout.
+
+> ⚠️ **« Huisserie » SEULE est une localisation de mesure**, pas une unité — elle
+> avait été retirée de la liste des éléments pour cette raison précise. Ce qui
+> sépare les deux n'est pas le mot, c'est la forme : une unité réunit zone,
+> substrat, revêtement et classement ; une localisation n'en porte aucun. La
+> porte est étroite à dessein — sur 117 volets, elle capte quatre lignes.
+
+Un second défaut est apparu en vérifiant le résultat plutôt qu'en le supposant :
+une seule mesure sur deux était rattachée. La ligne `16 Huisserie Fenêtre…`
+contient le mot « Fenêtre », le lecteur la prenait pour une unité voisine et
+l'excluait du bloc — perdant sa mesure. **Une ligne qui ouvre sur un numéro
+appartient à la colonne de gauche, quel que soit son vocabulaire.**
+
+### Ce qui reste, et où le chercher
+
+Le témoin tient à **92 %** : trois volets y perdent encore des unités, dans des
+formes que le lot d'apprentissage ne contient pas. Huit points séparent les deux
+échantillons, et c'est la mesure de ce qui reste appris par cœur.
+
+**On ne corrige pas sur le témoin.** La suite est d'agrandir encore le lot
+d'apprentissage — au-delà des 400 dossiers actuels, témoin toujours exclu —
+jusqu'à ce que ces formes y apparaissent d'elles-mêmes.

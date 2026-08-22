@@ -302,3 +302,65 @@ describe('un local extérieur aux colonnes empilées', () => {
     expect(unites.every((u) => /Absence de rev/i.test(u.motif ?? ''))).toBe(true);
   });
 });
+
+/**
+ * L'UNITÉ DONT LE NOM EST PARTI SUR LES LIGNES VOISINES.
+ *
+ * Dernière disposition rencontrée, et la plus retorse. L'extraction rejette le
+ * nom de l'unité sur ses deux voisines, mêlé aux mesures, et ne laisse sur la
+ * ligne de l'unité que sa zone, son substrat, son revêtement et sa classe.
+ *
+ * ⚠️ LE PIÈGE : « Huisserie » seule est une LOCALISATION DE MESURE, et elle
+ * avait été retirée de la liste des éléments pour cette raison. Ce qui
+ * distingue les deux n'est pas le mot mais la forme de la ligne.
+ */
+describe('l’unité dont le libellé est sur les lignes voisines', () => {
+  const ECLATE = [
+    '4ème étage - Séjour/Cuisine',
+    "Nombre d'unités de diagnostic : 2 - Nombre d'unités de diagnostic de classe 3 repéré : 0 soit 0 %",
+    'N° Zone Unité de diagnostic Substrat Revêtement apparent Localisation mesure Etat* de conservation Classement UD Observation',
+    '14 partie basse (< 1 m) 0,08',
+    'A Fenêtre intérieure (F1) Bois Peinture 0',
+    '15 partie haute (> 1 m) 0,32',
+    '16 Huisserie Fenêtre partie basse (< 1 m) 0,27',
+    'A Bois Peinture 0',
+    '17 intérieure (F1) partie haute (> 1 m) 0,31',
+    'Classement des unités de diagnostic'
+  ];
+
+  const unites = unitesDeDiagnostic(ECLATE);
+
+  it('ne perd pas l’unité privée de son nom', () => {
+    expect(unites).toHaveLength(2);
+  });
+
+  it('recompose son libellé à partir des deux voisines, sans rien inventer', () => {
+    expect(unites[1]?.element).toBe('Huisserie Fenêtre intérieure (F1)');
+  });
+
+  it('lui rend sa zone, son substrat et sa classe', () => {
+    expect(unites[1]?.zone).toBe('A');
+    expect(unites[1]?.substrat).toBe('Bois');
+    expect(unites[1]?.classe).toBe(0);
+  });
+
+  it('rattache ses DEUX mesures, malgré le mot « Fenêtre » sur la ligne du haut', () => {
+    /* La ligne « 16 Huisserie Fenêtre partie basse… » ouvre sur un numéro : elle
+       appartient à la colonne de gauche, et n'est donc pas une unité. Le lecteur
+       la prenait pour telle et perdait sa mesure. */
+    expect(unites[1]?.mesures.map((m) => m.concentration)).toEqual([0.27, 0.31]);
+  });
+
+  it('⚠️ ne fabrique aucune unité depuis une simple localisation de mesure', () => {
+    /* « Huisserie » seule, dans la colonne de gauche, n'est pas une unité : elle
+       n'a ni zone, ni substrat, ni revêtement, ni classement. */
+    expect(
+      unitesDeDiagnostic([
+        'N° Zone Unité de diagnostic Substrat Revêtement apparent Localisation mesure Etat* de conservation Classement UD Observation',
+        '12 partie mobile 4,3',
+        '13 Huisserie 4,79',
+        'Classement des unités de diagnostic'
+      ])
+    ).toEqual([]);
+  });
+});
