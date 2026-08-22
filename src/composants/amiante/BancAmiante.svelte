@@ -141,6 +141,8 @@
       <p class="etiquette">{nom}</p>
       <Amiante
         diagnostic={d}
+        versRetour={() => console.log("retour", nom)}
+        versPlus={() => console.log("plus", nom)}
         versRapport={() => console.log('rapport complet', nom)}
         versDetails={() => console.log('détails', nom)}
         versPhotos={() => console.log('photos', nom)}

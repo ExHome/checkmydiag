@@ -45,7 +45,9 @@
     versDetails,
     versPhotos,
     versConseils,
-    versSavoir
+    versSavoir,
+    versRetour,
+    versPlus
   }: {
     diagnostic: Diagnostic;
     entete?: boolean;
@@ -54,6 +56,8 @@
     versPhotos?: () => void;
     versConseils?: () => void;
     versSavoir?: () => void;
+    versRetour?: () => void;
+    versPlus?: () => void;
   } = $props();
 
   const s = $derived(syntheseAmiante(diagnostic));
@@ -79,17 +83,63 @@
       ? s.elements.entrees.map((e) => ({ nom: e.quoi, icone: iconeDe(e.quoi) }))
       : categoriesDe(s)
   );
+
+  /*
+   * LES PANNEAUX SE REPLIENT — comme dans le visuel, qui met un chevron au
+   * bout de chaque en-tête.
+   *
+   * ⚠️ Mais ils s'ouvrent TOUS LES DEUX au premier affichage, et « Ce qui n'a
+   * pas été contrôlé » garde son compte visible même replié. Un bloc fermé qui
+   * ne dit pas ce qu'il contient se lit comme un bloc vide — et le § 4 de
+   * l'ordre interdit qu'une zone non contrôlée passe pour saine, y compris par
+   * omission d'affichage.
+   */
+  let ouvert = $state({ constatations: true, limites: true });
+
+  /** D'où sort le pourcentage — dit en clair, jamais caché derrière un clic. */
+  const calcul = $derived(
+    confiance.part !== null
+      ? `${confiance.examinees} pièces examinées, ${confiance.nonExaminees} local ou composant resté fermé : ` +
+        `${confiance.examinees} sur ${confiance.examinees + confiance.nonExaminees}. ` +
+        'Les deux comptes viennent du rapport — la liste des pièces visitées et celle des locaux non visités.'
+      : 'Le rapport ne donne pas les deux listes nécessaires au calcul : on ne montre donc aucun pourcentage.'
+  );
 </script>
 
 <article class="ecran" data-issue={s.issue} data-risque={TON_RISQUE[risque]}>
   {#if entete}
     <header class="titre">
-      <svg class="toit" viewBox="0 0 46 36" aria-hidden="true">
-        <path d="M5 19 L23 5 L41 19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-        <path d="M10.5 18 L10.5 30.5 L35.5 30.5 L35.5 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
-      </svg>
-      <h1>Amiante</h1>
-      <p class="sous-titre">Synthèse du diagnostic</p>
+      <!--
+        La barre du visuel : retour à gauche, titre au centre, « plus » à
+        droite. Les deux boutons ne s'affichent QUE si l'appelant en fournit
+        l'action : un bouton qui ne mène nulle part promet quelque chose.
+      -->
+      <div class="barre">
+        {#if versRetour}
+          <button type="button" class="rond-barre" onclick={versRetour} aria-label="Revenir au dossier">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4 7 12l8 8" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          </button>
+        {:else}
+          <span class="rond-barre vide" aria-hidden="true"></span>
+        {/if}
+
+        <div class="au-centre">
+          <svg class="toit" viewBox="0 0 46 36" aria-hidden="true">
+            <path d="M5 19 L23 5 L41 19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M10.5 18 L10.5 30.5 L35.5 30.5 L35.5 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+          </svg>
+          <h1>Amiante</h1>
+          <p class="sous-titre">Synthèse du diagnostic</p>
+        </div>
+
+        {#if versPlus}
+          <button type="button" class="rond-barre" onclick={versPlus} aria-label="Autres actions">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.5" cy="12" r="1.7" fill="currentColor" /><circle cx="12" cy="12" r="1.7" fill="currentColor" /><circle cx="18.5" cy="12" r="1.7" fill="currentColor" /></svg>
+          </button>
+        {:else}
+          <span class="rond-barre vide" aria-hidden="true"></span>
+        {/if}
+      </div>
     </header>
   {/if}
 
@@ -152,7 +202,13 @@
             <strong>{p.titre}</strong>
             <small>{p.detail}</small>
           </span>
-          {#if p.ancre}<span class="chevron" aria-hidden="true">›</span>{/if}
+          <!--
+            Le chevron du visuel, sur chaque carte — mais ATTÉNUÉ quand il ne
+            mène nulle part. Une flèche pleine sur une ligne sans suite promet
+            un détail qui n'existe pas ; effacée, elle garde le rythme du
+            dessin sans mentir.
+          -->
+          <span class="chevron" class:sourd={!p.ancre} aria-hidden="true">›</span>
         </li>
       {/each}
     </ul>
@@ -217,15 +273,33 @@
   <!-- ══ CONSTATATIONS DIVERSES ═══════════════════════════════════════ -->
   {#if s.constatations.montrer}
     <section class="panneau constatations">
-      <h2 class="entete-panneau">Constatations diverses</h2>
-      {#if s.constatations.entrees.length}
-        <ul class="puces">
-          {#each s.constatations.entrees as c, i (c.terme + i)}
-            <li><span class="puce" aria-hidden="true"></span><span>{c.terme}{#if c.ou}<em> — {c.ou}</em>{/if}</span></li>
-          {/each}
-        </ul>
-      {:else if s.constatations.mention}
-        <p class="texte">{s.constatations.mention}</p>
+      <!-- Le feuillage du visuel, en filigrane dans le coin. Décoratif. -->
+      <svg class="feuillage" viewBox="0 0 90 90" aria-hidden="true">
+        <path d="M78 10c0 34-19 52-46 52 0-34 19-52 46-52Z" fill="none" stroke="currentColor" stroke-width="1.6" />
+        <path d="M62 26C45 37 34 52 30 68" fill="none" stroke="currentColor" stroke-width="1.3" />
+        <path d="M70 30c-6 5-13 8-20 9M64 44c-7 4-13 9-17 15" fill="none" stroke="currentColor" stroke-width="1.1" />
+      </svg>
+      <button
+        type="button"
+        class="entete-panneau bouton-repli"
+        aria-expanded={ouvert.constatations}
+        onclick={() => (ouvert.constatations = !ouvert.constatations)}
+      >
+        <span>Constatations diverses</span>
+        <span class="caret" class:replie={!ouvert.constatations} aria-hidden="true">
+          <svg viewBox="0 0 20 12"><path d="M2 10 10 2.5 18 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        </span>
+      </button>
+      {#if ouvert.constatations}
+        {#if s.constatations.entrees.length}
+          <ul class="puces">
+            {#each s.constatations.entrees as c, i (c.terme + i)}
+              <li><span class="puce" aria-hidden="true"></span><span>{c.terme}{#if c.ou}<em> — {c.ou}</em>{/if}</span></li>
+            {/each}
+          </ul>
+        {:else if s.constatations.mention}
+          <p class="texte">{s.constatations.mention}</p>
+        {/if}
       {/if}
     </section>
   {/if}
@@ -233,33 +307,53 @@
   <!-- ══ CE QUI N'A PAS ÉTÉ CONTRÔLÉ ══════════════════════════════════ -->
   {#if s.nonControle.montrer}
     <section class="panneau limites">
-      <h2 class="entete-panneau">
+      <!--
+        ⚠️ CE PANNEAU S'OUVRE, MAIS IL NE SE REFERME PAS SUR RIEN.
+        Son en-tête garde le COMPTE des zones même replié : un bloc fermé qui ne
+        dit pas ce qu'il contient se lit comme un bloc vide, et la règle du § 4
+        de l'ordre interdit qu'une zone non contrôlée passe pour saine.
+      -->
+      <button
+        type="button"
+        class="entete-panneau bouton-repli"
+        aria-expanded={ouvert.limites}
+        onclick={() => (ouvert.limites = !ouvert.limites)}
+      >
         <svg class="garde" viewBox="0 0 22 20" aria-hidden="true">
           <path d="M11 2 20.8 18.6H1.2Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
           <path d="M11 7.6v4.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
           <circle cx="11" cy="15.3" r="1" fill="currentColor" />
         </svg>
-        Ce qui n’a pas été contrôlé
-      </h2>
-      {#if s.nonControle.entrees.length}
-        <p class="texte">
-          Certaines zones n’ont pas pu être inspectées. Le constat ne dit rien de celles-là :
-          ni qu’elles contiennent de l’amiante, ni le contraire.
-        </p>
-        <ul class="lignes">
-          {#each s.nonControle.entrees as l, i (l.quoi + i)}
-            <li>
-              <span class="puce sable" aria-hidden="true"></span>
-              <span class="quoi">
-                {l.quoi}{#if l.ou}<em> — {l.ou}</em>{/if}
-                {#if l.pourquoi}<small>{l.pourquoi}</small>{/if}
-              </span>
-              <span class="statut">Non contrôlé</span>
-            </li>
-          {/each}
-        </ul>
-      {:else if s.nonControle.mention}
-        <p class="texte">{s.nonControle.mention}</p>
+        <span>
+          Ce qui n’a pas été contrôlé{#if !ouvert.limites && s.nonControle.entrees.length}
+            <span class="compte"> · {s.nonControle.entrees.length}</span>
+          {/if}
+        </span>
+        <span class="caret" class:replie={!ouvert.limites} aria-hidden="true">
+          <svg viewBox="0 0 20 12"><path d="M2 10 10 2.5 18 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        </span>
+      </button>
+      {#if ouvert.limites}
+        {#if s.nonControle.entrees.length}
+          <p class="texte">
+            Certaines zones n’ont pas pu être inspectées. Le constat ne dit rien de celles-là :
+            ni qu’elles contiennent de l’amiante, ni le contraire.
+          </p>
+          <ul class="lignes">
+            {#each s.nonControle.entrees as l, i (l.quoi + i)}
+              <li>
+                <span class="puce sable" aria-hidden="true"></span>
+                <span class="quoi">
+                  {l.quoi}{#if l.ou}<em> — {l.ou}</em>{/if}
+                  {#if l.pourquoi}<small>{l.pourquoi}</small>{/if}
+                </span>
+                <span class="statut">Non contrôlé</span>
+              </li>
+            {/each}
+          </ul>
+        {:else if s.nonControle.mention}
+          <p class="texte">{s.nonControle.mention}</p>
+        {/if}
       {/if}
     </section>
   {/if}
@@ -272,7 +366,25 @@
           <path d="M17 3c0 8-4.5 12-11 12 0-8 4.5-12 11-12Z" fill="none" stroke="currentColor" stroke-width="1.5" />
           <path d="M12.5 7.5C9 10 6.5 13.5 5.5 17" fill="none" stroke="currentColor" stroke-width="1.3" />
         </svg>
-        {confiance.part !== null ? 'Part du bien examinée' : 'Ce que couvre ce rapport'}
+        <span>{confiance.part !== null ? 'Part du bien examinée' : 'Ce que couvre ce rapport'}</span>
+        <!--
+          Le (i) du visuel. Il n'ouvre pas une aide : il DIT, au survol comme au
+          clavier, d'où sort le chiffre. Une note de confiance dont on ne peut
+          pas retrouver le calcul ne vaut rien.
+        -->
+        <span
+          class="info"
+          tabindex="0"
+          role="note"
+          aria-label="Comment ce chiffre est calculé : {calcul}"
+          title={calcul}
+        >
+          <svg viewBox="0 0 22 22" aria-hidden="true">
+            <circle cx="11" cy="11" r="9.6" fill="none" stroke="currentColor" stroke-width="1.5" />
+            <path d="M11 9.8v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            <circle cx="11" cy="6.6" r="1.05" fill="currentColor" />
+          </svg>
+        </span>
       </h2>
 
       {#if confiance.part !== null}
@@ -615,6 +727,9 @@
     color: var(--encre-douce);
     opacity: 0.6;
   }
+  .chevron.sourd {
+    opacity: 0.18;
+  }
   .coche-libelle {
     display: inline-flex;
     align-items: center;
@@ -652,6 +767,118 @@
     margin-top: 1.15rem;
     box-shadow: var(--ombre);
   }
+  /* ── La barre du haut ────────────────────────────────────────────── */
+  .barre {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .au-centre {
+    flex: 1;
+    min-width: 0;
+  }
+  .rond-barre {
+    width: 2.5rem;
+    height: 2.5rem;
+    flex: none;
+    display: grid;
+    place-items: center;
+    margin-top: 0.35rem;
+    padding: 0;
+    background: none;
+    border: 0;
+    border-radius: 50%;
+    color: var(--encre);
+    cursor: pointer;
+  }
+  .rond-barre svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  .rond-barre.vide {
+    cursor: default;
+  }
+  .rond-barre:focus-visible {
+    outline: 2px solid var(--sable-encre);
+    outline-offset: 2px;
+  }
+
+  /* ── En-têtes repliables ─────────────────────────────────────────── */
+  .bouton-repli {
+    width: 100%;
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    text-align: left;
+  }
+  .bouton-repli:focus-visible {
+    outline: 2px solid var(--sable-encre);
+    outline-offset: 3px;
+    border-radius: 0.4rem;
+  }
+  .bouton-repli > span:first-of-type {
+    flex: 1;
+  }
+  .caret {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    color: var(--encre-douce);
+  }
+  .caret svg {
+    width: 1.05rem;
+    height: 0.65rem;
+    /* Une rotation, pas une transition sur un jeton mouvant. */
+    transition: transform 160ms ease;
+  }
+  .caret.replie svg {
+    transform: rotate(180deg);
+  }
+  .compte {
+    font-weight: 700;
+  }
+
+  /* Le (i) : il porte une explication, pas une décoration. */
+  .info {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--encre-douce);
+    cursor: help;
+  }
+  .info svg {
+    width: 1.3rem;
+    height: 1.3rem;
+  }
+  .info:focus-visible {
+    outline: 2px solid var(--sable-encre);
+    outline-offset: 2px;
+    border-radius: 50%;
+  }
+
+  /* Le feuillage du visuel — décor, jamais une information. */
+  .feuillage {
+    position: absolute;
+    right: 0.4rem;
+    bottom: 0.3rem;
+    width: 5.5rem;
+    height: 5.5rem;
+    color: var(--sable);
+    opacity: 0.28;
+    pointer-events: none;
+  }
+  .constatations {
+    position: relative;
+    overflow: hidden;
+  }
+
   .entete-panneau {
     display: flex;
     align-items: center;
