@@ -85,11 +85,10 @@ Sa réponse vide diffère aussi : **« Observations : Néant »**, et non
 Leurs titres de rubriques sont, mot pour mot, ceux de LICIEL — jusqu'au tiret
 cadratin de « E. – Catégories de termites en cause : ».
 
-⚠️ **Cela ne permet pas de les appeler LICIEL.** L'ordre de mission est explicite :
-*« On garde sur une signature POSITIVE de l'éditeur, jamais sur l'absence d'un
-signe. »* Se ressembler n'est pas être. Ce que la mesure autorise à écrire est
-exactement ceci : **la carte de leurs rubriques est identique à celle de
-LICIEL** — une observation, pas une identification.
+⚠️ **Cela ne permet pas de les appeler LICIEL** — et la suite a montré que
+l'observation elle-même était mal formulée. Voir la section « LES ONZE VOLETS
+SANS ÉDITEUR » en fin de carnet : ils sont imprimés par Word, et leurs rubriques
+sont celles de l'ARRÊTÉ, que LICIEL suit aussi.
 
 Ce qu'elle signale, en revanche, c'est **qu'il manque une source
 d'identification**. `identifierGenerateur` connaît trois sources — déclaration,
@@ -725,3 +724,143 @@ aussi, **une mesure LICIEL**. Elle reste vraie ; elle ne dit rien de BC2E.
 *Lectures intégrales : 6 (5 LICIEL, 1 BC2E). Rubriques « constatations
 diverses » LICIEL : 40. Volets INCONNUS extraits, non encore lus : 11.
 Aucun code touché.*
+
+---
+
+# LES ONZE VOLETS SANS ÉDITEUR — ET LA FAUTE QUE J'ALLAIS COMMETTRE
+
+## Ce que j'avais écrit
+
+> « Leurs titres de rubriques sont, mot pour mot, ceux de LICIEL — jusqu'au tiret
+> cadratin de "E. – Catégories de termites en cause :". […] la carte de leurs
+> rubriques est identique à celle de LICIEL. »
+
+C'était juste comme observation et **faux comme raisonnement**, et la mesure
+suivante l'a montré.
+
+## Ce que les PDF disent réellement
+
+```
+la SIGNATURE d'impression de ces onze PDF
+  10  Producer = Microsoft® Word 2019
+   1  Producer = Microsoft® Word pour Microsoft 365
+
+la DÉCLARATION « Référence du logiciel validé », dans le dossier
+  11  aucune
+```
+
+**Ils sont imprimés par Word.** Ce ne sont pas des LICIEL non signés : la
+signature dit Word, **positivement**. Le document a été produit — ou refait —
+dans un traitement de texte, à partir d'un modèle.
+
+## Pourquoi leurs rubriques ressemblent à LICIEL
+
+⚠️ **Parce que ce ne sont pas les rubriques de LICIEL.**
+
+Le modèle de rapport termites — A. Désignation du ou des bâtiments · B.
+Désignation du client · C. Désignation de l'opérateur · D. Identification des
+bâtiments visités · E. Catégories de termites en cause · F. Parties n'ayant pu
+être visitées · G. Ouvrages non examinés · H/I. Constatations diverses et Moyens
+d'investigation · J. VISA — **est fixé par l'arrêté du 29 mars 2007**, modifié le
+7 mars 2012. LICIEL le suit. BC2E le suit aussi, avec ses propres libellés en
+capitales et deux rubriques de plus.
+
+Ces onze volets suivent donc **l'arrêté**, pas LICIEL. Attribuer la carte à
+LICIEL, c'était mettre au compte d'un éditeur ce qui appartient au texte
+réglementaire.
+
+C'est exactement le **piège inverse** que l'ordre de mission décrit : *« avant de
+mettre un trait au compte d'un éditeur, vérifier qu'il n'est pas dans le texte
+réglementaire »*. Je l'avais déjà commis une fois — les six domaines de
+l'électricité, que je donnais pour une habitude de LICIEL et qui sont l'annexe
+III de l'arrêté du 28 septembre 2017. Deuxième fois.
+
+## Ce que ces volets contiennent quand même
+
+Lu en entier, le volet 217 (`25/IMO/0370AM`) porte deux choses que Verrière ne
+lit pas, et qui ne sont pas des détails :
+
+**Une pièce NON VISITÉE**, en rubrique F :
+
+```
+F. – Identification des bâtiments et parties du bâtiment (pièces et volumes)
+n'ayant pu être visités et justification :
+Combles - Combles (Plafond rampant, contrôle de la charpente impossible.)
+```
+
+**La charpente incontrôlable**, reprise en rubrique G avec son motif. Sur un
+rapport de termites, une charpente non contrôlée est l'information principale —
+c'est là que les termites se voient.
+
+Et son tableau D a **une troisième mise en page**, différente de LICIEL comme de
+BC2E : la pièce seule sur sa ligne, puis les ouvrages en dessous, avec les
+lettres de mur groupées.
+
+```
+Entrée
+Mur - A, B, C, D - Plâtre et Peinture        Absence d'indices d'infestation
+Porte (P1) - A - Bois et Peinture            Absence d'indices d'infestation
+```
+
+Le bruit d'extraction y est aussi le plus fort du corpus : « E . – Catégories »,
+« B â timents », « S ituation », « l' a rrêté », « identifié e s », « termite s ».
+Cohérent avec un rendu Word.
+
+## Ce qu'on en fait — et ce qu'on n'en fait pas
+
+**On ne leur applique pas le lecteur LICIEL.** Ils ne sont pas du LICIEL, et une
+carte empruntée est une carte fausse.
+
+**On ne crée pas non plus un lecteur « WORD ».** « Imprimé par Word » ne nomme
+pas un éditeur de diagnostic : c'est un mode d'impression, et deux cabinets
+différents produiraient sous Word des documents sans rapport. Ici les onze
+viennent du même cabinet — la carte serait celle de *son modèle Word*, pas celle
+de Word.
+
+## ⚠️ ET LA MARQUE N'EST PAS DISJOINTE — mesuré
+
+```
+éditeur nommé <- producteur du PDF
+  237  LICIEL   <- iTextSharp 5.4.0
+   10  INCONNU  <- Microsoft Word 2019
+    1  BC2E     <- TCPDF 5.0.002
+    1  INCONNU  <- Microsoft Word pour Microsoft 365
+    1  LICIEL   <- Microsoft Word pour Microsoft 365   ← celui-ci décide
+```
+
+**Un volet est nommé LICIEL et imprimé par Word.** La marque « Producer = Word »
+apparaît donc des deux côtés : chez un éditeur nommé et chez les inconnus. Elle
+n'identifie rien.
+
+C'est la règle de sûreté, appliquée : *une marque qui apparaît aussi chez un
+éditeur nommé n'identifie pas.* **Donc on ne crée pas de lecteur, et les onze
+restent sans éditeur — on se tait sur eux.**
+
+Ce volet LICIEL-imprimé-par-Word apprend autre chose au passage : **un rapport
+LICIEL peut être repassé par un traitement de texte.** Les onze inconnus *peuvent*
+donc être des LICIEL repassés — ou ne pas l'être. On ne peut pas le savoir, et
+c'est exactement pourquoi on se tait.
+
+## Une inquiétude levée par la lecture du code
+
+LICIEL est reconnu par `Producer = iTextSharp`, qui est une bibliothèque PDF
+générique et non un logiciel de diagnostic. J'ai craint un faux positif — et
+`atelier/editeur.ts` avait déjà traité la question : la table des signatures
+distingue **la version** (LICIEL imprime en 5.4.0, un autre éditeur en 5.5.13) et
+croise le **créateur** (`ITGA` désigne Imm'PACT), la règle la plus précise
+passant en tête. Mesuré sur 700 PDF.
+
+Vérifier avant d'alerter : l'inquiétude était fondée, la réponse était déjà
+écrite.
+
+## Ce que coûte ce silence, chiffré
+
+```
+volets termites du corpus              : 250
+sans éditeur nommé                     :  11   (4,4 %)
+donc sans constatations diverses lues  :  11
+```
+
+Onze acquéreurs n'auraient pas leur rubrique. C'est le prix de la règle, et il
+est assumé : *« pas lue » se dit à l'écran*, et un silence annoncé vaut mieux
+qu'une carte empruntée qui invente.
