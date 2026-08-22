@@ -51,7 +51,20 @@
 
   // Le schéma parle du logement du lecteur, pas d'une maison en général.
   const TITRES: Partial<Record<TypeDiag, string>> = {
-    dpe: 'Par où la chaleur part de chez vous',
+    /*
+     * Le DPE n'a plus d'explicatif dessiné.
+     *
+     * « Je veux plus le schéma du DPE paroi par paroi, il est moche et fait une
+     * redite avec le schéma extrait du DPE » — Aude, 22/08/2026.
+     *
+     * Elle a raison sur le fond : la page de déperditions du rapport est
+     * découpée et montrée telle quelle, avec les VRAIS pourcentages du
+     * diagnostiqueur. Un dessin à côté redit la même chose en moins juste — il
+     * ne connaît que trois états d'isolation, là où le rapport chiffre.
+     *
+     * Sans titre, la section entière ne s'affiche pas : c'est le garde-fou
+     * `{#if titre}` juste en dessous.
+     */
     plomb: 'Pourquoi une vieille peinture est dangereuse',
     electricite: 'Ce que fait le différentiel quand le courant fuit',
     gaz: 'Ce qui se passe quand la grille d’air est bouchée',

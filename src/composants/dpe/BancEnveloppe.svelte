@@ -22,7 +22,6 @@
   import type { Etiquette } from '../../lib/modele';
   import { prioriserLesTravaux } from '../../lib/analyse/priorite';
   import type { Diagnostic } from '../../lib/modele';
-  import Deperditions from './Deperditions.svelte';
   import MiniAppDpe from './MiniAppDpe.svelte';
   import FormatInconnu from './FormatInconnu.svelte';
   import DoubleEtiquette from './DoubleEtiquette.svelte';
@@ -259,10 +258,6 @@
       dejaBien={aiguillage.valeur.dejaBien}
     />
 
-    <Deperditions
-      postes={aiguillage.valeur.enveloppe.deperditions}
-      pourcentagesDisponibles={aiguillage.valeur.enveloppe.pourcentagesDisponibles}
-    />
 
     <LesParois enveloppe={aiguillage.valeur.enveloppe} />
 

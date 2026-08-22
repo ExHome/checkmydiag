@@ -19,6 +19,7 @@
   import Explicatif from './schemas/Explicatif.svelte';
   import RegleDpe from './visuels/RegleDpe.svelte';
   import Amiante from './amiante/Amiante.svelte';
+  import MiniAppTermites from './termites/MiniAppTermites.svelte';
   import VisuelPlomb from './visuels/VisuelPlomb.svelte';
   /*
    * LA PREMIÈRE DES NOUVELLES SCÈNES.
@@ -40,7 +41,6 @@
   import MiniAppDpe from './dpe/MiniAppDpe.svelte';
   import VignetteDuBien from './dpe/VignetteDuBien.svelte';
   import MotsExpliques from './MotsExpliques.svelte';
-  import Deperditions from './dpe/Deperditions.svelte';
   import LesParois from './dpe/LesParois.svelte';
   import LesSystemes from './dpe/LesSystemes.svelte';
   import LesTravaux from './dpe/LesTravaux.svelte';
@@ -1189,6 +1189,26 @@
                 {/if}
                             {:else if d.type === 'termites'}
                 <!--
+                  LA MINI-APP DU PACK — ordre d'Aude du 22/08/2026,
+                  `ODM_MINI_APP_TERMITES.md`, visuel de référence : l'écran de
+                  DROITE.
+
+                  Elle porte les sept blocs imposés : points clés, résultat
+                  global, constatations diverses, ce qui n'a pas été contrôlé,
+                  complétude, conseil, rapport source. La scène des zones, plus
+                  bas, garde sa place : elle montre CE QUI A ÉTÉ contrôlé, que
+                  la mini-app ne dessine pas.
+
+                  `autonome={false}` : la carte porte déjà le titre et la
+                  navigation ; les répéter volerait la place de ce qui compte.
+                -->
+                <MiniAppTermites
+                  diagnostic={d}
+                  autonome={false}
+                  surVoirDansLeRapport={() => surVoirDansLeRapport?.(d.type)}
+                />
+
+                <!--
                   LA SCÈNE DES ZONES, à la place du dessin d'avant.
 
                   Elle dit la même chose et trois de plus : on peut toucher une
@@ -1597,11 +1617,6 @@
                       causes={lu.causes}
                       dejaBien={lu.dejaBien}
                     />
-                    <Deperditions
-                      postes={lu.enveloppe.deperditions}
-                      pourcentagesDisponibles={lu.enveloppe.pourcentagesDisponibles}
-                      chiffres={partsAdemeDe(d)}
-                    />
                     <LesParois enveloppe={lu.enveloppe} />
                     <BandeauDuRapport bandeau={bandeau('vue d’ensemble')} />
                     <LesSystemes systemes={lu.systemes} />
@@ -1654,201 +1669,6 @@
                 {/if}
               </section>
 
-
-              <!--
-                ═══════════════════════════════════════════════════════════════
-                CE QUE LE RAPPORT CONSTATE EN PLUS — le bloc des termites.
-                ═══════════════════════════════════════════════════════════════
-
-                Le tableau du rapport termites répond à UNE question : y a-t-il
-                des indices de TERMITES sur les éléments examinés ? Vrillettes,
-                moisissures, pourriture, humidité, l'historique du bien, ce que
-                l'opérateur n'a pas pu regarder — tout cela vit dans la rubrique
-                « Constatations diverses », et n'était affiché nulle part.
-
-                Lu sur un même logement réexpertisé quatre fois : la rubrique
-                raconte qu'il y a eu des termites six mois plus tôt et que le
-                plancher a dû être remplacé, pendant que le tableau est redevenu
-                « Absence d'indices » partout. La conclusion affichée était
-                exacte, et le lecteur en tirait une conclusion fausse.
-
-                Mesuré sur 150 volets : 48 rapports portent au moins un constat,
-                53 constats au total. Les mots employés sont ceux du rapport —
-                9 « termite », 8 « humidité », 7 « vrillette », 6 « pourriture »,
-                3 « capricorne », 1 « moisissure », et zéro « mérule ».
-
-                L'ordre de mission termites (§ 19) leur donne ce bloc, et son
-                § 23 en fixe l'ordre : les CONSTATS d'abord, jamais dilués — une
-                information minoritaire peut être l'information principale.
-              -->
-              {#if d.constatations}
-                {@const constats = d.constatations.entrees.filter((e) => e.nature === 'constat')}
-                {@const limites = d.constatations.entrees.filter((e) => e.nature === 'limite')}
-                <section class="etape" aria-labelledby="et-constat-{d.type}">
-                  <h4 id="et-constat-{d.type}" class="titre-etape">
-                    Ce que le rapport constate en plus
-                  </h4>
-
-                  {#if constats.length}
-                    <ul class="constatations">
-                      {#each constats as c (c.terme)}
-                        <li>
-                          <!-- Les mots du rapport, entiers. On cite, puis on
-                               explique — jamais l'inverse. -->
-                          <p class="mot-du-rapport">« {c.terme} »</p>
-                          {#if c.ou}
-                            <p class="ou-du-rapport">Localisation portée au rapport&nbsp;: {c.ou}</p>
-                          {/if}
-                        </li>
-                      {/each}
-                    </ul>
-                  {:else if d.constatations.neant}
-                    <p class="reponse-etape">
-                      La rubrique «&nbsp;Constatations diverses&nbsp;» existe dans ce rapport et
-                      répond «&nbsp;Néant&nbsp;»&nbsp;: le diagnostiqueur n’a rien relevé d’autre.
-                    </p>
-                  {:else if !d.constatations.lue}
-                    <!--
-                      « Pas lu » n'est pas « rien à signaler ».
-                      Le modèle de ce rapport n'est pas couvert : le silence est
-                      le nôtre, pas celui du diagnostiqueur (§ 15, § 24).
-                    -->
-                    <p class="reponse-etape">
-                      Le modèle de ce rapport n’est pas encore couvert&nbsp;: cette rubrique n’a
-                      pas été lue. Cela ne veut pas dire qu’elle est vide — ouvrez-la dans le
-                      rapport.
-                    </p>
-                  {/if}
-
-                  {#if limites.length}
-                    <!--
-                      Les limites d'examen, SÉPARÉES des constats (§ 14).
-                      Dix-sept rubriques sur quarante ne contiennent que ces
-                      clauses-là : mélangées aux constats, elles les noieraient.
-                    -->
-                    <div class="limites-examen">
-                      <p class="titre-limites">Ce que l’examen n’a pas couvert</p>
-                      {#each limites as l (l.terme)}
-                        <p class="mot-du-rapport">« {l.terme} »</p>
-                      {/each}
-                      <p class="reponse-etape">
-                        Une zone qui n’a pas pu être regardée n’est pas une zone sans termites.
-                      </p>
-                    </div>
-                  {/if}
-                </section>
-              {/if}
-
-
-              <!--
-                ═══════════════════════════════════════════════════════════════
-                CE QUE L'OPÉRATEUR N'A PAS PU VISITER — rubrique F.
-                ═══════════════════════════════════════════════════════════════
-
-                « EXAMINÉ + ABSENCE D'INDICE » n'est pas « NON EXAMINÉ ». Une
-                zone inaccessible ne peut jamais devenir une zone sans termites
-                — § 15 de l'ordre de mission, et il est absolu.
-
-                Or les pièces déclarées non visitées sont, très majoritairement,
-                LES COMBLES. Des combles non visités, c'est LA CHARPENTE non
-                contrôlée — l'endroit même où les termites se voient. Un rapport
-                qui conclut « absence d'indices » sans que personne soit monté
-                dans les combles ne dit pas la même chose qu'un rapport où tout
-                a été regardé, et l'écran ne faisait pas la différence.
-
-                Motifs relevés sur le corpus, tous d'accès et aucun de termites :
-                absence de trappe de visite · plafond rampant · encombrement trop
-                important · impossibilité d'entrer · moyen d'accès insuffisant ·
-                trappe d'accès trop petite · accès condamné · emplacement non
-                identifiable.
-              -->
-              {#if d.nonVisitees}
-                <section class="etape" aria-labelledby="et-nonvisite-{d.type}">
-                  <h4 id="et-nonvisite-{d.type}" class="titre-etape">
-                    Ce que l’opérateur n’a pas pu visiter
-                  </h4>
-
-                  {#if d.nonVisitees.pieces.length}
-                    {#if d.nonVisitees.charpente}
-                      <!-- Dit en premier, parce que c'est ce qui compte le plus
-                           dans un rapport de termites. -->
-                      <p class="reponse-etape alerte-charpente">
-                        Les combles ou la charpente n’ont pas pu être contrôlés. C’est
-                        l’endroit où les termites se voient&nbsp;: la conclusion du rapport ne
-                        porte pas sur eux.
-                      </p>
-                    {/if}
-                    <ul class="constatations">
-                      {#each d.nonVisitees.pieces as p (p.terme)}
-                        <li>
-                          <p class="mot-du-rapport">{p.ou}</p>
-                          {#if p.pourquoi}
-                            <p class="ou-du-rapport">Motif porté au rapport&nbsp;: {p.pourquoi}</p>
-                          {/if}
-                        </li>
-                      {/each}
-                    </ul>
-                    <p class="reponse-etape">
-                      Sur ces pièces, le rapport ne conclut rien — ni présence, ni absence.
-                    </p>
-                  {:else if d.nonVisitees.neant}
-                    <p class="reponse-etape">
-                      Le rapport répond «&nbsp;Néant&nbsp;»&nbsp;: toutes les pièces ont pu être
-                      visitées.
-                    </p>
-                  {:else if !d.nonVisitees.lue}
-                    <p class="reponse-etape">
-                      Le modèle de ce rapport n’est pas encore couvert&nbsp;: cette rubrique n’a
-                      pas été lue. Cela ne veut pas dire que tout a été visité — ouvrez-la dans
-                      le rapport.
-                    </p>
-                  {/if}
-
-                  <!--
-                    RUBRIQUE G — ce qui n'a pas été EXAMINÉ là où l'on est entré.
-
-                    F dit quelles pièces n'ont pas été visitées ; G dit ce qui,
-                    dans les pièces visitées, n'a pas pu être regardé : les murs
-                    derrière un doublage, la sous-face d'un parquet collé, le
-                    plancher sur solives sous un carrelage.
-
-                    Le cas réel du corpus : les MURS de HUIT pièces, revêtement
-                    fixé. C'est la moitié de la § 14 que le bloc précédent ne
-                    porte pas.
-                  -->
-                  {#if d.nonExamines?.ouvrages.length}
-                    <div class="limites-examen">
-                      <p class="titre-limites">Ouvrages non examinés dans les pièces visitées</p>
-                      {#each d.nonExamines.ouvrages as o (o.terme)}
-                        {#if o.separable}
-                          <p class="mot-du-rapport">{o.ou}</p>
-                          {#if o.pourquoi}
-                            <p class="ou-du-rapport">Motif porté au rapport&nbsp;: {o.pourquoi}</p>
-                          {/if}
-                        {:else}
-                          <!--
-                            Les colonnes du rapport n'ont pas pu être démêlées :
-                            on CITE plutôt que d'inventer un appariement. Le
-                            lecteur voit le texte du rapport, tel quel.
-                          -->
-                          <p class="mot-du-rapport">« {o.terme} »</p>
-                          <p class="ou-du-rapport">
-                            Texte du rapport, colonnes non séparées&nbsp;— reportez-vous à la
-                            rubrique&nbsp;G du rapport.
-                          </p>
-                        {/if}
-                      {/each}
-                    </div>
-                  {/if}
-
-                  {#if d.nonExamines?.bornage}
-                    <div class="limites-examen">
-                      <p class="titre-limites">Ce qui borne l’examen</p>
-                      <p class="mot-du-rapport">« {d.nonExamines.bornage} »</p>
-                    </div>
-                  {/if}
-                </section>
-              {/if}
 
               <!--
                 4 · POURQUOI ? — d'abord ce que CE rapport-ci raconte, ensuite
