@@ -18,7 +18,7 @@
   import SchemaDuRapport from './schemas/SchemaDuRapport.svelte';
   import Explicatif from './schemas/Explicatif.svelte';
   import RegleDpe from './visuels/RegleDpe.svelte';
-  import VisuelAmiante from './visuels/VisuelAmiante.svelte';
+  import Amiante from './amiante/Amiante.svelte';
   import VisuelPlomb from './visuels/VisuelPlomb.svelte';
   /*
    * LA PREMIÈRE DES NOUVELLES SCÈNES.
@@ -1143,7 +1143,19 @@
                   </p>
                 {/if}
               {:else if d.type === 'amiante'}
-                <VisuelAmiante gravite={d.gravite} zones={zonesDe(d)} />
+                <!--
+                  LA SYNTHÈSE AMIANTE — ordre d'Aude du 22/08/2026,
+                  `docs/ODM-AMIANTE-MINI-APP.md`.
+
+                  Le visuel seul ne disait qu'une chose : la gravité. L'ordre en
+                  demande huit — points clés, résultat global, matériaux
+                  repérés, constatations, CE QUI N'A PAS ÉTÉ CONTRÔLÉ,
+                  complétude, conseil, accès au rapport.
+
+                  `entete={false}` : la carte porte déjà le titre et le verdict,
+                  les répéter volerait la place de ce qui compte.
+                -->
+                <Amiante diagnostic={d} entete={false} />
               {:else if d.type === 'plomb'}
                 {@const s = plombDe(d)}
                 <!--

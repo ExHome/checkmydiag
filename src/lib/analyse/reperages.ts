@@ -1116,6 +1116,16 @@ export function analyserAmiante(lignes: string[], plage: [number, number]): Diag
         ],
     schema: zonesAmiante.length ? { genre: 'pieces', zones: zonesAmiante } : null,
     pages: plage,
+    /*
+     * Le périmètre, porté jusqu'à l'écran — et plus seulement résumé en fait.
+     *
+     * Le fait « Pièces visitées » ci-dessus en donne le COMPTE et six noms au
+     * plus. Le bloc « Éléments contrôlés » du visuel du 22/08 les veut tous :
+     * on passe donc la liste entière, sans troncature. `lue` distingue « la
+     * rubrique n'a pas été trouvée » de « elle est vide » — et ce n'est jamais
+     * « rien n'a été visité ».
+     */
+    perimetre: { lue: visitees.length > 0, pieces: visitees },
     ...(nonVus.length ? { releves: nonVus } : {}),
     ...(date?.[1] ? { date: date[1] } : {})
   };

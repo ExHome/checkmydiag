@@ -221,6 +221,20 @@ export interface Diagnostic {
     /** Le texte-type qui borne l'examen, quand le rapport l'imprime. */
     bornage?: string;
   };
+  /**
+   * LE PÉRIMÈTRE RÉELLEMENT EXAMINÉ — les pièces que l'opérateur a visitées.
+   *
+   * Le pendant de `nonVisitees` : l'une dit ce qui est resté fermé, l'autre ce
+   * qui a été ouvert. Ensemble, elles disent ce que le constat couvre — et
+   * c'est ce que le bloc « Éléments contrôlés » du visuel amiante affiche.
+   *
+   * `lue: false` veut dire « la rubrique n'a pas été trouvée », jamais « rien
+   * n'a été visité ».
+   */
+  perimetre?: {
+    lue: boolean;
+    pieces: string[];
+  };
   /** Pages du PDF où se trouve ce diagnostic (1-indexé). */
   pages: [number, number];
   /** Numéros de toutes les pages du diagnostic, pour les faire défiler. */
