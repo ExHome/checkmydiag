@@ -23,6 +23,7 @@
   import VisuelTermites from './visuels/VisuelTermites.svelte';
   import VisuelRisques from './visuels/VisuelRisques.svelte';
   import PlanDuLogement from './plans/PlanDuLogement.svelte';
+  import { consulterLAdeme, type Consultation } from '../lib/ademe/consultation';
   import MotsExpliques from './MotsExpliques.svelte';
   import Deperditions from './dpe/Deperditions.svelte';
   import LesParois from './dpe/LesParois.svelte';
@@ -125,6 +126,48 @@
     demande = 0,
     schemaDeperditions = null
   }: Props = $props();
+
+  /*
+   * ── LA FICHE PUBLIQUE DU DPE, DEMANDÉE À L'ADEME ────────────────────────
+   *
+   * Le PDF imprime son schéma de déperditions en image : ses pourcentages
+   * n'existent nulle part dans son texte. Le logiciel du diagnostiqueur les a
+   * pourtant transmis à l'ADEME, et la base publique les rend en clair.
+   *
+   * ⚠️ CE QUI SORT D'ICI : le numéro ADEME du DPE, et lui seul. Le PDF ne quitte
+   * pas l'appareil — il ne l'a jamais quitté. Mais ce numéro identifie un
+   * logement dans une base publique qui porte son adresse : c'est écrit dans les
+   * conditions et sur l'écran de dépôt, parce qu'un produit qui promet la
+   * confidentialité doit dire exactement ce qu'il envoie.
+   *
+   * On ne demande qu'une fois par numéro, et l'échec ne casse rien : sans
+   * réponse, l'écran montre ce que le rapport donne, comme avant.
+   */
+  let fiches = $state<Record<string, Consultation>>({});
+  const demandes = new Set<string>();
+
+  function numeroAdemeDe(d: Diagnostic): string | null {
+    if (d.type !== 'dpe') return null;
+    return d.faits.find((f) => f.libelle === 'N° ADEME')?.valeur ?? null;
+  }
+
+  $effect(() => {
+    for (const d of analyse.diagnostics) {
+      const numero = numeroAdemeDe(d);
+      if (!numero || demandes.has(numero)) continue;
+      demandes.add(numero);
+      void consulterLAdeme(numero).then((c) => {
+        fiches = { ...fiches, [numero]: c };
+      });
+    }
+  });
+
+  /** Les parts réelles pour ce diagnostic, ou rien tant qu'on ne les a pas. */
+  function partsAdemeDe(d: Diagnostic) {
+    const numero = numeroAdemeDe(d);
+    const fiche = numero ? fiches[numero] : undefined;
+    return fiche?.etat === 'trouvée' ? fiche.fiche.deperditions : [];
+  }
 
   /** « page 12 » ou « pages 12 à 18 » — le lecteur y va, il ne devine pas. */
   function pageDite([debut, fin]: [number, number]): string {
@@ -1462,6 +1505,7 @@
                     <Deperditions
                       postes={lu.enveloppe.deperditions}
                       pourcentagesDisponibles={lu.enveloppe.pourcentagesDisponibles}
+                      chiffres={partsAdemeDe(d)}
                     />
                     <LesParois enveloppe={lu.enveloppe} />
                     <LesSystemes systemes={lu.systemes} />

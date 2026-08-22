@@ -358,3 +358,67 @@ La base contient pourtant, en clair, ce que le PDF garde en image : les huit
 postes de **déperdition** en nombres, les classes **après travaux**, l'étiquette
 elle-même. Les afficher supposerait une requête par logement. **C'est une
 décision de produit, pas une décision technique.**
+
+## 10. Consulter l'ADEME — décision du 22/08/2026
+
+**Décision d'Aude, prise en connaissance du coût : automatiquement, dès le dépôt.**
+
+Trois choses que le lecteur cherche sont imprimées **en image** dans son PDF,
+donc illisibles par tout programme : la part de chaleur perdue par chaque paroi,
+les classes après travaux, l'étiquette elle-même. Les trois existent en clair
+dans la base publique, parce que le logiciel du diagnostiqueur les y a
+transmises. Les demander, c'est lire le DPE — pas le recalculer.
+
+### Ce qui sort, et ce qui ne sort pas
+
+| | |
+|---|---|
+| **Sort** | le numéro ADEME du DPE, et lui seul |
+| **Ne sort pas** | le PDF, qui n'a jamais quitté l'appareil |
+
+Ce n'est pas rien : ce numéro identifie un logement dans une base publique qui
+porte son adresse. **La promesse de confidentialité a donc été corrigée partout
+où elle est écrite** — écran de dépôt, conditions générales, pages publiques.
+Un produit qui promet la confidentialité doit dire exactement ce qu'il envoie.
+
+Trois garde-fous, chacun tenu par un test :
+
+- **on n'envoie que ce qui a la forme d'un numéro ADEME** — un numéro mal
+  extrait ne part pas ;
+- **on ne demande que 15 champs sur 230** — ni l'adresse, ni les coordonnées :
+  ce qu'on ne reçoit pas ne peut pas fuir ;
+- **requête GET sans corps** — rien du PDF ne peut y être glissé.
+
+### Trois réponses, jamais deux
+
+`trouvée` / `introuvable` / `injoignable`. « Pas de réseau » est notre problème ;
+« ce DPE n'est pas dans la base » est une information sur le rapport. L'écran ne
+les confond pas, et l'échec ne casse rien : sans réponse, on montre ce que le
+rapport donne, comme avant.
+
+### Ce que ça donne
+
+Vérifié en vrai sur un DPE de la base publique :
+
+```
+OÙ PART LA CHALEUR — 2 188,2 W/K au total
+  Le renouvellement d'air     34,8 %
+  Les murs                    27,1 %
+  Les ponts thermiques        20,8 %
+  Le plancher bas             11,6 %
+  Le plafond, la toiture       3,8 %
+  Les fenêtres                 1,3 %
+  Les portes                   0,6 %
+```
+
+Les parts sont **calculées** à partir des watts par kelvin transmis, et leur
+somme fait exactement 100 % — un test le vérifie. Quand un poste manque, la part
+se calcule sur la somme reçue, jamais sur le total annoncé : un camembert troué
+ferait douter de tout le reste.
+
+### La règle qui reste entière
+
+La fiche de l'ADEME est ce que le diagnostiqueur a **déclaré**. Le PDF est ce que
+le client a **reçu**. Rien ne garantit que les deux disent la même chose, et
+quand ils divergeront, Verrière montrera les deux — point à vérifier, jamais
+arbitrage.

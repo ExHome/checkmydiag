@@ -239,6 +239,7 @@
       <span>
         <strong>Votre document ne quitte pas votre appareil.</strong>
         Il est lu par votre navigateur, il n’est envoyé sur aucun serveur.
+        <span class="exception">Une seule exception, et elle est écrite ici : quand votre DPE porte un numéro ADEME, Verrière demande à l’ADEME la fiche publique de ce numéro — c’est le seul moyen d’obtenir les chiffres que votre PDF garde en image. Ce numéro part ; votre document, jamais.</span>
         <button
           type="button"
           class="verifier"
@@ -499,6 +500,12 @@
   }
 
   /* Le lien de vérification vit dans la phrase : c'est là que le doute naît. */
+  .exception {
+    display: block;
+    margin-top: 0.35rem;
+    opacity: 0.85;
+  }
+
   .verifier {
     display: inline;
     margin-left: var(--e1);

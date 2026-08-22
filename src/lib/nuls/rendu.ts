@@ -145,7 +145,7 @@ function pont(chemin: string, phrase?: string): string {
           phrase ??
             'Déposez votre dossier de diagnostic : chaque rapport est découpé, expliqué ligne par ligne, et ce qui cloche vous est signalé.'
         )}</p>
-        <p class="promesse">Votre PDF est lu par votre navigateur. Il ne part sur aucun serveur, il ne quitte pas votre appareil.</p>
+        <p class="promesse">Votre PDF est lu par votre navigateur. Il ne part sur aucun serveur, il ne quitte pas votre appareil. Seul le numéro ADEME de votre DPE est transmis à l’ADEME, pour obtenir les chiffres que le PDF garde en image.</p>
         <a class="bouton" href="${racine}">Ouvrir mon rapport</a>
       </aside>`;
 }
@@ -708,7 +708,7 @@ ${fil([{ nom: 'Accueil', lien: lien('mentions-legales/') }, { nom: 'Mentions lé
     chemin: 'confidentialite/',
     titre: `Vos données — ${MARQUE}`,
     description:
-      'Votre rapport de diagnostic est lu par votre navigateur. Il ne part sur aucun serveur, il ne quitte pas votre appareil.',
+      'Votre rapport de diagnostic est lu par votre navigateur. Il ne part sur aucun serveur, il ne quitte pas votre appareil. Seul le numéro ADEME de votre DPE est transmis à l’ADEME, pour obtenir les chiffres que le PDF garde en image.',
     carte: cheminCarte(),
     corps: `
 ${fil([{ nom: 'Accueil', lien: lien('confidentialite/') }, { nom: 'Vos données' }])}

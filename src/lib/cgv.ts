@@ -132,6 +132,9 @@ export const CGV: Article[] = [
     titre: '3. Votre document reste chez vous',
     points: [
       'Votre PDF est lu directement par votre navigateur. Il n’est jamais envoyé sur un serveur, ni copié, ni transmis à qui que ce soit.',
+      'Une seule donnée sort : le numéro ADEME de votre DPE, s’il en porte un. Nous le transmettons à l’ADEME pour obtenir la fiche publique de ce DPE.',
+      'Pourquoi : votre PDF imprime en image la part de chaleur perdue par chaque paroi. Aucun programme ne peut la lire. L’ADEME, elle, la donne en clair.',
+      'Ce que cela implique : ce numéro identifie votre logement dans une base publique, qui porte son adresse. Votre document, lui, ne part pas.',
       'Si vous choisissez de garder un dossier pour le rouvrir plus tard, il est enregistré dans votre propre navigateur. Vous pouvez l’effacer d’un bouton, à tout moment.'
     ]
   },

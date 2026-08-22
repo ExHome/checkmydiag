@@ -27,12 +27,23 @@
    * La longueur d'une barre est une surface, pas une perte. C'est écrit sous le
    * schéma, parce qu'un lecteur pressé lirait « perte ».
    */
+  import type { PosteDeperditionChiffre } from '../../lib/ademe/consultation';
   import type { PosteDeperdition } from '../../lib/analyse/enveloppe';
 
   const {
     postes = [],
-    pourcentagesDisponibles = false
-  }: { postes?: PosteDeperdition[]; pourcentagesDisponibles?: boolean } = $props();
+    pourcentagesDisponibles = false,
+    chiffres = []
+  }: {
+    postes?: PosteDeperdition[];
+    pourcentagesDisponibles?: boolean;
+    /**
+     * Les parts réelles, quand la fiche publique du DPE a pu être consultée.
+     * Vides sinon — et alors on ne montre que des surfaces, sans les faire
+     * passer pour des pertes.
+     */
+    chiffres?: PosteDeperditionChiffre[];
+  } = $props();
 
   const maximum = $derived(Math.max(1, ...postes.map((p) => p.surface)));
   const total = $derived(postes.reduce((n, p) => n + p.surface, 0));
@@ -55,6 +66,38 @@
 
 <section class="deperditions" aria-labelledby="titre-deperditions">
   <h2 id="titre-deperditions">Où part la chaleur</h2>
+
+  <!--
+    LES VRAIS CHIFFRES, QUAND ON LES A.
+
+    Le PDF imprime son schéma de déperditions en image : ses pourcentages
+    n'existent nulle part dans son texte. Mais le logiciel du diagnostiqueur les
+    a transmis à l'ADEME, et la fiche publique les rend en clair. Ce ne sont donc
+    pas des chiffres reconstitués : ce sont ceux du rapport, lus ailleurs.
+  -->
+  {#if chiffres.length > 0}
+    <ol class="parts">
+      {#each chiffres as poste (poste.poste)}
+        <li>
+          <div class="entete">
+            <span class="nom">{poste.poste}</span>
+            <span class="metres">{(poste.part * 100).toLocaleString('fr-FR', {
+              maximumFractionDigits: 1
+            })} %</span>
+          </div>
+          <div class="piste">
+            <div class="barre chiffre" style:width="{Math.round(poste.part * 100)}%"></div>
+          </div>
+        </li>
+      {/each}
+    </ol>
+    <p class="source">
+      Ces parts viennent de la <b>fiche publique de votre DPE à l’ADEME</b>, où le
+      logiciel du diagnostiqueur les a transmises. Elles ne sont ni recalculées ni
+      estimées.
+    </p>
+    <h3 class="sous">Et les surfaces qui les portent</h3>
+  {/if}
 
   {#if postes.length === 0}
     <p class="rien">
@@ -96,7 +139,7 @@
       là que ça part », ce que le rapport ne dit nulle part.
     -->
     <p class="garde-fou">
-      <b>La longueur d’une barre est une surface, pas une perte.</b>
+      <b>Ci-dessus, la longueur d’une barre est une surface, pas une perte.</b>
       {#if !pourcentagesDisponibles}
         Le rapport ne chiffre pas ses déperditions poste par poste : la page qui le
         fait est une image, et ses pourcentages n’existent pas en texte. Une grande
@@ -166,6 +209,39 @@
   .barre {
     height: 100%;
     border-radius: 999px;
+  }
+
+  /* Les vraies parts : une seule couleur, pleine — ce sont des mesures. */
+  .barre.chiffre {
+    background: var(--vert-verriere, #12463b);
+  }
+
+  .parts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .source {
+    margin: 0;
+    padding: 0.6rem 0.8rem;
+    border-left: 3px solid var(--vert-verriere, #12463b);
+    background: var(--surface, rgb(10 43 35 / 3%));
+    border-radius: 0 6px 6px 0;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: var(--encre, #0a2b23);
+  }
+
+  .sous {
+    margin: 0.3rem 0 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--encre-doux, #4a5a55);
   }
 
   /*
