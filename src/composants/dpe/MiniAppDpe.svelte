@@ -76,6 +76,26 @@
     surScenarios?: (() => void) | null;
   } = $props();
 
+  /*
+   * ── LES QUATRE ONGLETS DE LA RÉFÉRENCE ────────────────────────────────────
+   *
+   * La maquette pose une barre à quatre entrées. Ce n'est pas un ornement : le
+   * DPE original est paginé, l'écran ne doit pas l'être — « format application,
+   * jamais reproduction du PDF » (§22). Les onglets remplacent le défilement.
+   *
+   * Couleurs relevées dans l'image : fond #fefcf8, actif #044133, inactifs
+   * #c7c6c5, filet du haut #f4efe8.
+   */
+  type Onglet = 'synthèse' | 'détails' | 'recommandations' | 'conseils';
+  let onglet = $state<Onglet>('synthèse');
+
+  const ONGLETS: { cle: Onglet; nom: string }[] = [
+    { cle: 'synthèse', nom: 'Synthèse' },
+    { cle: 'détails', nom: 'Détails' },
+    { cle: 'recommandations', nom: 'Recommandations' },
+    { cle: 'conseils', nom: 'Conseils' }
+  ];
+
   const schema = $derived(diagnostic.schema?.genre === 'dpe' ? diagnostic.schema : null);
   const finale = $derived<Lettre | null>(schema?.finale ?? null);
   const bandeau = (nom: BandeauDecoupe['nom']) => bandeaux.find((b) => b.nom === nom) ?? null;
@@ -272,6 +292,7 @@
   </div>
   <p class="sous-titre">Synthèse du diagnostic</p>
 
+{#if onglet === 'synthèse'}
   <VignetteDuBien {photo} bien={enveloppe.bien} />
 
   <section class="carte">
@@ -334,7 +355,9 @@
 
     <BandeauDuRapport bandeau={bandeau('étiquette')} />
   </section>
+{/if}
 
+{#if onglet === 'détails'}
   <section class="carte">
     <h2>Détails techniques du logement</h2>
     <ul>
@@ -389,7 +412,9 @@
       </dl>
     </section>
   {/if}
+{/if}
 
+{#if onglet === 'synthèse'}
   <section class="carte">
     <h2>Points clés</h2>
     <ul class="points">
@@ -449,7 +474,9 @@
       </p>
     </section>
   {/if}
+{/if}
 
+{#if onglet === 'recommandations'}
   {#if travaux.length > 0}
     <section class="carte">
       <h2>Recommandations principales</h2>
@@ -501,7 +528,9 @@
   {/if}
 
   <BandeauDuRapport bandeau={bandeau('coûts')} />
+{/if}
 
+{#if onglet === 'conseils'}
   <section class="carte conseil">
     <h2>
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#378546" stroke-width="1.7" aria-hidden="true">
@@ -528,6 +557,7 @@
       <path d="M12 3v18M3 10.5h18M7.5 21V7M16.5 21V7M3 15.5h18" />
     </svg>
   </section>
+{/if}
 
   {#if surRapportComplet}
     <button class="action sombre" type="button" onclick={surRapportComplet}>
@@ -538,6 +568,40 @@
       <span class="chev" aria-hidden="true">›</span>
     </button>
   {/if}
+
+  <!--
+    LA BARRE DE LA RÉFÉRENCE. Quatre entrées, l'active en vert profond, les
+    autres en gris chaud — couleurs relevées dans l'image.
+  -->
+  <nav class="onglets" aria-label="Sections du DPE">
+    {#each ONGLETS as o (o.cle)}
+      <button
+        type="button"
+        class:actif={onglet === o.cle}
+        aria-current={onglet === o.cle ? 'page' : undefined}
+        onclick={() => (onglet = o.cle)}
+      >
+        {#if o.cle === 'synthèse'}
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <path d="M4 11 12 4l8 7v9H4z" /><path d="M10 20v-5h4v5" />
+          </svg>
+        {:else if o.cle === 'détails'}
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <path d="M5 7h14M5 12h14M5 17h9" />
+          </svg>
+        {:else if o.cle === 'recommandations'}
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <path d="M5 20V11M12 20V5M19 20v-6" />
+          </svg>
+        {:else}
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <path d="M9.5 18h5M10 21h4" /><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2h5c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z" />
+          </svg>
+        {/if}
+        <span>{o.nom}</span>
+      </button>
+    {/each}
+  </nav>
 </article>
 
 <style>
@@ -1298,5 +1362,42 @@
   .conseil p {
     position: relative;
     z-index: 1;
+  }
+
+  /* ── LA BARRE D'ONGLETS, relevée dans la référence ─────────────────────── */
+  .onglets {
+    position: sticky;
+    bottom: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.2rem;
+    margin: 0.3rem -0.9rem -3rem;
+    padding: 0.6rem 0.5rem 0.8rem;
+    border-top: 1px solid #f4efe8;
+    background: #fefcf8;
+  }
+
+  .onglets button {
+    display: grid;
+    justify-items: center;
+    gap: 0.22rem;
+    padding: 0.15rem 0.1rem;
+    border: none;
+    background: transparent;
+    font: inherit;
+    font-size: 0.6rem;
+    line-height: 1.2;
+    color: #c7c6c5;
+    cursor: pointer;
+  }
+
+  .onglets button.actif {
+    color: #044133;
+    font-weight: 600;
+  }
+
+  .onglets button:hover,
+  .onglets button:focus-visible {
+    color: var(--vert);
   }
 </style>
