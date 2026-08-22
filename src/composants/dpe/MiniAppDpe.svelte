@@ -241,7 +241,23 @@
             /* Le signe suit la gravité de l'analyse, qui connaît les seuils. */
             signe: (gravite === 'bon' ? 'bon' : 'attention') as Signe,
             titre: `Performance énergétique : classe ${finale}`,
-            texte: diagnostic.verdict
+            /*
+             * PAS DE TEXTE ICI : le verdict est déjà écrit au-dessus.
+             *
+             * Cette ligne portait `diagnostic.verdict`, mot pour mot le même
+             * paragraphe que le résultat global affiche à cinq cents pixels de
+             * là. Mesuré sur le déployé le 22/08 : « Classe F : ce logement
+             * fait partie des plus gros consommateurs… » deux fois dans le même
+             * écran, une fois dans `.resume`, une fois dans `.points`.
+             *
+             * La référence ne répète pas : son résultat global dit « Logement
+             * économe en énergie et à faibles émissions », son point clé dit
+             * « Bonne performance, consommation maîtrisée » — deux phrases
+             * différentes. Faute d'une seconde phrase lue dans le rapport, on
+             * n'en invente pas : le titre et le signe suffisent, et le verdict
+             * reste là où il a le plus de sens.
+             */
+            texte: ''
           }
         : null,
       enveloppe.vitrages.simple > 0
@@ -480,7 +496,9 @@
           <span class="rond {p.signe}" aria-hidden="true"
             >{p.signe === 'bon' ? '✓' : p.signe === 'attention' ? '!' : 'i'}</span
           >
-          <span class="corps"><b>{p.titre}</b><p>{p.texte}</p></span>
+          <!-- Un point clé sans texte n'ouvre pas de paragraphe vide : il
+               garderait sa marge et creuserait un trou sous le titre. -->
+          <span class="corps"><b>{p.titre}</b>{#if p.texte}<p>{p.texte}</p>{/if}</span>
           <span class="chev" aria-hidden="true">›</span>
         </li>
       {/each}
