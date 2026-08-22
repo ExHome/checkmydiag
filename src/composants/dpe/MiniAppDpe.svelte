@@ -97,6 +97,17 @@
   ];
 
   const schema = $derived(diagnostic.schema?.genre === 'dpe' ? diagnostic.schema : null);
+
+  /*
+   * LE COÛT ANNUEL — §17 de l'ordre de mission.
+   *
+   * C'est le chiffre que tout le monde cherche en premier, et c'est aussi celui
+   * qu'on lit le plus souvent de travers. Le §17 est formel : « ne jamais
+   * confondre consommation conventionnelle du DPE et facture énergétique réelle
+   * de l'occupant — la différence doit être explicitée ». Elle l'est, sous le
+   * montant, et pas en note de bas de page.
+   */
+  const cout = $derived(diagnostic.faits.find((f) => f.libelle === 'Coût annuel estimé'));
   const finale = $derived<Lettre | null>(schema?.finale ?? null);
   const bandeau = (nom: BandeauDecoupe['nom']) => bandeaux.find((b) => b.nom === nom) ?? null;
 
@@ -355,6 +366,32 @@
 
     <BandeauDuRapport bandeau={bandeau('étiquette')} />
   </section>
+
+  {#if cout}
+    <section class="carte">
+      <h2>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a68965" stroke-width="1.7" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" /><path d="M14.5 9.2A3 3 0 0 0 9.4 11c0 2.6 5.2 1.6 5.2 4.2a3 3 0 0 1-5.1 1.7M12 6.6v10.8" />
+        </svg>
+        Estimation des coûts annuels d’énergie
+      </h2>
+      <p class="montant">{cout.valeur}</p>
+      {#if cout.precision}
+        <p class="sous">{cout.precision}.</p>
+      {/if}
+      <!--
+        §17, mot pour mot : « ne jamais confondre consommation conventionnelle du
+        DPE et facture énergétique réelle ». Un lecteur qui prend ce montant pour
+        sa facture croira que son diagnostiqueur s'est trompé de moitié.
+      -->
+      <p class="garde">
+        <strong>Ce n’est pas votre facture.</strong> Ce montant suppose un logement
+        chauffé à 19 °C et occupé de façon standard, avec les prix moyens des énergies
+        — pas votre abonnement, ni votre façon de vivre.
+      </p>
+      <BandeauDuRapport bandeau={bandeau('coûts')} />
+    </section>
+  {/if}
 {/if}
 
 {#if onglet === 'détails'}
@@ -527,7 +564,6 @@
     {/if}
   {/if}
 
-  <BandeauDuRapport bandeau={bandeau('coûts')} />
 {/if}
 
 {#if onglet === 'conseils'}
@@ -636,7 +672,15 @@
     --bleu: #085c8e;
     --validation: #378546;
     --vert-pale: #e3ebdc;
+    /*
+     * Les deux fonds de vignette d'impact, relevés dans la référence. Ils
+     * manquaient : `--impact-moyen` était appelé sans être déclaré, et le fond
+     * du garde-fou tombait en transparent — le bord se voyait, pas le fond.
+     */
     --impact: #eef1e6;
+    --impact-fort: #eef1e6;
+    --impact-fort-texte: #557b66;
+    --impact-moyen: #fef9f2;
     --filet: #ece3d6;
     --encre: #1b2b26;
     --encre-doux: #5c6b64;
@@ -1399,5 +1443,28 @@
   .onglets button:hover,
   .onglets button:focus-visible {
     color: var(--vert);
+  }
+
+  /* ── LE COÛT ANNUEL ────────────────────────────────────────────────────── */
+  .montant {
+    margin: 0;
+    font-family: var(--police-titre, 'Iowan Old Style', Palatino, Georgia, serif);
+    font-size: 1.7rem;
+    line-height: 1.15;
+    font-weight: 700;
+    color: var(--vert-titre);
+    font-variant-numeric: tabular-nums;
+    text-wrap: balance;
+  }
+
+  .garde {
+    margin: 0;
+    padding: 0.65rem 0.85rem;
+    border-left: 3px solid var(--bronze);
+    background: var(--impact-moyen);
+    border-radius: 0 8px 8px 0;
+    font-size: 0.79rem;
+    line-height: 1.5;
+    color: var(--encre);
   }
 </style>

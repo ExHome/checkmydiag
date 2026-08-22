@@ -196,7 +196,13 @@
     verdict:
       'Classe E : ce logement consomme beaucoup. Il n’est pas encore dans les deux pires classes, mais il s’en approche.',
     gravite: 'attention',
-    faits: [],
+    faits: [
+      {
+        libelle: 'Coût annuel estimé',
+        valeur: 'entre 1 890 € et 2 560 €',
+        precision: 'usage standard, prix moyens des énergies'
+      }
+    ],
     pages: [1, 12],
     schema: {
       genre: 'dpe',
