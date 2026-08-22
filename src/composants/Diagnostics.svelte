@@ -1460,6 +1460,91 @@
                 {/if}
               </section>
 
+
+              <!--
+                ═══════════════════════════════════════════════════════════════
+                CE QUE LE RAPPORT CONSTATE EN PLUS — le bloc des termites.
+                ═══════════════════════════════════════════════════════════════
+
+                Le tableau du rapport termites répond à UNE question : y a-t-il
+                des indices de TERMITES sur les éléments examinés ? Vrillettes,
+                moisissures, pourriture, humidité, l'historique du bien, ce que
+                l'opérateur n'a pas pu regarder — tout cela vit dans la rubrique
+                « Constatations diverses », et n'était affiché nulle part.
+
+                Lu sur un même logement réexpertisé quatre fois : la rubrique
+                raconte qu'il y a eu des termites six mois plus tôt et que le
+                plancher a dû être remplacé, pendant que le tableau est redevenu
+                « Absence d'indices » partout. La conclusion affichée était
+                exacte, et le lecteur en tirait une conclusion fausse.
+
+                Mesuré sur 150 volets : 48 rapports portent au moins un constat,
+                53 constats au total. Les mots employés sont ceux du rapport —
+                9 « termite », 8 « humidité », 7 « vrillette », 6 « pourriture »,
+                3 « capricorne », 1 « moisissure », et zéro « mérule ».
+
+                L'ordre de mission termites (§ 19) leur donne ce bloc, et son
+                § 23 en fixe l'ordre : les CONSTATS d'abord, jamais dilués — une
+                information minoritaire peut être l'information principale.
+              -->
+              {#if d.constatations}
+                {@const constats = d.constatations.entrees.filter((e) => e.nature === 'constat')}
+                {@const limites = d.constatations.entrees.filter((e) => e.nature === 'limite')}
+                <section class="etape" aria-labelledby="et-constat-{d.type}">
+                  <h4 id="et-constat-{d.type}" class="titre-etape">
+                    Ce que le rapport constate en plus
+                  </h4>
+
+                  {#if constats.length}
+                    <ul class="constatations">
+                      {#each constats as c (c.terme)}
+                        <li>
+                          <!-- Les mots du rapport, entiers. On cite, puis on
+                               explique — jamais l'inverse. -->
+                          <p class="mot-du-rapport">« {c.terme} »</p>
+                          {#if c.ou}
+                            <p class="ou-du-rapport">Localisation portée au rapport&nbsp;: {c.ou}</p>
+                          {/if}
+                        </li>
+                      {/each}
+                    </ul>
+                  {:else if d.constatations.neant}
+                    <p class="reponse-etape">
+                      La rubrique «&nbsp;Constatations diverses&nbsp;» existe dans ce rapport et
+                      répond «&nbsp;Néant&nbsp;»&nbsp;: le diagnostiqueur n’a rien relevé d’autre.
+                    </p>
+                  {:else if !d.constatations.lue}
+                    <!--
+                      « Pas lu » n'est pas « rien à signaler ».
+                      Le modèle de ce rapport n'est pas couvert : le silence est
+                      le nôtre, pas celui du diagnostiqueur (§ 15, § 24).
+                    -->
+                    <p class="reponse-etape">
+                      Le modèle de ce rapport n’est pas encore couvert&nbsp;: cette rubrique n’a
+                      pas été lue. Cela ne veut pas dire qu’elle est vide — ouvrez-la dans le
+                      rapport.
+                    </p>
+                  {/if}
+
+                  {#if limites.length}
+                    <!--
+                      Les limites d'examen, SÉPARÉES des constats (§ 14).
+                      Dix-sept rubriques sur quarante ne contiennent que ces
+                      clauses-là : mélangées aux constats, elles les noieraient.
+                    -->
+                    <div class="limites-examen">
+                      <p class="titre-limites">Ce que l’examen n’a pas couvert</p>
+                      {#each limites as l (l.terme)}
+                        <p class="mot-du-rapport">« {l.terme} »</p>
+                      {/each}
+                      <p class="reponse-etape">
+                        Une zone qui n’a pas pu être regardée n’est pas une zone sans termites.
+                      </p>
+                    </div>
+                  {/if}
+                </section>
+              {/if}
+
               <!--
                 4 · POURQUOI ? — d'abord ce que CE rapport-ci raconte, ensuite
                 pourquoi ce diagnostic existe.
@@ -3031,6 +3116,50 @@
     margin-top: var(--e5);
     padding-top: var(--e4);
     border-top: 1px solid var(--u-trait, var(--trait-fin));
+  }
+
+  /*
+   * LES CONSTATATIONS DIVERSES — des PHRASES, pas des chiffres.
+   *
+   * Première version : versées dans `faits`, elles s'affichaient avec le style
+   * du chiffre dominant — une phrase de deux lignes en corps 40. Elles ont leur
+   * bloc, et leur mise en page : la citation d'abord, sa localisation dessous.
+   */
+  .constatations {
+    list-style: none;
+    margin: 0 0 var(--pas-3);
+    padding: 0;
+    display: grid;
+    gap: var(--pas-3);
+  }
+  .constatations > li {
+    border-left: 3px solid var(--trait-fort, currentColor);
+    padding-left: var(--pas-3);
+  }
+  .mot-du-rapport {
+    margin: 0;
+    font-size: var(--corps, 1rem);
+    line-height: 1.55;
+    text-wrap: pretty;
+  }
+  .ou-du-rapport {
+    margin: var(--pas-1) 0 0;
+    font-size: 0.875em;
+    opacity: 0.75;
+  }
+  .limites-examen {
+    margin-top: var(--pas-4);
+    padding-top: var(--pas-3);
+    border-top: 1px solid var(--trait, currentColor);
+    opacity: 0.85;
+  }
+  .titre-limites {
+    margin: 0 0 var(--pas-2);
+    font-weight: 600;
+    font-size: 0.9375em;
+  }
+  .limites-examen .mot-du-rapport + .mot-du-rapport {
+    margin-top: var(--pas-2);
   }
 
   .titre-etape {

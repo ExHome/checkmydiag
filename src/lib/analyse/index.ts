@@ -17,7 +17,7 @@ import { controler } from './coherence';
 import { confianceDuDossier, origineDe } from './confiance';
 import { reperer } from './reperes';
 import { choisirLecteur, inscrireLecteur } from './lecteurs';
-import { constatationsDiverses, faitsDesConstatations } from './termites.constatations';
+import { constatationsDiverses } from './termites.constatations';
 import { lireAmianteBC2E } from './amiante.bc2e';
 import { conclusionDe, graviteDe, lireSynthese, type BlocSynthese } from './synthese';
 import { nombre, trouver } from './texte';
@@ -92,9 +92,24 @@ inscrireLecteur('amiante', 'BC2E', lireAmianteBC2E);
 const avecConstatations = (c: Parameters<typeof lireAmianteBC2E>[0]): Diagnostic => {
   const base = analyserTermites([...c.lignes], [...c.plage] as [number, number]);
   const lecture = constatationsDiverses([...c.lignes], c.generateur.editeur);
-  /* Les constatations passent EN TÊTE des faits : § 23, une information
-     minoritaire peut être l'information principale du diagnostic. */
-  return { ...base, faits: [...faitsDesConstatations(lecture), ...base.faits] };
+  /*
+   * ⚠️ Elles ne vont PAS dans `faits`.
+   *
+   * Première version : je les y avais versées. Un `Fait` s'affiche comme un
+   * chiffre — une valeur en gros, un libellé court dessous — et le premier de la
+   * liste devient le chiffre DOMINANT de la carte. Une phrase de deux lignes s'y
+   * affichait donc en énorme, à la place du nombre de zones contrôlées.
+   *
+   * L'ordre de mission (§ 19) leur donne un bloc à elles. C'est celui-là.
+   */
+  return {
+    ...base,
+    constatations: {
+      lue: lecture.trouvee,
+      neant: lecture.neant,
+      entrees: lecture.entrees
+    }
+  };
 };
 
 inscrireLecteur('termites', 'LICIEL', avecConstatations);

@@ -1,5 +1,3 @@
-import type { Fait } from '../modele';
-
 /**
  * Les « Constatations diverses » de l'état relatif à la présence de termites.
  *
@@ -407,63 +405,4 @@ export function constatationsDiverses(
   if (editeur === 'LICIEL') return lireLiciel(lignes);
   if (editeur === 'BC2E') return lireBc2e(lignes);
   return RIEN;
-}
-
-/* ------------------------------------------------------- ce qui s'affiche */
-
-/**
- * Poser les constatations diverses sur le diagnostic termites.
- *
- * L'ordre compte, et il vient de l'ordre de mission :
- *
- * - **les CONSTATS d'abord** (§ 23, pas de moyenne, pas d'effacement). Une seule
- *   pièce avec un indice reste visible même si dix-neuf autres sont saines ;
- * - **les LIMITES ensuite**, et séparément (§ 14) : elles disent ce qui n'a pas
- *   pu être regardé, ce qui n'est pas la même information ;
- * - **« Néant » se dit** (§ 24) : la rubrique existe et répond, ce n'est pas la
- *   même chose qu'une rubrique absente ;
- * - **« pas lu » se dit aussi**, et surtout : un éditeur non couvert donne un
- *   silence, jamais une bonne nouvelle (§ 15).
- */
-export function faitsDesConstatations(lecture: LectureConstatations): Fait[] {
-  const faits: Fait[] = [];
-
-  for (const c of lecture.entrees.filter((e) => e.nature === 'constat')) {
-    faits.push({
-      libelle: 'Le rapport constate en plus',
-      valeur: c.terme,
-      /* La localisation vient du rapport, ou rien — jamais devinée (§ 24). */
-      ...(c.ou ? { precision: `Localisation portée au rapport : ${c.ou}` } : {})
-    });
-  }
-
-  const limites = lecture.entrees.filter((e) => e.nature === 'limite');
-  if (limites.length) {
-    faits.push({
-      libelle: 'Ce que l’examen n’a pas couvert',
-      valeur: limites.map((l) => l.terme).join(' '),
-      precision:
-        'Ces phrases bornent l’examen. Une zone qui n’a pas pu être regardée n’est pas une zone sans termites.'
-    });
-  }
-
-  if (lecture.trouvee && lecture.neant) {
-    faits.push({
-      libelle: 'Constatations diverses',
-      valeur: 'Néant',
-      precision:
-        'La rubrique existe dans le rapport et répond : le diagnostiqueur n’a rien relevé d’autre.'
-    });
-  }
-
-  if (!lecture.trouvee) {
-    faits.push({
-      libelle: 'Constatations diverses',
-      valeur: 'non lues',
-      precision:
-        'Le modèle de ce rapport n’est pas couvert : la rubrique n’a pas été lue. Cela ne veut pas dire qu’elle est vide — ouvrez-la dans le rapport.'
-    });
-  }
-
-  return faits;
 }

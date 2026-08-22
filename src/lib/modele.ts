@@ -147,6 +147,28 @@ export interface Diagnostic {
    * champ « Où » commun à toutes.
    */
   anomalies?: Anomalie[];
+  /**
+   * Les « Constatations diverses » du rapport termites — leur propre bloc.
+   *
+   * ⚠️ Ce n'est PAS un `Fait`. Un fait est un chiffre avec son libellé
+   * (« 208 unités de diagnostic ») ; une constatation diverse est une PHRASE du
+   * rapport, souvent longue, avec sa localisation. Versées dans `faits`, elles
+   * s'affichaient en gros caractères à la place du chiffre dominant — illisibles,
+   * et à la mauvaise place.
+   *
+   * L'ordre de mission termites (§ 19) leur donne un bloc à elles dans
+   * l'architecture de l'écran, entre « Champignons / altérations » et « Zones
+   * non examinées ». C'est ce champ.
+   *
+   * `lue: false` veut dire « le modèle de ce rapport n'est pas couvert, on n'a
+   * pas su lire » — jamais « rien à signaler » (§ 15, § 24).
+   */
+  constatations?: {
+    lue: boolean;
+    /** La rubrique existe et répond « Néant ». Distinct de `lue: false`. */
+    neant: boolean;
+    entrees: { terme: string; ou?: string; nature: 'constat' | 'limite' }[];
+  };
   /** Pages du PDF où se trouve ce diagnostic (1-indexé). */
   pages: [number, number];
   /** Numéros de toutes les pages du diagnostic, pour les faire défiler. */
