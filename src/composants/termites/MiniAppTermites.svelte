@@ -319,9 +319,14 @@
   .app {
     --ivoire-chaud: #faf8f3;
     --vert-nuit: #0e3b30;
-    --vert-signe: #2f7d5f;
+    /* Assombri après mesure : #2f7d5f donnait 4,16:1 sur le vert pâle du
+       résultat, sous le seuil de 4,5. */
+    --vert-signe: #256349;
     --vert-voile: #e4ede7;
-    --laiton: #b58f4a;
+    /* ⚠️ Mesuré à 2,83:1 sur l'ivoire en #b58f4a — « SYNTHÈSE DU DIAGNOSTIC »
+       était illisible au sens strict. Assombri jusqu'à passer le seuil, sans
+       quitter la famille du laiton. */
+    --laiton: #8a6626;
     --ambre-voile: #fbf0dd;
     --ambre-signe: #9c6a15;
     --bleu-voile: #e8eef4;
@@ -524,12 +529,16 @@
   .constatations {
     background: var(--bleu-voile);
   }
+  /* 44 px de haut : la règle des cibles tactiles du projet. Mesurée à 27 px,
+     cette bascule était trop petite pour un pouce. */
   .entete-repli {
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding: 0;
+    min-height: 44px;
+    margin: -0.6rem 0;
+    padding: 0.6rem 0;
     border: 0;
     background: none;
     font: inherit;
@@ -669,10 +678,18 @@
   }
 
   /* ── Barre d'onglets ─────────────────────────────────────────────────── */
+  /*
+   * ⚠️ FIXE, comme sur le visuel — et elle ne l'était pas.
+   *
+   * `position: absolute` la posait en bas du CONTENEUR : mesurée à y = 2930 sur
+   * un écran de 812, elle n'apparaissait qu'après avoir tout fait défiler. Sur
+   * le visuel c'est une barre d'application, elle reste sous le pouce.
+   */
   .onglets {
-    position: absolute;
+    position: fixed;
     inset-inline: 0;
     bottom: 0;
+    z-index: 2;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     background: #fff;

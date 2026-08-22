@@ -135,3 +135,54 @@ describe('la charte Verrière', () => {
     expect(source).not.toMatch(/background:\s*var\(--verriere-sable-or/);
   });
 });
+
+/**
+ * CE QUE LA VÉRIFICATION À L'ÉCRAN A TROUVÉ — et que la lecture du code
+ * n'aurait pas trouvé.
+ *
+ * Mesuré dans le navigateur, sur un écran de 375 × 812 :
+ *
+ *   .sous-titre        2,83:1  →  sous le seuil de 4,5. « SYNTHÈSE DU
+ *                                 DIAGNOSTIC » était illisible au sens strict
+ *   .niveau            4,16:1  →  sous le seuil, sur le vert pâle du résultat
+ *   .onglets           position: absolute  →  la barre se posait en bas du
+ *                                 CONTENEUR, à y = 2930 sur un écran de 812 :
+ *                                 elle n'apparaissait qu'après avoir tout fait
+ *                                 défiler
+ *   .entete-repli      27 px    →  cible tactile trop petite pour un pouce
+ *
+ * Après correction : aucun contraste sous 4,5:1, barre fixée en bas de
+ * l'écran, bascule à 46 px, et aucun débordement horizontal.
+ */
+const sourceMini = readFileSync(new URL('./MiniAppTermites.svelte', import.meta.url), 'utf8');
+/* Sans les commentaires : ils citent les valeurs d'origine pour dire pourquoi
+   elles ont été changées — troisième fois que je me fais prendre par là. */
+const miniApp = sourceMini.replace(/\/\*[\s\S]*?\*\//g, '');
+
+describe('la mini-app tient à l’écran', () => {
+  it('⚠️ fixe la barre d’onglets en bas de l’ÉCRAN, pas du document', () => {
+    const i = miniApp.indexOf('.onglets {');
+    expect(i).toBeGreaterThan(-1);
+    expect(miniApp.slice(i, i + 200)).toContain('position: fixed');
+    expect(miniApp.slice(i, i + 200)).not.toContain('position: absolute');
+  });
+
+  it('⚠️ donne 44 px à la bascule des constatations', () => {
+    const i = miniApp.indexOf('.entete-repli {');
+    expect(miniApp.slice(i, i + 260)).toContain('min-height: 44px');
+  });
+
+  it('garde les deux tons assombris après mesure de contraste', () => {
+    /* Les valeurs d'origine — #b58f4a et #2f7d5f — donnaient 2,83:1 et 4,16:1.
+       Les remettre casserait la lisibilité sans que rien ne le dise. */
+    expect(miniApp).toContain('--laiton: #8a6626');
+    expect(miniApp).toContain('--vert-signe: #256349');
+    expect(miniApp).not.toContain('#b58f4a');
+    expect(miniApp).not.toContain('#2f7d5f');
+  });
+
+  it('réserve la place de la barre sous le contenu', () => {
+    /* Sans ce fond de page, la barre fixe recouvrirait le dernier bloc. */
+    expect(miniApp).toMatch(/padding:[^;]*5\.5rem/);
+  });
+});
