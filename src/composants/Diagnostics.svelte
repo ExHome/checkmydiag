@@ -52,6 +52,7 @@
   import OuEstLePlomb from './OuEstLePlomb.svelte';
   import AnomaliesUneParUne from './AnomaliesUneParUne.svelte';
   import LesSurfaces from './LesSurfaces.svelte';
+  import MiniAppMesurage from './mesurage/MiniAppMesurage.svelte';
   import AVerifier from './AVerifier.svelte';
   import Travaux from './Travaux.svelte';
   import { libelleCourt } from '../lib/libelle';
@@ -134,6 +135,8 @@
      * et le verdict n'attend pas une image.
      */
     schemaDeperditions?: Photo | null;
+    /** La page du croquis du logement, déjà dessinée. */
+    imageCroquis?: string | null;
   }
 
   const {
@@ -144,7 +147,8 @@
     demande = 0,
     schemaDeperditions = null,
     bandeaux = [],
-    photo = null
+    photo = null,
+    imageCroquis = null
   }: Props = $props();
 
   /*
@@ -1204,7 +1208,22 @@
                 Quand aucune pièce n'est mesurée, l'explicatif reste : une scène
                 vide serait pire que générique.
               -->
-              {#if d.schema?.genre === 'surfaces' && d.schema.pieces.length}
+              {#if d.mesurage}
+                <!--
+                  LA MINI-APP MESURAGE prend la scène quand un lecteur d'éditeur
+                  a lu le volet. `LesSurfaces` reste pour le repli : il n'a ni
+                  commentaires de ligne, ni pièces non visitées, ni réserves de
+                  mission, et une mini-app nourrie d'une lecture approchée
+                  afficherait des cases vides en promettant de la précision.
+                -->
+                <MiniAppMesurage
+                  diagnostic={d}
+                  reference={d.surfaceDeReference ?? { etat: 'absente' }}
+                  croquis={d.croquis ?? { etat: 'non trouvé' }}
+                  {imageCroquis}
+                  entete={false}
+                />
+              {:else if d.schema?.genre === 'surfaces' && d.schema.pieces.length}
                 <LesSurfaces
                   pieces={d.schema.pieces}
                   totalPrivative={d.schema.totalPrivative}

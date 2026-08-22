@@ -152,6 +152,38 @@ export interface Diagnostic {
   };
   schema: Schema | null;
   /**
+   * LA LECTURE COMPLÈTE DU MESURAGE, quand un lecteur d'éditeur l'a produite.
+   *
+   * `faits` porte des couples libellé/valeur : il ne peut transporter ni le
+   * commentaire qui explique pourquoi une terrasse compte 0 m², ni l'intitulé
+   * exact dont sort chaque total, ni la ligne source de chacun. La mini-app
+   * Mesurage en a besoin — l'ordre de mission du pack exige que **toute valeur
+   * affichée soit auditable jusqu'à sa ligne dans le rapport**.
+   *
+   * Absent quand c'est le lecteur de repli qui a lu : on ne fabrique pas une
+   * lecture riche à partir d'une lecture approchée.
+   */
+  mesurage?: import('./lecteurs/mesurage/modele').LectureMesurage;
+  /**
+   * LE CROQUIS DU LOGEMENT, et d'où il vient.
+   *
+   * Il ne se cherche pas dans le volet de mesurage — mesuré : celui-ci n'en
+   * porte jamais, il dit seulement quand il n'y en a pas. Le dossier en porte
+   * un, en annexe du repérage amiante. C'est donc `analyser()` qui le trouve,
+   * sur le document entier, et l'accroche ici.
+   *
+   * Quatre états, jamais deux : voir `lecteurs/mesurage/croquis.ts`.
+   */
+  croquis?: import('./lecteurs/mesurage/croquis').Croquis;
+  /**
+   * LA TROISIÈME SURFACE — celle du DPE, lue sur SA page de garde.
+   *
+   * Ni la Carrez ni la Boutin. Un écart entre les trois n'est pas une erreur :
+   * elles ne comptent pas la même chose. On les affiche côte à côte, nommées,
+   * et on ne les moyenne jamais.
+   */
+  surfaceDeReference?: import('./lecteurs/mesurage/reference').SurfaceDeReference;
+  /**
    * Les anomalies, une par une — chacune un objet complet au sens du §8 de
    * l'ordre de mission électricité.
    *

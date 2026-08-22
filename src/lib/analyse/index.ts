@@ -24,6 +24,9 @@ import {
   piecesNonVisitees
 } from './termites.nonvisitees';
 import { lireAmianteBC2E } from './amiante.bc2e';
+import { lireLeMesurageEnDiagnostic } from './mesurage';
+import { trouverLeCroquis } from '../lecteurs/mesurage/croquis';
+import { lireLaSurfaceDeReference } from '../lecteurs/mesurage/reference';
 import { conclusionDe, graviteDe, lireSynthese, type BlocSynthese } from './synthese';
 import { nombre, trouver } from './texte';
 import { dateDuRapport } from './dateRapport';
@@ -84,6 +87,19 @@ for (const [type, lecteur] of Object.entries(REPLIS) as [TypeDiag, (typeof REPLI
  * bloc sans le moindre numéro de liste, et le lecteur LICIEL n'y trouverait
  * rien du tout.
  */
+/*
+ * MESURAGE — un lecteur par éditeur, LICIEL et BC2E.
+ *
+ * Le repli (`analyserCarrez`) cherchait « superficie privative » ou « surface
+ * habitable » indifféremment, et titrait toujours « loi Carrez ». Or LICIEL dit
+ * *surface* là où BC2E dit *superficie*, POUR LES DEUX LOIS : le repli
+ * annonçait donc la pièce d'une vente à qui tient celle d'une location.
+ * Mesuré sur 150 volets témoins avec ces deux lecteurs : 150 formats reconnus,
+ * 150 surfaces lues, 150 sommes de pièces qui retombent sur le total annoncé.
+ */
+inscrireLecteur('carrez', 'LICIEL', lireLeMesurageEnDiagnostic);
+inscrireLecteur('carrez', 'BC2E', lireLeMesurageEnDiagnostic);
+
 inscrireLecteur('amiante', 'LICIEL', (c) =>
   analyserAmiante([...c.lignes], [...c.plage] as [number, number])
 );
@@ -513,6 +529,31 @@ export function analyser(brutes: PageTexte[], metadonnees: MetadonneesPdf = {}):
   const { transaction } = lireTransaction(pages.flatMap((p) => p.lignes));
   for (const [i, diag] of diagnostics.entries()) {
     diagnostics[i] = preciserValidite(diag, transaction);
+  }
+
+  /*
+   * LE CROQUIS ET LA SURFACE DE RÉFÉRENCE — cherchés sur le DOSSIER, pas sur le
+   * volet.
+   *
+   * Le volet de mesurage ne porte jamais de croquis : mesuré sur 25 rapports,
+   * il ne fait qu'imprimer « Aucun schéma de repérage n'a été joint » quand il
+   * n'y en a pas. Le dossier, lui, en porte un — en annexe du repérage amiante,
+   * et c'est le même logement. De même, la surface de référence est imprimée sur
+   * la page de garde du DPE, pas dans le mesurage.
+   *
+   * Deux données du dossier accrochées au volet qui en a besoin : c'est
+   * précisément ce qu'un extracteur borné au volet ne pourrait jamais faire.
+   */
+  const iMesurage = diagnostics.findIndex((d) => d.type === 'carrez');
+  if (iMesurage >= 0) {
+    const voletDpe = sections.find((s) => s.type === 'dpe');
+    diagnostics[iMesurage] = {
+      ...diagnostics[iMesurage]!,
+      croquis: trouverLeCroquis(pages, sections),
+      surfaceDeReference: voletDpe
+        ? lireLaSurfaceDeReference(voletDpe.lignes)
+        : { etat: 'absente' }
+    };
   }
 
   diagnostics.sort((a, b) => ORDRE.indexOf(a.type) - ORDRE.indexOf(b.type));

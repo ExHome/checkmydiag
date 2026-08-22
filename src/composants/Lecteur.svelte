@@ -43,6 +43,8 @@
      * texte ne porte aucun « % ».
      */
     schemaDeperditions?: Photo | null;
+    /** La page du croquis du logement, déjà dessinée. */
+    imageCroquis?: string | null;
     /** Les bandes du rapport découpées pour être montrées. */
     bandeaux?: BandeauDecoupe[];
   }
@@ -53,6 +55,7 @@
     demande = null,
     photo = null,
     schemaDeperditions = null,
+    imageCroquis = null,
     bandeaux = []
   }: Props =
     $props();
@@ -623,6 +626,7 @@
         {schemaDeperditions}
         {bandeaux}
         {photo}
+        {imageCroquis}
       />
     </div>
 

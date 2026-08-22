@@ -315,6 +315,14 @@ describe('LICIEL', () => {
     });
   });
 
+  it('coiffe la colonne avec l’en-tête du rapport, pas le libellé du total', () => {
+    /* « Surface loi Carrez totale » posé sur des valeurs pièce par pièce dirait
+       « totale » au-dessus de ce qui ne l'est pas. L'en-tête Carrez est cassé
+       en trois lignes, l'en-tête Boutin tient sur une : deux lectures. */
+    expect(carrez.colonneRetenue).toBe('Superficie privative au sens Carrez');
+    expect(boutin.colonneRetenue).toBe('Superficie habitable');
+  });
+
   it('ne prend pas l’en-tête cassé pour un commentaire', () => {
     expect(carrez.pieces[0]?.nom).toBe('Rez de chaussée - Entrée');
     expect(carrez.pieces[0]?.commentaire).toBeNull();
@@ -399,6 +407,11 @@ describe('BC2E', () => {
   it('relève les réserves de mission dans les mots du rapport', () => {
     expect(carrez.reserves).toContain("L'acte de propriété n'a pas été fourni.");
     expect(carrez.reserves.some((r) => /règlement|réglement/i.test(r))).toBe(true);
+  });
+
+  it('donne l’en-tête de colonne de BC2E, guillemets compris', () => {
+    expect(carrez.colonneRetenue).toBe('Superficie privative « Loi Carrez »');
+    expect(boutin.colonneRetenue).toBe('Superficie habitable');
   });
 
   it('ne prête pas à BC2E la rubrique des pièces non visitées', () => {

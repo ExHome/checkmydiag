@@ -47,8 +47,25 @@ export function libelleCourt(d: Diagnostic): string {
       if (nb) return `${nb} anomalie${Number(nb) > 1 ? 's' : ''}`;
       return d.gravite === 'bon' ? 'Aucune anomalie' : 'Anomalies';
     }
-    case 'carrez':
-      return chiffre('Superficie privative') ?? 'Surface';
+    /*
+     * LA SURFACE SE PREND DANS LA LECTURE, PAS DANS UN LIBELLÉ FIXE.
+     *
+     * La tuile cherchait un fait nommé « Superficie privative ». Or les lecteurs
+     * d'éditeur citent le rapport dans SES mots — « Surface loi Carrez totale »
+     * chez LICIEL, « La superficie habitable est » chez BC2E — et aucun de ces
+     * intitulés ne correspondait : la tuile retombait sur le mot « Surface », en
+     * face du libellé « Surface ». Deux fois le même mot, et le chiffre nulle
+     * part.
+     *
+     * On lit donc la surface légale là où elle est, quel que soit son intitulé.
+     */
+    case 'carrez': {
+      const legale = d.mesurage?.surfaceLegale;
+      if (legale) {
+        return `${legale.valeur.toLocaleString('fr-FR', { maximumFractionDigits: 2 })} m²`;
+      }
+      return chiffre('Superficie privative') ?? chiffre('Surface habitable') ?? 'Surface';
+    }
     case 'erp': {
       const nb = chiffre('Risques concernant le bien');
       return nb ? `${nb} risque${Number(nb) > 1 ? 's' : ''}` : 'Aucun risque';

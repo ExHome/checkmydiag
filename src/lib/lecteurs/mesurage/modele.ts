@@ -116,6 +116,17 @@ export interface LectureMesurage {
    */
   autresTotaux: Surface[];
   pieces: PieceMesuree[];
+  /**
+   * L'EN-TÊTE DE COLONNE DU RAPPORT pour la surface retenue — ses mots à lui.
+   *
+   * « Superficie privative au sens Carrez », « Superficie habitable ». Sans ce
+   * champ, l'écran coiffait la colonne avec le libellé du TOTAL (« Surface loi
+   * Carrez totale ») : un intitulé de total posé sur des valeurs pièce par
+   * pièce, ce qui dit le contraire de ce que la colonne contient.
+   *
+   * `null` quand l'en-tête n'a pas été lu — on ne le devine pas.
+   */
+  colonneRetenue: string | null;
   piecesNonVisitees: Rubrique<PieceNonVisitee[]>;
   /** Rubrique propre à BC2E : « Particularités liées à ce mesurage : ». */
   particularites: Rubrique<string[]>;

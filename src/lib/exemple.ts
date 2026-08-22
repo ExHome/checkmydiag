@@ -78,6 +78,15 @@ export function pagesExemple(): PageTexte[] {
         'Montants et consommations annuels d’énergie',
         'chauffage Gaz naturel 13 400 (12 100 é.f.) entre 1 340 € et 1 810 €',
         'eau chaude Gaz naturel 4 100 (3 700 é.f.) entre 410 € et 560 €',
+        /*
+         * LA SEULE RUBRIQUE QUI NOMME LE LOGICIEL, et elle n'existe que s'il y
+         * a un DPE. Sans elle, l'exemple n'a pas d'editeur : le moteur lui
+         * applique le lecteur de REPLI, et la demonstration ne montre alors pas
+         * le meme code que celui qui lira le rapport du visiteur.
+         *
+         * C'est la ligne des vrais rapports LICIEL, mot pour mot.
+         */
+        'Référence du logiciel validé : LICIEL Diagnostics v4',
         'éclairage Electrique 260 (113 é.f.) entre 20 € et 40 €',
         'auxiliaires Electrique 340 (148 é.f.) entre 30 € et 60 €',
         'énergie totale pour les 18 100 kWh entre 1 890 € et 2 560 €',
@@ -232,13 +241,25 @@ export function pagesExemple(): PageTexte[] {
          * La cave a 0 en privatif : c'est la ligne la plus utile du tableau —
          * une piece qui existe, se visite, et ne se vend pas.
          */
+        /* L'en-tete de colonnes du certificat, casse sur trois lignes comme
+           dans les vrais rapports : sans lui, le tableau n'est pas borne et le
+           lecteur ne trouve aucune piece. L'exemple doit reproduire la mise en
+           forme reelle, sinon il ne demontre pas le meme code. */
+        'Tableau récapitulatif des surfaces de chaque pièce au sens Loi Carrez :',
+        'Superficie privative au',
+        "Parties de l'immeuble bâtis visitées Surface au sol Commentaires",
+        'sens Carrez',
         'Rez de chaussée - Séjour            18.20      18.20',
         'Rez de chaussée - Chambre 01        11.40      11.40',
         'Rez de chaussée - Cuisine            7.90       7.90',
         'Rez de chaussée - Salle de bain      4.50       4.50',
-        'Sous-sol - Cave                      0.00       2.80',
-        'Superficie Loi Carrez totale : 42,00 m²',
-        'Surface au sol totale : 44,80 m²'
+        'Sous-sol - Cave                      0.00       2.80 Pièce dont la fonction l’exclut de la surface carrez',
+        'Superficie privative en m² du ou des lot(s) :',
+        /* Le certificat ecrit « Surface loi Carrez totale » ; c'est le RESUME du
+           dossier, en tete, qui ecrit « Superficie Loi Carrez totale ». Les deux
+           formes existent et disent le meme chiffre. */
+        'Surface loi Carrez totale : 42,00 m² (quarante-deux mètres carrés)',
+        'Surface au sol totale : 44,80 m² (quarante-quatre mètres carrés quatre-vingts)'
       ]
     }
   ]);

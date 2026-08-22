@@ -30,24 +30,54 @@ const INTITULE_CARREZ = /^Certificat de superficie de la partie privative\s*$/i;
 const INTITULE_BOUTIN = /^Attestation de surface habitable\s*$/i;
 
 /**
- * Les totaux. Le deux-points est parfois collé au mot (`totale: 30.92 m²`), et
- * le séparateur décimal est le point jusqu'en 2022, la virgule ensuite.
+ * Les totaux — et LICIEL en écrit DEUX FORMES pour la même valeur.
+ *
+ * Le **certificat** écrit `Surface loi Carrez totale`, le **résumé de
+ * l'expertise**, en tête de dossier, écrit `Superficie Loi Carrez totale`. Même
+ * chiffre, deux intitulés — et pareil pour la Boutin (`Surface habitable
+ * totale` / `Superficie habitable totale`).
+ *
+ * D'où un `role` plutôt qu'un libellé pour dédoublonner : garder les deux
+ * ferait apparaître la même surface deux fois, une fois comme total légal et
+ * une fois comme « autre total ». Et un `rang`, parce qu'entre les deux
+ * écritures on cite **celle du certificat** : c'est la pièce, le résumé n'en
+ * est que le rappel — et il est imprimé AVANT, donc le premier arrivé n'est
+ * pas le bon.
+ *
+ * Le deux-points est parfois collé au mot (`totale: 30.92 m²`), et le
+ * séparateur décimal est le point jusqu'en 2022, la virgule ensuite.
  */
-const TOTAUX: { motif: RegExp; libelle: string; legale: Loi | null }[] = [
+type Role = 'carrez' | 'boutin' | 'au sol';
+const TOTAUX: { motif: RegExp; libelle: string; role: Role; rang: number }[] = [
   {
     motif: /^Surface\s+loi\s+Carrez\s+totale\s*:?\s*([\d\s.,]+?)\s*m/i,
     libelle: 'Surface loi Carrez totale',
-    legale: 'carrez'
+    role: 'carrez',
+    rang: 0
+  },
+  {
+    motif: /^Superficie\s+Loi\s+Carrez\s+totale\s*:?\s*([\d\s.,]+?)\s*m/i,
+    libelle: 'Superficie Loi Carrez totale',
+    role: 'carrez',
+    rang: 1
   },
   {
     motif: /^Surface\s+habitable\s+totale\s*:?\s*([\d\s.,]+?)\s*m/i,
     libelle: 'Surface habitable totale',
-    legale: 'boutin'
+    role: 'boutin',
+    rang: 0
+  },
+  {
+    motif: /^Superficie\s+habitable\s+totale\s*:?\s*([\d\s.,]+?)\s*m/i,
+    libelle: 'Superficie habitable totale',
+    role: 'boutin',
+    rang: 1
   },
   {
     motif: /^Surface\s+au\s+sol\s+totale\s*:?\s*([\d\s.,]+?)\s*m/i,
     libelle: 'Surface au sol totale',
-    legale: null
+    role: 'au sol',
+    rang: 0
   }
 ];
 
@@ -135,9 +165,34 @@ function estUneContinuation(fragment: string): boolean {
   return premier === premier.toLowerCase() && premier !== premier.toUpperCase();
 }
 
-function lireTableau(lignes: readonly string[]): PieceMesuree[] {
+/**
+ * L'en-tête de la colonne retenue, dans les mots du rapport.
+ *
+ * En **Carrez** il est cassé en trois lignes par l'extraction, et ses deux
+ * moitiés encadrent la ligne des autres colonnes :
+ *
+ *   Superficie privative au                                        ← avant
+ *   Parties de l'immeuble bâtis visitées Surface au sol Commentaires
+ *   sens Carrez                                                    ← après
+ *
+ * En **Boutin** il tient dans la ligne elle-même, entre « visitées » et
+ * « Surface au sol ». Deux dispositions, deux lectures — et `null` si aucune
+ * des deux ne se présente, plutôt qu'un intitulé fabriqué.
+ */
+function lireEnTeteColonne(lignes: readonly string[], debut: number): string | null {
+  const avant = (lignes[debut - 1] ?? '').trim();
+  const apres = (lignes[debut + 1] ?? '').trim();
+  if (/^Superficie (?:privative|habitable) au$/i.test(avant) && /^sens Carrez$/i.test(apres)) {
+    return `${avant} ${apres}`;
+  }
+  const m = /visit[ée]es\s+(.+?)\s+Surface au sol/i.exec(lignes[debut] ?? '');
+  return m ? m[1]!.trim() : null;
+}
+
+function lireTableau(lignes: readonly string[]): { pieces: PieceMesuree[]; colonne: string | null } {
   const debut = lignes.findIndex((l) => DEBUT_TABLEAU.test(l.trim()));
-  if (debut < 0) return [];
+  if (debut < 0) return { pieces: [], colonne: null };
+  const colonne = lireEnTeteColonne(lignes, debut);
   const zone: string[] = [];
   for (const brute of lignes.slice(debut + 1)) {
     const ligne = brute.trim();
@@ -178,7 +233,7 @@ function lireTableau(lignes: readonly string[]): PieceMesuree[] {
     piece.commentaire = piece.commentaire ? `${piece.commentaire} ${texte}` : texte;
   }
 
-  return pieces;
+  return { pieces, colonne };
 }
 
 /**
@@ -222,18 +277,21 @@ function lireLICIEL(lignes: readonly string[]): LectureMesurage {
    */
   let surfaceLegale: Surface | null = null;
   const autresTotaux: Surface[] = [];
-  const vus = new Set<string>();
+  const retenus = new Map<Role, { surface: Surface; rang: number }>();
   for (const ligne of nettes) {
-    for (const { motif, libelle, legale } of TOTAUX) {
+    for (const { motif, libelle, role, rang } of TOTAUX) {
       const m = motif.exec(ligne);
-      if (!m || vus.has(libelle)) continue;
+      if (!m) continue;
       const valeur = nombre(m[1]);
       if (valeur === null) continue;
-      vus.add(libelle);
-      const surface: Surface = { valeur, libelle, source: ligne };
-      if (legale === loi) surfaceLegale = surface;
-      else autresTotaux.push(surface);
+      const dejaLa = retenus.get(role);
+      if (dejaLa && dejaLa.rang <= rang) continue;
+      retenus.set(role, { surface: { valeur, libelle, source: ligne }, rang });
     }
+  }
+  for (const [role, { surface }] of retenus) {
+    if (role === loi) surfaceLegale = surface;
+    else if (role === 'au sol') autresTotaux.push(surface);
   }
 
   const dateVisite = /^Date du repérage\s*:\s*(\d{2}\/\d{2}\/\d{4})/i
@@ -244,12 +302,15 @@ function lireLICIEL(lignes: readonly string[]): LectureMesurage {
   const dateRapport =
     iRapport >= 0 ? (/^(\d{2}\/\d{2}\/\d{4})$/.exec(nettes[iRapport + 1] ?? '')?.[1] ?? null) : null;
 
+  const tableau = lireTableau(nettes);
+
   return {
     loi,
     intitule: ligneIntitule ?? '',
     surfaceLegale,
     autresTotaux,
-    pieces: lireTableau(nettes),
+    pieces: tableau.pieces,
+    colonneRetenue: tableau.colonne,
     piecesNonVisitees: lireNonVisitees(nettes),
     /* Rubrique propre à BC2E : LICIEL n'en imprime aucune. */
     particularites: { etat: 'non renseignée' },

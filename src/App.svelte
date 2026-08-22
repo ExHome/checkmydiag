@@ -42,6 +42,15 @@
   let photo = $state<Photo | null>(null);
   /** Le schema des deperditions du DPE, decoupe dans sa page. */
   let schemaDeperditions = $state<Photo | null>(null);
+  /**
+   * LA PAGE DU CROQUIS, dessinée telle qu'elle est.
+   *
+   * Pas de découpe : le croquis est tracé, pas posé en image, et un rectangle
+   * deviné autour d'un empilement de traits couperait le plan aussi souvent
+   * qu'il le cadrerait. On montre la page entière — c'est aussi ce qui rend la
+   * chose vérifiable : « page 31 de votre rapport », et le lecteur peut y aller.
+   */
+  let imageCroquis = $state<string | null>(null);
   /*
    * Les bandes du rapport qu'on ne peut pas lire, découpées pour être montrées :
    * la double étiquette, l'estimation des coûts, les classes projetées après
@@ -64,6 +73,7 @@
     rendus = new Map();
     photo = null;
     schemaDeperditions = null;
+    imageCroquis = null;
     analyse = garde.analyse;
     etat = 'resultat';
 
@@ -93,6 +103,7 @@
     rendus = new Map(); // pas de vrai PDF : pas de page à montrer
     photo = null;
     schemaDeperditions = null;
+    imageCroquis = null;
     analyse = analyser(pagesExemple());
     etat = 'resultat';
   }
@@ -159,6 +170,7 @@
       rendus = new Map();
       photo = null;
       schemaDeperditions = null;
+    imageCroquis = null;
       bandeaux = [];
       analyse = resultat;
       etat = 'resultat';
@@ -186,6 +198,17 @@
        * en image, aucun « % » n'y figure en texte.
        */
       void document.schemaDeperditions().then((s) => (schemaDeperditions = s));
+
+      /*
+       * Le croquis : sa page a été trouvée par l'analyse, sur le dossier entier
+       * — jamais dans le volet de mesurage, qui n'en porte pas. Il ne reste
+       * qu'à la dessiner, et seulement quand il y en a une.
+       */
+      const mesurage = resultat.diagnostics.find((d) => d.type === 'carrez');
+      if (mesurage?.croquis?.etat === 'trouvé') {
+        const page = mesurage.croquis.page;
+        void document.rendre(page, 1100).then((r) => (imageCroquis = r?.image ?? null));
+      }
 
       const volet = resultat.diagnostics.find((d) => d.type === 'dpe');
       if (volet) void document.bandeaux(volet.pages).then((b) => (bandeaux = b));
@@ -449,7 +472,7 @@
       </p>
     {/if}
 
-    <Lecteur {analyse} {rendus} {demande} {photo} {schemaDeperditions} {bandeaux} />
+    <Lecteur {analyse} {rendus} {demande} {photo} {schemaDeperditions} {bandeaux} {imageCroquis} />
 
     <p class="avertissement">
       {nomFichier} — outil de lecture, sans valeur réglementaire. La référence reste le rapport

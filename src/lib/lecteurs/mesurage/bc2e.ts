@@ -83,6 +83,17 @@ const AU_SOL = /^Surface totale au sol\s*\(\s*Carrez et Hors Carrez\s*\)\s*:\s*(
  */
 const COLONNES = ['Superficie HSP < 1.80M', 'Autres superficies exclues'] as const;
 
+/**
+ * L'en-tête de la colonne retenue, tel que BC2E l'imprime — et il est cassé en
+ * deux en Carrez (`Superficie privative « Loi` puis `Carrez »`), d'où ces deux
+ * constantes plutôt qu'un recollage qui rendrait un libellé tronqué une fois
+ * sur deux.
+ */
+const COLONNE_RETENUE = {
+  carrez: 'Superficie privative « Loi Carrez »',
+  boutin: 'Superficie habitable'
+} as const;
+
 /** Ce que la mission n'a pas pu contrôler, dans les mots du rapport. */
 const RESERVE =
   /(n['’]a pas été fourni|n['’]ayant pas été fournis?|Aucun document probant n['’]ayant été fourni)/i;
@@ -193,6 +204,7 @@ function lireBC2E(lignes: readonly string[]): LectureMesurage {
     surfaceLegale,
     autresTotaux,
     pieces: lireTableau(nettes),
+    colonneRetenue: COLONNE_RETENUE[loi],
     /* Rubrique propre à LICIEL : BC2E n'en imprime aucune. Le dire « non
        renseignée » est exact ; le dire « néant » ferait d'un silence une
        bonne nouvelle. */
