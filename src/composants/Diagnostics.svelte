@@ -36,6 +36,8 @@
   import { consulterLAdeme, type Consultation } from '../lib/ademe/consultation';
   import type { BandeauDecoupe } from '../lib/pdf';
   import BandeauDuRapport from './dpe/BandeauDuRapport.svelte';
+  import { prioriserLesTravaux } from '../lib/analyse/priorite';
+  import MiniAppDpe from './dpe/MiniAppDpe.svelte';
   import VignetteDuBien from './dpe/VignetteDuBien.svelte';
   import MotsExpliques from './MotsExpliques.svelte';
   import Deperditions from './dpe/Deperditions.svelte';
@@ -56,7 +58,7 @@
   import ChaineBarrieres, { type Barriere } from './visuels/ChaineBarrieres.svelte';
   import { enPratique, FICHES } from '../lib/analyse/fiches';
   import { echeance } from '../lib/echeance';
-  import { etiquetteDe } from '../lib/analyse/confiance';
+  import { confianceDuDossier, etiquetteDe } from '../lib/analyse/confiance';
   import type { Origine } from '../lib/bureau';
   import { APPS } from '../lib/apps';
   import { estSombre, styleUnivers } from '../lib/univers';
@@ -1572,6 +1574,23 @@
                   {@const lu = lectureDpeDe(d)}
                   {#if lu}
                     <VignetteDuBien {photo} bien={lu.enveloppe.bien} />
+                    <!--
+                      L'ÉCRAN DE RÉFÉRENCE DU PACK, en tête : la synthèse que le
+                      propriétaire lit d'abord. Les cartes qui suivent sont le niveau
+                      du dessous — « je veux voir le détail » — et elles restent, parce
+                      que la synthèse ne remplace pas la lecture paroi par paroi.
+                    -->
+                    <MiniAppDpe
+                      diagnostic={d}
+                      enveloppe={lu.enveloppe}
+                      systemes={lu.systemes}
+                      travaux={prioriserLesTravaux(lu.travaux.packs, lu.enveloppe, partsAdemeDe(d))}
+                      points={lu.points}
+                      {bandeaux}
+                      {photo}
+                      confiance={confianceDuDossier(analyse.diagnostics)}
+                    />
+
                     <BandeauDuRapport bandeau={bandeau('étiquette')} />
                     <PourquoiCetteNote
                       finale={dpeDe(d)?.finale ?? null}
