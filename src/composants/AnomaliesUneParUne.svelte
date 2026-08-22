@@ -28,6 +28,22 @@
     inconnue: null
   };
 
+  /**
+   * Ce que le rapport ne dit pas de cette anomalie-là.
+   *
+   * Rassemblé en une ligne plutôt qu'en trois rubriques vides. Un silence reste
+   * un silence — le § 2 interdit de le transformer en « aucun » — mais trois
+   * silences alignés donnent l'impression d'une fiche vide au lieu d'une
+   * information.
+   */
+  function silences(a: Anomalie): string[] {
+    const manque: string[] = [];
+    if (!a.localisations.length) manque.push('où');
+    if (!a.mesureCompensatoire) manque.push('s’il existe une mesure compensatoire');
+    if (!a.geste) manque.push('ce qu’il faut faire');
+    return manque;
+  }
+
   /** Une carte ouverte à la fois : on lit une anomalie, pas un mur. */
   let ouverte = $state<number | null>(null);
 </script>
@@ -36,7 +52,9 @@
   <p class="compte">
     {anomalies.length}
     {anomalies.length > 1 ? 'anomalies relevées' : 'anomalie relevée'}
-    <span class="fidelite">telles que le rapport les écrit</span>
+    <span class="fidelite">
+      {anomalies.length > 1 ? 'telles que le rapport les écrit' : 'telle que le rapport l’écrit'}
+    </span>
   </p>
 
   <ul>
@@ -78,21 +96,24 @@
               PLACE, dans la phrase même du rapport, qui n'est pas modifiée d'un
               caractère : elle est seulement soulignée là où un mot se définit.
             -->
-            <dt>Ce que dit le rapport</dt>
-            <dd class="source">« <MotsExpliques texte={a.libelle} /> »</dd>
+            <!--
+              LA PHRASE DU RAPPORT N'EST PAS DITE DEUX FOIS.
 
-            <dt>Où</dt>
-            <dd>
-              {#if a.localisations.length}
+              Elle était en tête de carte, puis répétée sous « Ce que dit le
+              rapport » : on dépliait pour découvrir la ligne qu'on venait de
+              lire. Le détail ne redit rien ; il n'ajoute que ce que la tête ne
+              porte pas.
+            -->
+            {#if a.localisations.length}
+              <dt>Où</dt>
+              <dd>
                 <ul class="lieux">
                   {#each a.localisations as lieu (lieu)}
                     <li>{lieu}</li>
                   {/each}
                 </ul>
-              {:else}
-                <span class="muet">Le rapport ne précise pas où.</span>
-              {/if}
-            </dd>
+              </dd>
+            {/if}
 
             {#if ETENDUE[a.pluralite]}
               <dt>Combien</dt>
@@ -105,26 +126,44 @@
               </dd>
             {/if}
 
-            <dt>Mesure compensatoire</dt>
-            <dd>
-              {#if a.mesureCompensatoire}
+            {#if a.mesureCompensatoire}
+              <dt>Mesure compensatoire</dt>
+              <dd>
                 {a.mesureCompensatoire.libelle}
                 <span class="muet">
                   — elle limite le risque, elle ne fait pas disparaître l’anomalie.
                 </span>
-              {:else}
-                <span class="muet">Non précisée par le rapport.</span>
-              {/if}
-            </dd>
+              </dd>
+            {/if}
 
             {#if a.geste}
               <dt>Ce que le rapport demande</dt>
               <dd><MotsExpliques texte={a.geste} /></dd>
             {/if}
 
+            <!--
+              CE QUE LE RAPPORT NE DIT PAS, EN UNE LIGNE.
+
+              Trois rubriques pleines annonçaient chacune un silence — « non
+              précisée », « ne précise pas où », « non précisée par le rapport ».
+              La carte se lisait comme un constat de vide. Les silences se
+              disent, mais ensemble et une fois : ce qui manque est une
+              information, pas trois.
+            -->
+            {#if silences(a).length}
+              <dt>Ce que le rapport ne précise pas</dt>
+              <dd class="muet">{silences(a).join(' · ')}</dd>
+            {/if}
+
             {#if a.code}
               <dt>Référence</dt>
-              <dd class="code">{a.code}</dd>
+              <dd class="code">
+                {a.code}
+                <span class="muet">
+                  — le numéro du point de contrôle dans la norme NF C 16-600, celui
+                  qu’un électricien reconnaîtra.
+                </span>
+              </dd>
             {/if}
           </dl>
         {/if}
