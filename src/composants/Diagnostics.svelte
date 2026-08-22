@@ -19,6 +19,7 @@
   import Explicatif from './schemas/Explicatif.svelte';
   import RegleDpe from './visuels/RegleDpe.svelte';
   import Amiante from './amiante/Amiante.svelte';
+  import MiniAppElectricite from './electricite/MiniAppElectricite.svelte';
   import MiniAppTermites from './termites/MiniAppTermites.svelte';
   import VisuelPlomb from './visuels/VisuelPlomb.svelte';
   /*
@@ -53,9 +54,6 @@
   import AVerifier from './AVerifier.svelte';
   import Travaux from './Travaux.svelte';
   import { libelleCourt } from '../lib/libelle';
-  import { mecanismeDe, type Mecanisme } from '../lib/analyse/mecanisme';
-  import { exploration } from '../lib/savoir/pile.svelte';
-  import ChaineBarrieres, { type Barriere } from './visuels/ChaineBarrieres.svelte';
   import { enPratique, FICHES } from '../lib/analyse/fiches';
   import { echeance } from '../lib/echeance';
   import { confianceDuDossier, etiquetteDe } from '../lib/analyse/confiance';
@@ -831,70 +829,6 @@
     return d.schema?.genre === 'dpe' ? d.schema.postes : null;
   }
 
-  /**
-   * ─────────────────────────────────────────────────────────────────────────
-   * LES BARRIÈRES ENTRE LE COURANT ET LA MAIN.
-   * ─────────────────────────────────────────────────────────────────────────
-   *
-   * Les six domaines de l'arrêté du 28 septembre 2017 ne sont pas six cases à
-   * cocher : ce sont des barrières successives, dans l'ordre où le courant
-   * devrait les franchir pour atteindre quelqu'un. Le différentiel existe parce
-   * que l'isolement peut lâcher ; la terre existe parce que le différentiel a
-   * besoin d'un chemin.
-   *
-   * `mecanismeDe()` accroche chaque anomalie du rapport à sa barrière — c'est
-   * lui qui fait tout le travail, et il existait déjà pour dessiner les fiches
-   * d'anomalie.
-   *
-   * ── Ce qu'on ne sait pas dire, et qu'on n'invente pas ─────────────────────
-   *
-   * L'état « non essayé » demanderait de savoir QUEL point n'a pas pu être
-   * vérifié. `pointsNonVerifies()` le sait, mais l'analyseur aplatit son
-   * résultat dans un fait global — « Points non vérifiés : 1 » — sans le nom du
-   * point. La barrière ne peut donc pas passer en creux, et la réserve sous la
-   * chaîne le dit à sa place. Le report relève de l'analyseur, pas d'ici.
-   *
-   * De même pour « rattrapé » : `domainesConstates().compense` porte le drapeau,
-   * mais il ne franchit pas la frontière du modèle.
-   */
-  const ORDRE_BARRIERES: Mecanisme[] = [
-    'coupure',
-    'differentiel',
-    'terre',
-    'surintensite',
-    'salleDeau',
-    'contactDirect'
-  ];
-
-  function barrieresDe(d: Diagnostic): Barriere[] {
-    const anomalies = (d.releves ?? []).filter((r) => r.genre === 'anomalie');
-
-    /* Une anomalie « enveloppe » — un boîtier cassé — est un contact direct
-       possible : c'est le même danger, et l'arrêté les compte ensemble. */
-    const barriereDe = (m: Mecanisme): Mecanisme => (m === 'enveloppe' ? 'contactDirect' : m);
-
-    const compte = new Map<Mecanisme, number>();
-    for (const r of anomalies) {
-      const m = barriereDe(mecanismeDe('electricite', r.libelle, r.code));
-      if (m === 'general') continue; // rattachement impossible : on ne devine pas
-      compte.set(m, (compte.get(m) ?? 0) + 1);
-    }
-
-    /* Conclusion non lue : on n'affirme rien sur aucune barrière. */
-    const nonLue = d.gravite === 'neutre';
-
-    return ORDRE_BARRIERES.map((m) => {
-      const n = compte.get(m) ?? 0;
-      if (nonLue) return { mecanisme: m, etat: 'nonLue' as const };
-      if (n > 0) return { mecanisme: m, etat: 'percee' as const, nombre: n };
-      return { mecanisme: m, etat: 'rienSignale' as const };
-    });
-  }
-
-  /** Le rapport signale-t-il des points qu'il n'a pas pu vérifier ? */
-  function nonVerifiesDe(d: Diagnostic): Fait | undefined {
-    return d.faits.find((f) => /non v[ée]rifi/i.test(f.libelle));
-  }
 
 
 </script>
@@ -1112,38 +1046,23 @@
 
               {:else if d.type === 'electricite'}
                 <!--
-                  LA CHAÎNE DES BARRIÈRES REMPLACE LE COFFRET.
+                  LA MINI-APP ÉLECTRICITÉ — pack d'Aude du 22/08/2026,
+                  `docs/ODM-ELECTRICITE-MINI-APP.md`.
 
-                  Le coffret à manettes passait trois paragraphes de commentaire
-                  à expliquer que ce n'était PAS le tableau du logement, puis
-                  l'écrivait sous le dessin : « un module par point de contrôle
-                  de la norme, pas par circuit ». Un dessin qui doit se démentir
-                  lui-même coûte plus qu'il ne rapporte.
+                  ⚠️ Elle remplace la chaîne de barrières pour une raison
+                  mesurée, pas esthétique : sur sept volets du corpus, le
+                  rapport annonçait 16 anomalies, l'extraction en rendait 18, et
+                  l'écran n'en montrait que 7. La chaîne ne dessinait que les
+                  anomalies qu'elle savait PLACER ; les autres n'existaient pas.
 
-                  Et il tenait ses manettes de `schema.groupes`, qui compte des
-                  MOTS : 15 logements sains sur 33 y recevaient six manettes
-                  orange. La chaîne, elle, ne connaît que les relevés — les
-                  vraies lignes d'anomalie du rapport.
+                  La mini-app part de `diagnostic.anomalies` et les rend toutes,
+                  avec leur code, leurs localisations et leur mesure
+                  compensatoire — puis les range par domaine, qui est le propre
+                  groupement du rapport.
+
+                  `entete={false}` : la carte porte déjà le titre et le verdict.
                 -->
-                <ChaineBarrieres
-                  barrieres={barrieresDe(d)}
-                  surTouche={(m) => exploration.ouvrir(m)}
-                />
-
-                {#if nonVerifiesDe(d)}
-                  {@const nv = nonVerifiesDe(d)}
-                  <!-- « Une information non trouvée n'est jamais transformée en
-                       information rassurante. » La chaîne ne sait pas QUELLE
-                       barrière n'a pas pu être essayée — l'analyseur aplatit le
-                       nom du point — alors on le dit sous elle, en clair, même
-                       et surtout quand la conclusion est bonne. -->
-                  <p class="non-essaye">
-                    <b>{nv?.valeur}</b>
-                    {Number(nv?.valeur) > 1 ? 'points n’ont pas pu être vérifiés' : 'point n’a pas pu être vérifié'}{nv?.precision
-                      ? ` — ${nv.precision}`
-                      : '.'}
-                  </p>
-                {/if}
+                <MiniAppElectricite diagnostic={d} entete={false} />
               {:else if d.type === 'amiante'}
                 <!--
                   LA SYNTHÈSE AMIANTE — ordre d'Aude du 22/08/2026,
