@@ -77,6 +77,12 @@
   import { etiquetteDe, origineDe } from '../../lib/analyse/confiance';
   import { zonesDe } from '../../lib/analyse/plan';
   import TableLumineuse from '../lumiere/TableLumineuse.svelte';
+  import Deperditions from './Deperditions.svelte';
+  import LesParois from './LesParois.svelte';
+  import LesSystemes from './LesSystemes.svelte';
+  import LesTravaux from './LesTravaux.svelte';
+  import PointsAVerifier from './PointsAVerifier.svelte';
+  import PourquoiCetteNote from './PourquoiCetteNote.svelte';
   import { heureDecimale, lumiereDe, teinteDe } from '../lumiere/heure';
   import { retraitDe } from '../lumiere/gravite';
   import {
@@ -136,6 +142,17 @@
   const climat = $derived(schema?.climat ?? null);
   const postes = $derived(schema?.postes ?? []);
   const isolation = $derived<Isolation | null>(schema?.isolation ?? null);
+
+  /*
+   * ── LA LECTURE DE L'ÉDITEUR ───────────────────────────────────────────
+   *
+   * `lecture` n'existe que si la signature du format a répondu — un lecteur par
+   * éditeur, choisi sur signature. Chez un éditeur non mesuré elle reste
+   * absente, et ces cartes disparaissent au lieu de montrer un bâtiment
+   * approximatif : un lecteur lâché hors de son format ne rend pas moins
+   * d'information, il en rend de la fausse, en silence.
+   */
+  const lecture = $derived(schema?.lecture ?? null);
 
   const origine = $derived(origineDe(diagnostic));
   const provenance = $derived(etiquetteDe(origine));
@@ -494,6 +511,26 @@
       <h2 class="titre2">Comprendre</h2>
       {#each diagnostic.explication as p, i (i)}<p>{p}</p>{/each}
     </section>
+  {/if}
+
+  <!--
+    ── 12 bis · LE BÂTIMENT, LU CHEZ SON ÉDITEUR. L3 ────────────────────────
+
+    Ces cartes viennent du lecteur du format reconnu : la fiche technique paroi
+    par paroi, les équipements générateur par générateur, les deux packs de
+    travaux, et les endroits où le rapport se décrit de deux façons. Rien ici
+    n'est affiché sans signature — voir docs/OU-PARSER-DPE.md, section 8.
+  -->
+  {#if lecture}
+    <PourquoiCetteNote {finale} causes={lecture.causes} dejaBien={lecture.dejaBien} />
+    <Deperditions
+      postes={lecture.enveloppe.deperditions}
+      pourcentagesDisponibles={lecture.enveloppe.pourcentagesDisponibles}
+    />
+    <LesParois enveloppe={lecture.enveloppe} />
+    <LesSystemes systemes={lecture.systemes} />
+    <LesTravaux travaux={lecture.travaux} />
+    <PointsAVerifier points={lecture.points} />
   {/if}
 
   <!-- ── 13 · LA PREUVE. L4 ─────────────────────────────────────────────── -->

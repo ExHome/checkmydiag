@@ -24,6 +24,12 @@
   import VisuelRisques from './visuels/VisuelRisques.svelte';
   import PlanDuLogement from './plans/PlanDuLogement.svelte';
   import MotsExpliques from './MotsExpliques.svelte';
+  import Deperditions from './dpe/Deperditions.svelte';
+  import LesParois from './dpe/LesParois.svelte';
+  import LesSystemes from './dpe/LesSystemes.svelte';
+  import LesTravaux from './dpe/LesTravaux.svelte';
+  import PointsAVerifier from './dpe/PointsAVerifier.svelte';
+  import PourquoiCetteNote from './dpe/PourquoiCetteNote.svelte';
   import Releves from './Releves.svelte';
   import OuEstLePlomb from './OuEstLePlomb.svelte';
   import AnomaliesUneParUne from './AnomaliesUneParUne.svelte';
@@ -667,6 +673,18 @@
 
   function dpeDe(d: Diagnostic) {
     return d.schema?.genre === 'dpe' ? d.schema : null;
+  }
+
+  /**
+   * Ce que le lecteur de SON éditeur a lu du bâtiment.
+   *
+   * `null` quand aucune signature n'a reconnu le format : les cartes
+   * disparaissent alors au lieu de montrer un bâtiment approximatif. Un lecteur
+   * mesuré chez un éditeur et lâché chez un autre ne rend pas moins
+   * d'information, il en rend de la fausse, en silence.
+   */
+  function lectureDpeDe(d: Diagnostic) {
+    return dpeDe(d)?.lecture ?? null;
   }
 
   function plombDe(d: Diagnostic) {
@@ -1422,6 +1440,34 @@
                     On montre donc la page, découpée dans le PDF déposé.
                   -->
                   <SchemaDuRapport schema={schemaDeperditions} />
+                {/if}
+
+                <!--
+                  LE BÂTIMENT, LU CHEZ SON ÉDITEUR.
+
+                  La fiche technique paroi par paroi, les équipements générateur
+                  par générateur, les deux packs de travaux, et les endroits où
+                  le rapport se décrit de deux façons. Ces cartes ne s'affichent
+                  que si la signature du format a répondu : un lecteur par
+                  éditeur, choisi sur signature. Voir docs/OU-PARSER-DPE.md § 8.
+                -->
+                {#if lectureDpeDe(d)}
+                  {@const lu = lectureDpeDe(d)}
+                  {#if lu}
+                    <PourquoiCetteNote
+                      finale={dpeDe(d)?.finale ?? null}
+                      causes={lu.causes}
+                      dejaBien={lu.dejaBien}
+                    />
+                    <Deperditions
+                      postes={lu.enveloppe.deperditions}
+                      pourcentagesDisponibles={lu.enveloppe.pourcentagesDisponibles}
+                    />
+                    <LesParois enveloppe={lu.enveloppe} />
+                    <LesSystemes systemes={lu.systemes} />
+                    <LesTravaux travaux={lu.travaux} />
+                    <PointsAVerifier points={lu.points} />
+                  {/if}
                 {/if}
 
                 <!--

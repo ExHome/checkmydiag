@@ -52,6 +52,9 @@ export interface Isolation {
   fenetres: EtatIsolation;
 }
 
+/* Type seul : la lecture vient des lecteurs par éditeur, pas du modèle. */
+import type { LectureDpe } from './lecteurs/dpe';
+
 export type Schema =
   | {
       genre: 'dpe';
@@ -62,6 +65,16 @@ export type Schema =
       postes: { nom: string; kwh: number; cout?: string }[];
       /** État d'isolation relevé dans le rapport, paroi par paroi. */
       isolation: Isolation;
+      /**
+       * Le bâtiment lu par le lecteur de SON éditeur — parois, équipements,
+       * travaux, causes, contradictions.
+       *
+       * Absent quand aucune signature ne reconnaît le format : l'écran le dit
+       * alors, plutôt que de montrer un bâtiment approximatif. C'est la
+       * contrainte du 21/08/2026 — un lecteur par éditeur, choisi sur
+       * signature — appliquée jusqu'à l'affichage.
+       */
+      lecture?: LectureDpe | null;
     }
   | {
       genre: 'plomb';

@@ -8,6 +8,7 @@ import { decouper } from './decoupe';
 import { natureDe } from './nature';
 import { controlerCopropriete } from './copropriete';
 import { analyserDpe } from './dpe';
+import { lireLeDpe } from '../lecteurs/dpe';
 import { analyserPlomb } from './plomb';
 import { analyserAmiante, analyserTermites } from './reperages';
 import { analyserElectricite, analyserGaz } from './securite';
@@ -56,6 +57,30 @@ const REPLIS: Record<TypeDiag, (lignes: string[], plage: [number, number]) => Di
 for (const [type, lecteur] of Object.entries(REPLIS) as [TypeDiag, (typeof REPLIS)[TypeDiag]][]) {
   inscrireLecteur(type, null, (c) => lecteur([...c.lignes], [...c.plage] as [number, number]));
 }
+
+/*
+ * DPE — le lecteur LICIEL, et le bâtiment qu'il rend.
+ *
+ * `analyserDpe` reste le repli : il sort la lettre et les chiffres, ce qu'un
+ * DPE de n'importe quel éditeur écrit à peu près pareil. Mais TOUT le reste —
+ * la fiche technique paroi par paroi, la vue d'ensemble des équipements, les
+ * deux packs de travaux — tient à des tableaux à cellules fusionnées dont la
+ * mise en page a été mesurée chez LICIEL et chez lui seul.
+ *
+ * Ce lecteur-ci ajoute donc cette lecture-là, et seulement quand la signature
+ * du format répond. Chez un éditeur non mesuré, `lecture` reste absent et
+ * l'écran dit qu'il ne sait pas lire ce format — il ne montre pas un bâtiment
+ * approximatif. Voir `docs/OU-PARSER-DPE.md`, section 8.
+ */
+inscrireLecteur('dpe', 'LICIEL', (c) => {
+  const diagnostic = analyserDpe([...c.lignes], [...c.plage] as [number, number]);
+  const aiguillage = lireLeDpe(c.lignes);
+  if (aiguillage.etat !== 'lu' || diagnostic.schema?.genre !== 'dpe') return diagnostic;
+  return {
+    ...diagnostic,
+    schema: { ...diagnostic.schema, lecture: aiguillage.valeur }
+  };
+});
 
 /*
  * LES LECTEURS ÉCRITS POUR UN ÉDITEUR — le chantier avance ici, volet par volet.
