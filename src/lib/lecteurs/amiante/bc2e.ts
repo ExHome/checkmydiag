@@ -204,7 +204,7 @@ export function lireAmianteBC2E(lignes: readonly string[]): LectureAmiante {
      * pas lu cette rubrique », jamais « rien n'a été visité » : l'écran masque
      * alors le bloc au lieu d'affirmer un périmètre vide.
      */
-    perimetre: { lue: false, pieces: [] }
+    perimetre: { lue: false, pieces: [], composants: [] }
   };
 }
 

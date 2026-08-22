@@ -235,6 +235,14 @@ export interface Diagnostic {
   perimetre?: {
     lue: boolean;
     pieces: string[];
+    /**
+     * Les composants regardés — « Sol », « Mur », « Plafond », « Conduits »…
+     *
+     * C'est la seule donnée du rapport qui corresponde aux **familles
+     * d'ouvrage** du visuel : un nom de pièce ne dit pas si l'on a regardé le
+     * sol ou le plafond, « Sol : Carrelage » le dit.
+     */
+    composants?: string[];
   };
   /**
    * LE GAZ, TEL QUE SON LECTEUR D'ÉDITEUR L'A LU.

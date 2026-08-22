@@ -299,7 +299,7 @@ export function perimetreDe(lignes: readonly string[]): LectureAmiante['perimetr
       break;
     }
   }
-  if (entete < 0) return { lue: false, pieces: [] };
+  if (entete < 0) return { lue: false, pieces: [], composants: [] };
 
   /* `<niveau> - <pièce>` : un tiret entouré d'espaces, du texte de part et
      d'autre. C'est la forme, et rien d'autre n'est retenu. */
@@ -325,7 +325,86 @@ export function perimetreDe(lignes: readonly string[]): LectureAmiante['perimetr
       pieces.push(p);
     }
   }
-  return { lue: true, pieces };
+  return { lue: true, pieces, composants: composantsDe(lignes, entete) };
+}
+
+/**
+ * LES COMPOSANTS REGARDÉS — le second bloc du § 3.2.6.
+ *
+ * Après la liste des pièces vient un tableau `Localisation | Description` qui
+ * décrit chaque pièce composant par composant :
+ *
+ *     Localisation            Description
+ *                             Sol : Parquet et Bois
+ *                             Plinthes A, D : Bois et Peinture
+ *     1er étage - Entrée      Mur A, D : Plâtre et Peinture
+ *                             Porte (P1) : Bois et Peinture
+ *                             Plafond : Plâtre et Peinture
+ *
+ * C'est la seule rubrique qui dise ce qui a été REGARDÉ, famille par famille —
+ * et donc la seule qui permette de remplir le bloc « éléments contrôlés » du
+ * visuel avec autre chose que des noms de pièces. « RDC - Cuisine » ne dit pas
+ * si l'on a regardé le sol ou le plafond ; « Sol : Carrelage » le dit.
+ *
+ * ⚠️ On ne retient que le NOM du composant, avant les deux-points. La matière
+ * qui suit (« Parquet et Bois ») ne dit rien de l'amiante, et la restituer
+ * comme un résultat serait le piège du § 5.0.2 — celui qui a fait annoncer de
+ * l'amiante à dix-sept logements.
+ */
+function composantsDe(lignes: readonly string[], depuis: number): string[] {
+  let entete = -1;
+  for (let i = Math.max(0, depuis); i < lignes.length; i++) {
+    const n = sansAccents(normaliser(lignes[i] ?? ''))
+      .replace(/[^a-z]/gi, '')
+      .toLowerCase();
+    if (n.startsWith('localisationdescription')) {
+      entete = i;
+      break;
+    }
+  }
+  if (entete < 0) return [];
+
+  const out: string[] = [];
+  const vus = new Set<string>();
+  for (let j = entete + 1; j < Math.min(entete + 400, lignes.length); j++) {
+    const brut = (lignes[j] ?? '').replace(/\s+/g, ' ').trim();
+    const n = sansAccents(brut).toLowerCase();
+    /* Le tableau s'arrête à la rubrique suivante — « 4. – Conditions de
+       réalisation du repérage ». */
+    if (/^4[\s.]/.test(brut) || n.startsWith('4. - conditions')) break;
+    if (/^(sarl|dglm|rcs|n.siren|tel|rapport du)/i.test(brut)) continue;
+
+    /*
+     * Une ligne porte « <Composant> : <matière> ». Le composant traîne ses
+     * repères — « Mur A, B, C, D », « Porte (P1) A », « Fenêtre (F2) C » —
+     * qu'on retire : ce sont des positions dans la pièce, pas des familles.
+     */
+    const m = brut.match(/([A-Za-zÀ-ÿ][A-Za-zÀ-ÿ' -]{2,28}?)\s*(?:\([^)]*\))?\s*[A-Z, ]{0,14}:\s*\S/);
+    if (!m?.[1]) continue;
+    /*
+     * ⚠️ LA COLONNE « LOCALISATION » DÉBORDE SUR LA DESCRIPTION.
+     *
+     * Le tableau imprime la pièce en face de la ligne du milieu de son bloc :
+     * l'extraction rend alors « 1er étage - Entrée Mur A, D : Plâtre », où le
+     * nom de la pièce et celui du composant se touchent. Mesuré sur un constat
+     * réel le 22/08.
+     *
+     * Le composant est ce qui vient APRÈS le nom de pièce — donc après le
+     * dernier tiret, et c'est le dernier mot de ce reste.
+     */
+    let nom = m[1].trim().replace(/\s+[A-Z](\s*,\s*[A-Z])*$/, '');
+    if (/\s-\s/.test(nom)) {
+      const apres = nom.split(/\s-\s/).pop() ?? nom;
+      nom = apres.trim().split(/\s+/).pop() ?? apres;
+    }
+    nom = nom.trim();
+    if (nom.length < 3 || nom.length > 28) continue;
+    const cle = sansAccents(nom).toLowerCase();
+    if (vus.has(cle)) continue;
+    vus.add(cle);
+    out.push(nom);
+  }
+  return out;
 }
 
 /** Le laboratoire — § 2, rempli trois fois sur 130 volets. */

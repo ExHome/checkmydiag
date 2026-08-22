@@ -127,8 +127,56 @@
     constatations: { lue: false, neant: false, entrees: [] }
   } as unknown as Diagnostic;
 
+  /* 5 · Le volet qui imprime son § 3.2.6 — celui où « Éléments contrôlés »
+     montre des FAMILLES D'OUVRAGE et non des noms de pièces.
+
+     Constat de vente LICIEL relu le 22/08, recopié entier : ses dix pièces,
+     ses douze composants, son « Néant » en limites. C'est le seul cas du banc
+     où les pictogrammes se distinguent — cinq volets LICIEL sur onze
+     impriment ce tableau, les six autres ne donnent que les pièces. */
+  const COMPOSANTS: Diagnostic = {
+    ...socle,
+    verdict: 'Aucun matériau contenant de l’amiante n’a été repéré dans les parties accessibles.',
+    gravite: 'bon',
+    faits: [],
+    date: '18/03/2025',
+    pages: [1, 22],
+    nonVisitees: { lue: true, neant: true, pieces: [], charpente: false },
+    constatations: { lue: true, neant: true, entrees: [] },
+    perimetre: {
+      lue: true,
+      pieces: [
+        '1er étage - Entrée',
+        '2ème étage - Pallier',
+        '1er étage - Wc',
+        '2ème étage - Chambre 1',
+        '1er étage - Séjour / Cuisine',
+        '2ème étage - Chambre 2 / Dressing',
+        '1er étage - Cellier',
+        '2ème étage - Salle de bain',
+        '1er étage - Terrasse',
+        '2ème étage - Buhanderie'
+      ],
+      composants: [
+        'Sol',
+        'Plinthes',
+        'Mur',
+        'Porte',
+        'Plafond',
+        'Fenêtre',
+        'Volet',
+        'Marches',
+        'Contremarches',
+        'Balustre',
+        'Main courante',
+        'Dressing Porte'
+      ]
+    }
+  } as unknown as Diagnostic;
+
   const dossiers: [string, Diagnostic][] = [
     ['Rien repéré · combles fermés', ABSENCE],
+    ['Vente · le § 3.2.6 imprimé', COMPOSANTS],
     ['Flocages en Score 3 · liste A', PRESENCE],
     ['Pré-rapport · laboratoire en attente', EN_ATTENTE],
     ['Document numérisé · illisible', ILLISIBLE]

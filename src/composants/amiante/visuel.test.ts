@@ -66,6 +66,50 @@ describe('les éléments contrôlés du visuel', () => {
   it('n’invente aucune catégorie quand le rapport ne nomme rien', () => {
     expect(categoriesDe(vide)).toEqual([]);
   });
+
+  it('⚠️ range TOUS les composants réellement lus au § 3.2.6, sans en perdre', () => {
+    /*
+     * LA MESURE QUI A FAIT AJOUTER DEUX FAMILLES.
+     *
+     * Le 22/08, sur les volets extraits du corpus : 41 composants lus, dont 23
+     * — 56 % — ne tombaient dans aucune des cinq familles du visuel. Ils
+     * disparaissaient de l'écran alors que le rapport les avait contrôlés.
+     *
+     * La liste ci-dessous est celle des composants réellement rencontrés, avec
+     * l'orthographe des rapports. Aucun ne doit rester orphelin : un composant
+     * sans famille est un ouvrage contrôlé que l'acquéreur ne verra jamais.
+     */
+    const LUS = [
+      'Sol',
+      'Plinthes',
+      'Mur',
+      'Porte',
+      'Plafond',
+      'Fenêtre',
+      'Volet',
+      'Marches',
+      'Contremarches',
+      'Balustre',
+      'Main courante',
+      'Dressing Porte',
+      'Porte de garage'
+    ];
+    const orphelins = LUS.filter((c) => categoriesDe({ ...vide, composants: [c] }).length === 0);
+    expect(orphelins).toEqual([]);
+  });
+
+  it('donne à chaque famille un pictogramme qui lui est propre', () => {
+    /* Sept familles, sept dessins : deux lignes qui partageraient une icône se
+       liraient comme une seule. Le repli « piece » n'en fait pas partie — il
+       n'est pas une famille, il dit qu'on n'en a pas reconnu. */
+    const familles = categoriesDe({
+      ...vide,
+      composants: ['Toiture', 'Façade', 'Plafond', 'Conduit', 'Sol', 'Fenêtre', 'Marches']
+    });
+    const icones = familles.map((c) => c.icone);
+    expect(new Set(icones).size).toBe(icones.length);
+    expect(icones).not.toContain('piece');
+  });
 });
 
 describe('la suite que le droit attache au constat', () => {

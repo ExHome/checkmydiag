@@ -104,6 +104,24 @@ export interface LectureAmiante {
   readonly perimetre: {
     readonly lue: boolean;
     readonly pieces: readonly string[];
+    /**
+     * LES COMPOSANTS RÉELLEMENT REGARDÉS — « Sol », « Mur », « Plafond »,
+     * « Porte », « Conduits »…
+     *
+     * Ils vivent dans le second bloc du § 3.2.6, le tableau `Localisation |
+     * Description` : chaque pièce y est décrite composant par composant
+     * (`Sol : Parquet et Bois`, `Mur A, B, C, D : plâtre et Peinture`).
+     *
+     * ⚠️ C'est la seule donnée du rapport qui corresponde aux **familles
+     * d'ouvrage** du visuel — Toiture, Façades, Revêtements, Conduits, Sols.
+     * Les noms de pièces, eux, n'en disent rien : « RDC - Cuisine » ne dit pas
+     * si l'on a regardé le sol ou le plafond.
+     *
+     * ⚠️ Et ce tableau **n'est pas un constat** : il dit de quoi les composants
+     * sont faits, jamais s'ils contiennent de l'amiante. Le mot `Divers` y est
+     * courant et ne signifie rien de plus que « non identifié ».
+     */
+    readonly composants: readonly string[];
   };
   /** Le laboratoire, quand un prélèvement a été analysé. */
   readonly laboratoire?: { readonly nom: string; readonly cofrac?: string };
