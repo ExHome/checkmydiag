@@ -34,6 +34,8 @@
   import VisuelRisques from './visuels/VisuelRisques.svelte';
   import PlanDuLogement from './plans/PlanDuLogement.svelte';
   import { consulterLAdeme, type Consultation } from '../lib/ademe/consultation';
+  import type { BandeauDecoupe } from '../lib/pdf';
+  import BandeauDuRapport from './dpe/BandeauDuRapport.svelte';
   import MotsExpliques from './MotsExpliques.svelte';
   import Deperditions from './dpe/Deperditions.svelte';
   import LesParois from './dpe/LesParois.svelte';
@@ -739,6 +741,18 @@
    * mesuré chez un éditeur et lâché chez un autre ne rend pas moins
    * d'information, il en rend de la fausse, en silence.
    */
+  /**
+   * Une bande découpée du rapport, par son nom.
+   *
+   * Elles ne sont pas montrées en galerie : chacune se pose **sous la carte
+   * qu'elle prouve**. Le lecteur voit d'abord ce que Verrière a compris, puis
+   * peut ouvrir la bande du rapport qui le dit — dans cet ordre, jamais
+   * l'inverse.
+   */
+  function bandeau(nom: BandeauDecoupe['nom']) {
+    return bandeaux.find((b) => b.nom === nom) ?? null;
+  }
+
   function lectureDpeDe(d: Diagnostic) {
     return dpeDe(d)?.lecture ?? null;
   }
@@ -1541,6 +1555,7 @@
                 {#if lectureDpeDe(d)}
                   {@const lu = lectureDpeDe(d)}
                   {#if lu}
+                    <BandeauDuRapport bandeau={bandeau('étiquette')} />
                     <PourquoiCetteNote
                       finale={dpeDe(d)?.finale ?? null}
                       causes={lu.causes}
@@ -1552,8 +1567,17 @@
                       chiffres={partsAdemeDe(d)}
                     />
                     <LesParois enveloppe={lu.enveloppe} />
+                    <BandeauDuRapport bandeau={bandeau('vue d’ensemble')} />
                     <LesSystemes systemes={lu.systemes} />
+                    <BandeauDuRapport bandeau={bandeau('coûts')} />
                     <LesTravaux travaux={lu.travaux} />
+                    <!--
+                      LES CLASSES APRÈS TRAVAUX. Elles sont en image dans le PDF et
+                      absentes de la base ADEME : on ne peut pas les lire. On les MONTRE,
+                      et le « E → C » du §19 s'affiche enfin — sans qu'un seul caractère
+                      en ait été extrait, donc sans risque d'erreur.
+                    -->
+                    <BandeauDuRapport bandeau={bandeau('après travaux')} />
                     <PointsAVerifier points={lu.points} />
                   {/if}
                 {/if}

@@ -5,7 +5,7 @@
   import Lecteur from './composants/Lecteur.svelte';
   import PanneauSavoir from './composants/savoir/PanneauSavoir.svelte';
   import { exploration } from './lib/savoir/pile.svelte';
-  import { ouvrirPdf, type PageRendue, type Photo } from './lib/pdf';
+  import { ouvrirPdf, type BandeauDecoupe, type PageRendue, type Photo } from './lib/pdf';
   import { echecDeLecture, echecScanne, refusAvantLecture } from './lib/echec';
   import { analyser } from './lib/analyse';
   import { pagesExemple } from './lib/exemple';
@@ -42,6 +42,12 @@
   let photo = $state<Photo | null>(null);
   /** Le schema des deperditions du DPE, decoupe dans sa page. */
   let schemaDeperditions = $state<Photo | null>(null);
+  /*
+   * Les bandes du rapport qu'on ne peut pas lire, découpées pour être montrées :
+   * la double étiquette, l'estimation des coûts, les classes projetées après
+   * travaux. Bornées au volet DPE — une rubrique ne compte que chez elle.
+   */
+  let bandeaux = $state<BandeauDecoupe[]>([]);
   /** Dossiers déjà analysés, gardés sur l'appareil — PDF compris. */
   let dossiers = $state<DossierGarde[]>([]);
   listerDossiers().then((liste) => (dossiers = liste));
@@ -153,6 +159,7 @@
       rendus = new Map();
       photo = null;
       schemaDeperditions = null;
+      bandeaux = [];
       analyse = resultat;
       etat = 'resultat';
       // Le rapport lui-même est gardé, pas seulement son analyse : c'est ce qui
@@ -179,6 +186,9 @@
        * en image, aucun « % » n'y figure en texte.
        */
       void document.schemaDeperditions().then((s) => (schemaDeperditions = s));
+
+      const volet = resultat.diagnostics.find((d) => d.type === 'dpe');
+      if (volet) void document.bandeaux(volet.pages).then((b) => (bandeaux = b));
 
       void dessinerPages(document, resultat);
     } catch (e) {
@@ -439,7 +449,7 @@
       </p>
     {/if}
 
-    <Lecteur {analyse} {rendus} {demande} {photo} {schemaDeperditions} />
+    <Lecteur {analyse} {rendus} {demande} {photo} {schemaDeperditions} {bandeaux} />
 
     <p class="avertissement">
       {nomFichier} — outil de lecture, sans valeur réglementaire. La référence reste le rapport

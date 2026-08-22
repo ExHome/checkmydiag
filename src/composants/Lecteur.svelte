@@ -16,7 +16,7 @@
   import type { Analyse, Diagnostic, TypeDiag } from '../lib/modele';
   import type { Origine } from '../lib/bureau';
   import { ouvrirCouche } from '../lib/couches';
-  import type { PageRendue, Photo } from '../lib/pdf';
+  import type { BandeauDecoupe, PageRendue, Photo } from '../lib/pdf';
   import Explicatif from './schemas/Explicatif.svelte';
   import MiniSchema from './MiniSchema.svelte';
   import Fiche from './Fiche.svelte';
@@ -43,9 +43,18 @@
      * texte ne porte aucun « % ».
      */
     schemaDeperditions?: Photo | null;
+    /** Les bandes du rapport découpées pour être montrées. */
+    bandeaux?: BandeauDecoupe[];
   }
 
-  const { analyse, rendus, demande = null, photo = null, schemaDeperditions = null }: Props =
+  const {
+    analyse,
+    rendus,
+    demande = null,
+    photo = null,
+    schemaDeperditions = null,
+    bandeaux = []
+  }: Props =
     $props();
 
   type Repere = NonNullable<Diagnostic['reperes']>[number];
@@ -612,6 +621,7 @@
         origine={origineIcone}
         demande={demandeNo}
         {schemaDeperditions}
+        {bandeaux}
       />
     </div>
 

@@ -10,6 +10,12 @@
 import * as pdfjs from 'pdfjs-dist';
 import travailleur from 'pdfjs-dist/build/pdf.worker.mjs?url';
 import { lignesDePage, lignesPositionnees, type Fragment, type PageTexte } from './lignes';
+import {
+  BANDEAUX_LICIEL,
+  bornerLeBandeau,
+  pageDuBandeau,
+  type NomDeBandeau
+} from './pdf/bandeaux';
 
 pdfjs.GlobalWorkerOptions.workerSrc = travailleur;
 
@@ -55,7 +61,28 @@ export interface Document {
    * invente aucun.
    */
   schemaDeperditions: () => Promise<Photo | null>;
+  /**
+   * Les bandes du rapport qu'on ne peut pas lire, découpées pour être montrées.
+   *
+   * La double étiquette, l'estimation des coûts, les classes projetées après
+   * travaux : imprimées en image, donc hors d'atteinte de toute extraction de
+   * texte. On ne peut pas les lire ; on peut les montrer, et c'est la seule
+   * façon honnête d'afficher un « E → C » après travaux.
+   *
+   * Chaque bande est bornée par les deux intitulés qui l'encadrent, cherchés
+   * **dans la plage du volet** et nulle part ailleurs. Voir `pdf/bandeaux.ts`.
+   */
+  bandeaux: (plage: readonly [number, number]) => Promise<BandeauDecoupe[]>;
   fermer: () => Promise<void>;
+}
+
+export interface BandeauDecoupe {
+  nom: NomDeBandeau;
+  /** Ce que l'écran en dit, pour que le lecteur sache ce qu'il regarde. */
+  legende: string;
+  /** La page d'où la bande sort — la traçabilité jusqu'au feuillet. */
+  page: number;
+  photo: Photo;
 }
 
 export interface Photo {
@@ -460,6 +487,94 @@ export async function ouvrirPdf(
         // Un schéma manquant n'empêche pas de lire un dossier.
         return null;
       }
+    },
+
+    /**
+     * Découpe les bandes du volet, dans l'ordre où le rapport les imprime.
+     *
+     * Une bande qui ne se borne pas ne sort pas : mieux vaut pas de bandeau
+     * qu'un bandeau de travers. L'échec d'une bande n'empêche pas les autres.
+     */
+    async bandeaux(plage) {
+      const sortie: BandeauDecoupe[] = [];
+      let doc;
+      try {
+        doc = await documentDeDessin();
+      } catch {
+        return sortie;
+      }
+
+      for (const definition of BANDEAUX_LICIEL) {
+        try {
+          const porteuse = pageDuBandeau(pages, definition, plage);
+          if (!porteuse?.positions) continue;
+          const bornes = bornerLeBandeau(porteuse.positions, definition);
+          if (!bornes) continue;
+
+          const page = await doc.getPage(porteuse.numero);
+          const base = page.getViewport({ scale: 1 });
+          /* Assez fin pour que les chiffres de l'étiquette restent nets. */
+          const echelle = Math.min(3, Math.max(1.6, 1100 / base.width));
+          const viewport = page.getViewport({ scale: echelle });
+
+          const feuille = document.createElement('canvas');
+          feuille.width = Math.floor(viewport.width);
+          feuille.height = Math.floor(viewport.height);
+          feuille.style.cssText = 'position:fixed;left:-10000px;top:0;';
+          document.body.append(feuille);
+
+          try {
+            const ctx = feuille.getContext('2d');
+            if (!ctx) continue;
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, feuille.width, feuille.height);
+            await page.render({ canvasContext: ctx, viewport }).promise;
+
+            /* L'ordonnée du PDF part du bas ; celle du canevas, du haut. */
+            const haut = Math.max(0, Math.round((base.height - bornes.haut) * echelle));
+            const bas = Math.min(
+              feuille.height,
+              Math.round((base.height - bornes.bas) * echelle)
+            );
+            const haute = bas - haut;
+            if (haute < 40) continue;
+
+            const decoupe = document.createElement('canvas');
+            decoupe.width = feuille.width;
+            decoupe.height = haute;
+            const ctx2 = decoupe.getContext('2d');
+            if (!ctx2) continue;
+            ctx2.drawImage(
+              feuille,
+              0,
+              haut,
+              feuille.width,
+              haute,
+              0,
+              0,
+              feuille.width,
+              haute
+            );
+
+            sortie.push({
+              nom: definition.nom,
+              legende: definition.legende,
+              page: porteuse.numero,
+              photo: {
+                image: decoupe.toDataURL('image/png'),
+                largeur: feuille.width,
+                hauteur: haute
+              }
+            });
+          } finally {
+            feuille.remove();
+            page.cleanup();
+          }
+        } catch {
+          /* Une bande manquante n'empêche pas les autres. */
+        }
+      }
+      return sortie;
     },
 
     async rendre(numero, largeurCible = 900) {
