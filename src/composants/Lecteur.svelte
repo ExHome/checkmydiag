@@ -961,7 +961,9 @@
          a son onglet parce que ce n'est ni une lecture du dossier ni une
          lecture du document — c'est ce qu'il faut en faire. -->
     <div class="vue" class:cachee={vue !== 'conseil'}>
-      <Notaire {analyse} />
+      <!-- §13 de l'ordre de mission « Conseils » : chaque carte renvoie vers le
+           diagnostic concerné. C'est le chemin qu'ouvrent déjà les mini-apps. -->
+      <Notaire {analyse} surOuvrirDiagnostic={(type) => ouvrirDansLAnalyse(type)} />
     </div>
 
     <!-- Au repos, le seul texte de l'écran : la porte d'entrée de la lecture

@@ -10,7 +10,7 @@
    * Le devoir de conseil est ici une contrainte d'écriture : on ne se contente
    * pas de rapporter, on dit ce qui engage, ce qui coûte et ce qui se négocie.
    */
-  import type { Analyse } from '../lib/modele';
+  import type { Analyse, TypeDiag } from '../lib/modele';
   import Positionnement from './Positionnement.svelte';
   import Deperditions from './schemas/Deperditions.svelte';
   import MotsExpliques from './MotsExpliques.svelte';
@@ -21,7 +21,15 @@
   import { conseil, tousLesPoints } from '../lib/conseil';
   import { APPS } from '../lib/apps';
 
-  const { analyse }: { analyse: Analyse } = $props();
+  /**
+   * `surOuvrirDiagnostic` réalise le §13 de l'ordre de mission : « chaque carte
+   * doit pouvoir renvoyer vers le diagnostic concerné ». C'est la navigation
+   * croisée Diagnostic ↔ Explication ↔ Conseil ↔ Professionnel.
+   */
+  const {
+    analyse,
+    surOuvrirDiagnostic
+  }: { analyse: Analyse; surOuvrirDiagnostic?: (type: TypeDiag) => void } = $props();
 
   const dpe = $derived(analyse.diagnostics.find((d) => d.type === 'dpe') ?? null);
   const lettre = $derived(dpe?.schema?.genre === 'dpe' ? dpe.schema.finale : null);
@@ -306,6 +314,21 @@
   }
 
   /**
+   * Les niveaux de recommandation, §7 de l'ordre de mission.
+   *
+   * « Le langage doit refléter exactement le niveau de certitude disponible. »
+   * Aucun de ces libellés n'affirme à la place du rapport : le plus engageant,
+   * « sécurité », n'est employé que là où le rapport a lui-même mis une
+   * installation hors service.
+   */
+  const NIVEAUX: Record<string, string> = {
+    urgence: 'Sécurité — sans attendre',
+    necessaire: 'Intervention nécessaire',
+    controle: 'Contrôle complémentaire',
+    envisager: 'Intervention à envisager'
+  };
+
+  /**
    * Amener l'œil sur le groupe demandé.
    *
    * `block: 'center'` plutôt que `'start'` : la barre du site est fixe, et une
@@ -499,112 +522,239 @@
       </ul>
     {/if}
 
-    <h2 class="apres"><span class="num">{numeros.conseil}</span>Ce que je vous conseille</h2>
-
-    {#if leConseil.aRegler.length}
-      <!--
-        CE QUI BLOQUE LE RENDEZ-VOUS, RÉUNI.
-
-        Ranger le conseil par diagnostic a coûté la lecture transversale : « à
-        régulariser avant la signature » réunissait tout ce qui fait repousser
-        un rendez-vous, et c'est la question du notaire — elle ne se pose pas
-        rapport par rapport. Il fallait désormais parcourir huit blocs pour la
-        reconstituer.
-
-        Ce rappel la rend, et rien de plus : les lignes qui bloquent, chacune
-        avec son diagnostic, et un clic pour y aller. Un rappel qui grossit
-        redevient une section.
-      -->
-      <aside class="a-regler" aria-label="Ce qui bloque la signature">
-        <p class="titre-regler">
-          À régulariser avant la signature
-          <span class="combien">{leConseil.aRegler.length}</span>
-        </p>
-        <ul>
-          {#each leConseil.aRegler as ligne, i (i)}
-            <li>
-              <button type="button" onclick={() => allerAu(ancre(ligne.origine))}>
-                <span class="ou">{ligne.provenance}</span>
-                <span class="quoi-regler">{ligne.texte}</span>
-              </button>
-            </li>
-          {/each}
-        </ul>
-      </aside>
-    {/if}
-
     <!--
-      LE CONSEIL, DIAGNOSTIC PAR DIAGNOSTIC.
+      ═══════════════════════════════════════════════════════════════════════
+      MODULE « CONSEILS & PROFESSIONNELS »
+      ═══════════════════════════════════════════════════════════════════════
 
-      Il était rangé par temps — ce qui se règle avant, ce qui se négocie, ce
-      qu'on ne garantit pas —, et un même rapport parlait donc dans trois blocs
-      éloignés : pour savoir ce qu'implique le plomb, il fallait le chercher
-      trois fois. Un bloc par rapport, et les temps deviennent ses intertitres.
+      Ordre de mission du 22/08/2026. La page ne dit plus ce qui a été constaté
+      — c'est le travail du diagnostic — mais UNE SEULE CHOSE : que faire
+      maintenant, et par qui.
+
+      Trois règles commandent tout ce qui suit :
+
+        §2  Une carte n'apparaît que si le rapport la justifie. Un diagnostic
+            sain n'en produit aucune.
+        §12 Un métier, une carte. Cinq anomalies électriques donnent une carte
+            Électricité qui dit « 5 points relevés », pas cinq cartes.
+        §20 Aucune carte n'est dépliée par défaut. On ouvre ce qu'on veut lire.
     -->
-    <div class="conseils">
-      {#each leConseil.diagnostics as diag (diag.origine)}
-        <div class="conseil" id={ancre(diag.origine)}>
-          <div class="tete-conseil">
-            <p class="titre-conseil">{diag.titre}</p>
-            {#if diag.echeance}
-              <!-- La date vit avec son rapport, et non dans un tableau à part :
-                   « valable jusqu'au » est une propriété du diagnostic. -->
-              <span class="echeance" class:perime={diag.echeance.perimee}>
-                {diag.echeance.texte}
-              </span>
-            {/if}
-          </div>
+    <!--
+      ═══════════════════════════════════════════════════════════════════════
+      MODULE « CONSEILS & PROFESSIONNELS » — au visuel de référence
+      ═══════════════════════════════════════════════════════════════════════
 
-          {#each diag.blocs as bloc (bloc.rang)}
-            <p class="temps {bloc.rang}">{bloc.titre}</p>
+      Ordre du 22/08/2026 : « VISUEL EXACT ». La composition, la typographie et
+      la charte du visuel fourni sont reprises telles quelles — grand titre
+      sérif vert profond, surtitre sable en capitales, cartes ivoire à médaillon
+      circulaire, encart vert plein au centre, bandeau des bénéfices, ruban de
+      mention légale en pied.
+
+      Ce qui reste dynamique, et doit le rester : le NOMBRE de cartes, leur
+      domaine, leur niveau, leur métier. Le visuel montre huit cartes de
+      démonstration ; un dossier sans anomalie électrique n'en affiche aucune
+      pour l'électricité (§2). Recopier la page telle quelle afficherait du faux
+      contenu, ce que le §18 interdit.
+    -->
+    <section class="module-conseils" aria-labelledby="titre-conseils">
+      <header class="entete-conseils">
+        <div class="mots-entete">
+          <h2 class="titre-module" id="titre-conseils">
+            <span class="num au-papier">{numeros.conseil}</span>
+            Conseils pour ce bien
+          </h2>
+          <p class="surtitre">Nos recommandations globales</p>
+          <p class="intro-conseils">
+            À la lecture de vos diagnostics, voici les points qui peuvent peser sur la sécurité, la
+            performance et la valeur du bien — et le professionnel à consulter pour chacun.
+          </p>
+
+          {#if leConseil.aRegler.length}
+            <!--
+              L'encart au filet : ce qui fait repousser une signature. Les cartes
+              sont rangées par urgence, mais repliées (§20) elles ne le MONTRENT
+              pas, et le §189 demande qu'on sache en dix secondes sur quoi agir.
+            -->
+            <aside class="a-regler" aria-label="Ce qui bloque la signature">
+              <p class="titre-regler">
+                À régulariser avant la signature
+                <span class="combien">{leConseil.aRegler.length}</span>
+              </p>
+              <ul>
+                {#each leConseil.aRegler as ligne, i (i)}
+                  <li>
+                    <button type="button" onclick={() => allerAu(ancre(ligne.origine))}>
+                      <span class="ou">{ligne.provenance}</span>
+                      <span class="quoi-regler">{ligne.texte}</span>
+                    </button>
+                  </li>
+                {/each}
+              </ul>
+            </aside>
+          {/if}
+        </div>
+
+        <!-- La pastille verte du visuel, en haut à droite. -->
+        <aside class="accroche">
+          <p>Anticiper aujourd’hui, c’est sécuriser demain et valoriser votre bien.</p>
+        </aside>
+      </header>
+
+      {#if leConseil.cartes.length}
+        <div class="cartes">
+          {#each leConseil.cartes as carte (carte.cle)}
+            <article class="carte {carte.niveau}" id={ancre(carte.origine)}>
+              <!-- Le médaillon circulaire du visuel : le pictogramme de la
+                   mini-application, en crème sur le vert profond. -->
+              <span
+                class="medaillon"
+                aria-hidden="true"
+                style:--picto={carte.origine !== 'dossier' && APPS[carte.origine]?.picto
+                  ? `url(./pictos/${APPS[carte.origine].picto}.svg)`
+                  : 'url(./pictos/conseil.svg)'}
+              ></span>
+
+              <p class="domaine">{carte.domaine}</p>
+              <p class="niveau"><span>{NIVEAUX[carte.niveau]}</span></p>
+
+              <!-- L'affichage initial : une ligne, et rien d'autre (§123). -->
+              <p class="conseil-ligne">{carte.conseil}</p>
+
+              <div class="pro">
+                <p class="pro-qui">{carte.recours.qui}</p>
+                <p class="pro-quoi">{carte.recours.quoi}</p>
+                <!--
+                  Le bouton dit ce qu'il ne sait pas encore faire. L'annuaire du
+                  §110 n'existe pas, et promettre une mise en relation qu'on ne
+                  sait pas tenir vaut moins que pas de bouton.
+                -->
+                <button type="button" class="trouver" disabled>
+                  Trouver un professionnel
+                  <span class="bientot">bientôt</span>
+                </button>
+              </div>
+
+              <div class="pieds-carte">
+                <details class="pourquoi">
+                  <summary>
+                    Pourquoi ?
+                    <span class="combien-points">
+                      {carte.combien} point{carte.combien > 1 ? 's' : ''} relevé{carte.combien > 1
+                        ? 's'
+                        : ''}
+                    </span>
+                  </summary>
+                  <ul>
+                    {#each carte.pourquoi as point, i (i)}
+                      <li><MotsExpliques texte={point} /></li>
+                    {/each}
+                  </ul>
+
+                  {#if carte.sources.length}
+                    <p class="titre-sources">Les textes qui le disent</p>
+                    <ul class="sources">
+                      {#each carte.sources as s (s.reference + s.url)}
+                        <li>
+                          <a href={s.url} target="_blank" rel="noopener noreferrer">{s.reference}</a>
+                          <span class="lu">lu le {new Date(s.luLe).toLocaleDateString('fr-FR')}</span>
+                        </li>
+                      {/each}
+                    </ul>
+                  {/if}
+                </details>
+
+                {#if carte.echeance}
+                  <span class="echeance" class:perime={carte.echeance.perimee}>
+                    {carte.echeance.texte}
+                  </span>
+                {/if}
+
+                {#if carte.origine !== 'dossier' && surOuvrirDiagnostic}
+                  <!-- §13 : la navigation croisée, vers la micro-application. -->
+                  <button
+                    type="button"
+                    class="voir-analyse"
+                    onclick={() => surOuvrirDiagnostic(carte.origine as TypeDiag)}
+                  >
+                    Voir l’analyse <span aria-hidden="true">›</span>
+                  </button>
+                {/if}
+              </div>
+            </article>
+          {/each}
+        </div>
+      {:else}
+        <p class="rien-a-faire">
+          Aucun de vos diagnostics n’appelle l’intervention d’un professionnel. Ce que chacun ne
+          garantit pas reste à lire ci-dessous.
+        </p>
+      {/if}
+
+      <!-- NOTRE CONSEIL GLOBAL (§14) — l'encart vert plein du visuel. -->
+      <aside class="global">
+        <span class="sceau" aria-hidden="true"></span>
+        <p class="titre-global">Notre conseil global</p>
+        <p>
+          Les diagnostics permettent d’identifier des points de vigilance mais ne remplacent pas
+          l’avis ni le devis d’un professionnel du bâtiment. Lorsque Verrière vous recommande une
+          intervention, l’objectif est de vous permettre de mieux comprendre la situation,
+          d’anticiper les éventuels travaux et de disposer d’éléments concrets avant votre décision.
+        </p>
+        <p class="or-global">
+          Un devis vous donne un chiffre, et un chiffre se discute avant de signer.
+        </p>
+      </aside>
+
+      <div class="bas-module">
+        <section class="benefices" aria-label="Les bénéfices d’une action ciblée">
+          <p class="titre-benefices">Les bénéfices d’une action ciblée</p>
+          <ul>
+            <li>Sécurité renforcée</li>
+            <li>Valorisation de votre bien</li>
+            <li>Maîtrise des coûts</li>
+            <li>Confort &amp; durabilité</li>
+            <li>Éléments concrets avant décision</li>
+          </ul>
+        </section>
+
+        <aside class="accompagnement">
+          <p class="titre-accompagnement">Besoin d’accompagnement ?</p>
+          <p>
+            Verrière prépare un annuaire de professionnels pour vous orienter. En attendant,
+            demandez plusieurs devis et comparez-les avant de vous engager.
+          </p>
+        </aside>
+      </div>
+
+      {#if leConseil.reserves.length}
+        <!--
+          Replié, et jamais une carte : il n'y a rien à y faire, et le §3 interdit
+          de refaire ici la synthèse du diagnostic.
+
+          ⚠️ Mais ces lignes ne peuvent pas disparaître. Vérifié le 22/08/2026 :
+          la fiche générique `Diagnostics.svelte` déclare une étape « Ce qu'il
+          faut faire » et ne rend jamais `aFaire`. Pour sept diagnostics sur neuf,
+          cette page est le seul endroit du produit où ces phrases existent.
+        -->
+        <details class="reserves">
+          <summary>Ce que vos diagnostics ne garantissent pas</summary>
+          {#each leConseil.reserves as reserve (reserve.domaine)}
+            <p class="domaine-reserve">{reserve.domaine}</p>
             <ul>
-              {#each bloc.points as point, i (i)}
+              {#each reserve.points as point, i (i)}
                 <li><MotsExpliques texte={point} /></li>
               {/each}
             </ul>
           {/each}
+        </details>
+      {/if}
 
-          {#if diag.recours}
-            <!--
-              À QUI S'ADRESSER.
-
-              Ordre d'Aude : « à chaque fois ça renvoie vers un professionnel
-              spécifique ». Un conseil qui dit « faites chiffrer » sans dire par
-              qui laisse le lecteur devant son moteur de recherche, et c'est là
-              qu'il abandonne.
-            -->
-            <p class="recours">
-              <span class="qui">{diag.recours.qui}</span>
-              <!-- Le tiret est écrit, pas dessiné par un `::after` : la ligne
-                   part souvent chez le notaire par copier-coller. -->
-              <span class="quoi"> — {diag.recours.quoi}</span>
-            </p>
-          {/if}
-
-          {#if diag.sources.length}
-            <!--
-              Les articles sur lesquels reposent ces gestes.
-
-              Ils étaient lus à la source, datés, rangés dans le référentiel —
-              et affichés nulle part. Le produit citait donc le droit sans
-              jamais donner de quoi le vérifier. Ici, chaque texte s'ouvre sur
-              Légifrance, et porte la date à laquelle il a été lu.
-            -->
-            <details class="textes">
-              <summary>Les textes qui le disent ({diag.sources.length})</summary>
-              <ul class="sources">
-                {#each diag.sources as s (s.reference + s.url)}
-                  <li>
-                    <a href={s.url} target="_blank" rel="noopener noreferrer">{s.reference}</a>
-                    <span class="lu">lu le {new Date(s.luLe).toLocaleDateString('fr-FR')}</span>
-                  </li>
-                {/each}
-              </ul>
-            </details>
-          {/if}
-        </div>
-      {/each}
-    </div>
+      <!-- Le ruban de pied du visuel : la limite du document, toujours dite. -->
+      <p class="mention">
+        Ce document est un conseil général. Seuls des diagnostics et devis réalisés par des
+        professionnels pourront préciser l’étendue et le coût des travaux à prévoir.
+      </p>
+    </section>
 
     {#if lexique.length}
       <!--
@@ -752,6 +902,591 @@
      Une seule colonne, donc, comme sur le papier — où le bloc `@media print`
      faisait déjà exactement cela. L'écran et la feuille disent enfin la même
      chose, et la largeur de lecture reste tenue par `--mesure`. */
+  /* ═══════════════════════════════════════════════════════════════════════
+     LE MODULE « CONSEILS » — au visuel de référence
+     ═══════════════════════════════════════════════════════════════════════
+
+     Ordre du 22/08/2026 : « VISUEL EXACT ». Ce qui suit reprend la charte du
+     visuel fourni, dans ses proportions : ivoire de fond, vert profond
+     dominant, sable réservé aux détails (§165), grand titre sérif, médaillons
+     circulaires, encart vert plein au centre, ruban de mention en pied.
+
+     Aucune couleur n'est écrite en dur : toutes viennent des jetons de la
+     charte, sinon le thème sombre et l'impression divergeraient du reste. */
+  .module-conseils {
+    --vert: var(--verriere-vert-profond);
+    --or: var(--verriere-sable-or);
+    /*
+     * ⚠️ DEUX SABLES, ET LE VISUEL N'EN CONNAÎT QU'UN.
+     *
+     * Le sable de la charte (#c8a96b) est fait pour le vert profond : mesuré
+     * sur l'écran, il y donne 6,76 de contraste — largement au-dessus du seuil
+     * AA. Sur l'ivoire, le même sable tombe à 2,08 : le surtitre « NOS
+     * RECOMMANDATIONS GLOBALES » du visuel est donc illisible aux normes, et il
+     * l'est aussi dans le visuel fourni.
+     *
+     * On garde le sable de la charte partout où il est posé sur du vert — c'est
+     * la quasi-totalité du module —, et on en fonce une variante pour les rares
+     * textes sable sur ivoire. À l'œil c'est le même or ; à la mesure, l'un
+     * passe et l'autre non.
+     */
+    --or-lisible: #8a6a1f;
+    display: flex;
+    flex-direction: column;
+    gap: var(--e6);
+  }
+
+  /* ---- L'en-tête : les mots à gauche, la pastille verte à droite --------- */
+  .entete-conseils {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--e5);
+    align-items: start;
+  }
+
+  @media (min-width: 900px) {
+    .entete-conseils {
+      grid-template-columns: minmax(0, 1fr) 260px;
+      gap: var(--e6);
+    }
+  }
+
+  /* Le grand titre sérif du visuel. Il ne porte plus le chiffre romain à
+     l'écran : le visuel ouvre sur un titre, pas sur un article numéroté. Le
+     papier, lui, le garde — c'est là que la numérotation sert. */
+  /*
+   * ⚠️ LE SEUL TITRE SÉRIF DU PRODUIT, ET C'EST UN ARBITRAGE.
+   *
+   * `app.css` porte une décision de charte écrite noir sur blanc : « la charte
+   * demande des titres en linéale grasse, pas en serif : Fraunces quitte donc
+   * les titres ». Le visuel de référence du module Conseils est pourtant en
+   * sérif, et l'ordre du 22/08/2026 dit « VISUEL EXACT ».
+   *
+   * On suit l'ordre, qui est postérieur — mais ICI SEULEMENT. Fraunces est déjà
+   * chargée et servie en local : elle ne coûte rien de plus. Le jour où la
+   * charte tranche dans l'autre sens, une ligne suffit à revenir.
+   */
+  .titre-module {
+    margin: 0;
+    font-family: var(--police-voix);
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 600;
+    line-height: 1.04;
+    letter-spacing: -0.015em;
+    color: var(--vert);
+  }
+
+  /* Le chiffre romain reste au papier : le visuel ouvre sur un titre, pas sur
+     un article numéroté. À l'impression, la numérotation sert encore. */
+  .titre-module .num {
+    display: none;
+  }
+
+  @media print {
+    .titre-module .num {
+      display: inline;
+      margin-right: var(--e2);
+    }
+  }
+
+  /* Le surtitre sable, en capitales espacées. */
+  .surtitre {
+    margin: var(--e3) 0 0;
+    font-size: var(--t-petit);
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--or-lisible);
+  }
+
+  .intro-conseils {
+    margin: var(--e3) 0 0;
+    max-width: var(--mesure);
+    font-size: var(--t-base);
+    line-height: 1.6;
+    color: var(--sur-fond-doux);
+  }
+
+  /* La pastille verte du visuel : une phrase, et un filet sable dessous. */
+  .accroche {
+    padding: var(--e4);
+    background: var(--vert);
+    border-radius: var(--rayon);
+    color: var(--papier);
+  }
+
+  .accroche p {
+    margin: 0 0 var(--e3);
+    font-size: var(--t-petit);
+    line-height: 1.5;
+  }
+
+  .accroche::after {
+    content: '';
+    display: block;
+    width: 46px;
+    height: 2px;
+    background: var(--or);
+  }
+
+  /* ---- Ce qui bloque le rendez-vous ------------------------------------- */
+  .a-regler {
+    max-width: var(--mesure);
+    margin: var(--e5) 0 0;
+    padding: var(--e3) var(--e4);
+    border: 1px solid var(--surface-bord);
+    border-left: 3px solid var(--alerte-vive);
+    background: var(--papier);
+    border-radius: var(--rayon);
+  }
+
+  .titre-regler {
+    display: flex;
+    align-items: center;
+    gap: var(--e2);
+    margin: 0 0 var(--e2);
+    font-size: var(--t-micro);
+    font-weight: 700;
+    letter-spacing: var(--suivi);
+    text-transform: uppercase;
+    color: var(--alerte-vive);
+  }
+
+  .combien {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.4em;
+    padding: 0 0.35em;
+    border-radius: 999px;
+    background: var(--alerte-vive);
+    color: var(--papier);
+    font-size: var(--t-micro);
+  }
+
+  .a-regler ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .a-regler li + li {
+    margin-top: var(--e1);
+  }
+
+  .a-regler button {
+    display: block;
+    width: 100%;
+    padding: var(--e1) 0;
+    background: none;
+    border: 0;
+    font: inherit;
+    font-size: var(--t-petit);
+    text-align: left;
+    color: var(--encre);
+    cursor: pointer;
+  }
+
+  .a-regler button:hover .quoi-regler,
+  .a-regler button:focus-visible .quoi-regler {
+    text-decoration: underline;
+  }
+
+  .a-regler .ou {
+    display: block;
+    font-size: var(--t-micro);
+    letter-spacing: var(--suivi);
+    text-transform: uppercase;
+    color: var(--sur-fond-doux);
+  }
+
+  /* ---- Les cartes -------------------------------------------------------
+     Deux colonnes dès qu'il y a la place, comme le visuel. Une seule sur
+     mobile (§170) : une carte par ligne, très lisible. */
+  .cartes {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--e4);
+  }
+
+  @media (min-width: 780px) {
+    .cartes {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .carte {
+    display: flex;
+    flex-direction: column;
+    gap: var(--e2);
+    padding: var(--e5);
+    background: var(--papier);
+    border: 1px solid var(--surface-bord);
+    border-radius: 18px;
+    break-inside: avoid;
+  }
+
+  /* Le médaillon circulaire : pictogramme crème sur vert profond. Le masque
+     reprend le dessin du fichier SVG sans lui imposer sa couleur. */
+  .medaillon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--vert);
+    position: relative;
+  }
+
+  .medaillon::before {
+    content: '';
+    position: absolute;
+    inset: 11px;
+    background: var(--papier);
+    mask-image: var(--picto);
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+    -webkit-mask-image: var(--picto);
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
+  }
+
+  .domaine {
+    margin: var(--e2) 0 0;
+    font-size: var(--t-petit);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1.25;
+    color: var(--vert);
+  }
+
+  /* La puce « TYPE 1 À 2 » du visuel devient le niveau de recommandation :
+     même dessin, un contenu qui ne ment pas. */
+  .niveau {
+    margin: var(--e1) 0 0;
+  }
+
+  .niveau span {
+    display: inline-block;
+    padding: 3px 10px;
+    border: 1px solid var(--niveau-teinte, var(--or));
+    border-radius: 999px;
+    font-size: var(--t-micro);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--niveau-teinte, var(--or));
+  }
+
+  .carte.urgence,
+  .carte.necessaire {
+    --niveau-teinte: var(--alerte-vive);
+  }
+  .carte.controle {
+    --niveau-teinte: var(--attention);
+  }
+  .carte.envisager {
+    --niveau-teinte: var(--or-lisible);
+  }
+
+  .conseil-ligne {
+    margin: var(--e2) 0 0;
+    font-size: var(--t-petit);
+    line-height: 1.6;
+    color: var(--sur-fond-doux);
+  }
+
+  /* L'encart professionnel : le seul filet sable de la carte. */
+  .pro {
+    margin-top: var(--e2);
+    padding: var(--e3);
+    border: 1px solid var(--trait-or);
+    border-radius: 12px;
+  }
+
+  .pro-qui {
+    margin: 0;
+    font-weight: 700;
+    font-size: var(--t-petit);
+    color: var(--vert);
+  }
+
+  .pro-quoi {
+    margin: var(--e1) 0 var(--e2);
+    font-size: var(--t-micro);
+    line-height: 1.5;
+    color: var(--sur-fond-doux);
+  }
+
+  .trouver {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--e2);
+    padding: var(--e2) var(--e4);
+    background: var(--vert);
+    border: 0;
+    border-radius: 999px;
+    color: var(--papier);
+    font: inherit;
+    font-size: var(--t-micro);
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .trouver:disabled {
+    cursor: default;
+    opacity: 0.55;
+  }
+
+  .bientot {
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: var(--suivi);
+  }
+
+  .pieds-carte {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--e2) var(--e3);
+    margin-top: var(--e2);
+    padding-top: var(--e3);
+    border-top: 1px solid var(--surface-bord);
+    font-size: var(--t-petit);
+  }
+
+  .pourquoi {
+    flex: 1 1 100%;
+  }
+
+  .pourquoi summary {
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--verriere-vert);
+  }
+
+  .combien-points {
+    margin-left: var(--e2);
+    font-weight: 400;
+    font-size: var(--t-micro);
+    color: var(--sur-fond-doux);
+  }
+
+  .pourquoi ul {
+    margin: var(--e2) 0 0;
+    padding-left: var(--e4);
+    line-height: 1.55;
+  }
+
+  .titre-sources {
+    margin: var(--e3) 0 0;
+    font-size: var(--t-micro);
+    font-weight: 700;
+    letter-spacing: var(--suivi);
+    text-transform: uppercase;
+    color: var(--sur-fond-doux);
+  }
+
+  .echeance {
+    font-family: var(--mono);
+    font-size: var(--t-micro);
+    color: var(--sur-fond-doux);
+  }
+
+  .echeance.perime {
+    font-weight: 700;
+    color: var(--alerte-vive);
+  }
+
+  .voir-analyse {
+    margin-left: auto;
+    padding: 0;
+    background: none;
+    border: 0;
+    font: inherit;
+    font-size: var(--t-micro);
+    font-weight: 700;
+    letter-spacing: var(--suivi);
+    text-transform: uppercase;
+    color: var(--verriere-vert);
+    cursor: pointer;
+  }
+
+  .rien-a-faire {
+    max-width: var(--mesure);
+    margin: 0;
+    font-size: var(--t-base);
+    line-height: 1.6;
+    color: var(--sur-fond-doux);
+  }
+
+  /* ---- NOTRE CONSEIL GLOBAL (§14) ---------------------------------------
+     L'encart vert plein du visuel, centré, avec son sceau circulaire. */
+  .global {
+    padding: var(--e6) var(--e5);
+    background: var(--vert);
+    border-radius: 18px;
+    color: var(--papier);
+    text-align: center;
+  }
+
+  .sceau {
+    display: block;
+    width: 44px;
+    height: 44px;
+    margin: 0 auto var(--e3);
+    border: 1px solid var(--or);
+    border-radius: 50%;
+    position: relative;
+  }
+
+  .sceau::before {
+    content: '';
+    position: absolute;
+    inset: 12px;
+    background: var(--or);
+    mask-image: url(./pictos/conseil.svg);
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+    -webkit-mask-image: url(./pictos/conseil.svg);
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
+  }
+
+  .titre-global {
+    margin: 0 0 var(--e3);
+    font-size: var(--t-petit);
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .global p {
+    margin: 0 auto;
+    max-width: 62ch;
+    font-size: var(--t-petit);
+    line-height: 1.7;
+  }
+
+  /* Le trait sable, puis la phrase dorée : c'est la respiration du visuel. */
+  .or-global {
+    margin-top: var(--e4) !important;
+    padding-top: var(--e4);
+    border-top: 1px solid var(--or);
+    color: var(--or);
+    font-weight: 700;
+  }
+
+  /* ---- Le bas de page : bénéfices à gauche, accompagnement à droite ------ */
+  .bas-module {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--e4);
+  }
+
+  @media (min-width: 900px) {
+    .bas-module {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    }
+  }
+
+  .benefices {
+    padding: var(--e5);
+    border: 1px solid var(--surface-bord);
+    border-radius: 18px;
+  }
+
+  .titre-benefices {
+    margin: 0 0 var(--e4);
+    text-align: center;
+    font-size: var(--t-petit);
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--vert);
+  }
+
+  .benefices ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: var(--e3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-align: center;
+    font-size: var(--t-micro);
+    color: var(--sur-fond-doux);
+  }
+
+  /* Chaque bénéfice a son filet sable au-dessus, comme les pictogrammes du
+     visuel — un signe, sans dessiner cinq icônes qui n'existent pas. */
+  .benefices li::before {
+    content: '';
+    display: block;
+    width: 22px;
+    height: 2px;
+    margin: 0 auto var(--e2);
+    background: var(--or);
+  }
+
+  .accompagnement {
+    padding: var(--e5);
+    background: var(--vert);
+    border-radius: 18px;
+    color: var(--papier);
+  }
+
+  .titre-accompagnement {
+    margin: 0 0 var(--e2);
+    font-size: var(--t-petit);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--or);
+  }
+
+  .accompagnement p {
+    margin: 0;
+    font-size: var(--t-micro);
+    line-height: 1.6;
+  }
+
+  /* ---- Le pli des réserves, et le ruban de mention ---------------------- */
+  .reserves {
+    max-width: var(--mesure);
+    font-size: var(--t-petit);
+    line-height: 1.55;
+  }
+
+  .reserves summary {
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--sur-fond-doux);
+  }
+
+  .domaine-reserve {
+    margin: var(--e3) 0 var(--e1);
+    font-size: var(--t-micro);
+    font-weight: 700;
+    letter-spacing: var(--suivi);
+    text-transform: uppercase;
+    color: var(--sur-fond-doux);
+  }
+
+  .mention {
+    margin: 0;
+    padding: var(--e3) var(--e4);
+    background: var(--vert);
+    border-radius: var(--rayon);
+    color: var(--papier);
+    font-size: var(--t-micro);
+    line-height: 1.6;
+    text-align: center;
+  }
+
   .conseils {
     display: flex;
     flex-direction: column;
@@ -1018,14 +1753,6 @@
     line-height: 1.5;
   }
 
-  .recours .qui {
-    font-weight: 700;
-    color: var(--verriere-vert-profond);
-  }
-
-  .recours .quoi {
-    color: var(--sur-fond-doux);
-  }
 
   .textes {
     margin-top: var(--e3);

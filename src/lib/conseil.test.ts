@@ -593,6 +593,176 @@ describe('chaque conseil renvoie vers un professionnel', () => {
   });
 });
 
+/**
+ * ORDRE DE MISSION « MODULE CONSEILS & PROFESSIONNELS » (22/08/2026).
+ *
+ * Les règles que ces lecteurs verrouillent viennent de ses paragraphes : §2
+ * (aucune carte sans justification), §4 (composition d'une carte), §7 (niveaux
+ * de recommandation), §12 (un métier, une carte), §18 (aucune urgence ni
+ * obligation inventée), §20 (aucune carte dépliée par défaut).
+ */
+describe('les cartes de conseil', () => {
+  const carteDe = (r: Conseil, origine: string) => r.cartes.find((c) => c.origine === origine);
+
+  /** §2 : « Si aucune anomalie électrique pertinente : le bloc ne doit pas apparaître. » */
+  it('n’ouvre aucune carte pour un diagnostic qui ne demande rien', () => {
+    const sain = diag({
+      type: 'carrez',
+      titre: 'Superficie (loi Carrez)',
+      gravite: 'bon',
+      aFaire: ['Le mesurage n’a pas de durée de validité.']
+    });
+    const r = conseil(dossier([sain]));
+    expect(r.cartes).toHaveLength(0);
+  });
+
+  /**
+   * …mais la phrase ne disparaît pas du produit pour autant. Vérifié le
+   * 22/08/2026 : la fiche générique ne rend jamais `aFaire`, donc le conseil
+   * est le seul endroit où ces lignes existent pour sept diagnostics sur neuf.
+   */
+  it('garde en réserve ce qui ne fait pas de carte', () => {
+    const sain = diag({
+      type: 'carrez',
+      titre: 'Superficie (loi Carrez)',
+      gravite: 'bon',
+      aFaire: ['Le mesurage n’a pas de durée de validité.']
+    });
+    const r = conseil(dossier([sain]));
+    expect(r.reserves.flatMap((x) => x.points)).toContain('Le mesurage n’a pas de durée de validité.');
+  });
+
+  /** §7 + §18 : l'urgence ne sort que d'un risque immédiat établi par le rapport. */
+  it('ne déclare l’urgence que pour une installation mise hors service', () => {
+    const dgi = diag({
+      type: 'gaz',
+      titre: 'Installation de gaz',
+      gravite: 'alerte',
+      faits: [{ libelle: 'DGI', valeur: 'oui' }],
+      aFaire: ['Ne remettez pas l’installation en service vous-même.']
+    });
+    expect(carteDe(conseil(dossier([dgi])), 'gaz')?.niveau).toBe('urgence');
+
+    const anomalies = diag({
+      type: 'electricite',
+      titre: 'Installation électrique',
+      gravite: 'attention',
+      aFaire: ['Faites établir un devis.']
+    });
+    /* Des anomalies électriques ne permettent pas d'écrire « urgence ». */
+    expect(carteDe(conseil(dossier([anomalies])), 'electricite')?.niveau).toBe('envisager');
+  });
+
+  /**
+   * §12 : « 5 anomalies électriques = 1 seule carte ÉLECTRICITÉ. »
+   *
+   * Le paragraphe interdit deux cartes du MÊME métier — pas deux métiers. Une
+   * installation qui a une cave non visitée ET des anomalies appelle deux
+   * professionnels : le diagnostiqueur pour revenir voir, l'électricien pour
+   * chiffrer. Les réunir faisait recommander le diagnostiqueur sous des
+   * anomalies qui ne le concernent pas, ce que le §18 interdit.
+   */
+  it('réunit les anomalies d’un même métier sur une seule carte', () => {
+    const elec = diag({
+      type: 'electricite',
+      titre: 'Installation électrique',
+      gravite: 'attention',
+      aFaire: ['Faites établir un devis.', 'Traitez le différentiel en priorité.']
+    });
+    const r = conseil(dossier([elec]));
+    const siennes = r.cartes.filter((c) => c.origine === 'electricite');
+    expect(siennes).toHaveLength(1);
+    expect(siennes[0]?.recours.qui).toMatch(/électricien/i);
+    expect(siennes[0]?.combien).toBe(2);
+  });
+
+  it('sépare les cartes quand un diagnostic appelle deux métiers', () => {
+    const elec = diag({
+      type: 'electricite',
+      titre: 'Installation électrique',
+      gravite: 'attention',
+      aFaire: ['Faites établir un devis.', 'Traitez le différentiel en priorité.'],
+      releves: [{ genre: 'nonVisite', libelle: 'Absence de trappe de visite', ou: 'Cave' }]
+    });
+    const siennes = conseil(dossier([elec])).cartes.filter((c) => c.origine === 'electricite');
+    expect(siennes).toHaveLength(2);
+
+    /* Celui qui n'a pas pu voir doit revenir voir — et lui seul. */
+    const aLever = siennes.find((c) => c.niveau === 'controle');
+    expect(aLever?.recours.qui).toMatch(/diagnostiqueur/i);
+    expect(aLever?.combien).toBe(1);
+
+    /* L'électricien garde ce qui le concerne : les anomalies à chiffrer. */
+    const aChiffrer = siennes.find((c) => c.niveau === 'envisager');
+    expect(aChiffrer?.recours.qui).toMatch(/électricien/i);
+    expect(aChiffrer?.combien).toBe(2);
+
+    /* Et le domaine nomme le métier, sinon les deux cartes seraient jumelles. */
+    expect(new Set(siennes.map((c) => c.domaine)).size).toBe(2);
+  });
+
+  /**
+   * Tous les métiers ne chiffrent pas : un assureur ne fait pas de devis, et
+   * l'écran affichait « Faites chiffrer par votre assureur ».
+   */
+  it('ne demande pas un devis à qui n’en fait pas', () => {
+    const erp = diag({
+      type: 'erp',
+      titre: 'État des risques',
+      gravite: 'attention',
+      aFaire: ['Vérifiez ce que couvre votre contrat.']
+    });
+    const carte = carteDe(conseil(dossier([erp])), 'erp');
+    expect(carte?.recours.qui).toMatch(/assureur/i);
+    expect(carte?.conseil).toMatch(/l’avis de votre assureur/);
+    expect(carte?.conseil).not.toMatch(/^Faites chiffrer par votre assureur/);
+  });
+
+  /** §123 : l'affichage initial tient en une ligne, et nomme le métier. */
+  it('ouvre sur une ligne qui dit quoi faire et par qui', () => {
+    const elec = diag({
+      type: 'electricite',
+      titre: 'Installation électrique',
+      gravite: 'attention',
+      aFaire: ['Faites établir un devis.']
+    });
+    const carte = carteDe(conseil(dossier([elec])), 'electricite');
+    expect(carte?.conseil).toMatch(/un électricien/);
+    /* §3 : cette ligne ne recopie pas le diagnostic. */
+    expect(carte?.conseil).not.toMatch(/devis établi|anomalie/i);
+  });
+
+  /** §189 : en dix secondes, savoir sur quoi agir — donc l'urgence en tête. */
+  it('range les cartes par urgence, pas par ordre du dossier', () => {
+    const elec = diag({
+      type: 'electricite',
+      titre: 'Installation électrique',
+      gravite: 'attention',
+      aFaire: ['Faites établir un devis.']
+    });
+    const dgi = diag({
+      type: 'gaz',
+      titre: 'Installation de gaz',
+      gravite: 'alerte',
+      faits: [{ libelle: 'DGI', valeur: 'oui' }],
+      aFaire: ['Ne remettez rien en service vous-même.']
+    });
+    /* Le gaz arrive après l'électricité au dossier, et passe devant à l'écran. */
+    const r = conseil(dossier([elec, dgi]));
+    expect(r.cartes[0]?.origine).toBe('gaz');
+  });
+
+  /** §4 + §9 : chaque carte nomme son professionnel. */
+  it('n’ouvre jamais une carte sans professionnel', () => {
+    const r = conseil(dossier(OUBLIES));
+    expect(r.cartes.length).toBeGreaterThan(0);
+    for (const carte of r.cartes) {
+      expect(carte.recours.qui.length).toBeGreaterThan(0);
+      expect(carte.recours.appel).toMatch(/^[a-zé]/);
+    }
+  });
+});
+
 describe('le conseil rend les textes sur lesquels il s’appuie', () => {
   /**
    * Le référentiel `reglement/textes.ts` porte les articles lus à la source,

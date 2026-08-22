@@ -103,7 +103,29 @@ export interface Recours {
   qui: string;
   /** Ce qu'on lui demande, en une phrase. */
   quoi: string;
+  /**
+   * Le même métier en groupe nominal minuscule — « un électricien ».
+   *
+   * Il sert à composer la ligne d'ouverture de la carte : « Faites chiffrer par
+   * un électricien ». Le tirer de `qui` en abaissant la première lettre marche
+   * pour « Un électricien » et échoue sur « Le SPANC de la commune ». On l'écrit
+   * plutôt que de le deviner.
+   */
+  appel: string;
 }
+
+/**
+ * LE NIVEAU DE RECOMMANDATION — §7 de l'ordre de mission.
+ *
+ * « Le langage doit refléter exactement le niveau de certitude disponible »
+ * (§18). Un rapport qui relève des anomalies électriques ne permet pas d'écrire
+ * « intervention nécessaire » ; un gaz mis hors service, si.
+ *
+ * `urgence` est le seul niveau qui affirme un risque immédiat, et il est réservé
+ * au cas où le rapport lui-même met l'installation hors service. Les quatre
+ * autres décroissent en engagement, et aucun ne conclut à la place du rapport.
+ */
+export type Niveau = 'urgence' | 'necessaire' | 'controle' | 'envisager';
 
 export interface PointConseil {
   /** Le geste, dans les mots du moteur — jamais reformulé ici. */
@@ -129,6 +151,16 @@ export interface BlocConseil {
   /** L'intertitre, à hauteur d'un seul diagnostic. */
   titre: string;
   points: string[];
+  /**
+   * Le métier de CE temps-là, qui n'est pas toujours celui du diagnostic.
+   *
+   * Une installation électrique peut appeler deux professionnels dans le même
+   * dossier : le diagnostiqueur, pour revenir voir la cave qu'il n'a pas pu
+   * ouvrir, et l'électricien, pour chiffrer les anomalies. Porter un seul
+   * métier au diagnostic entier faisait recommander le diagnostiqueur sous cinq
+   * points dont quatre étaient des anomalies à chiffrer.
+   */
+  recours?: Recours;
 }
 
 /**
@@ -185,7 +217,61 @@ export interface ARegler {
   texte: string;
 }
 
+/**
+ * UNE CARTE DE CONSEIL — §4 de l'ordre de mission.
+ *
+ * « Pictogramme + domaine + niveau de recommandation + conseil + professionnel
+ * recommandé + intérêt potentiel. »
+ *
+ * Une carte n'existe QUE s'il y a quelque chose à faire (§2). Un diagnostic
+ * sain n'en produit pas : ce qu'il ne garantit pas part dans les réserves, en
+ * fin de page et replié — le §3 interdit d'en faire une seconde synthèse du
+ * diagnostic, et le §20 interdit les cartes affichées par défaut.
+ *
+ * Un métier = une carte (§12) : cinq anomalies électriques donnent une carte
+ * Électricité qui dit « 5 points relevés », pas cinq cartes.
+ */
+export interface Carte {
+  /** Identifiant stable, pour l'ancrage et le pli. */
+  cle: string;
+  /** Le diagnostic d'où elle vient, pour renvoyer vers sa micro-application. */
+  origine: TypeDiag | 'dossier';
+  /** Le domaine, tel qu'il s'affiche en tête de carte. */
+  domaine: string;
+  niveau: Niveau;
+  /** L'affichage initial : une ligne, et rien d'autre (§123). */
+  conseil: string;
+  /** Combien de points du rapport la justifient (§142). */
+  combien: number;
+  /** Le « Pourquoi ? » (§128) : les gestes du moteur, entiers. */
+  pourquoi: string[];
+  /** Le professionnel recommandé (§9). */
+  recours: Recours;
+  /** Jusqu'à quand le rapport qui la justifie reste valable. */
+  echeance?: Echeancier;
+  sources: Source[];
+}
+
+/**
+ * Ce qu'un diagnostic ne garantit pas — replié, et jamais une carte.
+ *
+ * ⚠️ Ces lignes ne peuvent pas disparaître, et ce n'est pas un choix de
+ * confort : vérifié le 22/08/2026, la fiche générique `Diagnostics.svelte`
+ * DÉCLARE une étape « Ce qu'il faut faire » mais ne rend jamais `aFaire`. Seuls
+ * les deux écrans neufs — `EcranDpe`, `Termites` — l'affichent. Pour les sept
+ * autres diagnostics, le conseil est le seul endroit du produit où ces phrases
+ * existent. Les retirer d'ici les retirerait de partout.
+ */
+export interface Reserve {
+  domaine: string;
+  points: string[];
+}
+
 export interface Conseil {
+  /** Les cartes, dans l'ordre d'urgence. Vides si rien n'est à faire. */
+  cartes: Carte[];
+  /** Ce que les diagnostics ne garantissent pas, replié en fin de page. */
+  reserves: Reserve[];
   /** Un bloc par diagnostic du dossier, plus « Le dossier » lui-même. */
   diagnostics: ConseilDiag[];
   /** Ce qui empêche le rendez-vous d'avoir lieu, réuni. Vide s'il n'y a rien. */
@@ -228,45 +314,117 @@ const ORDRE: Rang[] = ['avant', 'lever', 'negocier', 'reserve'];
 const RECOURS: Partial<Record<TypeDiag, Recours>> = {
   electricite: {
     qui: 'Un électricien',
+    appel: 'un électricien',
     quoi: 'un devis chiffré des anomalies relevées, à obtenir avant de faire une offre'
   },
   gaz: {
     qui: 'Un professionnel du gaz',
+    appel: 'un professionnel du gaz',
     quoi: 'la reprise des anomalies, et l’entretien annuel de la chaudière'
   },
   termites: {
     qui: 'Une entreprise de traitement des termites',
+    appel: 'une entreprise de traitement des termites',
     quoi: 'un traitement curatif, et un contrôle de la charpente et des structures porteuses'
   },
   amiante: {
     qui: 'Une entreprise certifiée amiante',
+    appel: 'une entreprise certifiée amiante',
     quoi: 'toute intervention sur un matériau amianté — ne percez, ne poncez, ne découpez jamais vous-même'
   },
   plomb: {
     qui: 'Une entreprise formée au risque plomb',
+    appel: 'une entreprise formée au risque plomb',
     quoi: 'les travaux qui suppriment l’exposition, sans jamais poncer à sec'
   },
   erp: {
     qui: 'Votre assureur',
+    appel: 'votre assureur',
     quoi: 'ce que couvre votre contrat en cas de catastrophe naturelle, notamment pour le retrait-gonflement des argiles'
   },
   assainissement: {
     qui: 'Le SPANC de la commune, puis une entreprise d’assainissement',
+    appel: 'le SPANC de la commune',
     quoi: 'le chiffrage de la mise en conformité — elle se compte en milliers d’euros'
   },
   carrez: {
     qui: 'Un géomètre-expert ou un diagnostiqueur certifié',
+    appel: 'un géomètre-expert',
     quoi: 'un nouveau mesurage, si le chiffre annoncé vous paraît douteux'
   },
   dpe: {
     qui: 'Un professionnel de la rénovation énergétique',
+    appel: 'un professionnel de la rénovation énergétique',
     quoi: 'un devis des travaux que le rapport recommande, avant de vous engager sur le prix'
   }
 };
 
+/**
+ * LES MÉTIERS PAR LOT DE TRAVAUX — §5 de l'ordre de mission, et sa seule
+ * source honnête à ce jour.
+ *
+ * Le §5 énumère trente-cinq pôles : charpente, couverture, façade, maçonnerie,
+ * fissures, humidité, zinguerie, corrosion, piscine… Le moteur n'en lit AUCUN
+ * aujourd'hui — il lit neuf diagnostics, pas des désordres de bâtiment. Poser
+ * la table entière reviendrait à recommander des métiers au hasard, ce que le
+ * §18 interdit en toutes lettres.
+ *
+ * Un seul de ces pôles a une matière réelle : les travaux que le DPE
+ * RECOMMANDE, poste par poste. `analyse/reco.ts` en lit le lot dans les mots du
+ * rapport — « Murs », « Menuiseries », « Ventilation », « Chauffage » — et le
+ * §69 demande précisément ces métiers-là. On les branche, et eux seuls.
+ *
+ * La table est extensible comme le veut le §80 : le jour où le moteur saura
+ * lire une charpente ou une fissure, une ligne s'ajoute ici et la carte
+ * apparaît. Tant qu'il ne sait pas, elle n'apparaît pas.
+ */
+const METIERS_PAR_LOT: { motif: RegExp; recours: Recours }[] = [
+  {
+    motif: /mur|plancher|comble|toiture|isolation/i,
+    recours: {
+      qui: 'Une entreprise d’isolation',
+      appel: 'une entreprise d’isolation',
+      quoi: 'un devis du poste d’isolation que le rapport recommande'
+    }
+  },
+  {
+    motif: /menuiserie|fen[êe]tre|vitrage|porte/i,
+    recours: {
+      qui: 'Un menuisier',
+      appel: 'un menuisier',
+      quoi: 'un devis du remplacement des menuiseries que le rapport recommande'
+    }
+  },
+  {
+    motif: /ventilation|vmc/i,
+    recours: {
+      qui: 'Un professionnel de la ventilation',
+      appel: 'un professionnel de la ventilation',
+      quoi: 'un devis de la ventilation que le rapport recommande — elle conditionne la santé du bâti'
+    }
+  },
+  {
+    motif: /chauffage|chaudi[èe]re|[ée]metteur|r[ée]gulation|pompe [àa] chaleur/i,
+    recours: {
+      qui: 'Un chauffagiste',
+      appel: 'un chauffagiste',
+      quoi: 'un devis du poste de chauffage que le rapport recommande'
+    }
+  },
+  {
+    motif: /eau chaude|ecs|ballon|solaire|photovolta/i,
+    recours: {
+      qui: 'Un professionnel de l’eau chaude et des énergies renouvelables',
+      appel: 'un professionnel de l’eau chaude sanitaire',
+      quoi: 'un devis du poste d’eau chaude que le rapport recommande'
+    }
+  }
+];
+
 /** Le diagnostiqueur : c'est lui qu'on rappelle pour un dossier incomplet. */
 const LE_DIAGNOSTIQUEUR: Recours = {
   qui: 'Un diagnostiqueur certifié',
+  appel: 'un diagnostiqueur certifié',
   quoi: 'refaire le diagnostic périmé, établir celui qui manque, ou revenir compléter ce qu’il n’a pas pu voir'
 };
 
@@ -282,12 +440,14 @@ function recoursDe(d: Diagnostic): Recours | undefined {
   if (gazHorsService(d)) {
     return {
       qui: 'Un professionnel du gaz',
+      appel: 'un professionnel du gaz',
       quoi: 'la remise en état puis la remise en service, qui passe par le distributeur — ne rouvrez rien vous-même'
     };
   }
   if (d.type === 'amiante' && aSonder(d)) {
     return {
       qui: 'Un opérateur de repérage certifié',
+      appel: 'un opérateur de repérage certifié',
       quoi: 'un prélèvement des matériaux douteux, avec analyse en laboratoire accrédité'
     };
   }
@@ -563,8 +723,11 @@ export function conseil(analyse: Analyse, aujourdhui: Date = new Date()): Consei
   }
 
   const dates = calendrier(analyse, aujourdhui);
+  const blocs = parDiagnostic(analyse, points, dates);
   return {
-    diagnostics: parDiagnostic(analyse, points, dates),
+    cartes: cartes(blocs, analyse),
+    reserves: reserves(blocs),
+    diagnostics: blocs,
     aRegler: points.avant.map((p) => ({
       origine: p.origine,
       provenance: p.provenance,
@@ -622,16 +785,21 @@ function parDiagnostic(
   const blocs: ConseilDiag[] = [];
 
   for (const origine of ordre) {
-    const parRang = ORDRE.map((rang) => ({
-      rang,
-      /* « Le dossier » n'est pas un diagnostic : ses limites sont celles de
-         l'ensemble, et l'intertitre doit le dire dans les bons mots. */
-      titre:
-        origine === 'dossier' && rang === 'reserve'
-          ? 'Ce que le dossier ne garantit pas'
-          : TITRES[rang],
-      points: points[rang].filter((p) => p.origine === origine).map((p) => p.texte)
-    })).filter((b) => b.points.length > 0);
+    const parRang = ORDRE.map((rang) => {
+      const siens = points[rang].filter((p) => p.origine === origine);
+      const recours = siens.find((p) => p.recours)?.recours;
+      return {
+        rang,
+        /* « Le dossier » n'est pas un diagnostic : ses limites sont celles de
+           l'ensemble, et l'intertitre doit le dire dans les bons mots. */
+        titre:
+          origine === 'dossier' && rang === 'reserve'
+            ? 'Ce que le dossier ne garantit pas'
+            : TITRES[rang],
+        points: siens.map((p) => p.texte),
+        ...(recours ? { recours } : {})
+      };
+    }).filter((b) => b.points.length > 0);
 
     if (!parRang.length) continue;
 
@@ -661,6 +829,192 @@ function parDiagnostic(
 /** Tous les gestes d'un conseil, à plat — pour l'annexe des mots employés. */
 export function tousLesPoints(conseil: Conseil): string[] {
   return conseil.diagnostics.flatMap((d) => d.blocs.flatMap((b) => b.points));
+}
+
+/**
+ * Le niveau que porte un temps du conseil.
+ *
+ * `urgence` ne sort que du gaz mis hors service : c'est le seul cas où le
+ * rapport lui-même établit un risque immédiat, en coupant l'installation. Le
+ * reste décroît sans jamais conclure à la place du rapport — un contrôle
+ * complémentaire pour un angle mort, une intervention à envisager pour ce qui
+ * se chiffre.
+ */
+function niveauDe(rang: Rang, urgent: boolean): Niveau | null {
+  if (rang === 'avant') return urgent ? 'urgence' : 'necessaire';
+  if (rang === 'lever') return 'controle';
+  if (rang === 'negocier') return 'envisager';
+  return null; // `reserve` ne fait pas de carte : il n'y a rien à faire.
+}
+
+/**
+ * La ligne d'ouverture d'une carte — la seule chose visible avant le clic.
+ *
+ * Elle se compose du niveau et du métier, jamais du contenu du rapport : c'est
+ * une orientation, et le §3 interdit de refaire ici la synthèse du diagnostic.
+ * Le détail attend derrière « Pourquoi ? ».
+ */
+const OUVERTURE: Record<Niveau, (appel: string) => string> = {
+  urgence: (a) => `Ne rétablissez rien vous-même : faites intervenir ${a} sans attendre.`,
+  necessaire: (a) => `Faites intervenir ${a} avant le rendez-vous de signature.`,
+  controle: (a) => `Faites lever ce point par ${a} avant de vous décider.`,
+  /*
+   * « Prenez l'avis » et non « faites chiffrer ».
+   *
+   * Tous les métiers de cette page ne chiffrent pas : un assureur ne fait pas
+   * de devis, et l'écran affichait « Faites chiffrer par votre assureur ». La
+   * phrase couvre donc les deux — l'avis pour ceux qui conseillent, le chiffre
+   * pour ceux qui interviennent — et garde le levier que le §8 autorise :
+   * disposer d'éléments concrets avant de faire une offre.
+   */
+  envisager: (a) =>
+    `Prenez l’avis de ${a}, et faites chiffrer ce qui doit l’être, avant de faire une offre.`
+};
+
+/** « Un électricien » → « un électricien », pour l'insérer dans un titre. */
+function minuscule(qui: string): string {
+  return qui.charAt(0).toLowerCase() + qui.slice(1);
+}
+
+/**
+ * Les cartes, à partir des blocs par diagnostic — §2, §4 et §12.
+ *
+ * Un diagnostic peut parler à plusieurs niveaux : l'électricité d'un dossier
+ * réel a un angle mort à lever ET des anomalies à chiffrer. Le §12 interdit
+ * pourtant deux cartes du même métier. On garde donc le niveau le plus engageant
+ * et on réunit les gestes dessous — la carte dit « 5 points relevés », et le
+ * « Pourquoi ? » les porte tous.
+ */
+function cartes(blocs: ConseilDiag[], analyse: Analyse): Carte[] {
+  const liste: Carte[] = [];
+
+  for (const bloc of blocs) {
+    const urgent = analyse.diagnostics.some((d) => d.type === bloc.origine && gazHorsService(d));
+
+    const aFaire = bloc.blocs
+      .map((b) => ({
+        niveau: niveauDe(b.rang, urgent),
+        points: b.points,
+        recours: b.recours ?? bloc.recours
+      }))
+      .filter(
+        (b): b is { niveau: Niveau; points: string[]; recours: Recours } =>
+          b.niveau !== null && b.recours !== undefined
+      );
+
+    if (!aFaire.length) continue;
+
+    /*
+     * UN MÉTIER, UNE CARTE — et deux métiers, deux cartes.
+     *
+     * Le §12 interdit deux cartes du MÊME métier, pas deux métiers. Une
+     * installation électrique qui a une cave non visitée ET des anomalies
+     * appelle deux professionnels : le diagnostiqueur pour revenir voir,
+     * l'électricien pour chiffrer. Les réunir faisait recommander le
+     * diagnostiqueur sous quatre anomalies qui ne le concernent pas.
+     */
+    const parMetier = new Map<string, { niveau: Niveau; points: string[]; recours: Recours }>();
+    const RANGEE: Niveau[] = ['urgence', 'necessaire', 'controle', 'envisager'];
+
+    for (const b of aFaire) {
+      const vue = parMetier.get(b.recours.qui);
+      if (!vue) {
+        parMetier.set(b.recours.qui, { ...b, points: [...b.points] });
+        continue;
+      }
+      vue.points.push(...b.points);
+      /* Le niveau le plus engageant commande : on ne range pas une
+         installation coupée derrière « à envisager ». */
+      if (RANGEE.indexOf(b.niveau) < RANGEE.indexOf(vue.niveau)) vue.niveau = b.niveau;
+    }
+
+    for (const [qui, { niveau, points: pourquoi, recours }] of parMetier) {
+      liste.push({
+        cle: `carte-${bloc.origine}-${qui}`,
+        origine: bloc.origine,
+        /* Le domaine nomme le métier quand un diagnostic en appelle plusieurs :
+           deux cartes « Installation électrique » seraient indiscernables. */
+        domaine: parMetier.size > 1 ? `${bloc.titre} — ${minuscule(qui)}` : bloc.titre,
+        niveau,
+        conseil: OUVERTURE[niveau](recours.appel),
+        combien: pourquoi.length,
+        pourquoi,
+        recours,
+        ...(bloc.echeance ? { echeance: bloc.echeance } : {}),
+        sources: bloc.sources
+      });
+    }
+  }
+
+  liste.push(...cartesDeTravaux(analyse));
+
+  /* L'ordre de la page est celui de l'urgence, pas celui du dossier : le §189
+     demande qu'on sache en dix secondes sur quoi agir. */
+  const POIDS: Record<Niveau, number> = { urgence: 0, necessaire: 1, controle: 2, envisager: 3 };
+  return liste.sort((a, b) => POIDS[a.niveau] - POIDS[b.niveau]);
+}
+
+/**
+ * LES MÉTIERS DES TRAVAUX QUE LE DPE RECOMMANDE — §69.
+ *
+ * C'est le seul endroit du moteur où un LOT DE TRAVAUX est lisible : `reco.ts`
+ * relève, dans les mots du rapport, le lot de chaque recommandation — « Murs »,
+ * « Menuiseries », « Ventilation ». Le §69 demande exactement ces métiers-là, et
+ * le §18 interdit d'en inventer d'autres.
+ *
+ * Une carte par métier (§12), jamais une par recommandation : un DPE qui
+ * recommande d'isoler les murs ET les combles donne UNE carte isolation, qui
+ * dit « 2 points relevés ».
+ *
+ * Ces cartes s'ajoutent à celle du DPE au lieu de la remplacer : l'une porte ce
+ * que la classe implique — interdiction de louer, gel du loyer —, les autres
+ * portent les travaux. Ce sont deux sujets, et deux métiers.
+ */
+function cartesDeTravaux(analyse: Analyse): Carte[] {
+  const dpe = analyse.diagnostics.find((d) => d.type === 'dpe');
+  if (!dpe?.travaux?.length) return [];
+
+  /* Un métier, ses recommandations — dans l'ordre où le rapport les donne. */
+  const parMetier = new Map<string, { recours: Recours; points: string[] }>();
+
+  for (const bouquet of dpe.travaux) {
+    for (const reco of bouquet.recommandations) {
+      const trouve = METIERS_PAR_LOT.find((m) => m.motif.test(reco.lot));
+      /* Un lot qu'on ne sait pas rattacher ne recommande personne : le §18
+         interdit le métier au hasard, et le rapport reste lisible ailleurs. */
+      if (!trouve) continue;
+
+      const entree = parMetier.get(trouve.recours.qui) ?? { recours: trouve.recours, points: [] };
+      /* Les mots du rapport, entiers : le lot puis sa description. */
+      const texte = `${reco.lot} — ${reco.description}`;
+      if (!entree.points.includes(texte)) entree.points.push(texte);
+      parMetier.set(trouve.recours.qui, entree);
+    }
+  }
+
+  return [...parMetier.entries()].map(([qui, { recours, points }]) => ({
+    cle: `carte-travaux-${qui}`,
+    origine: 'dpe' as const,
+    domaine: `Travaux recommandés — ${qui.replace(/^(Un|Une)\s+/i, '')}`,
+    /* Le DPE RECOMMANDE : il n'impose rien. « À envisager » est le seul niveau
+       que ce document autorise. */
+    niveau: 'envisager' as const,
+    conseil: `Faites chiffrer par ${recours.appel} les travaux que le rapport recommande.`,
+    combien: points.length,
+    pourquoi: points,
+    recours,
+    sources: []
+  }));
+}
+
+/** Ce qui ne demande rien, mais qui ne doit pas disparaître pour autant. */
+function reserves(blocs: ConseilDiag[]): Reserve[] {
+  return blocs
+    .map((bloc) => ({
+      domaine: bloc.titre,
+      points: bloc.blocs.filter((b) => b.rang === 'reserve').flatMap((b) => b.points)
+    }))
+    .filter((r) => r.points.length > 0);
 }
 
 /** Le titre affiché d'un diagnostic présent au dossier, sinon son nom au texte. */
