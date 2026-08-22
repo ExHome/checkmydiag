@@ -17,11 +17,24 @@ import { enPratique, ficheDe, FICHE_BOUTIN, FICHES } from './fiches';
 import { lireLeMesurageEnDiagnostic } from './mesurage';
 import type { Generateur } from '../atelier/editeur';
 
+/*
+ * ⚠️ Complété par la session architecte le 22/08 — trois champs manquaient.
+ *
+ * `Generateur` en compte sept ; celui-ci en donnait quatre. `svelte-check`
+ * remontait donc une erreur de type, et `npm run check` est une étape
+ * BLOQUANTE du déploiement : la CI serait passée au rouge et plus rien ne se
+ * serait déployé, pour aucune session. Le volet mesurage reste propriétaire de
+ * ce fichier ; seul le blocage transverse a été levé, sans toucher aux
+ * assertions.
+ */
 const LICIEL: Generateur = {
   editeur: 'LICIEL',
+  societe: 'LICIEL Diagnostics Environnement',
   logiciel: 'LICIEL Diagnostics v4',
   version: null,
-  source: 'déclaration'
+  source: 'déclaration',
+  preuve: 'LICIEL Diagnostics v4',
+  genre: 'diagnostic'
 };
 
 const contexte = (lignes: string[]) => ({
