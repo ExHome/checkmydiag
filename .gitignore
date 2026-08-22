@@ -37,3 +37,6 @@ dist-atelier/
 # Le journal de l atelier : il recopie des lignes de rapports, donc
 # potentiellement des adresses. Il reste sur le poste.
 carnet-*.md
+
+# Les sondes de mesure : jetables, jamais dans le dépôt.
+.tmp/
