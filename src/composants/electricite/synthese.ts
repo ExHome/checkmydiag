@@ -127,6 +127,15 @@ export interface SyntheseElectricite {
    * vérifiés ».
    */
   readonly nonAttribues: number;
+  /**
+   * Les constatations diverses — les observations libres du diagnostiqueur.
+   *
+   * Le § 2 de l'ordre les veut « uniquement si présentes » : vétusté, matériels
+   * particuliers, fixations, protections mécaniques, obturateurs, repérage,
+   * conditions de visite. Le bloc de la planche ne s'affiche donc que lorsque le
+   * rapport en porte — on ne fabrique jamais son contenu.
+   */
+  readonly constatations: readonly string[];
   /** Ce que le rapport dit de sa propre complétude. Jamais un pourcentage. */
   readonly completude: readonly string[];
   readonly conseil: readonly string[];
@@ -404,6 +413,14 @@ export function syntheseElectricite(d: Diagnostic): SyntheseElectricite {
     anomalies,
     horsDomaine,
     limites: limitesDe(d),
+    /*
+     * ⚠️ On ne prend QUE ce que le rapport range en constatation. Une entrée de
+     * nature « limite » appartient au bloc des non-contrôlés, et l'y laisser
+     * serait la présenter comme une simple observation.
+     */
+    constatations: (d.constatations?.entrees ?? [])
+      .filter((e) => e.nature === 'constat')
+      .map((e) => (e.ou ? `${e.terme} — ${e.ou}` : e.terme)),
     nonAttribues:
       domaines.some((x) => x.etat === 'nonVerifie') ? 0 : (entier(fait(d, CLES.nonVerifies)?.valeur) ?? 0),
     completude: completudeDe(d, domaines),

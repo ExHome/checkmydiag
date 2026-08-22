@@ -17,13 +17,13 @@ import { enDate } from './coherence';
  *   « 70 33 36 0 0 1 »
  * On cherche donc la première ligne de six nombres qui suit l'en-tête.
  */
-function compter(lignes: string[]): {
+export function compter(lignes: string[]): {
   total: number;
   nonMesurees: number;
   classes: [number, number, number, number];
 } | null {
   const debut = lignes.findIndex((l) => /Total.*Non mesur.*Classe 0/i.test(l));
-  const zone = debut >= 0 ? lignes.slice(debut, debut + 6) : lignes;
+  const zone = debut >= 0 ? lignes.slice(debut, debut + 8) : lignes;
 
   for (const ligne of zone) {
     const brut = ligne.trim();
@@ -35,6 +35,50 @@ function compter(lignes: string[]): {
     // Contrôle de cohérence : la somme doit retomber sur le total.
     if (nonMesurees + c0 + c1 + c2 + c3 !== total) continue;
     return { total, nonMesurees, classes: [c0, c1, c2, c3] };
+  }
+
+  /*
+   * ⚠️ LES SIX CHIFFRES NE TIENNENT PAS TOUJOURS SUR UNE LIGNE.
+   *
+   * L'en-tête est là, entier — mais l'extraction rejette la colonne « Total »
+   * derrière les autres et coupe le libellé en deux :
+   *
+   *     Total Non mesurées Classe 0 Classe 1 Classe 2 Classe 3
+   *     Nombre d'unités
+   *     6 21 0 0 2        <- les non mesurées, puis les quatre classes
+   *     29                <- le total, seul sur sa ligne
+   *     de diagnostic
+   *
+   * Dix volets sur 117 se présentent ainsi. Le lecteur d'unités les lisait
+   * parfaitement — 691 unités reconstituées, signature reconnue, locaux nommés —
+   * mais le produit n'affichait AUCUN schéma, faute de ces six chiffres. Un CREP
+   * sur douze restait muet pour une coupure de ligne.
+   *
+   * On rassemble donc les nombres des lignes qui suivent l'en-tête, et on essaie
+   * les deux dispositions observées. ⚠️ C'EST LA SOMME QUI TRANCHE : si les cinq
+   * effectifs ne retombent pas exactement sur le total, on ne rend rien plutôt
+   * que de rendre un chiffre approché. Aucun chiffre inventé.
+   */
+  if (debut < 0) return null;
+  const suite: number[] = [];
+  for (const ligne of zone.slice(1)) {
+    const brut = ligne.trim();
+    if (brut.includes('%')) continue;
+    for (const n of brut.match(/\d+/g) ?? []) suite.push(Number(n));
+    if (suite.length >= 6) break;
+  }
+  if (suite.length < 6) return null;
+  const six = suite.slice(0, 6) as [number, number, number, number, number, number];
+
+  /* Le total en queue : la disposition relevée sur ces dix volets. */
+  const [nm, c0, c1, c2, c3, total] = six;
+  if (nm + c0 + c1 + c2 + c3 === total) {
+    return { total, nonMesurees: nm, classes: [c0, c1, c2, c3] };
+  }
+  /* Le total en tête, quand seule la coupure de ligne diffère. */
+  const [t, nm2, d0, d1, d2, d3] = six;
+  if (nm2 + d0 + d1 + d2 + d3 === t) {
+    return { total: t, nonMesurees: nm2, classes: [d0, d1, d2, d3] };
   }
   return null;
 }
@@ -1085,12 +1129,70 @@ const RECAP_LOCAL =
  * rien de plausible n'apparaît en trois lignes, on laisse le nom vide plutôt
  * que d'attribuer les chiffres d'une pièce à une autre.
  */
+/*
+ * ⚠️ La DATE du pied de page manquait à cette liste.
+ *
+ * Le pied porte « Rapport du : » puis, sur la ligne suivante, « 12/02/2024 ».
+ * La première était écartée, la seconde non — et elle devenait le nom d'un
+ * local. Le motif « \d+ / \d+ » ne l'attrapait pas : il vise « 7 / 19 », le
+ * numéro de page, et s'arrête à deux nombres.
+ *
+ * Conséquence mesurée sur un volet de 26 locaux : une pièce nommée
+ * « 12/02/2024 » dans le produit, et surtout le lecteur d'unités qui prenait
+ * cette ligne pour un titre de local, fermait son tableau à chaque saut de
+ * page et perdait tout ce qui suivait — cinq unités sur huit dans une entrée.
+ */
 const PAS_UN_LOCAL =
-  /^(?:Constat (?:de|des) [Rr]isques?|SARL|SAS |RCS|N.\s*SIREN|Mesure$|N° Zone|\d+\s*\/\s*\d+$|Rapport du|\(mg\/cm|^\s*$)/i;
+  /^(?:Constat (?:de|des) [Rr]isques?|SARL|SAS |RCS|N.\s*SIREN|Mesure$|N° Zone|\d+\s*\/\s*\d+$|\d{1,2}\s*[/.-]\s*\d{1,2}\s*[/.-]\s*\d{2,4}\s*$|Rapport du|\(mg\/cm|^\s*$)/i;
+
+/**
+ * À partir de combien de répétitions une ligne est-elle un élément de page ?
+ *
+ * ## Le défaut qui a rendu la question nécessaire
+ *
+ * Un rapport en attente de règlement porte un filigrane imprimé sur CHAQUE
+ * page. Sur un volet de 407 unités, ce filigrane s'est intercalé entre le titre
+ * d'un local et son récapitulatif : la recherche du nom, qui remonte de trois
+ * lignes et retient la première ligne plausible, l'a retenu.
+ *
+ * Le filigrane est alors devenu un nom de local — donc un titre. Et comme le
+ * titre d'un local **ferme le tableau du local précédent**, il refermait le
+ * tableau à chaque page où il apparaissait. Bilan : deux locaux entiers à zéro
+ * unité, un troisième sans nom, 33 unités perdues sur 407.
+ *
+ * ## Le seuil, mesuré sur 117 volets et non choisi
+ *
+ * | ce qu'on retient comme nom de local | occurrences dans le volet |
+ * |---|---|
+ * | 838 noms de locaux (95 %) | 1 fois |
+ * | 45 noms de locaux (5 %) | 2 fois |
+ * | *aucun* | *3 à 10 fois* |
+ * | 6 filigranes | 11 à 24 fois |
+ *
+ * Le seuil tombe dans un intervalle VIDE : aucun nom de local ne se répète
+ * trois fois, aucun élément de page n'apparaît moins de onze fois. Ce n'est pas
+ * un arbitrage, c'est un fossé.
+ *
+ * Quatre libellés distincts ont été relevés sur le lot — le défaut n'est pas
+ * l'affaire d'un rapport, et coder ces libellés en dur n'aurait rien réglé pour
+ * le cinquième.
+ */
+const REPETITIONS_D_UN_ELEMENT_DE_PAGE = 3;
+
+function estUnElementDePage(ligne: string, occurrences: Map<string, number>): boolean {
+  return (occurrences.get(ligne) ?? 0) >= REPETITIONS_D_UN_ELEMENT_DE_PAGE;
+}
 
 export function recapitulatifParLocal(lignes: string[]): LocalRecapitule[] {
   const normalisees = lignes.map(normaliser);
   const locaux: LocalRecapitule[] = [];
+  /* Ce qui se répète d'une page à l'autre : filigranes, en-têtes, pieds de
+     page. Un local, lui, n'est nommé qu'une fois — deux au plus. */
+  const occurrences = new Map<string, number>();
+  for (const l of lignes) {
+    const t = l.trim();
+    if (t) occurrences.set(t, (occurrences.get(t) ?? 0) + 1);
+  }
 
   for (let i = 0; i < normalisees.length; i++) {
     const m = RECAP_LOCAL.exec(normalisees[i] ?? '');
@@ -1099,7 +1201,12 @@ export function recapitulatifParLocal(lignes: string[]): LocalRecapitule[] {
     let local = '';
     for (let j = i - 1; j >= 0 && j > i - 4; j--) {
       const candidat = (lignes[j] ?? '').trim();
-      if (!candidat || PAS_UN_LOCAL.test(candidat) || RECAP_LOCAL.test(normalisees[j] ?? '')) {
+      if (
+        !candidat ||
+        PAS_UN_LOCAL.test(candidat) ||
+        RECAP_LOCAL.test(normalisees[j] ?? '') ||
+        estUnElementDePage(candidat, occurrences)
+      ) {
         continue;
       }
       if (candidat.length <= 60) local = candidat;

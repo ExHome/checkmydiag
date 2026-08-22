@@ -2785,3 +2785,83 @@ Le repère qui les sépare est mesurable, pas supposé :
 
 Un nom de local ne se répète pas ; un élément de page se répète autant qu'il y a
 de pages.
+
+### Ce que la forme a corrigé, et ce que le témoin en dit
+
+Deux corrections de fond ont suivi, et une seule chose permet de dire qu'elles
+valent : **le témoin monte aussi.**
+
+| | départ | + filigrane | + forme | + signature |
+|---|---|---|---|---|
+| apprentissage (117 volets) | 79 % | 81 % | 88 % | **89 %** |
+| témoin (39 volets, jamais corrigés) | 77 % | 77 % | 82 % | **87 %** |
+| volets où le lecteur FABRIQUE des unités | 1 / 2 | 1 / 2 | 1 / 2 | **0 / 0** |
+
+**1. Une unité se reconnaît à sa place, pas à son nom.** Le lecteur n'acceptait
+une ligne que si le nom de l'élément figurait dans une liste. Chaque volet neuf
+apportait son mot manquant — *Boiseries*, *Structure*, *Cimaise* — et chaque
+ajout ne réparait que le rapport qui l'avait révélé. Or la position, elle, ne
+change pas :
+
+```
+A Cimaise Bois Peinture Non Dégradé 1
+^ zone     ^ substrat            ^ classement
+```
+
+Ce qui se tient entre la zone et le substrat **est** le libellé, quel qu'il
+soit. Trois garde-fous l'encadrent : un substrat doit suivre, le libellé ne peut
+pas commencer par un chiffre (ce serait une ligne de mesure de la colonne de
+gauche) ni dépasser 48 caractères (ce serait une phrase). Le témoin a gagné
+5 points d'un coup — ce qu'aucun mot ajouté n'avait jamais fait.
+
+**2. La signature ne signait rien.** Le format se reconnaissait au motif
+`Unité de diagnostic.*Substrat`. Ce `.*` accepte n'importe quelle prose, et le
+CREP en contient une :
+
+> NOTE Une unité de diagnostic (UD) est un ou plusieurs éléments de
+> construction ayant même substrat et même revêtement.
+
+Cette note figure dans **tout** CREP, quel que soit le logiciel. Le lecteur
+répondait donc « c'est mon format » sur les rapports de n'importe quel éditeur —
+et un lecteur choisi sur une signature pareille n'est pas choisi. Elle ouvrait
+en outre le tableau 46 lignes trop tôt, ce qui y faisait entrer le tableau de
+synthèse du § 5 : la ligne « Sous-Sol - Escalier 3 » devenait une unité de
+diagnostic de classe 3 qui n'existe pas.
+
+Les intitulés de colonnes se **suivent** ; une phrase les sépare. Le motif
+l'exige désormais, et plus aucun volet ne fabrique d'unité.
+
+### Un CREP sur douze restait muet pour une coupure de ligne
+
+Dix volets sur 117 étaient comptés « tableau illisible » — le plus gros bloc
+d'échecs, devant tous les écarts réunis. Ils ne l'étaient pas : le lecteur
+d'unités les lisait **tous**, signature reconnue, locaux nommés, 691 unités
+reconstituées. C'est l'analyse en amont qui ne trouvait pas les six chiffres du
+tableau de synthèse, et sans eux le produit n'affichait aucun schéma.
+
+L'en-tête est pourtant entier. Ce sont les chiffres que l'extraction disperse :
+
+```
+Total Non mesurées Classe 0 Classe 1 Classe 2 Classe 3
+Nombre d'unités
+6 21 0 0 2        <- les non mesurées, puis les quatre classes
+29                <- le total, rejeté seul sur sa ligne
+de diagnostic
+```
+
+La colonne « Total » passe derrière les autres et le libellé se coupe en deux.
+La lecture exigeait six nombres sur une seule ligne : elle en trouvait cinq,
+puis un.
+
+**Les deux sources concordent, et c'est ce qui permet de conclure.** Sur neuf de
+ces dix volets, le total lu dans le tableau de synthèse tombe exactement sur le
+nombre d'unités que le lecteur reconstitue par ailleurs — 29, 54, 27, 79, 32,
+29, 58, 54, 227. Le § 41 est vérifié sans avoir été supposé.
+
+Le dixième annonce **106 quand le lecteur en capte 102**. C'est un écart réel,
+qu'aucune correction ne fabrique : il était masqué tant que le tableau n'était
+pas lu du tout.
+
+> ⚠️ La règle de lecture reste la somme. Si les cinq effectifs ne retombent pas
+> exactement sur le total, on ne rend rien — un effectif approché serait un
+> chiffre inventé, et un test l'interdit explicitement.

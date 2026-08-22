@@ -915,7 +915,7 @@
      charte, sinon le thème sombre et l'impression divergeraient du reste. */
   .module-conseils {
     --vert: var(--verriere-vert-profond);
-    --or: var(--verriere-sable-or);
+    --sable: var(--verriere-sable-or);
     /*
      * ⚠️ DEUX SABLES, ET LE VISUEL N'EN CONNAÎT QU'UN.
      *
@@ -930,7 +930,7 @@
      * textes sable sur ivoire. À l'œil c'est le même or ; à la mesure, l'un
      * passe et l'autre non.
      */
-    --or-lisible: #8a6a1f;
+    --sable-lisible: #8a6a1f;
     display: flex;
     flex-direction: column;
     gap: var(--e6);
@@ -996,7 +996,7 @@
     font-weight: 700;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--or-lisible);
+    color: var(--sable-lisible);
   }
 
   .intro-conseils {
@@ -1026,7 +1026,7 @@
     display: block;
     width: 46px;
     height: 2px;
-    background: var(--or);
+    background: var(--sable);
   }
 
   /* ---- Ce qui bloque le rendez-vous ------------------------------------- */
@@ -1170,13 +1170,13 @@
   .niveau span {
     display: inline-block;
     padding: 3px 10px;
-    border: 1px solid var(--niveau-teinte, var(--or));
+    border: 1px solid var(--niveau-teinte, var(--sable));
     border-radius: 999px;
     font-size: var(--t-micro);
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--niveau-teinte, var(--or));
+    color: var(--niveau-teinte, var(--sable));
   }
 
   .carte.urgence,
@@ -1187,7 +1187,7 @@
     --niveau-teinte: var(--attention);
   }
   .carte.envisager {
-    --niveau-teinte: var(--or-lisible);
+    --niveau-teinte: var(--sable-lisible);
   }
 
   .conseil-ligne {
@@ -1336,7 +1336,7 @@
     width: 44px;
     height: 44px;
     margin: 0 auto var(--e3);
-    border: 1px solid var(--or);
+    border: 1px solid var(--sable);
     border-radius: 50%;
     position: relative;
   }
@@ -1345,7 +1345,7 @@
     content: '';
     position: absolute;
     inset: 12px;
-    background: var(--or);
+    background: var(--sable);
     mask-image: url(./pictos/conseil.svg);
     mask-repeat: no-repeat;
     mask-position: center;
@@ -1375,8 +1375,8 @@
   .or-global {
     margin-top: var(--e4) !important;
     padding-top: var(--e4);
-    border-top: 1px solid var(--or);
-    color: var(--or);
+    border-top: 1px solid var(--sable);
+    color: var(--sable);
     font-weight: 700;
   }
 
@@ -1429,7 +1429,7 @@
     width: 22px;
     height: 2px;
     margin: 0 auto var(--e2);
-    background: var(--or);
+    background: var(--sable);
   }
 
   .accompagnement {
@@ -1445,7 +1445,7 @@
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--or);
+    color: var(--sable);
   }
 
   .accompagnement p {

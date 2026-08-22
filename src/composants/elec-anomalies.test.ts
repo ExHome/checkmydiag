@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { syntheseElectricite } from './electricite/synthese';
+import { confianceDe, famillesDe } from './electricite/visuel';
 import { readFileSync } from 'node:fs';
 
 /**
@@ -96,10 +97,15 @@ describe('la mini-app électricité', () => {
       ])
     );
     expect(s.anomalies).toHaveLength(2);
-    /* Celle qu'on ne sait pas ranger n'est pas jetée : elle est mise à part,
-       et l'écran a un bloc pour elle. */
+    /* Celle qu'on ne sait pas ranger n'est pas jetée : elle est mise à part… */
     expect(s.horsDomaine).toHaveLength(1);
-    expect(miniApp).toMatch(/horsDomaine/);
+    /* …et elle ressort bien dans les familles que l'écran dessine — rangée
+       dans « à améliorer », la moins engageante : on ne présume jamais de la
+       gravité de ce qu'on n'a pas su rattacher, et surtout pas à la hausse. */
+    const familles = famillesDe(s);
+    const rendues = familles.reduce((n, f) => n + f.anomalies.length, 0);
+    expect(rendues).toBe(2);
+    expect(familles.find((f) => f.cle === 'amelioration')?.anomalies).toHaveLength(1);
   });
 
   it('⚠️ n’affirme rien quand la conclusion n’a pas pu être lue', () => {
@@ -156,12 +162,23 @@ describe('le glossaire de la mise à la terre', () => {
 
 describe('⚠️ le grand chiffre du résultat détaillé', () => {
   it('ne montre pas « 0 » quand la conclusion n’a pas pu être lue', () => {
-    /* « 0 anomalies relevées » sur un rapport illisible est une bonne nouvelle
-       inventée — le pire sens dans lequel une information se transforme. */
-    const i = miniApp.indexOf("s.issue === 'nonLu'");
-    expect(i).toBeGreaterThan(-1);
-    const autour = miniApp.slice(i, i + 260);
-    expect(autour).toMatch(/conclusion/);
-    expect(autour).toMatch(/non lue/);
+    /* « 0 anomalies » sur un rapport illisible est une bonne nouvelle inventée
+       — le pire sens dans lequel une information se transforme. L'écran met un
+       tiret à la place, et le mot dit pourquoi. */
+    expect(miniApp).toMatch(/s\.issue === 'nonLu' \? '—'/);
+    expect(miniApp).toMatch(/'conclusion'/);
+    expect(miniApp).toMatch(/'non lue'/);
+  });
+
+  it('⚠️ n’affiche aucun pourcentage de confiance sur une conclusion non lue', () => {
+    const c = confianceDe(
+      syntheseElectricite(
+        volet([], {
+          gravite: 'neutre',
+          verdict: 'La conclusion est cochée à la main : un programme ne peut pas la lire.'
+        })
+      )
+    );
+    expect(c.part).toBeNull();
   });
 });

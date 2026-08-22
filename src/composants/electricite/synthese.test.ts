@@ -13,6 +13,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Anomalie, Diagnostic } from '../../lib/modele';
 import { DOMAINES, domaineDe, issueDe, syntheseElectricite } from './synthese';
+import { confianceDe, famillesDe, niveauDeRisque } from './visuel';
 
 const socle = {
   type: 'electricite' as const,
@@ -242,5 +243,51 @@ describe('⚠️ les points non vérifiés n’entrent pas dans un affichage ras
 
   it('ne réserve rien quand aucun point ne manque', () => {
     expect(syntheseElectricite(SAINE).nonAttribues).toBe(0);
+  });
+});
+
+describe('les valeurs dérivées de la planche', () => {
+  it('le niveau de risque monte quand la protection des PERSONNES est touchée', () => {
+    /* Différentiel, terre, contact direct : ce sont les points qui coupent le
+       courant quand il passe par quelqu'un. */
+    expect(niveauDeRisque(syntheseElectricite(SIX))).toBe('ÉLEVÉ');
+  });
+
+  it('reste modéré quand aucune anomalie ne touche ces points', () => {
+    const vetusteSeule = {
+      ...SIX,
+      faits: [{ libelle: 'Anomalies relevées', valeur: '1' }],
+      anomalies: [anomalie('L’installation comporte au moins un matériel électrique vétuste')]
+    } as unknown as Diagnostic;
+    expect(niveauDeRisque(syntheseElectricite(vetusteSeule))).toBe('MODÉRÉ');
+  });
+
+  it('⚠️ n’évalue aucun risque quand la conclusion n’a pas pu être lue', () => {
+    expect(niveauDeRisque(syntheseElectricite(NON_LUE))).toBe('NON ÉVALUÉ');
+    expect(confianceDe(syntheseElectricite(NON_LUE)).part).toBeNull();
+  });
+
+  it('range les anomalies dans les trois familles sans en perdre une seule', () => {
+    const s = syntheseElectricite(SIX);
+    const f = famillesDe(s);
+    const total = f.reduce((n, g) => n + g.anomalies.length, 0);
+    expect(total).toBe(s.anomalies.length);
+  });
+
+  it('⚠️ ne descend pas la confiance à 100 % quand des points manquent', () => {
+    const d = {
+      ...SAINE,
+      faits: [
+        { libelle: 'Anomalies relevées', valeur: '0' },
+        { libelle: 'Points non vérifiés', valeur: '2', precision: 'Installation non alimentée' }
+      ]
+    } as unknown as Diagnostic;
+    const c = confianceDe(syntheseElectricite(d));
+    expect(c.part).toBeLessThan(100);
+    expect(c.manquants).toBe(2);
+  });
+
+  it('donne 100 % seulement quand les six domaines sont renseignés', () => {
+    expect(confianceDe(syntheseElectricite(SAINE)).part).toBe(100);
   });
 });

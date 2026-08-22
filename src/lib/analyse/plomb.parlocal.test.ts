@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { recapitulatifParLocal } from './plomb';
+import { compter, recapitulatifParLocal } from './plomb';
 
 /**
  * Le récapitulatif par local — la pièce justificative du seuil des 50 %.
@@ -107,5 +107,56 @@ describe('le récapitulatif par local', () => {
     expect(r[0]?.pourcentage).toBe(50);
     expect(r[0]?.classe3).toBe(3);
     expect(r[0]?.unites).toBe(6);
+  });
+});
+
+/**
+ * LE TABLEAU DE SYNTHÈSE DONT LES CHIFFRES SONT COUPÉS EN DEUX.
+ *
+ * Dix volets sur 117 portaient leur en-tête entier, mais l'extraction rejetait
+ * la colonne « Total » derrière les autres et coupait le libellé en deux. La
+ * lecture exigeait six nombres sur une seule ligne : elle en trouvait cinq,
+ * puis un. Le produit n'affichait donc aucun schéma sur un CREP sur douze,
+ * alors que le lecteur d'unités lisait ces volets sans faute.
+ */
+describe('le tableau de synthèse aux chiffres coupés', () => {
+  const COUPE = [
+    'Conclusion des mesures de concentration en plomb',
+    'Total Non mesurées Classe 0 Classe 1 Classe 2 Classe 3',
+    'Nombre d’unités',
+    '6 21 0 0 2',
+    '29',
+    'de diagnostic'
+  ];
+
+  it('retrouve les six chiffres répartis sur deux lignes', () => {
+    expect(compter(COUPE)).toEqual({
+      total: 29,
+      nonMesurees: 6,
+      classes: [21, 0, 0, 2]
+    });
+  });
+
+  it('lit toujours la disposition d’origine, sur une seule ligne', () => {
+    expect(
+      compter([
+        'Total Non mesurées Classe 0 Classe 1 Classe 2 Classe 3',
+        'Nombre d’unités de diagnostic 29 6 21 0 0 2'
+      ])
+    ).toEqual({ total: 29, nonMesurees: 6, classes: [21, 0, 0, 2] });
+  });
+
+  it('⚠️ ne rend RIEN quand la somme ne retombe pas sur le total', () => {
+    /* Aucun chiffre inventé : un total qui ne se vérifie pas n'est pas un
+       total. Mieux vaut se taire que d'afficher un effectif approché. */
+    expect(
+      compter([
+        'Total Non mesurées Classe 0 Classe 1 Classe 2 Classe 3',
+        'Nombre d’unités',
+        '6 21 0 0 2',
+        '31',
+        'de diagnostic'
+      ])
+    ).toBeNull();
   });
 });

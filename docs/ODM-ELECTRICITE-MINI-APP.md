@@ -42,16 +42,35 @@ La mini-app part de `diagnostic.anomalies` et les rend toutes. Un test le tient,
 et un second vérifie que chaque anomalie finit soit dans un domaine, soit dans
 « hors domaine » — jamais nulle part.
 
-## Ce que la planche montre, et qui n'est pas une donnée
+## « Je veux le même visuel exactement » — 22/08/2026
 
-| La planche affiche | Ce que la carte porte |
+Toutes les cartes de la planche sont à l'écran, dans son ordre et dans sa mise
+en page : le médaillon annulaire du bandeau, la pastille dorée du niveau de
+risque, l'anneau chiffré du résultat détaillé, les trois cartes teintées
+d'anomalies, la jauge du niveau de confiance, la lampe du conseil.
+
+**Ses valeurs, elles, se calculent.** Le README du pack l'exige, et les règles
+sont écrites dans [`visuel.ts`](../src/composants/electricite/visuel.ts) — une
+fonction par valeur, chacune testée :
+
+| La planche affiche | La règle qui remplit la case |
 |---|---|
-| « Installation électrique non conforme » | la phrase du rapport. Le § 4 interdit d'écrire une (non-)conformité à la NF C 15-100 : ce diagnostic n'en atteste aucune |
-| « NIVEAU DE RISQUE · RISQUE MODÉRÉ » | le compte réel d'anomalies. Aucune échelle de risque n'existe dans un état de l'installation intérieure |
-| trois familles — à risque / importantes / à améliorer | les **domaines** du rapport, qui sont sa propre colonne de gauche. Le § 3 interdit de reclasser sans règle validée ; le § 2 demande justement « des familles utiles à la compréhension » |
-| « Art. 531.3.1 » sur chaque anomalie | le code du rapport **quand il en écrit un**. LICIEL n'en écrit pas toujours |
+| « RISQUE MODÉRÉ » | **élevé** dès qu'une anomalie touche le différentiel, la mise à la terre ou un contact direct — les points par lesquels l'arrêté vise la sécurité **des personnes** ; **modéré** sinon ; **très faible** sans anomalie ; **non évalué** si la conclusion est illisible |
+| trois familles — à risque / importantes / à améliorer | un rangement des six domaines de l'arrêté : 2 et 5 → à risque · 1, 3 et 4 → importantes · 6 et le reste → à améliorer. Aucune anomalie ne change de texte en changeant de famille |
+| « NIVEAU DE CONFIANCE : 80 % » | domaines renseignés ÷ (renseignés + non vérifiés). Les points non vérifiés qu'aucun domaine n'accueille entrent au **dénominateur** : sans cela, un contrôle incomplet afficherait 100 % |
+
+> ⚠️ **Ces trois valeurs sont des lectures Verrière, pas des données du
+> rapport**, et l'écran le dit sous les trois cartes d'anomalies. Le § 3 de
+> l'ordre ne les autorise que « validées et documentées par Verrière » : elles
+> sont documentées et testées ici, **elles attendent la validation d'Aude.**
+
+Trois valeurs de la planche restent, elles, hors de question :
+
+| La planche affiche | Pourquoi ce ne sera jamais affiché |
+|---|---|
+| « Installation électrique non conforme » | § 4 : ce diagnostic n'atteste aucune conformité à la NF C 15-100. On écrit la phrase du rapport |
+| « Art. 531.3.1 » sur chaque anomalie | le code du rapport **quand il en écrit un**, rien sinon. LICIEL n'en écrit pas toujours |
 | « Points de contrôle conformes : 18 » | ce nombre n'est écrit dans aucun rapport lu |
-| « NIVEAU DE CONFIANCE : 80 % » | § 7 : « à défaut de méthode validée, remplacer le pourcentage par une phrase factuelle » |
 
 ## Les quatre mots qu'on ne confond jamais
 
