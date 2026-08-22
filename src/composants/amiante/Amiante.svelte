@@ -95,37 +95,29 @@
 
   <!-- ══ RÉSULTAT GLOBAL ══════════════════════════════════════════════ -->
   <section class="bandeau" aria-labelledby="resultat-amiante">
-    <!-- L'ondulation d'une plaque de fibres-ciment. La matière du sujet — pas
-         la photo d'un logement qui n'est pas le vôtre. -->
-    <svg class="ondes" viewBox="0 0 200 300" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
-      <defs>
-        <linearGradient id="fondu-amiante" x1="0" x2="1">
-          <stop offset="0" stop-color="#0a2b23" stop-opacity="1" />
-          <stop offset="0.45" stop-color="#0a2b23" stop-opacity="0.55" />
-          <stop offset="1" stop-color="#0a2b23" stop-opacity="0.1" />
-        </linearGradient>
-      </defs>
-      <g class="plaque">
-        {#each [0, 1, 2, 3, 4, 5, 6] as i (i)}
-          <path
-            d="M{18 + i * 30} -20 q 22 55 0 110 q -22 55 0 110 q 22 55 0 110"
-            fill="none"
-            stroke="#cfd6cb"
-            stroke-width="15"
-            stroke-linecap="round"
-            opacity="0.34"
-          />
-          <path
-            d="M{25 + i * 30} -20 q 22 55 0 110 q -22 55 0 110 q 22 55 0 110"
-            fill="none"
-            stroke="#8d9a8c"
-            stroke-width="4"
-            opacity="0.3"
-          />
-        {/each}
-      </g>
-      <rect x="0" y="0" width="200" height="300" fill="url(#fondu-amiante)" />
-    </svg>
+    <!--
+      LA PLAQUE DE FIBRES-CIMENT — l'image du pack, à la demande d'Aude.
+
+      Découpée dans le visuel de référence sur sa crête éclairée, servie en
+      WebP (24 ko) avec repli JPEG. C'est une PHOTO DE MATIÈRE, pas la photo
+      d'un logement : elle montre de quoi on parle sans faire croire qu'elle
+      montre le bien de l'acquéreur. Décorative — `alt=""`.
+
+      ⚠️ Pas de `loading="lazy"` : c'est l'image de tête de l'écran. Différer ce
+      qu'on voit en premier, c'est afficher un trou pendant que le reste arrive.
+    -->
+    <picture class="plaque">
+      <source srcset="./fond/plaque-amiante.webp" type="image/webp" />
+      <img
+        src="./fond/plaque-amiante.jpg"
+        alt=""
+        width="361"
+        height="620"
+        decoding="async"
+        fetchpriority="high"
+      />
+    </picture>
+    <span class="fondu" aria-hidden="true"></span>
 
     <div class="dans-bandeau">
       <p class="chapeau" id="resultat-amiante">Résultat global</p>
@@ -434,18 +426,61 @@
     min-height: 17rem;
     display: flex;
   }
-  .ondes {
+  /*
+   * La plaque occupe la droite du bandeau, le texte la gauche — comme le
+   * visuel du pack.
+   */
+  .plaque {
     position: absolute;
-    inset: 0;
+    inset: 0 0 0 40%;
+    display: block;
+  }
+  .plaque img {
     width: 100%;
     height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
   }
+
+  /*
+   * ⚠️ LE FONDU EST MESURÉ, PAS DESSINÉ À L'ŒIL.
+   *
+   * Premier réglage, vérifié au pixel en composant photo + dégradé dans un
+   * canvas : le texte tombait à **1,68:1** sur « RÉSULTAT GLOBAL » et 2,89:1
+   * sur le verdict — illisible dès que le soleil frappe l'écran.
+   *
+   * Le fondu reste donc opaque sur toute la colonne de texte et ne s'ouvre
+   * qu'au-delà. La photo garde sa place à droite ; la lisibilité ne se négocie
+   * pas contre une texture.
+   */
+  .fondu {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      100deg,
+      #0a2b23 0%,
+      #0a2b23 68%,
+      rgb(10 43 35 / 86%) 80%,
+      rgb(10 43 35 / 52%) 92%,
+      rgb(10 43 35 / 28%) 100%
+    );
+  }
+  /*
+   * Le texte reste dans sa colonne — celle que le fondu tient opaque.
+   *
+   * Sans cette limite, le verdict s'étale sur la photo dès qu'il est long, et
+   * c'est là que le contraste s'effondre. La largeur est bornée à ce que le
+   * fondu couvre, mesuré : 74 % du bandeau. À 62 %, le titre partait sur cinq
+   * lignes au lieu de trois — trop étroit pour une phrase de rapport.
+   */
   .dans-bandeau {
     position: relative;
     display: flex;
     flex-direction: column;
     padding: 1.25rem 1.2rem 1.3rem 1.35rem;
     width: 100%;
+    max-width: 74%;
   }
   /* Le filet d'état — il double le mot de la pastille, il ne le remplace pas. */
   .bandeau::before {
@@ -478,7 +513,7 @@
     line-height: 1.2;
     margin: 0.55rem 0 auto;
     font-weight: 500;
-    max-width: 12ch;
+    max-width: 16ch;
   }
   .pastille {
     align-self: flex-start;
