@@ -1104,6 +1104,215 @@ Le § 6.3 donne la date en clair — « durée de validité de 1 an (jusqu'au
 
 ---
 
+## La note de bas de tableau n'est pas une borne — mesuré sur 107 volets
+
+*21/08/2026. Le lecteur d'unités de diagnostic a été calé sur un volet lu en
+entier, puis passé sur 107 volets plomb répartis dans tout le corpus.*
+
+Le contrôle est celui du § 41 de l'ordre de mission : les unités reconstituées
+doivent retomber sur le tableau de synthèse — même total, mêmes non mesurées,
+mêmes classes.
+
+```
+volets plomb mesurés : 107   (tableau illisible : 11)
+concordance          :  42   39 %
+écarts               :  54
+       16  unités manquantes + classes
+       12  unités manquantes + non mesurées + classes
+        9  unités manquantes + non mesurées
+        8  trop d'unités + non mesurées
+        6  trop d'unités + non mesurées + classes
+        3  non mesurées + classes
+```
+
+**Trente-sept cas d'unités manquantes sur cinquante-quatre écarts.** La cause
+était dans la borne de fermeture du tableau :
+
+```
+NM : Non mesuré car l'unité de diagnostic n'est pas visée par la règlementation.
+Localisation des mesures sur croquis de repérage
+```
+
+Ces deux lignes ressemblent à une fin de tableau. **Ce sont des notes de bas de
+tableau, réimprimées sous CHAQUE page.** S'en servir comme borne fermait le
+tableau à la fin de sa première page : sur un CREP de plusieurs pages de
+mesures, tout ce qui suivait était perdu.
+
+Seul le passage à la rubrique suivante — § 6.1 « Classement des unités de
+diagnostic » — ferme réellement le tableau.
+
+**Ce que cela apprend, au-delà du plomb** : une borne de rubrique se prend sur un
+titre de rubrique, jamais sur une phrase qui *ressemble* à une conclusion. Le
+pied de page, la note, le rappel réglementaire se répètent — et une borne qui se
+répète coupe le document au premier passage.
+
+Et la leçon de méthode, qui est la même que celle des termites : **le lecteur
+avait été calé sur un seul volet, où le tableau tenait sur une page.** Un repère
+vu une fois n'est pas un repère.
+
+---
+
+## La ligne de base, sur échantillon FIGÉ — 21/08/2026
+
+*120 dossiers tirés une fois sur 11 358 candidats, écrits à côté du registre et
+relus tels quels à chaque passe. C'est la condition pour que deux mesures se
+comparent : trois passes antérieures avaient donné 39 %, 47 % puis 33 % sur trois
+échantillons différents — dont deux avec le même code.*
+
+```
+volets plomb mesurés : 33   (tableau illisible : 4)
+concordance § 41     : 11   33 %
+écarts               : 18
+       13  unités manquantes (trois combinaisons)
+        3  trop d'unités + non mesurées + classes
+        2  non mesurées + classes
+```
+
+### La répartition des classes, enfin mesurée
+
+```
+classe 0 : 1 990   87 %
+classe 1 :   110    5 %
+classe 2 :   162    7 %
+classe 3 :    17    1 %
+```
+
+**Un CREP est très majoritairement de la classe 0.** Sur 2 910 unités, 289
+seulement dépassent le seuil — une sur dix. C'est une donnée de cadrage qui
+manquait : elle dit que l'essentiel d'un constat décrit ce qui ne pose pas de
+problème, et que le peu qui compte se cherche dans un dixième du tableau.
+
+### Ce que cette répartition tranche
+
+Le champ « état de conservation » n'est renseigné que sur **9 %** des unités.
+Isolé, ce chiffre ressemble à un trou d'extraction. Rapporté aux seules unités
+qui doivent en porter un — celles au-dessus du seuil, dont l'état décide s'il
+s'agit d'une classe 1, 2 ou 3 :
+
+```
+état renseigné sur les unités au-dessus du seuil : 261 / 289   90 %
+```
+
+**Ce n'est donc pas un défaut.** Une unité de classe 0 n'a pas d'état de
+conservation à décrire : il n'y a pas de revêtement au plomb à conserver. Les
+28 unités restantes (10 %) sont à regarder, mais l'ordre de grandeur est bon.
+
+⚠️ **La leçon de mesure** : un taux global ne dit rien tant qu'on ne l'a pas
+rapporté à la population qui devrait le porter. J'ai failli conclure à un second
+défaut d'extraction sur un chiffre qui décrivait en réalité la composition du
+corpus.
+
+---
+
+## Deux hypothèses réfutées sur les unités manquantes
+
+*Mesuré sur l'échantillon figé, 33 volets. La ligne de base est à 33 % de
+concordance, dont 13 écarts sur 18 pour cause d'unités manquantes.*
+
+### Ce n'est PAS une liste d'éléments trop courte
+
+Première hypothèse : le lecteur ne reconnaîtrait pas certains éléments —
+imposte, coffre, tablette, seuil, lambris, absents de sa liste.
+
+La sonde a cherché, dans les bornes du tableau, **toute ligne portant un
+classement 0-3 dont aucun élément n'est reconnu**. Elle n'en trouve aucune.
+
+Allonger la liste des motifs n'aurait rien corrigé — et c'est exactement le
+« lecteur unique rafistolé » que l'architecture par éditeur existe pour
+empêcher.
+
+### Ce n'est PAS la signature
+
+Deuxième hypothèse, plus fondamentale : si l'en-tête de colonnes variait entre
+versions du même logiciel, le tableau ne s'ouvrirait jamais et le lecteur
+rendrait zéro unité — ce qui se compte comme « unités manquantes » sans qu'aucun
+élément soit en cause.
+
+```
+signature LICIEL non reconnue : 0 / 33 volets
+lecteur rendant zéro unité    : 1 / 33 volets
+```
+
+**La signature reconnaît tous les volets.** Le tableau s'ouvre partout, et le
+lecteur rend des unités partout sauf une fois.
+
+### Ce qui reste
+
+Le déficit est donc **partiel** : le lecteur trouve des unités, mais pas toutes.
+La question suivante n'est pas « pourquoi » mais **« combien »** — un ou deux de
+moins par volet est un cas particulier récurrent, la moitié du tableau est un
+défaut structurel, et on ne cherche pas la même chose dans les deux cas.
+
+---
+
+## Trois défauts trouvés en LISANT, après quatre sondes stériles
+
+*21/08/2026, échantillon figé. Quatre sondes avaient réfuté trois hypothèses sans
+rien trouver. Un volet de 105 unités ouvert et lu ligne à ligne a donné les trois
+défauts en quelques minutes.*
+
+### 1. Le nom du local était réimplémenté, et faux
+
+Le lecteur remontait trois lignes au-dessus du récapitulatif et retenait la
+première ligne « plausible ». Résultat sur ce volet :
+
+```
+  0 / 13   3ème étage - Entrée
+  0 / 21   3ème étage - Chambre
+  0 / 11   3ème étage - Salle d'eau/Wc
+  0 / 60   3ème étage - Cuisine/Séjour
+locaux captés SANS récapitulatif : « mesurées » | « Rapport du : »
+```
+
+Les 99 unités captées étaient rattachées à un fragment d'en-tête et à un pied de
+page. `recapitulatifParLocal` faisait déjà ce travail, avec sa liste de ce qui
+n'est **pas** un nom de local — on prend ses noms, dans l'ordre.
+
+⚠️ **Le champ « local » était rempli à 100 % dans toutes les mesures.** Un taux de
+remplissage ne dit rien de la justesse de ce qu'il remplit.
+
+### 2. Un second chemin de nommage écrasait le premier
+
+« Une ligne courte sans chiffre est un titre de local » : cette règle attrapait
+« Rapport du : » en plein tableau. Le nom vient d'un seul endroit désormais.
+
+### 3. Deux éléments manquaient à la liste
+
+`Cheminée` — cinq occurrences dans le local qui perdait exactement cinq unités.
+`Barreaux` — une, dans le local qui en perdait une.
+
+**« Grille » n'a PAS été ajoutée.** Le § 3.2 du rapport la cite pourtant en
+exemple d'élément métallique à mesurer — mais elle n'apparaît dans aucun tableau
+lu. On ajoute ce qu'on a vu, jamais ce que le texte laisse supposer.
+
+### Ce que ça donne
+
+```
+volet lu     0 / 105 correctement rattachées  →  105 / 105, quatre locaux sur quatre
+échantillon  concordance § 41  33 %  →  45 %   (11 puis 15 volets sur 33)
+             écarts            18    →  14
+             récupération      2 911 / 2 960   98 %
+```
+
+⚠️ **Le taux de récupération a d'abord été annoncé à tort.** Le compteur ne
+cumulait que les volets *en écart* — les concordants sortaient de la boucle
+avant lui. Il décrivait donc le pire au lieu de l'ensemble. Deux indicateurs, et
+il faut les deux : **98 %** dit ce que le lecteur retrouve, **45 %** dit combien
+de dossiers sont exacts au sens du § 41. C'est le second qui commande le
+branchement dans le produit.
+
+### La leçon, et elle est dure
+
+La sonde « éléments non reconnus » avait rendu **zéro**. Elle cherchait
+exactement `Cheminée`, qui était sous ses yeux cinq fois. Elle était mal écrite,
+et son zéro m'a fait éliminer la bonne hypothèse pendant quatre passes.
+
+**Une sonde qui ment est pire qu'une absence de mesure** : un zéro ressemble à
+une réponse. On lit d'abord, on sonde ensuite — et une sonde qui ne trouve rien
+se vérifie sur un cas connu avant d'être crue.
+
+---
+
 ## Un endroit de plus : « Validité du constat » (§ 6.3)
 
 Le CREP écrit lui-même jusqu'à quand il vaut. Verrière, elle, le **calculait** —
@@ -1852,3 +2061,386 @@ sur le CREP, ne peut donc pas être appliquée telle quelle : elle doit être
   et la cellule d'anomalie se mélangent sur la même ligne reconstruite. Comme
   chez AnalysImmo, la lecture par lignes ne suffit pas.
 - 45 volets élec du registre restent à lire.
+
+## ⚠️ Correction du 21/08 — le motif de code était incomplet
+
+La règle ci-dessus ne connaissait que la famille `C.<n> - <n><lettre>`. Le
+corpus porte une **seconde famille**, liée aux mesures de monoxyde :
+
+```
+D.3 - S1        ← un code de point de contrôle, en zone E
+S1 : la teneur en CO est trop importante, l'appareil ne fonctionne pas dans…
+D.3 Appareils raccordés   S1) Taux de CO > 20 ppm
+                          S2) Taux de CO > 20 ppm
+                          S3) Taux de CO > 20 ppm
+```
+
+Mesuré : **un seul volet sur 26 porte un code S** (S1, S2 et S3 apparaissent en
+tout 6 fois), et ce volet porte *aussi* un code C. **Aucun verdict ne change
+donc sur ce corpus** — mais la règle ne tenait que par chance.
+
+**Un rapport dont l'unique anomalie serait un dépassement de CO ne porterait
+qu'un code S, et l'ancienne règle l'aurait classé « aucune anomalie » alors
+qu'il porte un DGI.** Le motif à retenir couvre les deux familles :
+`<LETTRE>.<n> - <n><suffixe>` **ou** `<LETTRE>.<n> - S<n>`.
+
+---
+
+# GAZ — Rubrique D · les appareils, leur localisation et le CO
+
+**Bornes** — présentes dans les 26 volets sur 26 :
+ouverture `D. - Identification des appareils`, fermeture `E. - Anomalies
+identifiées`.
+
+## Trois états, jamais deux
+
+| État | Forme | Volets |
+|---|---|---|
+| Aucun appareil | `Néant - - - -` | 1 |
+| Appareils identifiés | lignes de tableau | 25 |
+
+Mesuré : **33 appareils sur 26 volets**, de 0 à 2 par volet.
+
+Le volet sans appareil porte pourtant **deux anomalies** en rubrique E : elles
+visent l'organe de coupure, pas un appareil. *Anomalie sans appareil n'est pas
+une contradiction* — le moteur de contradictions ne doit pas la traiter comme
+telle.
+
+## ⚠️ L'ordre des lignes ne dit PAS le rattachement
+
+La mise en page éclate chaque ligne du tableau, et les observations
+s'intercalent **avant** l'appareil qu'elles décrivent. Relevé tel quel :
+
+```
+Mesure CO : Non réalisée          ← l'observation vient d'abord
+Chaudière SAUNIER DUVAL           ← l'appareil ensuite
+Modèle: THEMIS 23 E   Raccordé   23 kW   Rez de chaussée - Garage
+```
+
+**8 volets sur 26 portent plusieurs appareils ET au moins une mesure de CO.**
+Dans ces huit cas, rattacher la mesure à l'appareil par l'ordre des lignes est
+un pari. L'interdit du §15 de l'ordre de mission — *ne jamais rattacher une
+mesure au mauvais appareil* — impose donc de **rattacher par la position
+géométrique** (colonnes X/Y de `lignesPositionnees`), jamais par le flux de
+texte.
+
+## La mesure de CO a trois états, et le rapport les distingue
+
+| Forme | Sens | Occurrences |
+|---|---|---|
+| `Mesure CO : 0 ppm`, `Mesure CO : >30 ppm` | mesure faite | 10 |
+| `Mesure CO : Non réalisée` | test non réalisé | 12 |
+| *aucune ligne CO* | information absente | 4 volets |
+
+C'est exactement les trois états que le §29 interdit de fusionner :
+`CONTRÔLÉ + ABSENCE D'ANOMALIE` ≠ `NON CONTRÔLÉ` ≠ `INFORMATION ABSENTE`.
+
+⚠️ **`>30 ppm` est un seuil, pas une valeur.** Le format se conserve mot pour
+mot : ni arrondi, ni converti, ni transformé en nombre.
+
+## Le DGI peut être écrit en rubrique D, pas seulement en E
+
+Relevé dans la colonne d'observations d'un appareil :
+
+```
+Résultat anomalie : DGI (S1) Appareil mis en Danger Grave et Imédiat,
+le test de débit n'a donc pas pu être réalisé.
+```
+
+Deux conséquences. D'abord, **lire le DGI dans la seule rubrique E ne suffit
+pas** : D et E doivent être croisés. Ensuite, la ligne dit à la fois l'anomalie
+*et* le test qu'elle a empêché — un DGI peut rendre un autre contrôle
+impossible, et les deux informations doivent survivre.
+
+## Ce que la rubrique D porte encore, et qu'on garde
+
+- **Localisation double** : en clair (`RDC - Cuisine`, `Rez de chaussée -
+  Cellier`) **et** par renvoi au croquis annexe (`Localisation sur croquis :
+  001`). Les deux se conservent : le second permet de pointer sur le plan.
+- **Renvoi photo** : `Photo : PhGaz002` — traçabilité vers l'annexe
+  photographique.
+- **Motif d'impossibilité, au niveau de l'appareil** : *« Partiellement
+  contrôlé car : Appareils d'utilisation présents ne pouvant être mis en marche
+  pour les tests de débit et la mesure de CO »*. Il ne figure pas qu'en
+  rubrique F : un appareil peut être partiellement contrôlé sans que la pièce
+  soit inaccessible.
+- **Entretien appareil / Entretien conduit** : `Oui`, `Non`, `Sans objet` —
+  trois états là encore, et `Sans objet` n'est pas `Non`.
+- **Fonctionnement** : `Incorrect` relevé sur l'appareil en DGI.
+- **Un « appareil » peut ne pas en être un** : `Robinet en attente` figure dans
+  la liste des installations intérieures. La liste est ouverte (§7) : on le
+  conserve tel quel.
+
+---
+
+# GAZ — Rubriques F et G · le non-contrôlé et les constatations
+
+**Bornes** — présentes dans les 26 volets sur 26 :
+
+| Rubrique | Ouverture | Fermeture |
+|---|---|---|
+| F | `F. – Identification des bâtiments et parties du bâtiment…` | `G. - Constatations diverses` |
+| G | `G. - Constatations diverses` | la conclusion (`H. - Conclusion` **ou** `Conclusion :` sans lettre) |
+
+⚠️ Le tiret de `F.` est un **demi-cadratin** (`–`), celui de `G.` un trait
+d'union (`-`). Un motif qui code le tiret en dur rate F dans 26 volets sur 26 —
+c'est arrivé pendant cette mesure.
+
+## ⚠️ La rubrique F contient DEUX questions, et une seule réponse visible
+
+Son titre en pose deux :
+
+> *« Identification des bâtiments et parties du bâtiment (pièces et volumes)
+> **n'ayant pu être contrôlés** et motifs, **et** identification des **points de
+> contrôles n'ayant pas pu être réalisés** »*
+
+Le corps répond dans deux blocs distincts :
+
+1. **Les pièces et volumes** — soit `Néant`, soit une liste avec motif entre
+   parenthèses : *« 1er étage - Combles (Inaccessible en raison de
+   l'encombrement) »*, *« combles dépendance (Absence de trappe de visite) »*.
+   Mesuré : `Néant` dans 18 volets, une liste dans 8.
+2. **Les points de contrôle non réalisés** — un second tableau, introduit par
+   `Liste des points de contrôles n'ayant pas pu être réalisés :`, à colonnes
+   *Point de contrôle · Points désignés · Appareil · Type · Observations*.
+
+**Le piège, mesuré sur 1 volet sur 26 :** le premier bloc écrit `Néant` et le
+second liste malgré tout six points non réalisés sur une chaudière — dont les
+trois seuils de monoxyde `S1) S2) S3) Taux de CO > 20 ppm`, plus le débordement
+de flamme à l'allumage et deux dépassements de débit.
+
+Lire `Néant` en F et conclure « tout a été contrôlé » est donc faux. **Il faut
+lire les deux blocs**, et le second n'existe que quand il a quelque chose à
+dire : son absence n'est pas une réponse.
+
+C'est aussi là que se trouve la matrice de tests réclamée par le § 27 de
+l'ordre de mission : elle n'est pas à construire, elle est **déjà dans le
+rapport**, sous ce titre.
+
+## Rubrique G · constatations diverses
+
+Présente 26/26. Elle porte, en petits caractères et sans mise en avant, des
+éléments que rien d'autre du dossier ne dit :
+
+- attestation de vacuité des conduits de fumées non présentée ;
+- justificatif d'entretien de la chaudière non présenté ;
+- conduit de raccordement non visitable ;
+- assemblage par raccord mécanique au moyen d'un ruban d'étanchéité ;
+- puis deux sous-blocs constants : *Documents remis par le donneur d'ordre* et
+  *Observations complémentaires*, chacun pouvant porter `Néant`.
+
+L'entretien annuel et le ramonage sont des obligations de l'occupant : leur
+absence pèse en cas de sinistre. Le § 31 de l'ordre de mission a raison de
+refuser que cette rubrique soit traitée comme une annexe.
+
+## Ce que F impose au moteur de contradictions
+
+Le § 33 demande un blocage quand *« un appareil non contrôlé sort sans
+anomalie »*. La forme exacte à croiser est celle-ci : un appareil nommé dans le
+second tableau de F (points non réalisés) **ne peut pas** ressortir en
+« contrôlé, aucune anomalie ». Et le motif d'impossibilité peut être écrit à
+deux endroits — en rubrique D sur la ligne de l'appareil, ou dans ce tableau de
+F. Les deux se lisent.
+
+---
+
+# GAZ — BC2E, et ce que le second éditeur démolit
+
+*Mesuré le 21/08/2026 sur le fonds Dropbox (18 622 PDF) : **6 volets gaz BC2E
+distincts**, lus en entier. Norme NF P 45-500 du 12 janvier 2013 (LICIEL cite
+l'édition de juillet 2022).*
+
+Le référentiel prévenait qu'un repère mesuré chez un seul éditeur est
+l'habitude d'un logiciel. Six rapports ont suffi à le vérifier : **trois des
+repères tirés des 26 volets LICIEL ne survivent pas.**
+
+## Ce qui tombe
+
+### 1. « La conclusion ne se lit pas » — faux chez BC2E
+
+Chez BC2E, la conclusion est écrite **en clair, sur une ligne, en tête du
+volet**, juste après le bloc mission :
+
+```
+CONCLUSIONS
+L'installation comporte une ou des anomalie(s) : A1
+```
+
+Mesuré : présente et lisible dans **6 volets sur 6**. L'impossibilité de lire la
+conclusion est donc une habitude LICIEL, pas une propriété du diagnostic gaz.
+
+### 2. Les lettres de rubrique ne désignent pas les mêmes rubriques
+
+| Lettre | LICIEL | BC2E |
+|---|---|---|
+| A | Désignation des bâtiments | Propriétaire **et** Mission (deux blocs « A. ») |
+| B | Propriétaire | Titulaire du contrat de fourniture |
+| C | Opérateur | Opérateur |
+| D | Appareils | Appareils |
+| E | Anomalies | Anomalies |
+| F | Non contrôlés **+ points non réalisés** | Bâtiments non contrôlés seuls |
+| G | Constatations diverses | Constatations diverses **+ les 5 phrases** |
+| H | Conclusion *(ou actions DGI)* | Actions en cas de DGI |
+| I | Actions DGI | Actions en cas de 32c |
+| J | Actions 32c | Observations diverses |
+| K | — | **Points de contrôle non vérifiés** |
+
+**Borner par la lettre est faux dès qu'on change d'éditeur.** Seul l'intitulé
+délimite.
+
+### 3. Le motif de code de point de contrôle ne marche pas
+
+BC2E écrit le code **nu** : `8a1`, `8b`, `10`, `6a`, `6b1`, `6b2`.
+LICIEL écrit le même code **préfixé du chapitre** : `C.7 - 8a1`.
+
+C'est la même norme et le même point de contrôle : `8a1` est « au moins un
+robinet de commande d'appareil est absent » chez les deux. **Le préfixe `C.<n>`
+est une habitude LICIEL.** Un motif qui l'exige rate 100 % des anomalies BC2E.
+
+## Ce qui tient — et devient une règle du métier
+
+### Les cinq phrases imprimées existent chez les deux
+
+BC2E imprime lui aussi les cinq réponses possibles, mot pour mot, dans **6
+volets sur 6** — mais **en rubrique G**, à la suite des constatations diverses,
+et non dans une rubrique de conclusion. Le formulaire à cocher est donc dans le
+modèle réglementaire, pas dans le logiciel ; seul son emplacement change.
+
+**Conséquence : la phrase « L'installation ne comporte aucune anomalie » est
+présente dans 32 volets sur 32, tous éditeurs confondus.** Elle ne constate
+jamais rien, nulle part.
+
+### La matrice des tests non réalisés existe chez les deux
+
+- LICIEL : second bloc de la rubrique F, `Liste des points de contrôles n'ayant
+  pas pu être réalisés`.
+- BC2E : rubrique K, `POINT(S) DE CONTRÔLE(S) NON VÉRIFIÉ(S)`, colonnes
+  *Appareil / Installation · Point de contrôle · Motif*. Présente 6/6.
+
+Le § 27 de l'ordre de mission est donc satisfait par la source chez les deux
+éditeurs. Relevé chez BC2E : *« Absence de gaz : impossibilité de réaliser
+l'étanchéité de l'installation gaz »*, et *« Appareil en service mais absence
+d'une personne compétente désignée par le donneur d'ordre pour arrêter et
+mettre en marche un appareil »*.
+
+## Ce que BC2E fait mieux, et qu'il faut exploiter
+
+- **Le rattachement anomalie → appareil est explicite** : le tableau E porte une
+  colonne `APPAREIL` (`Appareil Etanche | 8a1 | A1 | au moins un robinet…`).
+  Chez LICIEL il fallait le déduire de la géométrie des colonnes.
+- **Un verdict par appareil**, en rubrique D : *« L'appareil ne comporte aucune
+  anomalie. »* / *« L'appareil comporte une ou des anomalie(s) : A1 »*.
+- **La cohérence interne se vérifie** : sur un volet où l'installation n'est pas
+  alimentée, les quatre points non vérifiés portent tous le motif « Absence de
+  gaz ». Le rapport se tient tout seul — et c'est exactement le § 5 de l'ordre
+  de mission, écrit par le diagnostiqueur.
+
+## ⚠️ Un faux positif du repérage, à corriger
+
+Chercher le titre du volet page par page attrape aussi des **attestations
+d'assurance** : leur liste de prestations contient « état de l'installation
+intérieure de gaz ». Un fichier de 2 pages nommé `assrance…` est ainsi remonté
+comme volet gaz. C'est le même faux ami que pour l'électricité — l'attestation
+de certification et la liste de prestations citent tous les diagnostics sans en
+contenir aucun.
+
+**Le repérage doit exiger, en plus du titre, une rubrique du volet** (par
+exemple `ANOMALIES IDENTIFIÉES` ou `IDENTIFICATION DES APPAREILS`).
+
+## Les codes de points de contrôle — trois formes, pas une
+
+Lecture intégrale des volets BC2E 1 et 2, croisée avec le tableau F du volet
+LICIEL 15. La norme NF P 45-500 numérote ses points de **trois façons**, et
+elles cohabitent dans un même rapport :
+
+| Forme | Exemples relevés | Où |
+|---|---|---|
+| Numérique | `6a` `6b1` `6b2` `8a1` `8b` `10` `14` `19.1` `29c3` | les deux éditeurs |
+| **Lettre seule** | `J` `K` `L` | BC2E (tableau E) et LICIEL (tableau F) |
+| S + chiffre | `S1` `S2` `S3` — les seuils de CO | les deux |
+
+Relevé mot pour mot chez BC2E :
+
+```
+Chaudière VMC Gaz   K   A1   le débit de gaz d'au moins un appareil raccordé est
+                             trop important : l'appareil ne fonctionne pas dans des
+                             conditions de sécurité satisfaisantes…
+```
+
+**Un motif qui exige un chiffre rate les points en lettre seule.** Et LICIEL les
+préfixe comme les autres (`C.7 - 8a1`), BC2E jamais.
+
+## ⚠️ Chez BC2E, `K` est à la fois un code et une rubrique
+
+Le même document porte :
+
+- `K` comme **point de contrôle**, dans la colonne du tableau E ;
+- `K. POINT(S) DE CONTRÔLE(S) NON VÉRIFIÉ(S) :` comme **rubrique**.
+
+Chercher « K » sans borner confond les deux. La rubrique se reconnaît au point
+et au libellé qui suit ; le code est seul dans sa colonne.
+
+## Rubrique J · les observations sont rattachées à l'appareil
+
+BC2E écrit l'observation **deux fois**, et nomme l'appareil dans les deux :
+
+```
+D. …  Observation : Perte de pression dans le reseau eau
+J. OBSERVATIONS DIVERSES :
+Chaudière VMC Gaz : Perte de pression dans le reseau eau
+```
+
+Le rattachement n'est donc pas à deviner chez BC2E — il est écrit. C'est
+l'inverse de LICIEL, où il faut le tirer de la géométrie des colonnes.
+
+## Les rubriques de BC2E ont toutes deux états
+
+`K. POINT(S) DE CONTRÔLE(S) NON VÉRIFIÉ(S)` porte quatre lignes dans un volet,
+`néant` dans un autre. Idem pour `J`, et pour le bloc *Bâtiments ou parties du
+bâtiment n'ayant pu être visités*. **`néant` est une réponse ; l'absence de la
+rubrique n'en est pas une** — et les deux ne s'écrivent pas pareil.
+
+## Une recommandation peut vivre hors de toute anomalie
+
+Relevé sous le tableau D, sans code ni niveau :
+
+> *« Faire contrôler la vacuité du conduit de fumée par une entreprise
+> qualifiée de fumisterie. »*
+
+Ce n'est ni une anomalie, ni une constatation diverse, ni une observation
+d'appareil : c'est une recommandation libre, posée entre deux rubriques. Le
+§ 44 — le test de la petite ligne — existe précisément pour celle-là.
+
+## ⚠️ Deux versions d'un même volet ne portent pas les mêmes informations
+
+Le corpus BC2E contient deux paires de rapports portant le même numéro de
+mission à un chiffre près (`…017` / `…0171`, `…020` / `…0201`). Ce sont des
+rééditions du même diagnostic. Comparées ligne à ligne, elles diffèrent — et
+pas seulement sur la mise en page :
+
+| | Première version | Réédition |
+|---|---|---|
+| Champ réglementaire | cite en plus le **décret n° 2016-1104** (logements en location) | ne le cite plus |
+| Titulaire du contrat | *« Informations non communiquées »* | nom, adresse, qualité renseignés |
+| Cadastre, nombre de pièces | vides | `AM 329/1`, `6` |
+| Validité de l'assurance | 31/12/2020 | 31/12/2021 |
+| Constatations diverses | porte des `NC (Non Concerné)` | ne les porte plus |
+| **Points de contrôle non vérifiés** | — | **une ligne de plus** (`Installation 6b2`) |
+
+**La réédition n'est pas une copie propre : elle ajoute et elle retire.** Sur
+l'un des deux dossiers, elle ajoute un point de contrôle non vérifié que la
+première version ne mentionnait pas.
+
+Deux conséquences directes :
+
+1. **Le comptage de complétude du § 34 doit se faire par document**, jamais sur
+   un dossier qui contient deux versions : les nombres d'anomalies, de points
+   non vérifiés et de constatations peuvent différer légitimement.
+2. **Choisir silencieusement une version est une faute.** Si un dossier en
+   contient deux, on le signale et on dit laquelle est lue — la plus récente
+   n'étant pas toujours la plus complète.
+
+⚠️ Cela jette un doute sur une décision prise plus tôt : dans le corpus LICIEL,
+les fichiers `…_en_attente.pdf` ont été écartés comme doublons, sur leur seul
+nom. Ils portaient 2 à 3 lignes d'écart avec leur homologue — **un écart du même
+ordre que celui mesuré ici**. Ils doivent être relus et comparés, pas écartés.

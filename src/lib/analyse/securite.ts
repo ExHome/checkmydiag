@@ -19,6 +19,7 @@ import {
 } from './tableau-anomalies';
 import { rubrique as rubriqueDe } from './rubriques';
 import { dateFrancaise, OU_REFAIRE, reformesElectricite } from './reformes';
+import { lireLeGaz } from '../lecteurs/gaz';
 
 /** Thèmes de la norme XC 16-600, dans l'ordre où ils apparaissent au rapport. */
 const THEMES_ELEC: { motif: RegExp; nom: string }[] = [
@@ -634,6 +635,50 @@ export function analyserGaz(lignes: string[], plage: [number, number]): Diagnost
   if (a1) faits.push({ libelle: 'Type A1', valeur: 'présent', precision: 'à corriger sans urgence' });
   if (a2) faits.push({ libelle: 'Type A2', valeur: 'présent', precision: 'à corriger rapidement' });
   if (dgi) faits.push({ libelle: 'DGI', valeur: 'oui', precision: 'mise hors service immédiate' });
+
+  /*
+   * LE LECTEUR DE L'ÉDITEUR — on nomme le format avant de se fier à ce qu'on lit.
+   *
+   * *Contrainte du 21/08/2026 : on ne parse pas de la même façon d'un éditeur à
+   * l'autre.* Les lecteurs mesurés (26 volets LICIEL, 6 BC2E) apportent ici ce
+   * que la lecture générique ci-dessus ne sait pas faire : nommer le format, et
+   * sortir la matrice des points de contrôle NON VÉRIFIÉS — qui vit au second
+   * bloc de la rubrique F chez LICIEL, sous la rubrique K chez BC2E.
+   *
+   * Quand aucune signature ne reconnaît le document, on le DIT. On ne fait pas
+   * passer une lecture générique pour une lecture certaine : présenter un test
+   * non réalisé comme satisfaisant est la faute la plus grave du gaz.
+   */
+  const parEditeur = lireLeGaz(lignes);
+  if (parEditeur.etat === 'lu') {
+    faits.push({
+      libelle: 'Format du rapport',
+      valeur: parEditeur.editeur,
+      precision: 'reconnu à sa mise en page — chaque éditeur a son lecteur'
+    });
+    const nonVerifies = parEditeur.valeur.pointsNonVerifies;
+    if (nonVerifies.length > 0) {
+      faits.push({
+        libelle: 'Points de contrôle non réalisés',
+        valeur: String(nonVerifies.length),
+        precision: 'le rapport les liste : non contrôlé ne veut pas dire sans anomalie'
+      });
+    }
+    /* Chez BC2E la conclusion est écrite en clair ; chez LICIEL, jamais. */
+    if (parEditeur.valeur.conclusion.lisible) {
+      faits.push({
+        libelle: 'Conclusion du rapport',
+        valeur: parEditeur.valeur.conclusion.texte,
+        precision: 'recopiée du rapport, mot pour mot'
+      });
+    }
+  } else {
+    faits.push({
+      libelle: 'Format du rapport',
+      valeur: 'non reconnu',
+      precision: `lecture générique — formats connus : ${parEditeur.essayes.join(', ')}`
+    });
+  }
 
   return {
     type: 'gaz',

@@ -1,0 +1,176 @@
+/**
+ * Ce que ces tests protègent : la contrainte du 21/08/2026, « un lecteur par
+ * éditeur, choisi sur signature ». Deux d'entre eux ne mesurent pas une
+ * extraction mais l'architecture elle-même — qu'aucune signature ne reconnaisse
+ * deux formats, et qu'aucun lecteur ne réponde hors du sien.
+ *
+ * Les extraits reproduisent la FORME des volets lus le 21/08/2026 (26 LICIEL,
+ * 6 BC2E) : intitulés, en-têtes de colonnes, libellés de la norme. Aucune
+ * donnée d'un rapport réel n'y figure.
+ */
+import { describe, expect, it } from 'vitest';
+import { signaturesQuiRepondent } from '../socle';
+import { LECTEURS_GAZ, lireLeGaz } from './index';
+import { LECTEUR_GAZ_BC2E } from './bc2e';
+import { LECTEUR_GAZ_LICIEL } from './liciel';
+
+const LICIEL = [
+  'Etat de l’installation intérieure de Gaz n° 00/XXX/0000',
+  'A. - Désignation du ou des bâtiments',
+  'Installation alimentée en gaz : ...... OUI',
+  'D. - Identification des appareils',
+  'Observations :',
+  'Chaudière MARQUE Modèle: MODELE Etanche 24 kW Rez de chaussée - Cellier',
+  'Mesure CO : 0 ppm',
+  '(1) Cuisinière, table de cuisson, chauffe - eaux, chaudière, radiateur, ….',
+  'E. - Anomalies identifiées',
+  '(selon la norme) (A1 , A2 ,',
+  'DGI (6) , 32c (7) )',
+  'Tuyauteries fixes - Espace annulaire non obturé C.10 - 14 A2',
+  '(4) A1 : L’installation présente une anomalie à prendre en compte lors d’une intervention ultérieure',
+  '(5) A2 : L’installation présente une anomalie dont le caractère de gravité ne justifie pas que l’on interrompe aussitôt la',
+  'fourniture du gaz, mais est suffisamment importante pour que la réparation soit réalisée dans les meilleurs délais.',
+  'F. – Identification des bâtiments et parties du bâtiment (pièces et volumes) n’ayant pu être',
+  'contrôlés et motifs, et identification des points de contrôles n’ayant pas pu être réalisés:',
+  '1er étage - Combles (Inaccessible en raison de l’encombrement)',
+  'Nota : Nous attirons votre attention sur le fait que la responsabilité du donneur d’ordre reste pleinement engagée',
+  'G. - Constatations diverses',
+  'Commentaires :',
+  'Justificatif d’entretien de moins d’un an de la chaudière non présenté',
+  'H. - Conclusion',
+  'Conclusion :',
+  'L’installation ne comporte aucune anomalie.',
+  'L’installation comporte des anomalies de type A1 qui devront être réparées ultérieurement.',
+  'L’installation comporte des anomalies de type A2 qui devront être réparées dans les meilleurs délais.',
+  'L’installation comporte des anomalies de type DGI qui devront être réparées avant remise en service.',
+  'L’installation comporte une anomalie 32c qui devra faire l’objet d’un traitement particulier par le syndic'
+];
+
+const BC2E = [
+  'État des Installations Intérieures de Gaz',
+  'Référence normative : d’après la norme NF P 45-500 du 12 janvier 2013',
+  'A. PROPRIETAIRE A. MISSION',
+  'Distributeur Gaz : GrDF Nature du gaz : Gaz naturel Installation',
+  'OUI',
+  'alimentée :',
+  'CONCLUSIONS',
+  'L’installation comporte une ou des anomalie(s) : A1',
+  'Il est rappelé que :',
+  'D. IDENTIFICATION DES APPAREILS :',
+  'GENRE (1), OBSERVATION : anomalie, débit calorifique, taux de CO',
+  'Chaudière VMC Gaz, MARQUE, MODELE Raccordé nc Cuisine  L’appareil comporte une ou des anomalie(s) : A1',
+  'E. ANOMALIES IDENTIFIÉES :',
+  'POINT DE A1, A2, DGI,',
+  'Chaudière VMC Gaz 8a1 A1 au moins un robinet de commande d appareil est absent.',
+  'A1: l’installation présente une anomalie à prendre en compte lors d’une intervention ultérieure sur l’installation.',
+  'F. IDENTIFICATION DES BÂTIMENTS ET PARTIES DU BÂTIMENT (PIECES ET VOLUMES) N’AYANT PU ÊTRE',
+  'Bâtiments ou parties du bâtiment n’ayant pu être visités :',
+  'Néant',
+  'G. CONSTATATIONS DIVERSES :',
+  'Justificatif d’entretien de moins d’un an de la chaudière non présenté',
+  'L’installation ne comporte aucune anomalie',
+  'L’installation comporte des anomalies de type A1 qui devront être réparées ultérieurement',
+  'H. ACTIONS DE L’OPÉRATEUR DE DIAGNOSTIC EN CAS DE DGI :',
+  'J. OBSERVATIONS DIVERSES :',
+  'K. POINT(S) DE CONTRÔLE(S) NON VÉRIFIÉ(S) :',
+  'APPAREIL / INSTALLATION POINT DE CONTRÔLE MOTIF',
+  'Installation 6a Absence de gaz : impossibilité de réaliser l étanchéité de l installation gaz',
+  'Etabli le 00/00/0000'
+];
+
+describe('l’architecture : un lecteur par éditeur', () => {
+  it('aucune signature ne reconnaît deux formats', () => {
+    expect(signaturesQuiRepondent(LECTEURS_GAZ, LICIEL)).toEqual(['LICIEL']);
+    expect(signaturesQuiRepondent(LECTEURS_GAZ, BC2E)).toEqual(['BC2E']);
+  });
+
+  it('un lecteur ne reconnaît pas le format de l’autre', () => {
+    expect(LECTEUR_GAZ_LICIEL.reconnait(BC2E)).toBeNull();
+    expect(LECTEUR_GAZ_BC2E.reconnait(LICIEL)).toBeNull();
+  });
+
+  it('un format inconnu se déclare, il ne se rafistole pas', () => {
+    const autre = ['ÉTAT DE L’INSTALLATION GAZ', 'Rubriques inconnues de nos deux lecteurs'];
+    const lu = lireLeGaz(autre);
+    expect(lu.etat).toBe('format inconnu');
+    if (lu.etat === 'format inconnu') expect(lu.essayes).toEqual(['LICIEL', 'BC2E']);
+  });
+
+  it('l’aiguillage nomme l’éditeur et cite sa preuve', () => {
+    const lu = lireLeGaz(BC2E);
+    expect(lu.etat).toBe('lu');
+    if (lu.etat === 'lu') {
+      expect(lu.editeur).toBe('BC2E');
+      expect(lu.preuve).toMatch(/ANOMALIES IDENTIFI|POINT\(S\) DE CONTR/i);
+    }
+  });
+});
+
+describe('LICIEL — ce que 26 volets ont imposé', () => {
+  const lu = LECTEUR_GAZ_LICIEL.lire(LICIEL);
+
+  it('ne prétend pas lire la conclusion, et dit pourquoi', () => {
+    expect(lu.conclusion.lisible).toBe(false);
+    if (!lu.conclusion.lisible) expect(lu.conclusion.pourquoi).toMatch(/case cochée/i);
+  });
+
+  it('ne prend pas la légende de colonne pour une anomalie', () => {
+    expect(lu.anomalies.map((a) => a.source)).not.toContain('DGI (6) , 32c (7) )');
+  });
+
+  it('ne prend pas les notes de bas de tableau, ni leurs lignes de continuation', () => {
+    const libelles = lu.anomalies.map((a) => a.libelle).join(' ');
+    expect(libelles).not.toMatch(/L’installation présente une anomalie à prendre en compte/);
+    expect(libelles).not.toMatch(/fourniture du gaz, mais est suffisamment importante/);
+  });
+
+  it('retient l’anomalie, avec son code préfixé et son niveau', () => {
+    expect(lu.anomalies).toHaveLength(1);
+    expect(lu.anomalies[0]?.code).toBe('C.10 - 14');
+    expect(lu.anomalies[0]?.niveau).toBe('A2');
+  });
+
+  it('ne rattache pas l’anomalie à un appareil : ce format ne le permet pas', () => {
+    expect(lu.anomalies[0]?.appareil).toBeNull();
+  });
+
+  it('lit l’alimentation, la zone non contrôlée et son motif', () => {
+    expect(lu.alimentee).toBe('OUI');
+    expect(lu.zonesNonControlees[0]?.zone).toMatch(/Combles/);
+    expect(lu.zonesNonControlees[0]?.motif).toMatch(/encombrement/i);
+  });
+
+  it('recopie la mesure de CO telle quelle', () => {
+    expect(lu.appareils[0]?.co).toEqual({ etat: 'mesurée', valeur: '0 ppm' });
+  });
+});
+
+describe('BC2E — ce que 6 volets ont démenti', () => {
+  const lu = LECTEUR_GAZ_BC2E.lire(BC2E);
+
+  it('lit la conclusion, qui est écrite en clair', () => {
+    expect(lu.conclusion.lisible).toBe(true);
+    if (lu.conclusion.lisible) expect(lu.conclusion.texte).toMatch(/une ou des anomalie\(s\) : A1/);
+  });
+
+  it('lit le code nu, que le motif de LICIEL ne trouverait pas', () => {
+    expect(lu.anomalies).toHaveLength(1);
+    expect(lu.anomalies[0]?.code).toBe('8a1');
+    expect(lu.anomalies[0]?.niveau).toBe('A1');
+  });
+
+  it('rattache l’anomalie à son appareil, parce que le format l’écrit', () => {
+    expect(lu.anomalies[0]?.appareil).toMatch(/Chaudière VMC Gaz/);
+  });
+
+  it('lit la rubrique K, qui n’existe pas chez LICIEL', () => {
+    expect(lu.pointsNonVerifies).toHaveLength(1);
+    expect(lu.pointsNonVerifies[0]?.point).toBe('6a');
+    expect(lu.pointsNonVerifies[0]?.motif).toMatch(/Absence de gaz/i);
+  });
+
+  it('n’avale pas les cinq phrases imprimées de la rubrique G', () => {
+    expect(lu.constatations.join(' ')).not.toMatch(/ne comporte aucune anomalie/);
+    expect(lu.constatations.join(' ')).toMatch(/Justificatif d’entretien/);
+  });
+});
