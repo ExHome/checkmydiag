@@ -75,6 +75,7 @@ C'est le piège central de ce volet, et il est mesuré :
 |---|---|---|
 | Total **Carrez** | `Surface loi Carrez totale : 42,47 m²` | `La superficie privative (Loi Carrez) est : 30.02 m²` |
 | Total **Boutin** | `Surface habitable totale : 60.72 m²` | `La superficie habitable est : 55.91 m²` |
+| **Aucune loi** | — | `Surface : 94.57 m²` (voir § 5.4) |
 
 LICIEL dit **surface** là où BC2E dit **superficie**, pour les deux lois. Un
 motif bâti sur l'un de ces deux mots attribue donc la mauvaise loi chez l'autre
@@ -226,11 +227,42 @@ rapport, quelque chose que le rapport ne dit pas.
 les totaux : `Surface totale au sol (Carrez et Hors Carrez) : 46.04 m²`. Le
 volet Boutin BC2E n'en porte aucune.
 
-### 5.4 Les particularités — rubrique : `Particularités liées à ce mesurage :`
+### 5.4 ⚠️ LE TROISIÈME GABARIT — un mesurage qui ne relève d'AUCUNE loi
+
+*Trouvé le 22/08/2026 en vérifiant ce que le lecteur refusait. L'hypothèse
+était « ce sont des fiches de synthèse » ; elle était fausse.*
+
+```
+Certificat de Surface
+Ce certificat n'est pas une LOI CARREZ, ce document ne peut pas être utilisé comme une LOI CARREZ.
+```
+
+**Le document écrit sa propre mise en garde en deuxième ligne.** Le ranger sous
+Carrez ou sous Boutin, c'est faire exactement ce qu'il interdit par écrit — et
+lui prêter une valeur juridique qu'il refuse.
+
+| | Attestations Carrez / Boutin | **Certificat de Surface** |
+|---|---|---|
+| conclusion | une phrase | **deux lignes** : `Surface : 94.57 m²` puis `Autre surface : 0 m²` |
+| colonnes de surface | trois | **deux** — `Surfaces`, `Autres Surfaces` |
+| colonne `Lot` | vide | **remplie** — `RDC 1 Veranda 13.99 0` |
+| ligne de totaux | trois nombres | **deux** — `Totaux 94.57 m² 0 m²` |
+| pied de volet | `ATTESTATION LOI …` | `CERTIFICAT DE SURFACE : 1 sur 2` |
+
+Un lecteur qui ignore ce gabarit ne rend pas une erreur : il rend **zéro pièce
+et zéro surface**, en silence. Et un lecteur qui le reconnaîtrait sans lire son
+pied le rangerait sous Boutin par défaut — c'est ce que faisait le mien avant.
+
+⚠️ La colonne `Lot` remplie n'est pas un détail : le certificat lu portait
+`Lot : 1` puis `Lot : 2` sur la même maison, avec `Particularités : Partie
+Nuit`. Le chiffre ne couvre qu'une partie du bien, et c'est cette rubrique-là
+qui le dit.
+
+### 5.5 Les particularités — rubrique : `Particularités liées à ce mesurage :`
 
 Ligne suivante : `Néant`, ou le texte. Rubrique propre à BC2E ; LICIEL n'en a pas.
 
-### 5.5 Les réserves de mission — après le tableau, en clair
+### 5.6 Les réserves de mission — après le tableau, en clair
 
 `L'acte de propriété n'a pas été fourni.` · `Le règlement de copropriété et
 l'état descriptif de division n'ayant pas été fournis…` · `Aucun document

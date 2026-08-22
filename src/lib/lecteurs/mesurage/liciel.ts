@@ -275,7 +275,7 @@ function lireLICIEL(lignes: readonly string[]): LectureMesurage {
    * tableau. C'est le même chiffre, pas deux mesures : on garde la première
    * occurrence de chaque intitulé et on n'additionne rien.
    */
-  let surfaceLegale: Surface | null = null;
+  let surfaceAnnoncee: Surface | null = null;
   const autresTotaux: Surface[] = [];
   const retenus = new Map<Role, { surface: Surface; rang: number }>();
   for (const ligne of nettes) {
@@ -290,7 +290,7 @@ function lireLICIEL(lignes: readonly string[]): LectureMesurage {
     }
   }
   for (const [role, { surface }] of retenus) {
-    if (role === loi) surfaceLegale = surface;
+    if (role === loi) surfaceAnnoncee = surface;
     else if (role === 'au sol') autresTotaux.push(surface);
   }
 
@@ -307,7 +307,10 @@ function lireLICIEL(lignes: readonly string[]): LectureMesurage {
   return {
     loi,
     intitule: ligneIntitule ?? '',
-    surfaceLegale,
+    /* Aucun volet LICIEL n'imprime de mise en garde sur lui-même : les cinq
+       gabarits lus servent tous une loi, et la nomment. */
+    miseEnGarde: null,
+    surfaceAnnoncee,
     autresTotaux,
     pieces: tableau.pieces,
     colonneRetenue: tableau.colonne,

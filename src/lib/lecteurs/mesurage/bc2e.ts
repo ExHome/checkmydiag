@@ -37,7 +37,57 @@ import {
  * qu'elle « ne peut pas être utilisée seule » — la lire comme une attestation
  * ferait passer un résumé pour la pièce due au notaire.
  */
-const PIED_DU_VOLET = /^ATTESTATION\s+LOI\s+(CARREZ|BOUTIN)\s*:\s*\d+\s+sur\s+\d+/i;
+const PIED_DU_VOLET =
+  /^(ATTESTATION\s+LOI\s+(?:CARREZ|BOUTIN)|CERTIFICAT\s+DE\s+SURFACE)\s*:\s*\d+\s+sur\s+\d+/i;
+
+/**
+ * LE TROISIÈME GABARIT DE BC2E, et il ne relève d'aucune loi.
+ *
+ * `CERTIFICAT DE SURFACE` n'est ni une Carrez ni une Boutin, et le document
+ * l'écrit lui-même en deuxième ligne. Sa maquette diffère sur trois points, et
+ * les trois cassent le lecteur des deux autres gabarits :
+ *
+ *   1. la conclusion tient sur DEUX lignes — `Surface : 94.57 m²` puis
+ *      `Autre surface : 0 m²` — au lieu d'une seule phrase ;
+ *   2. le tableau n'a que DEUX colonnes de surface, `Surfaces` et
+ *      `Autres Surfaces`, contre trois ailleurs ;
+ *   3. la colonne `Lot` est REMPLIE — `RDC 1 Veranda 13.99 0` —, alors qu'elle
+ *      est vide dans les deux autres gabarits.
+ *
+ * Un lecteur unique aurait rendu zéro pièce et zéro surface, en silence.
+ */
+const GABARIT_SANS_LOI = /^CERTIFICAT\s+DE\s+SURFACE\s*:\s*\d+\s+sur\s+\d+/i;
+
+/** Le titre de la 1ʳᵉ page du certificat sans loi. */
+const TITRE_SANS_LOI = /^Certificat de Surface\s*$/i;
+
+/**
+ * La mise en garde du document sur lui-même — recopiée, jamais reformulée.
+ *
+ * ⚠️ C'est la ligne la plus importante du gabarit : elle dit que le chiffre ne
+ * vaut pas pour une vente en copropriété. Elle doit remonter jusqu'à l'écran.
+ */
+const MISE_EN_GARDE = /n['’]est pas une LOI CARREZ/i;
+
+/** La conclusion du certificat sans loi : deux lignes, deux nombres. */
+const SANS_LOI_SURFACE = /^Surface\s*:\s*([\d\s.,]+?)\s*m/i;
+const SANS_LOI_AUTRE = /^Autre surface\s*:\s*([\d\s.,]+?)\s*m/i;
+
+/**
+ * Une ligne du certificat sans loi : étage, lot, local, puis DEUX nombres.
+ *
+ * `RDC 1 WC 1 1.58 0` — le nom de la pièce porte lui-même un chiffre, et c'est
+ * le retour arrière du moteur qui tranche : `WC` seul laisserait « 1 1.58 0 »,
+ * soit trois nombres pour deux colonnes.
+ */
+const LIGNE_SANS_LOI =
+  /^(\S+)\s+(\S+)\s+(.+?)\s+(\d+(?:[.,]\d+)?)\s+(\d+(?:[.,]\d+)?)\s*$/;
+
+/** La ligne de totaux du certificat sans loi : deux nombres, pas trois. */
+const TOTAUX_SANS_LOI = /^Totaux\s+([\d\s.,]+?)\s*m²\s+([\d\s.,]+?)\s*m²\s*$/i;
+
+/** Les intitulés de ses deux colonnes, tels qu'imprimés. */
+const COLONNES_SANS_LOI = ['Surfaces', 'Autres Surfaces'] as const;
 
 /** Le titre de la 1ʳᵉ page, où la loi est nommée entre guillemets. */
 const TITRE_CARREZ = /^Attestation de Superficie\s*[«"“]?\s*Loi Carrez/i;
@@ -106,23 +156,45 @@ const COLONNES = ['Superficie HSP < 1.80M', 'Autres superficies exclues'] as con
  * constantes plutôt qu'un recollage qui rendrait un libellé tronqué une fois
  * sur deux.
  */
-const COLONNE_RETENUE = {
+const COLONNE_RETENUE: Record<'carrez' | 'boutin' | 'aucune', string> = {
   carrez: 'Superficie privative « Loi Carrez »',
-  boutin: 'Superficie habitable'
-} as const;
+  boutin: 'Superficie habitable',
+  aucune: 'Surfaces'
+};
 
 /** Ce que la mission n'a pas pu contrôler, dans les mots du rapport. */
 const RESERVE =
   /(n['’]a pas été fourni|n['’]ayant pas été fournis?|Aucun document probant n['’]ayant été fourni)/i;
 
-function lireTableau(lignes: readonly string[]): PieceMesuree[] {
+function lireTableau(lignes: readonly string[], sansLoi: boolean): PieceMesuree[] {
   const debut = lignes.findIndex((l) => /^DÉTAIL DES SUPERFICIES\s*:/i.test(l.trim()));
   if (debut < 0) return [];
 
   const pieces: PieceMesuree[] = [];
   for (const brute of lignes.slice(debut + 1)) {
     const ligne = brute.trim();
-    if (TOTAUX.test(ligne)) break;
+    if (sansLoi ? TOTAUX_SANS_LOI.test(ligne) : TOTAUX.test(ligne)) break;
+
+    if (sansLoi) {
+      const m = LIGNE_SANS_LOI.exec(ligne);
+      if (!m) continue;
+      const retenue = nombre(m[4]);
+      const autre = nombre(m[5]);
+      if (retenue === null || autre === null) continue;
+      pieces.push({
+        /* Le lot est REMPLI dans ce gabarit : on le garde avec l'étage plutôt
+           que de le jeter — un logement scindé en lots, c'est ce qui explique
+           qu'un certificat ne couvre qu'une partie de la maison. */
+        nom: m[3]!.trim(),
+        niveau: `${m[1]!.trim()} · lot ${m[2]!.trim()}`,
+        retenue,
+        autres: [{ libelle: COLONNES_SANS_LOI[1], valeur: autre }],
+        commentaire: null,
+        source: ligne
+      });
+      continue;
+    }
+
     const m = LIGNE.exec(ligne);
     if (!m) continue;
     const retenue = nombre(m[3]);
@@ -137,7 +209,7 @@ function lireTableau(lignes: readonly string[]): PieceMesuree[] {
         { libelle: COLONNES[0], valeur: hsp },
         { libelle: COLONNES[1], valeur: exclues }
       ],
-      /* Le tableau BC2E n'a pas de colonne de commentaires : aucun des 8 volets
+      /* Le tableau BC2E n'a pas de colonne de commentaires : aucun des volets
          lus n'en porte. On rend `null`, jamais une chaîne vide. */
       commentaire: null,
       source: ligne
@@ -173,40 +245,64 @@ function lireBC2E(lignes: readonly string[]): LectureMesurage {
    * seul endroit où BC2E la nomme sans ambiguïté sur chaque page du volet.
    */
   const pied = nettes.find((l) => PIED_DU_VOLET.test(l));
-  const loi: Loi = pied && /CARREZ/i.test(pied) ? 'carrez' : 'boutin';
+  const sansLoi = !!pied && GABARIT_SANS_LOI.test(pied);
+  /* ⚠️ Trois gabarits, pas deux. Sans le test du certificat sans loi, celui-ci
+     tombait dans le `else` et ressortait « Boutin » — une surface habitable
+     annoncée sur un document qui déclare n'être encadré par aucun texte. */
+  const loi: Loi = sansLoi ? 'aucune' : pied && /CARREZ/i.test(pied) ? 'carrez' : 'boutin';
 
-  const intitule =
-    nettes.find((l) => (loi === 'carrez' ? TITRE_CARREZ : TITRE_BOUTIN).test(l)) ?? '';
+  const titre = sansLoi ? TITRE_SANS_LOI : loi === 'carrez' ? TITRE_CARREZ : TITRE_BOUTIN;
+  const intitule = nettes.find((l) => titre.test(l)) ?? '';
+  const miseEnGarde = nettes.find((l) => MISE_EN_GARDE.test(l)) ?? null;
 
-  let surfaceLegale: Surface | null = null;
-  for (const ligne of nettes) {
-    for (const { motif, libelle, loi: quelle } of CONCLUSIONS) {
-      if (surfaceLegale || quelle !== loi) continue;
-      const valeur = nombre(motif.exec(ligne)?.[1]);
-      if (valeur !== null) surfaceLegale = { valeur, libelle, source: ligne };
-    }
-  }
-
+  let surfaceAnnoncee: Surface | null = null;
   const autresTotaux: Surface[] = [];
-  const ligneTotaux = nettes.find((l) => TOTAUX.test(l));
-  if (ligneTotaux) {
-    const m = TOTAUX.exec(ligneTotaux)!;
-    /* Le premier des trois nombres redit la surface légale déjà lue en tête :
-       on ne le reprend pas, ce n'est pas une seconde mesure. */
-    for (const [i, libelle] of COLONNES.entries()) {
-      const valeur = nombre(m[i + 2]);
-      if (valeur !== null) autresTotaux.push({ valeur, libelle, source: ligneTotaux });
+
+  if (sansLoi) {
+    /*
+     * La conclusion tient sur deux lignes. `Autre surface` n'est pas nommée
+     * autrement : on garde son intitulé, et on ne lui prête aucun sens — le
+     * document ne dit pas ce qu'elle recouvre.
+     */
+    for (const ligne of nettes) {
+      if (!surfaceAnnoncee) {
+        const v = nombre(SANS_LOI_SURFACE.exec(ligne)?.[1]);
+        if (v !== null) surfaceAnnoncee = { valeur: v, libelle: 'Surface', source: ligne };
+      }
+      if (!autresTotaux.length) {
+        const v = nombre(SANS_LOI_AUTRE.exec(ligne)?.[1]);
+        if (v !== null) autresTotaux.push({ valeur: v, libelle: 'Autre surface', source: ligne });
+      }
     }
-  }
-  const ligneAuSol = nettes.find((l) => AU_SOL.test(l));
-  if (ligneAuSol) {
-    const valeur = nombre(AU_SOL.exec(ligneAuSol)![1]);
-    if (valeur !== null)
-      autresTotaux.push({
-        valeur,
-        libelle: 'Surface totale au sol (Carrez et Hors Carrez)',
-        source: ligneAuSol
-      });
+  } else {
+    for (const ligne of nettes) {
+      for (const { motif, libelle, loi: quelle } of CONCLUSIONS) {
+        if (surfaceAnnoncee || quelle !== loi) continue;
+        const valeur = nombre(motif.exec(ligne)?.[1]);
+        if (valeur !== null) surfaceAnnoncee = { valeur, libelle, source: ligne };
+      }
+    }
+
+    const ligneTotaux = nettes.find((l) => TOTAUX.test(l));
+    if (ligneTotaux) {
+      const m = TOTAUX.exec(ligneTotaux)!;
+      /* Le premier des trois nombres redit la surface déjà lue en tête : on ne
+         le reprend pas, ce n'est pas une seconde mesure. */
+      for (const [i, libelle] of COLONNES.entries()) {
+        const valeur = nombre(m[i + 2]);
+        if (valeur !== null) autresTotaux.push({ valeur, libelle, source: ligneTotaux });
+      }
+    }
+    const ligneAuSol = nettes.find((l) => AU_SOL.test(l));
+    if (ligneAuSol) {
+      const valeur = nombre(AU_SOL.exec(ligneAuSol)![1]);
+      if (valeur !== null)
+        autresTotaux.push({
+          valeur,
+          libelle: 'Surface totale au sol (Carrez et Hors Carrez)',
+          source: ligneAuSol
+        });
+    }
   }
 
   const dateVisite =
@@ -218,10 +314,11 @@ function lireBC2E(lignes: readonly string[]): LectureMesurage {
   return {
     loi,
     intitule,
-    surfaceLegale,
+    miseEnGarde,
+    surfaceAnnoncee,
     autresTotaux,
-    pieces: lireTableau(nettes),
-    colonneRetenue: COLONNE_RETENUE[loi],
+    pieces: lireTableau(nettes, sansLoi),
+    colonneRetenue: sansLoi ? COLONNES_SANS_LOI[0] : COLONNE_RETENUE[loi],
     /* Rubrique propre à LICIEL : BC2E n'en imprime aucune. Le dire « non
        renseignée » est exact ; le dire « néant » ferait d'un silence une
        bonne nouvelle. */

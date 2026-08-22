@@ -12,7 +12,7 @@
  */
 
 /**
- * La loi que sert le document — et ce ne sont pas les mêmes règles.
+ * La loi que sert le document — et il y en a une TROISIÈME, qui n'en est pas une.
  *
  * La **Carrez** (art. 46 de la loi 65-557, décret 67-223 art. 4-1) donne la
  * superficie privative d'un lot de copropriété : elle est due à la **vente**.
@@ -23,8 +23,19 @@
  * vérandas de plus d'1,80 m entrent dans la Carrez et pas dans la Boutin.
  * Annoncer la mauvaise, c'est présenter la pièce d'une vente à quelqu'un qui
  * tient celle d'une location.
+ *
+ * ⚠️ **`aucune` n'est pas un défaut de lecture.** Il existe un mesurage qui ne
+ * relève d'aucun texte, et qui le dit lui-même. Mesuré le 22/08/2026, le
+ * `Certificat de Surface` de BC2E porte en deuxième ligne :
+ *
+ *   « Ce certificat n'est pas une LOI CARREZ, ce document ne peut pas être
+ *     utilisé comme une LOI CARREZ. »
+ *
+ * Le ranger sous Carrez ou sous Boutin serait faire exactement ce que le
+ * document interdit par écrit — et lui prêter une valeur juridique qu'il
+ * refuse. Il vaut ce qu'il dit : un métré, rien de plus.
  */
-export type Loi = 'carrez' | 'boutin';
+export type Loi = 'carrez' | 'boutin' | 'aucune';
 
 /**
  * Une surface : le nombre ET les mots qui l'introduisent.
@@ -102,12 +113,24 @@ export interface LectureMesurage {
    */
   intitule: string;
   /**
+   * La mise en garde que le document imprime SUR LUI-MÊME, mot pour mot.
+   *
+   * C'est la ligne la plus importante d'un `Certificat de Surface` : elle dit
+   * que le chiffre qui suit ne vaut pas pour une vente en copropriété. La
+   * masquer reviendrait à laisser un acquéreur s'appuyer sur un document que
+   * son propre auteur écarte.
+   *
+   * `null` quand le document n'en imprime pas — ce qui est le cas des quatre
+   * autres gabarits lus.
+   */
+  miseEnGarde: string | null;
+  /**
    * La surface due par la loi — celle qui s'écrira dans l'acte ou dans le bail.
    *
    * `null` quand elle n'a pas été lue. Ce n'est jamais 0 : une surface légale
    * absente est un défaut de lecture, pas un logement sans surface.
    */
-  surfaceLegale: Surface | null;
+  surfaceAnnoncee: Surface | null;
   /**
    * Les autres totaux du document, avec leurs intitulés — « Surface au sol
    * totale », « Superficie HSP < 1.80M », « Surface totale au sol (Carrez et
@@ -151,10 +174,10 @@ export interface LectureMesurage {
  * à comparer, et inventer un écart de 0 laisserait croire qu'on a vérifié.
  */
 export function ecartNonCompte(lecture: LectureMesurage): number | null {
-  if (!lecture.surfaceLegale || !lecture.autresTotaux.length) return null;
+  if (!lecture.surfaceAnnoncee || !lecture.autresTotaux.length) return null;
   const plusGrand = Math.max(...lecture.autresTotaux.map((s) => s.valeur));
-  if (plusGrand <= lecture.surfaceLegale.valeur) return null;
-  return Math.round((plusGrand - lecture.surfaceLegale.valeur) * 100) / 100;
+  if (plusGrand <= lecture.surfaceAnnoncee.valeur) return null;
+  return Math.round((plusGrand - lecture.surfaceAnnoncee.valeur) * 100) / 100;
 }
 
 /** Les pièces mesurées et écartées : celles dont la surface retenue vaut 0. */

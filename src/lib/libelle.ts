@@ -60,7 +60,7 @@ export function libelleCourt(d: Diagnostic): string {
      * On lit donc la surface légale là où elle est, quel que soit son intitulé.
      */
     case 'carrez': {
-      const legale = d.mesurage?.surfaceLegale;
+      const legale = d.mesurage?.surfaceAnnoncee;
       if (legale) {
         return `${legale.valeur.toLocaleString('fr-FR', { maximumFractionDigits: 2 })} m²`;
       }

@@ -140,6 +140,85 @@ ATTESTATION LOI BOUTIN : 2 sur 2
   .trim()
   .split('\n');
 
+/**
+ * Le TROISIÈME gabarit BC2E — un mesurage qui ne relève d'aucune loi, et qui
+ * l'écrit sur lui-même en deuxième ligne. Deux colonnes de surface, la colonne
+ * « Lot » remplie, la conclusion sur deux lignes.
+ */
+const BC2E_SANS_LOI = `
+Certificat de Surface
+Ce certificat n'est pas une LOI CARREZ, ce document ne peut pas être utilisé comme une LOI CARREZ.
+MISSION N° : 000000000
+Type : Maison Nbre pièces : Lot : 1
+Porte : Date de visite : 22/01/2021 Escalier :
+CONCLUSIONS
+Surface : 94.57 m²
+Autre surface : 0 m²
+CERTIFICAT DE SURFACE : 1 sur 2
+DDT : 1 sur 2
+IDENTIFICATION DE L'OPÉRATEUR DE REPÉRAGE :
+DÉTAIL DES SUPERFICIES :
+SURFACES en m²
+Étage Lot Local Surfaces Autres Surfaces
+RDC 1 Veranda 13.99 0
+RDC 1 WC 1 1.58 0
+RDC 1 Chambre 01 23.76 0
+Totaux 94.57 m² 0 m²
+Particularités liées à ce mesurage :
+Partie Nuit
+Etablie le
+22/01/2021
+CERTIFICAT DE SURFACE : 2 sur 2
+`
+  .trim()
+  .split('\n');
+
+describe('le certificat qui n’est encadré par aucune loi', () => {
+  const lu = LECTEURS_MESURAGE[1]!.lire(BC2E_SANS_LOI);
+
+  it('ne se range ni sous Carrez ni sous Boutin', () => {
+    /* Sans le test du gabarit, il tombait dans le « sinon » et ressortait
+       Boutin : une surface habitable annoncée sur un document qui déclare
+       n'être encadré par aucun texte. */
+    expect(lu.loi).toBe('aucune');
+    expect(lu.intitule).toBe('Certificat de Surface');
+  });
+
+  it('remonte la mise en garde du document, mot pour mot', () => {
+    expect(lu.miseEnGarde).toBe(
+      "Ce certificat n'est pas une LOI CARREZ, ce document ne peut pas être utilisé comme une LOI CARREZ."
+    );
+  });
+
+  it('lit sa conclusion sur deux lignes', () => {
+    expect(lu.surfaceAnnoncee).toMatchObject({ valeur: 94.57, libelle: 'Surface' });
+    expect(lu.autresTotaux).toEqual([
+      { valeur: 0, libelle: 'Autre surface', source: 'Autre surface : 0 m²' }
+    ]);
+  });
+
+  it('lit ses deux colonnes, et garde le lot qui est rempli ici', () => {
+    expect(lu.pieces).toHaveLength(3);
+    expect(lu.pieces[1]).toMatchObject({
+      nom: 'WC 1',
+      niveau: 'RDC · lot 1',
+      retenue: 1.58,
+      autres: [{ libelle: 'Autres Surfaces', valeur: 0 }]
+    });
+    /* La somme retombe sur le total annoncé : la preuve que rien n'est perdu. */
+    const somme = lu.pieces.reduce((n, p) => n + p.retenue, 0);
+    expect(somme).toBeCloseTo(39.33, 2);
+  });
+
+  it('garde la particularité, qui n’est pas « Néant »', () => {
+    expect(lu.particularites).toEqual({ etat: 'renseignée', valeur: ['Partie Nuit'] });
+  });
+
+  it('une seule signature répond, comme pour les autres gabarits', () => {
+    expect(signaturesQuiRepondent(LECTEURS_MESURAGE, BC2E_SANS_LOI)).toEqual(['BC2E']);
+  });
+});
+
 describe('l’aiguilleur nomme l’éditeur avant de lire', () => {
   it('reconnaît LICIEL à son titre courant', () => {
     const lu = lireLeMesurage(LICIEL_CARREZ);
@@ -194,11 +273,11 @@ describe('LICIEL', () => {
   });
 
   it('retient la surface due par la loi, et cite son intitulé', () => {
-    expect(carrez.surfaceLegale).toMatchObject({
+    expect(carrez.surfaceAnnoncee).toMatchObject({
       valeur: 122.73,
       libelle: 'Surface loi Carrez totale'
     });
-    expect(boutin.surfaceLegale).toMatchObject({
+    expect(boutin.surfaceAnnoncee).toMatchObject({
       valeur: 60.72,
       libelle: 'Surface habitable totale'
     });
@@ -265,7 +344,7 @@ describe('LICIEL', () => {
     });
     /* La vérification qui ne vient pas de nous : la somme retombe sur le total. */
     const somme = lu.pieces.reduce((n, p) => n + p.retenue, 0);
-    expect(somme).toBeCloseTo(lu.surfaceLegale!.valeur, 2);
+    expect(somme).toBeCloseTo(lu.surfaceAnnoncee!.valeur, 2);
   });
 
   it('ne prend pas le numéro d’une chambre pour sa surface', () => {
@@ -356,11 +435,11 @@ describe('BC2E', () => {
   const boutin = LECTEURS_MESURAGE[1]!.lire(BC2E_BOUTIN);
 
   it('lit la conclusion écrite en tête du volet', () => {
-    expect(carrez.surfaceLegale).toMatchObject({
+    expect(carrez.surfaceAnnoncee).toMatchObject({
       valeur: 30.02,
       libelle: 'La superficie privative (Loi Carrez) est'
     });
-    expect(boutin.surfaceLegale).toMatchObject({
+    expect(boutin.surfaceAnnoncee).toMatchObject({
       valeur: 55.91,
       libelle: 'La superficie habitable est'
     });
@@ -474,7 +553,7 @@ describe('la troisième surface : la référence, lue sur le DPE', () => {
     const vues = confronter(
       {
         loi: 'carrez',
-        surfaceLegale: {
+        surfaceAnnoncee: {
           valeur: 30.92,
           libelle: 'Surface loi Carrez totale',
           source: 'Surface loi Carrez totale : 30.92 m²'
@@ -508,7 +587,7 @@ describe('la troisième surface : la référence, lue sur le DPE', () => {
     const vues = confronter(
       {
         loi: 'boutin',
-        surfaceLegale: {
+        surfaceAnnoncee: {
           valeur: 55.91,
           libelle: 'La superficie habitable est',
           source: 'La superficie habitable est : 55.91 m²'

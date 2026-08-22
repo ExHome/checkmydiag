@@ -39,22 +39,26 @@ const fr = (n: number): string => n.toLocaleString('fr-FR', { maximumFractionDig
  * perdre le lien avec la pièce que le lecteur a sous les yeux.
  */
 function titreDe(lecture: LectureMesurage): string {
-  return lecture.loi === 'carrez'
-    ? 'Superficie privative (loi Carrez)'
-    : 'Surface habitable (loi Boutin)';
+  if (lecture.loi === 'carrez') return 'Superficie privative (loi Carrez)';
+  if (lecture.loi === 'boutin') return 'Surface habitable (loi Boutin)';
+  /* Ni l'une ni l'autre, et le document le dit : le titre ne doit nommer
+     aucune loi, sans quoi l'écran contredit la pièce qu'il affiche. */
+  return 'Surface mesurée (sans portée juridique)';
 }
 
 function faitsDe(lecture: LectureMesurage): Fait[] {
   const faits: Fait[] = [];
 
-  if (lecture.surfaceLegale) {
+  if (lecture.surfaceAnnoncee) {
     faits.push({
-      libelle: lecture.surfaceLegale.libelle,
-      valeur: `${fr(lecture.surfaceLegale.valeur)} m²`,
+      libelle: lecture.surfaceAnnoncee.libelle,
+      valeur: `${fr(lecture.surfaceAnnoncee.valeur)} m²`,
       precision:
         lecture.loi === 'carrez'
           ? 'le chiffre qui s’écrit dans l’acte de vente'
-          : 'le chiffre qui s’écrit dans le bail'
+          : lecture.loi === 'boutin'
+            ? 'le chiffre qui s’écrit dans le bail'
+            : 'un métré, sans portée juridique'
     });
   }
 
@@ -134,6 +138,17 @@ const A_FAIRE_CARREZ = [
   'Le mesurage n’a pas de durée de validité tant que le logement n’est pas modifié.'
 ];
 
+const EXPLICATION_SANS_LOI = [
+  'Ce document est un métré : il donne la surface des pièces, mesurée par un professionnel.',
+  'Il ne relève d’aucun texte, et son auteur l’écrit en tête : il ne peut pas servir de mesurage loi Carrez.',
+  'Pour vendre un lot en copropriété, c’est la superficie privative — loi Carrez — qui est exigée. Pour louer, c’est la surface habitable — loi Boutin. Ni l’une ni l’autre n’est ce document.'
+];
+
+const A_FAIRE_SANS_LOI = [
+  'Ne pas reporter ce chiffre dans une promesse ou un acte de vente : le document écarte lui-même cet usage.',
+  'Pour vendre, demander un mesurage loi Carrez ; pour louer, une attestation de surface habitable.'
+];
+
 const A_FAIRE_BOUTIN = [
   'Une surface habitable inférieure de plus d’un vingtième à celle du bail permet au locataire de demander une diminution du loyer.',
   'Si vous vendez, ce document ne suffit pas : demandez un mesurage loi Carrez.'
@@ -153,13 +168,14 @@ export function lireLeMesurageEnDiagnostic(contexte: Contexte): Diagnostic {
 
   const lecture = lu.valeur;
   const carrez = lecture.loi === 'carrez';
-  const nom = lecture.surfaceLegale?.libelle ?? titreDe(lecture);
+  const sansLoi = lecture.loi === 'aucune';
+  const nom = lecture.surfaceAnnoncee?.libelle ?? titreDe(lecture);
 
   return {
     type: 'carrez',
     titre: titreDe(lecture),
-    verdict: lecture.surfaceLegale
-      ? `${nom} : ${fr(lecture.surfaceLegale.valeur)} m².`
+    verdict: lecture.surfaceAnnoncee
+      ? `${nom} : ${fr(lecture.surfaceAnnoncee.valeur)} m².`
       : 'Un mesurage figure au dossier, mais la surface n’a pas pu être lue.',
     /*
      * `bon` se déduit ici d'une valeur PRÉSENTE — le total imprimé par le
@@ -167,16 +183,19 @@ export function lireLeMesurageEnDiagnostic(contexte: Contexte): Diagnostic {
      * des conclusions favorables dangereuses relevées dans
      * `docs/LECTEURS-PAR-EDITEUR-ETAT.md` : sans surface lue, on rend `neutre`.
      */
-    gravite: lecture.surfaceLegale ? 'bon' : 'neutre',
+    gravite: lecture.surfaceAnnoncee ? 'bon' : 'neutre',
     faits: faitsDe(lecture),
     analogie:
       '1,80 m, c’est la hauteur sous laquelle vous ne tenez pas debout. La loi considère que cette surface-là ne compte pas. Voilà pourquoi votre logement paraît plus petit sur le papier que dans la réalité.',
     explication: [
-      ...(carrez ? EXPLICATION_CARREZ : EXPLICATION_BOUTIN),
+      /* La mise en garde du document passe AVANT tout le reste : c'est la
+         première chose à savoir de la pièce qu'on tient. */
+      ...(lecture.miseEnGarde ? [`Le document écrit lui-même : « ${lecture.miseEnGarde} »`] : []),
+      ...(sansLoi ? EXPLICATION_SANS_LOI : carrez ? EXPLICATION_CARREZ : EXPLICATION_BOUTIN),
       ...reservesEnClair(lecture)
     ],
     aFaire: [
-      ...(carrez ? A_FAIRE_CARREZ : A_FAIRE_BOUTIN),
+      ...(sansLoi ? A_FAIRE_SANS_LOI : carrez ? A_FAIRE_CARREZ : A_FAIRE_BOUTIN),
       ...(lecture.piecesNonVisitees.etat === 'renseignée'
         ? [
             'Une ou plusieurs pièces n’ont pas pu être visitées : leur surface n’est comptée nulle part. Demandez si elles doivent l’être.'
@@ -193,7 +212,7 @@ export function lireLeMesurageEnDiagnostic(contexte: Contexte): Diagnostic {
             privative: p.retenue,
             auSol: p.autres[0]?.valeur ?? p.retenue
           })),
-          totalPrivative: lecture.surfaceLegale?.valeur ?? null,
+          totalPrivative: lecture.surfaceAnnoncee?.valeur ?? null,
           totalAuSol: lecture.autresTotaux[0]?.valeur ?? null
         }
       : null,

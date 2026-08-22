@@ -93,24 +93,36 @@ const A_QUOI: Record<string, string> = {
  * que c'est la seule qui s'écrira dans l'acte ou dans le bail.
  */
 export function confronter(
-  mesurage: Pick<LectureMesurage, 'loi' | 'surfaceLegale' | 'autresTotaux'>,
+  mesurage: Pick<LectureMesurage, 'loi' | 'surfaceAnnoncee' | 'autresTotaux'>,
   reference: SurfaceDeReference
 ): SurfaceConfrontee[] {
   const sorties: SurfaceConfrontee[] = [];
 
-  if (mesurage.surfaceLegale) {
+  if (mesurage.surfaceAnnoncee) {
+    /*
+     * ⚠️ Trois lois, dont une qui n'en est pas une. Un `Certificat de Surface`
+     * écrit qu'il ne vaut pas comme loi Carrez : le ranger sous « ce qui
+     * s'écrit dans l'acte » ou « dans le bail » lui prêterait la portée qu'il
+     * refuse lui-même.
+     */
+    const ou =
+      mesurage.loi === 'carrez'
+        ? 'le certificat de superficie'
+        : mesurage.loi === 'boutin'
+          ? 'l’attestation de surface habitable'
+          : 'le certificat de surface';
+    const aQuoi =
+      mesurage.loi === 'carrez'
+        ? 'c’est le chiffre qui s’écrit dans l’acte de vente'
+        : mesurage.loi === 'boutin'
+          ? 'c’est le chiffre qui s’écrit dans le bail'
+          : 'un métré : ce chiffre n’a pas de portée juridique';
     sorties.push({
-      quoi: mesurage.surfaceLegale.libelle,
-      valeur: mesurage.surfaceLegale.valeur,
-      ou:
-        mesurage.loi === 'carrez'
-          ? 'le certificat de superficie'
-          : 'l’attestation de surface habitable',
-      aQuoiCaSert:
-        mesurage.loi === 'carrez'
-          ? 'c’est le chiffre qui s’écrit dans l’acte de vente'
-          : 'c’est le chiffre qui s’écrit dans le bail',
-      source: mesurage.surfaceLegale.source
+      quoi: mesurage.surfaceAnnoncee.libelle,
+      valeur: mesurage.surfaceAnnoncee.valeur,
+      ou,
+      aQuoiCaSert: aQuoi,
+      source: mesurage.surfaceAnnoncee.source
     });
   }
 

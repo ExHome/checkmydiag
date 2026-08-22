@@ -28,7 +28,11 @@ export interface Fiche {
  * « Aucun indice d'infestation » ne dit rien à personne : ce que le lecteur veut
  * savoir, c'est s'il doit faire quelque chose, et ce que la phrase ne dit pas.
  */
-export function enPratique(type: TypeDiag, gravite: Gravite, loi?: 'carrez' | 'boutin'): string | null {
+export function enPratique(
+  type: TypeDiag,
+  gravite: Gravite,
+  loi?: 'carrez' | 'boutin' | 'aucune'
+): string | null {
   const bon = gravite === 'bon';
 
   switch (type) {
@@ -65,9 +69,13 @@ export function enPratique(type: TypeDiag, gravite: Gravite, loi?: 'carrez' | 'b
      * vente » à quelqu'un qui tient la pièce d'un bail.
      */
     case 'carrez':
-      return loi === 'boutin'
-        ? 'Ce chiffre part dans le bail. Il engage le bailleur.'
-        : 'Ce chiffre part dans l’acte de vente. Il engage le vendeur.';
+      if (loi === 'boutin') return 'Ce chiffre part dans le bail. Il engage le bailleur.';
+      /* Le document écrit lui-même qu'il n'est pas une loi Carrez : lui prêter
+         l'engagement d'un acte de vente serait exactement ce qu'il interdit. */
+      if (loi === 'aucune') {
+        return 'Ce chiffre n’engage personne : le document dit lui-même qu’il ne vaut pas pour une vente.';
+      }
+      return 'Ce chiffre part dans l’acte de vente. Il engage le vendeur.';
     default:
       return null;
   }
@@ -200,7 +208,36 @@ export const FICHE_BOUTIN: Fiche = {
  * Sans lecture (éditeur inconnu, lecteur de repli), on garde la fiche Carrez :
  * c'est le cas majoritaire, et elle était déjà celle qui s'affichait.
  */
-export function ficheDe(d: { type: TypeDiag; mesurage?: { loi: 'carrez' | 'boutin' } }): Fiche {
-  if (d.type === 'carrez' && d.mesurage?.loi === 'boutin') return FICHE_BOUTIN;
-  return FICHES[d.type];
+export function ficheDe(d: {
+  type: TypeDiag;
+  mesurage?: { loi: 'carrez' | 'boutin' | 'aucune' };
+}): Fiche {
+  if (d.type !== 'carrez') return FICHES[d.type];
+  if (d.mesurage?.loi === 'boutin') return FICHE_BOUTIN;
+  if (d.mesurage?.loi === 'aucune') return FICHE_SANS_LOI;
+  return FICHES.carrez;
 }
+
+/**
+ * LA FICHE D'UN MESURAGE QUI NE RELÈVE D'AUCUNE LOI.
+ *
+ * Le `Certificat de Surface` de BC2E écrit sur lui-même : « Ce certificat n'est
+ * pas une LOI CARREZ, ce document ne peut pas être utilisé comme une LOI
+ * CARREZ. » Toutes les lignes des deux autres fiches deviennent alors fausses :
+ * il n'y a ni recours de l'acheteur, ni délai d'un an, ni baisse de loyer, ni
+ * obligation. C'est un métré, et il vaut ce qu'il dit.
+ *
+ * On ne le présente donc pas comme une pièce du dossier de vente — et on ne le
+ * jette pas non plus : il donne une surface mesurée par un professionnel, ce
+ * qui est utile pour s'y retrouver, à condition de savoir ce que ça n'est pas.
+ */
+export const FICHE_SANS_LOI: Fiche = {
+  pourquoi: 'Connaître la surface mesurée, sans que ce chiffre ait de portée juridique.',
+  comment: 'Un métré des pièces, pièce par pièce, avec le total.',
+  risque:
+    'Aucun recours n’y est attaché. S’en servir à la place d’une loi Carrez ou d’une loi Boutin, c’est se priver du recours que celles-ci ouvrent.',
+  quoiFaire:
+    'Pour vendre un lot en copropriété, demander un mesurage loi Carrez. Pour louer, une attestation de surface habitable.',
+  vente:
+    'Ce document ne fait partie d’aucun dossier obligatoire. Il ne remplace ni la superficie privative due à la vente, ni la surface habitable due au bail — son auteur l’écrit noir sur blanc en tête.'
+};

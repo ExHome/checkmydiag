@@ -93,13 +93,13 @@
    * rapport : deux centièmes par ligne, pas davantage.
    */
   const controle = $derived.by(() => {
-    if (!lecture?.surfaceLegale || !lecture.pieces.length) return null;
+    if (!lecture?.surfaceAnnoncee || !lecture.pieces.length) return null;
     const somme = lecture.pieces.reduce((n, p) => n + p.retenue, 0);
-    const ecartSomme = somme - lecture.surfaceLegale.valeur;
+    const ecartSomme = somme - lecture.surfaceAnnoncee.valeur;
     const tolerance = 0.02 * lecture.pieces.length + 0.011;
     return {
       somme,
-      total: lecture.surfaceLegale.valeur,
+      total: lecture.surfaceAnnoncee.valeur,
       juste: Math.abs(ecartSomme) <= tolerance,
       ecartSomme
     };
@@ -192,6 +192,25 @@
         </ul>
       {:else}
         <p class="absent">La surface n’a pas pu être lue dans ce rapport.</p>
+      {/if}
+
+      {#if lecture.miseEnGarde}
+        <!--
+          LA MISE EN GARDE DU DOCUMENT SUR LUI-MÊME, avant tout chiffre.
+
+          « Ce certificat n'est pas une LOI CARREZ » : c'est la première chose
+          à savoir de la pièce qu'on tient, et la masquer laisserait un
+          acquéreur s'appuyer sur un document que son propre auteur écarte.
+          Elle est citée mot pour mot — ni résumée, ni reformulée.
+        -->
+        <div class="encart alerte">
+          <p class="encart-titre">Ce document le dit lui-même</p>
+          <p class="citation">« {lecture.miseEnGarde} »</p>
+          <p>
+            Le chiffre ci-dessus est un métré. Il ne remplace ni la superficie privative due
+            à une vente en copropriété, ni la surface habitable due à un bail.
+          </p>
+        </div>
       {/if}
 
       <p class="phrase">{diagnostic.verdict}</p>
@@ -601,6 +620,10 @@
     margin: 0.35rem 0 0;
     line-height: 1.5;
     font-size: 0.92rem;
+  }
+
+  .citation {
+    font-style: italic;
   }
 
   .puces {
