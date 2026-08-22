@@ -712,6 +712,18 @@ export function analyserGaz(lignes: string[], plage: [number, number]): Diagnost
           'Un détecteur de monoxyde de carbone coûte quelques dizaines d’euros et se pose en cinq minutes.'
         ],
     ...(releves.length ? { releves } : {}),
+    /*
+     * LA LECTURE PAR ÉDITEUR, PORTÉE JUSQU'À L'ÉCRAN.
+     *
+     * Les `faits` ci-dessus n'en retiennent que trois chiffres. La mini-app, elle,
+     * a besoin de l'installation entière — niveaux de la norme, codes de points
+     * de contrôle, points non réalisés, zones non contrôlées, constatations — et
+     * ce champ la lui donne sans repasser par une extraction générique.
+     *
+     * Absent quand aucune signature ne reconnaît le format : l'écran dit alors
+     * qu'il n'a pas su lire, ce qui est la seule réponse honnête.
+     */
+    ...(parEditeur.etat === 'lu' ? { gaz: parEditeur.valeur } : {}),
     schema: null,
     pages: plage,
     ...(dateVisite?.[1] ? { date: dateVisite[1] } : {})

@@ -233,3 +233,62 @@ describe('BC2E — ce que 6 volets ont démenti', () => {
     expect(lu.constatations.join(' ')).toMatch(/Justificatif d’entretien/);
   });
 });
+
+/**
+ * LES DEUX DÉFAUTS TROUVÉS LE 22/08/2026, EN RELISANT UN VOLET RÉEL.
+ *
+ * Ni l'un ni l'autre ne se voyait : le lecteur rendait des anomalies
+ * parfaitement vraisemblables, avec un code qui existe et un libellé lisible.
+ * C'est ce qui les rendait dangereux. Ces tests sont là pour qu'ils ne
+ * reviennent pas — la forme reproduite est celle du volet, sans ses données.
+ */
+describe('BC2E — ce qu’une relecture du 22/08/2026 a corrigé', () => {
+  /* La colonne « LIBELLÉ » est étroite : son texte court sur les lignes voisines. */
+  const DEBORDEMENT = [
+    'État des Installations Intérieures de Gaz',
+    'K. POINT(S) DE CONTRÔLE(S) NON VÉRIFIÉ(S) :',
+    'E. ANOMALIES IDENTIFIÉES :',
+    'APPAREIL LIBELLÉ DES ANOMALIES ET RECOMMANDATIONS',
+    'Chaudière 29d5 A2 le conduit de raccordement n est pas démontable.',
+    'le conduit de raccordement présente un jeu aux assemblages estimé supérieur à 2',
+    'Chaudière 29c1 DGI',
+    'mm de part et d autre du diamètre du conduit.',
+    'Radiateur non raccordé 19.1 A2 le local équipé n est pas pourvu d une amenée d air.',
+    'le local équipé ou prévu pour un appareil d utilisation n est pas pourvu de sortie d',
+    'Radiateur non raccordé 20.1 A1',
+    'air.',
+    'A1: l’installation présente une anomalie à prendre en compte lors d’une intervention ultérieure.',
+    'F. IDENTIFICATION DES BÂTIMENTS ET PARTIES DU BÂTIMENT N’AYANT PU ÊTRE'
+  ];
+  const lu = LECTEUR_GAZ_BC2E.lire(DEBORDEMENT);
+  const parCode = (c: string) => lu.anomalies.find((a) => a.code === c);
+
+  it('le point fait partie du code : 19.1 n’est pas 19, 20.1 n’est pas 20', () => {
+    expect(lu.anomalies.map((a) => a.code)).toEqual(['29d5', '29c1', '19.1', '20.1']);
+    /* 19 et 20 existent aussi dans la norme : la troncature restait crédible. */
+    expect(parCode('19')).toBeUndefined();
+    expect(parCode('20')).toBeUndefined();
+  });
+
+  it('un rang nu récupère son libellé, au-dessus ET en dessous', () => {
+    /* Sans cela, le DGI — le niveau qui fait couper le gaz — arrivait sans motif. */
+    expect(parCode('29c1')?.libelle).toBe(
+      'le conduit de raccordement présente un jeu aux assemblages estimé supérieur à 2 mm de part et d autre du diamètre du conduit.'
+    );
+    expect(parCode('20.1')?.libelle).toBe(
+      'le local équipé ou prévu pour un appareil d utilisation n est pas pourvu de sortie d air.'
+    );
+  });
+
+  it('un rang déjà complet ne vole pas le libellé du suivant', () => {
+    expect(parCode('29d5')?.libelle).toBe('le conduit de raccordement n est pas démontable.');
+    expect(parCode('19.1')?.libelle).toBe('le local équipé n est pas pourvu d une amenée d air.');
+  });
+
+  it('le libellé ne répète plus l’appareil, le code ni le niveau', () => {
+    for (const a of lu.anomalies) {
+      expect(a.libelle).not.toMatch(/^(Chaudière|Radiateur)/);
+      expect(a.libelle).not.toMatch(new RegExp(`\b${a.niveau}\b`));
+    }
+  });
+});

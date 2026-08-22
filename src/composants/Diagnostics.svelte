@@ -21,6 +21,7 @@
   import Amiante from './amiante/Amiante.svelte';
   import MiniAppElectricite from './electricite/MiniAppElectricite.svelte';
   import MiniAppTermites from './termites/MiniAppTermites.svelte';
+  import MiniAppGaz from './gaz/MiniAppGaz.svelte';
   import VisuelPlomb from './visuels/VisuelPlomb.svelte';
   /*
    * LA PREMIÈRE DES NOUVELLES SCÈNES.
@@ -1063,6 +1064,26 @@
                   `entete={false}` : la carte porte déjà le titre et le verdict.
                 -->
                 <MiniAppElectricite diagnostic={d} entete={false} />
+              {:else if d.type === 'gaz' && d.gaz}
+                <!--
+                  LA MINI-APP GAZ — pack d'Aude du 22/08/2026,
+                  `VERRIERE_GAZ_VISUEL_ODM_CLAUDE.zip`.
+
+                  Elle part de `d.gaz`, c'est-à-dire de la lecture faite par le
+                  lecteur de l'ÉDITEUR du rapport — LICIEL ou BC2E, chacun le
+                  sien. Les `faits` de la carte n'en gardent que trois chiffres ;
+                  l'écran, lui, montre l'installation : les niveaux de la norme
+                  avec leur point de contrôle, les points non réalisés, les
+                  locaux non visités, et les contradictions du rapport.
+
+                  La condition porte sur `d.gaz` : quand aucune signature ne
+                  reconnaît le format, on retombe sur la carte générique plutôt
+                  que d'afficher un écran vide, qui se lirait comme une
+                  installation saine.
+
+                  `entete={false}` : la carte porte déjà le titre et le verdict.
+                -->
+                <MiniAppGaz diagnostic={d} entete={false} />
               {:else if d.type === 'amiante'}
                 <!--
                   LA SYNTHÈSE AMIANTE — ordre d'Aude du 22/08/2026,

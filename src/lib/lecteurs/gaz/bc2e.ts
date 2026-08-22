@@ -42,10 +42,16 @@ const RUBRIQUES = {
 };
 
 /**
- * Le code nu de la norme : numérique (`8a1`, `6b1`, `10`), lettre seule
- * (`J`, `K`, `L`) ou seuil de monoxyde (`S1`).
+ * Le code nu de la norme : numérique (`8a1`, `6b1`, `10`), **pointé** (`19.1`,
+ * `20.1`), lettre seule (`J`, `K`, `L`) ou seuil de monoxyde (`S1`).
+ *
+ * ⚠️ Le point fait partie du code. Une version antérieure s'arrêtait sur `\b`,
+ * qui tombe juste AVANT le point : `19.1` ressortait `19`, `20.1` ressortait
+ * `20`. Deux points de contrôle distincts de la norme, écrasés chacun sur un
+ * troisième qui existe aussi — la pire forme d'erreur, puisqu'elle reste
+ * parfaitement vraisemblable et ne se signale nulle part.
  */
-const CODE_NU = /\b(S?\d{1,2}[a-z]?\d?|[A-Z])\b/;
+const CODE_NU = /\b(S?\d{1,2}[a-z]?\d?(?:\.\d)?|[A-Z])\b/;
 
 /** Le lexique en bas du tableau E : il définit les niveaux, il ne constate pas. */
 const LEXIQUE = /^(A1|A2|DGI|32c)\s*[:(]|^Lexique|^\*\s*Point de contr/i;
@@ -163,29 +169,77 @@ function appareils(lignes: readonly string[]): AppareilGaz[] {
 /**
  * Les anomalies de la rubrique E.
  *
- * La ligne porte, dans l'ordre : l'appareil, le code, le niveau, le libellé.
- * Le lexique des abréviations tombe dans la même zone : il cite un niveau en
- * tête de ligne, suivi de deux-points — c'est ce qui le distingue d'un constat.
+ * Un rang porte, dans l'ordre : l'appareil, le code, le niveau, le libellé. Le
+ * lexique des abréviations tombe dans la même zone : il cite un niveau en tête
+ * de ligne, suivi de deux-points — c'est ce qui le distingue d'un constat.
+ *
+ * ## ⚠️ Le libellé déborde de sa ligne — au-dessus ET en dessous
+ *
+ * La colonne « LIBELLÉ DES ANOMALIES » est étroite. Quand son texte n'y tient
+ * pas, la mise en page le fait courir sur les lignes voisines, et le texte
+ * aplati les rend dans un ordre qui n'est pas celui de la lecture :
+ *
+ * ```
+ *   le conduit de raccordement présente un jeu aux assemblages supérieur à 2   ← le début
+ *   Chaudière 29c1 DGI                                                          ← le rang
+ *   mm de part et d autre du diamètre du conduit.                               ← la fin
+ * ```
+ *
+ * Garder la seule ligne du rang perdait ici tout le libellé, et le rapport ne
+ * disait plus pourquoi l'alimentation devait être coupée. La règle appliquée
+ * ci-dessous a été **mesurée sur les 32 rangs d'anomalie de tous les volets
+ * BC2E lus, et les reconstitue tous les 32** :
+ *
+ *   1. le rang porte du texte après son niveau, et ce texte finit par un
+ *      point → il est complet, on ne rattache rien ;
+ *   2. sinon, on suit les lignes de débordement — celle du dessus quand le
+ *      rang est nu, puis celles du dessous — jusqu'à retrouver le point final.
+ *
+ * Deux règles plus simples ont été essayées avant celle-là et écartées sur
+ * mesure : rattacher toujours colle le libellé du rang suivant (78 %), et ne
+ * rattacher que les rangs nus tronque les textes qui courent sur trois lignes
+ * (91 %). On n'écrit pas une règle qu'on n'a pas vue tenir.
  */
 export function anomaliesBc2e(lignes: readonly string[]): AnomalieGaz[] {
-  const zone = entre(lignes, RUBRIQUES.anomalies, RUBRIQUES.nonControles);
+  const zone = entre(lignes, RUBRIQUES.anomalies, RUBRIQUES.nonControles)
+    .map((l) => l.trim())
+    .filter((l) => l && !LEXIQUE.test(l) && !estUnePhraseDuFormulaire(l) && !estUnEnTete(l));
+
+  /* Un rang cite exactement UN niveau. Les autres lignes sont des débordements. */
+  const estUnRang = zone.map((l) => niveauDe(l) !== null);
   const sorties: AnomalieGaz[] = [];
-  for (const brute of zone) {
-    const ligne = brute.trim();
-    if (!ligne || LEXIQUE.test(ligne) || estUnePhraseDuFormulaire(ligne)) continue;
-    if (estUnEnTete(ligne)) continue;
-    const niveau = niveauDe(ligne);
-    if (!niveau) continue;
+
+  for (const [n, ligne] of zone.entries()) {
+    if (!estUnRang[n]) continue;
+    const niveau = niveauDe(ligne)!;
+    const place = ligne.search(new RegExp(`\\b${niveau}\\b`));
+
     /* L'appareil précède le code ; le code précède le niveau. */
-    const avant = ligne.slice(0, ligne.search(new RegExp(`\\b${niveau}\\b`)));
+    const avant = ligne.slice(0, place);
     const code = CODE_NU.exec(avant.replace(/^[^0-9A-Za-z]+/, '').split(/\s{2,}/).pop() ?? avant)?.[1] ?? null;
     const appareil = code ? avant.slice(0, avant.lastIndexOf(code)).trim() || null : avant.trim() || null;
+
+    /* Le texte que le rang porte lui-même, après son niveau. */
+    const surLeRang = ligne.slice(place).replace(new RegExp(`^\\b${niveau}\\b`), '').trim();
+
+    let debut = '';
+    if (!surLeRang && n > 0 && !estUnRang[n - 1]) debut = zone[n - 1] ?? '';
+    let suite = '';
+    if (!surLeRang || !/\.$/.test(surLeRang)) {
+      for (let k = n + 1; k < zone.length && !estUnRang[k]; k++) {
+        suite = `${suite} ${zone[k]}`.trim();
+        if (/\.$/.test(zone[k] ?? '')) break;
+      }
+    }
+
+    const libelle = [debut, surLeRang, suite].filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
     sorties.push({
       code: code ?? '(non lu)',
       niveau,
-      libelle: ligne,
+      /* Sans libellé écrit, on rend le rang tel quel — jamais une phrase de nous. */
+      libelle: libelle || ligne,
       appareil,
-      source: ligne
+      source: [debut, ligne, suite].filter(Boolean).join(' ')
     });
   }
   return sorties;

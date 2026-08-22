@@ -2914,3 +2914,77 @@ formes que le lot d'apprentissage ne contient pas. Huit points séparent les deu
 **On ne corrige pas sur le témoin.** La suite est d'agrandir encore le lot
 d'apprentissage — au-delà des 400 dossiers actuels, témoin toujours exclu —
 jusqu'à ce que ces formes y apparaissent d'elles-mêmes.
+
+---
+
+## GAZ · BC2E — ce que la relecture du 22/08/2026 a corrigé
+
+Deux défauts trouvés en relisant **un** volet en entier, alors que 24 volets
+avaient déjà été lus sans les voir. Aucun des deux ne se signalait : le lecteur
+rendait des anomalies parfaitement vraisemblables.
+
+### 1 · Le point fait partie du code
+
+`19.1` ressortait `19`, `20.1` ressortait `20`. Le motif s'arrêtait sur `\b`,
+qui tombe **avant** le point. Or `19` et `20` existent aussi dans la norme :
+la troncature ne produisait pas une erreur visible, elle produisait **un autre
+point de contrôle**, tout aussi crédible.
+
+Sur l'ensemble du corpus gaz, **41 anomalies** portaient un code pointé.
+
+### 2 · Le libellé déborde de sa ligne — au-dessus ET en dessous
+
+La colonne « LIBELLÉ DES ANOMALIES » est étroite. Quand le texte n'y tient pas,
+la mise en page le fait courir sur les lignes voisines, et le texte aplati les
+rend dans un ordre qui n'est pas celui de la lecture :
+
+```
+le conduit de raccordement présente un jeu aux assemblages supérieur à 2   ← le début
+Chaudière 29c1 DGI                                                          ← le rang
+mm de part et d autre du diamètre du conduit.                               ← la fin
+```
+
+Garder la seule ligne du rang perdait tout le libellé — y compris celui du
+**DGI**, c'est-à-dire le motif pour lequel le gaz est coupé.
+
+**La règle, mesurée sur les 32 rangs d'anomalie de tous les volets BC2E lus, et
+qui les reconstitue tous les 32 :**
+
+1. le rang porte du texte après son niveau, et ce texte finit par un point →
+   il est complet, on ne rattache rien ;
+2. sinon, on suit les lignes de débordement — celle du dessus quand le rang est
+   nu, puis celles du dessous — jusqu'à retrouver le point final.
+
+Deux règles plus simples ont été essayées **et écartées sur mesure** :
+rattacher toujours colle le libellé du rang suivant (78 %), ne rattacher que
+les rangs nus tronque les textes qui courent sur trois lignes (91 %).
+
+### 3 · La rubrique D ne se compte pas — et on ne l'affiche donc pas
+
+Chez BC2E, la rubrique « D. IDENTIFICATION DES APPAREILS » est disposée en
+colonnes que le texte aplati entremêle : le genre de l'appareil, son type, sa
+localisation et la colonne d'observation se retrouvent sur des lignes
+différentes, dans un ordre qui varie.
+
+Deux règles de comptage ont été mesurées, **deux ont été réfutées** :
+
+| Hypothèse | Résultat |
+|---|---|
+| une phrase « L'appareil (ne) comporte… » par appareil | **0 volet sur 24** |
+| le mot de type en tête de ligne | **5 volets sur 24** |
+
+Tant qu'aucune règle ne tient sur le corpus, **le nombre d'appareils ne
+s'affiche pas**. Un nombre faux serait plus grave qu'un nombre absent : il
+ferait croire l'installation entièrement recensée.
+
+### ⚠️ Le piège de sonde qui a failli faire conclure trop vite
+
+La première mesure du type en tête de ligne a rendu **0 sur 24** — un résultat
+qui aurait fait abandonner l'hypothèse. Le motif était
+`/^(Non raccordé|Raccordé|Étanche)\b/` : en JavaScript, **`\b` ne se déclenche
+pas après un caractère accenté**, `é` n'étant pas un caractère de mot. La sonde
+ne mesurait rien. Corrigée, elle a rendu 5 sur 24 — assez pour écarter
+l'hypothèse pour de bon, mais sur une mesure vraie.
+
+*Voir la mémoire « les sondes qui mentent » : regarder le corpus avant de
+croire un compteur.*

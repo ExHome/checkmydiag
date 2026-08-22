@@ -7,6 +7,7 @@
  */
 import type { Nature } from './analyse/nature';
 import type { Generateur } from './atelier/editeur';
+import type { LectureGaz } from './lecteurs/gaz/modele';
 
 export type { Nature };
 
@@ -235,6 +236,22 @@ export interface Diagnostic {
     lue: boolean;
     pieces: string[];
   };
+  /**
+   * LE GAZ, TEL QUE SON LECTEUR D'ÉDITEUR L'A LU.
+   *
+   * Les champs génériques ci-dessus ne savent pas porter ce que l'état de
+   * l'installation intérieure de gaz établit : les quatre niveaux de la norme
+   * NF P 45-500, les points de contrôle non réalisés appareil par appareil, la
+   * mesure de monoxyde et ses trois états. Aplatir tout cela dans `faits`
+   * reviendrait à perdre ce que l'ordre de mission du 21/08/2026 interdit
+   * précisément de perdre.
+   *
+   * ⚠️ `undefined` veut dire « aucun lecteur ne reconnaît ce format » — jamais
+   * « rien à signaler ». Le gaz est le seul diagnostic qui peut faire couper
+   * l'alimentation le jour même : l'écran doit pouvoir dire qu'il n'a pas su
+   * lire, plutôt que d'afficher une installation vide.
+   */
+  gaz?: LectureGaz;
   /** Pages du PDF où se trouve ce diagnostic (1-indexé). */
   pages: [number, number];
   /** Numéros de toutes les pages du diagnostic, pour les faire défiler. */
