@@ -90,6 +90,7 @@ const conseilDe = (issue: SyntheseAmiante['issue'], limites: number): string[] =
 function formatInconnu(essayes: readonly string[]): SyntheseAmiante {
   return {
     issue: 'illisible',
+    composants: [],
     resultat:
       "Ce document n’a pas pu être lu : sa mise en page ne correspond à aucun format connu. Aucune conclusion ne peut en être tirée.",
     gravite: 'attention',
@@ -280,6 +281,7 @@ export function syntheseDeLecture(
 
   return {
     issue: l.issue,
+    composants: l.perimetre.composants,
     resultat: resultatDe(l),
     gravite: l.issue === 'presence' ? 'alerte' : l.issue === 'nonConclu' ? 'attention' : 'bon',
     pointsCles,

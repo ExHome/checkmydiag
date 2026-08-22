@@ -53,7 +53,7 @@ describe('la taille des textes de schéma', () => {
       const fautifs = blocs(source).filter(
         (b) =>
           b.includes('fill:') &&
-          /font-size:\s*var\(--t-(?:petit|micro|base|lead|titre)/.test(b)
+          /font-size:\s*var\(--t-(?:petit|micro|base|lead|titre)\b/.test(b)
       );
       expect(fautifs).toEqual([]);
     }

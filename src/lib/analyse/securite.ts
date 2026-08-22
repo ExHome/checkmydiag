@@ -299,7 +299,7 @@ export function analyserElectricite(lignes: string[], plage: [number, number]): 
       localisations: d.ou ? localisationsDe(`(${d.ou})`) : [],
       pluralite: /^\s*au moins un/i.test(d.libelle)
         ? ('auMoinsUn' as const)
-        : /^\s*l['’]ensemble/i.test(d.libelle)
+        : /^\s*l['’]ensemble\b/i.test(d.libelle)
           ? ('ensemble' as const)
           : ('inconnue' as const),
       mesureCompensatoire: null,

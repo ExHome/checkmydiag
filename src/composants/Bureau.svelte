@@ -816,7 +816,17 @@
     --surface: rgb(255 255 255 / 6%);
     --surface-forte: rgb(255 255 255 / 10%);
     --surface-bord: rgb(255 255 255 / 18%);
-    --trait: #a6c39a;
+    /*
+     * ⚠️ Le trait ne peut pas être sauge — la charte l'a retiré des couleurs de
+     * structure le 20/08, et `charte.test.ts` le tient. Le test ne l'avait pas
+     * vu : dans sa propre expression, la limite de mot placée après « --trait »
+     * avait été écrite en CARACTÈRE BACKSPACE. Elle ne correspondait donc à
+     * rien, et la règle dormait. Réparée le 22/08, elle a trouvé cette ligne.
+     *
+     * Sur ce fond vert, un filet se fait à l'ivoire translucide, comme le
+     * `--trait-fin` juste dessous — c'est l'idiome du reste de la carte.
+     */
+    --trait: rgb(255 255 255 / 34%);
     --trait-fin: rgb(255 255 255 / 22%);
     /*
      * L'action sur fond vert : la terre cuite #a33220 y tombe à 1,71. Le

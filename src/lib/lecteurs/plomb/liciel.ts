@@ -77,7 +77,7 @@ export interface UniteDeDiagnostic {
  * libellé retenu commence au second mot et deux éléments distincts se
  * confondent.
  *
- * /!\ « Sol » ne doit pas se lire dans « Sous-Sol ». La frontiere de mot  se
+ * /!\ « Sol » ne doit pas se lire dans « Sous-Sol ». La frontiere de mot \b se
  * place apres le tiret : le lecteur voyait un sol dans « Sous-Sol - Cave 2 2 »,
  * une ligne du recapitulatif par local coupee avant ses pourcentages — donc
  * invisible au garde-fou du %. Le nombre d'unites qui la termine passait alors
@@ -411,7 +411,7 @@ const OUVRE_LE_TABLEAU =
  * manquantes. Seul le passage a la rubrique suivante ferme le tableau.
  */
 const FERME_LE_TABLEAU =
-  /^\s*6\s*\.\s*1|Classement des unit[ée]s de diagnostic|^\s*6\s*\.?\s*Conclusion|Recommandations au propri[ée]taire/i;
+  /^\s*6\s*\.\s*1\b|Classement des unit[ée]s de diagnostic|^\s*6\s*\.?\s*Conclusion|Recommandations au propri[ée]taire/i;
 
 /**
  * LA SIGNATURE DE CE FORMAT.

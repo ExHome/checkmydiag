@@ -599,7 +599,7 @@ const MARQUE_INDUBITABLE: Partial<Record<TypeDiag, RegExp>> = {
    * jamais reclamer ce diagnostic. Seule la mention legale prouve sa presence.
    */
   erp: /En application des articles L\s*\.?\s*125-5/i,
-  plomb: /Constat de risque d'exposition au plomb|CREP/i,
+  plomb: /Constat de risque d'exposition au plomb|\bCREP\b/i,
   amiante: /rep[ée]rage des mat[ée]riaux et produits contenant de l'amiante/i,
   electricite: /Etat de l['’]Installation Int[ée]rieure d['’]Electricit[ée]/i,
   termites: /[ée]tat relatif [àa] la pr[ée]sence de termites/i

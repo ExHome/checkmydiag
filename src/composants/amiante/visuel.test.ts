@@ -7,7 +7,7 @@
  * écrites. Ce fichier tient les règles.*
  */
 import { describe, expect, it } from 'vitest';
-import { categoriesDe, confianceDe, niveauDeRisque } from './visuel';
+import { categoriesDe, confianceDe, suiteReglementaire } from './visuel';
 import type { SyntheseAmiante } from './synthese';
 
 const vide: SyntheseAmiante = {
@@ -17,6 +17,7 @@ const vide: SyntheseAmiante = {
   pointsCles: [],
   materiaux: { montrer: false, entrees: [] },
   elements: { montrer: false, entrees: [] },
+  composants: [],
   constatations: { montrer: false, entrees: [] },
   nonControle: { montrer: false, entrees: [] },
   completude: [],
@@ -67,30 +68,57 @@ describe('les éléments contrôlés du visuel', () => {
   });
 });
 
-describe('le niveau de risque', () => {
+describe('la suite que le droit attache au constat', () => {
+  it('⚠️ ne gradue rien : il porte la cotation du rapport et ce qu’elle impose', () => {
+    /* L'échelle « très faible / modéré / élevé » a été retirée le 22/08 :
+       aucun texte amiante ne la définit. L'arrêté du 12 décembre 2012, lui,
+       cote — et attache à chaque cote une obligation datée. */
+    const s = suiteReglementaire(POSITIF);
+    expect(s.mot).toBe('Score 3');
+    expect(s.impose).toMatch(/retrait ou de confinement/);
+  });
+
   it('distingue une cotation qui oblige d’une cotation qui surveille', () => {
-    expect(niveauDeRisque(POSITIF)).toBe('ÉLEVÉ');
     const ep: SyntheseAmiante = {
       ...POSITIF,
       materiaux: { montrer: true, entrees: [{ quoi: 'Conduits', etat: 'Résultat EP' }] }
     };
-    expect(niveauDeRisque(ep)).toBe('MODÉRÉ');
+    const s = suiteReglementaire(ep);
+    expect(s.mot).toBe('EP');
+    expect(s.impose).toMatch(/[ÉE]valuation périodique/);
+  });
+
+  it('prend la cotation la plus contraignante quand le volet en porte plusieurs', () => {
+    const melange: SyntheseAmiante = {
+      ...POSITIF,
+      materiaux: {
+        montrer: true,
+        entrees: [
+          { quoi: 'Conduits', etat: 'Résultat EP' },
+          { quoi: 'Flocages', etat: 'Score 3' }
+        ]
+      }
+    };
+    expect(suiteReglementaire(melange).mot).toBe('Score 3');
   });
 
   it('⚠️ ne conclut pas à la place d’un rapport qui ne conclut pas', () => {
-    expect(niveauDeRisque({ ...vide, issue: 'nonConclu' })).toBe('À CONFIRMER');
-    expect(niveauDeRisque({ ...vide, issue: 'illisible' })).toBe('NON ÉVALUÉ');
+    expect(suiteReglementaire({ ...vide, issue: 'nonConclu' }).mot).toBe('Conclusion en attente');
+    expect(suiteReglementaire({ ...vide, issue: 'illisible' }).mot).toBe('Non évalué');
+    expect(suiteReglementaire(vide).mot).toBe('Aucun matériau repéré');
+  });
+
+  it('⚠️ ne fabrique pas de cotation quand le rapport n’en porte pas', () => {
+    const sansCote: SyntheseAmiante = {
+      ...POSITIF,
+      materiaux: { montrer: true, entrees: [{ quoi: 'Dalles de sol' }] }
+    };
+    const s = suiteReglementaire(sansCote);
+    expect(s.mot).toBe('Amiante repérée');
+    expect(s.impose).toBeUndefined();
   });
 });
 
-/**
- * LA PART DU BIEN EXAMINÉE — le chiffre qui remplace le « 90 % » du mockup.
- *
- * *Mesuré le 22/08 sur douze volets réels : avant ce verrou, la carte affichait
- * 100 % sur onze d'entre eux, parce que le § 1.2 ne rendait aucune entrée et
- * que le dénominateur valait « examinées + 0 ». Un dénominateur amputé ne donne
- * pas un chiffre approximatif : il donne toujours 100 %.*
- */
 const troisPieces = {
   montrer: true,
   entrees: [

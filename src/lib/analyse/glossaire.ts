@@ -297,7 +297,7 @@ export const GLOSSAIRE: Terme[] = [
      * dans un tableau. Le produit s'y était lui-même trompé — en comparant une
      * Carrez à la surface d'un DPE, qui ne mesurent pas la même chose.
      */
-    motif: /surface de r[ée]f[ée]rence|trois surfaces|Sref/i,
+    motif: /surface de r[ée]f[ée]rence|trois surfaces|Sref\b/i,
     titre: 'Surface de référence',
     schema: 'surface',
     points: [

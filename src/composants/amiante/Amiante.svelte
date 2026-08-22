@@ -29,14 +29,7 @@
    */
   import type { Diagnostic } from '../../lib/modele';
   import { syntheseAmiante } from './synthese';
-  import {
-    TITRE_BANDEAU,
-    TON_RISQUE,
-    categoriesDe,
-    confianceDe,
-    iconeDe,
-    niveauDeRisque
-  } from './visuel';
+  import { TITRE_BANDEAU, categoriesDe, confianceDe, iconeDe, suiteReglementaire } from './visuel';
 
   let {
     diagnostic,
@@ -61,7 +54,13 @@
   } = $props();
 
   const s = $derived(syntheseAmiante(diagnostic));
-  const risque = $derived(niveauDeRisque(s));
+  /*
+   * ⚠️ L'ÉCHELLE DE RISQUE A ÉTÉ RETIRÉE LE 22/08 — ordre d'Aude : « respecte
+   * l'intitulé de la réglementation ». Aucun texte amiante ne gradue un niveau
+   * de risque ; il définit une COTATION et la suite qu'elle impose. La pastille
+   * porte donc « Score 3 », « AC1 », « EP »… et ce que le droit y attache.
+   */
+  const suite = $derived(suiteReglementaire(s));
   const confiance = $derived(confianceDe(s));
 
   /*
@@ -79,9 +78,27 @@
    * une case cochée que personne n'a regardée.
    */
   const elements = $derived(
-    s.elements.montrer && s.elements.entrees.length
-      ? s.elements.entrees.map((e) => ({ nom: e.quoi, icone: iconeDe(e.quoi) }))
-      : categoriesDe(s)
+    /*
+     * LES FAMILLES D'ABORD, LES PIÈCES EN REPLI — et pas l'inverse.
+     *
+     * Le visuel montre des familles d'ouvrage, chacune avec son pictogramme :
+     * Toiture, Façades, Revêtements, Conduits, Sols. Tant que cette colonne
+     * affichait les PIÈCES du rapport — « Rez de chaussée - Entrée », « 1er
+     * étage - Chambre 2 » — aucune ne pouvait porter d'icône juste : mesuré le
+     * 22/08 sur le banc, les six lignes tombaient toutes sur le même
+     * pictogramme de repli. Une pièce ne dit pas quel ouvrage a été regardé.
+     *
+     * Les familles se déduisent des composants du § 3.2.6 (« Sol », « Mur »,
+     * « Fenêtre »…), et là chaque ligne a son dessin. On ne garde les pièces
+     * que lorsqu'aucune famille ne ressort : six volets LICIEL sur onze
+     * n'impriment pas ce tableau, et une colonne vide vaudrait moins que des
+     * noms de pièces réellement visitées.
+     */
+    categoriesDe(s).length
+      ? categoriesDe(s)
+      : s.elements.montrer && s.elements.entrees.length
+        ? s.elements.entrees.map((e) => ({ nom: e.quoi, icone: iconeDe(e.quoi) }))
+        : []
   );
 
   /*
@@ -106,7 +123,7 @@
   );
 </script>
 
-<article class="ecran" data-issue={s.issue} data-risque={TON_RISQUE[risque]}>
+<article class="ecran" data-issue={s.issue} data-risque={suite.ton}>
   {#if entete}
     <header class="titre">
       <!--
@@ -172,14 +189,18 @@
     <div class="dans-bandeau">
       <p class="chapeau" id="resultat-amiante">Résultat global</p>
       <p class="verdict">{TITRE_BANDEAU[s.issue]}</p>
-      <p class="chapeau bas">Niveau de risque</p>
+      <p class="chapeau bas">{suite.impose ? 'Cotation du rapport' : 'Ce que le rapport conclut'}</p>
       <p class="pastille">
         <svg class="feuille" viewBox="0 0 20 20" aria-hidden="true">
           <path d="M17 3c0 8-4.5 12-11 12 0-8 4.5-12 11-12Z" fill="none" stroke="currentColor" stroke-width="1.5" />
           <path d="M12.5 7.5C9 10 6.5 13.5 5.5 17" fill="none" stroke="currentColor" stroke-width="1.3" />
         </svg>
-        {risque}
+        {suite.mot}
       </p>
+      {#if suite.impose}
+        <!-- La suite que le droit attache à cette cotation, dans ses mots. -->
+        <p class="impose">{suite.impose}</p>
+      {/if}
     </div>
   </section>
 
@@ -231,6 +252,12 @@
               <svg viewBox="0 0 24 24"><rect x="5" y="4" width="4.6" height="16" rx="1" fill="none" stroke="currentColor" stroke-width="1.4" /><rect x="14.4" y="4" width="4.6" height="16" rx="1" fill="none" stroke="currentColor" stroke-width="1.4" /><path d="M5 9h4.6M5 14h4.6M14.4 9H19M14.4 14H19" stroke="currentColor" stroke-width="1.1" /></svg>
             {:else if c.icone === 'sol'}
               <svg viewBox="0 0 24 24"><path d="M3 18.5 12 6l9 12.5Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" /><path d="M6.6 14.5h10.8M8.8 11h6.4M12 6v12.5" stroke="currentColor" stroke-width="1.05" /></svg>
+            {:else if c.icone === 'menuiserie'}
+              <!-- Une fenêtre à deux ouvrants — l'ouvrage où l'amiante ne se
+                   voit pas : elle est dans le mastic de vitrage. -->
+              <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4" /><path d="M12 4v16M4 11.5h16" stroke="currentColor" stroke-width="1.2" /><path d="M9.6 12.8v2.2M14.4 12.8v2.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg>
+            {:else if c.icone === 'escalier'}
+              <svg viewBox="0 0 24 24"><path d="M3.5 20v-3.6h4.6v-3.6h4.6V9.2h4.6V5.6h3.2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" /><path d="M3.5 20h17" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" /></svg>
             {:else}
               <svg viewBox="0 0 24 24"><path d="M3 10 12 3.5 21 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" /><path d="M5.5 10v10h13V10" fill="none" stroke="currentColor" stroke-width="1.4" /></svg>
             {/if}
@@ -626,6 +653,12 @@
     margin: 0.55rem 0 auto;
     font-weight: 500;
     max-width: 16ch;
+  }
+  .impose {
+    margin: 0.5rem 0 0;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    max-width: 22em;
   }
   .pastille {
     align-self: flex-start;

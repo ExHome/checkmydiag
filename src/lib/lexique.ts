@@ -178,7 +178,7 @@ export const LEXIQUE: Mot[] = [
   },
   {
     nom: 'DPE',
-    motif: /DPE|diagnostic de performance [ée]nerg[ée]tique/i,
+    motif: /\bDPE\b|diagnostic de performance [ée]nerg[ée]tique/i,
     definition:
       'Le diagnostic de performance énergétique. Il classe le logement de A à G sur deux notes — ce qu’il consomme et ce qu’il émet — et la plus mauvaise des deux l’emporte.'
   },
@@ -190,19 +190,19 @@ export const LEXIQUE: Mot[] = [
   },
   {
     nom: 'Ventilation',
-    motif: /ventilations?/i,
+    motif: /ventilations?\b/i,
     definition:
       'Le renouvellement de l’air. Un logement trop étanche garde son humidité et ses polluants ; un logement trop ouvert perd sa chaleur. Le diagnostic regarde si les entrées et les sorties d’air existent.'
   },
   {
     nom: 'GES',
-    motif: /GES|gaz [àa] effet de serre/i,
+    motif: /\bGES\b|gaz [àa] effet de serre/i,
     definition:
       'Les gaz à effet de serre émis pour chauffer et alimenter le logement, comptés en kilos de CO₂ par mètre carré et par an. C’est la seconde note du DPE, à côté de la consommation.'
   },
   {
     nom: 'Dispositif différentiel',
-    motif: /dispositifs? (?:de protection )?diff[ée]rentiels?|diff[ée]rentiel/i,
+    motif: /dispositifs? (?:de protection )?diff[ée]rentiels?|diff[ée]rentiel\b/i,
     definition:
       'L’appareil qui coupe le courant quand il fuit — vers la terre, ou vers quelqu’un. Il ne protège pas les fils, il protège les personnes : c’est ce qui le distingue d’un disjoncteur ordinaire.'
   },
@@ -214,7 +214,7 @@ export const LEXIQUE: Mot[] = [
   },
   {
     nom: 'Matériau contenant de l’amiante',
-    motif: /mat[ée]riaux? contenant de l[’']amiante|MCA/i,
+    motif: /mat[ée]riaux? contenant de l[’']amiante|\bMCA\b/i,
     definition:
       'Un matériau dans lequel de l’amiante a été incorporé à la fabrication : dalle, colle, plaque, calorifugeage. Tant qu’il est intact et qu’on n’y touche pas, il ne libère rien.'
   },

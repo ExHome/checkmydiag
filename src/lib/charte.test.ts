@@ -182,7 +182,7 @@ describe('aucun jeton ne ment sur ce qu’il contient', () => {
         .forEach((ligne, i) => {
           if (/^\s*(\*|\/\/|\/\*)/.test(ligne)) return;
           if (!/#a6c39a/i.test(ligne)) return;
-          if (/background|border|--u-trait|--trait|fill:/.test(ligne)) {
+          if (/background|border|--u-trait|--trait\b|fill:/.test(ligne)) {
             fautifs.push(`${f}:${i + 1}: ${ligne.trim().slice(0, 70)}`);
           }
         });

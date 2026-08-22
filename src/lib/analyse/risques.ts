@@ -165,7 +165,7 @@ export function analyserErp(lignes: string[], plage: [number, number]): Diagnost
    * d'Information sur les Sols (SIS) oui non x » faisait annoncer une pollution
    * des sols à des biens que le tableau déclare non concernés.
    */
-  const PROPOSE_AU_LIEU_D_AFFIRMER = /oui\s*\W{0,4}\s*non|(?:zone\s*\d.{0,12}){3,}/i;
+  const PROPOSE_AU_LIEU_D_AFFIRMER = /\boui\b\s*\W{0,4}\s*\bnon\b|(?:zone\s*\d\b.{0,12}){3,}/i;
 
   const affirmations = lignes.filter((l) =>
     !FORMULAIRE_PPR.test(l) &&

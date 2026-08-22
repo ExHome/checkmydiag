@@ -205,7 +205,7 @@ export function lireVueDEnsemble(lignes: string[]): PosteEquipement[] {
         l &&
         !/^description$/i.test(l) &&
         !/Page\s+\d+\s*\/\s*\d+\s*$/.test(l) &&
-        !/^DPE.*p\.\d+$/i.test(l)
+        !/^DPE\b.*p\.\d+$/i.test(l)
     );
 
   const motif = new RegExp(`^(${POSTES.join('|')})\\b\\s*(.*)$`, 'i');

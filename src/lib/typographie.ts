@@ -43,7 +43,7 @@ const AVANT_FERMANT = new RegExp(`${ESPACE}*(»)`, 'g');
 /**
  * Un nombre et son unité ne se séparent pas : « 373 kWh », « 42 m² », « 15 % ».
  *
- * La fin d'unité se marque par ce qui SUIT, pas par `` : en fin de chaîne,
+ * La fin d'unité se marque par ce qui SUIT, pas par `\b` : en fin de chaîne,
  * « 15 % » ne présente aucune frontière de mot après le pour-cent — le motif
  * échouait précisément là où l'unité est la plus fréquente, en fin de phrase.
  */

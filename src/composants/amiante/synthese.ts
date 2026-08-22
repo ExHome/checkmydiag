@@ -126,6 +126,13 @@ export interface SyntheseAmiante {
   readonly materiaux: Bloc<Materiau>;
   /** Ce que le repérage a examiné — pièces visitées, matériaux analysés. */
   readonly elements: Bloc<Element>;
+  /**
+   * Les composants regardés — « Sol », « Mur », « Plafond », « Conduits »…
+   *
+   * Ils ne s'affichent pas tels quels : ils servent à nommer les FAMILLES
+   * d'ouvrage du visuel. Un nom de pièce n'en dit rien.
+   */
+  readonly composants: readonly string[];
   readonly constatations: Bloc<{ terme: string; ou?: string }>;
   readonly nonControle: Bloc<Limite>;
   /** Ce que le rapport dit de sa propre complétude. Jamais un pourcentage. */
@@ -418,6 +425,7 @@ export function syntheseAmiante(d: Diagnostic): SyntheseAmiante {
     pointsCles,
     materiaux,
     elements: elementsDe(d),
+    composants: d.perimetre?.composants ?? [],
     constatations,
     nonControle,
     completude: completudeDe(d, nonControle),

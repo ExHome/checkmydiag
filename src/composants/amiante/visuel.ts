@@ -38,51 +38,75 @@ export const TITRE_BANDEAU: Record<SyntheseAmiante['issue'], string> = {
 };
 
 /* ════════════════════════════════════════════════════════════════════════
- * 2 · LE NIVEAU DE RISQUE
+ * 2 · LA SUITE QUE LE DROIT ATTACHE AU CONSTAT — son intitulé, pas une note
  * ════════════════════════════════════════════════════════════════════════
  *
- * ⚠️ **Aucun constat amiante ne porte d'échelle de risque.** Ce n'est donc pas
- * une donnée du rapport : c'est une LECTURE de Verrière, et elle doit se
- * déduire de ce que le rapport dit, jamais d'une impression.
+ * ⚠️⚠️ **L'ÉCHELLE « TRÈS FAIBLE / À CONFIRMER / MODÉRÉ / ÉLEVÉ » A ÉTÉ RETIRÉE
+ * LE 22/08.** Ordre d'Aude : « pour le niveau, respecte l'intitulé de la
+ * réglementation ». Elle avait raison sur les deux volets.
  *
- * La règle, en quatre marches, du plus sûr au plus grave :
+ * Aucun texte amiante ne gradue un « niveau de risque ». Ce qu'il définit, en
+ * revanche, est bien plus précis et bien plus utile : **une cotation, et la
+ * suite qu'elle impose.** Les inventer une seconde fois par-dessus était une
+ * perte sèche — « ÉLEVÉ » ne dit ni ce qu'il faut faire, ni sous quel délai.
  *
- * | Ce que le rapport établit | Niveau |
+ * ## Les intitulés du droit, et eux seuls
+ *
+ * *Arrêté du 12 décembre 2012 et articles R. 1334-27 à R. 1334-29 du code de la
+ * santé publique, lus le 20/08/2026 (voir `reglement/textes.ts`).*
+ *
+ * | Cotation du rapport | Ce que le texte impose, dans ses mots |
  * |---|---|
- * | rien repéré | **TRÈS FAIBLE** |
- * | le laboratoire n'a pas rendu, ou il reste à sonder | **À CONFIRMER** |
- * | de l'amiante, cotée en évaluation périodique (EP) | **MODÉRÉ** |
- * | de l'amiante, cotée `Score 2`, `Score 3`, `AC1` ou `AC2` | **ÉLEVÉ** |
- * | document illisible | **NON ÉVALUÉ** |
+ * | `Score 1` | évaluation périodique, dans un délai maximal de trois ans |
+ * | `Score 2` | mesure d'empoussièrement, sous trois mois |
+ * | `Score 3` | travaux de retrait ou de confinement |
+ * | `EP` | évaluation périodique |
+ * | `AC1` | action corrective de premier niveau |
+ * | `AC2` | action corrective de second niveau |
  *
- * Les seuils viennent du droit, pas d'un ressenti : `Score 3` impose des
- * travaux de retrait sous trente-six mois (R. 1334-29), `Score 2` une mesure
- * d'empoussièrement sous trois mois, `EP` une simple surveillance à trois ans.
- * Un matériau en `EP` et un matériau en `Score 3` ne se disent pas pareil.
+ * La pastille porte donc **la cotation du rapport et sa conséquence**, jamais
+ * une marche d'échelle. Quand le rapport ne cote pas, elle porte ce qu'il
+ * conclut — et rien de plus.
  */
-export type NiveauRisque = 'TRÈS FAIBLE' | 'À CONFIRMER' | 'MODÉRÉ' | 'ÉLEVÉ' | 'NON ÉVALUÉ';
 
-/** Ce qui, dans une cotation, déclenche une obligation et non une surveillance. */
-const COTATION_GRAVE = /score\s*[23]\b|\bAC1\b|\bAC2\b|retrait|confinement|empoussi[èe]rement/i;
-
-export function niveauDeRisque(s: SyntheseAmiante): NiveauRisque {
-  if (s.issue === 'illisible') return 'NON ÉVALUÉ';
-  if (s.issue === 'nonConclu') return 'À CONFIRMER';
-  if (s.issue === 'absence') return 'TRÈS FAIBLE';
-  const grave = s.materiaux.entrees.some(
-    (m) => COTATION_GRAVE.test(m.etat ?? '') || COTATION_GRAVE.test(m.suite ?? '')
-  );
-  return grave ? 'ÉLEVÉ' : 'MODÉRÉ';
+/** Ce que la pastille affiche : les mots du rapport, ou ceux du texte. */
+export interface SuiteReglementaire {
+  /** L'intitulé affiché — cotation du rapport, ou conclusion. */
+  readonly mot: string;
+  /** Ce que le texte impose, quand une cotation est lue. */
+  readonly impose?: string;
+  readonly ton: Gravite;
 }
 
-/** Le ton d'affichage du niveau — pour ne jamais porter l'état par la seule couleur. */
-export const TON_RISQUE: Record<NiveauRisque, Gravite> = {
-  'TRÈS FAIBLE': 'bon',
-  'À CONFIRMER': 'attention',
-  MODÉRÉ: 'attention',
-  ÉLEVÉ: 'alerte',
-  'NON ÉVALUÉ': 'attention'
-};
+/** Les cotations, telles que les rapports les impriment. */
+const COTATIONS: { readonly rx: RegExp; readonly mot: string; readonly impose: string; readonly ton: Gravite }[] = [
+  { rx: /score\s*3\b/i, mot: 'Score 3', impose: 'Travaux de retrait ou de confinement.', ton: 'alerte' },
+  { rx: /score\s*2\b/i, mot: 'Score 2', impose: 'Mesure d’empoussièrement dans l’air, sous trois mois.', ton: 'alerte' },
+  { rx: /score\s*1\b/i, mot: 'Score 1', impose: 'Évaluation périodique, dans un délai maximal de trois ans.', ton: 'attention' },
+  { rx: /\bAC2\b/i, mot: 'AC2', impose: 'Action corrective de second niveau : elle porte sur toute une zone.', ton: 'alerte' },
+  { rx: /\bAC1\b/i, mot: 'AC1', impose: 'Action corrective de premier niveau, limitée aux éléments dégradés.', ton: 'alerte' },
+  { rx: /\bEP\b|[ée]valuation p[ée]riodique/i, mot: 'EP', impose: 'Évaluation périodique.', ton: 'attention' }
+];
+
+/**
+ * La suite réglementaire du constat.
+ *
+ * ⚠️ On lit la COTATION du rapport, dans l'ordre du plus contraignant au moins
+ * contraignant : un volet qui porte à la fois un `Score 3` et un `EP` doit
+ * afficher le `Score 3`, jamais l'inverse.
+ */
+export function suiteReglementaire(s: SyntheseAmiante): SuiteReglementaire {
+  if (s.issue === 'illisible') return { mot: 'Non évalué', ton: 'attention' };
+  if (s.issue === 'nonConclu') return { mot: 'Conclusion en attente', ton: 'attention' };
+  if (s.issue === 'absence') return { mot: 'Aucun matériau repéré', ton: 'bon' };
+
+  const dits = s.materiaux.entrees.map((m) => `${m.etat ?? ''} ${m.suite ?? ''}`).join(' · ');
+  const trouvee = COTATIONS.find((c) => c.rx.test(dits));
+  if (trouvee) return { mot: trouvee.mot, impose: trouvee.impose, ton: trouvee.ton };
+
+  /* Repéré, mais sans cotation lisible : on ne la fabrique pas. */
+  return { mot: 'Amiante repérée', ton: 'alerte' };
+}
 
 /* ════════════════════════════════════════════════════════════════════════
  * 3 · LE NIVEAU DE CONFIANCE
@@ -184,7 +208,15 @@ export function confianceDe(s: SyntheseAmiante): Confiance {
  */
 export interface Categorie {
   readonly nom: string;
-  readonly icone: 'toiture' | 'facade' | 'revetement' | 'conduit' | 'sol' | 'piece';
+  readonly icone:
+    | 'toiture'
+    | 'facade'
+    | 'revetement'
+    | 'conduit'
+    | 'sol'
+    | 'menuiserie'
+    | 'escalier'
+    | 'piece';
 }
 
 const CATEGORIES: { readonly cat: Categorie; readonly rx: RegExp }[] = [
@@ -192,7 +224,32 @@ const CATEGORIES: { readonly cat: Categorie; readonly rx: RegExp }[] = [
   { cat: { nom: 'Façades / Bardages', icone: 'facade' }, rx: /fa[çc]ade|bardage|mur ext|ext[ée]rieur|enduit|pierre|parement/i },
   { cat: { nom: 'Revêtements intérieurs', icone: 'revetement' }, rx: /rev[êe]tement|peinture|papier|lambris|pl[âa]tre|cloison|faux[- ]plafond|plafond|mur\b/i },
   { cat: { nom: 'Conduits / Gaines', icone: 'conduit' }, rx: /conduit|gaine|canalisation|vide[- ]ordures|chemin[ée]e|ventilation|calorifug/i },
-  { cat: { nom: 'Sols', icone: 'sol' }, rx: /\bsol\b|dalle|carrelage|parquet|lino|plancher|plinthe/i }
+  { cat: { nom: 'Sols', icone: 'sol' }, rx: /\bsol\b|dalle|carrelage|parquet|lino|plancher|plinthe/i },
+  /*
+   * MENUISERIES ET ESCALIER — deux familles que le visuel ne montrait pas, et
+   * que les rapports contrôlent pourtant plus souvent que les cinq autres.
+   *
+   * Mesure du 22/08 sur les volets extraits du corpus : 41 composants lus au
+   * § 3.2.6, dont 23 — 56 % — ne tombaient dans AUCUNE des cinq familles du
+   * mockup. Porte (6), Fenêtre (4), Volet (3), Marches (3), Contremarches (3),
+   * Balustre, Main courante, Dressing Porte, Porte de garage.
+   *
+   * Les laisser dehors, c'était effacer de l'écran des ouvrages réellement
+   * contrôlés. Et ces deux familles ne sont pas accessoires : le mastic de
+   * vitrage des fenêtres et les dalles de marches en vinyle-amiante comptent
+   * parmi les repérages les plus courants de la liste B.
+   *
+   * ⚠️ La ligne garde le gabarit du visuel — vignette, libellé, « Contrôlé ✓ ».
+   * Ce qui change ici est la DONNÉE affichée, pas le dessin.
+   */
+  {
+    cat: { nom: 'Menuiseries', icone: 'menuiserie' },
+    rx: /menuiserie|\bportes?\b|\bfen[êe]tres?\b|\bvolets?\b|\bch[âa]ssis\b|vitrage|mastic|huisserie|placard|dressing/i
+  },
+  {
+    cat: { nom: 'Escalier', icone: 'escalier' },
+    rx: /escalier|\bmarches?\b|contremarches?|balustre|main courante|garde[- ]corps|\brampe\b|limon/i
+  }
 ];
 
 /**
@@ -216,7 +273,20 @@ const CATEGORIES: { readonly cat: Categorie; readonly rx: RegExp }[] = [
  * sens — on ne présente jamais comme sain ce qui ne l'est pas.
  */
 export function categoriesDe(s: SyntheseAmiante): Categorie[] {
+  /*
+   * ⚠️ CE SONT LES COMPOSANTS QUI DISENT LA FAMILLE, PAS LES PIÈCES.
+   *
+   * « RDC - Cuisine » ne dit pas si l'on a regardé le sol ou le plafond ;
+   * « Sol : Carrelage » le dit. Les composants viennent du tableau
+   * `Localisation | Description` du § 3.2.6 — la seule rubrique du rapport qui
+   * corresponde aux cinq familles d'ouvrage du visuel.
+   *
+   * Les noms de pièces restent dans le lot : « Combles », « Vide sanitaire »
+   * nomment bien une famille. Mais ils ne suffisaient pas, et c'est pourquoi la
+   * colonne retombait sur l'icône générique.
+   */
   const mots = [
+    ...(s.composants ?? []),
     ...s.elements.entrees.map((e) => e.quoi),
     ...s.materiaux.entrees.flatMap((m) => [m.quoi, m.ou ?? ''])
   ].join(' · ');
