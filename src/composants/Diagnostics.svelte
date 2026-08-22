@@ -17,7 +17,6 @@
   import type { Photo } from '../lib/pdf';
   import SchemaDuRapport from './schemas/SchemaDuRapport.svelte';
   import Explicatif from './schemas/Explicatif.svelte';
-  import RegleDpe from './visuels/RegleDpe.svelte';
   import Amiante from './amiante/Amiante.svelte';
   import MiniAppElectricite from './electricite/MiniAppElectricite.svelte';
   import MiniAppTermites from './termites/MiniAppTermites.svelte';
@@ -816,23 +815,6 @@
     return false; // amiante et termites : leur visuel ne situe rien
   }
 
-  /**
-   * La surface de référence, lue dans les faits du rapport.
-   *
-   * Elle décide des seuils : sous 40 m², l'arrêté du 25 mars 2024 en donne
-   * d'autres. `Schema.dpe` ne la porte pas — VisuelDpe la réclamait déjà en
-   * prop et ne l'a jamais reçue, si bien que toute sa branche « petite
-   * surface » était du code mort à l'écran.
-   *
-   * On la lit donc là où elle est écrite, plutôt que d'attendre un champ.
-   */
-  function surfaceDe(d: Diagnostic): number | null {
-    const f = d.faits.find((x) => /surface de r[ée]f[ée]rence|surface habitable/i.test(x.libelle));
-    if (!f) return null;
-    const m = /([\d]+(?:[.,][\d]+)?)/.exec(f.valeur);
-    return m?.[1] ? Number(m[1].replace(',', '.')) : null;
-  }
-
   function postesDe(d: Diagnostic) {
     return d.schema?.genre === 'dpe' ? d.schema.postes : null;
   }
@@ -1093,12 +1075,24 @@
                     Poser la graduation générale sur un studio afficherait une
                     frontière fausse.
                   -->
-                  <RegleDpe
-                    energie={s.energie}
-                    climat={s.climat}
-                    finale={s.finale}
-                    surface={surfaceDe(d)}
-                  />
+                  <!--
+                    L'ÉCHELLE À AIGUILLES S'EFFACE DEVANT LA MINI-APP.
+
+                    Elle affichait la consommation une seconde fois : mesuré sur
+                    le déployé le 22/08, « 373 » lisible à y = 503 dans les
+                    chiffres du résultat global, puis à y = 1623 sur l'aiguille
+                    de la règle. Même valeur, deux dessins, un seul écran — et
+                    c'est le second que le lecteur atteignait après avoir déjà
+                    tout lu.
+
+                    Ce que la règle apportait en plus — les deux notes côte à
+                    côte et la mauvaise qui l'emporte — la mini-app le dit en
+                    toutes lettres sous ses chiffres : « C'est la moins bonne des
+                    deux qui est retenue. »
+
+                    Seul l'affichage disparaît. `RegleDpe` reste le composant du
+                    banc `enveloppe.html`, où elle est l'objet du banc.
+                  -->
                 {/if}
 
               {:else if d.type === 'electricite'}
