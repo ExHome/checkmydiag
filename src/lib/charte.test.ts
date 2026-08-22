@@ -201,9 +201,13 @@ describe('aucun jeton ne ment sur ce qu’il contient', () => {
 
         const selecteur = bloc.split('{')[0]?.trim().split(String.fromCharCode(10)).pop() ?? '?';
 
-        /* Un survol est transitoire et ne se voit qu'à la souris. Le visuel est
-           une maquette mobile : il ne peut pas montrer d'état de survol, donc il
-           ne peut pas trancher. En attente de l'arbitrage d'Aude. */
+        /* Les survols sont exclus de CETTE mesure — leur padding vit dans le
+           bloc du repos, pas dans le leur, donc le critère de surface n'y
+           s'applique pas. Ils ont été tranchés séparément : le 22/08, Aude a
+           demandé qu'ils passent au vert, et les sept boutons qui se
+           remplissaient d'or au survol portent maintenant le vert Verrière avec
+           l'encre ivoire. La bordure, elle, reste un filet doré : sur un fond
+           vert sombre, le bouton ne se détacherait qu'à 1,42 sans elle. */
         if (/:hover|:focus|:active/.test(selecteur)) continue;
 
         /* `padding: 0` ne fait pas une surface — au contraire. `.panneaux` de

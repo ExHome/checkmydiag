@@ -1599,9 +1599,9 @@
   }
 
   .fermer-fenetre:hover {
-    background: var(--verriere-sable-or);
+    background: var(--verriere-vert);
     border-color: var(--verriere-sable-or);
-    color: var(--vert-900);
+    color: var(--verriere-ivoire);
   }
 
   .dedans {
@@ -1696,9 +1696,9 @@
   }
 
   .commencer:hover {
-    background: var(--verriere-sable-or);
+    background: var(--verriere-vert);
     border-color: var(--verriere-sable-or);
-    color: var(--vert-900);
+    color: var(--verriere-ivoire);
   }
 
   .commencer em {
@@ -1755,9 +1755,9 @@
   }
 
   .pas-a-pas .suivant:hover:not(:disabled) {
-    background: var(--verriere-sable-or);
+    background: var(--verriere-vert);
     border-color: var(--verriere-sable-or);
-    color: var(--vert-900);
+    color: var(--verriere-ivoire);
   }
 
   .pas-a-pas button:disabled {
@@ -2139,8 +2139,8 @@
   }
 
   .passerelles button:hover {
-    background: var(--verriere-sable-or);
-    color: #0a2b23;
+    background: var(--verriere-vert);
+    color: var(--verriere-ivoire);
   }
 
   @media (max-width: 820px) {

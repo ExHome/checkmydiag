@@ -224,8 +224,8 @@
   }
 
   .ouvrir-recours:hover {
-    background: var(--verriere-sable-or);
-    color: var(--vert-900);
+    background: var(--verriere-vert);
+    color: var(--verriere-ivoire);
   }
 
   .recours {

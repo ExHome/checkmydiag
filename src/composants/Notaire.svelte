@@ -2239,9 +2239,9 @@
   }
 
   .editer:hover {
-    background: var(--verriere-sable-or);
+    background: var(--verriere-vert);
     border-color: var(--verriere-sable-or);
-    color: var(--vert-900);
+    color: var(--verriere-ivoire);
   }
 
   /* L'annexe : un terme, sa définition, en deux colonnes. */
