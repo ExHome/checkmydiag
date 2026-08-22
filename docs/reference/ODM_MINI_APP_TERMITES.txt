@@ -1,0 +1,124 @@
+VERRIÈRE — MINI-APP TERMITES
+ORDRE DE MISSION MAÎTRE POUR CLAUDE
+Référence visuelle retenue : écran de droite • Version de travail 22 août 2026
+1. Décision de design — référence impérative
+La référence à reproduire et à perfectionner est exclusivement l’écran de droite du visuel joint.
+L’univers Verrière doit rester premium, architectural, chaleureux et immédiatement lisible : fond ivoire/crème, vert profond, accents sable/laiton discrets, typographie élégante, respiration généreuse et relief subtil.
+Le design ne doit jamais devenir administratif, dense ou « logiciel métier ». Il doit transformer un rapport technique en lecture évidente pour un non-spécialiste.
+2. Architecture obligatoire de la synthèse Termites
+A — Points clés
+Présenter en premier les conclusions réellement présentes dans le rapport.
+Exemples de catégories possibles : indice de termites, dégradations, indices d’activité, éléments importants signalés par l’opérateur.
+Chaque point comporte : un pictogramme, un titre court, une phrase explicative et, si utile, un accès au détail.
+Ne jamais transformer une absence d’information en conclusion rassurante.
+B — Résultat global
+Afficher une conclusion courte, compréhensible et fidèle au rapport.
+Le niveau de risque, s’il est affiché, doit être calculable ou explicitement issu d’une règle métier validée. Il ne doit jamais être inventé par l’interface.
+La représentation graphique sert à comprendre, jamais à remplacer la donnée source.
+C — Constatations diverses
+Créer un bloc dédié et clairement identifiable.
+Restituer les constatations complémentaires du diagnostiqueur : état apparent des bois, humidité, contacts bois/sol, traces de traitements, débris, galeries, conditions particulières, observations libres, etc., uniquement lorsqu’elles figurent dans le rapport.
+Conserver le sens exact de la constatation. Une reformulation pédagogique est possible, mais la donnée technique d’origine doit rester accessible.
+D — Ce qui n’a pas été contrôlé
+Bloc obligatoire et visuellement impossible à confondre avec les zones contrôlées.
+Lister toutes les parties, ouvrages, volumes ou éléments non visités, non accessibles, masqués, encombrés, recouverts ou exclus du contrôle selon le rapport.
+Afficher la raison lorsqu’elle est connue : revêtement, stockage, absence d’accès, doublage, hauteur, sécurité, clé absente, encombrement, etc.
+Employer un statut explicite : « Non contrôlé », « Non accessible », « Non visible » ou formulation fidèle au rapport.
+Ne jamais écrire ou laisser entendre « absence de termites » pour une zone qui n’a pas été inspectée.
+E — Niveau de confiance / complétude
+Ne pas afficher arbitrairement un pourcentage tel que 90 %.
+Si Verrière conserve cet indicateur, Claude doit définir une règle de calcul documentée à partir de la complétude réelle du contrôle et des limites mentionnées.
+À défaut de règle métier validée, remplacer le pourcentage par une formulation factuelle : « Contrôle complet selon les zones accessibles » ou « Contrôle comportant des zones non accessibles ».
+F — Conseil Verrière
+Le conseil vient après les faits.
+Il doit être contextualisé par le rapport, les limites de contrôle et les obligations applicables.
+Aucune recommandation automatique ne doit contredire le diagnostiqueur ou créer une fausse garantie.
+3. Règle absolue de fidélité au rapport
+INTERDICTION D’INVENTER. Toutes les données visibles doivent être reliées à une information réellement extraite du diagnostic ou à une règle métier explicitement validée.
+Si une donnée manque : afficher « Non renseigné » ou masquer le champ selon la règle UX définie.
+Si une zone n’est pas contrôlée : elle ne peut pas contribuer à une conclusion d’absence.
+Si le rapport est ambigu : signaler l’ambiguïté et conserver un accès au texte source.
+Toute synthèse doit permettre de remonter à la page, rubrique ou donnée d’origine du rapport.
+La pédagogie ne doit jamais simplifier au point de modifier la portée technique ou juridique du diagnostic.
+4. Comportement de la mini-app
+La synthèse doit être la première vue.
+Les cartes « Points clés », « Constatations diverses » et « Ce qui n’a pas été contrôlé » doivent pouvoir s’ouvrir pour afficher le détail.
+Un clic sur une information doit permettre d’accéder à sa justification et idéalement à l’extrait correspondant du rapport.
+Prévoir les onglets : Synthèse, Détails, Photos, Conseils.
+Prévoir un bouton « Voir le rapport complet ».
+Les informations importantes ne doivent jamais dépendre d’un survol : l’interface doit être parfaite sur mobile et tactile.
+Les statuts doivent être distinguables par le texte et l’icône, pas uniquement par la couleur.
+5. Hiérarchie visuelle à respecter
+Niveau
+Élément
+Traitement
+1
+Points clés
+Lecture immédiate, cartes sobres, icônes signifiantes
+2
+Résultat global
+Grande carte premium, conclusion dominante
+3
+Constatations diverses
+Bloc encadré, puces fines, lecture confortable
+4
+Non contrôlé
+Alerte douce mais visible, statut explicite
+5
+Complétude / confiance
+Secondaire, factuel, sans faux score
+6
+Conseil Verrière
+Chaleureux, utile, jamais alarmiste
+6. Direction artistique
+Fond : ivoire chaud, jamais blanc clinique.
+Vert : profond et architectural, utilisé comme couleur de structure et de confiance.
+Accent : sable/laiton très discret ; éviter l’effet doré luxueux ou « bijouterie ».
+Termites : tonalité matière bois/brun chaud possible pour certains pictogrammes secondaires.
+Typographie : titres éditoriaux élégants + sans-serif très lisible pour les données.
+Coins arrondis raffinés, ombres légères, aucune surenchère d’effets.
+Motifs végétaux/verrière uniquement en filigrane très léger : décoration secondaire, jamais au détriment de la donnée.
+Densité : conserver de l’air. La sophistication vient de la hiérarchie, pas de l’accumulation.
+7. États métier que Claude doit prévoir
+Termites / indices détectés.
+Aucun indice détecté dans les zones effectivement contrôlées.
+Présence d’indices anciens ou doute à qualifier.
+Une ou plusieurs zones non contrôlées.
+Contrôle fortement limité par l’accessibilité.
+Constatations diverses présentes / absentes.
+Photos disponibles / absentes.
+Information contradictoire ou extraction incertaine.
+Rapport incomplet ou page manquante.
+Donnée non renseignée.
+8. Ordre de mission d’exécution pour Claude
+1. Prendre le visuel joint comme référence graphique et conserver l’écran de droite comme matrice.
+2. Reproduire sa structure dans la mini-app Termites sans copier aveuglément les exemples fictifs du visuel.
+3. Brancher chaque bloc sur les données réellement extraites du rapport.
+4. Ajouter systématiquement les « Constatations diverses » lorsqu’elles existent.
+5. Ajouter systématiquement « Ce qui n’a pas été contrôlé » et restituer chaque limite d’inspection.
+6. Supprimer toute conclusion non justifiée par la source.
+7. Rendre chaque donnée traçable jusqu’au rapport source.
+8. Prévoir les états positifs, négatifs, incomplets, non accessibles et incertains.
+9. Tester la lecture sur petit écran : aucune troncature, aucune information critique cachée.
+10. Faire une revue de non-régression avant validation : contenu, exactitude, lisibilité, cohérence Verrière.
+11. Ne pas considérer la tâche terminée parce que l’écran « ressemble » au visuel : il doit aussi être métier, exhaustif et fiable.
+12. Une fois Termites validé, utiliser cette architecture comme système commun des autres mini-apps, tout en adaptant les rubriques au diagnostic concerné.
+9. Critères de validation — aucune livraison si un point échoue
+[ ] Le résultat global est fidèle au rapport.
+[ ] Les points clés ne contiennent aucune invention.
+[ ] Les constatations diverses sont présentes lorsqu’elles existent.
+[ ] Toutes les zones/parties non contrôlées sont visibles et explicites.
+[ ] Aucune zone non contrôlée n’est présentée comme saine ou exempte.
+[ ] Les limites du diagnostic sont compréhensibles par un particulier.
+[ ] Les données importantes sont traçables vers la source.
+[ ] Le design reste conforme à l’univers Verrière.
+[ ] La lecture mobile est fluide et premium.
+[ ] Le système fonctionne aussi avec un rapport défavorable ou incomplet.
+10. Livrables attendus de Claude
+Écran Termites final responsive.
+Composants réutilisables de synthèse.
+États UI complets et documentés.
+Mapping données source → champs affichés.
+Règles de gestion des absences, limites et incertitudes.
+Tests sur plusieurs rapports Termites aux conclusions différentes.
+Capture de contrôle mobile + desktop avant validation.
