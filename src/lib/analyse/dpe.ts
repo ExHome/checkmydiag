@@ -11,6 +11,8 @@ import { contient, nombre, trouver } from './texte';
 import { dateFrancaise, faitDesReformes, OU_RECTIFIER, reformesDepuis } from './reformes';
 import { enAltitude, seuilsClimat, seuilsEnergie } from './seuilsPetitesSurfaces';
 import { travauxDuDpe } from './reco';
+import { aiguiller } from '../lecteurs/socle';
+import { LECTEURS_DPE } from '../lecteurs/dpe';
 
 const LETTRES: Lettre[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 
@@ -691,6 +693,55 @@ export function analyserDpe(lignes: string[], plage: [number, number]): Diagnost
    */
   const travaux = travauxDuDpe(lignes);
 
+  /*
+   * ═════════════════════════════════════════════════════════════════════════
+   * LE DESCRIPTIF DU BÂTIMENT : ON NOMME L'ÉDITEUR AVANT DE LIRE.
+   * ═════════════════════════════════════════════════════════════════════════
+   *
+   * Tout ce qui précède lit l'ÉTIQUETTE — les deux lettres, les chiffres, les
+   * postes. Ces valeurs se présentent de la même façon partout, parce qu'un
+   * arrêté en fixe la forme.
+   *
+   * Le DESCRIPTIF, lui, n'a pas de forme imposée : chaque logiciel range à sa
+   * manière les murs, les menuiseries, le générateur, la ventilation. C'est
+   * exactement le cas où la contrainte absolue s'applique — un lecteur par
+   * éditeur, choisi sur signature POSITIVE, jamais un lecteur unique rafistolé.
+   *
+   * `aiguiller` cherche donc une signature. S'il n'en trouve aucune, il rend
+   * « format inconnu » et l'on n'écrit rien : `enveloppe` et `systemes`
+   * restent absents. C'est la bonne réponse — chez un éditeur qu'on ne
+   * reconnaît pas, deviner la structure du descriptif ne rendrait pas moins
+   * d'information, elle en rendrait de la fausse, en silence.
+   *
+   * L'éditeur reconnu est conservé et affiché : sans lui, une carte vide
+   * passerait pour un manque du rapport, alors que c'est une limite de
+   * Verrière.
+   *
+   * ── LE MAILLON QUI MANQUAIT ────────────────────────────────────────────
+   *
+   * `lecteurs/dpe/liciel.ts` était écrit, testé, exporté par `LECTEURS_DPE` —
+   * et personne ne l'appelait. Mesuré le 22 août : le diagnostic DPE ne
+   * portait ni `enveloppe`, ni `systemes`, et les trois composants qui savent
+   * les afficher n'étaient montés nulle part, faute de données. La chaîne
+   * s'arrêtait ici.
+   */
+  const aiguillage = aiguiller(LECTEURS_DPE, lignes);
+
+  /*
+   * La lecture entre dans le SCHÉMA, et non à la racine du diagnostic.
+   *
+   * Le modèle porte `schema.lecture` — un seul champ qui reçoit tout ce que le
+   * lecteur d'éditeur a produit : parois, équipements, ventilation, travaux,
+   * causes, contradictions. Éclater ces données en champs séparés à la racine
+   * les aurait détachées de l'étiquette qu'elles expliquent, et obligé à les
+   * réassembler à l'affichage.
+   *
+   * `null` et non `undefined` quand la signature manque : la différence est
+   * lisible à l'écran. `null` dit « on a cherché un éditeur et on n'en a pas
+   * reconnu » ; une absence de champ ne dit rien du tout.
+   */
+  const lecture = aiguillage.etat === 'lu' ? aiguillage.valeur : null;
+
   return {
     type: 'dpe',
     titre: estAudit ? 'Audit énergétique (DPE inclus)' : 'Performance énergétique (DPE)',
@@ -728,7 +779,8 @@ export function analyserDpe(lignes: string[], plage: [number, number]): Diagnost
       climat,
       finale,
       postes: detailPostes,
-      isolation: lireIsolation(lignes)
+      isolation: lireIsolation(lignes),
+      lecture
     },
     pages: plage,
     ...(travaux.length ? { travaux } : {}),
