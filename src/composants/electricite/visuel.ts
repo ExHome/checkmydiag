@@ -22,6 +22,31 @@ import type { Anomalie } from '../../lib/modele';
 import type { SyntheseElectricite } from './synthese';
 
 /* ════════════════════════════════════════════════════════════════════════
+ * 0 · LE TITRE DU BANDEAU
+ * ════════════════════════════════════════════════════════════════════════
+ *
+ * La planche porte « Installation électrique non conforme » : un titre COURT,
+ * en trois lignes, qui tient dans la carte à côté du médaillon. La phrase du
+ * rapport, elle, fait le double — « L'installation intérieure d'électricité
+ * comporte une ou des anomalies. » — et sur 375 px elle court sur cinq lignes
+ * et vient buter contre l'anneau.
+ *
+ * On garde donc le titre court du visuel **et** la phrase exacte du rapport,
+ * placée juste en dessous, en détail du premier point clé — exactement comme
+ * la planche, qui met « Des anomalies ont été relevées. » sous son titre.
+ * Rien ne se perd, et la carte retrouve sa mise en page.
+ *
+ * ⚠️ Le titre de la planche est le seul mot qu'on ne reprend pas : « non
+ * conforme » est interdit par le § 4 — ce diagnostic n'atteste d'aucune
+ * conformité à une norme d'installation neuve.
+ */
+export const TITRE_BANDEAU: Record<SyntheseElectricite['issue'], string> = {
+  anomalies: 'Des anomalies ont été relevées',
+  sansAnomalie: 'Aucune anomalie relevée',
+  nonLu: 'La conclusion n’a pas pu être lue'
+};
+
+/* ════════════════════════════════════════════════════════════════════════
  * 1 · LE NIVEAU DE RISQUE
  * ════════════════════════════════════════════════════════════════════════
  *

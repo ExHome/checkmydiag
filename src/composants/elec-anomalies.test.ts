@@ -182,3 +182,53 @@ describe('⚠️ le grand chiffre du résultat détaillé', () => {
     expect(c.part).toBeNull();
   });
 });
+
+/**
+ * L'ORDRE DES CARTES DE LA PLANCHE — « je veux le même visuel exactement ».
+ *
+ * *Relevé au navigateur le 22/08 sur le banc, à 375 px : les onze cartes de
+ * `01_VISUEL_REFERENCE_ELECTRICITE.png` sont à l'écran, dans cet ordre. Ce test
+ * empêche qu'une future retouche en déplace une sans qu'on le voie.*
+ */
+describe('le visuel du pack, carte par carte', () => {
+  const CARTES = [
+    'RÉSULTAT GLOBAL', // le bandeau sombre
+    'Niveau de risque', // sa pastille
+    'medaillon', // l'anneau à écusson
+    'Points clés',
+    'Résultat global détaillé',
+    'anneau', // le grand chiffre en son centre
+    'legende',
+    'Ce qui a été contrôlé',
+    'famille', // les trois cartes teintées
+    'Ce qui n’a pas été contrôlé',
+    'Niveau de confiance',
+    'jauge',
+    'Conseil Verrière',
+    'lampe',
+    'Voir le rapport complet',
+    'Synthèse' // la barre d'onglets
+  ];
+
+  it('les porte toutes, et dans l’ordre de la planche', () => {
+    let curseur = -1;
+    for (const carte of CARTES) {
+      const i = miniApp.indexOf(carte, curseur + 1);
+      expect(i, `« ${carte} » manque ou a changé de place`).toBeGreaterThan(curseur);
+      curseur = i;
+    }
+  });
+
+  it('⚠️ n’écrit jamais la conformité de la planche à la NF C 15-100', () => {
+    /* Hors commentaires : l'en-tête du fichier CITE la formule de la maquette
+       pour expliquer pourquoi elle est écartée. C'est ce qui s'affiche qui
+       compte, pas ce qui s'explique. */
+    const rendu = miniApp.replace(/\/\*[\s\S]*?\*\/|<!--[\s\S]*?-->/g, '');
+    expect(rendu).not.toMatch(/non conforme/i);
+    expect(rendu).not.toMatch(/NF\s*C\s*15/i);
+  });
+
+  it('dit en clair que les trois familles sont une lecture Verrière', () => {
+    expect(miniApp).toMatch(/classement Verrière/);
+  });
+});

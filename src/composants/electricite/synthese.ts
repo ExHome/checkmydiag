@@ -343,10 +343,14 @@ export function syntheseElectricite(d: Diagnostic): SyntheseElectricite {
         anomalies.length === 1
           ? 'Une anomalie relevée'
           : `${anomalies.length} anomalies relevées`,
-      detail: domaines
-        .filter((x) => x.etat === 'anomalie')
-        .map((x) => x.nom)
-        .join(' · '),
+      /*
+       * La phrase du rapport, mot pour mot, sous le compte.
+       *
+       * Le bandeau porte un titre court — celui de la planche — pour tenir en
+       * trois lignes à côté du médaillon. La citation exacte se lit donc ici,
+       * à la place que la maquette lui donne : on cite, puis on explique.
+       */
+      detail: d.verdict,
       ton: 'attention',
       ancre: 'anomalies'
     });

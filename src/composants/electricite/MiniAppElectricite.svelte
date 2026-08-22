@@ -64,7 +64,7 @@
    */
   import type { Diagnostic } from '../../lib/modele';
   import { syntheseElectricite, type Etat } from './synthese';
-  import { confianceDe, famillesDe, niveauDeRisque, TON_RISQUE } from './visuel';
+  import { confianceDe, famillesDe, niveauDeRisque, TITRE_BANDEAU, TON_RISQUE } from './visuel';
 
   let {
     diagnostic,
@@ -167,7 +167,12 @@
   <section class="bandeau" aria-labelledby="resultat-elec">
     <div class="dedans">
       <p class="chapeau" id="resultat-elec">Résultat global</p>
-      <p class="verdict">{s.resultat}</p>
+      <!--
+        Le titre court de la planche. La phrase exacte du rapport se lit juste
+        en dessous, en détail du premier point clé — la place que la maquette
+        lui donne. Rien ne se perd, et la carte tient en trois lignes.
+      -->
+      <p class="verdict">{TITRE_BANDEAU[s.issue]}</p>
       <p class="chapeau bas">Niveau de risque</p>
       <p class="pastille" data-ton={TON_RISQUE[risque]}>{risque}</p>
     </div>
@@ -759,6 +764,22 @@
   button.tete {
     cursor: pointer;
   }
+  /*
+   * ⚠️ 6 px de débordement, mesurés au navigateur à 375 px.
+   *
+   * L'interlettrage de la rubrique ajoute un blanc après sa dernière lettre, et
+   * ce blanc poussait la tête de carte au-delà de sa boîte. Six pixels ne se
+   * voient pas — mais le § 10 de l'ordre demande « aucune information tronquée
+   * sur mobile », et un débordement finit toujours par en tronquer une.
+   */
+  .tete {
+    max-width: 100%;
+    overflow: hidden;
+  }
+  .tete .rubrique {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
   .tete.fixe {
     cursor: default;
   }
@@ -775,8 +796,19 @@
     line-height: 1;
     color: var(--encre-doux, #4a5a55);
   }
+  /*
+   * Le chevron tourne DANS une boîte fixe.
+   *
+   * Mesuré : en `inline-block`, le glyphe pivoté débordait sa ligne de 6 px et
+   * poussait la tête de carte hors de sa boîte. Une boîte carrée, le glyphe
+   * centré dedans, et la rotation ne déborde plus de rien.
+   */
   .pivot {
-    display: inline-block;
+    display: grid;
+    place-items: center;
+    width: 1.4rem;
+    height: 1.4rem;
+    padding-left: 0;
     transform: rotate(90deg);
     transition: transform 0.15s ease;
   }
