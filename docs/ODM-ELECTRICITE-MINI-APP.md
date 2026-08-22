@@ -117,3 +117,45 @@ d'habitation. L'état vise à **évaluer les risques pouvant porter atteinte à 
 sécurité des personnes** et le fonctionnement de l'installation. Le contrôle
 porte sur l'installation privative en aval de l'appareil général de commande et
 de protection, jusqu'aux bornes d'alimentation ou socles de prises.
+
+---
+
+## Revue de non-régression visuelle — 22/08/2026
+
+*§ 11.10 de l'ordre : « effectuer une revue de non-régression visuelle et métier
+avant toute validation ». Faite au navigateur, sur le banc, à 375 px, capture à
+l'appui, puis mesurée au DOM carte par carte.*
+
+### Les onze cartes de la planche, relevées dans l'ordre
+
+en-tête à éclair → bandeau sombre + niveau de risque + médaillon → points clés →
+résultat global détaillé (anneau chiffré + légende) → ce qui a été contrôlé
+(six domaines) → les trois cartes teintées d'anomalies → ce qui n'a pas été
+contrôlé → niveau de confiance (pourcentage + jauge + lien) → conseil Verrière
+et sa lampe → voir le rapport complet → barre d'onglets.
+
+**Un test verrouille cet ordre** (`elec-anomalies.test.ts`) : il échoue si une
+carte disparaît ou change de place.
+
+### Les trois écarts trouvés, et corrigés
+
+| | Ce que la mesure a montré | Correction |
+|---|---|---|
+| 1 | Le titre du bandeau courait sur **cinq lignes** et butait contre le médaillon — 258 px de haut au lieu de 182. La planche tient en trois lignes | Titre court (`TITRE_BANDEAU`), et **la phrase exacte du rapport en détail du premier point clé** — la place que la maquette lui donne. On cite, puis on explique |
+| 2 | Une tête de carte débordait de **6 px** : le chevron pivoté sort de sa boîte en `inline-block` | Le chevron tourne dans une boîte carrée, glyphe centré |
+| 3 | — | Après correction : **zéro débordement horizontal, zéro troncature verticale** sur l'écran entier, les quatre dossiers du banc compris |
+
+### Le mot de la planche qui reste écarté
+
+« Installation électrique **non conforme** ». Le § 4 l'interdit : ce diagnostic
+n'atteste d'aucune conformité à une norme d'installation neuve. Un test le
+vérifie **hors commentaires** — l'en-tête du composant cite la formule pour
+expliquer pourquoi elle est écartée, et c'est ce qui s'affiche qui compte.
+
+### Ce qui attend encore la validation d'Aude
+
+Le niveau de risque, les trois familles et le pourcentage de confiance sont des
+**lectures Verrière** : des règles écrites, mesurables et testées, mais que le
+rapport n'écrit pas. L'écran le dit en clair sous les cartes d'anomalies. Le § 3
+ne les autorise que « validées et documentées » — la documentation est faite, la
+validation reste à donner.
