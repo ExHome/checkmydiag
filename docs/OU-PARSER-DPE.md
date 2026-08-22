@@ -292,3 +292,21 @@ LICIEL.
 
 Une ligne dans `LECTEURS_DPE`, un fichier à côté. **Jamais** élargir un motif du
 lecteur LICIEL pour qu'il « passe aussi » ailleurs.
+
+### Le maillon, branché le 22/08/2026
+
+`LECTEURS_DPE` était écrit, testé, mesuré — et **appelé nulle part**. Les six
+cartes n'existaient que sur leur banc : vérifié sur le bundle construit, aucune
+de leurs phrases n'y figurait. Le chemin est désormais complet :
+
+| Fichier | Ce qu'il apporte |
+|---|---|
+| `lib/modele.ts` | le schéma `dpe` porte `lecture`, absente si le format n'est pas reconnu |
+| `lib/analyse/index.ts` | `inscrireLecteur('dpe', 'LICIEL', …)` — `analyserDpe` reste le repli pour la lettre et les chiffres, le lecteur LICIEL ajoute le bâtiment |
+| `composants/Diagnostics.svelte` | les six cartes dans l'écran **réellement livré** |
+| `composants/dpe/EcranDpe.svelte` | les mêmes sur l'écran d'atelier |
+
+**La preuve se prend sur le bundle, pas sur le code.** Un composant qu'aucune
+page d'entrée n'atteint est éliminé au build : il est écrit, testé, et absent du
+site. La vérification est donc `grep` sur `dist/assets/*.js`, puis sur le bundle
+servi en ligne.
