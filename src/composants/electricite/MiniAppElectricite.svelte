@@ -64,7 +64,14 @@
    */
   import type { Diagnostic } from '../../lib/modele';
   import { syntheseElectricite, type Etat } from './synthese';
-  import { confianceDe, famillesDe, niveauDeRisque, TITRE_BANDEAU, TON_RISQUE } from './visuel';
+  import {
+    confianceDe,
+    famillesDe,
+    MOT_RISQUE,
+    RISQUES_PAR_DOMAINE,
+    risquesEncourus,
+    TITRE_BANDEAU
+  } from './visuel';
 
   let {
     diagnostic,
@@ -83,7 +90,15 @@
   } = $props();
 
   const s = $derived(syntheseElectricite(diagnostic));
-  const risque = $derived(niveauDeRisque(s));
+  /*
+   * LES RISQUES ENCOURUS — les mots de l'arrêté, jamais une note.
+   *
+   * L'échelle « très faible / modéré / élevé » a été retirée le 22/08 : le
+   * texte ne gradue rien, il NOMME. Sa rubrique 8 attache à chaque domaine le
+   * risque encouru, et il n'en existe que deux — l'électrisation, voire
+   * l'électrocution, et l'incendie.
+   */
+  const risques = $derived(risquesEncourus(s));
   const confiance = $derived(confianceDe(s));
   const familles = $derived(famillesDe(s));
 
@@ -152,7 +167,7 @@
   }
 </script>
 
-<article class="ecran" data-issue={s.issue} data-risque={TON_RISQUE[risque]}>
+<article class="ecran" data-issue={s.issue} data-risque={risques.length ? 'alerte' : s.issue === 'sansAnomalie' ? 'bon' : 'neutre'}>
   {#if entete}
     <header class="titre">
       <svg class="eclair" viewBox="0 0 24 32" aria-hidden="true">
@@ -173,12 +188,28 @@
         lui donne. Rien ne se perd, et la carte tient en trois lignes.
       -->
       <p class="verdict">{TITRE_BANDEAU[s.issue]}</p>
-      <p class="chapeau bas">Niveau de risque</p>
-      <p class="pastille" data-ton={TON_RISQUE[risque]}>{risque}</p>
+      <!--
+        L'intitulé du texte, et le sien seul : l'arrêté parle de « risques
+        encourus » (annexe III, rubrique 8) et les NOMME. Il ne les gradue pas.
+      -->
+      <p class="chapeau bas">Risques encourus</p>
+      {#if risques.length}
+        <p class="risques">
+          {#each risques as r (r)}
+            <span class="pastille" data-risque={r}>{MOT_RISQUE[r]}</span>
+          {/each}
+        </p>
+      {:else}
+        <p class="risques">
+          <span class="pastille" data-ton={s.issue === 'sansAnomalie' ? 'bon' : 'neutre'}>
+            {s.issue === 'sansAnomalie' ? 'Aucune anomalie relevée' : 'Non évalué : conclusion non lue'}
+          </span>
+        </p>
+      {/if}
     </div>
 
     <!-- Le médaillon de la planche : l'anneau et son écusson. -->
-    <svg class="medaillon" viewBox="0 0 130 130" role="img" aria-label="Niveau de risque : {risque}">
+    <svg class="medaillon" viewBox="0 0 130 130" role="img" aria-label={risques.length ? 'Risques encourus : ' + risques.map((r) => MOT_RISQUE[r]).join(', ') : 'Aucun risque nommé'}>
       <circle cx="65" cy="65" r="52" fill="none" stroke="rgb(247 246 242 / 14%)" stroke-width="9" />
       <circle
         class="jauge-risque"
@@ -188,7 +219,7 @@
         fill="none"
         stroke-width="9"
         stroke-linecap="round"
-        stroke-dasharray="{(risque === 'ÉLEVÉ' ? 0.82 : risque === 'MODÉRÉ' ? 0.55 : risque === 'TRÈS FAIBLE' ? 0.22 : 0) *
+        stroke-dasharray="{(risques.length === 2 ? 0.82 : risques.length === 1 ? 0.5 : s.issue === 'sansAnomalie' ? 0.22 : 0) *
           PERIMETRE_MEDAILLON} {PERIMETRE_MEDAILLON}"
         transform="rotate(-90 65 65)"
       />
@@ -308,6 +339,15 @@
           <span class="dit">
             <strong>{d.nom}</strong>
             {#if d.motif}<small>{d.motif}</small>{/if}
+            <!--
+              La rubrique 8 du rapport, mot pour mot : « Explications détaillées
+              relatives aux risques encourus ». C'est elle qui dit POURQUOI le
+              point compte, et elle n'apparaît que là où le rapport a relevé.
+            -->
+            {#if d.etat === 'anomalie'}
+              {@const encouru = RISQUES_PAR_DOMAINE[d.numero]}
+              {#if encouru}<small class="encouru">{encouru.phrase}</small>{/if}
+            {/if}
           </span>
           <span class="statut" data-etat={d.etat}>
             {d.etat === 'anomalie' ? `${d.anomalies.length} anomalie${d.anomalies.length > 1 ? 's' : ''}` : MOT[d.etat]}
@@ -684,6 +724,22 @@
     background: #d8a53c;
     color: #0a2b23;
   }
+  .risques {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0.45rem 0 0;
+  }
+  .risques .pastille {
+    margin: 0;
+  }
+  /* Les deux risques nommés par le texte, et leurs deux teintes. */
+  .pastille[data-risque='electrisation'] {
+    background: #d98f6b;
+  }
+  .pastille[data-risque='incendie'] {
+    background: #d8a53c;
+  }
   .pastille[data-ton='bon'] {
     background: #7fb08c;
   }
@@ -976,6 +1032,12 @@
   .vignette svg {
     width: 1.15rem;
     height: 1.15rem;
+  }
+  .encouru {
+    margin-top: 0.2rem;
+    font-size: 0.8rem !important;
+    line-height: 1.4;
+    color: var(--encre-ambre) !important;
   }
   .domaine .dit strong {
     font-weight: 500;

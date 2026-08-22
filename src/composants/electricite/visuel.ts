@@ -47,49 +47,112 @@ export const TITRE_BANDEAU: Record<SyntheseElectricite['issue'], string> = {
 };
 
 /* ════════════════════════════════════════════════════════════════════════
- * 1 · LE NIVEAU DE RISQUE
+ * 1 · LES RISQUES ENCOURUS — les intitulés du texte, et rien d'autre
  * ════════════════════════════════════════════════════════════════════════
  *
- * La planche affiche « RISQUE MODÉRÉ ». Le rapport n'en dit rien — mais
- * l'arrêté, lui, dit ce que ce diagnostic cherche : « évaluer les risques
- * pouvant porter atteinte à la **sécurité des personnes** et le fonctionnement
- * de l'installation ». Les deux ne sont pas au même niveau, et c'est là-dessus
- * que la règle se fonde.
+ * ⚠️⚠️ **L'ÉCHELLE « TRÈS FAIBLE / MODÉRÉ / ÉLEVÉ » A ÉTÉ RETIRÉE LE 22/08.**
+ * Ordre d'Aude : « pour le niveau, respecte l'intitulé de la réglementation ».
+ * Elle avait raison, et la vérification l'a montré : **l'arrêté du 28 septembre
+ * 2017 ne gradue rien.** Il ne définit aucune échelle de risque. Il NOMME des
+ * risques, et il les nomme domaine par domaine, dans sa rubrique 8
+ * « Explications détaillées relatives aux risques encourus ».
  *
- * | Ce que le rapport établit | Niveau |
+ * Une échelle inventée par-dessus un texte qui n'en a pas, c'est exactement ce
+ * que le § 4 de l'ordre du pack interdit — « ne jamais inventer de niveau de
+ * danger ». La planche montre « RISQUE MODÉRÉ » : c'est sa donnée fictive, et
+ * elle ne devient pas une donnée en passant dans du code.
+ *
+ * ## Ce que le texte écrit, mot pour mot
+ *
+ * *Annexe III de l'arrêté, rubrique 8, telle que le modèle de rapport
+ * l'imprime — relevée le 22/08/2026 sur sept volets du corpus DGLM. Les
+ * annexes ne figurent pas dans la version HTML de Légifrance : elles ne vivent
+ * que dans le PDF du Journal officiel et dans les rapports, qui reproduisent le
+ * modèle à l'identique.*
+ *
+ * | Domaine | Ce que la rubrique 8 écrit du risque |
  * |---|---|
- * | aucune anomalie | **TRÈS FAIBLE** |
- * | anomalies, mais aucune sur la protection des personnes | **MODÉRÉ** |
- * | au moins une sur le différentiel, la terre ou un contact direct | **ÉLEVÉ** |
- * | conclusion non lisible | **NON ÉVALUÉ** |
+ * | 1 · appareil général | « ne permet pas d'assurer cette fonction de coupure en cas de danger (risque d'électrisation, voire d'électrocution), d'incendie ou d'intervention sur l'installation électrique » |
+ * | 2 · différentiel, terre | « peut être la cause d'une électrisation, voire d'une électrocution » |
+ * | 3 · surintensités | « peut être à l'origine d'incendies » |
+ * | 4 · baignoire ou douche | « peut être la cause d'une électrisation, voire d'une électrocution » |
+ * | 5 · contact direct | « présentent d'importants risques d'électrisation, voire d'électrocution » |
+ * | 6 · vétustes ou inadaptés | « présentent d'importants risques d'électrisation, voire d'électrocution » |
  *
- * Les deux domaines qui font basculer en « élevé » sont le 2 et le 5, et ce
- * n'est pas un choix de goût : le différentiel est le seul organe du tableau
- * qui coupe le courant **quand il passe par quelqu'un**, et une partie active
- * nue accessible est un contact direct possible, c'est-à-dire le même danger
- * sans aucune barrière devant.
+ * **Deux risques sont nommés, et deux seulement** : l'électrisation — voire
+ * l'électrocution — et l'incendie. C'est cette liste que la carte affiche, avec
+ * les mots du texte, et jamais une note.
  */
-export type NiveauRisque = 'TRÈS FAIBLE' | 'MODÉRÉ' | 'ÉLEVÉ' | 'NON ÉVALUÉ';
 
-/** Les domaines qui protègent les PERSONNES, et non les biens. */
-export const DOMAINES_PERSONNES = [2, 5] as const;
+/** Les deux risques que l'arrêté nomme. Pas un de plus, pas une graduation. */
+export type Risque = 'electrisation' | 'incendie';
 
-export function niveauDeRisque(s: SyntheseElectricite): NiveauRisque {
-  if (s.issue === 'nonLu') return 'NON ÉVALUÉ';
-  if (s.issue === 'sansAnomalie') return 'TRÈS FAIBLE';
-  const personnes = s.domaines.some(
-    (d) => d.etat === 'anomalie' && (DOMAINES_PERSONNES as readonly number[]).includes(d.numero)
-  );
-  return personnes ? 'ÉLEVÉ' : 'MODÉRÉ';
-}
-
-/** Le ton du niveau — jamais seul à porter l'information : le mot est écrit. */
-export const TON_RISQUE: Record<NiveauRisque, 'bon' | 'attention' | 'alerte' | 'neutre'> = {
-  'TRÈS FAIBLE': 'bon',
-  MODÉRÉ: 'attention',
-  ÉLEVÉ: 'alerte',
-  'NON ÉVALUÉ': 'neutre'
+export const MOT_RISQUE: Record<Risque, string> = {
+  electrisation: 'Électrisation, voire électrocution',
+  incendie: 'Incendie'
 };
+
+/**
+ * Ce que la rubrique 8 dit du risque, domaine par domaine — **mot pour mot**.
+ *
+ * `phrase` se cite telle quelle sous le domaine concerné : c'est l'objet même
+ * de la rubrique 8, et c'est ce qu'un acquéreur a besoin de lire pour
+ * comprendre POURQUOI le point compte.
+ */
+export const RISQUES_PAR_DOMAINE: Record<
+  number,
+  { readonly risques: readonly Risque[]; readonly phrase: string }
+> = {
+  1: {
+    risques: ['electrisation', 'incendie'],
+    phrase:
+      'Son absence, son inaccessibilité ou un appareil inadapté ne permet pas d’assurer cette fonction de coupure en cas de danger (risque d’électrisation, voire d’électrocution), d’incendie ou d’intervention sur l’installation électrique.'
+  },
+  2: {
+    risques: ['electrisation'],
+    phrase:
+      'Son absence ou son mauvais fonctionnement peut être la cause d’une électrisation, voire d’une électrocution.'
+  },
+  3: {
+    risques: ['incendie'],
+    phrase:
+      'L’absence de ces dispositifs de protection ou leur calibre trop élevé peut être à l’origine d’incendies.'
+  },
+  4: {
+    risques: ['electrisation'],
+    phrase:
+      'Son absence privilégie, en cas de défaut, l’écoulement du courant électrique par le corps humain, ce qui peut être la cause d’une électrisation, voire d’une électrocution.'
+  },
+  5: {
+    risques: ['electrisation'],
+    phrase:
+      'Les matériels électriques dont des parties nues sous tension sont accessibles présentent d’importants risques d’électrisation, voire d’électrocution.'
+  },
+  6: {
+    risques: ['electrisation'],
+    phrase:
+      'Ces matériels électriques, lorsqu’ils sont trop anciens, n’assurent pas une protection satisfaisante contre l’accès aux parties nues sous tension ou ne possèdent plus un niveau d’isolement suffisant. Dans les deux cas, ces matériels présentent d’importants risques d’électrisation, voire d’électrocution.'
+  }
+};
+
+/**
+ * Les risques encourus, d'après les domaines où le rapport a relevé.
+ *
+ * ⚠️ Aucun risque n'est déduit d'un domaine sans anomalie : le texte attache
+ * ses phrases à l'ABSENCE ou au DÉFAUT d'un dispositif, jamais à sa présence.
+ * Et quand la conclusion n'a pas pu être lue, la liste est vide — on ne sait
+ * pas, et une liste vide se dit « non évalué » à l'écran, pas « aucun risque ».
+ */
+export function risquesEncourus(s: SyntheseElectricite): Risque[] {
+  if (s.issue !== 'anomalies') return [];
+  const vus = new Set<Risque>();
+  for (const d of s.domaines) {
+    if (d.etat !== 'anomalie') continue;
+    for (const r of RISQUES_PAR_DOMAINE[d.numero]?.risques ?? []) vus.add(r);
+  }
+  /* L'ordre du texte : l'atteinte aux personnes d'abord, le bien ensuite. */
+  return (['electrisation', 'incendie'] as const).filter((r) => vus.has(r));
+}
 
 /* ════════════════════════════════════════════════════════════════════════
  * 2 · LES TROIS FAMILLES D'ANOMALIES

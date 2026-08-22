@@ -193,7 +193,7 @@ describe('⚠️ le grand chiffre du résultat détaillé', () => {
 describe('le visuel du pack, carte par carte', () => {
   const CARTES = [
     'RÉSULTAT GLOBAL', // le bandeau sombre
-    'Niveau de risque', // sa pastille
+    'Risques encourus', // sa pastille — l'intitulé de l'arrêté, pas une note
     'medaillon', // l'anneau à écusson
     'Points clés',
     'Résultat global détaillé',
@@ -230,5 +230,13 @@ describe('le visuel du pack, carte par carte', () => {
 
   it('dit en clair que les trois familles sont une lecture Verrière', () => {
     expect(miniApp).toMatch(/classement Verrière/);
+  });
+
+  it('⚠️ n’affiche plus l’échelle de risque inventée', () => {
+    /* L'arrêté du 28 septembre 2017 ne gradue rien : il nomme deux risques.
+       Une échelle par-dessus un texte qui n'en a pas est une donnée inventée. */
+    const rendu = miniApp.replace(/\/\*[\s\S]*?\*\/|<!--[\s\S]*?-->/g, '');
+    expect(rendu).not.toMatch(/TRÈS FAIBLE|MODÉRÉ|RISQUE ÉLEVÉ/);
+    expect(rendu).toMatch(/Risques encourus/);
   });
 });

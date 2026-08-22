@@ -13,7 +13,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Anomalie, Diagnostic } from '../../lib/modele';
 import { DOMAINES, domaineDe, issueDe, syntheseElectricite } from './synthese';
-import { confianceDe, famillesDe, niveauDeRisque } from './visuel';
+import { confianceDe, famillesDe, risquesEncourus, RISQUES_PAR_DOMAINE } from './visuel';
 
 const socle = {
   type: 'electricite' as const,
@@ -138,6 +138,7 @@ describe('⚠️ les valeurs fictives du mockup', () => {
       const tout = JSON.stringify(syntheseElectricite(d));
       expect(tout).not.toMatch(/niveau de risque/i);
       expect(tout).not.toMatch(/risque mod[ée]r[ée]/i);
+      expect(tout).not.toMatch(/tr[èe]s faible|risque [ée]lev[ée]/i);
       expect(tout).not.toMatch(/\d{2}\s*%/);
     }
   });
@@ -247,24 +248,61 @@ describe('⚠️ les points non vérifiés n’entrent pas dans un affichage ras
 });
 
 describe('les valeurs dérivées de la planche', () => {
-  it('le niveau de risque monte quand la protection des PERSONNES est touchée', () => {
-    /* Différentiel, terre, contact direct : ce sont les points qui coupent le
-       courant quand il passe par quelqu'un. */
-    expect(niveauDeRisque(syntheseElectricite(SIX))).toBe('ÉLEVÉ');
+  it('⚠️ ne gradue rien : il nomme les risques que l’arrêté nomme', () => {
+    /* L'échelle « très faible / modéré / élevé » a été retirée le 22/08 :
+       l'arrêté du 28 septembre 2017 ne définit aucune échelle. Sa rubrique 8
+       nomme deux risques, et deux seulement.
+       ⚠️ Les six anomalies du volet portent sur les domaines 2, 4, 5 et 6 —
+       tous rattachés à l'électrisation. AUCUNE ne touche l'appareil général ni
+       les surintensités : le risque d'incendie ne se nomme donc pas ici, et
+       l'ajouter serait exactement l'invention qu'on refuse. */
+    expect(risquesEncourus(syntheseElectricite(SIX))).toEqual(['electrisation']);
   });
 
-  it('reste modéré quand aucune anomalie ne touche ces points', () => {
+  it('nomme l’incendie quand une anomalie touche la protection contre les surintensités', () => {
+    const surintensite = {
+      ...SIX,
+      faits: [{ libelle: 'Anomalies relevées', valeur: '1' }],
+      anomalies: [
+        anomalie(
+          'Le calibre du dispositif de protection contre les surintensités est trop élevé pour la section des conducteurs'
+        )
+      ]
+    } as unknown as Diagnostic;
+    expect(risquesEncourus(syntheseElectricite(surintensite))).toEqual(['incendie']);
+  });
+
+  it('ne nomme que l’électrisation quand aucun domaine ne porte le risque d’incendie', () => {
     const vetusteSeule = {
       ...SIX,
       faits: [{ libelle: 'Anomalies relevées', valeur: '1' }],
       anomalies: [anomalie('L’installation comporte au moins un matériel électrique vétuste')]
     } as unknown as Diagnostic;
-    expect(niveauDeRisque(syntheseElectricite(vetusteSeule))).toBe('MODÉRÉ');
+    expect(risquesEncourus(syntheseElectricite(vetusteSeule))).toEqual(['electrisation']);
   });
 
-  it('⚠️ n’évalue aucun risque quand la conclusion n’a pas pu être lue', () => {
-    expect(niveauDeRisque(syntheseElectricite(NON_LUE))).toBe('NON ÉVALUÉ');
+  it('⚠️ ne nomme aucun risque quand la conclusion n’a pas pu être lue', () => {
+    /* Une liste vide se dit « non évalué » à l'écran, jamais « aucun risque ». */
+    expect(risquesEncourus(syntheseElectricite(NON_LUE))).toEqual([]);
     expect(confianceDe(syntheseElectricite(NON_LUE)).part).toBeNull();
+  });
+
+  it('⚠️ ne nomme aucun risque sur un rapport sans anomalie', () => {
+    /* Le texte attache ses phrases à l'ABSENCE ou au DÉFAUT d'un dispositif,
+       jamais à sa présence : un domaine sain n'encourt rien qui se cite. */
+    expect(risquesEncourus(syntheseElectricite(SAINE))).toEqual([]);
+  });
+
+  it('cite la rubrique 8 mot pour mot, pour les six domaines', () => {
+    for (const n of [1, 2, 3, 4, 5, 6]) {
+      const e = RISQUES_PAR_DOMAINE[n];
+      expect(e, `domaine ${n}`).toBeDefined();
+      expect(e!.phrase.length).toBeGreaterThan(40);
+      expect(e!.risques.length).toBeGreaterThan(0);
+    }
+    /* Les deux seuls risques du texte — pas un de plus. */
+    const tous = new Set(Object.values(RISQUES_PAR_DOMAINE).flatMap((e) => e.risques));
+    expect([...tous].sort()).toEqual(['electrisation', 'incendie']);
   });
 
   it('range les anomalies dans les trois familles sans en perdre une seule', () => {

@@ -296,6 +296,21 @@ export const REGLEMENT: Partial<Record<TypeDiag, Reglement>> = {
           url: 'https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000035772506',
           luLe: '2026-08-14'
         }
+      },
+      {
+        enonce:
+          'Le texte ne définit aucune échelle de gravité. Sa rubrique 8, « Explications détaillées relatives aux risques encourus », nomme les risques domaine par domaine, et elle n’en nomme que deux : l’électrisation — voire l’électrocution — et l’incendie. L’incendie n’est attaché qu’à deux domaines : l’appareil général de commande et de protection, et la protection contre les surintensités, dont « l’absence ou le calibre trop élevé peut être à l’origine d’incendies ».',
+        source: {
+          reference: 'arrêté du 28 septembre 2017, annexe III, rubrique 8',
+          url: 'https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000035772506',
+          luLe: '2026-08-22'
+        },
+        /*
+         * ⚠️ La provenance est dite en toutes lettres : cette rubrique a été
+         * lue dans les RAPPORTS, pas sur Légifrance.
+         */
+        reserve:
+          '⚠️ Les annexes de cet arrêté ne figurent pas dans la version HTML de Légifrance : elles ne vivent que dans le PDF du Journal officiel et dans le modèle de rapport, que les rapports reproduisent à l’identique. La rubrique 8 a donc été relevée le 22/08/2026 sur sept volets du corpus, où elle est imprimée mot pour mot et identique d’un rapport à l’autre. Toute échelle du type « risque faible / modéré / élevé » est une invention : le texte nomme, il ne gradue pas.'
       }
     ]
   },
