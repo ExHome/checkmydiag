@@ -161,3 +161,58 @@ combien de locaux n'ont pas été ouverts, **et lesquels**.
 | Présence `sur anciennes analyses` | la preuve est une pièce **que le rapport ne joint pas** |
 | Rapport sans texte extractible | « je n'ai pas pu lire ce document » — 14 cas dans le corpus |
 | Éditeur non couvert | le repli se déclare, il ne se fait jamais en silence |
+
+---
+
+## Ce qui a été MESURÉ, le 22/08/2026
+
+*§ 8.7 de l'ordre : « tester sur plusieurs rapports Amiante réellement
+différents ». La chaîne entière — PDF → découpe → lecteur d'éditeur → écran —
+passée sur douze volets amiante tirés du corpus DGLM, un DDT sur 133.*
+
+| | avant | après |
+|---|---|---|
+| périmètre § 3.2.6 lu | — | **11 / 12** volets, 61 pièces |
+| bloc « Éléments contrôlés » rempli | 0 | **11 / 12** |
+| bloc « Ce qui n'a pas été contrôlé » **avec ses entrées** | **0 / 12** | **5 / 12** |
+| contradictions détectées | — | **0** |
+| pieds de page pris pour des pièces | — | **0** |
+
+### Les deux défauts que la mesure a trouvés
+
+**1. Le § 1.2 perdait ses lignes en silence.** Le lecteur n'acceptait une ligne
+du tableau des locaux non visités que si elle portait deux espaces consécutifs
+ou le mot `Toutes`. Un constat réel dont le § 1.2 dit
+
+```
+1er étage - Entrée, 1er étage - Séjour  Sous faces des planchers  non démontable
+1er étage - Entrée, 1er étage - Séjour  Plancher sous moquette collée  non démontable
+```
+
+rendait **zéro entrée** : l'extraction avait ramené les colonnes à un espace
+simple. Les deux seules limites du rapport tombaient — dans le bloc qui existe
+pour les dire, et sur un rapport qui imprime juste en dessous que « les
+obligations réglementaires du (des) propriétaire(s) […] ne sont pas remplies ».
+La signature manquante est **positive** : une ligne de ce tableau commence par
+une localisation, `<niveau> - <local>`, la même forme qu'au § 3.2.6.
+
+**2. La carte de complétude affichait 100 % sur presque tout le corpus.** Le
+dénominateur valait `pièces examinées + locaux non visités` ; le second terme
+étant toujours nul à cause du défaut ci-dessus, la carte annonçait « toutes les
+pièces ont été examinées, le rapport ne signale aucun local resté fermé » — y
+compris sur le constat des deux planchers non sondés. Un dénominateur amputé ne
+donne pas un chiffre approximatif : **il donne toujours 100 %.** Le calcul est
+désormais interdit tant que la rubrique des non-visités n'a pas été LUE
+(`Bloc.lue`), et trois états sont distingués partout : non lue · lue et
+« Néant » · lue et remplie.
+
+### Ce qui reste ouvert
+
+- **Le périmètre n'est pas lu chez BC2E.** Le repli se déclare (`lue: false`),
+  le bloc se masque au lieu d'affirmer un périmètre vide. La carte renvoie aux
+  § 4.1 / 4.2 / 4.3, dont la disposition n'a pas encore été sondée.
+- **Le niveau de risque et le pourcentage sont des règles à valider par Aude.**
+  Ils ne sont pas recopiés du mockup : ils se calculent (`visuel.ts`), et chaque
+  règle est écrite. L'ordre § 2 n'autorise un pourcentage que « si une règle
+  métier validée existe » — la règle existe et se vérifie ligne à ligne, sa
+  validation appartient à Aude.

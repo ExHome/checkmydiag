@@ -106,6 +106,7 @@ function formatInconnu(essayes: readonly string[]): SyntheseAmiante {
     nonControle: {
       montrer: true,
       entrees: [],
+      lue: false,
       mention: 'Rien de ce rapport n’a pu être lu — ni ce qui a été contrôlé, ni ce qui ne l’a pas été.'
     },
     completude: [],
@@ -160,12 +161,18 @@ export function syntheseDeLecture(
    * lue se dit comme telle.
    */
   const nonControle: Bloc<Limite> = limites.length
-    ? { montrer: true, entrees: limites }
+    ? { montrer: true, entrees: limites, lue: true }
     : l.limites.neant
-      ? { montrer: true, entrees: [], mention: 'Le rapport indique qu’aucun local n’est resté fermé.' }
+      ? {
+          montrer: true,
+          entrees: [],
+          lue: true,
+          mention: 'Le rapport indique qu’aucun local n’est resté fermé.'
+        }
       : {
           montrer: true,
           entrees: [],
+          lue: false,
           mention:
             'La liste des locaux non visités n’a pas pu être lue dans ce rapport. On ne peut donc pas dire que tout a été examiné : reportez-vous au rapport complet.'
         };

@@ -118,6 +118,31 @@ export function confianceDe(s: SyntheseAmiante): Confiance {
   const examinees = s.elements.entrees.length;
   const nonExaminees = s.nonControle.entrees.length;
 
+  /*
+   * ⚠️⚠️ PAS DE CHIFFRE SI LA RUBRIQUE DES NON-VISITÉS N'A PAS ÉTÉ LUE.
+   *
+   * Le commentaire ci-dessus posait déjà la règle — « pas de chiffre sans les
+   * deux rubriques » — mais le code ne vérifiait que la première. Mesuré le
+   * 22/08 sur douze volets réels : le § 1.2 ne rendait aucune entrée sur onze
+   * d'entre eux, le dénominateur valait donc `examinées + 0`, et la carte
+   * affichait **100 % sur presque tout le corpus** — y compris sur un constat
+   * dont le rapport écrit noir sur blanc que deux planchers n'ont pas pu être
+   * sondés et que les obligations du propriétaire ne sont pas remplies.
+   *
+   * Un dénominateur amputé ne donne pas un chiffre approximatif : il donne
+   * toujours 100 %, c'est-à-dire l'affirmation exacte que l'ordre interdit.
+   * `lue === false` veut dire « je n'ai pas lu cette rubrique » — et on ne
+   * calcule rien sur ce qu'on n'a pas lu.
+   */
+  if (s.nonControle.lue === false) {
+    return {
+      part: null,
+      examinees,
+      nonExaminees,
+      dit: 'La liste des locaux non visités n’a pas pu être lue : la part réellement examinée ne peut pas être calculée.'
+    };
+  }
+
   if (!s.elements.montrer || examinees + nonExaminees === 0) {
     return {
       part: null,

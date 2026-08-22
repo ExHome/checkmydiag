@@ -7,7 +7,7 @@
  * écrites. Ce fichier tient les règles.*
  */
 import { describe, expect, it } from 'vitest';
-import { categoriesDe, niveauDeRisque } from './visuel';
+import { categoriesDe, confianceDe, niveauDeRisque } from './visuel';
 import type { SyntheseAmiante } from './synthese';
 
 const vide: SyntheseAmiante = {
@@ -80,5 +80,53 @@ describe('le niveau de risque', () => {
   it('⚠️ ne conclut pas à la place d’un rapport qui ne conclut pas', () => {
     expect(niveauDeRisque({ ...vide, issue: 'nonConclu' })).toBe('À CONFIRMER');
     expect(niveauDeRisque({ ...vide, issue: 'illisible' })).toBe('NON ÉVALUÉ');
+  });
+});
+
+/**
+ * LA PART DU BIEN EXAMINÉE — le chiffre qui remplace le « 90 % » du mockup.
+ *
+ * *Mesuré le 22/08 sur douze volets réels : avant ce verrou, la carte affichait
+ * 100 % sur onze d'entre eux, parce que le § 1.2 ne rendait aucune entrée et
+ * que le dénominateur valait « examinées + 0 ». Un dénominateur amputé ne donne
+ * pas un chiffre approximatif : il donne toujours 100 %.*
+ */
+const troisPieces = {
+  montrer: true,
+  entrees: [
+    { quoi: 'RDC - Entrée', statut: 'Visitée', ton: 'neutre' as const },
+    { quoi: 'RDC - Séjour', statut: 'Visitée', ton: 'neutre' as const },
+    { quoi: 'R+1 - Chambre', statut: 'Visitée', ton: 'neutre' as const }
+  ]
+};
+
+describe('la part du bien examinée', () => {
+  it('⚠️ ne calcule RIEN quand la rubrique des non-visités n’a pas été lue', () => {
+    const c = confianceDe({
+      ...vide,
+      elements: troisPieces,
+      nonControle: { montrer: true, entrees: [], lue: false, mention: 'pas lue' }
+    });
+    expect(c.part).toBeNull();
+    expect(c.dit).toMatch(/n’a pas pu être lue/);
+  });
+
+  it('donne 100 % seulement quand le rapport DIT qu’aucun local n’est resté fermé', () => {
+    const c = confianceDe({
+      ...vide,
+      elements: troisPieces,
+      nonControle: { montrer: true, entrees: [], lue: true, mention: 'Néant' }
+    });
+    expect(c.part).toBe(100);
+  });
+
+  it('descend sous 100 % dès qu’un local est resté fermé', () => {
+    const c = confianceDe({
+      ...vide,
+      elements: troisPieces,
+      nonControle: { montrer: true, entrees: [{ quoi: 'Combles' }], lue: true }
+    });
+    expect(c.part).toBe(75);
+    expect(c.dit).toContain('3 pièces examinées sur 4');
   });
 });

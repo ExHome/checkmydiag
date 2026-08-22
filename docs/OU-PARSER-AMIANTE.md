@@ -112,7 +112,8 @@ corpus est aux neuf dixièmes LICIEL.*
 
 | L'endroit | **LICIEL** | **BC2E** |
 |---|---|---|
-| Tableau de ce qui a été **regardé** | § 5.0.1 / 5.0.2 (absents en DAPP et en RAAT) | § 4.1 / 4.2 / 4.3 |
+| Tableau de ce qui a été **regardé** | § 5.0.1 / 5.0.2 (absents en DAPP et en RAAT) — ⚠️ **`Néant -` dans les volets négatifs**, voir plus bas | § 4.1 / 4.2 / 4.3 |
+| Liste des **pièces visitées** | **§ 3.2.6**, `Descriptif des pièces visitées` — le seul inventaire de ce qui a été VU | non mesuré |
 | Tableau de ce qui **contient** de l'amiante | § 5.1, **avec des sous-listes après le renvoi en astérisque** | § 5.1 / 5.2 / 5.3 (conclusions et recommandations) |
 | Forme des valeurs | **texte en clair** : `Présence d'amiante (Sur jugement personnel)` | **sigles**, avec la légende imprimée sous le tableau : `JPOR` `MM` `DOC` `RASP` `MPPNCA` `MPSCA` |
 | Colonne « y a-t-il de l'amiante » | mêlée à la justification | **colonne `Amiante` séparée** : `NON` · `Susceptible` · `Analyse` |
@@ -529,8 +530,36 @@ prélèvements ont été faits » à cet endroit sans vérifier le § 2 et l'ann
 | 5.2 | `Listes des matériaux et produits ne contenant pas d'amiante après analyse` | idem | présente | les négatifs **prouvés par analyse** |
 | 5.3 | *absente* | `Liste des matériaux ou produits ne contenant pas d'amiante sur justificatif` | présente | négatifs prouvés sur pièce |
 
+⚠️⚠️⚠️ **ET IL N'EST PAS DAVANTAGE UN INVENTAIRE DE CE QUI A ÉTÉ REGARDÉ.**
+
+*Correction du 22/08/2026, mesurée en sondant le corpus DGLM sur la chaîne
+entière.* La ligne d'en-tête de ce document annonçait que les § 5.0.1 / 5.0.2
+portent « **tout** ce qui a été inspecté » en liste A ou B. **Les volets
+négatifs le démentent** : les deux tableaux y répondent
+
+```
+5.0.1 Liste des matériaux repérés de la liste A
+Localisation  Identifiant + Description  Conclusion (justification)  Etat de conservation  Commentaires
+Néant -
+Aucun autre matériau de la liste A n'a été repéré dans périmètre de repérage mentionné au paragraphe 3.2.6
+```
+
+— et ils renvoient eux-mêmes au § 3.2.6. Le § 5.0.x ne liste donc que ce que
+l'opérateur a **retenu**, pas ce qu'il a **parcouru**. Y chercher les
+« éléments contrôlés » du visuel, c'est chercher dans le seul tableau qui se
+tait précisément quand il n'y a rien à déclarer — c'est-à-dire dans la
+très grande majorité des cas.
+
+**L'inventaire de ce qui a été vu est au § 3.2.6**, et nulle part ailleurs :
+`Descriptif des pièces visitées`, imprimé **sur deux colonnes**, deux pièces par
+ligne, refermé par l'en-tête `Localisation Description` du tableau des
+composants. Une pièce s'y reconnaît à sa forme — `<niveau> - <pièce>` — et non
+à son nom : c'est une signature positive, et le pied de page (`SARL … | Tél.`,
+`3 / 14`, `Rapport du :`) tombe alors de lui-même. Lu par
+`perimetreDe()` dans `src/lib/lecteurs/amiante/liciel.ts`.
+
 ⚠️⚠️ **Le piège central du volet amiante : le § 5.0.2 n'est pas une liste
-d'amiante.** C'est la liste de ce que l'opérateur a *regardé* en liste B, et sa
+d'amiante.** C'est la liste de ce que l'opérateur a *retenu* en liste B, et sa
 colonne `Conclusion (justification)` porte aussi bien la présence que l'absence.
 Vu dans les dix volets lus :
 

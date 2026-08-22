@@ -88,6 +88,16 @@ export interface Bloc<T> {
   readonly montrer: boolean;
   readonly entrees: readonly T[];
   /**
+   * La rubrique a-t-elle été LUE ?
+   *
+   * ⚠️ Sans ce drapeau, « zéro entrée » se lit comme « rien à signaler ». Sur
+   * « ce qui n'a pas été contrôlé », c'est la confusion la plus grave du
+   * produit : un § 1.2 non lu devenait un bien entièrement examiné, et la carte
+   * de complétude en tirait « 100 % ». Trois états, jamais deux : non lue,
+   * lue et vide (« Néant »), lue et remplie.
+   */
+  readonly lue?: boolean;
+  /**
    * Ce qu'on dit quand il n'y a pas d'entrée — et qui change tout :
    * « la rubrique répond Néant » n'est pas « on n'a pas su lire ».
    */
@@ -264,12 +274,13 @@ function nonControleDe(d: Diagnostic): Bloc<Limite> {
     entrees.push({ quoi: e.terme, ...(renseigne(e.ou) ? { ou: e.ou! } : {}) });
   }
 
-  if (entrees.length) return { montrer: true, entrees };
+  if (entrees.length) return { montrer: true, entrees, lue: true };
 
   if (n && !n.lue) {
     return {
       montrer: true,
       entrees: [],
+      lue: false,
       mention:
         "La rubrique des locaux non visités n'a pas pu être lue. On ne peut donc pas dire que tout a été examiné."
     };
@@ -278,10 +289,11 @@ function nonControleDe(d: Diagnostic): Bloc<Limite> {
     return {
       montrer: true,
       entrees: [],
+      lue: true,
       mention: 'Le rapport indique qu’aucun local n’est resté fermé.'
     };
   }
-  return { montrer: false, entrees: [] };
+  return { montrer: false, entrees: [], lue: false };
 }
 
 /**

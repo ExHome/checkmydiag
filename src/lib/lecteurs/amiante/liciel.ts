@@ -227,9 +227,29 @@ export function limitesDe(lignes: readonly string[]): LectureAmiante['limites'] 
      * Le § 1.2 en a trois — Localisation | Parties du local | Raison — et la
      * colonne du milieu vaut presque toujours « Toutes ». Une phrase coupée
      * n'a jamais cette forme.
+     *
+     * ⚠️⚠️ **IL FALLAIT UNE TROISIÈME SIGNATURE, et son absence a coûté une
+     * perte silencieuse.** Mesuré le 22/08 sur douze volets réels : un constat
+     * dont le § 1.2 porte deux lignes vraies
+     *
+     *     1er étage - Entrée, 1er étage - Séjour Sous faces des planchers non démontable
+     *     1er étage - Entrée, 1er étage - Séjour Plancher sous moquette collée non démontable
+     *
+     * rendait **zéro entrée**. L'extraction avait ramené les colonnes à un
+     * espace simple, et la colonne du milieu ne vaut pas « Toutes » : les deux
+     * seules limites du rapport tombaient — dans le bloc qui existe pour les
+     * dire. Le rapport, lui, imprime juste en dessous que « les obligations
+     * réglementaires du (des) propriétaire(s) […] ne sont pas remplies ».
+     *
+     * La signature qui manquait est POSITIVE et ne dépend d'aucun blanc : une
+     * ligne de ce tableau **commence par une localisation**, `<niveau> - <local>`
+     * — la même forme qu'au § 3.2.6. Aucune phrase de clause ne l'a : « Le
+     * diagnostic se limite… », « Les zones situées derrière… », « Certains
+     * locaux, parties de locaux… » ne portent pas de tiret d'étage.
      */
-    const colonnes = /\s{2,}/.test(brut) || /\b(Toutes|Tous)\b/.test(brut);
-    if (!colonnes) continue;
+    const deuxColonnes = /\s{2,}/.test(brut) || /\b(Toutes|Tous)\b/.test(brut);
+    const localisation = /^[^,;]{2,40}\s-\s\S/.test(brut);
+    if (!deuxColonnes && !localisation) continue;
     entrees.push({ quoi: brut });
   }
   return { lue: true, neant, entrees };
