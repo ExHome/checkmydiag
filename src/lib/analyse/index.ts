@@ -16,15 +16,32 @@ import { nonVisites } from './anomalies';
 import { controler } from './coherence';
 import { confianceDuDossier, origineDe } from './confiance';
 import { reperer } from './reperes';
+import { choisirLecteur, inscrireLecteur } from './lecteurs';
+import { constatationsDiverses, faitsDesConstatations } from './termites.constatations';
+import { lireAmianteBC2E } from './amiante.bc2e';
 import { conclusionDe, graviteDe, lireSynthese, type BlocSynthese } from './synthese';
 import { nombre, trouver } from './texte';
 import { dateDuRapport } from './dateRapport';
 import { lireTransaction, type Transaction } from './transaction';
 import type { PointDeControle } from '../modele';
 
-type Extracteur = (lignes: string[], plage: [number, number]) => Diagnostic;
-
-const EXTRACTEURS: Record<TypeDiag, Extracteur> = {
+/*
+ * L'AIGUILLAGE PAR ÉDITEUR — contrainte absolue du 21/08/2026.
+ *
+ * « La bonne architecture est un lecteur PAR ÉDITEUR, choisi sur signature, et
+ * non un lecteur unique rafistolé. On commence par nommer l'éditeur avant de
+ * lire. » (`ORDRE-DE-MISSION-LECTEURS-PAR-EDITEUR.md`)
+ *
+ * ÉTAT DU CHANTIER, dit sans le farder : les neuf lecteurs ci-dessous ont été
+ * écrits en lisant du LICIEL, et ils sont inscrits ici comme lecteurs de
+ * REPLI — c'est-à-dire « faute de mieux », et non « pour tout le monde ». Ils
+ * sont donc choisis avec `repli: true` dès que l'éditeur n'est pas couvert, et
+ * ce drapeau est ce qui devra remonter jusqu'à l'écran.
+ *
+ * Migrer un volet, c'est écrire son lecteur LICIEL, l'inscrire sous ce nom, et
+ * ne laisser au repli que ce qui vaut vraiment pour un éditeur inconnu.
+ */
+const REPLIS: Record<TypeDiag, (lignes: string[], plage: [number, number]) => Diagnostic> = {
   dpe: analyserDpe,
   plomb: analyserPlomb,
   amiante: analyserAmiante,
@@ -35,6 +52,53 @@ const EXTRACTEURS: Record<TypeDiag, Extracteur> = {
   carrez: analyserCarrez,
   assainissement: analyserAssainissement
 };
+
+for (const [type, lecteur] of Object.entries(REPLIS) as [TypeDiag, (typeof REPLIS)[TypeDiag]][]) {
+  inscrireLecteur(type, null, (c) => lecteur([...c.lignes], [...c.plage] as [number, number]));
+}
+
+/*
+ * LES LECTEURS ÉCRITS POUR UN ÉDITEUR — le chantier avance ici, volet par volet.
+ *
+ * `analyserAmiante` a été écrit en lisant du LICIEL, et corrigé sur 130 volets
+ * LICIEL : il est donc inscrit sous ce nom, en plus de servir de repli. BC2E a
+ * le sien, écrit sur sa propre carte — sa conclusion vit en page 1, dans un
+ * bloc sans le moindre numéro de liste, et le lecteur LICIEL n'y trouverait
+ * rien du tout.
+ */
+inscrireLecteur('amiante', 'LICIEL', (c) =>
+  analyserAmiante([...c.lignes], [...c.plage] as [number, number])
+);
+inscrireLecteur('amiante', 'BC2E', lireAmianteBC2E);
+
+/*
+ * TERMITES — les constatations diverses, un lecteur par éditeur.
+ *
+ * « Je veux à tout prix les constatations diverses dans les termites » — Aude,
+ * 22/08/2026, contrainte absolue.
+ *
+ * Le tableau D d'un rapport termites répond à UNE question : y a-t-il des
+ * indices de TERMITES sur les éléments examinés ? Vrillettes, moisissures,
+ * pourriture, humidité, l'historique du bien, ce que l'opérateur n'a pas pu
+ * regarder — tout cela vit dans « Constatations diverses », et Verrière n'en
+ * lisait rien.
+ *
+ * Les deux cartes n'ont rien de commun : chez LICIEL la rubrique change de
+ * lettre et ses colonnes s'insèrent en plein texte ; chez BC2E elle porte des
+ * sous-libellés nommés et se prolonge en trois rubriques de plus. Chacune a donc
+ * son lecteur, et l'éditeur non couvert n'en reçoit aucun — le repli lit les
+ * termites sans prétendre lire cette rubrique-là.
+ */
+const avecConstatations = (c: Parameters<typeof lireAmianteBC2E>[0]): Diagnostic => {
+  const base = analyserTermites([...c.lignes], [...c.plage] as [number, number]);
+  const lecture = constatationsDiverses([...c.lignes], c.generateur.editeur);
+  /* Les constatations passent EN TÊTE des faits : § 23, une information
+     minoritaire peut être l'information principale du diagnostic. */
+  return { ...base, faits: [...faitsDesConstatations(lecture), ...base.faits] };
+};
+
+inscrireLecteur('termites', 'LICIEL', avecConstatations);
+inscrireLecteur('termites', 'BC2E', avecConstatations);
 
 /** Ordre d'affichage : ce qui engage la sécurité et l'argent d'abord. */
 const ORDRE: TypeDiag[] = [
@@ -269,10 +333,19 @@ export function analyser(brutes: PageTexte[], metadonnees: MetadonneesPdf = {}):
 
   const diagnostics: Diagnostic[] = [];
   for (const section of sections) {
-    const extracteur = EXTRACTEURS[section.type];
+    /*
+     * On ne prend plus « le » lecteur du volet : on demande CELUI DE CET
+     * ÉDITEUR, dont le nom a été établi plus haut, avant toute lecture.
+     */
+    const choix = choisirLecteur(section.type, generateur);
+    if (!choix) continue;
     // La page de synthèse porte souvent la conclusion la plus explicite : on la
-    // joint à la section pour que les extracteurs puissent s'en servir.
-    const diag = extracteur([...section.lignes, ...synthese], section.plage);
+    // joint à la section pour que les lecteurs puissent s'en servir.
+    const diag = choix.lecteur({
+      lignes: [...section.lignes, ...synthese],
+      plage: section.plage,
+      generateur
+    });
     const reperes = reperer(section.type, section.pages);
     const feuillets = section.pages.map((p) => p.numero);
 
@@ -327,7 +400,19 @@ export function analyser(brutes: PageTexte[], metadonnees: MetadonneesPdf = {}):
   // le diagnostic n'existait pas.
   for (const bloc of blocs) {
     if (diagnostics.some((d) => d.type === bloc.type)) continue;
-    const diag = EXTRACTEURS[bloc.type](bloc.lignes, plageSynthese ?? [1, pages.length]);
+    /*
+     * Même règle ici : on passe par l'aiguillage, l'éditeur en main. Le volet
+     * détaillé manque, mais le rapport a bien été produit par quelqu'un — et
+     * la page de synthèse est justement l'un des endroits qui varient le plus
+     * d'un éditeur à l'autre.
+     */
+    const choix = choisirLecteur(bloc.type, generateur);
+    if (!choix) continue;
+    const diag = choix.lecteur({
+      lignes: bloc.lignes,
+      plage: plageSynthese ?? [1, pages.length],
+      generateur
+    });
     const depuisLaSynthese = depuisSynthese(diag, blocs);
     /*
      * Ici, le rapport lui-même n'est pas dans le PDF.
