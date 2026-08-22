@@ -59,7 +59,8 @@
     bandeaux = [],
     confiance = null,
     surDetail = null,
-    surRapportComplet = null
+    surRapportComplet = null,
+    surScenarios = null
   }: {
     diagnostic: Diagnostic;
     enveloppe: Enveloppe;
@@ -72,27 +73,60 @@
     confiance?: number | null;
     surDetail?: ((cle: string) => void) | null;
     surRapportComplet?: (() => void) | null;
+    surScenarios?: (() => void) | null;
   } = $props();
 
   const schema = $derived(diagnostic.schema?.genre === 'dpe' ? diagnostic.schema : null);
   const finale = $derived<Lettre | null>(schema?.finale ?? null);
   const bandeau = (nom: BandeauDecoupe['nom']) => bandeaux.find((b) => b.nom === nom) ?? null;
 
-  /** L'échelle réglementaire, déjà en usage dans la maison. */
-  const COULEURS: Record<Lettre, string> = {
-    A: '#319834',
-    B: '#33cc31',
-    C: '#cbfc34',
-    D: '#fbfe06',
-    E: '#fbcc05',
-    F: '#fc9935',
-    G: '#fc0205'
-  };
+  /*
+   * L'ARC DE LA JAUGE.
+   *
+   * La référence dessine un arc ouvert, pas un anneau plein : la part remplie
+   * dit où la classe se situe sur l'échelle A→G. Sept classes, sept crans.
+   */
+  const LETTRES: Lettre[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+  const CERCLE = 2 * Math.PI * 42;
+  const OUVERT = CERCLE * 0.75;
+  const rempli = $derived(finale ? (OUVERT * (LETTRES.indexOf(finale) + 1)) / 7 : 0);
 
   /*
-   * La phrase du résultat vient de l'analyse, pas d'ici : c'est elle qui connaît
-   * les seuils et les conséquences réglementaires.
+   * Le titre court, en serif, comme la maquette. Il nomme la classe ; la phrase
+   * en dessous vient de l'analyse, qui connaît les seuils et les conséquences.
    */
+  const titreResultat = $derived(
+    finale === 'A' || finale === 'B'
+      ? 'Très bonne performance énergétique'
+      : finale === 'C' || finale === 'D'
+        ? 'Performance énergétique ordinaire'
+        : finale === 'E'
+          ? 'Performance à améliorer'
+          : finale
+            ? 'Logement très peu performant'
+            : 'Performance non déterminée'
+  );
+
+  /** La parenthèse de l'étiquette climat, prise sur l'échelle officielle. */
+  const nuanceClimat = $derived(
+    schema?.climat
+      ? LETTRES.indexOf(schema.climat.lettre) <= 1
+        ? '(peu d’émissions)'
+        : LETTRES.indexOf(schema.climat.lettre) <= 3
+          ? '(émissions moyennes)'
+          : '(fortes émissions)'
+      : ''
+  );
+
+  /** La tuile d'un travail suit le lot qu'il touche. */
+  function tuileDuLot(lot: string | null): string {
+    if (!lot) return 'violet';
+    if (/^murs?$|toiture|plafond|plancher|combles/i.test(lot)) return 'vert';
+    if (/chauffage|eau chaude|climatisation/i.test(lot)) return 'peche';
+    if (/fen[êe]tre|porte/i.test(lot)) return 'violet';
+    return 'bleu';
+  }
+
   const gravite = $derived(diagnostic.gravite);
 
   /* ── LES QUATRE DÉTAILS TECHNIQUES VERROUILLÉS PAR L'ORDRE ─────────────── */
@@ -116,17 +150,21 @@
   }
 
   const DETAILS = $derived([
-    { cle: 'enveloppe', titre: 'ENVELOPPE DU BÂTIMENT', texte: phraseMurs() },
-    { cle: 'systemes', titre: 'CHAUFFAGE & ECS', texte: phraseSystemes() },
+    { cle: 'enveloppe', tuile: 'vert', titre: 'Enveloppe du bâtiment', texte: phraseMurs() },
+    { cle: 'systemes', tuile: 'peche', titre: 'Chauffage & ECS', texte: phraseSystemes() },
     {
       cle: 'ventilation',
-      titre: 'VENTILATION',
+      tuile: 'bleu',
+      titre: 'Ventilation',
       texte: systemes.ventilation?.type ?? 'Non précisé dans le rapport'
     },
     {
       cle: 'surface',
-      titre: 'SURFACE DE RÉFÉRENCE',
-      texte: enveloppe.bien.surfaceReference?.valeur ?? 'Non précisée dans le rapport'
+      tuile: 'violet',
+      titre: 'Surface de référence',
+      texte: enveloppe.bien.surfaceReference?.valeur
+        ? `${enveloppe.bien.surfaceReference.valeur} — surface du calcul, pas la surface Carrez`
+        : 'Non précisée dans le rapport'
     }
   ]);
 
@@ -136,14 +174,14 @@
      sept. */
   const CLES = $derived(
     [
-      ['Type de bien', enveloppe.bien.typeDeBien?.valeur],
-      ['Année de construction', enveloppe.bien.anneeConstruction?.valeur],
-      ['Surface de référence', enveloppe.bien.surfaceReference?.valeur],
-      ['Nombre de niveaux', enveloppe.bien.nombreNiveaux?.valeur],
-      ['Hauteur sous plafond', enveloppe.bien.hauteurSousPlafond?.valeur],
-      ['Département', enveloppe.bien.departement?.valeur],
-      ['Altitude', enveloppe.bien.altitude?.valeur]
-    ].filter((l): l is [string, string] => Boolean(l[1]))
+      ['⌂', 'Type de bien', enveloppe.bien.typeDeBien?.valeur],
+      ['▤', 'Année de construction', enveloppe.bien.anneeConstruction?.valeur],
+      ['◱', 'Surface de référence', enveloppe.bien.surfaceReference?.valeur],
+      ['≡', 'Nombre de niveaux', enveloppe.bien.nombreNiveaux?.valeur],
+      ['↕', 'Hauteur sous plafond', enveloppe.bien.hauteurSousPlafond?.valeur],
+      ['◈', 'Département', enveloppe.bien.departement?.valeur],
+      ['△', 'Altitude', enveloppe.bien.altitude?.valeur]
+    ].filter((l): l is [string, string, string] => Boolean(l[2]))
   );
 
   /* ── POINTS CLÉS ──────────────────────────────────────────────────────────
@@ -221,47 +259,67 @@
 </script>
 
 <article class="dpe">
-  <!-- ── EN-TÊTE ─────────────────────────────────────────────────────────── -->
-  <header class="tete">
-    <h1>DPE</h1>
-    <p>Synthèse du diagnostic</p>
-  </header>
+  <div class="barre-haut">
+    <span aria-hidden="true">‹</span>
+    <div class="marque">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#024436" stroke-width="1.4" aria-hidden="true">
+        <path d="M3 10.5 12 3l9 7.5V21H3z" />
+        <path d="M12 3v18M3 10.5h18M7.5 21V7M16.5 21V7M3 15.5h18" />
+      </svg>
+      <h1>DPE</h1>
+    </div>
+    <span aria-hidden="true">⋯</span>
+  </div>
+  <p class="sous-titre">Synthèse du diagnostic</p>
 
   <VignetteDuBien {photo} bien={enveloppe.bien} />
 
-  <!-- ── 1 · RÉSULTAT GLOBAL ─────────────────────────────────────────────── -->
-  <section class="carte resultat">
+  <section class="carte">
     <h2>Résultat global</h2>
     <div class="global">
       {#if finale}
-        <div class="jauge" style:--teinte={COULEURS[finale]}>
-          <b>{finale}</b>
-          <span>Classe énergie</span>
+        <div class="jauge">
+          <svg viewBox="0 0 100 100" aria-hidden="true">
+            <circle cx="50" cy="50" r="42" fill="none" stroke="#afcda9" stroke-width="7"
+              stroke-linecap="round" stroke-dasharray="{OUVERT} {CERCLE - OUVERT}" />
+            <circle cx="50" cy="50" r="42" fill="none" stroke="#378546" stroke-width="7"
+              stroke-linecap="round" stroke-dasharray="{rempli} {CERCLE - rempli}" />
+          </svg>
+          <div class="lettre"><b>{finale}</b><span>Classe énergie</span></div>
         </div>
       {/if}
-      <p class="verdict">{diagnostic.verdict}</p>
+      <div class="resume">
+        <h3>{titreResultat}</h3>
+        <p>{diagnostic.verdict}</p>
+      </div>
     </div>
 
-    <div class="chiffres">
-      {#if schema?.energie}
-        <div>
-          <dt>Consommation d’énergie</dt>
-          <dd>
-            <b>{schema.energie.valeur.toLocaleString('fr-FR')}</b>
-            <span>{schema.energie.unite}</span>
-          </dd>
-        </div>
-      {/if}
-      {#if schema?.climat}
-        <div>
-          <dt>Émissions de gaz à effet de serre</dt>
-          <dd>
-            <b>{schema.climat.valeur.toLocaleString('fr-FR')}</b>
-            <span>{schema.climat.unite}</span>
-          </dd>
-        </div>
-      {/if}
-    </div>
+    {#if schema?.energie || schema?.climat}
+      <dl class="chiffres">
+        {#if schema?.energie}
+          <div>
+            <dt>Consommation d’énergie</dt>
+            <dd>
+              <span class="val"><b>{schema.energie.valeur.toLocaleString('fr-FR')}</b><span
+                  >{schema.energie.unite}</span
+                ></span>
+              <small>(énergie primaire)</small>
+            </dd>
+          </div>
+        {/if}
+        {#if schema?.climat}
+          <div>
+            <dt>Émissions de gaz à effet de serre</dt>
+            <dd>
+              <span class="val"><b>{schema.climat.valeur.toLocaleString('fr-FR')}</b><span
+                  >{schema.climat.unite}</span
+                ></span>
+              <small>{nuanceClimat}</small>
+            </dd>
+          </div>
+        {/if}
+      </dl>
+    {/if}
 
     <!--
       La règle du double seuil, écrite en clair : c'est elle qui décide de la
@@ -269,61 +327,84 @@
     -->
     {#if schema?.energie && schema?.climat}
       <p class="double-seuil">
-        <b>C’est la moins bonne des deux qui est retenue.</b> La classe du logement n’est
-        jamais une moyenne des deux étiquettes.
+        <strong>C’est la moins bonne des deux qui est retenue.</strong> La classe du
+        logement n’est jamais une moyenne des deux étiquettes.
       </p>
     {/if}
 
     <BandeauDuRapport bandeau={bandeau('étiquette')} />
   </section>
 
-  <!-- ── 2 · DÉTAILS TECHNIQUES DU LOGEMENT ──────────────────────────────── -->
   <section class="carte">
     <h2>Détails techniques du logement</h2>
-    <ul class="details">
+    <ul>
       {#each DETAILS as d (d.cle)}
-        <li>
-          <div>
+        <li class="rangee">
+          <span class="tuile {d.tuile}">
+            {#if d.cle === 'enveloppe'}
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0c4a34" stroke-width="1.6" aria-hidden="true">
+                <path d="M4 11 12 4l8 7v9H4z" /><path d="M9 20v-5h6v5" />
+              </svg>
+            {:else if d.cle === 'systemes'}
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d62300" stroke-width="1.6" aria-hidden="true">
+                <rect x="4" y="7" width="11" height="11" rx="1.5" /><path d="M7 7v11M11 7v11" />
+                <path d="M19 6c1.6 1.8 2 2.9 2 4a2 2 0 1 1-4 0c0-1.1.4-2.2 2-4z" />
+              </svg>
+            {:else if d.cle === 'ventilation'}
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2478a2" stroke-width="1.6" aria-hidden="true">
+                <circle cx="12" cy="12" r="2.2" />
+                <path d="M12 9.8C12 6 10 4 7.5 4.6 5.6 5 5 7.5 7 9.3l3 1.7M14.2 12c3.8 0 5.8-2 5.2-4.5-.4-1.9-2.9-2.5-4.7-.5l-1.7 3M12 14.2c0 3.8 2 5.8 4.5 5.2 1.9-.4 2.5-2.9.5-4.7l-3-1.7" />
+              </svg>
+            {:else}
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6a5da5" stroke-width="1.6" aria-hidden="true">
+                <path d="M3 20h18L3 6z" /><path d="M7 20v-4M11 20v-6" />
+              </svg>
+            {/if}
+          </span>
+          <span class="corps">
             <b>{d.titre}</b>
             <p>{d.texte}</p>
-          </div>
+          </span>
           {#if surDetail}
-            <button type="button" onclick={() => surDetail(d.cle)}>Détail</button>
+            <button class="pilule" type="button" onclick={() => surDetail(d.cle)}>Détail</button>
           {/if}
+          <span class="chev" aria-hidden="true">›</span>
         </li>
       {/each}
     </ul>
     <BandeauDuRapport bandeau={bandeau('vue d’ensemble')} />
   </section>
 
-  <!-- ── 3 · CARACTÉRISTIQUES CLÉS ───────────────────────────────────────── -->
   {#if CLES.length > 0}
     <section class="carte">
       <h2>Caractéristiques clés du logement</h2>
       <dl class="cles">
-        {#each CLES as [nom, valeur] (nom)}
-          <div><dt>{nom}</dt><dd>{valeur}</dd></div>
+        {#each CLES as [icone, nom, valeur] (nom)}
+          <div>
+            <span class="ic" aria-hidden="true">{icone}</span>
+            <dt>{nom}</dt>
+            <dd>{valeur}</dd>
+          </div>
         {/each}
       </dl>
     </section>
   {/if}
 
-  <!-- ── 4 · POINTS CLÉS ─────────────────────────────────────────────────── -->
   <section class="carte">
     <h2>Points clés</h2>
     <ul class="points">
       {#each POINTS_CLES as p (p.titre)}
-        <li>
-          <span class="pastille {p.signe}" aria-hidden="true"
+        <li class="rangee">
+          <span class="rond {p.signe}" aria-hidden="true"
             >{p.signe === 'bon' ? '✓' : p.signe === 'attention' ? '!' : 'i'}</span
           >
-          <div><b>{p.titre}</b><p>{p.texte}</p></div>
+          <span class="corps"><b>{p.titre}</b><p>{p.texte}</p></span>
+          <span class="chev" aria-hidden="true">›</span>
         </li>
       {/each}
     </ul>
   </section>
 
-  <!-- ── 5 · CONSTATATIONS DIVERSES ──────────────────────────────────────── -->
   {#if CONSTATATIONS.length > 0}
     <section class="carte">
       <h2>Constatations diverses</h2>
@@ -332,12 +413,19 @@
           <li>{c}</li>
         {/each}
       </ul>
+      <svg class="filigrane" width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.9" aria-hidden="true">
+        <path d="M12 21c0-6 3-11 8-13-1 7-4 11-8 13z" /><path d="M12 21C9 16 6 13 3 12c1 5 4 8 9 9z" />
+      </svg>
     </section>
   {/if}
 
-  <!-- ── 6 · CE QUI N'A PAS ÉTÉ CONTRÔLÉ ─────────────────────────────────── -->
   <section class="carte">
-    <h2>Ce qui n’a pas été contrôlé ou renseigné</h2>
+    <h2>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d15a19" stroke-width="1.7" aria-hidden="true">
+        <path d="M3 3l18 18M10.6 6.3A9.8 9.8 0 0 1 12 6c5 0 9 4.5 9 6a11 11 0 0 1-2.4 3.3M6.6 8.3C4.4 9.6 3 11.3 3 12c0 1.5 4 6 9 6 1.2 0 2.3-.2 3.3-.6" />
+      </svg>
+      Ce qui n’a pas été contrôlé / non renseigné
+    </h2>
     <ul class="manques">
       {#each NON_RENSEIGNE as m (m.quoi)}
         <li><span>{m.quoi}</span><em>{m.etat}</em></li>
@@ -345,204 +433,284 @@
     </ul>
   </section>
 
-  <!-- ── 7 · NIVEAU DE CONFIANCE ─────────────────────────────────────────── -->
   {#if confiance !== null}
     <section class="carte">
-      <h2>Niveau de confiance</h2>
+      <h2>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#024436" stroke-width="1.7" aria-hidden="true">
+          <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z" /><path d="M9 12l2 2 4-4" />
+        </svg>
+        Niveau de confiance
+      </h2>
       <p class="taux">{pourcent(confiance)}</p>
       <div class="piste"><div class="barre" style:width={pourcent(confiance)}></div></div>
       <p class="sous">
-        Part de ce que nous avons pu lire dans le rapport. Ce n’est pas un jugement
-        sur le diagnostic : c’est la mesure de notre propre lecture.
+        Part de ce que nous avons pu lire dans le rapport. Ce n’est pas un jugement sur
+        le diagnostic : c’est la mesure de notre propre lecture.
       </p>
     </section>
   {/if}
 
-  <!-- ── 8 · RECOMMANDATIONS PRINCIPALES ─────────────────────────────────── -->
   {#if travaux.length > 0}
     <section class="carte">
       <h2>Recommandations principales</h2>
-      <ul class="travaux">
+      <ul class="reco">
         {#each travaux as t, i (t.lot ?? i)}
-          <li>
-            <div class="ligne">
+          <li class="rangee">
+            <span class="tuile {tuileDuLot(t.lot)}">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0c4a34" stroke-width="1.6" aria-hidden="true">
+                <path d="M4 11 12 4l8 7v9H4z" /><path d="M8 20v-6h8v6" />
+              </svg>
+            </span>
+            <span class="corps">
               <b>{t.lot ?? 'Poste non nommé'}</b>
-              {#if t.performance}<span class="perf">{t.performance}</span>{/if}
-            </div>
+              {#if t.performance}
+                <span class="impact {t.portee.genre === 'part' ? 'fort' : 'moyen'}"
+                  >Vise {t.performance}</span
+                >
+              {/if}
+            </span>
             <!--
               À la place de « économie estimée ~ 320 € / an », qui n'existe dans
               aucune source : la part de pertes que ce travail touche, prise dans
-              la fiche ADEME du même DPE.
+              la fiche publique du même DPE. Même emplacement, même mise en forme.
             -->
-            {#if t.portee.genre === 'part'}
-              <p class="portee">Agit sur <b>{pourcent(t.portee.part)}</b> des pertes</p>
-            {:else if t.portee.genre === 'hors enveloppe'}
-              <p class="portee hors">N’agit pas sur les pertes : change la façon de les compenser</p>
-            {/if}
-            <p class="consigne">{t.description}</p>
+            <span class="droite">
+              {#if t.portee.genre === 'part'}
+                <small>Part des pertes</small>
+                <b>{pourcent(t.portee.part)}</b>
+              {:else if t.portee.genre === 'hors enveloppe'}
+                <b class="hors">N’agit pas sur les pertes</b>
+              {/if}
+            </span>
+            <span class="chev" aria-hidden="true">›</span>
           </li>
         {/each}
       </ul>
       <BandeauDuRapport bandeau={bandeau('après travaux')} />
     </section>
+
+    {#if surScenarios}
+      <button class="action" type="button" onclick={surScenarios}>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#024436" stroke-width="1.7" aria-hidden="true">
+          <path d="M4 19V5M4 19h16" /><path d="M8 15l3.5-4 3 2.5L20 7" />
+        </svg>
+        Voir tous les scénarios de travaux
+        <span class="chev" aria-hidden="true">›</span>
+      </button>
+    {/if}
   {/if}
 
   <BandeauDuRapport bandeau={bandeau('coûts')} />
 
-  <!-- ── 9 · CONSEIL VERRIÈRE ────────────────────────────────────────────── -->
   <section class="carte conseil">
-    <h2>Conseil Verrière</h2>
+    <h2>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#378546" stroke-width="1.7" aria-hidden="true">
+        <path d="M12 21c0-6 3-11 8-13-1 7-4 11-8 13z" /><path d="M12 21C9 16 6 13 3 12c1 5 4 8 9 9z" />
+      </svg>
+      Conseil Verrière
+    </h2>
     <p>
       {#if finale === 'A' || finale === 'B' || finale === 'C'}
         Votre logement est déjà performant. Les améliorations ci-dessus visent le
         confort et la facture, pas la mise en conformité.
       {:else if finale === 'F' || finale === 'G'}
-        Votre logement fait partie des plus gros consommateurs. Les travaux
-        ci-dessus ne sont pas seulement une économie : ils conditionnent ce que la
-        loi vous autorise à faire du bien.
+        Votre logement fait partie des plus gros consommateurs. Les travaux ci-dessus ne
+        sont pas seulement une économie : ils conditionnent ce que la loi vous autorise
+        à faire du bien.
       {:else}
-        Ce rapport décrit un logement ordinaire. Les travaux ci-dessus visent les
-        postes que le diagnostiqueur a jugés prioritaires.
+        Ce rapport décrit un logement ordinaire. Les travaux ci-dessus visent les postes
+        que le diagnostiqueur a jugés prioritaires.
       {/if}
       Le rapport reste la référence : ce que vous lisez ici en vient, ligne à ligne.
     </p>
+    <svg class="filigrane" width="130" height="130" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8" aria-hidden="true">
+      <path d="M3 10.5 12 3l9 7.5V21H3z" />
+      <path d="M12 3v18M3 10.5h18M7.5 21V7M16.5 21V7M3 15.5h18" />
+    </svg>
   </section>
 
   {#if surRapportComplet}
-    <button type="button" class="rapport" onclick={surRapportComplet}>
+    <button class="action sombre" type="button" onclick={surRapportComplet}>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <path d="M6 3h8l4 4v14H6z" /><path d="M14 3v4h4M9 12h6M9 16h6" />
+      </svg>
       Voir le rapport complet
+      <span class="chev" aria-hidden="true">›</span>
     </button>
   {/if}
 </article>
 
 <style>
-  /* La charte : vert profond, ivoire, sable discret. Cartes respirantes. */
+  /*
+   * ── LA PALETTE DU PACK, MESURÉE DANS SA PROPRE IMAGE ──────────────────────
+   *
+   * « Je veux le visuel exact que tu viens de me montrer avec les mêmes
+   * couleurs » — Aude, 22/08. Ces valeurs ne sont pas approchées à l'œil :
+   * elles sont relevées pixel par pixel dans 01_VISUEL_REFERENCE_DPE.png.
+   *
+   *   fond de page      #fcf8f4     carte             #fefcf8
+   *   vert profond      #024436     bronze            #a68965
+   *   rouille           #d15a19     orange pastille   #ea8423
+   *   bleu pastille     #085c8e     vert validation   #378546
+   *   vert pâle         #e3ebdc     pastille impact   #eef1e6
+   *
+   * Elles vivent ici, sur `.dpe`, et non dans la charte de l'application : cet
+   * écran reproduit une référence verrouillée, il n'a pas à la réinterpréter.
+   */
   .dpe {
+    --fond: #fcf8f4;
+    --carte: #fefcf8;
+    --vert: #024436;
+    /*
+     * `--bronze` et non `--or` : la charte bannit ce nom-là, parce que
+     * l'ancien jeton mentait — il s'appelait « or » et contenait du vert.
+     * Celui-ci contient bien un bronze, relevé dans la référence.
+     */
+    --bronze: #a68965;
+    --rouille: #d15a19;
+    --orange: #ea8423;
+    --bleu: #085c8e;
+    --validation: #378546;
+    --vert-pale: #e3ebdc;
+    --impact: #eef1e6;
+    --filet: #ece3d6;
+    --encre: #1b2b26;
+    --encre-doux: #5c6b64;
+
     display: grid;
-    gap: 1rem;
-    max-width: 34rem;
+    gap: 0.85rem;
+    max-width: 33rem;
     margin: 0 auto;
-    padding: 1rem 0.9rem 3rem;
-    background: var(--fond, #f7f6f2);
-    color: var(--encre, #0a2b23);
+    padding: 1.1rem 0.9rem 3rem;
+    background: var(--fond);
+    color: var(--encre);
   }
 
   .tete {
     text-align: center;
     display: grid;
-    gap: 0.15rem;
+    gap: 0.2rem;
+    padding: 0.4rem 0 0.6rem;
   }
 
   .tete h1 {
     margin: 0;
-    font-size: 1.7rem;
-    letter-spacing: 0.06em;
-    color: var(--vert-verriere, #12463b);
+    font-size: 1.9rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--vert);
   }
 
   .tete p {
     margin: 0;
-    font-size: 0.74rem;
-    letter-spacing: 0.22em;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.26em;
     text-transform: uppercase;
-    color: var(--verriere-sable-encre, #896c33);
+    color: var(--bronze);
   }
 
   .carte {
     display: grid;
-    gap: 0.7rem;
-    padding: 1rem 1.05rem;
-    border: 1px solid var(--verriere-sable-filet, #d8c199);
-    border-radius: 12px;
-    background: var(--papier, #fff);
+    gap: 0.75rem;
+    padding: 1.05rem 1.1rem;
+    border: 1px solid var(--filet);
+    border-radius: 16px;
+    background: var(--carte);
+    box-shadow: 0 1px 2px rgb(2 68 54 / 4%);
   }
 
   h2 {
     margin: 0;
-    font-size: 0.74rem;
+    font-size: 0.7rem;
     font-weight: 700;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--encre-doux, #4a5a55);
+    color: var(--encre-doux);
   }
 
   .global {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.1rem;
   }
 
-  /* La jauge : un disque cerclé de la couleur réglementaire de la classe. */
+  /* La jauge : un anneau vert, la lettre au centre — comme la référence. */
   .jauge {
     flex: none;
     display: grid;
     place-items: center;
-    width: 5.2rem;
-    height: 5.2rem;
+    width: 5.4rem;
+    height: 5.4rem;
     border-radius: 50%;
-    border: 5px solid var(--teinte);
-    background: var(--papier, #fff);
+    border: 6px solid var(--teinte);
+    background: var(--carte);
   }
 
   .jauge b {
-    font-size: 2.1rem;
+    font-size: 2.3rem;
     line-height: 1;
-    color: var(--encre, #0a2b23);
+    color: var(--vert);
   }
 
   .jauge span {
-    font-size: 0.52rem;
-    letter-spacing: 0.1em;
+    font-size: 0.5rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--encre-doux, #4a5a55);
+    color: var(--encre-doux);
   }
 
   .verdict {
     margin: 0;
-    font-size: 0.9rem;
+    font-size: 0.92rem;
     line-height: 1.5;
+    color: var(--encre);
   }
 
   .chiffres {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
-    gap: 0.8rem;
-    padding-top: 0.7rem;
-    border-top: 1px solid var(--surface, rgb(10 43 35 / 3%));
+    grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+    gap: 0.9rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--filet);
   }
 
   .chiffres dt,
   .cles dt {
-    font-size: 0.68rem;
-    letter-spacing: 0.06em;
+    font-size: 0.64rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--encre-doux, #4a5a55);
+    color: var(--encre-doux);
   }
 
   .chiffres dd {
-    margin: 0.15rem 0 0;
+    margin: 0.2rem 0 0;
     display: flex;
     align-items: baseline;
     gap: 0.3rem;
   }
 
   .chiffres dd b {
-    font-size: 1.9rem;
+    font-size: 2.1rem;
     line-height: 1;
+    color: var(--vert);
+    font-variant-numeric: tabular-nums;
   }
 
   .chiffres dd span {
-    font-size: 0.72rem;
-    color: var(--encre-doux, #4a5a55);
+    font-size: 0.7rem;
+    color: var(--encre-doux);
   }
 
   .double-seuil {
     margin: 0;
     padding: 0.6rem 0.8rem;
-    border-left: 3px solid var(--vert-verriere, #12463b);
-    background: var(--surface, rgb(10 43 35 / 3%));
-    border-radius: 0 6px 6px 0;
-    font-size: 0.82rem;
+    border-left: 3px solid var(--vert);
+    background: var(--impact);
+    border-radius: 0 8px 8px 0;
+    font-size: 0.8rem;
     line-height: 1.5;
   }
 
@@ -552,16 +720,16 @@
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 0.55rem;
+    gap: 0.6rem;
   }
 
   .details li,
   .points li {
     display: flex;
-    gap: 0.6rem;
+    gap: 0.7rem;
     align-items: flex-start;
-    padding-top: 0.55rem;
-    border-top: 1px solid var(--surface, rgb(10 43 35 / 3%));
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--filet);
   }
 
   .details li > div {
@@ -569,17 +737,19 @@
   }
 
   .details b {
-    font-size: 0.74rem;
-    letter-spacing: 0.08em;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
     text-transform: uppercase;
+    color: var(--vert);
   }
 
   .details p,
   .points p {
-    margin: 0.15rem 0 0;
-    font-size: 0.82rem;
+    margin: 0.2rem 0 0;
+    font-size: 0.8rem;
     line-height: 1.45;
-    color: var(--encre-doux, #4a5a55);
+    color: var(--encre-doux);
   }
 
   .details button,
@@ -590,36 +760,41 @@
 
   .details button {
     flex: none;
-    padding: 0.25rem 0.6rem;
-    border: 1px solid var(--vert-100, #e6ede4);
+    padding: 0.28rem 0.7rem;
+    border: 1px solid var(--vert-pale);
     border-radius: 999px;
-    background: transparent;
-    font-size: 0.74rem;
-    color: var(--vert-verriere, #12463b);
+    background: var(--impact);
+    font-size: 0.72rem;
+    color: var(--vert);
   }
 
   .pastille {
     flex: none;
     display: grid;
     place-items: center;
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 1.7rem;
+    height: 1.7rem;
     border-radius: 50%;
-    font-size: 0.78rem;
+    font-size: 0.82rem;
     font-weight: 700;
     color: #fff;
   }
 
   .pastille.bon {
-    background: var(--vert-verriere, #12463b);
+    background: var(--validation);
   }
 
   .pastille.attention {
-    background: #c05621;
+    background: var(--orange);
   }
 
   .pastille.info {
-    background: #2f5d8a;
+    background: var(--bleu);
+  }
+
+  .points b {
+    font-size: 0.87rem;
+    color: var(--encre);
   }
 
   .cles div,
@@ -627,60 +802,80 @@
     display: flex;
     justify-content: space-between;
     gap: 0.8rem;
-    padding-top: 0.45rem;
-    border-top: 1px solid var(--surface, rgb(10 43 35 / 3%));
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--filet);
     font-size: 0.83rem;
   }
 
   .cles dd {
     margin: 0;
     text-align: right;
+    font-variant-numeric: tabular-nums;
   }
 
   .constats li {
     position: relative;
-    padding-left: 0.9rem;
+    padding-left: 1rem;
     font-size: 0.83rem;
-    line-height: 1.5;
-    color: var(--encre-doux, #4a5a55);
+    line-height: 1.55;
+    color: var(--encre-doux);
   }
 
   .constats li::before {
     content: '';
     position: absolute;
     left: 0;
-    top: 0.5rem;
-    width: 0.35rem;
-    height: 0.35rem;
+    top: 0.55rem;
+    width: 0.38rem;
+    height: 0.38rem;
     border-radius: 50%;
-    background: var(--vert-verriere, #12463b);
+    background: var(--validation);
+  }
+
+  /* La rouille de la référence : « Non réalisé », « Hors DPE ». */
+  .manques li {
+    position: relative;
+    padding-left: 1rem;
+  }
+
+  .manques li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.95rem;
+    width: 0.38rem;
+    height: 0.38rem;
+    border-radius: 50%;
+    background: var(--rouille);
   }
 
   .manques em {
     flex: none;
     font-style: normal;
-    font-size: 0.76rem;
-    color: var(--verriere-sable-encre, #896c33);
+    font-size: 0.78rem;
+    color: var(--rouille);
   }
 
   .taux {
     margin: 0;
-    font-size: 2.1rem;
+    font-size: 2.4rem;
     line-height: 1;
-    color: var(--vert-verriere, #12463b);
+    font-weight: 700;
+    color: var(--vert);
+    font-variant-numeric: tabular-nums;
   }
 
   .piste {
-    height: 0.45rem;
+    height: 0.4rem;
     border-radius: 999px;
-    background: var(--surface, rgb(10 43 35 / 3%));
+    background: var(--impact);
     overflow: hidden;
   }
 
   .barre {
     height: 100%;
     border-radius: 999px;
-    background: var(--vert-verriere, #12463b);
+    background: var(--vert);
   }
 
   .sous,
@@ -688,14 +883,14 @@
     margin: 0;
     font-size: 0.78rem;
     line-height: 1.5;
-    color: var(--encre-doux, #4a5a55);
+    color: var(--encre-doux);
   }
 
   .travaux li {
     display: grid;
-    gap: 0.2rem;
-    padding-top: 0.55rem;
-    border-top: 1px solid var(--surface, rgb(10 43 35 / 3%));
+    gap: 0.25rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--filet);
   }
 
   .ligne {
@@ -706,50 +901,402 @@
   }
 
   .ligne b {
-    font-size: 0.87rem;
+    font-size: 0.88rem;
+    color: var(--encre);
   }
 
   .perf {
-    padding: 0.05rem 0.45rem;
-    border: 1px solid var(--vert-100, #e6ede4);
+    padding: 0.1rem 0.5rem;
     border-radius: 999px;
-    font-size: 0.72rem;
-    color: var(--vert-verriere, #12463b);
+    background: var(--impact);
+    font-size: 0.71rem;
+    color: var(--vert);
+    font-variant-numeric: tabular-nums;
   }
 
   .portee {
     margin: 0;
     font-size: 0.79rem;
-    color: var(--vert-verriere, #12463b);
+    font-weight: 600;
+    color: var(--validation);
   }
 
   .portee.hors {
-    color: var(--encre-doux, #4a5a55);
+    font-weight: 400;
+    color: var(--encre-doux);
   }
 
   .conseil {
-    border-color: var(--vert-100, #e6ede4);
-    background: linear-gradient(
-      180deg,
-      var(--vert-100, #e6ede4) 0%,
-      var(--papier, #fff) 70%
-    );
+    border-color: var(--vert-pale);
+    background: linear-gradient(180deg, var(--vert-pale) 0%, var(--carte) 72%);
+  }
+
+  .conseil h2 {
+    color: var(--vert);
   }
 
   .conseil p {
     margin: 0;
     font-size: 0.85rem;
     line-height: 1.55;
+    color: var(--encre);
   }
 
   .rapport {
-    padding: 0.9rem 1rem;
+    padding: 1rem;
     border: none;
-    border-radius: 12px;
-    background: var(--vert-profond, #0a2b23);
-    color: var(--ivoire, #f7f6f2);
-    font-size: 0.78rem;
-    letter-spacing: 0.12em;
+    border-radius: 14px;
+    background: var(--vert);
+    color: #fefcf8;
+    font-size: 0.76rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
+  }
+
+  .rapport:hover,
+  .rapport:focus-visible,
+  .details button:hover,
+  .details button:focus-visible {
+    filter: brightness(1.12);
+  }
+
+  .barre-haut {
+    display: grid;
+    grid-template-columns: 1.5rem 1fr 1.5rem;
+    align-items: center;
+    padding: 0.3rem 0.2rem 0;
+  }
+
+  .barre-haut .marque {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .barre-haut h1 {
+    margin: 0;
+    font-family: var(--police-titre, 'Iowan Old Style', Palatino, Georgia, serif);
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--vert);
+  }
+
+  .barre-haut > span {
+    color: var(--encre-doux);
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  .sous-titre {
+    margin: 0.1rem 0 0.3rem;
+    text-align: center;
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--bronze);
+  }
+
+  /* ── LA JAUGE EN ARC, comme la référence : pas un anneau plein. ────────── */
+  .jauge {
+    position: relative;
+    flex: none;
+    width: 6rem;
+    height: 6rem;
+  }
+
+  .jauge svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(135deg);
+  }
+
+  .jauge .lettre {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding-bottom: 0.9rem;
+  }
+
+  .jauge .lettre b {
+    font-family: var(--police-titre, 'Iowan Old Style', Palatino, Georgia, serif);
+    font-size: 2.5rem;
+    line-height: 1;
+    color: var(--vert-titre);
+  }
+
+  .jauge .lettre span {
+    position: absolute;
+    bottom: 0.3rem;
+    font-size: 0.46rem;
+    font-weight: 600;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--encre-doux);
+  }
+
+  .resume h3 {
+    margin: 0 0 0.3rem;
+    font-family: var(--police-titre, 'Iowan Old Style', Palatino, Georgia, serif);
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--vert-titre);
+    text-wrap: balance;
+  }
+
+  .resume p {
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--encre-doux);
+  }
+
+  .chiffres .val {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+  }
+
+  .chiffres small {
+    display: block;
+    margin-top: 0.15rem;
+    font-size: 0.66rem;
+    color: var(--encre-doux);
+  }
+
+  /* ── LES RANGÉES À TUILE ───────────────────────────────────────────────── */
+  .rangee {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.62rem 0;
+    border-top: 1px solid var(--filet);
+  }
+
+  .rangee:first-child {
+    border-top: none;
+  }
+
+  .tuile {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 12px;
+  }
+
+  /* Les quatre fonds de tuile, relevés dans la référence. */
+  .tuile.vert {
+    background: #e5eede;
+  }
+
+  .tuile.peche {
+    background: #fce5d2;
+  }
+
+  .tuile.bleu {
+    background: #e4eced;
+  }
+
+  .tuile.violet {
+    background: #efecf0;
+  }
+
+  .corps {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .corps b {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--vert-titre);
+  }
+
+  .corps p {
+    margin: 0.15rem 0 0;
+    font-size: 0.76rem;
+    line-height: 1.4;
+    color: var(--encre-doux);
+  }
+
+  .pilule {
+    flex: none;
+    padding: 0.26rem 0.65rem;
+    border: none;
+    border-radius: 999px;
+    background: var(--impact-fort);
+    font: inherit;
+    font-size: 0.7rem;
+    color: var(--vert);
+    cursor: pointer;
+  }
+
+  .chev {
+    flex: none;
+    color: #b9b2a6;
+  }
+
+  .cles div {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0;
+    border-top: 1px solid var(--filet);
+    font-size: 0.8rem;
+  }
+
+  .cles div:first-child {
+    border-top: none;
+  }
+
+  .cles dt {
+    flex: 1;
+  }
+
+  .cles .ic {
+    flex: none;
+    color: var(--encre-doux);
+  }
+
+  .rond {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.3rem;
+    height: 2.3rem;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .rond.bon {
+    background: var(--validation);
+  }
+
+  .rond.attention {
+    background: var(--orange);
+  }
+
+  .rond.info {
+    background: var(--bleu);
+  }
+
+  .points .corps b,
+  .reco .corps b {
+    font-size: 0.84rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  /* ── LA COLONNE DE DROITE DES RECOMMANDATIONS ──────────────────────────── */
+  .impact {
+    display: inline-block;
+    margin-top: 0.28rem;
+    padding: 0.22rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.7rem;
+  }
+
+  .impact.fort {
+    background: var(--impact-fort);
+    color: var(--impact-fort-texte);
+  }
+
+  .impact.moyen {
+    background: var(--impact-moyen);
+    color: var(--rouille);
+  }
+
+  .droite {
+    flex: none;
+    text-align: right;
+  }
+
+  .droite small {
+    display: block;
+    font-size: 0.62rem;
+    line-height: 1.3;
+    color: var(--encre-doux);
+  }
+
+  .droite b {
+    font-size: 0.84rem;
+    color: var(--vert-titre);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .droite b.hors {
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: var(--encre-doux);
+  }
+
+  /* ── LES ACTIONS PLEINE LARGEUR ────────────────────────────────────────── */
+  .action {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: none;
+    border-radius: 14px;
+    background: var(--carte);
+    font: inherit;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--vert-titre);
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgb(2 68 54 / 5%);
+  }
+
+  .action .chev {
+    margin-left: auto;
+  }
+
+  .action.sombre {
+    background: var(--vert);
+    color: #fefcf8;
+    box-shadow: none;
+  }
+
+  .action.sombre .chev {
+    color: rgb(254 252 248 / 65%);
+  }
+
+  .action:hover,
+  .action:focus-visible,
+  .pilule:hover,
+  .pilule:focus-visible {
+    filter: brightness(1.06);
+  }
+
+  /* ── LES FILIGRANES DE LA RÉFÉRENCE ────────────────────────────────────── */
+  .filigrane {
+    position: absolute;
+    right: -0.4rem;
+    bottom: -0.6rem;
+    opacity: 0.28;
+    color: var(--validation);
+    pointer-events: none;
+  }
+
+  .constats,
+  .manques,
+  .conseil p {
+    position: relative;
+    z-index: 1;
   }
 </style>
