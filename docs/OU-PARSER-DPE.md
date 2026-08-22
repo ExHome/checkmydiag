@@ -365,9 +365,17 @@ décision de produit, pas une décision technique.**
 
 Trois choses que le lecteur cherche sont imprimées **en image** dans son PDF,
 donc illisibles par tout programme : la part de chaleur perdue par chaque paroi,
-les classes après travaux, l'étiquette elle-même. Les trois existent en clair
-dans la base publique, parce que le logiciel du diagnostiqueur les y a
-transmises. Les demander, c'est lire le DPE — pas le recalculer.
+l'étiquette elle-même, et les classes après travaux.
+
+**Deux des trois** existent en clair dans la base publique. Les demander, c'est
+lire le DPE — pas le recalculer.
+
+> ⚠️ **Correction du 22/08.** J'avais écrit que les trois y étaient : c'est faux,
+> et je l'avais écrit avant de vérifier. Contrôle fait champ par champ sur les
+> 230 du modèle : **aucun ne porte de scénario de rénovation**. Les classes après
+> travaux ne sont pas dans ce jeu de données. Elles vivent peut-être dans le XML
+> transmis ou dans celui des audits — reste à le mesurer. En attendant, l'écran
+> continue de dire qu'elles sont sur le PDF, en image.
 
 ### Ce qui sort, et ce qui ne sort pas
 

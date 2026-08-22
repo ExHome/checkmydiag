@@ -17,15 +17,18 @@
  * ── Pourquoi le faire quand même ────────────────────────────────────────────
  *
  * Trois choses que le lecteur cherche sont **imprimées en image** dans son PDF,
- * donc illisibles par tout programme :
+ * donc illisibles par tout programme : la part de chaleur perdue par chaque
+ * paroi, l'étiquette A→G elle-même, et les classes projetées après travaux.
  *
- *  - la part de chaleur perdue par chaque paroi — le fameux schéma ;
- *  - les classes projetées après travaux ;
- *  - l'étiquette A→G elle-même.
- *
- * Les trois existent en clair dans la base, parce que le logiciel du
+ * **Deux des trois** existent en clair dans cette base, parce que le logiciel du
  * diagnostiqueur les y a transmises. Les demander, c'est lire le DPE — pas le
  * recalculer.
+ *
+ * ⚠️ **Les classes après travaux n'y sont PAS.** Vérifié champ par champ sur les
+ * 230 du modèle : aucun ne porte de scénario de rénovation. Elles vivent
+ * peut-être ailleurs — dans le XML transmis, ou dans le jeu de données des
+ * audits — mais pas ici, et on ne les affichera pas tant qu'on ne les aura pas
+ * trouvées. Le manque se déclare, il ne se comble pas.
  *
  * ── La règle qui reste entière ──────────────────────────────────────────────
  *
