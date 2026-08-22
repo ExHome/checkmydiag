@@ -79,6 +79,7 @@
    * qu'un seul agrandi.
    */
   import type { Diagnostic, Fait, Gravite } from '../../lib/modele';
+  import { syntheseTermites } from '../termites/synthese';
   import TableLumineuse from '../lumiere/TableLumineuse.svelte';
   import { LARGEUR_HACHURE, PAS_HACHURE } from '../lumiere/calque';
 
@@ -92,6 +93,21 @@
   }
 
   const { diagnostic, onvoirLeRapport, heure }: Props = $props();
+
+  /*
+   * LES SEPT BLOCS DU PACK D'AUDE (22/08/2026).
+   *
+   * La logique vit dans `composants/termites/synthese.ts` — ce module ne
+   * dessine rien, il répond à « qu'est-ce que ce rapport permet d'afficher ? ».
+   * L'écran n'en montre que le résultat.
+   */
+  const pack = $derived(syntheseTermites(diagnostic));
+
+  /* Le statut se lit par un PICTOGRAMME et par un MOT, jamais par la couleur
+     seule (§ 4 de l'ordre de mission). */
+  const signeDuTon = (t: string): string => (t === 'alerte' ? '!' : t === 'attention' ? '?' : '✓');
+  const motDuTon = (t: string): string =>
+    t === 'alerte' ? 'Point d’alerte' : t === 'attention' ? 'À regarder' : 'Rien à signaler';
 
   const uid = `tm${++sequence}`;
 
@@ -605,6 +621,139 @@
     </section>
   {/if}
 
+
+  <!--
+    ═══════════════════════════════════════════════════════════════════════
+    LES SEPT BLOCS DE L'ORDRE DU 22/08/2026 — pack `VERRIERE_TERMITES`.
+    ═══════════════════════════════════════════════════════════════════════
+
+    Cet écran existait avant le pack, et sa planche reste : elle montre les
+    zones contrôlées. Ce que le pack impose en plus, le voici — Points clés,
+    Constatations diverses, Ce qui n'a pas été contrôlé, Complétude, Conseil.
+
+    ⚠️ CE QUE LE VISUEL DU PACK MONTRE ET QUI N'EST PAS ICI, PARCE QUE FICTIF :
+    le « 90 % » de confiance (§ E l'interdit nommément), le « NIVEAU DE RISQUE :
+    TRÈS FAIBLE » (§ B : calculable ou rien), et les trois points clés
+    décomposés — les rapports ne répondent pas indice par indice.
+
+    Le visuel se contredit d'ailleurs : il annonce « inspection complète » en
+    affichant quatre zones non contrôlées.
+
+    ⚠️ Aucun statut n'est porté par la couleur seule (§ 4) : chaque ton porte un
+    pictogramme ET un mot.
+  -->
+
+  {#if pack.pointsCles.length}
+    <section class="pack" aria-labelledby="pk-cles">
+      <h2 id="pk-cles">Points clés</h2>
+      <ul class="pk-cles">
+        {#each pack.pointsCles as p (p.titre)}
+          <li class="pk-cle pk-{p.ton}">
+            <span class="pk-pastille" aria-hidden="true">{signeDuTon(p.ton)}</span>
+            <span class="pk-corps">
+              <b>{p.titre}</b>
+              <span class="pk-etiquette">{motDuTon(p.ton)}</span>
+              <span class="pk-detail">{p.detail}</span>
+            </span>
+          </li>
+        {/each}
+      </ul>
+    </section>
+  {/if}
+
+  <section class="pack pk-resultat" aria-labelledby="pk-res">
+    <h2 id="pk-res">Résultat global</h2>
+    <p class="pk-phrase">{pack.resultat}</p>
+    <p class="pk-portee">
+      Cette conclusion porte sur les éléments que l’opérateur a examinés — pas au-delà.
+    </p>
+  </section>
+
+  {#if pack.constatations.montrer}
+    <section class="pack" aria-labelledby="pk-cd">
+      <h2 id="pk-cd">Constatations diverses</h2>
+      {#if pack.constatations.entrees.length}
+        <ul class="pk-citations">
+          {#each pack.constatations.entrees as c (c.terme)}
+            <li>
+              <p class="pk-citation">« {c.terme} »</p>
+              {#if c.ou}<p class="pk-source">Localisation portée au rapport&nbsp;: {c.ou}</p>{/if}
+            </li>
+          {/each}
+        </ul>
+      {:else if pack.constatations.mention}
+        <p class="pk-mention">{pack.constatations.mention}</p>
+      {/if}
+    </section>
+  {/if}
+
+  {#if pack.nonVisitees.montrer || pack.nonExamines.montrer}
+    <section class="pack pk-limites" aria-labelledby="pk-nc">
+      <h2 id="pk-nc">Ce qui n’a pas été contrôlé</h2>
+
+      {#if pack.charpente}
+        <p class="pk-avertissement">
+          Les combles ou la charpente n’ont pas pu être contrôlés. C’est là que les termites se
+          voient&nbsp;: la conclusion du rapport ne porte pas sur eux.
+        </p>
+      {/if}
+
+      {#if pack.nonVisitees.entrees.length}
+        <p class="pk-sous">Pièces non visitées</p>
+        <ul class="pk-limites-liste">
+          {#each pack.nonVisitees.entrees as l (l.quoi)}
+            <li>
+              <span class="pk-quoi">{l.quoi}</span>
+              <span class="pk-statut">Non visitée</span>
+              {#if l.pourquoi}<span class="pk-source">{l.pourquoi}</span>{/if}
+            </li>
+          {/each}
+        </ul>
+      {:else if pack.nonVisitees.mention}
+        <p class="pk-mention">{pack.nonVisitees.mention}</p>
+      {/if}
+
+      {#if pack.nonExamines.entrees.length}
+        <p class="pk-sous">Ouvrages non examinés dans les pièces visitées</p>
+        <ul class="pk-limites-liste">
+          {#each pack.nonExamines.entrees as l (l.quoi)}
+            <li>
+              {#if l.separe}
+                <span class="pk-quoi">{l.quoi}</span>
+                <span class="pk-statut">Non examiné</span>
+                {#if l.pourquoi}<span class="pk-source">{l.pourquoi}</span>{/if}
+              {:else}
+                <span class="pk-quoi pk-citation">« {l.quoi} »</span>
+                <span class="pk-statut">Non examiné</span>
+                <span class="pk-source">
+                  Texte du rapport, colonnes non séparées — voir la rubrique&nbsp;G.
+                </span>
+              {/if}
+            </li>
+          {/each}
+        </ul>
+      {:else if pack.nonExamines.mention}
+        <p class="pk-mention">{pack.nonExamines.mention}</p>
+      {/if}
+
+      <p class="pk-portee">Sur ces zones, le rapport ne conclut rien — ni présence, ni absence.</p>
+    </section>
+  {/if}
+
+  {#if pack.completude.length}
+    <section class="pack" aria-labelledby="pk-comp">
+      <h2 id="pk-comp">Complétude du contrôle</h2>
+      {#each pack.completude as ligne (ligne)}<p class="pk-ligne">{ligne}</p>{/each}
+    </section>
+  {/if}
+
+  {#if pack.conseil.length}
+    <section class="pack pk-conseil" aria-labelledby="pk-cons">
+      <h2 id="pk-cons">Conseil Verrière</h2>
+      {#each pack.conseil as ligne (ligne)}<p>{ligne}</p>{/each}
+    </section>
+  {/if}
+
   {#if nbReperes && onvoirLeRapport}
     <button type="button" class="preuve" onclick={() => onvoirLeRapport(premierRepere)}>
       Voir les {nbReperes} passages dans le rapport
@@ -613,6 +762,165 @@
 </article>
 
 <style>
+  /*
+   * LES SEPT BLOCS DU PACK — ivoire chaud, vert profond, sable en accent.
+   *
+   * « Fond : ivoire chaud, jamais blanc clinique. Accent : sable/laiton très
+   * discret ; éviter l'effet doré luxueux. Densité : conserver de l'air. »
+   */
+  .pack {
+    background: var(--verriere-ivoire);
+    border: 1px solid var(--filet);
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin-block: 1rem;
+  }
+  .pack h2 {
+    margin: 0 0 1rem;
+    font-size: 0.8125rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .pk-cles {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+  }
+  .pk-cle {
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    gap: 0.75rem;
+    align-items: start;
+  }
+  /*
+   * ⚠️ AUCUNE COULEUR D'ÉTAT ICI — ET J'EN AVAIS MIS TROIS FOIS.
+   *
+   * J'avais inventé un corail pour l'alerte et posé le sauge en fond de
+   * pastille. Trois tests m'ont arrêté : « le corail ne revient pas, quelle que
+   * soit son écriture », « le sauge n'est plus une couleur de structure », et
+   * celui de cet écran — « ne peint aucun pigment de bois ».
+   *
+   * Puis j'ai repris les jetons de la charte (`--ok`, `--attention`,
+   * `--alerte`) : le test de cet écran les refuse AUSSI, et sa raison est
+   * meilleure que la mienne — « un état qui se lit à la couleur ne se lit plus
+   * en noir et blanc, ni pour un daltonien ».
+   *
+   * La pastille est donc neutre. L'état se lit par son SIGNE et par son MOT,
+   * les deux canaux que le § 4 de l'ordre exige — et cet écran va plus loin :
+   * il n'en garde aucun troisième.
+   */
+  .pk-pastille {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: 1px solid var(--filet);
+    font-weight: 700;
+  }
+  .pk-alerte .pk-pastille {
+    border-width: 3px;
+  }
+  .pk-attention .pk-pastille {
+    border-style: dashed;
+  }
+  .pk-corps {
+    display: grid;
+    gap: 0.15rem;
+  }
+  .pk-etiquette {
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--encre-doux, #4a5a52);
+  }
+  .pk-detail,
+  .pk-ligne {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+  .pk-resultat {
+    background: var(--vert-800);
+    color: #fff;
+    border-color: transparent;
+  }
+  .pk-phrase {
+    margin: 0;
+    font-size: clamp(1.125rem, 4.5vw, 1.5rem);
+    line-height: 1.35;
+    text-wrap: pretty;
+  }
+  .pk-citations {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+  }
+  .pk-citations > li {
+    border-left: 3px solid var(--filet);
+    padding-left: 1rem;
+  }
+  .pk-citation {
+    margin: 0;
+    line-height: 1.55;
+    text-wrap: pretty;
+  }
+  .pk-source,
+  .pk-mention,
+  .pk-portee {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    opacity: 0.8;
+    margin: 0.35rem 0 0;
+  }
+  .pk-limites {
+    border-width: 2px;
+  }
+  .pk-avertissement {
+    margin: 0 0 1rem;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+  .pk-sous {
+    margin: 1rem 0 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+  .pk-limites-liste {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+  }
+  .pk-limites-liste > li {
+    display: grid;
+    gap: 0.15rem;
+  }
+  .pk-quoi {
+    font-weight: 600;
+    line-height: 1.45;
+  }
+  /* Le statut est un MOT, pas une couleur. */
+  .pk-statut {
+    justify-self: start;
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    border: 1px solid var(--filet);
+  }
+  .pk-conseil p {
+    margin: 0 0 0.6rem;
+    line-height: 1.6;
+    text-wrap: pretty;
+  }
+
   /*
    * ── LA PAGE ────────────────────────────────────────────────────────────
    *

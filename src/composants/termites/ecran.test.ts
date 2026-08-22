@@ -4,10 +4,19 @@ import { readFileSync } from 'node:fs';
 /**
  * L'ÉCRAN TERMITES — les sept blocs de l'ordre, et les garde-fous du visuel.
  *
+ * ⚠️ L'écran vit dans `composants/ecrans/Termites.svelte`, et il existait AVANT
+ * le pack d'Aude : sa planche montre les zones contrôlées, mais il ne portait
+ * aucun des sept blocs. J'en avais écrit un second sans le savoir — doublon
+ * supprimé, les blocs sont allés dans celui qui existait. La logique, elle,
+ * reste ici, dans `synthese.ts`.
+ *
  * On lit la source de l'écran : le plugin Svelte n'est pas chargé par Vitest, et
  * c'est la convention des autres tests de ce dossier.
  */
-const source = readFileSync(new URL('./Termites.svelte', import.meta.url), 'utf8');
+const source = readFileSync(
+  new URL('../ecrans/Termites.svelte', import.meta.url),
+  'utf8'
+);
 
 /**
  * ⚠️ On teste le BALISAGE, pas la documentation.
@@ -34,7 +43,7 @@ describe('les sept blocs, dans l’ordre imposé', () => {
       'Ce qui n’a pas été contrôlé',
       'Complétude du contrôle',
       'Conseil Verrière',
-      'Voir le rapport complet'
+      'Voir les '
     ]) {
       expect(ecran, `bloc manquant : ${titre}`).toContain(titre);
     }
@@ -47,7 +56,7 @@ describe('les sept blocs, dans l’ordre imposé', () => {
     expect(rang('Constatations diverses')).toBeLessThan(rang('Ce qui n’a pas été contrôlé'));
     expect(rang('Ce qui n’a pas été contrôlé')).toBeLessThan(rang('Complétude du contrôle'));
     expect(rang('Complétude du contrôle')).toBeLessThan(rang('Conseil Verrière'));
-    expect(rang('Conseil Verrière')).toBeLessThan(rang('Voir le rapport complet'));
+    expect(rang('Conseil Verrière')).toBeLessThan(rang('Voir les '));
   });
 });
 
@@ -75,13 +84,13 @@ describe('⚠️ aucun statut n’est porté par la couleur seule', () => {
        pas uniquement par la couleur. » */
     /* Les deux fonctions vivent dans le <script>, qu'on a retiré : on les
        cherche dans la source, et leur EMPLOI dans le balisage. */
-    expect(source).toContain('const signe = ');
-    expect(source).toContain('const mot = ');
+    expect(source).toContain('const signeDuTon = ');
+    expect(source).toContain('const motDuTon = ');
     expect(source).toContain('Point d’alerte');
     expect(source).toContain('Rien à signaler');
-    expect(ecran).toContain('{signe(p.ton)}');
-    expect(ecran).toContain('{mot(p.ton)}');
-    expect(ecran).toContain('etiquette-ton');
+    expect(ecran).toContain('{signeDuTon(p.ton)}');
+    expect(ecran).toContain('{motDuTon(p.ton)}');
+    expect(ecran).toContain('pk-etiquette');
   });
 
   it('les limites portent un statut écrit', () => {
@@ -113,9 +122,16 @@ describe('la charte Verrière', () => {
     expect(ecran).toContain('--vert-800');
   });
 
-  it('n’emploie le sable qu’en accent, jamais en aplat de fond', () => {
-    /* « Accent : sable/laiton très discret ; éviter l'effet doré luxueux. » */
-    expect(ecran).toMatch(/--verriere-sable-(voile|filet|clair|encre)/);
-    expect(ecran).not.toMatch(/background:\s*var\(--verriere-sable-or/);
+  it('⚠️ n’emploie AUCUNE couleur d’état — ni jeton, ni pigment inventé', () => {
+    /*
+     * Cet écran est plus strict que l'ordre, et sa raison est meilleure : « un
+     * état qui se lit à la couleur ne se lit plus en noir et blanc, ni pour un
+     * daltonien ». J'y avais mis un corail, puis le sauge, puis les jetons
+     * `--ok/--attention/--alerte`. Les trois ont été refusés.
+     */
+    for (const jeton of ['--alerte', '--attention', '--ok', '--etq-', '--citron']) {
+      expect(source).not.toContain(`var(${jeton}`);
+    }
+    expect(source).not.toMatch(/background:\s*var\(--verriere-sable-or/);
   });
 });
