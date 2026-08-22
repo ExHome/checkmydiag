@@ -36,6 +36,7 @@
   import { consulterLAdeme, type Consultation } from '../lib/ademe/consultation';
   import type { BandeauDecoupe } from '../lib/pdf';
   import BandeauDuRapport from './dpe/BandeauDuRapport.svelte';
+  import VignetteDuBien from './dpe/VignetteDuBien.svelte';
   import MotsExpliques from './MotsExpliques.svelte';
   import Deperditions from './dpe/Deperditions.svelte';
   import LesParois from './dpe/LesParois.svelte';
@@ -108,6 +109,8 @@
   interface Props {
     /** Les bandes du rapport, découpées pour être montrées. */
     bandeaux?: BandeauDecoupe[];
+    /** La photo du bien, tirée de la page de garde du rapport. */
+    photo?: Photo | null;
     analyse: Analyse;
     /** Ouvre le rapport à l'endroit exact d'où sort ce verdict. */
     surVoirDansLeRapport?: (type: Diagnostic['type']) => void;
@@ -139,7 +142,8 @@
     origine = null,
     demande = 0,
     schemaDeperditions = null,
-    bandeaux = []
+    bandeaux = [],
+    photo = null
   }: Props = $props();
 
   /*
@@ -1555,6 +1559,7 @@
                 {#if lectureDpeDe(d)}
                   {@const lu = lectureDpeDe(d)}
                   {#if lu}
+                    <VignetteDuBien {photo} bien={lu.enveloppe.bien} />
                     <BandeauDuRapport bandeau={bandeau('étiquette')} />
                     <PourquoiCetteNote
                       finale={dpeDe(d)?.finale ?? null}

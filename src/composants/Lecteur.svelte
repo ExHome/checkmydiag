@@ -622,6 +622,7 @@
         demande={demandeNo}
         {schemaDeperditions}
         {bandeaux}
+        {photo}
       />
     </div>
 
