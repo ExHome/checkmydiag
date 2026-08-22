@@ -383,6 +383,63 @@
   }
 
   /**
+   * LES PASTILLES, ECARTEES QUAND ELLES SE TOUCHENT.
+   *
+   * Ordre d'Aude (22/08/2026) : « decalage auto quand deux points se
+   * touchent ». Le cas se produit des qu'un diagnostic appelle deux metiers :
+   * l'electricite d'un dossier reel porte une carte pour le diagnostiqueur, qui
+   * doit revenir voir la cave, et une pour l'electricien, qui doit chiffrer.
+   * Les deux visaient le meme point du bati, et la seconde disparaissait sous
+   * la premiere — donc devenait inaccessible a la souris.
+   *
+   * On garde le point d'origine pour la premiere pastille : c'est elle qui doit
+   * tomber juste. Les suivantes se posent en couronne autour d'elle, a la
+   * distance minimale qui les separe — un tour complet tous les six voisins,
+   * puis un second anneau plus large. Le rattachement au bati reste lisible :
+   * une pastille ecartee de 8 % reste sur la meme partie de la verriere.
+   *
+   * La comparaison se fait sur la distance reelle entre centres, pas sur
+   * l'egalite des coordonnees : deux points a 1 % l'un de l'autre se
+   * chevauchent tout autant que deux points confondus.
+   */
+  /** L'ecart minimal entre deux centres, en pourcentage de l'image. */
+  const ECART = 9;
+
+  const pastilles = $derived.by(() => {
+    const posees: { x: number; y: number }[] = [];
+
+    const libre = (x: number, y: number): boolean =>
+      posees.every((q) => Math.hypot(q.x - x, q.y - y) >= ECART);
+
+    /* Borner dans l'image : une pastille poussee hors du cadre serait coupee. */
+    const dansLeCadre = (v: number): number => Math.min(96, Math.max(4, v));
+
+    const liste: { carte: (typeof leConseil.cartes)[number]; x: number; y: number }[] = [];
+
+    for (const carte of leConseil.cartes) {
+      const point = pointDe(carte);
+      if (!point) continue;
+
+      let x = point.x;
+      let y = point.y;
+
+      /* Deux anneaux de six places suffisent : au-dela, c'est que la table des
+         points est a revoir, pas que le decalage manque de rayon. */
+      for (let essai = 0; essai < 12 && !libre(x, y); essai++) {
+        const rayon = ECART * (1 + Math.floor(essai / 6)) * 1.05;
+        const angle = ((essai % 6) * Math.PI) / 3;
+        x = dansLeCadre(point.x + Math.cos(angle) * rayon);
+        y = dansLeCadre(point.y + Math.sin(angle) * rayon);
+      }
+
+      posees.push({ x, y });
+      liste.push({ carte, x, y });
+    }
+
+    return liste;
+  });
+
+  /**
    * La carte ouverte par un clic sur la verrière.
    *
    * Cliquer un point ne se contente pas d'amener l'œil : il DÉPLIE le conseil,
@@ -708,26 +765,23 @@
             se prennent au clavier, portent le nom de leur domaine, et la liste
             des cartes reste dessous pour qui ne peut pas viser une pastille.
           -->
-          {#each leConseil.cartes as carte (carte.cle)}
-            {@const point = pointDe(carte)}
-            {#if point}
-              <button
-                type="button"
-                class="point {carte.niveau}"
-                style:left="{point.x}%"
-                style:top="{point.y}%"
-                aria-label="{carte.domaine} — {NIVEAUX[carte.niveau]}"
-                onclick={() => ouvrirDepuisLaVerriere(carte.cle, carte.origine)}
-              >
-                <span
-                  class="picto-point"
-                  aria-hidden="true"
-                  style:--picto={carte.origine !== 'dossier' && APPS[carte.origine]?.picto
-                    ? `url(./pictos/${APPS[carte.origine].picto}.svg)`
-                    : 'url(./pictos/conseil.svg)'}
-                ></span>
-              </button>
-            {/if}
+          {#each pastilles as { carte, x, y } (carte.cle)}
+            <button
+              type="button"
+              class="point {carte.niveau}"
+              style:left="{x}%"
+              style:top="{y}%"
+              aria-label="{carte.domaine} — {NIVEAUX[carte.niveau]}"
+              onclick={() => ouvrirDepuisLaVerriere(carte.cle, carte.origine)}
+            >
+              <span
+                class="picto-point"
+                aria-hidden="true"
+                style:--picto={carte.origine !== 'dossier' && APPS[carte.origine]?.picto
+                  ? `url(./pictos/${APPS[carte.origine].picto}.svg)`
+                  : 'url(./pictos/conseil.svg)'}
+              ></span>
+            </button>
           {/each}
         </div>
         <figcaption>Cliquez un point de la verrière pour ouvrir le conseil.</figcaption>
