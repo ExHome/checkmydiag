@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { CATEGORIE_ENR } from '../reglement/dpeAdeme';
 import { lireFicheTechnique } from './ficheTechnique';
 import { indicesRenouvelables, lireSystemes, lireVueDEnsemble } from './systemes';
 
@@ -115,8 +116,43 @@ describe('les systèmes du logement', () => {
   it('ne prend pas une menuiserie bois pour un chauffage au bois', () => {
     expect(indicesRenouvelables(['Fenêtre bois double vitrage'])).toEqual([]);
     expect(indicesRenouvelables(['Plafond sous solives bois'])).toEqual([]);
-    expect(indicesRenouvelables(['Poêle à bois bûches'])).toContain('bois');
+    expect(indicesRenouvelables(['Poêle à bois bûches'])).toContain('chauffage au bois');
     expect(indicesRenouvelables(['Pompe à chaleur air/eau'])).toContain('pompe à chaleur');
+  });
+
+  /*
+   * LA GARDE. Les noms des catégories ne sont pas les miens : ce sont ceux de
+   * l'ADEME, relevés sur 15 409 991 DPE. Inventer un nom hors de cette liste,
+   * c'est reprendre l'habitude qu'on cherche à perdre — nommer les choses comme
+   * un logiciel les nomme, et prendre ça pour le vocabulaire du métier.
+   */
+  it('ne nomme aucune catégorie que l’ADEME ne connaît pas', () => {
+    const echantillons = [
+      'Pompe à chaleur air/eau',
+      'Géothermie sur nappe',
+      'Panneaux photovoltaïques en toiture',
+      'Chauffe-eau solaire individuel CESI',
+      'Chauffe-eau thermodynamique sur air extrait',
+      'Poêle à granulés',
+      'Réseau de chaleur urbain',
+      'Cogénération gaz',
+      'Éolienne domestique'
+    ];
+    for (const e of echantillons) {
+      const trouves = indicesRenouvelables([e]);
+      expect(trouves.length, e).toBeGreaterThan(0);
+      for (const nom of trouves) expect(CATEGORIE_ENR, e).toContain(nom);
+    }
+  });
+
+  /*
+   * Les trois catégories que ma table maison ignorait. Un logement qui en a une
+   * l'aurait vue disparaître de l'écran.
+   */
+  it('reconnaît la géothermie, la cogénération et l’éolienne', () => {
+    expect(indicesRenouvelables(['Géothermie'])).toEqual(['géothermie']);
+    expect(indicesRenouvelables(['Cogénération'])).toEqual(['cogénération']);
+    expect(indicesRenouvelables(['Éolienne'])).toEqual(['éolienne']);
   });
 
   /*

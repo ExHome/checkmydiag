@@ -1,0 +1,4451 @@
+{
+ "source": "ADEME — base publique « DPE Logements existants (depuis juillet 2021) »",
+ "url": "https://data.ademe.fr/data-fair/api/v1/datasets/dpe03existant",
+ "lu_le": "2026-08-22",
+ "dpe_dans_la_base": 15409991,
+ "comment": "Chaque liste est EXHAUSTIVE : l'API a repondu total_other = 0, c'est-a-dire qu'aucune valeur ne manque. Les comptes sont le nombre de DPE portant cette valeur ; ils disent ce qui est courant et ce qui est rare, pas ce qui est vrai.",
+ "champs": {
+  "etiquette_dpe": [
+   {
+    "valeur": "C",
+    "dpe": 5661020
+   },
+   {
+    "valeur": "D",
+    "dpe": 4794687
+   },
+   {
+    "valeur": "E",
+    "dpe": 2454512
+   },
+   {
+    "valeur": "F",
+    "dpe": 958584
+   },
+   {
+    "valeur": "B",
+    "dpe": 766165
+   },
+   {
+    "valeur": "G",
+    "dpe": 544928
+   },
+   {
+    "valeur": "A",
+    "dpe": 230095
+   }
+  ],
+  "etiquette_ges": [
+   {
+    "valeur": "C",
+    "dpe": 4597253
+   },
+   {
+    "valeur": "B",
+    "dpe": 3458109
+   },
+   {
+    "valeur": "D",
+    "dpe": 2782286
+   },
+   {
+    "valeur": "A",
+    "dpe": 2424200
+   },
+   {
+    "valeur": "E",
+    "dpe": 1346402
+   },
+   {
+    "valeur": "F",
+    "dpe": 587403
+   },
+   {
+    "valeur": "G",
+    "dpe": 214338
+   }
+  ],
+  "type_batiment": [
+   {
+    "valeur": "appartement",
+    "dpe": 10427534
+   },
+   {
+    "valeur": "maison",
+    "dpe": 4585125
+   },
+   {
+    "valeur": "immeuble",
+    "dpe": 397332
+   }
+  ],
+  "periode_construction": [
+   {
+    "valeur": "1948-1974",
+    "dpe": 4868094
+   },
+   {
+    "valeur": "avant 1948",
+    "dpe": 4068109
+   },
+   {
+    "valeur": "1989-2000",
+    "dpe": 1430078
+   },
+   {
+    "valeur": "2006-2012",
+    "dpe": 1105707
+   },
+   {
+    "valeur": "2013-2021",
+    "dpe": 1038927
+   },
+   {
+    "valeur": "1978-1982",
+    "dpe": 829304
+   },
+   {
+    "valeur": "1983-1988",
+    "dpe": 731478
+   },
+   {
+    "valeur": "1975-1977",
+    "dpe": 643034
+   },
+   {
+    "valeur": "2001-2005",
+    "dpe": 513058
+   },
+   {
+    "valeur": "après 2021",
+    "dpe": 182202
+   }
+  ],
+  "type_installation_chauffage": [
+   {
+    "valeur": "individuel",
+    "dpe": 6228356
+   },
+   {
+    "valeur": "collectif",
+    "dpe": 3819349
+   },
+   {
+    "valeur": "mixte (collectif-individuel)",
+    "dpe": 776881
+   }
+  ],
+  "type_installation_ecs": [
+   {
+    "valeur": "individuel",
+    "dpe": 7602137
+   },
+   {
+    "valeur": "collectif",
+    "dpe": 3168023
+   },
+   {
+    "valeur": "mixte (collectif-individuel)",
+    "dpe": 54426
+   }
+  ],
+  "typologie_logement": [
+   {
+    "valeur": "T1",
+    "dpe": 187897
+   },
+   {
+    "valeur": "T3",
+    "dpe": 145981
+   },
+   {
+    "valeur": "T2",
+    "dpe": 104848
+   },
+   {
+    "valeur": "T4",
+    "dpe": 89178
+   },
+   {
+    "valeur": "T5",
+    "dpe": 28190
+   },
+   {
+    "valeur": "T6",
+    "dpe": 3683
+   },
+   {
+    "valeur": "T7 ou plus",
+    "dpe": 336
+   }
+  ],
+  "classe_inertie_batiment": [
+   {
+    "valeur": "Moyenne",
+    "dpe": 4968522
+   },
+   {
+    "valeur": "Lourde",
+    "dpe": 4330552
+   },
+   {
+    "valeur": "Légère",
+    "dpe": 4216358
+   },
+   {
+    "valeur": "Très lourde",
+    "dpe": 1724348
+   }
+  ],
+  "classe_altitude": [
+   {
+    "valeur": "inférieur à 400m",
+    "dpe": 14457427
+   },
+   {
+    "valeur": "400-800m",
+    "dpe": 712430
+   },
+   {
+    "valeur": "supérieur à 800m",
+    "dpe": 196850
+   },
+   {
+    "valeur": "Non affecté",
+    "dpe": 4718
+   }
+  ],
+  "zone_climatique": [
+   {
+    "valeur": "H1a",
+    "dpe": 5563188
+   },
+   {
+    "valeur": "H1c",
+    "dpe": 2265750
+   },
+   {
+    "valeur": "H3",
+    "dpe": 1773198
+   },
+   {
+    "valeur": "H1b",
+    "dpe": 1621783
+   },
+   {
+    "valeur": "H2b",
+    "dpe": 1555371
+   },
+   {
+    "valeur": "H2c",
+    "dpe": 1441096
+   },
+   {
+    "valeur": "H2a",
+    "dpe": 808680
+   },
+   {
+    "valeur": "H2d",
+    "dpe": 337641
+   },
+   {
+    "valeur": "Non affecté",
+    "dpe": 4718
+   }
+  ],
+  "statut_geocodage": [
+   {
+    "valeur": "adresse géocodée ban à l'adresse",
+    "dpe": 11459214
+   },
+   {
+    "valeur": "adresse non géocodée ban car aucune correspondance trouvée",
+    "dpe": 3950777
+   }
+  ],
+  "position_logement_dans_immeuble": [
+   {
+    "valeur": "RDC",
+    "dpe": 397439
+   },
+   {
+    "valeur": "étage intermédiaire",
+    "dpe": 138358
+   },
+   {
+    "valeur": "dernier étage",
+    "dpe": 24316
+   }
+  ],
+  "indicateur_confort_ete": [
+   {
+    "valeur": "moyen",
+    "dpe": 4479035
+   },
+   {
+    "valeur": "insuffisant",
+    "dpe": 4191339
+   },
+   {
+    "valeur": "bon",
+    "dpe": 1808163
+   }
+  ],
+  "qualite_isolation_enveloppe": [
+   {
+    "valeur": "insuffisante",
+    "dpe": 7915898
+   },
+   {
+    "valeur": "bonne",
+    "dpe": 2927927
+   },
+   {
+    "valeur": "moyenne",
+    "dpe": 2540537
+   },
+   {
+    "valeur": "très bonne",
+    "dpe": 2025629
+   }
+  ],
+  "qualite_isolation_murs": [
+   {
+    "valeur": "insuffisante",
+    "dpe": 8535824
+   },
+   {
+    "valeur": "bonne",
+    "dpe": 2841261
+   },
+   {
+    "valeur": "très bonne",
+    "dpe": 2072029
+   },
+   {
+    "valeur": "moyenne",
+    "dpe": 1953959
+   }
+  ],
+  "qualite_isolation_plancher_haut_comble_amenage": [
+   {
+    "valeur": "insuffisante",
+    "dpe": 909631
+   },
+   {
+    "valeur": "bonne",
+    "dpe": 673930
+   },
+   {
+    "valeur": "très bonne",
+    "dpe": 578665
+   },
+   {
+    "valeur": "moyenne",
+    "dpe": 352944
+   }
+  ],
+  "qualite_isolation_plancher_haut_comble_perdu": [
+   {
+    "valeur": "très bonne",
+    "dpe": 4436785
+   },
+   {
+    "valeur": "insuffisante",
+    "dpe": 1543061
+   },
+   {
+    "valeur": "moyenne",
+    "dpe": 980092
+   },
+   {
+    "valeur": "bonne",
+    "dpe": 720402
+   }
+  ],
+  "qualite_isolation_plancher_haut_toit_terrasse": [
+   {
+    "valeur": "insuffisante",
+    "dpe": 1768344
+   },
+   {
+    "valeur": "très bonne",
+    "dpe": 1330458
+   },
+   {
+    "valeur": "bonne",
+    "dpe": 536828
+   },
+   {
+    "valeur": "moyenne",
+    "dpe": 313233
+   }
+  ],
+  "qualite_isolation_plancher_bas": [
+   {
+    "valeur": "insuffisante",
+    "dpe": 5256892
+   },
+   {
+    "valeur": "très bonne",
+    "dpe": 4739352
+   },
+   {
+    "valeur": "bonne",
+    "dpe": 2609825
+   },
+   {
+    "valeur": "moyenne",
+    "dpe": 1877625
+   }
+  ],
+  "qualite_isolation_menuiseries": [
+   {
+    "valeur": "moyenne",
+    "dpe": 7129966
+   },
+   {
+    "valeur": "bonne",
+    "dpe": 3261442
+   },
+   {
+    "valeur": "très bonne",
+    "dpe": 2681395
+   },
+   {
+    "valeur": "insuffisante",
+    "dpe": 2337188
+   }
+  ],
+  "type_energie_n1": [
+   {
+    "valeur": "Gaz naturel",
+    "dpe": 6254886
+   },
+   {
+    "valeur": "Électricité",
+    "dpe": 6129688
+   },
+   {
+    "valeur": "Réseau de Chauffage urbain",
+    "dpe": 1864627
+   },
+   {
+    "valeur": "Fioul domestique",
+    "dpe": 654809
+   },
+   {
+    "valeur": "Bois – Bûches",
+    "dpe": 265870
+   },
+   {
+    "valeur": "Bois – Granulés (pellets) ou briquettes",
+    "dpe": 113650
+   },
+   {
+    "valeur": "GPL",
+    "dpe": 87559
+   },
+   {
+    "valeur": "Propane",
+    "dpe": 22411
+   },
+   {
+    "valeur": "Bois – Plaquettes forestières",
+    "dpe": 8116
+   },
+   {
+    "valeur": "Charbon",
+    "dpe": 3297
+   },
+   {
+    "valeur": "Bois – Plaquettes d’industrie",
+    "dpe": 2310
+   },
+   {
+    "valeur": "Électricité d'origine renouvelable utilisée dans le bâtiment",
+    "dpe": 2259
+   },
+   {
+    "valeur": "Butane",
+    "dpe": 488
+   },
+   {
+    "valeur": "Réseau de Froid Urbain",
+    "dpe": 21
+   }
+  ],
+  "type_energie_n2": [
+   {
+    "valeur": "Électricité",
+    "dpe": 8524764
+   },
+   {
+    "valeur": "Bois – Bûches",
+    "dpe": 843025
+   },
+   {
+    "valeur": "Gaz naturel",
+    "dpe": 501830
+   },
+   {
+    "valeur": "Bois – Granulés (pellets) ou briquettes",
+    "dpe": 160170
+   },
+   {
+    "valeur": "Fioul domestique",
+    "dpe": 51110
+   },
+   {
+    "valeur": "Réseau de Chauffage urbain",
+    "dpe": 33743
+   },
+   {
+    "valeur": "GPL",
+    "dpe": 11685
+   },
+   {
+    "valeur": "Électricité d'origine renouvelable utilisée dans le bâtiment",
+    "dpe": 9102
+   },
+   {
+    "valeur": "Propane",
+    "dpe": 2264
+   },
+   {
+    "valeur": "Bois – Plaquettes forestières",
+    "dpe": 1337
+   },
+   {
+    "valeur": "Butane",
+    "dpe": 1281
+   },
+   {
+    "valeur": "Charbon",
+    "dpe": 1214
+   },
+   {
+    "valeur": "Bois – Plaquettes d’industrie",
+    "dpe": 336
+   },
+   {
+    "valeur": "Réseau de Froid Urbain",
+    "dpe": 32
+   }
+  ],
+  "type_energie_n3": [
+   {
+    "valeur": "Électricité",
+    "dpe": 740256
+   },
+   {
+    "valeur": "Bois – Bûches",
+    "dpe": 35487
+   },
+   {
+    "valeur": "Gaz naturel",
+    "dpe": 22063
+   },
+   {
+    "valeur": "Électricité d'origine renouvelable utilisée dans le bâtiment",
+    "dpe": 10336
+   },
+   {
+    "valeur": "Bois – Granulés (pellets) ou briquettes",
+    "dpe": 10187
+   },
+   {
+    "valeur": "Fioul domestique",
+    "dpe": 9186
+   },
+   {
+    "valeur": "GPL",
+    "dpe": 3657
+   },
+   {
+    "valeur": "Propane",
+    "dpe": 850
+   },
+   {
+    "valeur": "Réseau de Chauffage urbain",
+    "dpe": 807
+   },
+   {
+    "valeur": "Butane",
+    "dpe": 458
+   },
+   {
+    "valeur": "Charbon",
+    "dpe": 186
+   },
+   {
+    "valeur": "Bois – Plaquettes forestières",
+    "dpe": 129
+   },
+   {
+    "valeur": "Bois – Plaquettes d’industrie",
+    "dpe": 113
+   },
+   {
+    "valeur": "Réseau de Froid Urbain",
+    "dpe": 36
+   }
+  ],
+  "type_energie_principale_chauffage": [
+   {
+    "valeur": "Gaz naturel",
+    "dpe": 6157623
+   },
+   {
+    "valeur": "Électricité",
+    "dpe": 6148097
+   },
+   {
+    "valeur": "Réseau de Chauffage urbain",
+    "dpe": 1874886
+   },
+   {
+    "valeur": "Fioul domestique",
+    "dpe": 642126
+   },
+   {
+    "valeur": "Bois – Bûches",
+    "dpe": 325258
+   },
+   {
+    "valeur": "Bois – Granulés (pellets) ou briquettes",
+    "dpe": 136169
+   },
+   {
+    "valeur": "GPL",
+    "dpe": 86519
+   },
+   {
+    "valeur": "Propane",
+    "dpe": 22277
+   },
+   {
+    "valeur": "Bois – Plaquettes forestières",
+    "dpe": 8698
+   },
+   {
+    "valeur": "Charbon",
+    "dpe": 3268
+   },
+   {
+    "valeur": "Électricité d'origine renouvelable utilisée dans le bâtiment",
+    "dpe": 2308
+   },
+   {
+    "valeur": "Bois – Plaquettes d’industrie",
+    "dpe": 2246
+   },
+   {
+    "valeur": "Butane",
+    "dpe": 485
+   },
+   {
+    "valeur": "Réseau de Froid Urbain",
+    "dpe": 19
+   },
+   {
+    "valeur": "Non affecté",
+    "dpe": 12
+   }
+  ],
+  "type_installation_chauffage_n1": [
+   {
+    "valeur": "installation individuelle",
+    "dpe": 10724419
+   },
+   {
+    "valeur": "installation collective",
+    "dpe": 3559471
+   },
+   {
+    "valeur": "installation collective multi-bâtiment : modélisée comme un réseau de chaleur",
+    "dpe": 630251
+   },
+   {
+    "valeur": "installation hybride collective-individuelle (chauffage base + appoint individuel ou convecteur bi-jonction)",
+    "dpe": 83695
+   }
+  ],
+  "type_emetteur_installation_chauffage_n1": [
+   {
+    "valeur": "Radiateur bitube avec robinet thermostatique sur réseau individuel eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 1600984
+   },
+   {
+    "valeur": "radiateur électrique NFC, NF** et NF***",
+    "dpe": 1508116
+   },
+   {
+    "valeur": "Convecteur électrique NFC, NF** et NF***",
+    "dpe": 1280782
+   },
+   {
+    "valeur": "Panneau rayonnant NFC, NF** et NF***",
+    "dpe": 1207122
+   },
+   {
+    "valeur": "Radiateur bitube avec robinet thermostatique sur réseau individuel eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 1038697
+   },
+   {
+    "valeur": "Radiateur bitube avec robinet thermostatique sur réseau collectif eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 954153
+   },
+   {
+    "valeur": "Radiateur bitube avec robinet thermostatique sur réseau collectif eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 912816
+   },
+   {
+    "valeur": "Radiateur bitube sans robinet thermostatique sur réseau collectif eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 711550
+   },
+   {
+    "valeur": "Poêle bois",
+    "dpe": 683806
+   },
+   {
+    "valeur": "Radiateur bitube sans robinet thermostatique sur réseau individuel eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 656347
+   },
+   {
+    "valeur": "Radiateur bitube sans robinet thermostatique sur réseau individuel eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 605150
+   },
+   {
+    "valeur": "Plancher chauffant sur réseau collectif eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 407661
+   },
+   {
+    "valeur": "Radiateur électrique à accumulation",
+    "dpe": 407444
+   },
+   {
+    "valeur": "Radiateur bitube sans robinet thermostatique sur réseau collectif eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 406163
+   },
+   {
+    "valeur": "Plancher chauffant sur réseau collectif eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 326691
+   },
+   {
+    "valeur": "Soufflage d'air chaud (air soufflé) avec distribution par réseau aéraulique",
+    "dpe": 286395
+   },
+   {
+    "valeur": "Radiateur monotube avec robinet thermostatique sur réseau individuel eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 241425
+   },
+   {
+    "valeur": "Radiateur monotube sans robinet thermostatique sur réseau individuel eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 197137
+   },
+   {
+    "valeur": "Soufflage d'air chaud (air soufflé) avec distribution par fluide frigorigène",
+    "dpe": 179640
+   },
+   {
+    "valeur": "Autres émetteurs à effet joule",
+    "dpe": 171063
+   },
+   {
+    "valeur": "Plancher chauffant sur réseau individuel eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 165703
+   },
+   {
+    "valeur": "Radiateur monotube sans robinet thermostatique sur réseau collectif eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 149920
+   },
+   {
+    "valeur": "Radiateur monotube avec robinet thermostatique sur réseau individuel eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 141300
+   },
+   {
+    "valeur": "Plancher chauffant sur réseau individuel eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 136192
+   },
+   {
+    "valeur": "Radiateur monotube avec robinet thermostatique sur réseau collectif eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 133678
+   },
+   {
+    "valeur": "Plancher rayonnant électrique avec régulation terminale",
+    "dpe": 95288
+   },
+   {
+    "valeur": "Radiateur monotube sans robinet thermostatique sur réseau individuel eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 80928
+   },
+   {
+    "valeur": "Radiateur monotube avec robinet thermostatique sur réseau collectif eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 74113
+   },
+   {
+    "valeur": "Radiateur monotube sans robinet thermostatique sur réseau collectif eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 54942
+   },
+   {
+    "valeur": "Soufflage d'air chaud sans réseau de distribution (ventiloconvecteur éléctrique)",
+    "dpe": 49147
+   },
+   {
+    "valeur": "Plancher rayonnant électrique sans régulation",
+    "dpe": 43258
+   },
+   {
+    "valeur": "Radiateur gaz à ventouse ou sur conduit de fumée",
+    "dpe": 29065
+   },
+   {
+    "valeur": "Autres équipements",
+    "dpe": 18201
+   },
+   {
+    "valeur": "Plafond rayonnant électrique avec régulation terminale",
+    "dpe": 8338
+   },
+   {
+    "valeur": "Convecteur bi-jonction",
+    "dpe": 7854
+   },
+   {
+    "valeur": "Poêle fioul",
+    "dpe": 7392
+   },
+   {
+    "valeur": "Poêle charbon",
+    "dpe": 5057
+   },
+   {
+    "valeur": "Plafond chauffant sur réseau collectif eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 3071
+   },
+   {
+    "valeur": "Plafond chauffant sur réseau collectif eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 2800
+   },
+   {
+    "valeur": "Plafond rayonnant électrique sans régulation",
+    "dpe": 1690
+   },
+   {
+    "valeur": "Radiateur avec distribution par fluide frigorigène (à détente directe)",
+    "dpe": 1446
+   },
+   {
+    "valeur": "Plafond chauffant sur réseau individuel eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 1169
+   },
+   {
+    "valeur": "Soufflage d'air chaud (Ventiloconvecteur) sur réseau individuel eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 905
+   },
+   {
+    "valeur": "Plancher chauffant avec distribution par fluide frigorigène (plancher chauffant à détente directe)",
+    "dpe": 818
+   },
+   {
+    "valeur": "Soufflage d'air chaud (Ventiloconvecteur) sur réseau collectif eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 650
+   },
+   {
+    "valeur": "Plafond chauffant sur réseau individuel eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 572
+   },
+   {
+    "valeur": "Poêle GPL",
+    "dpe": 560
+   },
+   {
+    "valeur": "Soufflage d'air chaud (Ventiloconvecteur) sur réseau collectif eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 432
+   },
+   {
+    "valeur": "Soufflage d'air chaud (Ventiloconvecteur) sur réseau individuel eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 150
+   },
+   {
+    "valeur": "Plafond chauffant avec distribution par fluide frigorigène (Plafond chauffant à détente directe)",
+    "dpe": 55
+   }
+  ],
+  "configuration_installation_chauffage_n1": [
+   {
+    "valeur": "Installation de chauffage simple",
+    "dpe": 13925560
+   },
+   {
+    "valeur": "Installation de chauffage avec insert ou poêle bois en appoint",
+    "dpe": 847725
+   },
+   {
+    "valeur": "Installation de chauffage collectif avec Base + appoint",
+    "dpe": 75118
+   },
+   {
+    "valeur": "Installation de chauffage avec en appoint un insert ou poêle bois et un chauffage électrique dans la salle de bain (différent du chauffage principal)",
+    "dpe": 56388
+   },
+   {
+    "valeur": "Installation de chauffage avec chaudière en relève de PAC",
+    "dpe": 27770
+   },
+   {
+    "valeur": "Installation de chauffage par insert, poêle bois (ou biomasse) avec un chauffage électrique dans la salle de bain",
+    "dpe": 22155
+   },
+   {
+    "valeur": "Installation de chauffage avec une chaudière ou une PAC en relève d’une chaudière bois",
+    "dpe": 18028
+   },
+   {
+    "valeur": "Installation de chauffage avec chauffage solaire",
+    "dpe": 9739
+   },
+   {
+    "valeur": "Convecteurs bi-jonction",
+    "dpe": 7905
+   },
+   {
+    "valeur": "Installation de chauffage avec chaudière en relève de PAC avec insert ou poêle bois en appoint",
+    "dpe": 5402
+   },
+   {
+    "valeur": "Installation de chauffage avec chauffage solaire et insert ou poêle bois en appoint",
+    "dpe": 2046
+   }
+  ],
+  "type_energie_generateur_n1_installation_n1": [
+   {
+    "valeur": "Gaz naturel",
+    "dpe": 6165080
+   },
+   {
+    "valeur": "Électricité",
+    "dpe": 5689094
+   },
+   {
+    "valeur": "Réseau de Chauffage urbain",
+    "dpe": 1873608
+   },
+   {
+    "valeur": "Fioul domestique",
+    "dpe": 642610
+   },
+   {
+    "valeur": "Bois – Bûches",
+    "dpe": 362985
+   },
+   {
+    "valeur": "Bois – Granulés (pellets) ou briquettes",
+    "dpe": 142693
+   },
+   {
+    "valeur": "GPL",
+    "dpe": 85894
+   },
+   {
+    "valeur": "Propane",
+    "dpe": 21127
+   },
+   {
+    "valeur": "Bois – Plaquettes forestières",
+    "dpe": 8731
+   },
+   {
+    "valeur": "Charbon",
+    "dpe": 3290
+   },
+   {
+    "valeur": "Bois – Plaquettes d’industrie",
+    "dpe": 2241
+   },
+   {
+    "valeur": "Butane",
+    "dpe": 476
+   },
+   {
+    "valeur": "Réseau de Froid Urbain",
+    "dpe": 7
+   }
+  ],
+  "usage_generateur_n1_installation_n1": [
+   {
+    "valeur": "chauffage",
+    "dpe": 8550600
+   },
+   {
+    "valeur": "chauffage + ecs",
+    "dpe": 6446731
+   },
+   {
+    "valeur": "ecs",
+    "dpe": 435
+   },
+   {
+    "valeur": "Non affecté",
+    "dpe": 70
+   }
+  ],
+  "type_energie_generateur_n2_installation_n1": [
+   {
+    "valeur": "Bois – Bûches",
+    "dpe": 654405
+   },
+   {
+    "valeur": "Gaz naturel",
+    "dpe": 313965
+   },
+   {
+    "valeur": "Électricité",
+    "dpe": 245098
+   },
+   {
+    "valeur": "Bois – Granulés (pellets) ou briquettes",
+    "dpe": 111970
+   },
+   {
+    "valeur": "Fioul domestique",
+    "dpe": 23063
+   },
+   {
+    "valeur": "GPL",
+    "dpe": 2662
+   },
+   {
+    "valeur": "Réseau de Chauffage urbain",
+    "dpe": 702
+   },
+   {
+    "valeur": "Bois – Plaquettes forestières",
+    "dpe": 616
+   },
+   {
+    "valeur": "Propane",
+    "dpe": 297
+   },
+   {
+    "valeur": "Charbon",
+    "dpe": 271
+   },
+   {
+    "valeur": "Bois – Plaquettes d’industrie",
+    "dpe": 202
+   },
+   {
+    "valeur": "Butane",
+    "dpe": 3
+   }
+  ],
+  "usage_generateur_n2_installation_n1": [
+   {
+    "valeur": "chauffage",
+    "dpe": 1112745
+   },
+   {
+    "valeur": "chauffage + ecs",
+    "dpe": 240497
+   },
+   {
+    "valeur": "ecs",
+    "dpe": 9
+   },
+   {
+    "valeur": "Non affecté",
+    "dpe": 3
+   }
+  ],
+  "type_installation_chauffage_n2": [
+   {
+    "valeur": "installation individuelle",
+    "dpe": 2632841
+   },
+   {
+    "valeur": "installation collective",
+    "dpe": 29932
+   },
+   {
+    "valeur": "installation hybride collective-individuelle (chauffage base + appoint individuel ou convecteur bi-jonction)",
+    "dpe": 6354
+   },
+   {
+    "valeur": "installation collective multi-bâtiment : modélisée comme un réseau de chaleur",
+    "dpe": 3030
+   }
+  ],
+  "type_emetteur_installation_chauffage_n2": [
+   {
+    "valeur": "radiateur électrique NFC, NF** et NF***",
+    "dpe": 447667
+   },
+   {
+    "valeur": "Convecteur électrique NFC, NF** et NF***",
+    "dpe": 396898
+   },
+   {
+    "valeur": "Panneau rayonnant NFC, NF** et NF***",
+    "dpe": 327569
+   },
+   {
+    "valeur": "Radiateur bitube avec robinet thermostatique sur réseau individuel eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 253037
+   },
+   {
+    "valeur": "Soufflage d'air chaud (air soufflé) avec distribution par fluide frigorigène",
+    "dpe": 209517
+   },
+   {
+    "valeur": "Soufflage d'air chaud (air soufflé) avec distribution par réseau aéraulique",
+    "dpe": 203658
+   },
+   {
+    "valeur": "Radiateur bitube avec robinet thermostatique sur réseau individuel eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 146899
+   },
+   {
+    "valeur": "Radiateur électrique à accumulation",
+    "dpe": 137111
+   },
+   {
+    "valeur": "Poêle bois",
+    "dpe": 108536
+   },
+   {
+    "valeur": "Autres émetteurs à effet joule",
+    "dpe": 104305
+   },
+   {
+    "valeur": "Radiateur bitube sans robinet thermostatique sur réseau individuel eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 64505
+   },
+   {
+    "valeur": "Radiateur bitube sans robinet thermostatique sur réseau individuel eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 63272
+   },
+   {
+    "valeur": "Soufflage d'air chaud sans réseau de distribution (ventiloconvecteur éléctrique)",
+    "dpe": 30583
+   },
+   {
+    "valeur": "Radiateur monotube avec robinet thermostatique sur réseau individuel eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 24644
+   },
+   {
+    "valeur": "Radiateur monotube avec robinet thermostatique sur réseau individuel eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 21781
+   },
+   {
+    "valeur": "Plancher rayonnant électrique avec régulation terminale",
+    "dpe": 19004
+   },
+   {
+    "valeur": "Radiateur monotube sans robinet thermostatique sur réseau individuel eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 17097
+   },
+   {
+    "valeur": "Plancher chauffant sur réseau individuel eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 16126
+   },
+   {
+    "valeur": "Plancher chauffant sur réseau individuel eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 14938
+   },
+   {
+    "valeur": "Radiateur monotube sans robinet thermostatique sur réseau individuel eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 10657
+   },
+   {
+    "valeur": "Radiateur bitube avec robinet thermostatique sur réseau collectif eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 7492
+   },
+   {
+    "valeur": "Radiateur gaz à ventouse ou sur conduit de fumée",
+    "dpe": 7010
+   },
+   {
+    "valeur": "Radiateur bitube avec robinet thermostatique sur réseau collectif eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 6230
+   },
+   {
+    "valeur": "Plancher rayonnant électrique sans régulation",
+    "dpe": 6155
+   },
+   {
+    "valeur": "Plancher chauffant sur réseau collectif eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 4509
+   },
+   {
+    "valeur": "Radiateur bitube sans robinet thermostatique sur réseau collectif eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 3442
+   },
+   {
+    "valeur": "Plancher chauffant sur réseau collectif eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 3388
+   },
+   {
+    "valeur": "Autres équipements",
+    "dpe": 3235
+   },
+   {
+    "valeur": "Poêle fioul",
+    "dpe": 2781
+   },
+   {
+    "valeur": "Radiateur bitube sans robinet thermostatique sur réseau collectif eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 2216
+   },
+   {
+    "valeur": "Plafond rayonnant électrique avec régulation terminale",
+    "dpe": 2018
+   },
+   {
+    "valeur": "Poêle charbon",
+    "dpe": 1136
+   },
+   {
+    "valeur": "Convecteur bi-jonction",
+    "dpe": 987
+   },
+   {
+    "valeur": "Radiateur monotube sans robinet thermostatique sur réseau collectif eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 777
+   },
+   {
+    "valeur": "Radiateur monotube avec robinet thermostatique sur réseau collectif eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 699
+   },
+   {
+    "valeur": "Plafond rayonnant électrique sans régulation",
+    "dpe": 561
+   },
+   {
+    "valeur": "Soufflage d'air chaud (Ventiloconvecteur) sur réseau individuel eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 410
+   },
+   {
+    "valeur": "Radiateur monotube avec robinet thermostatique sur réseau collectif eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 392
+   },
+   {
+    "valeur": "Radiateur monotube sans robinet thermostatique sur réseau collectif eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 295
+   },
+   {
+    "valeur": "Poêle GPL",
+    "dpe": 218
+   },
+   {
+    "valeur": "Plafond chauffant sur réseau individuel eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 93
+   },
+   {
+    "valeur": "Radiateur avec distribution par fluide frigorigène (à détente directe)",
+    "dpe": 89
+   },
+   {
+    "valeur": "Plancher chauffant avec distribution par fluide frigorigène (plancher chauffant à détente directe)",
+    "dpe": 73
+   },
+   {
+    "valeur": "Soufflage d'air chaud (Ventiloconvecteur) sur réseau individuel eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 59
+   },
+   {
+    "valeur": "Plafond chauffant sur réseau individuel eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 40
+   },
+   {
+    "valeur": "Soufflage d'air chaud (Ventiloconvecteur) sur réseau collectif eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 17
+   },
+   {
+    "valeur": "Plafond chauffant sur réseau collectif eau chaude basse ou moyenne température(inf 65°C)",
+    "dpe": 12
+   },
+   {
+    "valeur": "Plafond chauffant sur réseau collectif eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 11
+   },
+   {
+    "valeur": "Plafond chauffant avec distribution par fluide frigorigène (Plafond chauffant à détente directe)",
+    "dpe": 4
+   },
+   {
+    "valeur": "Soufflage d'air chaud (Ventiloconvecteur) sur réseau collectif eau chaude haute température(sup ou egal 65°C)",
+    "dpe": 4
+   }
+  ],
+  "configuration_installation_chauffage_n2": [
+   {
+    "valeur": "Installation de chauffage simple",
+    "dpe": 2604469
+   },
+   {
+    "valeur": "Installation de chauffage avec insert ou poêle bois en appoint",
+    "dpe": 56605
+   },
+   {
+    "valeur": "Installation de chauffage collectif avec Base + appoint",
+    "dpe": 3429
+   },
+   {
+    "valeur": "Installation de chauffage avec en appoint un insert ou poêle bois et un chauffage électrique dans la salle de bain (différent du chauffage principal)",
+    "dpe": 3310
+   },
+   {
+    "valeur": "Installation de chauffage par insert, poêle bois (ou biomasse) avec un chauffage électrique dans la salle de bain",
+    "dpe": 1191
+   },
+   {
+    "valeur": "Installation de chauffage avec chaudière en relève de PAC",
+    "dpe": 1092
+   },
+   {
+    "valeur": "Convecteurs bi-jonction",
+    "dpe": 1003
+   },
+   {
+    "valeur": "Installation de chauffage avec chauffage solaire",
+    "dpe": 663
+   },
+   {
+    "valeur": "Installation de chauffage avec une chaudière ou une PAC en relève d’une chaudière bois",
+    "dpe": 138
+   },
+   {
+    "valeur": "Installation de chauffage avec chaudière en relève de PAC avec insert ou poêle bois en appoint",
+    "dpe": 133
+   },
+   {
+    "valeur": "Installation de chauffage avec chauffage solaire et insert ou poêle bois en appoint",
+    "dpe": 124
+   }
+  ],
+  "type_energie_generateur_n1_installation_n2": [
+   {
+    "valeur": "Électricité",
+    "dpe": 1922713
+   },
+   {
+    "valeur": "Gaz naturel",
+    "dpe": 603361
+   },
+   {
+    "valeur": "Bois – Bûches",
+    "dpe": 87023
+   },
+   {
+    "valeur": "Fioul domestique",
+    "dpe": 20935
+   },
+   {
+    "valeur": "Bois – Granulés (pellets) ou briquettes",
+    "dpe": 20222
+   },
+   {
+    "valeur": "Réseau de Chauffage urbain",
+    "dpe": 11566
+   },
+   {
+    "valeur": "GPL",
+    "dpe": 4435
+   },
+   {
+    "valeur": "Charbon",
+    "dpe": 869
+   },
+   {
+    "valeur": "Propane",
+    "dpe": 845
+   },
+   {
+    "valeur": "Bois – Plaquettes forestières",
+    "dpe": 93
+   },
+   {
+    "valeur": "Bois – Plaquettes d’industrie",
+    "dpe": 50
+   },
+   {
+    "valeur": "Butane",
+    "dpe": 45
+   }
+  ],
+  "usage_generateur_n1_installation_n2": [
+   {
+    "valeur": "chauffage",
+    "dpe": 2419348
+   },
+   {
+    "valeur": "chauffage + ecs",
+    "dpe": 252797
+   },
+   {
+    "valeur": "ecs",
+    "dpe": 10
+   },
+   {
+    "valeur": "Non affecté",
+    "dpe": 2
+   }
+  ],
+  "type_energie_generateur_n2_installation_n2": [
+   {
+    "valeur": "Bois – Bûches",
+    "dpe": 33213
+   },
+   {
+    "valeur": "Électricité",
+    "dpe": 23892
+   },
+   {
+    "valeur": "Bois – Granulés (pellets) ou briquettes",
+    "dpe": 7126
+   },
+   {
+    "valeur": "Gaz naturel",
+    "dpe": 1772
+   },
+   {
+    "valeur": "Fioul domestique",
+    "dpe": 596
+   },
+   {
+    "valeur": "Réseau de Chauffage urbain",
+    "dpe": 40
+   },
+   {
+    "valeur": "GPL",
+    "dpe": 31
+   },
+   {
+    "valeur": "Bois – Plaquettes forestières",
+    "dpe": 20
+   },
+   {
+    "valeur": "Propane",
+    "dpe": 17
+   },
+   {
+    "valeur": "Charbon",
+    "dpe": 16
+   },
+   {
+    "valeur": "Bois – Plaquettes d’industrie",
+    "dpe": 1
+   },
+   {
+    "valeur": "Butane",
+    "dpe": 1
+   }
+  ],
+  "usage_generateur_n2_installation_n2": [
+   {
+    "valeur": "chauffage",
+    "dpe": 64900
+   },
+   {
+    "valeur": "chauffage + ecs",
+    "dpe": 1824
+   },
+   {
+    "valeur": "ecs",
+    "dpe": 1
+   }
+  ],
+  "type_energie_principale_ecs": [
+   {
+    "valeur": "Électricité",
+    "dpe": 7199833
+   },
+   {
+    "valeur": "Gaz naturel",
+    "dpe": 5922995
+   },
+   {
+    "valeur": "Réseau de Chauffage urbain",
+    "dpe": 1347800
+   },
+   {
+    "valeur": "Non affecté",
+    "dpe": 455975
+   },
+   {
+    "valeur": "Fioul domestique",
+    "dpe": 340699
+   },
+   {
+    "valeur": "GPL",
+    "dpe": 78530
+   },
+   {
+    "valeur": "Bois – Granulés (pellets) ou briquettes",
+    "dpe": 24152
+   },
+   {
+    "valeur": "Propane",
+    "dpe": 18459
+   },
+   {
+    "valeur": "Bois – Bûches",
+    "dpe": 13938
+   },
+   {
+    "valeur": "Bois – Plaquettes forestières",
+    "dpe": 3979
+   },
+   {
+    "valeur": "Butane",
+    "dpe": 1842
+   },
+   {
+    "valeur": "Bois – Plaquettes d’industrie",
+    "dpe": 1403
+   },
+   {
+    "valeur": "Électricité d'origine renouvelable utilisée dans le bâtiment",
+    "dpe": 270
+   },
+   {
+    "valeur": "Charbon",
+    "dpe": 110
+   },
+   {
+    "valeur": "Réseau de Froid Urbain",
+    "dpe": 6
+   }
+  ],
+  "type_installation_ecs_n1": [
+   {
+    "valeur": "installation individuelle",
+    "dpe": 11801428
+   },
+   {
+    "valeur": "installation collective",
+    "dpe": 2956277
+   },
+   {
+    "valeur": "installation collective multi-bâtiment : modélisée comme un réseau de chaleur",
+    "dpe": 196311
+   }
+  ],
+  "configuration_installation_ecs_n1": [
+   {
+    "valeur": "Un seul système d'ECS sans solaire",
+    "dpe": 14501743
+   },
+   {
+    "valeur": "Un seul système d'ECS avec solaire",
+    "dpe": 311834
+   },
+   {
+    "valeur": "Deux systèmes d'ECS dans une maison ou un appartement",
+    "dpe": 140439
+   }
+  ],
+  "type_installation_solaire_n1": [
+   {
+    "valeur": "Non affecté",
+    "dpe": 14631721
+   },
+   {
+    "valeur": "ECS solaire seule sup 5 ans",
+    "dpe": 262579
+   },
+   {
+    "valeur": "ECS solaire seule inf 5 ans",
+    "dpe": 46420
+   },
+   {
+    "valeur": "Chauffage + ECS solaire",
+    "dpe": 7114
+   },
+   {
+    "valeur": "Chauffage solaire (seul ou combiné)",
+    "dpe": 6182
+   }
+  ],
+  "type_energie_generateur_n1_ecs_n1": [
+   {
+    "valeur": "Électricité",
+    "dpe": 7198748
+   },
+   {
+    "valeur": "Gaz naturel",
+    "dpe": 5922549
+   },
+   {
+    "valeur": "Réseau de Chauffage urbain",
+    "dpe": 1347833
+   },
+   {
+    "valeur": "Fioul domestique",
+    "dpe": 341787
+   },
+   {
+    "valeur": "GPL",
+    "dpe": 78731
+   },
+   {
+    "valeur": "Bois – Granulés (pellets) ou briquettes",
+    "dpe": 24275
+   },
+   {
+    "valeur": "Propane",
+    "dpe": 18472
+   },
+   {
+    "valeur": "Bois – Bûches",
+    "dpe": 13993
+   },
+   {
+    "valeur": "Bois – Plaquettes forestières",
+    "dpe": 3987
+   },
+   {
+    "valeur": "Butane",
+    "dpe": 1850
+   },
+   {
+    "valeur": "Bois – Plaquettes d’industrie",
+    "dpe": 1403
+   },
+   {
+    "valeur": "Électricité d'origine renouvelable utilisée dans le bâtiment",
+    "dpe": 270
+   },
+   {
+    "valeur": "Charbon",
+    "dpe": 112
+   },
+   {
+    "valeur": "Réseau de Froid Urbain",
+    "dpe": 6
+   }
+  ],
+  "usage_generateur_n1_ecs_n1": [
+   {
+    "valeur": "ecs",
+    "dpe": 7905731
+   },
+   {
+    "valeur": "chauffage + ecs",
+    "dpe": 6904819
+   },
+   {
+    "valeur": "chauffage",
+    "dpe": 143466
+   }
+  ],
+  "type_generateur_n2_ecs_n1": [
+   {
+    "valeur": "Chaudière gaz à condensation après 2015",
+    "dpe": 336
+   },
+   {
+    "valeur": "Chaudière gaz standard 2001-2015",
+    "dpe": 159
+   },
+   {
+    "valeur": "Chaudière bois granulés après 2019",
+    "dpe": 94
+   },
+   {
+    "valeur": "Chaudière gaz à condensation 2001-2015",
+    "dpe": 76
+   },
+   {
+    "valeur": "Chaudière gaz basse température 1991-2000",
+    "dpe": 72
+   },
+   {
+    "valeur": "Chaudière gaz basse température 2001-2015",
+    "dpe": 16
+   },
+   {
+    "valeur": "Chaudière gaz standard 1991-2000",
+    "dpe": 9
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane standard 2001-2015",
+    "dpe": 6
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane standard 1991-2000",
+    "dpe": 4
+   },
+   {
+    "valeur": "Ballon électrique à accumulation vertical Autres ou inconnue",
+    "dpe": 3
+   },
+   {
+    "valeur": "Chaudière fioul classique avant 1970",
+    "dpe": 3
+   },
+   {
+    "valeur": "Chaudière gaz standard après 2015",
+    "dpe": 3
+   },
+   {
+    "valeur": "Chaudière gaz à condensation 1986-2000",
+    "dpe": 3
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane classique avant 1981",
+    "dpe": 3
+   },
+   {
+    "valeur": "CET sur air extérieur après 2014",
+    "dpe": 2
+   },
+   {
+    "valeur": "Chaudière bois bûche avant 1978",
+    "dpe": 2
+   },
+   {
+    "valeur": "Chaudière fioul basse température 1991-2015",
+    "dpe": 2
+   },
+   {
+    "valeur": "Chaudière gaz basse température après 2015",
+    "dpe": 2
+   },
+   {
+    "valeur": "Chaudière gaz classique 1986-1990",
+    "dpe": 2
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane standard après 2015",
+    "dpe": 2
+   },
+   {
+    "valeur": "système collectif par défaut en abscence d'information : chaudière fioul pénalisante",
+    "dpe": 2
+   },
+   {
+    "valeur": "Ballon électrique à accumulation vertical Catégorie C ou 3 étoiles",
+    "dpe": 1
+   },
+   {
+    "valeur": "Chaudière bois granulés 2013-2019",
+    "dpe": 1
+   },
+   {
+    "valeur": "Chaudière fioul standard 1991-2015",
+    "dpe": 1
+   },
+   {
+    "valeur": "Chaudière gaz classique 1981-1985",
+    "dpe": 1
+   },
+   {
+    "valeur": "Chaudière gaz classique avant 1981",
+    "dpe": 1
+   },
+   {
+    "valeur": "autre système thermodynamique électrique",
+    "dpe": 1
+   }
+  ],
+  "type_energie_generateur_n2_ecs_n1": [
+   {
+    "valeur": "Gaz naturel",
+    "dpe": 680
+   },
+   {
+    "valeur": "Bois – Granulés (pellets) ou briquettes",
+    "dpe": 95
+   },
+   {
+    "valeur": "GPL",
+    "dpe": 15
+   },
+   {
+    "valeur": "Électricité",
+    "dpe": 8
+   },
+   {
+    "valeur": "Fioul domestique",
+    "dpe": 6
+   },
+   {
+    "valeur": "Bois – Bûches",
+    "dpe": 2
+   },
+   {
+    "valeur": "Électricité d'origine renouvelable utilisée dans le bâtiment",
+    "dpe": 1
+   }
+  ],
+  "usage_generateur_n2_ecs_n1": [
+   {
+    "valeur": "chauffage + ecs",
+    "dpe": 801
+   },
+   {
+    "valeur": "ecs",
+    "dpe": 6
+   }
+  ],
+  "type_ventilation": [
+   {
+    "valeur": "Ventilation par ouverture des fenêtres",
+    "dpe": 2363190
+   },
+   {
+    "valeur": "VMC SF Hygro B après 2012",
+    "dpe": 1578322
+   },
+   {
+    "valeur": "VMC SF Auto réglable de 1982 à 2000",
+    "dpe": 1468534
+   },
+   {
+    "valeur": "VMC SF Auto réglable après 2012",
+    "dpe": 1256684
+   },
+   {
+    "valeur": "VMC SF Auto réglable de 2001 à 2012",
+    "dpe": 1199954
+   },
+   {
+    "valeur": "Ventilation naturelle par conduit",
+    "dpe": 1180330
+   },
+   {
+    "valeur": "VMC SF Auto réglable avant 1982",
+    "dpe": 976245
+   },
+   {
+    "valeur": "Ventilation par entrées d'air hautes et basses",
+    "dpe": 876339
+   },
+   {
+    "valeur": "VMC SF Hygro A après 2012",
+    "dpe": 718595
+   },
+   {
+    "valeur": "VMC SF Hygro B de 2001 à 2012",
+    "dpe": 674668
+   },
+   {
+    "valeur": "VMC SF Hygro A de 2001 à 2012",
+    "dpe": 515389
+   },
+   {
+    "valeur": "VMC SF Hygro A avant 2001",
+    "dpe": 444718
+   },
+   {
+    "valeur": "Ventilation mécanique sur conduit existant avant 2013",
+    "dpe": 282736
+   },
+   {
+    "valeur": "VMC SF Hygro B avant  2001",
+    "dpe": 217118
+   },
+   {
+    "valeur": "Ventilation naturelle par conduit avec entrées d'air hygro",
+    "dpe": 169052
+   },
+   {
+    "valeur": "Ventilation mécanique sur conduit existant à partir de 2013",
+    "dpe": 116489
+   },
+   {
+    "valeur": "VMC Basse pression Hygro B",
+    "dpe": 112445
+   },
+   {
+    "valeur": "VMC Basse pression Hygro A",
+    "dpe": 94845
+   },
+   {
+    "valeur": "VMC SF Gaz avant  2001",
+    "dpe": 69086
+   },
+   {
+    "valeur": "VMC SF Gaz de 2001 à 2012",
+    "dpe": 52402
+   },
+   {
+    "valeur": "VMC SF Gaz après 2012",
+    "dpe": 41204
+   },
+   {
+    "valeur": "VMC Basse pression Auto-réglable",
+    "dpe": 37969
+   },
+   {
+    "valeur": "VMC DF individuelle avec échangeur à partir de 2013",
+    "dpe": 33489
+   },
+   {
+    "valeur": "Ventilation hybride après 2012",
+    "dpe": 29398
+   },
+   {
+    "valeur": "Ventilation hybride de 2001 à 2012",
+    "dpe": 24985
+   },
+   {
+    "valeur": "Ventilation hybride avant  2001",
+    "dpe": 24207
+   },
+   {
+    "valeur": "VMC DF individuelle avec échangeur avant 2013",
+    "dpe": 23940
+   },
+   {
+    "valeur": "VMC DF collective avec échangeur avant 2013",
+    "dpe": 18403
+   },
+   {
+    "valeur": "Ventilation hybride avec entrées d'air hygro après 2012",
+    "dpe": 18156
+   },
+   {
+    "valeur": "VMC DF collective avec échangeur à partir de 2013",
+    "dpe": 17547
+   },
+   {
+    "valeur": "VMC DF sans échangeur avant 2013",
+    "dpe": 7782
+   },
+   {
+    "valeur": "VMC DF sans échangeur après 2012",
+    "dpe": 7458
+   },
+   {
+    "valeur": "Ventilation hybride avec entrées d'air hygro de 2001 à 2012",
+    "dpe": 6727
+   },
+   {
+    "valeur": "Ventilation hybride avec entrées d'air hygro avant  2001",
+    "dpe": 6177
+   },
+   {
+    "valeur": "Non affecté",
+    "dpe": 4371
+   },
+   {
+    "valeur": "Puits climatique avec échangeur avant 2013",
+    "dpe": 550
+   },
+   {
+    "valeur": "Puits climatique sans échangeur avant 2013",
+    "dpe": 431
+   },
+   {
+    "valeur": "Puits climatique avec échangeur à partir de 2013",
+    "dpe": 401
+   },
+   {
+    "valeur": "Puits climatique sans échangeur à partir de 2013",
+    "dpe": 83
+   }
+  ],
+  "type_generateur_froid": [
+   {
+    "valeur": "PAC air/air installée à partir de 2015",
+    "dpe": 658349
+   },
+   {
+    "valeur": "PAC air/air installée avant 2008",
+    "dpe": 232899
+   },
+   {
+    "valeur": "PAC air/air installée entre 2008 et 2014",
+    "dpe": 186051
+   },
+   {
+    "valeur": "PAC air/eau installée après 2017",
+    "dpe": 26793
+   },
+   {
+    "valeur": "PAC air/eau installée avant 2008",
+    "dpe": 10834
+   },
+   {
+    "valeur": "PAC air/eau installée entre 2008 et 2014",
+    "dpe": 9727
+   },
+   {
+    "valeur": "autre système de refroidissement",
+    "dpe": 7408
+   },
+   {
+    "valeur": "PAC air/eau installée entre 2015 et 2016",
+    "dpe": 3889
+   },
+   {
+    "valeur": "autre système thermodynamique électrique",
+    "dpe": 2489
+   },
+   {
+    "valeur": "PAC géothermique installée après 2017",
+    "dpe": 1696
+   },
+   {
+    "valeur": "PAC eau/eau installée après 2017",
+    "dpe": 1235
+   },
+   {
+    "valeur": "PAC géothermique installée avant 2008",
+    "dpe": 1186
+   },
+   {
+    "valeur": "PAC géothermique installée entre 2008 et 2014",
+    "dpe": 853
+   },
+   {
+    "valeur": "PAC eau/eau installée entre 2008 et 2014",
+    "dpe": 569
+   },
+   {
+    "valeur": "PAC eau/eau installée avant 2008",
+    "dpe": 416
+   },
+   {
+    "valeur": "PAC géothermique installée entre 2015 et 2016",
+    "dpe": 344
+   },
+   {
+    "valeur": "autre système thermodynamique gaz",
+    "dpe": 306
+   },
+   {
+    "valeur": "PAC eau/eau installée entre 2015 et 2016",
+    "dpe": 137
+   },
+   {
+    "valeur": "réseau de froid urbain",
+    "dpe": 74
+   },
+   {
+    "valeur": "PAC eau glycolée/eau installée avant 2008",
+    "dpe": 21
+   },
+   {
+    "valeur": "PAC eau glycolée/eau installée entre 2008 et 2014",
+    "dpe": 21
+   },
+   {
+    "valeur": "PAC eau glycolée/eau installée après 2017",
+    "dpe": 18
+   },
+   {
+    "valeur": "PAC eau glycolée/eau installée entre 2015 et 2016",
+    "dpe": 5
+   }
+  ],
+  "type_energie_climatisation": [
+   {
+    "valeur": "Électricité",
+    "dpe": 1015217
+   },
+   {
+    "valeur": "Réseau de Chauffage urbain",
+    "dpe": 467
+   },
+   {
+    "valeur": "Gaz naturel",
+    "dpe": 299
+   },
+   {
+    "valeur": "Réseau de Froid Urbain",
+    "dpe": 58
+   },
+   {
+    "valeur": "GPL",
+    "dpe": 5
+   },
+   {
+    "valeur": "Propane",
+    "dpe": 1
+   }
+  ],
+  "periode_installation_generateur_froid": [
+   {
+    "valeur": "A partir de 2015",
+    "dpe": 693378
+   },
+   {
+    "valeur": "Avant 2008",
+    "dpe": 254124
+   },
+   {
+    "valeur": "2008-2014",
+    "dpe": 197818
+   }
+  ],
+  "categorie_enr": [
+   {
+    "valeur": "réseau de chaleur ou de froid vertueux",
+    "dpe": 1083634
+   },
+   {
+    "valeur": "pompe à chaleur",
+    "dpe": 977871
+   },
+   {
+    "valeur": "chauffage au bois",
+    "dpe": 947937
+   },
+   {
+    "valeur": "Il existe plusieurs descriptifs ENR",
+    "dpe": 593120
+   },
+   {
+    "valeur": "panneaux solaires thermiques",
+    "dpe": 201556
+   },
+   {
+    "valeur": "chauffe-eau thermodynamique",
+    "dpe": 114612
+   },
+   {
+    "valeur": "panneaux solaires photovoltaïques",
+    "dpe": 55559
+   },
+   {
+    "valeur": "géothermie",
+    "dpe": 21033
+   },
+   {
+    "valeur": "cogénération",
+    "dpe": 4959
+   },
+   {
+    "valeur": "éolienne",
+    "dpe": 42
+   }
+  ],
+  "systeme_production_electricite_origine_renouvelable": [
+   {
+    "valeur": "Solaire Photovoltaïque",
+    "dpe": 1039622
+   },
+   {
+    "valeur": "Eolien + Cogénération",
+    "dpe": 41400
+   },
+   {
+    "valeur": "Non affecté",
+    "dpe": 6643
+   },
+   {
+    "valeur": "Cogénération",
+    "dpe": 796
+   },
+   {
+    "valeur": "Solaire photovoltaïque + Eolien + Cogénération",
+    "dpe": 310
+   },
+   {
+    "valeur": "Eolien",
+    "dpe": 84
+   },
+   {
+    "valeur": "Solaire Photovoltaïque + Eolien",
+    "dpe": 70
+   },
+   {
+    "valeur": "Solaire photovoltaïque + Cogénération",
+    "dpe": 46
+   }
+  ],
+  "type_generateur_chauffage_principal": [
+   {
+    "valeur": "Chaudière gaz à condensation après 2015",
+    "dpe": 595283
+   },
+   {
+    "valeur": "Chaudière gaz à condensation 2001-2015",
+    "dpe": 410801
+   },
+   {
+    "valeur": "radiateur électrique NFC, NF** et NF***",
+    "dpe": 393362
+   },
+   {
+    "valeur": "Réseau de chaleur isolé",
+    "dpe": 367848
+   },
+   {
+    "valeur": "Convecteur électrique NFC, NF** et NF***",
+    "dpe": 337748
+   },
+   {
+    "valeur": "Panneau rayonnant électrique NFC, NF** et NF***",
+    "dpe": 330661
+   },
+   {
+    "valeur": "Chaudière gaz standard 2001-2015",
+    "dpe": 209347
+   },
+   {
+    "valeur": "Radiateur électrique à accumulation",
+    "dpe": 168841
+   },
+   {
+    "valeur": "PAC air/air installée à partir de 2015",
+    "dpe": 137122
+   },
+   {
+    "valeur": "Chaudière gaz basse température 2001-2015",
+    "dpe": 120703
+   },
+   {
+    "valeur": "Chaudière(s) gaz multi bâtiment modélisée comme un réseau de chaleur",
+    "dpe": 106969
+   },
+   {
+    "valeur": "Chaudière gaz standard 1991-2000",
+    "dpe": 82187
+   },
+   {
+    "valeur": "PAC air/eau installée après 2017",
+    "dpe": 75825
+   },
+   {
+    "valeur": "Réseau de chaleur non isolé",
+    "dpe": 62012
+   },
+   {
+    "valeur": "Chaudière fioul standard 1991-2015",
+    "dpe": 58528
+   },
+   {
+    "valeur": "Chaudière gaz standard après 2015",
+    "dpe": 56884
+   },
+   {
+    "valeur": "Autres émetteurs à effet joule",
+    "dpe": 56729
+   },
+   {
+    "valeur": "Chaudière gaz basse température après 2015",
+    "dpe": 45597
+   },
+   {
+    "valeur": "Chaudière gaz classique avant 1981",
+    "dpe": 37380
+   },
+   {
+    "valeur": "Plancher ou plafond rayonnant électrique avec régulation terminale",
+    "dpe": 33061
+   },
+   {
+    "valeur": "PAC air/air installée entre 2008 et 2014",
+    "dpe": 31675
+   },
+   {
+    "valeur": "Chaudière gaz à condensation 1986-2000",
+    "dpe": 24842
+   },
+   {
+    "valeur": "réseau de chaleur non répertorié ou inconnu",
+    "dpe": 22292
+   },
+   {
+    "valeur": "Chaudière fioul basse température 1991-2015",
+    "dpe": 18392
+   },
+   {
+    "valeur": "PAC air/air installée avant 2008",
+    "dpe": 17760
+   },
+   {
+    "valeur": "Plancher ou plafond rayonnant électrique sans régulation terminale",
+    "dpe": 16528
+   },
+   {
+    "valeur": "PAC air/eau installée entre 2008 et 2014",
+    "dpe": 15582
+   },
+   {
+    "valeur": "Chaudière gaz basse température 1991-2000",
+    "dpe": 14877
+   },
+   {
+    "valeur": "Chaudière fioul classique 1981-1990",
+    "dpe": 12338
+   },
+   {
+    "valeur": "Chaudière gaz classique 1986-1990",
+    "dpe": 12086
+   },
+   {
+    "valeur": "Chaudière(s) bois multi bâtiment modélisée comme un réseau de chaleur",
+    "dpe": 11623
+   },
+   {
+    "valeur": "Chaudière électrique",
+    "dpe": 11471
+   },
+   {
+    "valeur": "Chaudière gaz à condensation 1981-1985",
+    "dpe": 9868
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane à condensation après 2015",
+    "dpe": 9739
+   },
+   {
+    "valeur": "Poêle à granulés flamme verte installé à partir de 2020",
+    "dpe": 9723
+   },
+   {
+    "valeur": "Chaudière fioul à condensation 1996-2015",
+    "dpe": 9586
+   },
+   {
+    "valeur": "Poêle à granulés flamme verte installé entre 2012 et 2019",
+    "dpe": 8680
+   },
+   {
+    "valeur": "PAC air/eau installée entre 2015 et 2016",
+    "dpe": 7417
+   },
+   {
+    "valeur": "Chaudière fioul classique avant 1970",
+    "dpe": 7299
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane à condensation 2001-2015",
+    "dpe": 6486
+   },
+   {
+    "valeur": "Chaudière gaz classique 1981-1985",
+    "dpe": 6144
+   },
+   {
+    "valeur": "Chaudière fioul à condensation après 2015",
+    "dpe": 6119
+   },
+   {
+    "valeur": "Chaudière bois granulés après 2019",
+    "dpe": 5909
+   },
+   {
+    "valeur": "Chaudière fioul classique 1970-1975",
+    "dpe": 5430
+   },
+   {
+    "valeur": "radiateur à gaz indépendant ou autonome avant 2006",
+    "dpe": 5091
+   },
+   {
+    "valeur": "Chaudière bois granulés 2013-2019",
+    "dpe": 4228
+   },
+   {
+    "valeur": "Chaudière fioul classique 1976-1980",
+    "dpe": 4130
+   },
+   {
+    "valeur": "Poêle bûche installé installé à partir de 2018 avec label flamme verte",
+    "dpe": 3810
+   },
+   {
+    "valeur": "Poêle bûche installé installé de 2007 à 2017 avec label flamme verte",
+    "dpe": 3716
+   },
+   {
+    "valeur": "Chaudière fioul basse température après 2015",
+    "dpe": 3613
+   },
+   {
+    "valeur": "PAC air/eau installée avant 2008",
+    "dpe": 3596
+   },
+   {
+    "valeur": "Chaudière fioul standard après 2015",
+    "dpe": 3466
+   },
+   {
+    "valeur": "Poêle bûche installé à partir de 2005 sans label flamme verte",
+    "dpe": 2804
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane standard 2001-2015",
+    "dpe": 2788
+   },
+   {
+    "valeur": "PAC géothermique installée entre 2008 et 2014",
+    "dpe": 2541
+   },
+   {
+    "valeur": "Poêle à granulés installée avant 2012 ou sans label flamme verte",
+    "dpe": 2505
+   },
+   {
+    "valeur": "Poêle bûche installé entre 1990 et 2004",
+    "dpe": 2502
+   },
+   {
+    "valeur": "convecteur bi-jonction",
+    "dpe": 2404
+   },
+   {
+    "valeur": "insert installé entre 1990 et 2004",
+    "dpe": 2127
+   },
+   {
+    "valeur": "PAC géothermique installée après 2017",
+    "dpe": 2026
+   },
+   {
+    "valeur": "Chaudière bois granulés 2004-2012",
+    "dpe": 1948
+   },
+   {
+    "valeur": "Poêle bûche installé avant 1990",
+    "dpe": 1887
+   },
+   {
+    "valeur": "Poêle fioul ou GPL ou charbon",
+    "dpe": 1811
+   },
+   {
+    "valeur": "PAC géothermique installée avant 2008",
+    "dpe": 1797
+   },
+   {
+    "valeur": "Chaudière bois bûche 2004-2012",
+    "dpe": 1759
+   },
+   {
+    "valeur": "Pompe(s) à chaleur multi bâtiment modélisée comme un réseau de chaleur",
+    "dpe": 1749
+   },
+   {
+    "valeur": "PAC eau/eau installée après 2017",
+    "dpe": 1680
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane basse température 2001-2015",
+    "dpe": 1676
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie pompe à chaleur PAC air/eau installée après 2017",
+    "dpe": 1614
+   },
+   {
+    "valeur": "PAC eau/eau installée entre 2008 et 2014",
+    "dpe": 1570
+   },
+   {
+    "valeur": "système collectif par défaut en abscence d'information : chaudière fioul pénalisante",
+    "dpe": 1562
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane standard 1991-2000",
+    "dpe": 1462
+   },
+   {
+    "valeur": "insert installé avant 1990",
+    "dpe": 1462
+   },
+   {
+    "valeur": "Chaudière(s) fioul multi bâtiment modélisée comme un réseau de chaleur",
+    "dpe": 1452
+   },
+   {
+    "valeur": "Chaudière bois bûche 1978-1994",
+    "dpe": 1387
+   },
+   {
+    "valeur": "insert installé installé de 2007 à 2017 avec label flamme verte",
+    "dpe": 1231
+   },
+   {
+    "valeur": "insert installé à partir de 2005 sans label flamme verte",
+    "dpe": 1007
+   },
+   {
+    "valeur": "Cuisinière installé avant 1990",
+    "dpe": 1006
+   },
+   {
+    "valeur": "Chaudière bois plaquette 2013-2017",
+    "dpe": 993
+   },
+   {
+    "valeur": "Chaudière bois bûche avant 1978",
+    "dpe": 954
+   },
+   {
+    "valeur": "insert installé installé à partir de 2018 avec label flamme verte",
+    "dpe": 909
+   },
+   {
+    "valeur": "radiateur à gaz indépendant ou autonome après 2006",
+    "dpe": 875
+   },
+   {
+    "valeur": "Chaudière bois bûche 2013-2017",
+    "dpe": 869
+   },
+   {
+    "valeur": "poêle à bois bouilleur bûche installé avant 2012",
+    "dpe": 838
+   },
+   {
+    "valeur": "Chaudière bois bûche 1995-2003",
+    "dpe": 701
+   },
+   {
+    "valeur": "Chaudière bois plaquette 2004-2012",
+    "dpe": 605
+   },
+   {
+    "valeur": "Foyer fermé installé avant 1990",
+    "dpe": 592
+   },
+   {
+    "valeur": "Chaudière bois bûche après 2019",
+    "dpe": 550
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane standard après 2015",
+    "dpe": 538
+   },
+   {
+    "valeur": "poêle à bois bouilleur bûche installé à partir de 2012",
+    "dpe": 538
+   },
+   {
+    "valeur": "Foyer fermé installé entre 1990 et 2004",
+    "dpe": 514
+   },
+   {
+    "valeur": "poêle à bois bouilleur granulés installé à partir de 2012",
+    "dpe": 499
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie pompe à chaleur PAC air/eau installée entre 2008 et 2014",
+    "dpe": 492
+   },
+   {
+    "valeur": "PAC eau/eau installée avant 2008",
+    "dpe": 491
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane à condensation 1986-2000",
+    "dpe": 440
+   },
+   {
+    "valeur": "autre système à combustion gaz",
+    "dpe": 429
+   },
+   {
+    "valeur": "PAC eau/eau installée entre 2015 et 2016",
+    "dpe": 383
+   },
+   {
+    "valeur": "Chaudière bois plaquette après 2019",
+    "dpe": 382
+   },
+   {
+    "valeur": "Poêle bûche installé installé de 2005 à 2006 avec label flamme verte",
+    "dpe": 357
+   },
+   {
+    "valeur": "Foyer fermé installé installé de 2007 à 2017 avec label flamme verte",
+    "dpe": 337
+   },
+   {
+    "valeur": "autre système à combustion bois",
+    "dpe": 336
+   },
+   {
+    "valeur": "PAC eau glycolée/eau installée après 2017",
+    "dpe": 298
+   },
+   {
+    "valeur": "Chaudière bois granulés 1978-1994",
+    "dpe": 277
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane basse température après 2015",
+    "dpe": 276
+   },
+   {
+    "valeur": "Cuisinière installé entre 1990 et 2004",
+    "dpe": 273
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane basse température 1991-2000",
+    "dpe": 272
+   },
+   {
+    "valeur": "PAC géothermique installée entre 2015 et 2016",
+    "dpe": 264
+   },
+   {
+    "valeur": "générateur à air chaud à combustion avant 2006",
+    "dpe": 261
+   },
+   {
+    "valeur": "Chaudière bois granulés 1995-2003",
+    "dpe": 254
+   },
+   {
+    "valeur": "Chaudière bois bûche 2018-2019",
+    "dpe": 235
+   },
+   {
+    "valeur": "PAC eau glycolée/eau installée entre 2008 et 2014",
+    "dpe": 224
+   },
+   {
+    "valeur": "Chaudière bois plaquette 2018-2019",
+    "dpe": 210
+   },
+   {
+    "valeur": "Foyer fermé installé installé à partir de 2018 avec label flamme verte",
+    "dpe": 206
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane classique avant 1981",
+    "dpe": 205
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane classique 1986-1990",
+    "dpe": 203
+   },
+   {
+    "valeur": "Foyer fermé installé à partir de 2005 sans label flamme verte",
+    "dpe": 197
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie pompe à chaleur PAC air/eau installée entre 2015 et 2016",
+    "dpe": 197
+   },
+   {
+    "valeur": "insert installé installé de 2005 à 2006 avec label flamme verte",
+    "dpe": 176
+   },
+   {
+    "valeur": "autre système à combustion fioul",
+    "dpe": 163
+   },
+   {
+    "valeur": "autre système thermodynamique électrique",
+    "dpe": 145
+   },
+   {
+    "valeur": "générateur à air chaud à combustion standard a partir de 2006",
+    "dpe": 136
+   },
+   {
+    "valeur": "Cuisinière installé installé à partir de 2018 avec label flamme verte",
+    "dpe": 131
+   },
+   {
+    "valeur": "Cuisinière installé installé de 2007 à 2017 avec label flamme verte",
+    "dpe": 125
+   },
+   {
+    "valeur": "Cuisinière installé à partir de 2005 sans label flamme verte",
+    "dpe": 113
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane classique 1981-1985",
+    "dpe": 96
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane à condensation 1981-1985",
+    "dpe": 94
+   },
+   {
+    "valeur": "poêle à bois bouilleur granulés installé avant 2012",
+    "dpe": 84
+   },
+   {
+    "valeur": "PAC eau glycolée/eau installée entre 2015 et 2016",
+    "dpe": 75
+   },
+   {
+    "valeur": "PAC eau glycolée/eau installée avant 2008",
+    "dpe": 72
+   },
+   {
+    "valeur": "Chaudière charbon avant 1978",
+    "dpe": 66
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie pompe à chaleur PAC géothermique installée après 2017",
+    "dpe": 50
+   },
+   {
+    "valeur": "générateur à air chaud à combustion à condensation a partir de 2006",
+    "dpe": 47
+   },
+   {
+    "valeur": "Chaudière charbon 1978-1994",
+    "dpe": 44
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie pompe à chaleur PAC eau/eau installée après 2017",
+    "dpe": 41
+   },
+   {
+    "valeur": "Foyer fermé installé installé de 2005 à 2006 avec label flamme verte",
+    "dpe": 39
+   },
+   {
+    "valeur": "Chaudière bois granulés avant 1978",
+    "dpe": 27
+   },
+   {
+    "valeur": "Chaudière bois plaquette 1995-2003",
+    "dpe": 23
+   },
+   {
+    "valeur": "autre système à combustion autres energies fossiles (charbon,pétrole etc…)",
+    "dpe": 22
+   },
+   {
+    "valeur": "Chaudière(s) charbon multi bâtiment modélisée comme un réseau de chaleur",
+    "dpe": 12
+   },
+   {
+    "valeur": "Chaudière bois plaquette 1978-1994",
+    "dpe": 11
+   },
+   {
+    "valeur": "Cuisinière installé installé de 2005 à 2006 avec label flamme verte",
+    "dpe": 11
+   },
+   {
+    "valeur": "Chaudière charbon 1995-2003",
+    "dpe": 8
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie pompe à chaleur PAC eau/eau installée entre 2015 et 2016",
+    "dpe": 8
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie pompe à chaleur PAC eau/eau installée entre 2008 et 2014",
+    "dpe": 6
+   },
+   {
+    "valeur": "Chaudière charbon 2004-2012",
+    "dpe": 4
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière gaz à condensation après 2015",
+    "dpe": 4
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière gaz à condensation 2001-2015",
+    "dpe": 3
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie pompe à chaleur PAC eau glycolée/eau installée après 2017",
+    "dpe": 3
+   },
+   {
+    "valeur": "Chaudière charbon 2013-2017",
+    "dpe": 2
+   },
+   {
+    "valeur": "Chaudière charbon après 2019",
+    "dpe": 2
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie pompe à chaleur PAC géothermique installée entre 2008 et 2014",
+    "dpe": 2
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie pompe à chaleur PAC géothermique installée entre 2015 et 2016",
+    "dpe": 2
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière fioul à condensation après 2015",
+    "dpe": 1
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière gpl/propane/butane à condensation 2001-2015",
+    "dpe": 1
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie pompe à chaleur PAC eau glycolée/eau installée entre 2008 et 2014",
+    "dpe": 1
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie pompe à chaleur PAC eau glycolée/eau installée entre 2015 et 2016",
+    "dpe": 1
+   }
+  ],
+  "type_generateur_chauffage_principal_ecs": [
+   {
+    "valeur": "Ballon électrique à accumulation vertical Catégorie B ou 2 étoiles",
+    "dpe": 942905
+   },
+   {
+    "valeur": "Chaudière gaz à condensation après 2015",
+    "dpe": 540620
+   },
+   {
+    "valeur": "Ballon électrique à accumulation vertical Autres ou inconnue",
+    "dpe": 484692
+   },
+   {
+    "valeur": "Chaudière gaz à condensation 2001-2015",
+    "dpe": 360241
+   },
+   {
+    "valeur": "Réseau de chaleur isolé",
+    "dpe": 314758
+   },
+   {
+    "valeur": "Ballon électrique à accumulation vertical Catégorie C ou 3 étoiles",
+    "dpe": 286333
+   },
+   {
+    "valeur": "Chaudière gaz standard 2001-2015",
+    "dpe": 171791
+   },
+   {
+    "valeur": "Chaudière gaz basse température 2001-2015",
+    "dpe": 105944
+   },
+   {
+    "valeur": "Ballon électrique à accumulation horizontal",
+    "dpe": 93485
+   },
+   {
+    "valeur": "Chaudière(s) gaz multi bâtiment modélisée comme un réseau de chaleur",
+    "dpe": 70750
+   },
+   {
+    "valeur": "Chauffe-eau gaz à production instantanée 2001-2015",
+    "dpe": 68673
+   },
+   {
+    "valeur": "PAC double service après 2014",
+    "dpe": 63620
+   },
+   {
+    "valeur": "Chaudière gaz standard 1991-2000",
+    "dpe": 56718
+   },
+   {
+    "valeur": "Chaudière gaz standard après 2015",
+    "dpe": 50426
+   },
+   {
+    "valeur": "Chauffe-eau gaz à production instantanée après 2015",
+    "dpe": 47597
+   },
+   {
+    "valeur": "Chaudière gaz basse température après 2015",
+    "dpe": 42479
+   },
+   {
+    "valeur": "CET sur air extérieur après 2014",
+    "dpe": 41741
+   },
+   {
+    "valeur": "Chaudière fioul standard 1991-2015",
+    "dpe": 30994
+   },
+   {
+    "valeur": "Chaudière gaz classique avant 1981",
+    "dpe": 25496
+   },
+   {
+    "valeur": "CET sur air ambiant (sur local non chauffé) après 2014",
+    "dpe": 24281
+   },
+   {
+    "valeur": "Chaudière gaz à condensation 1986-2000",
+    "dpe": 21776
+   },
+   {
+    "valeur": "CET sur air extrait après 2014",
+    "dpe": 21320
+   },
+   {
+    "valeur": "chauffe-eau électrique instantané",
+    "dpe": 17875
+   },
+   {
+    "valeur": "réseau de chaleur non répertorié ou inconnu",
+    "dpe": 16612
+   },
+   {
+    "valeur": "Réseau de chaleur non isolé",
+    "dpe": 11791
+   },
+   {
+    "valeur": "Chauffe-eau gaz à production instantanée 1990-2000",
+    "dpe": 11739
+   },
+   {
+    "valeur": "Chaudière fioul basse température 1991-2015",
+    "dpe": 11229
+   },
+   {
+    "valeur": "Chaudière gaz basse température 1991-2000",
+    "dpe": 10093
+   },
+   {
+    "valeur": "Chauffe-eau gaz à production instantanée avant 1980",
+    "dpe": 8788
+   },
+   {
+    "valeur": "Chaudière(s) bois multi bâtiment modélisée comme un réseau de chaleur",
+    "dpe": 8065
+   },
+   {
+    "valeur": "Chaudière gaz classique 1986-1990",
+    "dpe": 7679
+   },
+   {
+    "valeur": "PAC double service 2010-2014",
+    "dpe": 7211
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane à condensation après 2015",
+    "dpe": 6949
+   },
+   {
+    "valeur": "Chaudière fioul à condensation 1996-2015",
+    "dpe": 5328
+   },
+   {
+    "valeur": "Chaudière fioul classique 1981-1990",
+    "dpe": 5310
+   },
+   {
+    "valeur": "Chaudière gaz à condensation 1981-1985",
+    "dpe": 5155
+   },
+   {
+    "valeur": "CET sur air extérieur 2010-2014",
+    "dpe": 4720
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane à condensation 2001-2015",
+    "dpe": 4695
+   },
+   {
+    "valeur": "Accumulateur gaz classique après 2000",
+    "dpe": 4123
+   },
+   {
+    "valeur": "Chaudière gaz classique 1981-1985",
+    "dpe": 3926
+   },
+   {
+    "valeur": "Chaudière électrique",
+    "dpe": 3394
+   },
+   {
+    "valeur": "Chaudière fioul à condensation après 2015",
+    "dpe": 3370
+   },
+   {
+    "valeur": "Chaudière bois granulés 2013-2019",
+    "dpe": 3144
+   },
+   {
+    "valeur": "Chaudière bois granulés après 2019",
+    "dpe": 2968
+   },
+   {
+    "valeur": "CET sur air ambiant (sur local non chauffé) 2010-2014",
+    "dpe": 2960
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane standard 2001-2015",
+    "dpe": 2779
+   },
+   {
+    "valeur": "Chaudière fioul classique avant 1970",
+    "dpe": 2677
+   },
+   {
+    "valeur": "PAC double service avant 2010",
+    "dpe": 2621
+   },
+   {
+    "valeur": "Accumulateur gaz à condensation après 2000",
+    "dpe": 2583
+   },
+   {
+    "valeur": "Chaudière fioul classique 1970-1975",
+    "dpe": 2329
+   },
+   {
+    "valeur": "Chaudière fioul classique 1976-1980",
+    "dpe": 2139
+   },
+   {
+    "valeur": "Chaudière fioul basse température après 2015",
+    "dpe": 2095
+   },
+   {
+    "valeur": "CET sur air extrait 2010-2014",
+    "dpe": 1957
+   },
+   {
+    "valeur": "CET sur air extérieur avant 2010",
+    "dpe": 1947
+   },
+   {
+    "valeur": "Chauffe-eau gaz à production instantanée 1981-1989",
+    "dpe": 1797
+   },
+   {
+    "valeur": "Chaudière fioul standard après 2015",
+    "dpe": 1691
+   },
+   {
+    "valeur": "Accumulateur gaz classique 1990-2000",
+    "dpe": 1644
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane standard après 2015",
+    "dpe": 1594
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière gaz à condensation après 2015",
+    "dpe": 1540
+   },
+   {
+    "valeur": "système collectif par défaut en abscence d'information : chaudière fioul pénalisante",
+    "dpe": 1164
+   },
+   {
+    "valeur": "Pompe(s) à chaleur multi bâtiment modélisée comme un réseau de chaleur",
+    "dpe": 1153
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane basse température 2001-2015",
+    "dpe": 1141
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane standard 1991-2000",
+    "dpe": 984
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane classique avant 1981",
+    "dpe": 925
+   },
+   {
+    "valeur": "Chaudière bois granulés 2004-2012",
+    "dpe": 849
+   },
+   {
+    "valeur": "CET sur air ambiant (sur local non chauffé) avant 2010",
+    "dpe": 774
+   },
+   {
+    "valeur": "Chaudière(s) fioul multi bâtiment modélisée comme un réseau de chaleur",
+    "dpe": 767
+   },
+   {
+    "valeur": "CET sur air extrait avant 2010",
+    "dpe": 724
+   },
+   {
+    "valeur": "Accumulateur gaz classique avant 1990",
+    "dpe": 720
+   },
+   {
+    "valeur": "Chaudière bois plaquette 2013-2017",
+    "dpe": 555
+   },
+   {
+    "valeur": "Chauffe-eau gpl/propane/butane à production instantanée 2001-2015",
+    "dpe": 528
+   },
+   {
+    "valeur": "Chaudière bois bûche 2004-2012",
+    "dpe": 506
+   },
+   {
+    "valeur": "Chauffe-eau gpl/propane/butane à production instantanée avant 1980",
+    "dpe": 401
+   },
+   {
+    "valeur": "Chaudière bois plaquette 2004-2012",
+    "dpe": 400
+   },
+   {
+    "valeur": "Chauffe-eau gpl/propane/butane à production instantanée 1990-2000",
+    "dpe": 387
+   },
+   {
+    "valeur": "Chauffe-eau gpl/propane/butane à production instantanée après 2015",
+    "dpe": 387
+   },
+   {
+    "valeur": "Chaudière bois bûche 2013-2017",
+    "dpe": 371
+   },
+   {
+    "valeur": "autre système à combustion gaz",
+    "dpe": 341
+   },
+   {
+    "valeur": "Chaudière bois plaquette après 2019",
+    "dpe": 277
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière gaz à condensation 2001-2015",
+    "dpe": 254
+   },
+   {
+    "valeur": "Chaudière bois bûche 1978-1994",
+    "dpe": 243
+   },
+   {
+    "valeur": "Chaudière bois bûche après 2019",
+    "dpe": 217
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane basse température après 2015",
+    "dpe": 217
+   },
+   {
+    "valeur": "autre système thermodynamique électrique",
+    "dpe": 211
+   },
+   {
+    "valeur": "Chaudière bois granulés 1995-2003",
+    "dpe": 202
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane à condensation 1986-2000",
+    "dpe": 200
+   },
+   {
+    "valeur": "Accumulateur gaz à condensation 1996-2000",
+    "dpe": 194
+   },
+   {
+    "valeur": "Chaudière bois bûche avant 1978",
+    "dpe": 170
+   },
+   {
+    "valeur": "Chauffe-eau gpl/propane/butane à production instantanée 1981-1989",
+    "dpe": 162
+   },
+   {
+    "valeur": "Chaudière bois bûche 1995-2003",
+    "dpe": 161
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane basse température 1991-2000",
+    "dpe": 156
+   },
+   {
+    "valeur": "Chaudière bois plaquette 2018-2019",
+    "dpe": 143
+   },
+   {
+    "valeur": "autre système à combustion bois",
+    "dpe": 139
+   },
+   {
+    "valeur": "poêle à bois bouilleur bûche installé avant 2012",
+    "dpe": 129
+   },
+   {
+    "valeur": "Chaudière bois bûche 2018-2019",
+    "dpe": 104
+   },
+   {
+    "valeur": "Accumulateur gpl/propane/butane à condensation après 2000",
+    "dpe": 100
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane classique 1986-1990",
+    "dpe": 92
+   },
+   {
+    "valeur": "poêle à bois bouilleur bûche installé à partir de 2012",
+    "dpe": 89
+   },
+   {
+    "valeur": "Accumulateur gpl/propane/butane classique après 2000",
+    "dpe": 87
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière fioul à condensation après 2015",
+    "dpe": 80
+   },
+   {
+    "valeur": "Accumulateur gpl/propane/butane classique 1990-2000",
+    "dpe": 55
+   },
+   {
+    "valeur": "poêle à bois bouilleur granulés installé à partir de 2012",
+    "dpe": 50
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane classique 1981-1985",
+    "dpe": 49
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière gpl/propane/butane à condensation après 2015",
+    "dpe": 34
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière fioul à condensation 1996-2015",
+    "dpe": 33
+   },
+   {
+    "valeur": "Chaudière bois granulés 1978-1994",
+    "dpe": 26
+   },
+   {
+    "valeur": "autre système à combustion fioul",
+    "dpe": 26
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière gpl/propane/butane à condensation 2001-2015",
+    "dpe": 25
+   },
+   {
+    "valeur": "Accumulateur gpl/propane/butane classique avant 1990",
+    "dpe": 23
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane à condensation 1981-1985",
+    "dpe": 16
+   },
+   {
+    "valeur": "Chaudière bois plaquette 1995-2003",
+    "dpe": 11
+   },
+   {
+    "valeur": "Chaudière(s) charbon multi bâtiment modélisée comme un réseau de chaleur",
+    "dpe": 11
+   },
+   {
+    "valeur": "Chaudière bois granulés avant 1978",
+    "dpe": 8
+   },
+   {
+    "valeur": "Chaudière charbon 1978-1994",
+    "dpe": 6
+   },
+   {
+    "valeur": "Chaudière charbon avant 1978",
+    "dpe": 6
+   },
+   {
+    "valeur": "Accumulateur gpl/propane/butane à condensation 1996-2000",
+    "dpe": 5
+   },
+   {
+    "valeur": "autre système à combustion autres energies fossiles (charbon,pétrole etc…)",
+    "dpe": 4
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière bois granulés après 2019",
+    "dpe": 4
+   },
+   {
+    "valeur": "poêle à bois bouilleur granulés installé avant 2012",
+    "dpe": 4
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière bois granulés 2013-2019",
+    "dpe": 2
+   },
+   {
+    "valeur": "Chaudière bois plaquette 1978-1994",
+    "dpe": 1
+   },
+   {
+    "valeur": "Chaudière charbon 2013-2017",
+    "dpe": 1
+   }
+  ],
+  "type_generateur_n1_installation_n1": [
+   {
+    "valeur": "Chaudière gaz à condensation après 2015",
+    "dpe": 1982497
+   },
+   {
+    "valeur": "Chaudière gaz à condensation 2001-2015",
+    "dpe": 1445325
+   },
+   {
+    "valeur": "Convecteur électrique NFC, NF** et NF***",
+    "dpe": 1288516
+   },
+   {
+    "valeur": "Réseau de chaleur isolé",
+    "dpe": 1236260
+   },
+   {
+    "valeur": "Panneau rayonnant électrique NFC, NF** et NF***",
+    "dpe": 1211069
+   },
+   {
+    "valeur": "radiateur électrique NFC, NF** et NF***",
+    "dpe": 1132797
+   },
+   {
+    "valeur": "Chaudière gaz standard 2001-2015",
+    "dpe": 912730
+   },
+   {
+    "valeur": "Radiateur électrique à accumulation",
+    "dpe": 878316
+   },
+   {
+    "valeur": "Chaudière gaz basse température 2001-2015",
+    "dpe": 467182
+   },
+   {
+    "valeur": "Chaudière(s) gaz multi bâtiment modélisée comme un réseau de chaleur",
+    "dpe": 383098
+   },
+   {
+    "valeur": "Chaudière gaz standard 1991-2000",
+    "dpe": 370440
+   },
+   {
+    "valeur": "PAC air/air installée à partir de 2015",
+    "dpe": 311521
+   },
+   {
+    "valeur": "Chaudière fioul standard 1991-2015",
+    "dpe": 294677
+   },
+   {
+    "valeur": "Chaudière gaz standard après 2015",
+    "dpe": 246211
+   },
+   {
+    "valeur": "Réseau de chaleur non isolé",
+    "dpe": 204552
+   },
+   {
+    "valeur": "Autres émetteurs à effet joule",
+    "dpe": 196457
+   },
+   {
+    "valeur": "Chaudière gaz classique avant 1981",
+    "dpe": 183971
+   },
+   {
+    "valeur": "PAC air/eau installée après 2017",
+    "dpe": 179455
+   },
+   {
+    "valeur": "Chaudière gaz basse température après 2015",
+    "dpe": 178703
+   },
+   {
+    "valeur": "Plancher ou plafond rayonnant électrique avec régulation terminale",
+    "dpe": 124300
+   },
+   {
+    "valeur": "Chaudière gaz à condensation 1986-2000",
+    "dpe": 86749
+   },
+   {
+    "valeur": "PAC air/air installée entre 2008 et 2014",
+    "dpe": 85655
+   },
+   {
+    "valeur": "réseau de chaleur non répertorié ou inconnu",
+    "dpe": 79189
+   },
+   {
+    "valeur": "Chaudière fioul basse température 1991-2015",
+    "dpe": 78084
+   },
+   {
+    "valeur": "Chaudière gaz classique 1986-1990",
+    "dpe": 69286
+   },
+   {
+    "valeur": "Chaudière fioul classique 1981-1990",
+    "dpe": 63948
+   },
+   {
+    "valeur": "Chaudière gaz basse température 1991-2000",
+    "dpe": 61716
+   },
+   {
+    "valeur": "Plancher ou plafond rayonnant électrique sans régulation terminale",
+    "dpe": 57631
+   },
+   {
+    "valeur": "Poêle à granulés flamme verte installé entre 2012 et 2019",
+    "dpe": 53540
+   },
+   {
+    "valeur": "PAC air/air installée avant 2008",
+    "dpe": 52419
+   },
+   {
+    "valeur": "Poêle à granulés flamme verte installé à partir de 2020",
+    "dpe": 47675
+   },
+   {
+    "valeur": "Chaudière électrique",
+    "dpe": 47288
+   },
+   {
+    "valeur": "PAC air/eau installée entre 2008 et 2014",
+    "dpe": 43192
+   },
+   {
+    "valeur": "Chaudière fioul à condensation 1996-2015",
+    "dpe": 42842
+   },
+   {
+    "valeur": "Chaudière fioul classique avant 1970",
+    "dpe": 41050
+   },
+   {
+    "valeur": "Poêle bûche installé installé de 2007 à 2017 avec label flamme verte",
+    "dpe": 38269
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane à condensation après 2015",
+    "dpe": 34900
+   },
+   {
+    "valeur": "insert installé entre 1990 et 2004",
+    "dpe": 33006
+   },
+   {
+    "valeur": "Poêle bûche installé installé à partir de 2018 avec label flamme verte",
+    "dpe": 31466
+   },
+   {
+    "valeur": "Chaudière(s) bois multi bâtiment modélisée comme un réseau de chaleur",
+    "dpe": 30823
+   },
+   {
+    "valeur": "Chaudière gaz classique 1981-1985",
+    "dpe": 30344
+   },
+   {
+    "valeur": "Poêle bûche installé à partir de 2005 sans label flamme verte",
+    "dpe": 29576
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane à condensation 2001-2015",
+    "dpe": 26964
+   },
+   {
+    "valeur": "Chaudière fioul à condensation après 2015",
+    "dpe": 26654
+   },
+   {
+    "valeur": "Chaudière fioul classique 1970-1975",
+    "dpe": 25678
+   },
+   {
+    "valeur": "insert installé avant 1990",
+    "dpe": 24905
+   },
+   {
+    "valeur": "radiateur à gaz indépendant ou autonome avant 2006",
+    "dpe": 24832
+   },
+   {
+    "valeur": "Chaudière gaz à condensation 1981-1985",
+    "dpe": 22371
+   },
+   {
+    "valeur": "Chaudière fioul classique 1976-1980",
+    "dpe": 21651
+   },
+   {
+    "valeur": "Chaudière bois granulés après 2019",
+    "dpe": 20999
+   },
+   {
+    "valeur": "PAC air/eau installée entre 2015 et 2016",
+    "dpe": 20181
+   },
+   {
+    "valeur": "Poêle bûche installé entre 1990 et 2004",
+    "dpe": 19923
+   },
+   {
+    "valeur": "Chaudière bois granulés 2013-2019",
+    "dpe": 17382
+   },
+   {
+    "valeur": "insert installé installé de 2007 à 2017 avec label flamme verte",
+    "dpe": 16880
+   },
+   {
+    "valeur": "Chaudière fioul basse température après 2015",
+    "dpe": 16743
+   },
+   {
+    "valeur": "Poêle bûche installé avant 1990",
+    "dpe": 16614
+   },
+   {
+    "valeur": "Chaudière fioul standard après 2015",
+    "dpe": 15970
+   },
+   {
+    "valeur": "insert installé à partir de 2005 sans label flamme verte",
+    "dpe": 14650
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane standard 2001-2015",
+    "dpe": 14476
+   },
+   {
+    "valeur": "Poêle à granulés installée avant 2012 ou sans label flamme verte",
+    "dpe": 13934
+   },
+   {
+    "valeur": "Chaudière bois bûche 2004-2012",
+    "dpe": 12615
+   },
+   {
+    "valeur": "PAC air/eau installée avant 2008",
+    "dpe": 11257
+   },
+   {
+    "valeur": "Poêle fioul ou GPL ou charbon",
+    "dpe": 11063
+   },
+   {
+    "valeur": "PAC géothermique installée entre 2008 et 2014",
+    "dpe": 10923
+   },
+   {
+    "valeur": "Foyer fermé installé avant 1990",
+    "dpe": 9687
+   },
+   {
+    "valeur": "Cuisinière installé avant 1990",
+    "dpe": 9452
+   },
+   {
+    "valeur": "insert installé installé à partir de 2018 avec label flamme verte",
+    "dpe": 9385
+   },
+   {
+    "valeur": "Foyer fermé installé entre 1990 et 2004",
+    "dpe": 9313
+   },
+   {
+    "valeur": "Chaudière bois granulés 2004-2012",
+    "dpe": 8491
+   },
+   {
+    "valeur": "convecteur bi-jonction",
+    "dpe": 8236
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane standard 1991-2000",
+    "dpe": 8024
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane basse température 2001-2015",
+    "dpe": 8004
+   },
+   {
+    "valeur": "Chaudière bois bûche 1978-1994",
+    "dpe": 7875
+   },
+   {
+    "valeur": "système collectif par défaut en abscence d'information : chaudière fioul pénalisante",
+    "dpe": 7794
+   },
+   {
+    "valeur": "Pompe(s) à chaleur multi bâtiment modélisée comme un réseau de chaleur",
+    "dpe": 6048
+   },
+   {
+    "valeur": "Chaudière bois bûche avant 1978",
+    "dpe": 5972
+   },
+   {
+    "valeur": "Chaudière(s) fioul multi bâtiment modélisée comme un réseau de chaleur",
+    "dpe": 5709
+   },
+   {
+    "valeur": "poêle à bois bouilleur bûche installé avant 2012",
+    "dpe": 5664
+   },
+   {
+    "valeur": "PAC eau/eau installée après 2017",
+    "dpe": 5283
+   },
+   {
+    "valeur": "PAC géothermique installée avant 2008",
+    "dpe": 5162
+   },
+   {
+    "valeur": "Foyer fermé installé installé de 2007 à 2017 avec label flamme verte",
+    "dpe": 5075
+   },
+   {
+    "valeur": "radiateur à gaz indépendant ou autonome après 2006",
+    "dpe": 4977
+   },
+   {
+    "valeur": "Chaudière bois bûche 2013-2017",
+    "dpe": 4873
+   },
+   {
+    "valeur": "Chaudière bois bûche 1995-2003",
+    "dpe": 4518
+   },
+   {
+    "valeur": "PAC géothermique installée après 2017",
+    "dpe": 4509
+   },
+   {
+    "valeur": "Chaudière bois bûche après 2019",
+    "dpe": 3961
+   },
+   {
+    "valeur": "Chaudière bois plaquette 2004-2012",
+    "dpe": 3852
+   },
+   {
+    "valeur": "PAC eau/eau installée entre 2008 et 2014",
+    "dpe": 3839
+   },
+   {
+    "valeur": "Chaudière bois plaquette 2013-2017",
+    "dpe": 3655
+   },
+   {
+    "valeur": "poêle à bois bouilleur bûche installé à partir de 2012",
+    "dpe": 3600
+   },
+   {
+    "valeur": "Foyer fermé installé à partir de 2005 sans label flamme verte",
+    "dpe": 3456
+   },
+   {
+    "valeur": "Chaudière bois plaquette après 2019",
+    "dpe": 3404
+   },
+   {
+    "valeur": "autre système à combustion gaz",
+    "dpe": 3206
+   },
+   {
+    "valeur": "poêle à bois bouilleur granulés installé à partir de 2012",
+    "dpe": 2772
+   },
+   {
+    "valeur": "Poêle bûche installé installé de 2005 à 2006 avec label flamme verte",
+    "dpe": 2698
+   },
+   {
+    "valeur": "Foyer fermé installé installé à partir de 2018 avec label flamme verte",
+    "dpe": 2564
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane standard après 2015",
+    "dpe": 2524
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie pompe à chaleur PAC air/eau installée après 2017",
+    "dpe": 2305
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière gaz à condensation après 2015",
+    "dpe": 2206
+   },
+   {
+    "valeur": "Cuisinière installé entre 1990 et 2004",
+    "dpe": 2147
+   },
+   {
+    "valeur": "insert installé installé de 2005 à 2006 avec label flamme verte",
+    "dpe": 2117
+   },
+   {
+    "valeur": "autre système à combustion bois",
+    "dpe": 1994
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane classique avant 1981",
+    "dpe": 1967
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane à condensation 1986-2000",
+    "dpe": 1905
+   },
+   {
+    "valeur": "PAC géothermique installée entre 2015 et 2016",
+    "dpe": 1481
+   },
+   {
+    "valeur": "PAC eau glycolée/eau installée après 2017",
+    "dpe": 1441
+   },
+   {
+    "valeur": "générateur à air chaud à combustion avant 2006",
+    "dpe": 1431
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane basse température après 2015",
+    "dpe": 1414
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane classique 1986-1990",
+    "dpe": 1386
+   },
+   {
+    "valeur": "PAC eau/eau installée avant 2008",
+    "dpe": 1383
+   },
+   {
+    "valeur": "Chaudière bois bûche 2018-2019",
+    "dpe": 1320
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane basse température 1991-2000",
+    "dpe": 1219
+   },
+   {
+    "valeur": "Chaudière bois plaquette 2018-2019",
+    "dpe": 1074
+   },
+   {
+    "valeur": "Cuisinière installé installé de 2007 à 2017 avec label flamme verte",
+    "dpe": 1027
+   },
+   {
+    "valeur": "autre système à combustion fioul",
+    "dpe": 1001
+   },
+   {
+    "valeur": "PAC eau/eau installée entre 2015 et 2016",
+    "dpe": 934
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière gaz à condensation 2001-2015",
+    "dpe": 895
+   },
+   {
+    "valeur": "Cuisinière installé à partir de 2005 sans label flamme verte",
+    "dpe": 802
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie pompe à chaleur PAC air/eau installée entre 2008 et 2014",
+    "dpe": 793
+   },
+   {
+    "valeur": "Cuisinière installé installé à partir de 2018 avec label flamme verte",
+    "dpe": 764
+   },
+   {
+    "valeur": "PAC eau glycolée/eau installée entre 2008 et 2014",
+    "dpe": 720
+   },
+   {
+    "valeur": "poêle à bois bouilleur granulés installé avant 2012",
+    "dpe": 671
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane classique 1981-1985",
+    "dpe": 635
+   },
+   {
+    "valeur": "Foyer fermé installé installé de 2005 à 2006 avec label flamme verte",
+    "dpe": 605
+   },
+   {
+    "valeur": "Chaudière bois granulés 1978-1994",
+    "dpe": 528
+   },
+   {
+    "valeur": "Chaudière bois granulés 1995-2003",
+    "dpe": 523
+   },
+   {
+    "valeur": "générateur à air chaud à combustion standard a partir de 2006",
+    "dpe": 520
+   },
+   {
+    "valeur": "Chaudière charbon avant 1978",
+    "dpe": 386
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie pompe à chaleur PAC air/eau installée entre 2015 et 2016",
+    "dpe": 349
+   },
+   {
+    "valeur": "Chaudière(s) charbon multi bâtiment modélisée comme un réseau de chaleur",
+    "dpe": 343
+   },
+   {
+    "valeur": "PAC eau glycolée/eau installée entre 2015 et 2016",
+    "dpe": 271
+   },
+   {
+    "valeur": "PAC eau glycolée/eau installée avant 2008",
+    "dpe": 263
+   },
+   {
+    "valeur": "générateur à air chaud à combustion à condensation a partir de 2006",
+    "dpe": 232
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane à condensation 1981-1985",
+    "dpe": 209
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière fioul à condensation après 2015",
+    "dpe": 206
+   },
+   {
+    "valeur": "Chaudière bois plaquette 1995-2003",
+    "dpe": 157
+   },
+   {
+    "valeur": "Chaudière bois plaquette 1978-1994",
+    "dpe": 156
+   },
+   {
+    "valeur": "Chaudière charbon 1978-1994",
+    "dpe": 153
+   },
+   {
+    "valeur": "Chaudière bois granulés avant 1978",
+    "dpe": 147
+   },
+   {
+    "valeur": "autre système à combustion autres energies fossiles (charbon,pétrole etc…)",
+    "dpe": 143
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière fioul à condensation 1996-2015",
+    "dpe": 108
+   },
+   {
+    "valeur": "autre système thermodynamique électrique",
+    "dpe": 104
+   },
+   {
+    "valeur": "Cuisinière installé installé de 2005 à 2006 avec label flamme verte",
+    "dpe": 96
+   },
+   {
+    "valeur": "Chaudière charbon 1995-2003",
+    "dpe": 54
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie pompe à chaleur PAC eau/eau installée après 2017",
+    "dpe": 44
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière gpl/propane/butane à condensation après 2015",
+    "dpe": 43
+   },
+   {
+    "valeur": "Chaudière bois plaquette avant 1978",
+    "dpe": 40
+   },
+   {
+    "valeur": "Chaudière charbon 2004-2012",
+    "dpe": 35
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie pompe à chaleur PAC géothermique installée après 2017",
+    "dpe": 23
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière gpl/propane/butane à condensation 2001-2015",
+    "dpe": 22
+   },
+   {
+    "valeur": "Chaudière charbon 2013-2017",
+    "dpe": 20
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie pompe à chaleur PAC eau/eau installée entre 2008 et 2014",
+    "dpe": 17
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie pompe à chaleur PAC eau/eau installée entre 2015 et 2016",
+    "dpe": 7
+   },
+   {
+    "valeur": "autre système thermodynamique gaz",
+    "dpe": 6
+   },
+   {
+    "valeur": "Chaudière charbon 2018-2019",
+    "dpe": 5
+   },
+   {
+    "valeur": "Chaudière charbon après 2019",
+    "dpe": 5
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie pompe à chaleur PAC eau glycolée/eau installée entre 2015 et 2016",
+    "dpe": 4
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie pompe à chaleur PAC eau glycolée/eau installée après 2017",
+    "dpe": 2
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie pompe à chaleur PAC géothermique installée entre 2008 et 2014",
+    "dpe": 2
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie pompe à chaleur PAC géothermique installée entre 2015 et 2016",
+    "dpe": 2
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière bois bûche après 2019",
+    "dpe": 1
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie pompe à chaleur PAC eau glycolée/eau installée entre 2008 et 2014",
+    "dpe": 1
+   }
+  ],
+  "type_generateur_n1_ecs_n1": [
+   {
+    "valeur": "Ballon électrique à accumulation vertical Catégorie B ou 2 étoiles",
+    "dpe": 3311797
+   },
+   {
+    "valeur": "Ballon électrique à accumulation vertical Autres ou inconnue",
+    "dpe": 1872265
+   },
+   {
+    "valeur": "Chaudière gaz à condensation après 2015",
+    "dpe": 1794322
+   },
+   {
+    "valeur": "Chaudière gaz à condensation 2001-2015",
+    "dpe": 1270112
+   },
+   {
+    "valeur": "Ballon électrique à accumulation vertical Catégorie C ou 3 étoiles",
+    "dpe": 1017672
+   },
+   {
+    "valeur": "Réseau de chaleur isolé",
+    "dpe": 1001475
+   },
+   {
+    "valeur": "Chaudière gaz standard 2001-2015",
+    "dpe": 750044
+   },
+   {
+    "valeur": "Chaudière gaz basse température 2001-2015",
+    "dpe": 413395
+   },
+   {
+    "valeur": "Ballon électrique à accumulation horizontal",
+    "dpe": 347729
+   },
+   {
+    "valeur": "Chauffe-eau gaz à production instantanée 2001-2015",
+    "dpe": 297947
+   },
+   {
+    "valeur": "Chaudière gaz standard 1991-2000",
+    "dpe": 266498
+   },
+   {
+    "valeur": "Chaudière(s) gaz multi bâtiment modélisée comme un réseau de chaleur",
+    "dpe": 248998
+   },
+   {
+    "valeur": "Chaudière gaz standard après 2015",
+    "dpe": 218149
+   },
+   {
+    "valeur": "Chauffe-eau gaz à production instantanée après 2015",
+    "dpe": 191830
+   },
+   {
+    "valeur": "PAC double service après 2014",
+    "dpe": 190606
+   },
+   {
+    "valeur": "Chaudière gaz basse température après 2015",
+    "dpe": 166926
+   },
+   {
+    "valeur": "Chaudière fioul standard 1991-2015",
+    "dpe": 161390
+   },
+   {
+    "valeur": "Chaudière gaz classique avant 1981",
+    "dpe": 129160
+   },
+   {
+    "valeur": "CET sur air extérieur après 2014",
+    "dpe": 127374
+   },
+   {
+    "valeur": "chauffe-eau électrique instantané",
+    "dpe": 81276
+   },
+   {
+    "valeur": "CET sur air ambiant (sur local non chauffé) après 2014",
+    "dpe": 79851
+   },
+   {
+    "valeur": "Chaudière gaz à condensation 1986-2000",
+    "dpe": 75669
+   },
+   {
+    "valeur": "Chauffe-eau gaz à production instantanée 1990-2000",
+    "dpe": 65257
+   },
+   {
+    "valeur": "Réseau de chaleur non isolé",
+    "dpe": 62574
+   },
+   {
+    "valeur": "CET sur air extrait après 2014",
+    "dpe": 60602
+   },
+   {
+    "valeur": "réseau de chaleur non répertorié ou inconnu",
+    "dpe": 58253
+   },
+   {
+    "valeur": "Chaudière fioul basse température 1991-2015",
+    "dpe": 49638
+   },
+   {
+    "valeur": "Chaudière gaz basse température 1991-2000",
+    "dpe": 46329
+   },
+   {
+    "valeur": "Chauffe-eau gaz à production instantanée avant 1980",
+    "dpe": 44241
+   },
+   {
+    "valeur": "Chaudière gaz classique 1986-1990",
+    "dpe": 40609
+   },
+   {
+    "valeur": "PAC double service 2010-2014",
+    "dpe": 31742
+   },
+   {
+    "valeur": "Chaudière fioul classique 1981-1990",
+    "dpe": 28387
+   },
+   {
+    "valeur": "Chaudière fioul à condensation 1996-2015",
+    "dpe": 25204
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane à condensation après 2015",
+    "dpe": 23428
+   },
+   {
+    "valeur": "Chaudière(s) bois multi bâtiment modélisée comme un réseau de chaleur",
+    "dpe": 21418
+   },
+   {
+    "valeur": "Accumulateur gaz classique après 2000",
+    "dpe": 21407
+   },
+   {
+    "valeur": "Chaudière gaz classique 1981-1985",
+    "dpe": 19618
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane à condensation 2001-2015",
+    "dpe": 19084
+   },
+   {
+    "valeur": "CET sur air extérieur 2010-2014",
+    "dpe": 17785
+   },
+   {
+    "valeur": "Chaudière fioul classique avant 1970",
+    "dpe": 16128
+   },
+   {
+    "valeur": "Chaudière gaz à condensation 1981-1985",
+    "dpe": 15471
+   },
+   {
+    "valeur": "Chaudière fioul à condensation après 2015",
+    "dpe": 15052
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane standard 2001-2015",
+    "dpe": 14486
+   },
+   {
+    "valeur": "Chaudière électrique",
+    "dpe": 14397
+   },
+   {
+    "valeur": "CET sur air ambiant (sur local non chauffé) 2010-2014",
+    "dpe": 13612
+   },
+   {
+    "valeur": "Chaudière fioul classique 1970-1975",
+    "dpe": 12846
+   },
+   {
+    "valeur": "Accumulateur gaz à condensation après 2000",
+    "dpe": 12131
+   },
+   {
+    "valeur": "Chaudière fioul classique 1976-1980",
+    "dpe": 11380
+   },
+   {
+    "valeur": "Chaudière bois granulés après 2019",
+    "dpe": 11144
+   },
+   {
+    "valeur": "Chaudière bois granulés 2013-2019",
+    "dpe": 10058
+   },
+   {
+    "valeur": "PAC double service avant 2010",
+    "dpe": 9282
+   },
+   {
+    "valeur": "Chauffe-eau gaz à production instantanée 1981-1989",
+    "dpe": 9170
+   },
+   {
+    "valeur": "Chaudière fioul basse température après 2015",
+    "dpe": 8998
+   },
+   {
+    "valeur": "Accumulateur gaz classique 1990-2000",
+    "dpe": 8666
+   },
+   {
+    "valeur": "Chaudière fioul standard après 2015",
+    "dpe": 8435
+   },
+   {
+    "valeur": "CET sur air extrait 2010-2014",
+    "dpe": 7716
+   },
+   {
+    "valeur": "CET sur air extérieur avant 2010",
+    "dpe": 7489
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane standard après 2015",
+    "dpe": 7012
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane basse température 2001-2015",
+    "dpe": 5833
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane standard 1991-2000",
+    "dpe": 5827
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane classique avant 1981",
+    "dpe": 5715
+   },
+   {
+    "valeur": "système collectif par défaut en abscence d'information : chaudière fioul pénalisante",
+    "dpe": 5370
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière gaz à condensation après 2015",
+    "dpe": 4545
+   },
+   {
+    "valeur": "Chaudière bois granulés 2004-2012",
+    "dpe": 4334
+   },
+   {
+    "valeur": "CET sur air ambiant (sur local non chauffé) avant 2010",
+    "dpe": 4233
+   },
+   {
+    "valeur": "Pompe(s) à chaleur multi bâtiment modélisée comme un réseau de chaleur",
+    "dpe": 4196
+   },
+   {
+    "valeur": "Accumulateur gaz classique avant 1990",
+    "dpe": 3537
+   },
+   {
+    "valeur": "Chauffe-eau gpl/propane/butane à production instantanée 2001-2015",
+    "dpe": 3172
+   },
+   {
+    "valeur": "Chauffe-eau gpl/propane/butane à production instantanée avant 1980",
+    "dpe": 2888
+   },
+   {
+    "valeur": "Chaudière bois bûche 2004-2012",
+    "dpe": 2775
+   },
+   {
+    "valeur": "Chaudière(s) fioul multi bâtiment modélisée comme un réseau de chaleur",
+    "dpe": 2674
+   },
+   {
+    "valeur": "CET sur air extrait avant 2010",
+    "dpe": 2526
+   },
+   {
+    "valeur": "Chauffe-eau gpl/propane/butane à production instantanée 1990-2000",
+    "dpe": 2477
+   },
+   {
+    "valeur": "Chaudière bois plaquette 2013-2017",
+    "dpe": 2303
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière gaz à condensation 2001-2015",
+    "dpe": 2250
+   },
+   {
+    "valeur": "Chaudière bois bûche 2013-2017",
+    "dpe": 2039
+   },
+   {
+    "valeur": "autre système à combustion gaz",
+    "dpe": 1967
+   },
+   {
+    "valeur": "Chauffe-eau gpl/propane/butane à production instantanée après 2015",
+    "dpe": 1491
+   },
+   {
+    "valeur": "Chaudière bois plaquette après 2019",
+    "dpe": 1378
+   },
+   {
+    "valeur": "Chaudière bois bûche 1978-1994",
+    "dpe": 1376
+   },
+   {
+    "valeur": "Chaudière bois plaquette 2004-2012",
+    "dpe": 1375
+   },
+   {
+    "valeur": "autre système thermodynamique électrique",
+    "dpe": 1361
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane à condensation 1986-2000",
+    "dpe": 1157
+   },
+   {
+    "valeur": "Chauffe-eau gpl/propane/butane à production instantanée 1981-1989",
+    "dpe": 1045
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane basse température après 2015",
+    "dpe": 1032
+   },
+   {
+    "valeur": "Chaudière bois bûche avant 1978",
+    "dpe": 1021
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane classique 1986-1990",
+    "dpe": 981
+   },
+   {
+    "valeur": "Chaudière bois bûche 1995-2003",
+    "dpe": 955
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane basse température 1991-2000",
+    "dpe": 844
+   },
+   {
+    "valeur": "Chaudière bois bûche après 2019",
+    "dpe": 829
+   },
+   {
+    "valeur": "poêle à bois bouilleur bûche installé avant 2012",
+    "dpe": 781
+   },
+   {
+    "valeur": "Accumulateur gaz à condensation 1996-2000",
+    "dpe": 729
+   },
+   {
+    "valeur": "Chaudière bois bûche 2018-2019",
+    "dpe": 519
+   },
+   {
+    "valeur": "Chaudière bois plaquette 2018-2019",
+    "dpe": 478
+   },
+   {
+    "valeur": "autre système à combustion bois",
+    "dpe": 462
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane classique 1981-1985",
+    "dpe": 417
+   },
+   {
+    "valeur": "Chaudière(s) charbon multi bâtiment modélisée comme un réseau de chaleur",
+    "dpe": 415
+   },
+   {
+    "valeur": "poêle à bois bouilleur bûche installé à partir de 2012",
+    "dpe": 414
+   },
+   {
+    "valeur": "Accumulateur gpl/propane/butane classique après 2000",
+    "dpe": 328
+   },
+   {
+    "valeur": "Chaudière bois granulés 1995-2003",
+    "dpe": 284
+   },
+   {
+    "valeur": "Accumulateur gpl/propane/butane à condensation après 2000",
+    "dpe": 273
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière fioul à condensation après 2015",
+    "dpe": 252
+   },
+   {
+    "valeur": "Accumulateur gpl/propane/butane classique 1990-2000",
+    "dpe": 235
+   },
+   {
+    "valeur": "poêle à bois bouilleur granulés installé à partir de 2012",
+    "dpe": 233
+   },
+   {
+    "valeur": "autre système à combustion fioul",
+    "dpe": 169
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière fioul à condensation 1996-2015",
+    "dpe": 141
+   },
+   {
+    "valeur": "Accumulateur gpl/propane/butane classique avant 1990",
+    "dpe": 128
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière gpl/propane/butane à condensation après 2015",
+    "dpe": 114
+   },
+   {
+    "valeur": "Chaudière gpl/propane/butane à condensation 1981-1985",
+    "dpe": 98
+   },
+   {
+    "valeur": "Chaudière bois plaquette 1995-2003",
+    "dpe": 81
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière gpl/propane/butane à condensation 2001-2015",
+    "dpe": 71
+   },
+   {
+    "valeur": "poêle à bois bouilleur granulés installé avant 2012",
+    "dpe": 57
+   },
+   {
+    "valeur": "Chaudière charbon avant 1978",
+    "dpe": 55
+   },
+   {
+    "valeur": "Chaudière bois granulés 1978-1994",
+    "dpe": 48
+   },
+   {
+    "valeur": "Chaudière bois granulés avant 1978",
+    "dpe": 34
+   },
+   {
+    "valeur": "Accumulateur gpl/propane/butane à condensation 1996-2000",
+    "dpe": 33
+   },
+   {
+    "valeur": "autre système à combustion autres energies fossiles (charbon,pétrole etc…)",
+    "dpe": 26
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière bois granulés 2013-2019",
+    "dpe": 19
+   },
+   {
+    "valeur": "Chaudière bois plaquette avant 1978",
+    "dpe": 18
+   },
+   {
+    "valeur": "Chaudière charbon 1978-1994",
+    "dpe": 17
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière bois granulés après 2019",
+    "dpe": 17
+   },
+   {
+    "valeur": "Chaudière bois plaquette 1978-1994",
+    "dpe": 8
+   },
+   {
+    "valeur": "Chaudière charbon 2004-2012",
+    "dpe": 5
+   },
+   {
+    "valeur": "Chaudière charbon 1995-2003",
+    "dpe": 4
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière bois bûche 2013-2017",
+    "dpe": 4
+   },
+   {
+    "valeur": "Chaudière charbon 2013-2017",
+    "dpe": 3
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière bois plaquette 2018-2019",
+    "dpe": 2
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière bois plaquette après 2019",
+    "dpe": 2
+   },
+   {
+    "valeur": "Chaudière charbon 2018-2019",
+    "dpe": 1
+   },
+   {
+    "valeur": "pompe à chaleur hybride : partie chaudière Chaudière bois plaquette 2013-2017",
+    "dpe": 1
+   }
+  ]
+ }
+}

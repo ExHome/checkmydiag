@@ -52,6 +52,7 @@
  *
  * Portée : mesuré sur les vingt-six volets DPE LICIEL du corpus.
  */
+import { CATEGORIE_ENR } from '../reglement/dpeAdeme';
 import { rattacher } from './celluleFusionnee';
 import type { Donnee, FicheTechnique } from './ficheTechnique';
 import { blocs as blocsDe, type BlocFiche } from './ficheTechnique';
@@ -135,18 +136,38 @@ const AUCUN_RENOUVELABLE =
 /**
  * Ce qui, dans le nom d'un générateur, désigne une production renouvelable.
  *
- * On ne cherche pas ces mots n'importe où : uniquement dans les libellés
- * d'équipement. « bois » traîne partout ailleurs — « menuiserie bois »,
- * « volets battants bois », « plafond sous solives bois » — et une recherche
- * large aurait trouvé du chauffage au bois dans chaque logement du corpus.
+ * ── Les noms viennent de l'ADEME, pas de moi ────────────────────────────────
+ *
+ * Ma première table donnait six catégories, devinées sur vingt-six rapports. La
+ * liste officielle en compte **dix** : il manquait la géothermie, la
+ * cogénération et l'éolienne — trois productions qu'un logement peut avoir et
+ * que Verrière aurait tues. Voir `reglement/dpeAdeme.ts`, relevé sur 15 409 991
+ * DPE, et le test qui interdit d'inventer une catégorie hors liste.
+ *
+ * La dixième — « Il existe plusieurs descriptifs ENR » — ne se reconnaît pas
+ * dans un libellé : c'est le cas où le logement en a plusieurs à la fois, et il
+ * se déduit du nombre d'indices trouvés, pas d'un motif.
+ *
+ * ── Où l'on cherche, et pas ailleurs ────────────────────────────────────────
+ *
+ * Uniquement dans les libellés d'équipement. « bois » traîne partout ailleurs —
+ * « menuiserie bois », « volets battants bois », « plafond sous solives bois » —
+ * et une recherche large aurait trouvé du chauffage au bois dans chaque
+ * logement du corpus.
  */
-const RENOUVELABLES: [RegExp, string][] = [
+const RENOUVELABLES: [RegExp, (typeof CATEGORIE_ENR)[number]][] = [
   [/pompe\s+[àa]\s+chaleur|\bPAC\b/i, 'pompe à chaleur'],
-  [/solaire\s+thermique|chauffe-eau\s+solaire|CESI\b/i, 'solaire thermique'],
-  [/photovolta[ïi]que/i, 'photovoltaïque'],
-  [/(?:po[êe]le|insert|chaudi[èe]re|appareil)[^.]{0,30}\bbois\b|granul[ée]s?|\bpellets?\b|b[ûu]ches?/i, 'bois'],
+  [/g[ée]othermie|g[ée]othermique/i, 'géothermie'],
+  [/photovolta[ïi]que/i, 'panneaux solaires photovoltaïques'],
+  [/solaire\s+thermique|chauffe-eau\s+solaire|\bCESI\b|\bSSC\b/i, 'panneaux solaires thermiques'],
   [/thermodynamique/i, 'chauffe-eau thermodynamique'],
-  [/r[ée]seau\s+de\s+chaleur/i, 'réseau de chaleur']
+  [
+    /(?:po[êe]le|insert|chaudi[èe]re|appareil)[^.]{0,30}\bbois\b|granul[ée]s?|\bpellets?\b|b[ûu]ches?/i,
+    'chauffage au bois'
+  ],
+  [/r[ée]seau\s+de\s+(?:chaleur|froid)/i, 'réseau de chaleur ou de froid vertueux'],
+  [/cog[ée]n[ée]ration/i, 'cogénération'],
+  [/[ée]olienne/i, 'éolienne']
 ];
 
 function propre(t: string): string {

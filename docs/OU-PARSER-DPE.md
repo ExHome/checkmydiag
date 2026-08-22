@@ -310,3 +310,51 @@ de leurs phrases n'y figurait. Le chemin est désormais complet :
 page d'entrée n'atteint est éliminé au build : il est écrit, testé, et absent du
 site. La vérification est donc `grep` sur `dist/assets/*.js`, puis sur le bundle
 servi en ligne.
+
+## 9. Le vocabulaire officiel — relevé chez l'ADEME le 22/08/2026
+
+Tout ce qui précède tire son vocabulaire de **26 rapports LICIEL**. C'est
+l'habitude d'un logiciel, pas la règle du métier. Le DPE est le **seul
+diagnostic normalisé** : depuis le 1ᵉʳ juillet 2021 il est transmis à l'ADEME
+dans un format standardisé, et la base publique expose les valeurs possibles de
+chaque champ.
+
+**Relevé** : 57 énumérations, 1 082 valeurs, sur **15 409 991 DPE**. L'API a
+répondu `total_other = 0` pour chacune — aucune valeur ne manque.
+
+- Preuve complète, avec les comptes : `docs/reference/enumerations-dpe-ademe.json`
+- Référentiel utilisable : `src/lib/reglement/dpeAdeme.ts`
+- Source : `https://data.ademe.fr/data-fair/api/v1/datasets/dpe03existant`
+
+### Ce que ça a corrigé, tout de suite
+
+Ma table des énergies renouvelables donnait **six** catégories, devinées sur le
+corpus. La liste officielle en compte **dix** : manquaient la **géothermie**, la
+**cogénération** et l'**éolienne**. Un logement qui en a une l'aurait vue
+disparaître de l'écran. Un test interdit désormais de nommer une catégorie hors
+liste.
+
+### ⚠️ Ce que ces listes ne sont pas
+
+C'est le vocabulaire de ce que le logiciel **transmet**, pas toujours de ce que
+le PDF **imprime**. Les deux coïncident pour la ventilation — les 39 libellés
+sont mot pour mot ceux du PDF — mais pas partout :
+
+| ADEME (transmis) | PDF (imprimé) |
+|---|---|
+| `qualite_isolation_murs` : insuffisante / moyenne / bonne / très bonne | « Isolation » : oui / non / inconnue |
+
+L'un est une **classe calculée**, l'autre un **constat du diagnostiqueur**. Les
+confondre ferait dire au rapport ce qu'il ne dit pas.
+
+### Ce qu'on n'a pas fait, et pourquoi
+
+**On n'interroge pas l'ADEME en ligne.** Les listes sont relevées une fois et
+inscrites dans le code avec leur date. Envoyer le numéro ADEME d'un logement à
+une API publique, ce serait envoyer une donnée — et la promesse est que rien ne
+sort du navigateur.
+
+La base contient pourtant, en clair, ce que le PDF garde en image : les huit
+postes de **déperdition** en nombres, les classes **après travaux**, l'étiquette
+elle-même. Les afficher supposerait une requête par logement. **C'est une
+décision de produit, pas une décision technique.**
