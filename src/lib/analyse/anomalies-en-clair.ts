@@ -40,7 +40,11 @@ function cle(texte: string): string {
  */
 const EN_CLAIR: { fragment: string; enClair: string }[] = [
   {
-    fragment: 'enveloppe d au moins un materiel est manquante ou deterioree',
+    /* Le corpus écrit « manquante ou détériorée », l'exemple « détériorée » tout
+       court : le fragment s'arrête donc avant la variante. Un fragment trop long
+       ne reconnaît rien, et le bouton d'aide ne s'affiche jamais — mesuré à
+       l'écran, pas deviné. */
+    fragment: 'enveloppe d au moins un materiel est',
     enClair:
       'Le boîtier qui protège un appareil électrique est cassé, ouvert ou absent. Ce boîtier est ce qui empêche de toucher les parties sous tension.'
   },
