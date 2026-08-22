@@ -18,17 +18,19 @@
   import DoubleSeuil from './schemas/DoubleSeuil.svelte';
   import { motsEmployes } from '../lib/lexique';
   import { libelleCourt } from '../lib/libelle';
+  import { conseil, tousLesPoints } from '../lib/conseil';
+  import { APPS } from '../lib/apps';
 
   const { analyse }: { analyse: Analyse } = $props();
 
   const dpe = $derived(analyse.diagnostics.find((d) => d.type === 'dpe') ?? null);
   const lettre = $derived(dpe?.schema?.genre === 'dpe' ? dpe.schema.finale : null);
-  const maison = $derived(
-    /maison/i.test(
-      analyse.diagnostics.flatMap((d) => d.faits).find((f) => /type de bien/i.test(f.libelle))
-        ?.valeur ?? ''
-    )
-  );
+  /*
+   * « Maison ou appartement » ne se lit plus ici. Cette vue s'en servait pour
+   * décider si l'audit énergétique devait être annoncé ; c'est le DPE qui le
+   * dit désormais, dans ses propres gestes, avec la condition écrite dans la
+   * phrase — « si c'est une maison ». La donnée appartient au diagnostic.
+   */
 
   /**
    * Le descriptif : de quel bien on parle, en une phrase.
@@ -244,19 +246,6 @@
    * détail qu'elle annonce. Cette vue-ci parle du bien et du conseil.
    */
 
-  const perimes = $derived(analyse.controles.filter((c) => c.genre === 'perime'));
-  const manquants = $derived(analyse.controles.filter((c) => c.genre === 'manque'));
-  /** Deux chiffres du dossier qui ne concordent pas : ça se règle avant l'acte. */
-  const incoherences = $derived(analyse.controles.filter((c) => c.genre === 'incoherence'));
-  /** Ce qui ne bloque rien mais mérite d'être su. */
-  const remarques = $derived(analyse.controles.filter((c) => c.genre === 'attention'));
-  const anomalies = $derived(
-    analyse.diagnostics.filter(
-      (d) => (d.type === 'electricite' || d.type === 'gaz') && d.gravite !== 'bon'
-    )
-  );
-  const muets = $derived(analyse.diagnostics.filter((d) => d.gravite === 'neutre'));
-
   /** Ce que le dossier établit, diagnostic par diagnostic, sans commentaire. */
   const etat = $derived.by<string[]>(() => {
     const lignes: string[] = [];
@@ -269,79 +258,71 @@
   });
 
   /**
-   * Le conseil, dans l'ordre où il faut s'en occuper : ce qui empêche de
-   * signer, puis ce qui se négocie, puis ce qui se vérifie.
+   * Le conseil, dans l'ordre où il faut s'en occuper.
+   *
+   * Il était écrit ici, à la main, et il ne connaissait que trois choses : les
+   * contrôles du dossier, les anomalies d'électricité et de gaz, et la lettre
+   * du DPE. Six des neuf diagnostics n'y arrivaient donc jamais — amiante,
+   * plomb, termites, état des risques, Carrez, assainissement —, alors que
+   * chacun calcule ses gestes, phrase par phrase et sourcés au texte. Un
+   * logement avec du plomb en classe 3, donc des travaux imposés par le code de
+   * la santé publique, n'en disait pas un mot au lecteur qui venait ici
+   * chercher ce qu'il fallait faire.
+   *
+   * Le rangement vit désormais dans `lib/conseil.ts`, où il se teste : la vue
+   * ne décide plus de ce qui mérite d'être dit.
    */
-  const conseils = $derived.by<{ titre: string; points: string[] }[]>(() => {
-    const liste: { titre: string; points: string[] }[] = [];
-
-    // Les incohérences comptaient parmi les quatre contrôles produits par le
-    // moteur, et elles étaient les seules à n'être affichées nulle part — alors
-    // que « deux surfaces différentes dans le même dossier » est exactement ce
-    // que le site promet de trouver. Elles se règlent au même moment que les
-    // rapports périmés : avant le rendez-vous.
-    if (perimes.length || manquants.length || incoherences.length) {
-      const points: string[] = [];
-      for (const c of [...perimes, ...manquants, ...incoherences]) {
-        points.push(`${c.titre} — ${c.quoiFaire}`);
-      }
-      points.push('Un dossier incomplet le jour du rendez-vous fait repousser la signature.');
-      liste.push({ titre: 'À régulariser avant la signature', points });
-    }
-
-    if (anomalies.length) {
-      liste.push({
-        titre: 'À chiffrer, puis à négocier',
-        points: [
-          `${anomalies.map((d) => d.titre.toLowerCase()).join(' et ')} : le rapport signale des anomalies.`,
-          'Aucun texte n’oblige le vendeur à les réparer pour vendre.',
-          'Faites établir un devis avant de faire une offre : c’est votre marge de discussion.',
-          'Pour le gaz, une anomalie de type DGI fait exception : le gaz reste coupé tant qu’un professionnel n’est pas intervenu.'
-        ]
-      });
-    }
-
-    if (lettre) {
-      const points: string[] = [];
-      if (lettre === 'F' || lettre === 'G') {
-        points.push(
-          lettre === 'G'
-            ? 'Ce logement n’est plus louable depuis le 1ᵉʳ janvier 2025.'
-            : 'Ce logement ne sera plus louable au 1ᵉʳ janvier 2028.'
-        );
-        points.push('Le loyer est gelé : aucune révision ni réévaluation entre deux locataires.');
-        if (maison) points.push('Pour vendre, un audit énergétique doit être joint au dossier.');
-        points.push('Ces deux points pèsent sur le prix. Ils se discutent.');
-      } else if (lettre === 'E') {
-        points.push('Interdiction de louer au 1ᵉʳ janvier 2034 : l’échéance est lointaine, mais elle existe.');
-        if (maison) points.push('Un audit énergétique est exigé pour vendre depuis 2025.');
-      } else {
-        points.push('Aucune interdiction de location ne vise cette classe à ce jour.');
-        points.push('Aucun audit énergétique n’est exigé pour vendre.');
-        points.push('C’est un point favorable du dossier : il se dit dans l’annonce.');
-      }
-      liste.push({ titre: 'Ce que la classe énergétique implique', points });
-    }
-
-    const aVerifier: string[] = [];
-    for (const c of remarques) aVerifier.push(`${c.titre} — ${c.quoiFaire}`);
-    if (muets.length) {
-      aVerifier.push(
-        `${muets.length} conclusion${muets.length > 1 ? 's' : ''} n’${muets.length > 1 ? 'ont' : 'a'} pas pu être lue${muets.length > 1 ? 's' : ''} automatiquement : à relire sur le rapport signé.`
-      );
-    }
-    aVerifier.push(
-      'Ces diagnostics portent sur ce qui était visible le jour de la visite, sans démontage.'
-    );
-    aVerifier.push('Ce qui est fermé, encombré ou inaccessible n’a pas été contrôlé.');
-    liste.push({ titre: 'Ce que le dossier ne garantit pas', points: aVerifier });
-
-    return liste;
-  });
+  const leConseil = $derived(conseil(analyse));
   /** Les termes employés dans ce document-ci, pour l'annexe. */
-  const lexique = $derived(
-    motsEmployes([pourquoi, ...conseils.flatMap((c) => c.points), ...etat])
+  const lexique = $derived(motsEmployes([pourquoi, ...tousLesPoints(leConseil), ...etat]));
+
+  /**
+   * LE BANDEAU DES DIAGNOSTICS — la carte du dossier.
+   *
+   * Un onglet par rapport, avec son verdict en trois mots et sa pastille de
+   * gravité. Le nom court et le verdict viennent des mêmes sources que la
+   * grille d'accueil et le voyant (`apps.ts`, `libelle.ts`) : le lecteur
+   * retrouve le même mot d'un écran à l'autre, sinon il croit lire deux
+   * choses.
+   *
+   * `cible` est l'ancre du premier groupe de conseil où ce diagnostic parle.
+   * Elle vaut `null` quand le dossier ne dit rien de lui — l'onglet reste alors
+   * affiché, mais éteint : un diagnostic présent doit se voir même quand il n'y
+   * a rien à en faire.
+   */
+  const bandeau = $derived.by(() =>
+    analyse.diagnostics.map((d) => ({
+      type: d.type,
+      nom: APPS[d.type]?.nom ?? d.titre,
+      dit: libelleCourt(d),
+      gravite: d.gravite,
+      cible: leConseil.diagnostics.some((c) => c.origine === d.type) ? ancre(d.type) : null
+    }))
   );
+
+  /** L'identifiant du bloc d'un diagnostic : une seule règle, aux deux bouts. */
+  function ancre(origine: string): string {
+    return `conseil-${origine}`;
+  }
+
+  /**
+   * Amener l'œil sur le groupe demandé.
+   *
+   * `block: 'center'` plutôt que `'start'` : la barre du site est fixe, et une
+   * cible posée en haut passerait dessous. Centrer évite d'avoir à connaître sa
+   * hauteur.
+   *
+   * ⚠️ PAS DE `behavior: 'smooth'` ICI, et ce n'est pas un oubli. Mesuré le
+   * 21/08/2026 dans cette vue : le défilement doux est un NO-OP dans le
+   * conteneur `.dedans-vue` — `scrollTop` ne bouge pas d'un pixel, quand le
+   * même appel en `'auto'` amène la cible au centre. Le bouton semblait donc
+   * mort alors que son gestionnaire s'exécutait. `Dicodiag.svelte` fait déjà
+   * sans, et son sommaire fonctionne.
+   */
+  function allerAu(id: string | null): void {
+    if (!id) return;
+    document.getElementById(id)?.scrollIntoView({ block: 'center' });
+  }
 
   /**
    * La numérotation des sections, calculée et non écrite à la main.
@@ -408,6 +389,37 @@
 
     <RubanDpe epaisseur={5} />
   </header>
+
+  <!--
+    LE BANDEAU DES DIAGNOSTICS — la carte du dossier, en tête du conseil.
+
+    Le conseil s'ouvrait sur la description du bien, puis enchaînait les
+    sections : on lisait « à régulariser », « à négocier », sans jamais voir
+    combien de rapports composent le dossier ni ce que chacun dit. La réponse
+    existait pourtant — elle était calculée pour l'annexe des mots employés, et
+    affichée nulle part.
+
+    Un onglet par rapport, sa pastille de gravité, son verdict en trois mots.
+    Et il conduit : cliquer amène aux gestes de ce diagnostic-là, plus bas.
+    C'est la même forme que le bandeau de la vue « Les diagnostics » — deux
+    dessins différents pour la même chose feraient croire à deux choses.
+  -->
+  {#if bandeau.length}
+    <nav class="bandeau-diags" aria-label="Les diagnostics du dossier">
+      {#each bandeau as d (d.type)}
+        <button
+          type="button"
+          class="onglet-diag {d.gravite}"
+          disabled={!d.cible}
+          onclick={() => allerAu(d.cible)}
+        >
+          <span class="pastille" aria-hidden="true"></span>
+          <span class="nom-onglet">{d.nom}</span>
+          <span class="dit-onglet">{d.dit}</span>
+        </button>
+      {/each}
+    </nav>
+  {/if}
 
   <div class="feuille">
     {#if caracteristiques.length}
@@ -488,15 +500,108 @@
     {/if}
 
     <h2 class="apres"><span class="num">{numeros.conseil}</span>Ce que je vous conseille</h2>
+
+    {#if leConseil.aRegler.length}
+      <!--
+        CE QUI BLOQUE LE RENDEZ-VOUS, RÉUNI.
+
+        Ranger le conseil par diagnostic a coûté la lecture transversale : « à
+        régulariser avant la signature » réunissait tout ce qui fait repousser
+        un rendez-vous, et c'est la question du notaire — elle ne se pose pas
+        rapport par rapport. Il fallait désormais parcourir huit blocs pour la
+        reconstituer.
+
+        Ce rappel la rend, et rien de plus : les lignes qui bloquent, chacune
+        avec son diagnostic, et un clic pour y aller. Un rappel qui grossit
+        redevient une section.
+      -->
+      <aside class="a-regler" aria-label="Ce qui bloque la signature">
+        <p class="titre-regler">
+          À régulariser avant la signature
+          <span class="combien">{leConseil.aRegler.length}</span>
+        </p>
+        <ul>
+          {#each leConseil.aRegler as ligne, i (i)}
+            <li>
+              <button type="button" onclick={() => allerAu(ancre(ligne.origine))}>
+                <span class="ou">{ligne.provenance}</span>
+                <span class="quoi-regler">{ligne.texte}</span>
+              </button>
+            </li>
+          {/each}
+        </ul>
+      </aside>
+    {/if}
+
+    <!--
+      LE CONSEIL, DIAGNOSTIC PAR DIAGNOSTIC.
+
+      Il était rangé par temps — ce qui se règle avant, ce qui se négocie, ce
+      qu'on ne garantit pas —, et un même rapport parlait donc dans trois blocs
+      éloignés : pour savoir ce qu'implique le plomb, il fallait le chercher
+      trois fois. Un bloc par rapport, et les temps deviennent ses intertitres.
+    -->
     <div class="conseils">
-      {#each conseils as bloc (bloc.titre)}
-        <div class="conseil">
-          <p class="titre-conseil">{bloc.titre}</p>
-          <ul>
-            {#each bloc.points as point}
-              <li><MotsExpliques texte={point} /></li>
-            {/each}
-          </ul>
+      {#each leConseil.diagnostics as diag (diag.origine)}
+        <div class="conseil" id={ancre(diag.origine)}>
+          <div class="tete-conseil">
+            <p class="titre-conseil">{diag.titre}</p>
+            {#if diag.echeance}
+              <!-- La date vit avec son rapport, et non dans un tableau à part :
+                   « valable jusqu'au » est une propriété du diagnostic. -->
+              <span class="echeance" class:perime={diag.echeance.perimee}>
+                {diag.echeance.texte}
+              </span>
+            {/if}
+          </div>
+
+          {#each diag.blocs as bloc (bloc.rang)}
+            <p class="temps {bloc.rang}">{bloc.titre}</p>
+            <ul>
+              {#each bloc.points as point, i (i)}
+                <li><MotsExpliques texte={point} /></li>
+              {/each}
+            </ul>
+          {/each}
+
+          {#if diag.recours}
+            <!--
+              À QUI S'ADRESSER.
+
+              Ordre d'Aude : « à chaque fois ça renvoie vers un professionnel
+              spécifique ». Un conseil qui dit « faites chiffrer » sans dire par
+              qui laisse le lecteur devant son moteur de recherche, et c'est là
+              qu'il abandonne.
+            -->
+            <p class="recours">
+              <span class="qui">{diag.recours.qui}</span>
+              <!-- Le tiret est écrit, pas dessiné par un `::after` : la ligne
+                   part souvent chez le notaire par copier-coller. -->
+              <span class="quoi"> — {diag.recours.quoi}</span>
+            </p>
+          {/if}
+
+          {#if diag.sources.length}
+            <!--
+              Les articles sur lesquels reposent ces gestes.
+
+              Ils étaient lus à la source, datés, rangés dans le référentiel —
+              et affichés nulle part. Le produit citait donc le droit sans
+              jamais donner de quoi le vérifier. Ici, chaque texte s'ouvre sur
+              Légifrance, et porte la date à laquelle il a été lu.
+            -->
+            <details class="textes">
+              <summary>Les textes qui le disent ({diag.sources.length})</summary>
+              <ul class="sources">
+                {#each diag.sources as s (s.reference + s.url)}
+                  <li>
+                    <a href={s.url} target="_blank" rel="noopener noreferrer">{s.reference}</a>
+                    <span class="lu">lu le {new Date(s.luLe).toLocaleDateString('fr-FR')}</span>
+                  </li>
+                {/each}
+              </ul>
+            </details>
+          {/if}
         </div>
       {/each}
     </div>
@@ -631,47 +736,325 @@
     color: var(--encre);
   }
 
-  /* Le conseil se lit bloc par bloc, chacun un sujet.
+  /* Le conseil se lit bloc par bloc, dans l'ordre où l'on s'en occupe.
 
-     C'était un `columns: 2`, qui coule le contenu du bas de la première colonne
-     vers le haut de la seconde : « à régulariser avant la signature » pouvait
-     donc se retrouver sous une remarque de fin. Une grille garde l'ordre de
-     lecture qu'on a écrit — et le premier bloc, celui qui empêche de signer,
-     prend toute la largeur. */
+     C'était un `columns: 2`, puis une grille en deux colonnes — laquelle tenait
+     tant qu'il y avait trois sections : la première prenait toute la largeur,
+     les deux autres se répondaient côte à côte.
+
+     La quatrième section a cassé ça, et il a fallu le mesurer pour le voir :
+     « À faire lever » et « À chiffrer, puis à négocier » se retrouvaient à la
+     MÊME hauteur au pixel près (2373 px l'une et l'autre), dans deux colonnes
+     voisines. Or l'ordre de ces deux-là porte tout le raisonnement du conseil —
+     on ne négocie pas ce que personne n'a regardé. Côte à côte, ils se lisent
+     comme deux options équivalentes, et la démonstration tombe.
+
+     Une seule colonne, donc, comme sur le papier — où le bloc `@media print`
+     faisait déjà exactement cela. L'écran et la feuille disent enfin la même
+     chose, et la largeur de lecture reste tenue par `--mesure`. */
   .conseils {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: var(--e5) 44px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--e5);
   }
 
   .conseil {
     break-inside: avoid;
+    max-width: var(--mesure);
   }
 
+  /* Ce qui empêche de signer se distingue du reste : un filet, dès le premier
+     coup d'œil, avant même d'avoir lu le titre. */
   .conseil:first-child {
-    grid-column: 1 / -1;
     padding-left: var(--e4);
     border-left: 3px solid var(--verriere-sable-or);
   }
 
-  @media print {
-    .conseils {
-      display: block;
-    }
+  /* ---- Ce qui bloque le rendez-vous, réuni --------------------------------
 
-    .conseil {
-      margin-bottom: var(--e5);
-    }
+     Un encart, pas une section : il tient en quelques lignes, il ne porte que
+     des renvois, et il disparaît quand rien ne bloque. Le filet à gauche est
+     celui qui distinguait déjà « à régulariser » quand c'était un bloc — le
+     lecteur retrouve le même signe. */
+  .a-regler {
+    max-width: var(--mesure);
+    margin: 0 0 var(--e6);
+    padding: var(--e3) var(--e4);
+    border-left: 3px solid var(--alerte-vive);
+    background: var(--surface-forte);
+    border-radius: 0 var(--rayon) var(--rayon) 0;
+  }
+
+  .titre-regler {
+    display: flex;
+    align-items: center;
+    gap: var(--e2);
+    margin: 0 0 var(--e2);
+    font-size: var(--t-micro);
+    font-weight: 700;
+    letter-spacing: var(--suivi);
+    text-transform: uppercase;
+    color: var(--alerte-vive);
+  }
+
+  .combien {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.4em;
+    padding: 0 0.35em;
+    border-radius: 999px;
+    background: var(--alerte-vive);
+    color: var(--papier);
+    font-size: var(--t-micro);
+  }
+
+  .a-regler ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .a-regler li + li {
+    margin-top: var(--e1);
+  }
+
+  /* Chaque ligne est un renvoi : elle mène au bloc du diagnostic, plus bas. */
+  .a-regler button {
+    display: block;
+    width: 100%;
+    padding: var(--e1) 0;
+    background: none;
+    border: 0;
+    font: inherit;
+    font-size: var(--t-petit);
+    text-align: left;
+    color: var(--encre);
+    cursor: pointer;
+    border-radius: var(--rayon);
+  }
+
+  .a-regler button:hover .quoi-regler,
+  .a-regler button:focus-visible .quoi-regler {
+    text-decoration: underline;
+  }
+
+  .a-regler .ou {
+    display: block;
+    font-size: var(--t-micro);
+    letter-spacing: var(--suivi);
+    text-transform: uppercase;
+    color: var(--sur-fond-doux);
+  }
+
+  /* La tête d'un bloc : le nom du diagnostic à gauche, sa date à droite. */
+  .tete-conseil {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--e4);
+    margin-bottom: var(--e3);
+    padding-bottom: var(--e2);
+    border-bottom: 1px solid var(--surface-bord);
   }
 
   .titre-conseil {
-    margin: 0 0 var(--e2);
+    margin: 0;
     font-weight: 700;
-    font-size: var(--t-petit);
-    letter-spacing: 0.14em;
+    font-size: var(--t-base);
     color: var(--verriere-vert-profond);
   }
 
+  /* La date vit avec son rapport : « valable jusqu'au » est une propriété du
+     diagnostic, pas une ligne d'un tableau à part. */
+  .echeance {
+    flex: none;
+    font-family: var(--mono);
+    font-size: var(--t-micro);
+    color: var(--sur-fond-doux);
+    white-space: nowrap;
+  }
+
+  .echeance.perime {
+    font-weight: 700;
+    color: var(--alerte-vive);
+  }
+
+  /* Le temps auquel appartiennent les gestes qui suivent : à régulariser, à
+     faire lever, à négocier, à savoir. Un intercalaire, pas un titre de plus. */
+  .temps {
+    margin: var(--e4) 0 var(--e1);
+    font-size: var(--t-micro);
+    font-weight: 700;
+    letter-spacing: var(--suivi);
+    text-transform: uppercase;
+    color: var(--sur-fond-doux);
+  }
+
+  .temps:first-of-type {
+    margin-top: 0;
+  }
+
+  /* Ce qui bloque et ce qu'on ne sait pas se voient sans qu'on les cherche ;
+     la marge de négociation aussi, parce que c'est là qu'on gagne de l'argent.
+     Ce qui ne demande rien reste en gris. */
+  .temps.avant {
+    color: var(--alerte-vive);
+  }
+
+  .temps.lever,
+  .temps.negocier {
+    color: var(--verriere-vert-profond);
+  }
+
+  /* ---- Le bandeau des diagnostics ---------------------------------------
+
+     Même dessin que le bandeau de la vue « Les diagnostics » : une ligne de
+     pastilles qui défile, chacune avec sa gravité. La différence tient à ce
+     qu'il fait — celui-là ne feuillette pas, il conduit au conseil du
+     diagnostic, plus bas dans la page. D'où l'absence d'onglet « courant » :
+     aucun n'est ouvert, ils mènent tous ailleurs. */
+  .bandeau-diags {
+    display: flex;
+    gap: var(--e2);
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: var(--e1) var(--e1) var(--e2);
+    margin: 0 0 var(--e5);
+    /* Ce qui déborde s'efface au bord plutôt que d'être tranché net : on
+       comprend qu'il y en a d'autres. */
+    mask-image: linear-gradient(90deg, transparent, #000 14px, #000 calc(100% - 14px), transparent);
+  }
+
+  .bandeau-diags::-webkit-scrollbar {
+    display: none;
+  }
+
+  .onglet-diag {
+    flex: none;
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--e2);
+    padding: var(--e2) var(--e4);
+    background: var(--surface-forte);
+    border: 1px solid var(--surface-bord);
+    border-radius: 999px;
+    color: var(--sur-fond-doux);
+    font-family: inherit;
+    font-size: var(--t-petit);
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background 0.18s ease,
+      border-color 0.18s ease,
+      color 0.18s ease;
+  }
+
+  .onglet-diag:hover:not(:disabled),
+  .onglet-diag:focus-visible {
+    background: var(--surface-bord);
+    border-color: var(--gravite, var(--surface-bord));
+    color: var(--sur-fond);
+  }
+
+  /* Un diagnostic dont le dossier ne dit rien reste affiché, mais éteint :
+     présent au dossier, sans rien à en faire. */
+  .onglet-diag:disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+
+  .onglet-diag .pastille {
+    align-self: center;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--gravite, var(--sur-fond-doux));
+    flex: none;
+  }
+
+  .nom-onglet {
+    font-weight: 700;
+    letter-spacing: var(--suivi-serre);
+    color: var(--sur-fond);
+  }
+
+  /* Le verdict en trois mots, en retrait : le nom se lit d'abord. */
+  .dit-onglet {
+    font-size: var(--t-micro);
+    color: var(--sur-fond-doux);
+  }
+
+  .onglet-diag.bon {
+    --gravite: var(--verriere-vert);
+  }
+  .onglet-diag.attention {
+    --gravite: var(--attention);
+  }
+  .onglet-diag.alerte {
+    --gravite: var(--alerte-vive);
+  }
+  .onglet-diag.neutre {
+    --gravite: var(--sur-fond-doux);
+  }
+
+  /* Sur le papier, rien ne défile : le bandeau devient un relevé qui passe à
+     la ligne, et il garde tout son sens — c'est le sommaire du dossier. */
+  @media print {
+    .bandeau-diags {
+      flex-wrap: wrap;
+      overflow: visible;
+      mask-image: none;
+    }
+  }
+
+  /* Le professionnel à appeler, posé sous les gestes qu'il exécute. Un filet à
+     gauche plutôt qu'un encadré : c'est une adresse, pas une alerte de plus. */
+  .recours {
+    margin: var(--e2) 0 0;
+    padding-left: var(--e3);
+    border-left: 2px solid var(--trait-or);
+    font-size: var(--t-petit);
+    line-height: 1.5;
+  }
+
+  .recours .qui {
+    font-weight: 700;
+    color: var(--verriere-vert-profond);
+  }
+
+  .recours .quoi {
+    color: var(--sur-fond-doux);
+  }
+
+  .textes {
+    margin-top: var(--e3);
+    font-size: var(--t-petit);
+  }
+
+  .textes summary {
+    cursor: pointer;
+    color: var(--verriere-vert);
+  }
+
+  .sources {
+    margin: var(--e2) 0 0;
+    padding-left: var(--e4);
+  }
+
+  .sources li {
+    margin-bottom: var(--e1);
+  }
+
+  .lu {
+    margin-left: var(--e2);
+    font-size: var(--t-micro);
+    color: var(--sur-fond-doux);
+  }
+
+  /* Le calendrier n'a plus de tableau à lui : chaque date est remontée dans la
+     tête du diagnostic qu'elle concerne, où « valable jusqu'au » se lit comme
+     une propriété du rapport et non comme une ligne d'un relevé à part. */
 
   /* Les styles des encarts de synthèse sont partis avec eux, dans la vue
      « Les diagnostics » où le sommaire a repris leur rôle. */
