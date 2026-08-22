@@ -926,11 +926,24 @@
         {@const pratique = enPratique(d.type, d.gravite, d.mesurage?.loi)}
         {@const quand = echeance(d)}
         <article
-          class="fiche-diag {d.gravite}"
+          class="fiche-diag {d.gravite} {d.type === 'dpe' ? 'plein' : ''}"
           class:ouvert={i === courant}
           id="diag-{d.type}"
           aria-hidden={i !== courant ? 'true' : undefined}
         >
+          <!--
+            L'EN-TÊTE DE FICHE S'EFFACE DEVANT LA MINI-APP — DPE seulement.
+
+            Il annonce la classe en grand, le titre et le verdict. La mini-app
+            du pack dit exactement les trois, dans sa propre composition :
+            « RÉSULTAT GLOBAL », la jauge « CLASSE ÉNERGIE », le titre serif et
+            la phrase en dessous. Les garder tous les deux, c'est ce qui faisait
+            lire « Classe F : ce logement fait partie… » deux fois de suite.
+
+            Les huit autres volets gardent leur en-tête : eux n'ont pas d'écran
+            de référence qui le remplace.
+          -->
+          {#if d.type !== 'dpe'}
           <header>
             <!--
               LA CLASSE, EN GRAND, DANS SA COULEUR REGLEMENTAIRE.
@@ -1017,8 +1030,44 @@
             </p>
 
           </header>
+          {/if}
 
           <div class="corps">
+            <!--
+              LE DPE OUVRE SUR LA MINI-APP DU PACK — ordre d'Aude, 22/08/2026.
+
+              Elle était rendue plus bas, en sixième position, après le dessin,
+              le verdict et les étapes. Deux écrans complets se retrouvaient
+              donc emboîtés : la fiche annonçait « Classe F », l'échelle, « ce
+              qu'il faut savoir » — puis la mini-app redisait tout, dans la mise
+              en page de la référence. Mesuré sur le déployé : « passoire
+              thermique » écrit trois fois, « Classe F : ce logement fait
+              partie… » deux fois, 373 et 48,5 m² deux fois.
+
+              Le commentaire qui accompagnait la mini-app disait déjà « en
+              tête ». Elle y est.
+
+              ⚠️ Le reste de la fiche ne disparaît pas : c'est le niveau du
+              dessous, « je veux voir le détail ». Ce qui se recouvre vraiment
+              se masque bloc par bloc, en dessous, et pas d'un seul geste.
+            -->
+            {#if d.type === 'dpe'}
+              {@const lu = lectureDpeDe(d)}
+              {#if lu}
+                <VignetteDuBien {photo} bien={lu.enveloppe.bien} />
+                <MiniAppDpe
+                  diagnostic={d}
+                  enveloppe={lu.enveloppe}
+                  systemes={lu.systemes}
+                  travaux={prioriserLesTravaux(lu.travaux.packs, lu.enveloppe, partsAdemeDe(d))}
+                  points={lu.points}
+                  {bandeaux}
+                  {photo}
+                  confiance={confianceDuDossier(analyse.diagnostics)}
+                />
+              {/if}
+            {/if}
+
             <div class="dessin">
               <!-- Le visuel de l'écran vient en premier : c'est lui qui dit,
                    avant tout mot, dans quel diagnostic on est entré. -->
@@ -1556,24 +1605,13 @@
                 {#if lectureDpeDe(d)}
                   {@const lu = lectureDpeDe(d)}
                   {#if lu}
-                    <VignetteDuBien {photo} bien={lu.enveloppe.bien} />
                     <!--
-                      L'ÉCRAN DE RÉFÉRENCE DU PACK, en tête : la synthèse que le
-                      propriétaire lit d'abord. Les cartes qui suivent sont le niveau
-                      du dessous — « je veux voir le détail » — et elles restent, parce
-                      que la synthèse ne remplace pas la lecture paroi par paroi.
+                      LA MINI-APP N'EST PLUS ICI : elle ouvre le corps de la fiche,
+                      quelques centaines de lignes plus haut. Elle était rendue à cet
+                      endroit — sixième position, après le dessin, le verdict et les
+                      étapes — ce qui la rendait invisible sans faire défiler un écran
+                      entier qui redisait déjà tout.
                     -->
-                    <MiniAppDpe
-                      diagnostic={d}
-                      enveloppe={lu.enveloppe}
-                      systemes={lu.systemes}
-                      travaux={prioriserLesTravaux(lu.travaux.packs, lu.enveloppe, partsAdemeDe(d))}
-                      points={lu.points}
-                      {bandeaux}
-                      {photo}
-                      confiance={confianceDuDossier(analyse.diagnostics)}
-                    />
-
                     <BandeauDuRapport bandeau={bandeau('étiquette')} />
                     <PourquoiCetteNote
                       finale={dpeDe(d)?.finale ?? null}
@@ -1840,15 +1878,30 @@
         L'accroche de marque reste, en second et en petit : elle dit ce qu'on
         regarde, la question dit ce qu'on cherche.
       -->
-      <header class="entree">
-        <p class="lumiere">{lumiereSur(diags[courant]?.type ?? 'dpe')}</p>
-        <!-- La grande question de l'écran. Elle finit par « ? » : sans espace
-             insécable, le point d'interrogation part seul à la ligne dès que le
-             titre passe sur deux lignes — ce qui est le cas sur mobile. -->
-        <h2 class="question">
-          {espacesFrancaises(questionDe(diags[courant]?.type ?? 'dpe'))}
-        </h2>
-      </header>
+      <!--
+        L'ENTRÉE S'EFFACE DEVANT LA MINI-APP — DPE seulement.
+
+        « Lumière sur votre DPE » et sa grande question ouvraient l'écran, et
+        la mini-app du pack venait ensuite avec son propre en-tête : « DPE »,
+        « Synthèse du diagnostic », « Résultat global ». Deux ouvertures pour
+        un seul écran — c'est ce qui donnait l'impression que le visuel de
+        référence n'était pas respecté : il l'était, mais on l'atteignait après
+        avoir lu autre chose.
+
+        Les autres volets gardent leur entrée : leur question posée en tête
+        change la lecture de tout ce qui suit, et rien ne la remplace chez eux.
+      -->
+      {#if diags[courant]?.type !== 'dpe'}
+        <header class="entree">
+          <p class="lumiere">{lumiereSur(diags[courant]?.type ?? 'dpe')}</p>
+          <!-- La grande question de l'écran. Elle finit par « ? » : sans espace
+               insécable, le point d'interrogation part seul à la ligne dès que le
+               titre passe sur deux lignes — ce qui est le cas sur mobile. -->
+          <h2 class="question">
+            {espacesFrancaises(questionDe(diags[courant]?.type ?? 'dpe'))}
+          </h2>
+        </header>
+      {/if}
 
       <section class="diagnostics">
         {@render dossier()}
@@ -2625,6 +2678,30 @@
     /* La barre des vues est collante : sans cette marge, une ancre déposait le
        titre de la fiche juste derrière elle. */
     scroll-margin-top: 110px;
+  }
+
+  /*
+   * LA MINI-APP EST L'ÉCRAN, PAS LE CONTENU D'UNE CARTE — DPE seulement.
+   *
+   * Mesuré le 22/08 sur le déployé : `article.fiche-diag.alerte` posait un
+   * liseré rouge de 4 px, un fond, une ombre, un rayon de 12 px et 24 px de
+   * padding AUTOUR de la mini-app — qui pose elle-même ses propres cartes
+   * blanches à l'intérieur. Une carte dans une carte, avec une barre d'alerte
+   * par-dessus.
+   *
+   * Le visuel de référence ne montre rien de tout cela : l'écran est plein,
+   * les cartes respirent sur le fond ivoire, et aucune bordure d'état ne le
+   * traverse. La gravité est déjà dite par la mini-app elle-même, dans son
+   * résultat global et ses points clés.
+   *
+   * Les huit autres volets gardent leur carte : eux sont bien des fiches.
+   */
+  .fiche-diag.plein {
+    padding: 0;
+    background: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
   }
 
   .fiche-diag.bon {

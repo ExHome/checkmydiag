@@ -21,6 +21,29 @@ Pour **d'où vient une couleur** (charte, univers, jetons), voir
 
 ---
 
+## 0. La règle qui commande les autres
+
+> **Un visuel Verrière est ivoire et vert — sauf s'il porte une photographie.**
+> *Aude, 22/08/2026.*
+
+La couleur entre dans une page **par l'image**. Sans photographie, la page ne va
+pas l'emprunter ailleurs : ni doré, ni sable, ni couleur métier en aplat.
+
+Cela recoupe exactement la mesure du 20/08 sur la publicité : **58 % de lumière,
+21 % de verts profonds**, et le reste — moins d'un cinquième — porté par les
+*photographies*, le sable et les couleurs métier. Retirez la photo, et les
+quatre cinquièmes qui restent sont l'ivoire et le vert.
+
+⚠️ **Point ouvert, non tranché** : `lib/univers.ts` donne à chaque diagnostic un
+`accentVif` vif — violet amiante, bleu gaz, orange termites — posé sur des
+écrans qui ne portent aucune photographie. Si cette règle vaut aussi pour eux,
+les dix valeurs sont à revoir. La charte propose d'ailleurs autre chose à leur
+place : des **matières** (bakélite et cuivre, laiton, pierre, bois, verre
+quadrillé), pas des aplats de couleur. Rien ne bouge avant arbitrage — dix
+univers changés, c'est tout le produit.
+
+---
+
 ## I. La vérification
 
 ### 1. Le visuel se vérifie à l'écran, jamais dans l'éditeur

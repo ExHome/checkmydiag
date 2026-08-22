@@ -293,7 +293,9 @@
   <div class="barre-haut">
     <span aria-hidden="true">‹</span>
     <div class="marque">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#024436" stroke-width="1.4" aria-hidden="true">
+      <!-- La verrière suit la taille du titre : à 26 px sous un « DPE » de
+           2,4 rem, elle devenait une puce. -->
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#024436" stroke-width="1.3" aria-hidden="true">
         <path d="M3 10.5 12 3l9 7.5V21H3z" />
         <path d="M12 3v18M3 10.5h18M7.5 21V7M16.5 21V7M3 15.5h18" />
       </svg>
@@ -808,15 +810,47 @@
     color: var(--encre-doux);
   }
 
+  /*
+   * LE NOMBRE D'ABORD, LA PRÉCISION DESSOUS.
+   *
+   * `dd` était une seule ligne flex : le nombre, son unité et la précision
+   * entre parenthèses s'y disputaient la largeur et cassaient en quatre lignes
+   * empilées. Mesuré sur l'écran déployé, le 22/08 : 140 × 89 px pour quatre
+   * lignes de texte, chacune tronquée.
+   *
+   * Le visuel de référence les range autrement : le nombre en grand avec son
+   * unité posée à côté sur la ligne de base, puis la précision seule en
+   * dessous. Même information, composition retrouvée.
+   */
   .chiffres dd {
-    margin: 0.2rem 0 0;
+    margin: 0.25rem 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.15rem;
+  }
+
+  .chiffres dd .val {
     display: flex;
     align-items: baseline;
     gap: 0.3rem;
+    flex-wrap: wrap;
   }
 
+  /*
+   * ⚠️ `--t-section` a été essayé ici et il RÉTRÉCIT le nombre.
+   *
+   * Les crans fluides de l'échelle sont des `clamp()` calés sur la largeur de
+   * la FENÊTRE : `clamp(1.5rem, 3.4vw, 2rem)`. Dans une mini-app de 430 px,
+   * 3,4 vw vaut 14 px — le clamp tombe donc sur son plancher, 24 px, quand la
+   * valeur en dur d'avant en faisait 33. Mesuré le 22/08 sur l'écran.
+   *
+   * `--t-affiche` a le même défaut mais un plancher de 2 rem, qui est
+   * précisément la taille que la référence donne au nombre. C'est le bon cran,
+   * et il reste un jeton de l'échelle.
+   */
   .chiffres dd b {
-    font-size: 2.1rem;
+    font-size: var(--t-affiche);
     line-height: 1;
     color: var(--vert);
     font-variant-numeric: tabular-nums;
@@ -824,6 +858,12 @@
 
   .chiffres dd span {
     font-size: 0.7rem;
+    color: var(--encre-doux);
+  }
+
+  .chiffres dd small {
+    font-size: var(--t-micro);
+    line-height: 1.35;
     color: var(--encre-doux);
   }
 
@@ -1098,11 +1138,22 @@
     gap: 0.5rem;
   }
 
+  /*
+   * LE TITRE OUVRE L'ÉCRAN, IL NE S'Y GLISSE PAS.
+   *
+   * Mesuré sur le déployé le 22/08 : 28 px, coincé sous la barre « ← Retour »
+   * de l'application, il se lisait comme une étiquette et non comme l'entrée
+   * du diagnostic. Sur le visuel de référence, « DPE » est le premier objet de
+   * la page — grand, en capitales espacées, le pictogramme de la verrière posé
+   * à sa gauche.
+   */
   .barre-haut h1 {
     margin: 0;
     font-family: var(--police-titre, 'Iowan Old Style', Palatino, Georgia, serif);
-    font-size: 1.75rem;
+    font-size: var(--t-affiche);
     font-weight: 700;
+    letter-spacing: 0.06em;
+    line-height: 1.05;
     color: var(--vert);
   }
 
@@ -1113,11 +1164,11 @@
   }
 
   .sous-titre {
-    margin: 0.1rem 0 0.3rem;
+    margin: 0.25rem 0 0.9rem;
     text-align: center;
-    font-size: 0.66rem;
+    font-size: var(--t-micro);
     font-weight: 600;
-    letter-spacing: 0.24em;
+    letter-spacing: 0.26em;
     text-transform: uppercase;
     color: var(--bronze);
   }
