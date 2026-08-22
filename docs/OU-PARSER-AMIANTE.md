@@ -450,6 +450,38 @@ sur jugement, sans prélèvement.
 composants, jamais s'ils contiennent de l'amiante. Le mot `Divers` y est courant
 et ne signifie rien de plus que « non identifié ».
 
+### Ce que la colonne `Localisation` donne — mesuré le 22/08
+
+**Onze volets LICIEL passés au lecteur : cinq impriment ce tableau, six ne
+donnent que la liste des pièces.** L'endroit existe donc, mais il n'est pas
+garanti : un lecteur qui compterait dessus rendrait un écran vide une fois sur
+deux. C'est pourquoi la liste des pièces reste le repli.
+
+Les composants rencontrés, avec l'orthographe des rapports — **41 relevés** :
+
+| Composant | Occurrences |
+|---|---|
+| `Porte` | 6 |
+| `Sol`, `Mur`, `Plafond` | le trio de base, présent dans les cinq volets |
+| `Fenêtre` | 4 |
+| `Volet`, `Marches`, `Contremarches` | 3 chacun |
+| `Plinthes` | 2 |
+| `Balustre`, `Main courante`, `Dressing Porte`, `Porte de garage` | 1 |
+
+⚠️ **Vingt-trois de ces quarante et un — 56 % — sont des menuiseries ou des
+éléments d'escalier.** Une carte des familles d'ouvrage qui ne les prévoit pas
+perd plus de la moitié de ce que les rapports contrôlent : le mastic de vitrage
+et les dalles de marches sont deux repérages courants de la liste B.
+
+⚠️ **Reste à mesurer** : pourquoi six volets sur onze n'impriment pas ce
+tableau. Réglage du logiciel, type de mission, ou rubrique imprimée sous une
+autre forme — non tranché, et il faut cinquante lectures pour le savoir.
+
+⚠️ **Défaut de recomposition relevé le même jour, non corrigé** : un volet rend
+`5èm e étage - Dégagement`. La coupure n'est pas dans le PDF, elle naît du
+regroupement des fragments par ligne. À traiter avec les autres cas de mots
+scindés, jamais isolément.
+
 ⚠️ **Le champ `Périmètre de repérage` de la page 1 porte parfois l'exclusion
 lui-même** : `Toutes parties accessibles sans démontage ni destruction, Cave non
 accesible : Abscence de clef`. Il est aussi, dans deux volets lus, **entièrement

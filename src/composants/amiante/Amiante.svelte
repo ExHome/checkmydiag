@@ -251,7 +251,9 @@
             {:else if c.icone === 'conduit'}
               <svg viewBox="0 0 24 24"><rect x="5" y="4" width="4.6" height="16" rx="1" fill="none" stroke="currentColor" stroke-width="1.4" /><rect x="14.4" y="4" width="4.6" height="16" rx="1" fill="none" stroke="currentColor" stroke-width="1.4" /><path d="M5 9h4.6M5 14h4.6M14.4 9H19M14.4 14H19" stroke="currentColor" stroke-width="1.1" /></svg>
             {:else if c.icone === 'sol'}
-              <svg viewBox="0 0 24 24"><path d="M3 18.5 12 6l9 12.5Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" /><path d="M6.6 14.5h10.8M8.8 11h6.4M12 6v12.5" stroke="currentColor" stroke-width="1.05" /></svg>
+              <!-- Un carrelage vu en perspective, comme dans le pack. Le
+                   triangle qui tenait cette place se lisait comme un toit. -->
+              <svg viewBox="0 0 24 24"><path d="M8.4 7.5H15.6L20 19.5H4Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" /><path d="M6.9 11.5h10.2M5.5 15.5h13" stroke="currentColor" stroke-width="1.05" /><path d="M10.8 7.5 9.3 19.5M13.2 7.5l1.5 12" stroke="currentColor" stroke-width="1.05" /></svg>
             {:else if c.icone === 'menuiserie'}
               <!-- Une fenêtre à deux ouvrants — l'ouvrage où l'amiante ne se
                    voit pas : elle est dans le mastic de vitrage. -->
