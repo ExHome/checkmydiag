@@ -1,0 +1,98 @@
+VERRIÈRE - MINI-APP DPE
+ORDRE DE MISSION MAÎTRE POUR CLAUDE
+Référence visuelle verrouillée - version avec vignette et détails techniques
+1. Référence graphique impérative
+Utiliser le visuel joint comme matrice de la mini-app DPE, en conservant la vignette du bien et l'esthétique Verrière.
+Univers premium d'architecture : ivoire chaud, vert profond, accents sable/laiton discrets, relief subtil, cartes respirantes et excellente lisibilité mobile.
+La vignette doit provenir du dossier ou d'une image réellement associée au bien. Ne jamais inventer une photographie du logement en production.
+2. Architecture obligatoire de la synthèse
+Vignette du bien : photo si disponible, type de bien, surface utile affichée seulement si extraite, année/période de construction si renseignée.
+Points clés : informations immédiatement importantes pour comprendre le DPE.
+Résultat global : classes énergie et climat/GES, consommations et émissions avec unités exactes du rapport.
+Détails techniques du logement : Enveloppe du bâtiment, Chauffage & ECS, Ventilation, Surface de référence.
+Caractéristiques clés du logement.
+Constatations diverses.
+Ce qui n'a pas été contrôlé / non renseigné / non vérifiable.
+Recommandations principales et accès à tous les scénarios de travaux lorsqu'ils figurent dans le DPE.
+Conseil Verrière et accès au rapport complet.
+3. Enveloppe du bâtiment - carte détaillée
+Créer une carte ouvrable dédiée à l'enveloppe.
+Restituer, selon disponibilité dans le DPE : murs, toiture/plafonds/combles, planchers bas, menuiseries, portes, vitrages, ponts thermiques, isolation et caractéristiques thermiques pertinentes.
+Distinguer clairement donnée connue, donnée estimée, donnée non renseignée et élément non applicable.
+Faire ressortir les points déperditifs ou performants sans créer de conclusion absente du rapport.
+Prévoir une lecture pédagogique : élément, composition/isolation connue, performance ou observation, impact éventuel, recommandation associée.
+4. Chauffage & ECS - carte détaillée
+Séparer visuellement le chauffage de la production d'eau chaude sanitaire tout en les regroupant dans la même famille technique.
+Afficher, lorsqu'ils sont disponibles : type de générateur, énergie, ancienneté/année, puissance ou rendement pertinent, émetteurs, régulation, distribution, production ECS, ballon/accumulation, localisation et informations de performance.
+Gérer plusieurs systèmes de chauffage ou d'ECS sans écraser les équipements secondaires.
+Relier les recommandations correspondantes au système concerné.
+5. Ventilation - carte détaillée
+Afficher le type de ventilation réellement identifié : naturelle, VMC simple flux, hygroréglable, double flux, autre, ou non renseigné.
+Restituer les informations disponibles sur entrées d'air, extraction, fonctionnement, débits ou étanchéité à l'air lorsque ces données existent.
+Ne pas confondre absence de donnée et absence de ventilation.
+Mettre en évidence les recommandations de ventilation ou de qualité du renouvellement d'air présentes dans le DPE.
+6. Surface de référence - carte dédiée
+Afficher explicitement la surface de référence utilisée pour le DPE lorsqu'elle est fournie.
+Ne pas la remplacer automatiquement par la surface habitable : les deux valeurs doivent rester distinctes si le rapport les distingue.
+Afficher l'intitulé et la valeur issus du document et, si Verrière ajoute une explication pédagogique, la séparer clairement de la donnée source.
+Prévoir les cas où la surface de référence est absente, non exploitable ou issue d'un format de rapport différent.
+7. Constatations diverses
+Bloc obligatoire lorsqu'il existe des observations utiles qui ne rentrent pas proprement dans les cartes principales.
+Y restituer les particularités du bâti, équipements, isolation, confort, systèmes ou hypothèses mentionnées dans le rapport.
+Conserver la nuance et la portée de l'observation originale.
+8. Non contrôlé / non renseigné / limites
+Afficher explicitement les données manquantes, non vérifiées, estimées ou hors périmètre lorsque cette information est pertinente.
+Ne jamais présenter une information absente comme un résultat favorable.
+Ne pas mélanger les diagnostics amiante, plomb, gaz ou électricité au DPE : si une information est hors périmètre, l'indiquer comme telle seulement si cela sert réellement la compréhension.
+Toute limite ou hypothèse influençant l'interprétation doit être visible.
+9. Recommandations DPE
+Présenter les recommandations réellement contenues dans le DPE et leurs scénarios lorsqu'ils existent.
+Afficher coût, économie, gain de classe ou impact uniquement si ces valeurs sont présentes ou calculées selon une règle métier validée.
+Ne jamais inventer une économie annuelle.
+Relier chaque recommandation à la composante concernée : enveloppe, chauffage, ECS, ventilation, régulation, etc.
+Permettre l'accès à une vue détaillée des scénarios de travaux.
+10. Règle absolue de fidélité
+INTERDICTION D'INVENTER : aucune valeur, classe, rendement, économie, surface, équipement, recommandation, niveau de confiance ou photo ne peut être fabriqué.
+Chaque donnée visible doit être traçable jusqu'au rapport source ou à une règle métier documentée.
+En cas d'extraction incertaine : signaler l'incertitude plutôt que choisir arbitrairement.
+Le design ne doit jamais donner une certitude supérieure à celle du document.
+Le pourcentage de confiance du mockup est illustratif : ne pas conserver 85 % sans méthode de calcul validée.
+11. Navigation et interactions
+Onglets : Synthèse, Détails, Recommandations, Conseils.
+Les cartes Enveloppe, Chauffage & ECS, Ventilation et Surface de référence sont ouvrables.
+Les points clés et recommandations ouvrent le détail et, idéalement, la source correspondante.
+Prévoir un bouton Voir le rapport complet.
+Aucune information essentielle ne dépend du survol ; priorité au tactile/mobile.
+Les statuts doivent être compréhensibles par texte + icône, pas par couleur seule.
+12. Ordre d'exécution pour Claude
+1. Reproduire et perfectionner le visuel joint sans changer son architecture validée.
+2. Construire la synthèse DPE à partir des données réellement extraites.
+3. Ajouter les quatre cartes techniques obligatoires : Enveloppe, Chauffage & ECS, Ventilation, Surface de référence.
+4. Pour chaque carte, gérer plusieurs équipements/éléments et les données absentes.
+5. Conserver Constatations diverses et Non contrôlé / non renseigné.
+6. Brancher les recommandations sur les données et scénarios réels du DPE.
+7. Garantir la traçabilité donnée affichée -> source.
+8. Tester les classes A à G, plusieurs systèmes, logements individuels/collectifs et rapports incomplets.
+9. Tester mobile étroit et desktop, sans troncature ni information critique masquée.
+10. Effectuer une revue de non-régression métier et graphique avant toute validation.
+13. Contrôle qualité avant livraison
+[ ] Classes énergie et GES exactes.
+[ ] Consommations, émissions et unités exactes.
+[ ] Surface de référence correctement distinguée.
+[ ] Enveloppe exhaustive selon les données disponibles.
+[ ] Chauffage et ECS complets, y compris systèmes multiples.
+[ ] Ventilation correctement identifiée.
+[ ] Constatations diverses restituées.
+[ ] Données non renseignées/limites visibles.
+[ ] Recommandations fidèles et non inventées.
+[ ] Vignette réelle ou absence de vignette gérée proprement.
+[ ] Traçabilité vers la source.
+[ ] Conformité visuelle Verrière et excellente lecture mobile.
+14. Livrables attendus
+Mini-app DPE responsive finalisée.
+Composants UI réutilisables.
+Mapping des champs DPE vers chaque carte.
+Règles de gestion des valeurs manquantes, estimées et incertaines.
+États d'interface complets.
+Jeu de tests sur plusieurs DPE différents.
+Captures mobile et desktop de validation.
