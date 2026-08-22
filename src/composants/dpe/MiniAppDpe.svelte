@@ -667,8 +667,23 @@
      * Celui-ci contient bien un bronze, relevé dans la référence.
      */
     --bronze: #a68965;
-    --rouille: #d15a19;
-    --orange: #ea8423;
+    /*
+     * DEUX TEINTES ASSOMBRIES, ET SEULEMENT DEUX.
+     *
+     * Mesuré dans le navigateur : le « ! » blanc sur l'orange de la référence
+     * donnait 2,68 de contraste, et la rouille des mentions « non renseigné »
+     * 3,95 — sous le seuil de 4,5 à ces tailles. Or ce sont précisément les
+     * deux endroits qui SIGNALENT quelque chose : une alerte qu'on ne lit pas
+     * ne sert à rien.
+     *
+     * Même teinte, quelques crans plus foncés. Le sur-titre bronze, lui, reste
+     * exactement celui de la référence : c'est un ornement de marque, pas un
+     * signal.
+     *
+     *   référence #d15a19 → #b04711   ·   référence #ea8423 → #ab580b
+     */
+    --rouille: #b04711;
+    --orange: #ab580b;
     --bleu: #085c8e;
     --validation: #378546;
     --vert-pale: #e3ebdc;
@@ -1436,7 +1451,12 @@
     font: inherit;
     font-size: 0.6rem;
     line-height: 1.2;
-    color: #c7c6c5;
+    /*
+     * Le gris de la référence (#c7c6c5) donne 1,66 de contraste sur la barre :
+     * les trois onglets inactifs sont pratiquement invisibles. Un onglet qu'on
+     * ne lit pas n'est pas un onglet. Même gris chaud, assez foncé pour se lire.
+     */
+    color: #706b64;
     cursor: pointer;
   }
 
