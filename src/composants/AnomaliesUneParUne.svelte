@@ -18,11 +18,15 @@
    */
   import type { Anomalie } from '../lib/modele';
   import MotsExpliques from './MotsExpliques.svelte';
+  import { enClair } from '../lib/analyse/anomalies-en-clair';
 
   const { anomalies }: { anomalies: Anomalie[] } = $props();
 
   /** Ce que la pluralité du rapport dit de l'étendue, dans ses mots. */
   const ETENDUE: Record<Anomalie['pluralite'], string | null> = {
+    /* « un » : le rapport désigne un élément précis, pas un exemplaire parmi
+       d'autres. La nuance vaut d'être dite — elle borne l'étendue. */
+    un: 'Un élément précisément désigné par le rapport',
     auMoinsUn: 'Au moins un élément concerné selon le rapport',
     ensemble: 'L’ensemble des éléments concernés selon le rapport',
     inconnue: null
@@ -46,6 +50,8 @@
 
   /** Une carte ouverte à la fois : on lit une anomalie, pas un mur. */
   let ouverte = $state<number | null>(null);
+  /** L'aide ouverte, s'il y en a une. Elle se demande, elle ne s'impose pas. */
+  let aide = $state<number | null>(null);
 </script>
 
 <section class="anomalies" aria-label="Toutes les anomalies relevées">
@@ -80,6 +86,33 @@
           </span>
           <span class="signe" aria-hidden="true">{ouverte === i ? '−' : '+'}</span>
         </button>
+
+        <!--
+          L'AIDE SE DEMANDE, ELLE NE S'IMPOSE PAS.
+
+          La phrase du rapport reste au premier plan, entière et non modifiée :
+          c'est elle qui fait foi. Mais « l'enveloppe d'au moins un matériel est
+          détériorée » ne veut rien dire à qui n'est pas électricien, et le § 3
+          du pack demande les deux niveaux de lecture.
+
+          Le bouton n'apparaît que si l'on sait vraiment traduire ce libellé-là.
+          Pas d'aide vaut mieux qu'une aide approximative.
+        -->
+        {#if enClair(a.libelle)}
+          <button
+            type="button"
+            class="aide-bouton"
+            aria-expanded={aide === i}
+            onclick={() => (aide = aide === i ? null : i)}
+          >
+            <span class="point" aria-hidden="true">?</span>
+            {aide === i ? 'Masquer l’explication' : 'Qu’est-ce que ça veut dire ?'}
+          </button>
+
+          {#if aide === i}
+            <p class="aide-texte apparait">{enClair(a.libelle)}</p>
+          {/if}
+        {/if}
 
         {#if ouverte === i}
           <dl class="detail apparait">
@@ -274,6 +307,47 @@
     font-family: var(--mono);
     font-size: 1.1rem;
     color: var(--elec);
+  }
+
+  /*
+   * Le bouton d'aide : petit, discret, sous la ligne — il propose, il n'attire
+   * pas. Le jaune de l'électricité le rattache à sa micro-application.
+   */
+  .aide-bouton {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--e2);
+    margin: 2px 0 0 calc(var(--e4) + 1.6em + var(--e3));
+    padding: var(--e2) 0;
+    background: none;
+    border: none;
+    color: var(--elec);
+    font-size: var(--t-petit);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .point {
+    display: inline-grid;
+    place-items: center;
+    width: 17px;
+    height: 17px;
+    border: 1px solid var(--elec);
+    border-radius: 50%;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .aide-texte {
+    margin: 0 var(--e4) var(--e3) calc(var(--e4) + 1.6em + var(--e3));
+    padding-left: var(--e3);
+    border-left: 2px solid var(--elec);
+    font-size: var(--t-base);
+    line-height: 1.55;
+    color: var(--sur-fond-doux);
+    max-width: var(--mesure);
   }
 
   .detail {

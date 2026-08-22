@@ -370,7 +370,17 @@ export interface Analyse {
 }
 
 /** L'étendue que le rapport donne à une anomalie, dans ses propres mots. */
-export type Pluralite = 'auMoinsUn' | 'ensemble' | 'inconnue';
+/**
+ * L'étendue que le rapport donne à une anomalie, dans ses propres mots.
+ *
+ * `'un'` s'ajoute pour l'amiante, où le rapport désigne UN élément précis et
+ * localisé — « Flocages, sous-sol » — là où l'électricité écrit presque
+ * toujours « au moins un ». Les deux sont des faits du rapport, pas des
+ * interprétations : l'un dit « celui-ci », l'autre « il y en a au moins un, il
+ * peut y en avoir d'autres ». Les confondre perdrait précisément la nuance que
+ * le § 9 de l'ordre de mission protège.
+ */
+export type Pluralite = 'un' | 'auMoinsUn' | 'ensemble' | 'inconnue';
 
 /**
  * Une anomalie électrique, objet complet au sens du §8 de l'ordre de mission.
