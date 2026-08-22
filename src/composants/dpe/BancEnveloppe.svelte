@@ -20,7 +20,10 @@
    */
   import { lireLeDpe } from '../../lib/lecteurs/dpe';
   import type { Etiquette } from '../../lib/modele';
+  import { prioriserLesTravaux } from '../../lib/analyse/priorite';
+  import type { Diagnostic } from '../../lib/modele';
   import Deperditions from './Deperditions.svelte';
+  import MiniAppDpe from './MiniAppDpe.svelte';
   import FormatInconnu from './FormatInconnu.svelte';
   import DoubleEtiquette from './DoubleEtiquette.svelte';
   import LesParois from './LesParois.svelte';
@@ -187,6 +190,31 @@
    */
   const aiguillage = $derived(lireLeDpe(autreEditeur ? AUTRE_EDITEUR : RAPPORT));
 
+  /* Le diagnostic tel que le moteur le rend, réduit à ce que l'écran consomme. */
+  const diagnostic = $derived({
+    type: 'dpe',
+    titre: 'Diagnostic de performance énergétique',
+    verdict:
+      'Classe E : ce logement consomme beaucoup. Il n’est pas encore dans les deux pires classes, mais il s’en approche.',
+    gravite: 'attention',
+    faits: [],
+    pages: [1, 12],
+    schema: {
+      genre: 'dpe',
+      energie: { lettre: 'E', valeur: 291, unite: 'kWh/m²/an', recalculee: true },
+      climat: { lettre: 'D', valeur: 38, unite: 'kg CO₂/m²/an', recalculee: true },
+      finale: 'E',
+      postes: [],
+      isolation: { murs: 'nonIsole', toit: 'inconnu', plancher: 'nonIsole', fenetres: 'nonIsole' }
+    }
+  }) as unknown as Diagnostic;
+
+  const priorises = $derived(
+    aiguillage.etat === 'lu'
+      ? prioriserLesTravaux(aiguillage.valeur.travaux.packs, aiguillage.valeur.enveloppe, [])
+      : []
+  );
+
   /* Une classe E en énergie, une D en climat : la moins bonne est retenue. */
   const energie: Etiquette = { lettre: 'E', valeur: 291, unite: 'kWh/m²/an', recalculee: true };
   const climat: Etiquette = { lettre: 'D', valeur: 38, unite: 'kg CO₂/m²/an', recalculee: true };
@@ -206,6 +234,17 @@
     <p class="lu">
       Format reconnu : <b>{aiguillage.editeur}</b> — {aiguillage.preuve}
     </p>
+
+    <MiniAppDpe
+      {diagnostic}
+      enveloppe={aiguillage.valeur.enveloppe}
+      systemes={aiguillage.valeur.systemes}
+      travaux={priorises}
+      points={aiguillage.valeur.points}
+      confiance={0.85}
+    />
+
+    <hr />
 
     <DoubleEtiquette
     {energie}
