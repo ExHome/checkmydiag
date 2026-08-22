@@ -26,7 +26,20 @@ const PAGES = readdirSync(import.meta.dirname).filter((f) => f.endsWith('.html')
 export default defineConfig({
   base: './',
   plugins: [svelte(), nuls()],
-  server: { port: 5181 },
+  /*
+   * LE PORT SE REÇOIT, IL NE SE RÉCLAME PAS.
+   *
+   * Il était fixé à 5181 en dur. Plusieurs sessions travaillent en même temps
+   * sur ce dépôt, chacune lance `npm run dev`, et toutes réclamaient donc le
+   * MÊME port : la première l'obtenait, les suivantes glissaient sur 5187,
+   * 5191, 5195, 5197… Cinq serveurs empilés le 22/08, quota d'aperçus saturé,
+   * plus aucune session capable d'en ouvrir un — et un `launch.json` qui ne
+   * pouvait annoncer un port juste pour personne.
+   *
+   * Vite lit `PORT` quand on le lui donne ; 5181 ne reste que le défaut de
+   * celle qui démarre en premier.
+   */
+  server: { port: Number(process.env.PORT) || 5181 },
   build: {
     target: 'es2022',
     rollupOptions: {
