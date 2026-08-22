@@ -59,9 +59,18 @@
   interface Props {
     diagnostic: Diagnostic;
     surVoirDansLeRapport?: (page: number) => void;
+    /**
+     * L'en-tête et la barre d'onglets, à couper quand la mini-app s'insère
+     * dans la carte du flux — celle-ci porte déjà son titre et sa navigation,
+     * et les répéter volerait la place de ce qui compte.
+     *
+     * Le banc, lui, les garde : c'est là qu'on regarde l'écran du pack en
+     * entier.
+     */
+    autonome?: boolean;
   }
 
-  const { diagnostic, surVoirDansLeRapport }: Props = $props();
+  const { diagnostic, surVoirDansLeRapport, autonome = true }: Props = $props();
   const s = $derived(syntheseTermites(diagnostic));
 
   let constatationsOuvertes = $state(true);
@@ -74,8 +83,9 @@
     ton === 'alerte' ? 'Point d’alerte' : ton === 'attention' ? 'À regarder' : 'Rien à signaler';
 </script>
 
-<div class="app">
+<div class="app" class:insere={!autonome}>
   <!-- L'EN-TÊTE du visuel : termite laiton, TERMITES en serif, sous-titre. -->
+  {#if autonome}
   <header class="entete">
     <svg class="insecte" viewBox="0 0 24 32" aria-hidden="true">
       <ellipse cx="12" cy="6" rx="3.1" ry="3.4" />
@@ -89,6 +99,7 @@
     <h1>Termites</h1>
     <p class="sous-titre">Synthèse du diagnostic</p>
   </header>
+  {/if}
 
   <!-- 1 · POINTS CLÉS -->
   {#if s.pointsCles.length}
@@ -287,12 +298,14 @@
   {/if}
 
   <!-- LA BARRE D'ONGLETS du visuel. Seule « Synthèse » est écrite à ce jour. -->
+  {#if autonome}
   <nav class="onglets" aria-label="Sections du diagnostic">
     <span class="onglet actif" aria-current="page"><span aria-hidden="true">⌂</span>Synthèse</span>
     <span class="onglet"><span aria-hidden="true">☰</span>Détails</span>
     <span class="onglet"><span aria-hidden="true">▣</span>Photos</span>
     <span class="onglet"><span aria-hidden="true">✿</span>Conseils</span>
   </nav>
+  {/if}
 </div>
 
 <style>
@@ -676,6 +689,14 @@
   .onglet.actif {
     color: var(--vert-nuit);
     font-weight: 600;
+  }
+
+  /* Insérée dans la carte du flux : pas de fond propre, pas de place réservée
+     à une barre d'onglets qui n'y est plus. */
+  .app.insere {
+    background: none;
+    padding: 0;
+    max-width: none;
   }
 
   @media (prefers-reduced-motion: reduce) {

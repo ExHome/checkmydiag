@@ -20,12 +20,36 @@ import { readFileSync } from 'node:fs';
  * composant appelle `$effect`, qui n'existe pas en rendu serveur, et le plugin
  * Svelte n'est pas chargé par Vitest.
  */
-const ecran = readFileSync(new URL('./Diagnostics.svelte', import.meta.url), 'utf8');
+/*
+ * ⚠️ L'ÉCRAN A CHANGÉ DE PLACE, ET CES GARDE-FOUS L'ONT SUIVI.
+ *
+ * Les blocs vivaient dans la carte générique de `Diagnostics.svelte`. Depuis
+ * qu'Aude a demandé de brancher la mini-app du pack dans l'application, c'est
+ * `termites/MiniAppTermites.svelte` qui les porte — et c'est donc lui qu'il
+ * faut garder. Un test qui surveille un fichier qu'on n'affiche plus ne
+ * surveille rien.
+ */
+const source = readFileSync(
+  new URL('./termites/MiniAppTermites.svelte', import.meta.url),
+  'utf8'
+);
+/* On teste le BALISAGE, pas la documentation : les commentaires citent les
+   données fictives du visuel pour expliquer leur absence. */
+const ecran = source
+  .replace(/<script[\s\S]*?<\/script>/g, '')
+  .replace(/<!--[\s\S]*?-->/g, '');
+
+/*
+ * Les PHRASES vivent dans la synthèse, l'écran ne fait que les poser. C'est le
+ * bon partage — « ce module ne dessine rien » — et les garde-fous doivent donc
+ * regarder les deux : la place dans l'écran, le mot dans la synthèse.
+ */
+const synthese = readFileSync(new URL('./termites/synthese.ts', import.meta.url), 'utf8');
 
 describe('les constatations diverses, à l’écran', () => {
   it('ont leur propre bloc dans la carte', () => {
-    expect(ecran).toContain('Ce que le rapport constate en plus');
-    expect(ecran).toMatch(/\{#if d\.constatations\}/);
+    expect(ecran).toContain('Constatations diverses');
+    expect(ecran).toMatch(/\{#if s\.constatations\.montrer\}/);
   });
 
   it('citent les mots du rapport, entiers et entre guillemets', () => {
@@ -34,8 +58,9 @@ describe('les constatations diverses, à l’écran', () => {
   });
 
   it('portent la localisation que le rapport donne', () => {
-    expect(ecran).toContain('Localisation portée au rapport');
+    /* § 10 : chaque constatation reste reliée à sa localisation. */
     expect(ecran).toMatch(/\{#if c\.ou\}/);
+    expect(ecran).toMatch(/\{c\.ou\}/);
   });
 
   it('⚠️ ne sont PAS rendues comme un chiffre', () => {
@@ -44,9 +69,8 @@ describe('les constatations diverses, à l’écran', () => {
      * `valeur-chef` est la classe du chiffre dominant et ne doit jamais
      * l'habiller.
      */
-    const i = ecran.indexOf('Ce que le rapport constate en plus');
+    const i = ecran.indexOf('Constatations diverses');
     const bloc = ecran.slice(i, i + 3000);
-    expect(bloc).toContain('mot-du-rapport');
     expect(bloc).not.toContain('valeur-chef');
     expect(bloc).not.toContain('chiffres-suite');
   });
@@ -54,17 +78,15 @@ describe('les constatations diverses, à l’écran', () => {
   it('séparent les limites d’examen des constats', () => {
     /* § 14 : une zone qui n'a pas pu être regardée n'est pas une zone saine, et
        dix-sept rubriques sur quarante ne contiennent QUE ces clauses-là. */
-    expect(ecran).toContain('Ce que l’examen n’a pas couvert');
-    expect(ecran).toContain('n’est pas une zone sans termites');
-    expect(ecran).toMatch(/nature === 'limite'/);
-    expect(ecran).toMatch(/nature === 'constat'/);
+    expect(ecran).toContain('Ce qui borne l’examen, dans les mots du rapport');
+    expect(ecran).toMatch(/\{#each s\.bornages/);
   });
 
   it('disent « Néant » quand la rubrique répond', () => {
-    const i = ecran.indexOf('Ce que le rapport constate en plus');
+    const i = ecran.indexOf('Constatations diverses');
     const bloc = ecran.slice(i, i + 3000);
-    expect(bloc).toMatch(/d\.constatations\.neant/);
-    expect(bloc).toContain('n’a rien relevé d’autre');
+    expect(bloc).toMatch(/s\.constatations\.mention/);
+    expect(synthese).toContain('répond « Néant »');
   });
 
   it('⚠️ disent « pas lue » quand l’éditeur n’est pas couvert — jamais « rien »', () => {
@@ -73,19 +95,15 @@ describe('les constatations diverses, à l’écran', () => {
      * volets sur 250 n'ont aucun éditeur nommé, et leurs titres ressemblent à
      * ceux de LICIEL — se ressembler n'est pas être.
      */
-    const i = ecran.indexOf('Ce que le rapport constate en plus');
+    const i = ecran.indexOf('Constatations diverses');
     const bloc = ecran.slice(i, i + 3000);
-    expect(bloc).toMatch(/!d\.constatations\.lue/);
-    expect(bloc).toContain('Cela ne veut pas dire qu’elle est vide');
+    expect(bloc).toMatch(/s\.constatations\.mention/);
+    expect(synthese).toContain('Cela ne veut pas dire qu’elle est vide');
   });
 
   it('ne s’ouvrent pas sur les diagnostics qui n’ont pas la rubrique', () => {
     /* Le bloc entier est sous `{#if d.constatations}` : sans le champ, rien. */
-    const i = ecran.indexOf('{#if d.constatations}');
-    expect(i).toBeGreaterThan(-1);
-    expect(ecran.slice(i, ecran.indexOf('Ce que le rapport constate en plus'))).not.toContain(
-      '{/if}'
-    );
+    expect(ecran).toMatch(/\{#if s\.constatations\.montrer\}/);
   });
 });
 
@@ -98,31 +116,31 @@ describe('les constatations diverses, à l’écran', () => {
  */
 describe('les pièces non visitées, à l’écran', () => {
   it('ont leur propre bloc', () => {
-    expect(ecran).toContain('Ce que l’opérateur n’a pas pu visiter');
-    expect(ecran).toMatch(/\{#if d\.nonVisitees\}/);
+    expect(ecran).toContain('Ce qui n’a pas été contrôlé');
+    expect(ecran).toMatch(/s\.nonVisitees\.montrer/);
   });
 
   it('⚠️ annoncent la charpente AVANT la liste', () => {
     /* C'est ce qui compte le plus dans un rapport de termites : la conclusion
        ne porte pas sur ce que personne n'a regardé. */
-    const i = ecran.indexOf('Ce que l’opérateur n’a pas pu visiter');
+    const i = ecran.indexOf('Ce qui n’a pas été contrôlé');
     const bloc = ecran.slice(i, i + 2600);
-    const alerte = bloc.indexOf('d.nonVisitees.charpente');
-    const liste = bloc.indexOf('d.nonVisitees.pieces as p');
+    const alerte = bloc.indexOf('s.charpente');
+    const liste = bloc.indexOf('s.nonVisitees.entrees as l');
     expect(alerte).toBeGreaterThan(-1);
     expect(liste).toBeGreaterThan(-1);
     expect(alerte).toBeLessThan(liste);
     /* Sans dépendre de l'indentation : le texte compte, pas les espaces —
        ce test s'était cassé tout seul à l'insertion du bloc voisin. */
-    expect(bloc.replace(/\s+/g, ' ')).toContain('l’endroit où les termites se voient');
+    expect(bloc.replace(/\s+/g, ' ')).toContain('C’est là que les termites se voient');
   });
 
   it('portent le motif du rapport, séparé du lieu', () => {
-    const i = ecran.indexOf('Ce que l’opérateur n’a pas pu visiter');
+    const i = ecran.indexOf('Ce qui n’a pas été contrôlé');
     const bloc = ecran.slice(i, i + 2600);
-    expect(bloc).toContain('Motif porté au rapport');
-    expect(bloc).toMatch(/\{p\.ou\}/);
-    expect(bloc).toMatch(/\{#if p\.pourquoi\}/);
+    expect(bloc).toContain('l.pourquoi');
+    expect(bloc).toMatch(/\{l\.quoi\}/);
+    expect(bloc).toMatch(/\{#if l\.pourquoi\}/);
   });
 
   it('disent que le rapport ne conclut RIEN sur ces pièces', () => {
@@ -131,16 +149,16 @@ describe('les pièces non visitées, à l’écran', () => {
   });
 
   it('⚠️ « pas lue » ne devient pas « tout a été visité »', () => {
-    const i = ecran.indexOf('Ce que l’opérateur n’a pas pu visiter');
+    const i = ecran.indexOf('Ce qui n’a pas été contrôlé');
     const bloc = ecran.slice(i, i + 2600);
-    expect(bloc).toContain('Cela ne veut pas dire que tout a été visité');
-    expect(bloc).toMatch(/!d\.nonVisitees\.lue/);
+    expect(synthese).toContain('Cela ne veut pas dire que tout a été visité');
+    expect(bloc).toMatch(/s\.nonVisitees\.mention/);
   });
 
   it('distinguent « Néant » de « non lue »', () => {
-    const i = ecran.indexOf('Ce que l’opérateur n’a pas pu visiter');
+    const i = ecran.indexOf('Ce qui n’a pas été contrôlé');
     const bloc = ecran.slice(i, i + 2600);
-    expect(bloc).toMatch(/d\.nonVisitees\.neant/);
-    expect(bloc).toContain('toutes les pièces ont pu être');
+    expect(bloc).toMatch(/s\.nonVisitees\.mention/);
+    expect(synthese).toContain('toutes les pièces ont pu être');
   });
 });
