@@ -56,7 +56,7 @@
   import AVerifier from './AVerifier.svelte';
   import Travaux from './Travaux.svelte';
   import { libelleCourt } from '../lib/libelle';
-  import { enPratique, FICHES } from '../lib/analyse/fiches';
+  import { enPratique, ficheDe } from '../lib/analyse/fiches';
   import { echeance } from '../lib/echeance';
   import { confianceDuDossier, etiquetteDe } from '../lib/analyse/confiance';
   import type { Origine } from '../lib/bureau';
@@ -137,6 +137,8 @@
     schemaDeperditions?: Photo | null;
     /** La page du croquis du logement, déjà dessinée. */
     imageCroquis?: string | null;
+    /** Le dessin du croquis est-il encore en route ? */
+    croquisEnAttente?: boolean;
   }
 
   const {
@@ -148,7 +150,8 @@
     schemaDeperditions = null,
     bandeaux = [],
     photo = null,
-    imageCroquis = null
+    imageCroquis = null,
+    croquisEnAttente = false
   }: Props = $props();
 
   /*
@@ -920,7 +923,7 @@
   >
     <div class="piste" style:--sens={sens}>
       {#each diags as d, i (d.type)}
-        {@const pratique = enPratique(d.type, d.gravite)}
+        {@const pratique = enPratique(d.type, d.gravite, d.mesurage?.loi)}
         {@const quand = echeance(d)}
         <article
           class="fiche-diag {d.gravite}"
@@ -1221,6 +1224,7 @@
                   reference={d.surfaceDeReference ?? { etat: 'absente' }}
                   croquis={d.croquis ?? { etat: 'non trouvé' }}
                   {imageCroquis}
+                  {croquisEnAttente}
                   entete={false}
                 />
               {:else if d.schema?.genre === 'surfaces' && d.schema.pieces.length}
@@ -1424,7 +1428,7 @@
                   <p class="reponse-etape"><MotsExpliques texte={pratique} /></p>
                 {:else}
                   {#each blocsDe('importance') as bloc (bloc.cle)}
-                    <p class="reponse-etape"><MotsExpliques texte={FICHES[d.type][bloc.cle]} /></p>
+                    <p class="reponse-etape"><MotsExpliques texte={ficheDe(d)[bloc.cle]} /></p>
                   {/each}
                 {/if}
               </section>
@@ -1657,7 +1661,7 @@
                   </div>
                 {/if}
                 {#each blocsDe('pourquoi') as bloc (bloc.cle)}
-                  <p class="reponse-etape"><MotsExpliques texte={FICHES[d.type][bloc.cle]} /></p>
+                  <p class="reponse-etape"><MotsExpliques texte={ficheDe(d)[bloc.cle]} /></p>
                 {/each}
               </section>
 
@@ -1667,7 +1671,7 @@
               <section class="etape detail" class:replie={modeDe(d.type) === 'succinct'} aria-labelledby="et-faire-{d.type}">
                 <h4 id="et-faire-{d.type}" class="titre-etape">Que faire&nbsp;?</h4>
                 {#each blocsDe('faire') as bloc (bloc.cle)}
-                  <p class="reponse-etape"><MotsExpliques texte={FICHES[d.type][bloc.cle]} /></p>
+                  <p class="reponse-etape"><MotsExpliques texte={ficheDe(d)[bloc.cle]} /></p>
                 {/each}
                 {#if d.demarche}
                   <p class="quoi-emporter">{d.demarche.quoiEmporter}</p>
@@ -1698,7 +1702,7 @@
                   {#each blocsDe('loin') as bloc (bloc.cle)}
                     <div>
                       <dt>{bloc.mot}</dt>
-                      <dd><MotsExpliques texte={FICHES[d.type][bloc.cle]} /></dd>
+                      <dd><MotsExpliques texte={ficheDe(d)[bloc.cle]} /></dd>
                     </div>
                   {/each}
                 </dl>

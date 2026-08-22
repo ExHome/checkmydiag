@@ -28,7 +28,7 @@ export interface Fiche {
  * « Aucun indice d'infestation » ne dit rien à personne : ce que le lecteur veut
  * savoir, c'est s'il doit faire quelque chose, et ce que la phrase ne dit pas.
  */
-export function enPratique(type: TypeDiag, gravite: Gravite): string | null {
+export function enPratique(type: TypeDiag, gravite: Gravite, loi?: 'carrez' | 'boutin'): string | null {
   const bon = gravite === 'bon';
 
   switch (type) {
@@ -55,8 +55,19 @@ export function enPratique(type: TypeDiag, gravite: Gravite): string | null {
         : null;
     case 'erp':
       return 'Ne se répare pas : c’est le terrain. Ce qui compte → ce que couvre l’assurance.';
+    /*
+     * ⚠️ DEUX LOIS SOUS UN SEUL TYPE.
+     *
+     * `carrez` désigne le volet « mesurage », et ce volet porte tantôt la
+     * superficie privative due à la VENTE, tantôt la surface habitable due à la
+     * LOCATION. Cette phrase-ci ne valait que pour la première : sur une
+     * attestation Boutin, l'écran annonçait « ce chiffre part dans l'acte de
+     * vente » à quelqu'un qui tient la pièce d'un bail.
+     */
     case 'carrez':
-      return 'Ce chiffre part dans l’acte de vente. Il engage le vendeur.';
+      return loi === 'boutin'
+        ? 'Ce chiffre part dans le bail. Il engage le bailleur.'
+        : 'Ce chiffre part dans l’acte de vente. Il engage le vendeur.';
     default:
       return null;
   }
@@ -157,3 +168,39 @@ export const FICHES: Record<TypeDiag, Fiche> = {
       'Obligatoire hors réseau collectif. Valable 3 ans. Non conforme : la vente se fait quand même, mais l’acheteur a 1 an pour tout remettre aux normes — d’où la négociation.'
   }
 };
+
+/**
+ * LA FICHE DU MESURAGE QUAND C'EST UNE LOI BOUTIN.
+ *
+ * `FICHES.carrez` décrit une vente en copropriété de bout en bout : « savoir
+ * quelle surface on achète », « plus de 5 % d'écart → l'acheteur peut faire
+ * baisser le prix », « obligatoire en copropriété ». Sur une attestation de
+ * surface habitable, les cinq lignes sont fausses ensemble — mauvaise partie,
+ * mauvais recours, mauvais délai.
+ *
+ * La loi Boutin a ses propres règles : l'article 3-1 de la loi 89-462 donne au
+ * locataire, quand la surface réelle est inférieure de plus d'un vingtième à
+ * celle du bail, le droit de demander une diminution du loyer proportionnelle.
+ */
+export const FICHE_BOUTIN: Fiche = {
+  pourquoi: 'Savoir quelle surface on loue, et ce qui s’écrit dans le bail.',
+  comment: 'Surface de plancher habitable, sous plus de 1,80 m. Murs, cloisons et gaines déduits.',
+  risque:
+    'Plus d’un vingtième d’écart avec le bail → le locataire peut demander une baisse de loyer.',
+  quoiFaire: 'Comparer avec le bail. Pour vendre, ce document ne suffit pas : il faut une loi Carrez.',
+  vente:
+    'Due au locataire, pas à l’acheteur : elle s’écrit dans le bail d’une résidence principale. Pour vendre un lot en copropriété, c’est la superficie privative — loi Carrez — qui est exigée, et elle est en général plus grande.'
+};
+
+/**
+ * La fiche d'un diagnostic — et pour le mesurage, celle de SA loi.
+ *
+ * Le type ne suffit pas à choisir : `carrez` recouvre les deux mesurages. On
+ * regarde donc ce que le lecteur d'éditeur a lu sur l'intitulé du document.
+ * Sans lecture (éditeur inconnu, lecteur de repli), on garde la fiche Carrez :
+ * c'est le cas majoritaire, et elle était déjà celle qui s'affichait.
+ */
+export function ficheDe(d: { type: TypeDiag; mesurage?: { loi: 'carrez' | 'boutin' } }): Fiche {
+  if (d.type === 'carrez' && d.mesurage?.loi === 'boutin') return FICHE_BOUTIN;
+  return FICHES[d.type];
+}

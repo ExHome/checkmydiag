@@ -51,6 +51,15 @@
    * chose vérifiable : « page 31 de votre rapport », et le lecteur peut y aller.
    */
   let imageCroquis = $state<string | null>(null);
+  /**
+   * Le dessin du croquis est-il encore en route ?
+   *
+   * Sans ce drapeau, une page qui ne se dessine pas laisse l'écran sur « il est
+   * en cours de dessin » — indéfiniment, et sans que le lecteur sache s'il doit
+   * attendre. Une attente qui ne finit jamais est pire qu'un échec annoncé : on
+   * la borne, et on dit alors où regarder dans le rapport.
+   */
+  let croquisEnAttente = $state(false);
   /*
    * Les bandes du rapport qu'on ne peut pas lire, découpées pour être montrées :
    * la double étiquette, l'estimation des coûts, les classes projetées après
@@ -74,6 +83,7 @@
     photo = null;
     schemaDeperditions = null;
     imageCroquis = null;
+    croquisEnAttente = false;
     analyse = garde.analyse;
     etat = 'resultat';
 
@@ -104,6 +114,7 @@
     photo = null;
     schemaDeperditions = null;
     imageCroquis = null;
+    croquisEnAttente = false;
     analyse = analyser(pagesExemple());
     etat = 'resultat';
   }
@@ -171,6 +182,7 @@
       photo = null;
       schemaDeperditions = null;
     imageCroquis = null;
+    croquisEnAttente = false;
       bandeaux = [];
       analyse = resultat;
       etat = 'resultat';
@@ -207,7 +219,15 @@
       const mesurage = resultat.diagnostics.find((d) => d.type === 'carrez');
       if (mesurage?.croquis?.etat === 'trouvé') {
         const page = mesurage.croquis.page;
-        void document.rendre(page, 1100).then((r) => (imageCroquis = r?.image ?? null));
+        croquisEnAttente = true;
+        /* Vingt secondes : au-delà, la page ne se dessinera pas — une planche
+           vectorielle lourde, un appareil à bout de souffle. On rend la main. */
+        void Promise.race([
+          document.rendre(page, 900),
+          new Promise<null>((r) => setTimeout(() => r(null), 20_000))
+        ])
+          .then((r) => (imageCroquis = r?.image ?? null))
+          .finally(() => (croquisEnAttente = false));
       }
 
       const volet = resultat.diagnostics.find((d) => d.type === 'dpe');
@@ -472,7 +492,7 @@
       </p>
     {/if}
 
-    <Lecteur {analyse} {rendus} {demande} {photo} {schemaDeperditions} {bandeaux} {imageCroquis} />
+    <Lecteur {analyse} {rendus} {demande} {photo} {schemaDeperditions} {bandeaux} {imageCroquis} {croquisEnAttente} />
 
     <p class="avertissement">
       {nomFichier} — outil de lecture, sans valeur réglementaire. La référence reste le rapport

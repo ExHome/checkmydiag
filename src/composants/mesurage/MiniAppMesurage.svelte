@@ -49,6 +49,7 @@
     reference = { etat: 'absente' } as SurfaceDeReference,
     croquis = { etat: 'non trouvé' } as Croquis,
     imageCroquis = null,
+    croquisEnAttente = false,
     entete = true
   }: {
     diagnostic: Diagnostic;
@@ -56,6 +57,8 @@
     croquis?: Croquis;
     /** La page du croquis, déjà dessinée. `null` tant qu'elle ne l'est pas. */
     imageCroquis?: string | null;
+    /** Le dessin est-il encore en route ? Distingue « pas encore » de « pas du tout ». */
+    croquisEnAttente?: boolean;
     entete?: boolean;
   } = $props();
 
@@ -266,10 +269,18 @@
             <img src={imageCroquis} alt="Croquis de repérage, page {croquis.page} du rapport" />
             <figcaption>{legendeCroquis}</figcaption>
           </figure>
-        {:else}
+        {:else if croquisEnAttente}
           <p class="note">
             Le rapport porte un croquis en page {croquis.page} ({croquis.titre}). Il est en cours
             de dessin.
+          </p>
+        {:else}
+          <!-- Le dessin n'a pas abouti : on ne laisse pas le lecteur attendre
+               une image qui ne viendra pas. On lui dit où elle est. -->
+          <p class="note">
+            Le rapport porte un croquis en <strong>page {croquis.page}</strong>
+            ({croquis.titre}), mais il n’a pas pu être dessiné ici — une planche
+            vectorielle est lourde. Ouvrez cette page dans l’onglet « Rapport » pour la voir.
           </p>
         {/if}
       {:else if croquis.etat === 'annoncé'}

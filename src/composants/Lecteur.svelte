@@ -26,7 +26,7 @@
   import Diagnostics from './Diagnostics.svelte';
   import Verdict from './Verdict.svelte';
   import Bureau from './Bureau.svelte';
-  import { FICHES } from '../lib/analyse/fiches';
+  import { ficheDe } from '../lib/analyse/fiches';
 
   interface Props {
     analyse: Analyse;
@@ -45,6 +45,8 @@
     schemaDeperditions?: Photo | null;
     /** La page du croquis du logement, déjà dessinée. */
     imageCroquis?: string | null;
+    /** Le dessin du croquis est-il encore en route ? */
+    croquisEnAttente?: boolean;
     /** Les bandes du rapport découpées pour être montrées. */
     bandeaux?: BandeauDecoupe[];
   }
@@ -56,6 +58,7 @@
     photo = null,
     schemaDeperditions = null,
     imageCroquis = null,
+    croquisEnAttente = false,
     bandeaux = []
   }: Props =
     $props();
@@ -627,6 +630,7 @@
         {bandeaux}
         {photo}
         {imageCroquis}
+        {croquisEnAttente}
       />
     </div>
 
@@ -826,12 +830,12 @@
                   <section class="bloc deux">
                     <div>
                       <p class="quoi-bloc">Ce qu’on risque</p>
-                      <p class="risque"><MotsExpliques texte={FICHES[diagnostic.type].risque} /></p>
+                      <p class="risque"><MotsExpliques texte={ficheDe(diagnostic).risque} /></p>
                     </div>
                     <div>
                       <p class="quoi-bloc">Ce qu’il faut faire</p>
                       <p class="faire">
-                        <MotsExpliques texte={FICHES[diagnostic.type].quoiFaire} />
+                        <MotsExpliques texte={ficheDe(diagnostic).quoiFaire} />
                       </p>
                     </div>
                   </section>
@@ -1021,7 +1025,7 @@
         {/if}
 
         {#if diagnostic}
-          <p class="risque">{FICHES[diagnostic.type].risque}</p>
+          <p class="risque">{ficheDe(diagnostic).risque}</p>
         {/if}
 
         {#if actif.repere.suites?.length}
