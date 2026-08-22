@@ -1248,9 +1248,14 @@
     cursor: pointer;
   }
 
+  /*
+   * Les chevrons de la référence sont SOMBRES, pas gris clair : mesuré, leur
+   * trait tombe autour de #06070a. Un #b9b2a6 les rendait presque invisibles, et
+   * c'était une couleur de mon cru — hors de la palette relevée.
+   */
   .chev {
     flex: none;
-    color: #b9b2a6;
+    color: var(--encre-doux);
   }
 
   .cles div {
