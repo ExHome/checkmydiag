@@ -18,6 +18,7 @@ import { confianceDuDossier, origineDe } from './confiance';
 import { reperer } from './reperes';
 import { choisirLecteur, inscrireLecteur } from './lecteurs';
 import { constatationsDiverses } from './termites.constatations';
+import { charpenteNonControlee, piecesNonVisitees } from './termites.nonvisitees';
 import { lireAmianteBC2E } from './amiante.bc2e';
 import { conclusionDe, graviteDe, lireSynthese, type BlocSynthese } from './synthese';
 import { nombre, trouver } from './texte';
@@ -115,12 +116,21 @@ const avecConstatations = (c: Parameters<typeof lireAmianteBC2E>[0]): Diagnostic
    *
    * L'ordre de mission (§ 19) leur donne un bloc à elles. C'est celui-là.
    */
+  /* Rubrique F : ce que l'opérateur n'a pas pu visiter. Les combles y dominent,
+     et des combles non visités sont une charpente non contrôlée (§ 15). */
+  const f = piecesNonVisitees([...c.lignes], c.generateur.editeur);
   return {
     ...base,
     constatations: {
       lue: lecture.trouvee,
       neant: lecture.neant,
       entrees: lecture.entrees
+    },
+    nonVisitees: {
+      lue: f.trouvee,
+      neant: f.neant,
+      pieces: f.pieces,
+      charpente: charpenteNonControlee(f)
     }
   };
 };

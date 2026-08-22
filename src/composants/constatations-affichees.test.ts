@@ -88,3 +88,57 @@ describe('les constatations diverses, à l’écran', () => {
     );
   });
 });
+
+/**
+ * RUBRIQUE F — ce que l'opérateur n'a pas pu visiter.
+ *
+ * « EXAMINÉ + ABSENCE D'INDICE » n'est pas « NON EXAMINÉ » (§ 15). Et les pièces
+ * non visitées sont très majoritairement les COMBLES : c'est-à-dire la
+ * charpente, l'endroit même où les termites se voient.
+ */
+describe('les pièces non visitées, à l’écran', () => {
+  it('ont leur propre bloc', () => {
+    expect(ecran).toContain('Ce que l’opérateur n’a pas pu visiter');
+    expect(ecran).toMatch(/\{#if d\.nonVisitees\}/);
+  });
+
+  it('⚠️ annoncent la charpente AVANT la liste', () => {
+    /* C'est ce qui compte le plus dans un rapport de termites : la conclusion
+       ne porte pas sur ce que personne n'a regardé. */
+    const i = ecran.indexOf('Ce que l’opérateur n’a pas pu visiter');
+    const bloc = ecran.slice(i, i + 2600);
+    const alerte = bloc.indexOf('d.nonVisitees.charpente');
+    const liste = bloc.indexOf('d.nonVisitees.pieces as p');
+    expect(alerte).toBeGreaterThan(-1);
+    expect(liste).toBeGreaterThan(-1);
+    expect(alerte).toBeLessThan(liste);
+    expect(bloc).toContain('C’est\n                        l’endroit où les termites se voient');
+  });
+
+  it('portent le motif du rapport, séparé du lieu', () => {
+    const i = ecran.indexOf('Ce que l’opérateur n’a pas pu visiter');
+    const bloc = ecran.slice(i, i + 2600);
+    expect(bloc).toContain('Motif porté au rapport');
+    expect(bloc).toMatch(/\{p\.ou\}/);
+    expect(bloc).toMatch(/\{#if p\.pourquoi\}/);
+  });
+
+  it('disent que le rapport ne conclut RIEN sur ces pièces', () => {
+    /* § 15 : une zone inaccessible ne devient jamais une zone sans termites. */
+    expect(ecran).toContain('le rapport ne conclut rien — ni présence, ni absence');
+  });
+
+  it('⚠️ « pas lue » ne devient pas « tout a été visité »', () => {
+    const i = ecran.indexOf('Ce que l’opérateur n’a pas pu visiter');
+    const bloc = ecran.slice(i, i + 2600);
+    expect(bloc).toContain('Cela ne veut pas dire que tout a été visité');
+    expect(bloc).toMatch(/!d\.nonVisitees\.lue/);
+  });
+
+  it('distinguent « Néant » de « non lue »', () => {
+    const i = ecran.indexOf('Ce que l’opérateur n’a pas pu visiter');
+    const bloc = ecran.slice(i, i + 2600);
+    expect(bloc).toMatch(/d\.nonVisitees\.neant/);
+    expect(bloc).toContain('toutes les pièces ont pu être');
+  });
+});

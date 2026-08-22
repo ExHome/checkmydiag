@@ -1591,6 +1591,73 @@
                 </section>
               {/if}
 
+
+              <!--
+                ═══════════════════════════════════════════════════════════════
+                CE QUE L'OPÉRATEUR N'A PAS PU VISITER — rubrique F.
+                ═══════════════════════════════════════════════════════════════
+
+                « EXAMINÉ + ABSENCE D'INDICE » n'est pas « NON EXAMINÉ ». Une
+                zone inaccessible ne peut jamais devenir une zone sans termites
+                — § 15 de l'ordre de mission, et il est absolu.
+
+                Or les pièces déclarées non visitées sont, très majoritairement,
+                LES COMBLES. Des combles non visités, c'est LA CHARPENTE non
+                contrôlée — l'endroit même où les termites se voient. Un rapport
+                qui conclut « absence d'indices » sans que personne soit monté
+                dans les combles ne dit pas la même chose qu'un rapport où tout
+                a été regardé, et l'écran ne faisait pas la différence.
+
+                Motifs relevés sur le corpus, tous d'accès et aucun de termites :
+                absence de trappe de visite · plafond rampant · encombrement trop
+                important · impossibilité d'entrer · moyen d'accès insuffisant ·
+                trappe d'accès trop petite · accès condamné · emplacement non
+                identifiable.
+              -->
+              {#if d.nonVisitees}
+                <section class="etape" aria-labelledby="et-nonvisite-{d.type}">
+                  <h4 id="et-nonvisite-{d.type}" class="titre-etape">
+                    Ce que l’opérateur n’a pas pu visiter
+                  </h4>
+
+                  {#if d.nonVisitees.pieces.length}
+                    {#if d.nonVisitees.charpente}
+                      <!-- Dit en premier, parce que c'est ce qui compte le plus
+                           dans un rapport de termites. -->
+                      <p class="reponse-etape alerte-charpente">
+                        Les combles ou la charpente n’ont pas pu être contrôlés. C’est
+                        l’endroit où les termites se voient&nbsp;: la conclusion du rapport ne
+                        porte pas sur eux.
+                      </p>
+                    {/if}
+                    <ul class="constatations">
+                      {#each d.nonVisitees.pieces as p (p.terme)}
+                        <li>
+                          <p class="mot-du-rapport">{p.ou}</p>
+                          {#if p.pourquoi}
+                            <p class="ou-du-rapport">Motif porté au rapport&nbsp;: {p.pourquoi}</p>
+                          {/if}
+                        </li>
+                      {/each}
+                    </ul>
+                    <p class="reponse-etape">
+                      Sur ces pièces, le rapport ne conclut rien — ni présence, ni absence.
+                    </p>
+                  {:else if d.nonVisitees.neant}
+                    <p class="reponse-etape">
+                      Le rapport répond «&nbsp;Néant&nbsp;»&nbsp;: toutes les pièces ont pu être
+                      visitées.
+                    </p>
+                  {:else if !d.nonVisitees.lue}
+                    <p class="reponse-etape">
+                      Le modèle de ce rapport n’est pas encore couvert&nbsp;: cette rubrique n’a
+                      pas été lue. Cela ne veut pas dire que tout a été visité — ouvrez-la dans
+                      le rapport.
+                    </p>
+                  {/if}
+                </section>
+              {/if}
+
               <!--
                 4 · POURQUOI ? — d'abord ce que CE rapport-ci raconte, ensuite
                 pourquoi ce diagnostic existe.
@@ -3192,6 +3259,12 @@
     margin: var(--pas-1) 0 0;
     font-size: 0.875em;
     opacity: 0.75;
+  }
+  /* Les combles non contrôlés : dit avant la liste, parce que c'est ce qui
+     compte le plus dans un rapport de termites. */
+  .alerte-charpente {
+    font-weight: 600;
+    margin-bottom: var(--pas-3);
   }
   .limites-examen {
     margin-top: var(--pas-4);

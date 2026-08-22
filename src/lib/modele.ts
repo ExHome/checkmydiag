@@ -182,6 +182,26 @@ export interface Diagnostic {
     neant: boolean;
     entrees: { terme: string; ou?: string; nature: 'constat' | 'limite' }[];
   };
+  /**
+   * Les pièces que l'opérateur n'a PAS pu visiter — rubrique F du termites.
+   *
+   * ⚠️ « EXAMINÉ + ABSENCE D'INDICE » n'est pas « NON EXAMINÉ » (§ 15 de l'ordre
+   * de mission termites). Et les pièces non visitées sont très majoritairement
+   * les COMBLES : c'est-à-dire la charpente, l'endroit même où les termites se
+   * voient. Un « absence d'indices » sans montée dans les combles ne vaut pas un
+   * « absence d'indices » sur un bien entièrement regardé.
+   *
+   * `lue: false` veut dire « modèle non couvert, on n'a pas su lire » — jamais
+   * « tout a été visité ».
+   */
+  nonVisitees?: {
+    lue: boolean;
+    /** La rubrique existe et répond « Néant » : tout a été visité. */
+    neant: boolean;
+    pieces: { terme: string; ou: string; pourquoi: string }[];
+    /** Les combles, la charpente, le grenier ou la toiture en font-ils partie ? */
+    charpente: boolean;
+  };
   /** Pages du PDF où se trouve ce diagnostic (1-indexé). */
   pages: [number, number];
   /** Numéros de toutes les pages du diagnostic, pour les faire défiler. */
