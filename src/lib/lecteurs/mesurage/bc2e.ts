@@ -57,7 +57,24 @@ const CONCLUSIONS: { motif: RegExp; libelle: string; loi: Loi }[] = [
   }
 ];
 
-/** Une ligne du tableau : étage, local, puis TROIS nombres. */
+/**
+ * Une ligne du tableau : étage, local, puis TROIS nombres.
+ *
+ * ⚠️ **RISQUE CONNU, NON TRANCHÉ.** Ce motif exige un premier jeton pour la
+ * colonne « Étage ». Dans les 8 volets lus elle est toujours remplie — `RDC`,
+ * `01`, `03`, `05`, `SOUS-SOL` —, mais rien ne garantit qu'un logement de
+ * plain-pied ne la laisse pas vide. La ligne deviendrait alors
+ * `Séjour/Cuisine 26.40 0.00 11.00`, le motif n'y trouverait plus de local, et
+ * **la pièce serait perdue sans erreur** — exactement la faute qui a coûté deux
+ * pièces sur trois chez LICIEL.
+ *
+ * On ne rustine pas sur une hypothèse : l'ordre de mission demande de relire,
+ * pas de deviner, et aucun volet du corpus n'a encore montré ce cas. Ce qui
+ * protège en attendant, c'est le **contrôle d'addition** de l'écran : une pièce
+ * perdue fait que la somme ne retombe plus sur le total, et Verrière le dit au
+ * lieu de le corriger. Le jour où un volet BC2E affiche un écart de somme,
+ * c'est ici qu'il faut regarder d'abord.
+ */
 const LIGNE = /^(\S+)\s+(.+?)\s+(\d+(?:[.,]\d+)?)\s+(\d+(?:[.,]\d+)?)\s+(\d+(?:[.,]\d+)?)\s*$/;
 
 /** La ligne de totaux : trois nombres suivis chacun de leur unité. */
