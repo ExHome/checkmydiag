@@ -107,6 +107,40 @@ const PLAFONDS: ReadonlyMap<string, number> = new Map([
   ['src/composants/visuels/VisuelRisques.svelte', 17]
 ]);
 
+/**
+ * Les tailles et les rayons écrits en dur, hors de l'échelle.
+ *
+ * ## Pourquoi les formes comptent autant que les couleurs
+ *
+ * « Je veux que le visuel soit homogène et premium » — Aude, 22/08/2026. Le
+ * premium ne se joue pas sur la couleur seule : il se joue sur le fait que
+ * TOUT s'aligne. L'échelle typographique de `app.css` prévoit deux tailles
+ * entre 0,60 et 1,00 rem — `--t-micro` (0.75) et `--t-petit` (0.875). Le
+ * produit en emploie **trente-six**.
+ *
+ * Trente-six valeurs pour deux emplacements, ce n'est pas une hiérarchie : à
+ * l'œil, un écart de 0,02 rem ne se lit pas comme une intention, il se lit
+ * comme du flou. C'est exactement ce qui sépare un écran soigné d'un écran
+ * approximatif.
+ *
+ * Le système existe déjà et il est complet — 7 tailles, 8 espacements,
+ * 4 rayons, 5 ombres, 3 polices. Rien à inventer : il n'est appliqué qu'à
+ * moitié.
+ *
+ * ## Ce qui n'est PAS compté, et pourquoi
+ *
+ * `border-radius: 50%` et `999px` ne sont pas des rayons d'échelle, ce sont des
+ * FORMES — un cercle, une pilule. Les compter serait reprocher à une pastille
+ * d'être ronde. `0` non plus : c'est une annulation. Et les rayons asymétriques
+ * (`0 6px 6px 0`) décrivent une géométrie, pas un niveau d'arrondi.
+ */
+function formesEnDur(fichier: string): number {
+  const source = readFileSync(fichier, 'utf8');
+  const tailles = source.match(/font-size:\s*[0-9.]+(rem|px|em)/g) ?? [];
+  const rayons = source.match(/border-radius:\s*[0-9.]+(px|rem|em)\s*;/g) ?? [];
+  return tailles.length + rayons.length;
+}
+
 describe('l’homogénéité visuelle ne se dégrade pas', () => {
   const palette = paletteLegitime();
 
@@ -131,6 +165,36 @@ describe('l’homogénéité visuelle ne se dégrade pas', () => {
       ).toBeLessThanOrEqual(plafond);
     });
   }
+
+  /*
+   * LES FORMES — même cliquet que les couleurs.
+   *
+   * Le plafond global plutôt que fichier par fichier : la dette est de 502
+   * déclarations sur 57 composants au 22/08, et ce qui compte est qu'elle
+   * DESCENDE. Un plafond par fichier figerait une carte qui bouge à chaque
+   * mini-app livrée ; un plafond global laisse un volet se réaligner sans
+   * attendre les autres, et refuse que le total remonte.
+   */
+  it('les tailles et rayons en dur ne se multiplient pas', () => {
+    const PLAFOND_FORMES = 502;
+    const parFichier = composants()
+      .map((f) => ({ fichier: f, dette: formesEnDur(f) }))
+      .filter((x) => x.dette > 0)
+      .sort((a, b) => b.dette - a.dette);
+    const total = parFichier.reduce((s, x) => s + x.dette, 0);
+
+    expect(
+      total,
+      total > PLAFOND_FORMES
+        ? `\n${total} tailles ou rayons écrits en dur, pour un plafond de ${PLAFOND_FORMES}.\n` +
+          `Les plus chargés :\n` +
+          parFichier.slice(0, 5).map((x) => `  ${x.dette}  ${x.fichier}`).join('\n') +
+          `\n\nL'échelle existe déjà dans app.css : --t-micro/--t-petit/--t-base/--t-lead\n` +
+          `pour les tailles, --rayon-petit/--rayon/--rayon-large pour les arrondis.\n` +
+          `Voir docs/DIRECTIVES-VISUELLES.md.`
+        : ''
+    ).toBeLessThanOrEqual(PLAFOND_FORMES);
+  });
 
   /*
    * Le plafond ne remonte jamais.

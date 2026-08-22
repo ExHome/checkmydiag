@@ -66,6 +66,43 @@ corriger** : c'est la différence entre un ordre et une bévue.
 
 ---
 
+## Les formes comptent autant que les couleurs
+
+*Ajouté le 22/08 : « je veux que le visuel soit homogène et premium. »*
+
+Le premium ne se joue pas sur la couleur seule. Il se joue sur le fait que
+**tout s'aligne** — et c'est mesurable.
+
+| | |
+|---|---|
+| Tailles prévues par l'échelle entre 0,60 et 1,00 rem | **2** (`--t-micro` 0,75 · `--t-petit` 0,875) |
+| Tailles réellement employées dans cette plage | **36** |
+| Tailles et rayons écrits en dur | **502**, sur 57 composants |
+
+Trente-six valeurs pour deux emplacements, ce n'est pas une hiérarchie. À l'œil,
+un écart de 0,02 rem ne se lit pas comme une intention : **il se lit comme du
+flou.** C'est exactement ce qui sépare un écran soigné d'un écran approximatif.
+
+**Le système existe déjà et il est complet** — 7 tailles, 8 espacements
+(`--e1`…`--e8`), 4 rayons, 5 ombres, 6 reliefs, 3 polices. Il n'y a rien à
+inventer : il n'est appliqué qu'à moitié. 76 % des rayons, 56 % des ombres et
+45 % des tailles sont écrits en dur.
+
+Les plus chargés, tous des mini-apps — donc les écrans qu'un jury regardera :
+`MiniAppDpe` (57), `MiniAppElectricite` (47), `MiniAppGaz` (42), `Amiante` (36),
+`MiniAppPlomb` (29), `MiniAppTermites` (25), `MiniAppMesurage` (25).
+
+⚠️ **Ce qui n'est pas compté, et ne doit pas l'être** : `border-radius: 50%` et
+`999px` ne sont pas des rayons d'échelle, ce sont des **formes** — un cercle,
+une pilule. Les compter reviendrait à reprocher à une pastille d'être ronde.
+`0` est une annulation, et un rayon asymétrique (`0 6px 6px 0`) décrit une
+géométrie.
+
+Le cliquet est **global** ici, pas par fichier : la dette doit descendre, et un
+volet doit pouvoir se réaligner sans attendre les autres.
+
+---
+
 ## L'ordre, volet par volet
 
 Chaque session réaligne **son** volet. Personne ne touche au volet d'un autre
