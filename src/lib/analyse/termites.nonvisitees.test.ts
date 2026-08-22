@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { charpenteNonControlee, piecesNonVisitees } from './termites.nonvisitees';
+import {
+  charpenteNonControlee,
+  ouvragesNonExamines,
+  piecesNonVisitees
+} from './termites.nonvisitees';
 
 /**
  * Rubrique F — les pièces que l'opérateur n'a PAS pu visiter.
@@ -170,5 +174,171 @@ describe('la charpente, quand elle n’a pas été contrôlée', () => {
 
   it('ne se déclenche pas sur un « Néant »', () => {
     expect(charpenteNonControlee(liciel('Néant'))).toBe(false);
+  });
+});
+
+
+/**
+ * RUBRIQUE G — les ouvrages non examinés dans les pièces où l'on est entré.
+ *
+ * F dit quelles PIÈCES n'ont pas été visitées ; G dit quels OUVRAGES n'ont pas
+ * été examinés là où l'opérateur est entré — les murs derrière un doublage, la
+ * sous-face d'un parquet collé.
+ *
+ * ⚠️ C'est le tableau le plus entrelacé du corpus chez LICIEL : trois colonnes
+ * verticalement centrées, dont le reflow pose la courte au milieu de la longue,
+ * en coupant un mot en deux.
+ */
+const enteteG = [
+  'G. - Identification des ouvrages, parties d’ouvrages et éléments qui n’ont pas été',
+  'examinés et justification :',
+  'Liste des ouvrages, parties',
+  'Localisation Motif',
+  'd’ouvrages'
+];
+const finG = ['H. - Constatations diverses :'];
+
+describe('la rubrique G, chez LICIEL', () => {
+  it('⚠️ recolle la localisation que deux colonnes coupent en deux', () => {
+    /*
+     * Le cas réel : les MURS de HUIT pièces, revêtement fixé. Recollées dans
+     * l'ordre, les lignes donnent « … Rez de **Mur Revetement fixé** chaussée -
+     * Séjour … » — un nom de pièce coupé par deux autres colonnes.
+     */
+    const r = ouvragesNonExamines(
+      [
+        ...enteteG,
+        'Rez de chaussée - Entrée, Rez de chaussée',
+        '- Chambre 1, Rez de chaussée - Chambre',
+        '2, Rez de chaussée - Salle de bain, Rez de',
+        'Mur Revetement fixé',
+        'chaussée - Séjour, Rez de chaussée -',
+        'Cuisine, Rez de chaussée - Cellier, Rez de',
+        'chaussée - Wc',
+        ...finG
+      ],
+      'LICIEL'
+    );
+    expect(r.trouvee).toBe(true);
+    expect(r.ouvrages).toHaveLength(1);
+    expect(r.ouvrages[0]?.separable).toBe(true);
+    /* La localisation est recollée sans l'intruse : les huit pièces y sont. */
+    expect(r.ouvrages[0]?.ou).toContain('Rez de chaussée - Séjour');
+    expect(r.ouvrages[0]?.ou).toContain('Rez de chaussée - Wc');
+    expect(r.ouvrages[0]?.ou).not.toContain('Revetement fixé');
+    expect(r.ouvrages[0]?.pourquoi).toBe('Mur Revetement fixé');
+  });
+
+  it('sort le texte-type de bornage du bloc', () => {
+    /*
+     * « Le diagnostic se limite aux zones rendues visibles… » ne désigne aucun
+     * ouvrage : il borne l'examen. Laissé dans le bloc, il noierait les
+     * exclusions réelles.
+     */
+    const r = ouvragesNonExamines(
+      [
+        ...enteteG,
+        'Le diagnostic se limite aux zones rendues visibles et',
+        'accessibles par le propriétaire. Les zones situées',
+        'derrière les doublages des murs et plafonds n’ont pas',
+        'été visitées par défaut d’accès. Contrôles impossibles',
+        'Ensemble du bien - sans destruction ou démontage des faces cachées du',
+        'bien, structure sous isolant, plinthes, doublages,',
+        'cloisons, faux plafond, revêtements de sols, charpente',
+        'sous plafond sous rampant, accès combles insuffisant,',
+        'etc',
+        ...finG
+      ],
+      'LICIEL'
+    );
+    expect(r.bornage).toContain('Le diagnostic se limite aux zones rendues visibles');
+  });
+
+  it('⚠️ « Néant - » n’est pas « rubrique absente »', () => {
+    const r = ouvragesNonExamines([...enteteG, 'Néant -', ...finG], 'LICIEL');
+    expect(r.trouvee).toBe(true);
+    expect(r.neant).toBe(true);
+    expect(r.ouvrages).toEqual([]);
+  });
+
+  it('⚠️ CITE sans séparer quand rien ne tranche', () => {
+    /*
+     * La règle de sûreté de ce lecteur : un tableau inventé serait pire qu'un
+     * texte brut. `separable: false` dit au lecteur que les colonnes n'ont pas
+     * pu être démêlées — c'est la géométrie qui manque, et on le dit.
+     */
+    const r = ouvragesNonExamines(
+      [...enteteG, 'Combles - Combles Toutes Plafond rampant.', 'Autre chose ici.', ...finG],
+      'LICIEL'
+    );
+    expect(r.ouvrages).toHaveLength(1);
+    expect(r.ouvrages[0]?.separable).toBe(false);
+    expect(r.ouvrages[0]?.ou).toBeUndefined();
+    expect(r.ouvrages[0]?.terme).toContain('Combles');
+  });
+
+  it('⚠️ ne prend pas la rubrique F pour la rubrique G', () => {
+    const r = ouvragesNonExamines(
+      [
+        'F. – Identification des bâtiments et parties du bâtiment (pièces et volumes) n’ayant pu être',
+        'visités et justification :',
+        'R+1 - Combles (Absence de trappe de visite)'
+      ],
+      'LICIEL'
+    );
+    expect(r.trouvee).toBe(false);
+  });
+});
+
+describe('la rubrique G — éditeur non couvert', () => {
+  it('ne lit rien, et ne dit pas « rien »', () => {
+    expect(ouvragesNonExamines([...enteteG, 'Mur Revetement fixé', ...finG], null).trouvee).toBe(
+      false
+    );
+  });
+});
+
+describe('⚠️ le titre se coupe à DEUX endroits différents', () => {
+  /*
+   * Défaut trouvé par la mesure, pas par la lecture : la rubrique G ressortait
+   * « Néant » ZÉRO fois sur 250 volets, alors qu'elle y répond « Néant - ».
+   *
+   *   forme A   « … n'ayant pu être »          « visités et justification : »
+   *   forme B   « … n'ayant pu être visités et » « justification : »
+   *
+   * La seconde ligne peut donc n'être que « justification : ». Non filtrée, elle
+   * reste dans le corps, et « justification : Néant » ne ressemble plus à
+   * « Néant ».
+   */
+  it('lit la forme B de la rubrique F', () => {
+    const r = piecesNonVisitees(
+      [
+        'F. – Identification des bâtiments et parties du bâtiment (pièces et volumes) n’ayant pu être visités et',
+        'justification :',
+        'Néant',
+        'G. - Identification des ouvrages'
+      ],
+      'LICIEL'
+    );
+    expect(r.trouvee).toBe(true);
+    expect(r.neant).toBe(true);
+  });
+
+  it('lit la forme B de la rubrique G', () => {
+    const r = ouvragesNonExamines(
+      [
+        'G. - Identification des ouvrages, parties d’ouvrages et éléments qui n’ont pas été examinés et',
+        'justification :',
+        'Liste des ouvrages, parties',
+        'Localisation Motif',
+        'd’ouvrages',
+        'Néant -',
+        'Nota : notre cabinet s’engage à retourner sur les lieux'
+      ],
+      'LICIEL'
+    );
+    expect(r.trouvee).toBe(true);
+    expect(r.neant).toBe(true);
+    expect(r.ouvrages).toEqual([]);
   });
 });

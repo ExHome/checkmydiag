@@ -202,6 +202,25 @@ export interface Diagnostic {
     /** Les combles, la charpente, le grenier ou la toiture en font-ils partie ? */
     charpente: boolean;
   };
+  /**
+   * Les OUVRAGES non examinés — rubrique G du termites.
+   *
+   * F dit quelles pièces n'ont pas été visitées ; G dit ce qui, dans les pièces
+   * où l'opérateur est entré, n'a pas pu être regardé : les murs derrière un
+   * doublage, la sous-face d'un parquet collé, le plancher sur solives sous un
+   * carrelage.
+   *
+   * `separable: false` sur une entrée veut dire que le tableau du rapport n'a
+   * pas pu être démêlé en colonnes — le texte est alors cité tel quel. C'est
+   * assumé : un tableau inventé serait pire qu'un texte brut.
+   */
+  nonExamines?: {
+    lue: boolean;
+    neant: boolean;
+    ouvrages: { terme: string; ou?: string; pourquoi?: string; separable: boolean }[];
+    /** Le texte-type qui borne l'examen, quand le rapport l'imprime. */
+    bornage?: string;
+  };
   /** Pages du PDF où se trouve ce diagnostic (1-indexé). */
   pages: [number, number];
   /** Numéros de toutes les pages du diagnostic, pour les faire défiler. */

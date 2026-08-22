@@ -18,7 +18,11 @@ import { confianceDuDossier, origineDe } from './confiance';
 import { reperer } from './reperes';
 import { choisirLecteur, inscrireLecteur } from './lecteurs';
 import { constatationsDiverses } from './termites.constatations';
-import { charpenteNonControlee, piecesNonVisitees } from './termites.nonvisitees';
+import {
+  charpenteNonControlee,
+  ouvragesNonExamines,
+  piecesNonVisitees
+} from './termites.nonvisitees';
 import { lireAmianteBC2E } from './amiante.bc2e';
 import { conclusionDe, graviteDe, lireSynthese, type BlocSynthese } from './synthese';
 import { nombre, trouver } from './texte';
@@ -119,6 +123,8 @@ const avecConstatations = (c: Parameters<typeof lireAmianteBC2E>[0]): Diagnostic
   /* Rubrique F : ce que l'opérateur n'a pas pu visiter. Les combles y dominent,
      et des combles non visités sont une charpente non contrôlée (§ 15). */
   const f = piecesNonVisitees([...c.lignes], c.generateur.editeur);
+  /* Rubrique G : ce qui n'a pas été EXAMINÉ dans les pièces où l'on est entré. */
+  const g = ouvragesNonExamines([...c.lignes], c.generateur.editeur);
   return {
     ...base,
     constatations: {
@@ -131,6 +137,12 @@ const avecConstatations = (c: Parameters<typeof lireAmianteBC2E>[0]): Diagnostic
       neant: f.neant,
       pieces: f.pieces,
       charpente: charpenteNonControlee(f)
+    },
+    nonExamines: {
+      lue: g.trouvee,
+      neant: g.neant,
+      ouvrages: g.ouvrages,
+      ...(g.bornage ? { bornage: g.bornage } : {})
     }
   };
 };

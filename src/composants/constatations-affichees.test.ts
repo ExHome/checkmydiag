@@ -112,7 +112,9 @@ describe('les pièces non visitées, à l’écran', () => {
     expect(alerte).toBeGreaterThan(-1);
     expect(liste).toBeGreaterThan(-1);
     expect(alerte).toBeLessThan(liste);
-    expect(bloc).toContain('C’est\n                        l’endroit où les termites se voient');
+    /* Sans dépendre de l'indentation : le texte compte, pas les espaces —
+       ce test s'était cassé tout seul à l'insertion du bloc voisin. */
+    expect(bloc.replace(/\s+/g, ' ')).toContain('l’endroit où les termites se voient');
   });
 
   it('portent le motif du rapport, séparé du lieu', () => {

@@ -109,8 +109,23 @@ const MARQUE_F = /n['’]?ayantpu/;
 const FIN_F =
   /^[a-z]?[.\-–—]*(?:identificationdesouvrages|moyensd'investigation|visa|constatationsdiverses)|^nota\s*\d*:|^note\s*\d*:/;
 
-/** La seconde ligne du titre, à ne pas prendre pour du contenu. */
-const SUITE_DU_TITRE = /^(?:être)?visit[ée]setjustification:?$/;
+/**
+ * La seconde ligne du titre, à ne pas prendre pour du contenu.
+ *
+ * ⚠️ LE TITRE SE COUPE À DEUX ENDROITS DIFFÉRENTS, et je n'en connaissais qu'un.
+ * Mesuré : la rubrique G ressortait « Néant » ZÉRO fois sur 250 volets, alors
+ * qu'elle y répond « Néant - ». La cause était ici.
+ *
+ *     forme A   « … (pièces et volumes) n'ayant pu être »
+ *               « visités et justification : »
+ *     forme B   « … n'ayant pu être visités et »
+ *               « justification : »
+ *
+ * La seconde ligne peut donc n'être que « justification : ». Non filtrée, elle
+ * reste dans le corps, et « justification : Néant » ne ressemble plus à
+ * « Néant ».
+ */
+const SUITE_DU_TITRE = /^(?:[êe]tre)?visit[ée]setjustification:?$|^justification:?$/;
 
 /** L'habillage qui traverse la rubrique aux sauts de page. */
 const HABILLAGE = /^etatrelatif|^sarl|^rcs:|^rapportdu:?$|^\d+\/\d+$|^n°siren|^\d{2}\/\d{2}\/\d{4}$/;
@@ -198,4 +213,213 @@ export function piecesNonVisitees(
  */
 export function charpenteNonControlee(lecture: LectureNonVisitees): boolean {
   return lecture.pieces.some((p) => /combles?|charpente|grenier|toiture/i.test(p.terme));
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   RUBRIQUE G — les ouvrages qui n'ont PAS été examinés
+   ════════════════════════════════════════════════════════════════════════════
+
+   Rubrique F dit quelles PIÈCES n'ont pas été visitées. Rubrique G dit quels
+   OUVRAGES n'ont pas été examinés dans les pièces où l'opérateur est entré —
+   les murs derrière un doublage, la sous-face d'un parquet collé, le plancher
+   sur solives sous un carrelage. C'est la seconde moitié du § 14 de l'ordre de
+   mission, et elle porte le cas le plus parlant du corpus : « les MURS de HUIT
+   pièces, revêtement fixé ».
+
+   ⚠️ C'EST LE TABLEAU LE PLUS ENTRELACÉ DU CORPUS, chez LICIEL.
+
+   Trois colonnes — Localisation | Ouvrages | Motif — dont les cellules sont
+   VERTICALEMENT CENTRÉES. Le reflow du texte pose donc la cellule courte au
+   milieu du bloc de la cellule longue, et coupe un mot en deux :
+
+       Rez de chaussée - Entrée, Rez de chaussée
+       - Chambre 1, Rez de chaussée - Chambre
+       2, Rez de chaussée - Salle de bain, Rez de
+       Mur           Revetement fixé          ← les colonnes 2 et 3, insérées
+       chaussée - Séjour, Rez de chaussée -
+       Cuisine, Rez de chaussée - Cellier, Rez de
+       chaussée - Wc
+
+   Recoller les lignes dans l'ordre donne « … Rez de **Mur Revetement fixé**
+   chaussée - Séjour … » : le nom d'une pièce coupé en deux par deux autres
+   colonnes.
+
+   La réponse propre serait la GÉOMÉTRIE — les abscisses des cellules. Elle
+   n'est pas branchée dans ce pipeline, et le faire toucherait des fichiers
+   qu'une autre session édite. On fait donc ce que le texte permet, et on le dit.
+
+   LA RÈGLE APPLIQUÉE : une ligne est INSÉRÉE quand elle interrompt une phrase
+   dont les deux moitiés se recollent. Ce qu'elle contient dit ensuite laquelle
+   des colonnes elle porte :
+
+       « Ensemble du bien - »        → une localisation ; le bloc est le motif
+       « Mur   Revetement fixé »     → ouvrage + motif ; le bloc est la
+                                       localisation
+
+   Et quand rien ne tranche, ON NE SÉPARE PAS : le bloc est cité tel quel,
+   marqué `separable: false`. Mieux vaut un texte brut qu'un tableau inventé. */
+
+/** Le titre de G — « qui n'ont pas été examinés », là où F dit « n'ayant pu ». */
+const TITRE_G = /^[a-z]?[.\-–—]*identificationdesouvrages/;
+const MARQUE_G = /n['’]?ontpas[ée]t[ée]examin[ée]s|[ée]l[ée]mentsnonexamin[ée]s|^pi[èe]ces[ée]l[ée]ments/;
+
+const FIN_G =
+  /^[a-z]?[.\-–—]*(?:moyensd'investigation|visa|constatationsdiverses|conclusion|annexe)|^nota\s*\d*:|^note\s*\d*:/;
+
+/** Les trois lignes d'en-tête des colonnes, à écarter. */
+const ENTETE_G =
+  /^listedesouvrages,?parties$|^d'ouvrages$|^localisationmotif$|^localisation$|^motif$|^pi[èe]ces[ée]l[ée]mentsnonexamin[ée]s$/;
+
+/**
+ * Le texte-type que LICIEL imprime dans cette rubrique, mot pour mot.
+ *
+ * C'est le même que celui des constatations diverses : il borne l'examen sans
+ * désigner d'ouvrage particulier. On le sort du bloc pour qu'il ne noie pas les
+ * exclusions réelles, et on le rend à part.
+ */
+const TEXTE_TYPE_G =
+  /Le diagnostic se limite aux zones rendues visibles et accessibles par le propri[ée]taire\.?.*?(?:accès combles insuffisant,?\s*etc|par d[ée]faut d['’]acc[èe]s\.?)/is;
+
+export interface OuvrageNonExamine {
+  /** Le texte du rapport pour cette entrée. */
+  terme: string;
+  /** OÙ, quand les colonnes ont pu être séparées. */
+  ou?: string;
+  /** POURQUOI, quand le rapport le donne et que la séparation a tenu. */
+  pourquoi?: string;
+  /**
+   * Les colonnes ont-elles pu être séparées ?
+   *
+   * `false` veut dire « le rapport le dit, mais son tableau ne se sépare pas en
+   * texte » — on cite alors le bloc entier plutôt que d'inventer un appariement.
+   */
+  separable: boolean;
+}
+
+export interface LectureNonExamines {
+  trouvee: boolean;
+  neant: boolean;
+  ouvrages: OuvrageNonExamine[];
+  /** Le texte-type de bornage, quand le rapport l'imprime. */
+  bornage?: string;
+  editeur: string | null;
+}
+
+const RIEN_G: LectureNonExamines = { trouvee: false, neant: false, ouvrages: [], editeur: null };
+
+/**
+ * La ligne INSÉRÉE : celle qui coupe une phrase dont les deux moitiés se
+ * recollent.
+ *
+ * Les cellules du tableau sont verticalement centrées ; la courte tombe donc au
+ * milieu du bloc de la longue. On la reconnaît à ce qu'elle produit : la ligne
+ * d'avant se termine sur un fragment, celle d'après en porte la suite.
+ *
+ *     « … Salle de bain, Rez de »   ← se termine sur « Rez de »
+ *     « Mur   Revetement fixé »     ← l'intruse
+ *     « chaussée - Séjour, … »      ← reprend sur « chaussée »
+ */
+function lignesQuiSeRecollent(avant: string, apres: string): boolean {
+  const finMot = /[a-zà-ÿ]$/i.test(avant.trim()) && !/[.,;:]$/.test(avant.trim());
+  const suiteMot = /^[a-zà-ÿ]/.test(apres.trim());
+  return finMot && suiteMot;
+}
+
+/** Une localisation LICIEL : niveaux, pièces, et le tiret de colonne vide. */
+const RESSEMBLE_A_UNE_LOCALISATION =
+  /(?:rez de chauss[ée]e|\d+(?:er|[èe]me)?\s*[ée]tage|R\+\d|RDC|sous-sol|combles?|ensemble du bien)/i;
+
+function lireRubriqueG(lignes: string[], editeur: string): LectureNonExamines {
+  const plats = lignes.map(aplati);
+
+  for (let debut = 0; debut < lignes.length; debut++) {
+    if (!TITRE_G.test(plats[debut] ?? '')) continue;
+    if (!MARQUE_G.test(`${plats[debut]}${plats[debut + 1] ?? ''}${plats[debut + 2] ?? ''}`)) continue;
+
+    const apres = plats.slice(debut + 1).findIndex((l) => FIN_G.test(l));
+    const fin = apres < 0 ? Math.min(debut + 40, lignes.length) : debut + 1 + apres;
+
+    const utiles = lignes
+      .slice(debut + 1, fin)
+      .filter((_l, i) => {
+        const a = plats[debut + 1 + i] ?? '';
+        return (
+          a !== '' &&
+          !ENTETE_G.test(a) &&
+          !HABILLAGE.test(a) &&
+          /* Même piège qu'en F : la seconde ligne du titre est tantôt
+             « examinés et justification : », tantôt « justification : » seul. */
+          !/^examin[ée]setjustification:?$/.test(a) &&
+          !/^[ée]tre?examin[ée]setjustification:?$/.test(a) &&
+          !/^justification:?$/.test(a)
+        );
+      });
+
+    if (!utiles.length) continue;
+
+    const recolle = propre(utiles.join(' '));
+    if (/^n[ée]ant(\s*[-–—]\s*)*$/i.test(recolle)) {
+      return { trouvee: true, neant: true, ouvrages: [], editeur };
+    }
+
+    /* Le texte-type de bornage sort du bloc : il ne désigne aucun ouvrage, et
+       il noierait les exclusions réelles. */
+    const type = TEXTE_TYPE_G.exec(recolle);
+    const bornage = type?.[0] ? propre(type[0]) : undefined;
+
+    /* On repère les lignes insérées, dans les lignes restées. */
+    const restantes = utiles.filter((l) => !bornage || !bornage.includes(propre(l)));
+    const ouvrages: OuvrageNonExamine[] = [];
+    const bloc: string[] = [];
+    const intruses: string[] = [];
+
+    for (let i = 0; i < restantes.length; i++) {
+      const avant = restantes[i - 1];
+      const apresL = restantes[i + 1];
+      if (avant && apresL && lignesQuiSeRecollent(avant, apresL)) intruses.push(restantes[i] ?? '');
+      else bloc.push(restantes[i] ?? '');
+    }
+
+    if (intruses.length === 1 && bloc.length) {
+      const intruse = propre(intruses[0] ?? '');
+      const reste = propre(bloc.join(' '));
+      /* Laquelle des colonnes l'intruse porte-t-elle ? Son contenu le dit. */
+      const intruseEstLocalisation = RESSEMBLE_A_UNE_LOCALISATION.test(intruse);
+      ouvrages.push(
+        intruseEstLocalisation
+          ? { terme: `${intruse} ${reste}`, ou: intruse, pourquoi: reste, separable: true }
+          : { terme: `${reste} — ${intruse}`, ou: reste, pourquoi: intruse, separable: true }
+      );
+    } else if (restantes.length) {
+      /* Rien ne tranche : on CITE, on ne sépare pas. Un tableau inventé serait
+         pire qu'un texte brut (§ 24). */
+      ouvrages.push({ terme: propre(restantes.join(' ')), separable: false });
+    }
+
+    return {
+      trouvee: true,
+      neant: false,
+      ouvrages,
+      ...(bornage ? { bornage } : {}),
+      editeur
+    };
+  }
+
+  return RIEN_G;
+}
+
+/**
+ * Lire la rubrique G — avec la carte de CET éditeur.
+ *
+ * ⚠️ BC2E n'a PAS ce problème : son tableau est propre, une ligne par élément,
+ * la pièce à gauche, et les lignes suivantes héritent de la pièce. Sa lecture
+ * est donc exacte là où celle de LICIEL est approchée — encore une raison de ne
+ * jamais appliquer une carte à un autre éditeur.
+ */
+export function ouvragesNonExamines(
+  lignes: string[],
+  editeur: string | null | undefined
+): LectureNonExamines {
+  if (editeur === 'LICIEL' || editeur === 'BC2E') return lireRubriqueG(lignes, editeur);
+  return RIEN_G;
 }

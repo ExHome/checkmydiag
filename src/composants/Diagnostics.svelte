@@ -29,6 +29,7 @@
    */
   import Scene from './scene/Scene.svelte';
   import { sceneZonesTermites, largeurDe, HAUTEUR_SCENE } from './scene/zonesTermites';
+  import { sceneParois, largeurParois, HAUTEUR_PAROIS } from './scene/parois';
   import VisuelTermites from './visuels/VisuelTermites.svelte';
   import VisuelRisques from './visuels/VisuelRisques.svelte';
   import PlanDuLogement from './plans/PlanDuLogement.svelte';
@@ -1518,6 +1519,22 @@
                   que si la signature du format a répondu : un lecteur par
                   éditeur, choisi sur signature. Voir docs/OU-PARSER-DPE.md § 8.
                 -->
+                <!--
+                  LA SCÈNE DES PAROIS, avant les cartes du descriptif.
+
+                  Elle donne d'un coup d'œil ce que les cartes détaillent : ce
+                  qui sépare l'intérieur du dehors, et qui est isolé. Le clic
+                  éclaire une paroi et cite ce que le rapport en dit — y compris
+                  quand il dit « inconnue », qui n'est ni un défaut ni une
+                  qualité.
+                -->
+                {#if lectureDpeDe(d)?.enveloppe?.parois?.length}
+                  {@const sp = sceneParois(lectureDpeDe(d)?.enveloppe?.parois ?? [])}
+                  {#if sp}
+                    <Scene scene={sp} largeur={largeurParois(sp)} hauteur={HAUTEUR_PAROIS} />
+                  {/if}
+                {/if}
+
                 {#if lectureDpeDe(d)}
                   {@const lu = lectureDpeDe(d)}
                   {#if lu}
