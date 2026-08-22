@@ -81,8 +81,22 @@ export function reconnaitLiciel(lignes: readonly string[]): { preuve: string } |
 function alimentation(lignes: readonly string[]): 'OUI' | 'NON' | null {
   for (const ligne of lignes) {
     if (!/Installation aliment[ée]e en gaz/i.test(ligne)) continue;
-    if (/\bNON\b/.test(ligne)) return 'NON';
-    if (/\bOUI\b/.test(ligne)) return 'OUI';
+    const oui = /\bOUI\b/.test(ligne);
+    const non = /\bNON\b/.test(ligne);
+    /*
+     * ⚠️ Les DEUX réponses sur la même ligne : c'est un formulaire à cocher, et
+     * la coche est un dessin. Mesuré le 22/08/2026 sur un volet d'annexe LICIEL
+     * qui imprime « Installation alimentée en gaz : OUI NON », comme il imprime
+     * juste au-dessus « Type de bâtiment : Appartement Maison individuelle ».
+     *
+     * La version précédente testait NON en premier et rendait donc « non
+     * alimentée ». Or une installation non alimentée ne permet AUCUN essai :
+     * l'annoncer à tort fausse la portée de tout le volet. On rend `null` —
+     * l'information n'est pas dans le texte, et on ne la devine pas.
+     */
+    if (oui && non) return null;
+    if (non) return 'NON';
+    if (oui) return 'OUI';
   }
   return null;
 }

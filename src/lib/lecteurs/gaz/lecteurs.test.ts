@@ -143,6 +143,23 @@ describe('LICIEL — ce que 26 volets ont imposé', () => {
   it('recopie la mesure de CO telle quelle', () => {
     expect(lu.appareils[0]?.co).toEqual({ etat: 'mesurée', valeur: '0 ppm' });
   });
+
+  /*
+   * Le volet d'annexe imprime les deux réponses et coche la bonne d'un dessin.
+   * Répondre « NON » y serait pire que se taire : une installation non
+   * alimentée ne permet aucun essai, et toute la portée du volet en dépend.
+   */
+  it('ne conclut pas quand les deux réponses sont imprimées', () => {
+    const annexe = [
+      'Etat de l’Installation Intérieure de GAZ',
+      'Annexe',
+      'E. - Anomalies identifiées',
+      'Type de bâtiment : Appartement Maison individuelle',
+      'Nature du gaz distribué : GN GPL Air propané ou butané',
+      'Installation alimentée en gaz : OUI NON'
+    ];
+    expect(LECTEUR_GAZ_LICIEL.lire(annexe).alimentee).toBeNull();
+  });
 });
 
 describe('BC2E — ce que 6 volets ont démenti', () => {

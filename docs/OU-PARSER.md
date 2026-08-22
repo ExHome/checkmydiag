@@ -2444,3 +2444,167 @@ Deux conséquences directes :
 les fichiers `…_en_attente.pdf` ont été écartés comme doublons, sur leur seul
 nom. Ils portaient 2 à 3 lignes d'écart avec leur homologue — **un écart du même
 ordre que celui mesuré ici**. Ils doivent être relus et comparés, pas écartés.
+
+---
+
+# GAZ — PreventImmo, le troisième format, et la coche enfin lisible
+
+*Un volet lu en entier le 22/08/2026, repéré sur le fonds Dropbox. **Un seul** :
+rien de ce qui suit n'est une règle, tout est à confirmer.*
+
+## ⚠️ La case cochée est un « X » DANS LE TEXTE
+
+C'est la première fois. Relevé mot pour mot :
+
+```
+X L'installation ne comporte aucune anomalie.
+L'installation comporte des anomalies de type A1 qui devront être réparées ultérieurement.
+L'installation comporte des anomalies de type A2 qui devront être réparées dans les meilleurs délais.
+L'installation comporte des anomalies de type DGI qui devront être réparées avant remise en service.
+```
+
+Les cinq phrases sont imprimées comme chez les deux autres éditeurs — mais la
+réponse est marquée par un **X en tête de ligne**, et ce X sort à l'extraction.
+
+**Mesuré : 0 marque de coche lisible dans les 26 volets LICIEL et les 6 volets
+BC2E.** Chez eux la coche est un glyphe graphique, absent du texte. Chez
+PreventImmo, elle se lit.
+
+Conséquence : la règle « la conclusion ne se lit jamais dans la liste des cinq
+phrases » est vraie chez LICIEL, vraie chez BC2E, **fausse ici**. C'est le
+troisième format qui le montre, exactement comme le référentiel le prévoyait.
+
+## Un plan sans lettres de rubrique
+
+Ni `A.`, ni `B.`, ni `E.` : les rubriques sont des intitulés en texte suivi.
+
+| | Intitulé |
+|---|---|
+| Cadre de la mission | `Mission` |
+| Appareils | `Identification des appareils` |
+| Anomalies | `Anomalies identifiées` |
+| Pièces non visitées | `Locaux non visités` |
+| Constatations | `Constatations diverses` |
+| Actions | `Action de l'opérateur de diagnostic en cas de DGI` / `…en cas d'anomalie 32c` |
+
+Aucun lecteur bornant sur une lettre ne peut lire ce format. Aucune rubrique de
+points de contrôle non vérifiés non plus — ni le second bloc de F de LICIEL, ni
+la rubrique K de BC2E.
+
+## Trois autres écarts relevés
+
+1. **L'alimentation est une phrase, pas un champ** : *« L'installation est
+   alimentée. »* — là où LICIEL écrit `Installation alimentée en gaz : OUI` et
+   BC2E pose un `OUI` sur sa propre ligne.
+2. **Le tableau des anomalies est VIDE**, sans `Néant` : après l'en-tête, il n'y
+   a que le lexique. C'est un troisième cas — ni ligne de constat, ni mention
+   d'absence. Un lecteur qui exige `Néant` pour conclure « aucune anomalie »
+   reste muet ici, alors que le X de la conclusion, lui, répond.
+3. **Le verdict est écrit par appareil**, dans la colonne d'observations :
+   *« Aucune anomalie. »* sur chacun des deux appareils.
+
+## Ce que le découpage a raté
+
+Le volet fait **3 pages** — le rapport le dit lui-même, `page 1 sur 3`. Le
+découpeur n'en a borné qu'une : la conclusion, les constatations diverses et les
+actions de l'opérateur tombaient hors de la plage, et une lecture qui s'y serait
+fiée aurait perdu le verdict.
+
+À retenir : **quand un rapport pagine lui-même son volet (`page n sur N`), cette
+mention borne mieux que le découpage automatique.**
+
+## Statut
+
+**Un volet. Aucun lecteur PreventImmo n'est écrit**, et il ne le sera pas sur
+cette base : une signature mesurée sur un seul document ne distingue pas un
+format d'un accident de mise en page. Le repérage continue sur le fonds ; le
+lecteur s'écrira quand il y aura de quoi le mesurer.
+
+En attendant, l'aiguilleur fait ce qu'il doit : il rend `format inconnu`, et le
+repérage a marqué ce fichier « éditeur non couvert, à lire ».
+
+---
+
+# GAZ — un quatrième format, et un bug qu'il a révélé
+
+*Lecture du 22/08/2026 : 22 volets d'éditeur non nommé, extraits du fonds
+Dropbox et lus un par un.*
+
+## Ce que portent ces 22 volets
+
+| Format | Volets | Reconnaissable à |
+|---|---|---|
+| LICIEL | 5 | `E. - Anomalies identifiées` — le format est lisible, c'est le **nom** de l'éditeur qui manque |
+| **Format 4** | **6** | `Conclusion` sans lettre, titre en capitales espacées |
+| Ni l'un ni l'autre | 11 | dont des courriers et attestations — voir plus bas |
+
+## Le format 4 — la mise en page coupe les mots
+
+Relevé mot pour mot :
+
+```
+E TAT DE L ’ INSTALLATION INTERIE URE DE GAZ
+S ELON L ’ ARRETE DU 18 NOVEMBRE 2013 PORTANT RECONNAISSAN CE DE LA NORME NF P45 - 500
+…devront être réparées ul térieurement.
+Durée de validité du rapport : 3 ans , (la date de référence est la da te de la visite)
+```
+
+Le titre, les intitulés et jusqu'aux mots courants sont **coupés par des
+espaces** — `INTERIE URE`, `ul térieurement`, `da te`, `RECONNAISSAN CE`.
+
+**Aucun motif littéral ne tient là-dessus.** Un lecteur de ce format devra
+normaliser les espaces avant de chercher quoi que ce soit — c'est probablement
+aussi pourquoi l'identification d'éditeur échoue sur ces six volets.
+
+Autres traits mesurés : la conclusion est en **première page** avec les cinq
+phrases imprimées et aucune coche lisible ; les rubriques n'ont pas de lettres
+(`Propriétaire`, `Adresse des locaux visités`, `Conclusion`, `Annexes
+réglementaires`) ; le rapport porte un numéro de dossier de la forme
+`BX33-19-03-LR-1695`.
+
+## ⚠️ Le bug que ce corpus a révélé dans le lecteur LICIEL
+
+Un des volets est au format LICIEL, mais c'est une **annexe** : elle imprime les
+deux réponses possibles côte à côte, et coche d'un dessin.
+
+```
+Type de bâtiment : Appartement  Maison individuelle
+Nature du gaz distribué : GN  GPL  Air propané ou butané
+Installation alimentée en gaz : OUI  NON
+```
+
+Le lecteur testait `NON` avant `OUI` : il rendait donc **« installation non
+alimentée »**. Or une installation non alimentée ne permet aucun essai — cette
+seule valeur change la portée de tout le volet, et la rendre à tort est une
+faute grave.
+
+Corrigé : quand les deux réponses sont sur la ligne, le lecteur rend `null`.
+L'information n'est pas dans le texte, on ne la devine pas. Un test la garde.
+
+## Le repérage attrape encore des documents qui ne sont pas des diagnostics
+
+Sur les 11 volets inclassés, au moins deux ne sont pas des rapports :
+
+- une **attestation d'assurance** AXA, dans un dossier de 240 pages, dont la
+  liste des activités garanties cite « État de l'installation intérieure de
+  gaz » ;
+- un **courrier d'organisme de certification** (surveillance documentaire), de
+  2 pages, à l'encodage cassé.
+
+⚠️ Le premier révèle une limite du repérage : dans un document composite, il
+retient la **première** occurrence du titre. Ici, elle tombe page 27, dans
+l'attestation — le vrai volet est ailleurs dans les 240 pages, et n'a pas été
+lu. **Le repérage doit chercher toutes les occurrences, pas la première.**
+
+## Mesure des lecteurs après cette lecture
+
+Sur 55 volets soumis (26 LICIEL, 24 BC2E, 5 inconnus) :
+
+| | |
+|---|---|
+| lus par un lecteur | 50 |
+| format inconnu, déclaré comme tel | 5 |
+| **documents reconnus par deux signatures** | **0** |
+| conclusions lues | 24 — les BC2E, aucune LICIEL |
+| points de contrôle non vérifiés remontés | 82 |
+| appareils | 79 |
